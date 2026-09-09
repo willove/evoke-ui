@@ -1,0 +1,73 @@
+name: Publish to npm
+
+on:
+  # 手动触发：可选发布哪个包
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "选择要发布的包"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - both
+          - business-ui
+          - ui
+
+  # 发布 GitHub Release 时自动发布全部包
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      matrix:
+        include:
+          - { name: business-ui, pkg: "@wil-works/evoke-business-ui" }
+          - { name: ui, pkg: "@wil-works/evoke-ui" }
+      # 手动选择单个包时跳过另一个
+      max-parallel: 1
+    steps:
+      - name: Skip when package not selected
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] \
+             && [ "${{ inputs.package }}" != "both" ] \
+             && [ "${{ inputs.package }}" != "${{ matrix.name }}" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.skip == 'false'
+
+      - uses: pnpm/action-setup@v4
+        if: steps.gate.outputs.skip == 'false'
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.skip == 'false'
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        if: steps.gate.outputs.skip == 'false'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        if: steps.gate.outputs.skip == 'false'
+        run: pnpm --filter ${{ matrix.pkg }} build
+
+      - name: Publish
+        if: steps.gate.outputs.skip == 'false'
+        run: pnpm --filter ${{ matrix.pkg }} publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
