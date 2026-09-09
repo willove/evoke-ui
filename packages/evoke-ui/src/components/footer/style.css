@@ -1,0 +1,112 @@
+/* EwFooter — 站点页脚 */
+
+.ew-footer {
+  padding: 80px 0 40px;
+  border-top: 1px solid var(--ew-border-color-light);
+  color: var(--ew-text-regular);
+}
+
+.ew-footer.is-soft {
+  background-color: var(--ew-bg-muted);
+}
+
+/* ─── 主体：品牌区 + 链接栏 ─── */
+.ew-footer__main {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--ew-space-12) var(--ew-space-8);
+  padding-bottom: var(--ew-space-12);
+}
+
+.ew-footer__logo {
+  font-size: var(--ew-font-size-lg);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+  color: var(--ew-text-primary);
+}
+
+.ew-footer__slogan {
+  margin-top: var(--ew-space-3);
+  max-width: 300px;
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
+}
+
+.ew-footer__social {
+  display: flex;
+  gap: var(--ew-space-2);
+  margin-top: var(--ew-space-5);
+}
+
+.ew-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ew-space-3);
+}
+
+.ew-footer__col-title {
+  margin-bottom: var(--ew-space-2);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ew-text-secondary);
+}
+
+.ew-footer__link {
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-secondary);
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-footer__link:hover {
+  color: var(--ew-text-primary);
+}
+
+/* ─── 底部版权条 ─── */
+.ew-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ew-space-4);
+  padding-top: var(--ew-space-6);
+  border-top: 1px solid var(--ew-border-color-light);
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-secondary);
+}
+
+.ew-footer__legal {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-4);
+}
+
+@media (max-width: 640px) {
+  .ew-footer__main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ew-footer__brand {
+    grid-column: 1 / -1;
+  }
+
+  .ew-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-footer .ew-footer__slogan {
+  margin: var(--ew-space-3) 0 0;
+  font-size: var(--ew-font-size-sm);
+}
+
+.ew-footer .ew-footer__col-title {
+  margin: 0 0 var(--ew-space-2);
+  font-size: var(--ew-font-size-xs);
+}

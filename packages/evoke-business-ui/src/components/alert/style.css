@@ -1,0 +1,119 @@
+/* EvAlert —警告提示 */
+
+.ev-alert.ev-alert {
+  --ev-alert-padding: 8px 16px;
+  --ev-alert-border-radius: var(--ev-radius-md);
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  padding: var(--ev-alert-padding);
+  border-radius: var(--ev-alert-border-radius);
+  background-color: var(--ev-alert-bg-color);
+  color: var(--ev-alert-text-color);
+  font-size: var(--ev-font-size-xs);
+  line-height: var(--ev-line-height-base);
+  overflow: hidden;
+  opacity: 1;
+}
+
+/* light 效果（默认） */
+.ev-alert.ev-alert--light.ev-alert--info.ev-alert,
+.ev-alert.ev-alert--light.ev-alert--primary.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-info-light-9);
+  --ev-alert-text-color: var(--ev-color-info);
+}
+.ev-alert.ev-alert--light.ev-alert--success.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-success-light-9);
+  --ev-alert-text-color: var(--ev-color-success);
+}
+.ev-alert.ev-alert--light.ev-alert--warning.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-warning-light-9);
+  --ev-alert-text-color: var(--ev-color-warning);
+}
+.ev-alert.ev-alert--light.ev-alert--error.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-danger-light-9);
+  --ev-alert-text-color: var(--ev-color-danger);
+}
+
+/* dark 效果 */
+.ev-alert.ev-alert--dark.ev-alert--info.ev-alert,
+.ev-alert.ev-alert--dark.ev-alert--primary.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-info);
+  --ev-alert-text-color: #fff;
+}
+.ev-alert.ev-alert--dark.ev-alert--success.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-success);
+  --ev-alert-text-color: #fff;
+}
+.ev-alert.ev-alert--dark.ev-alert--warning.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-warning);
+  --ev-alert-text-color: #fff;
+}
+.ev-alert.ev-alert--dark.ev-alert--error.ev-alert {
+  --ev-alert-bg-color: var(--ev-color-danger);
+  --ev-alert-text-color: #fff;
+}
+
+.ev-alert.ev-alert .ev-alert__icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: var(--ev-space-2);
+  color: var(--ev-alert-text-color);
+  flex-shrink: 0;
+}
+
+.ev-alert.ev-alert .ev-alert__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.ev-alert.ev-alert .ev-alert__title {
+  font-size: var(--ev-font-size-base);
+  line-height: 1.5;
+  color: var(--ev-alert-text-color);
+  font-weight: var(--ev-font-weight-medium);
+}
+
+.ev-alert.ev-alert .ev-alert__description {
+  margin: 0;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-alert-text-color);
+  opacity: 0.85;
+}
+
+.ev-alert.ev-alert .ev-alert__close-btn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--ev-alert-text-color);
+  opacity: 0.6;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+  flex-shrink: 0;
+}
+.ev-alert.ev-alert .ev-alert__close-btn:hover {
+  opacity: 1;
+}
+
+.ev-alert.ev-alert.is-center {
+  justify-content: center;
+}
+
+/* 过渡 */
+.ev-alert-fade-enter-active,
+.ev-alert-fade-leave-active {
+  transition:
+    opacity var(--ev-duration-base) var(--ev-ease-out),
+    transform var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-alert-fade-enter-from,
+.ev-alert-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}

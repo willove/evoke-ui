@@ -1,0 +1,24 @@
+/* EvCascaderPanel — 独立级联面板（复用 cascader 面板样式 + 边框变体与空态补充） */
+
+.ev-cascader-panel.ev-cascader-panel {
+  display: flex;
+  background: var(--ev-bg-color);
+  border-radius: var(--ev-radius-md);
+}
+
+.ev-cascader-panel.ev-cascader-panel.is-bordered {
+  border: 1px solid var(--ev-border-color-light);
+}
+
+.ev-cascader-panel.ev-cascader-panel .ev-cascader-menu {
+  border-right: 1px solid var(--ev-border-color-lighter);
+}
+.ev-cascader-panel.ev-cascader-panel .ev-cascader-menu:last-child {
+  border-right: none;
+}
+
+.ev-cascader-panel.ev-cascader-panel .ev-cascader-panel__empty {
+  padding: var(--ev-space-4) var(--ev-space-5);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}

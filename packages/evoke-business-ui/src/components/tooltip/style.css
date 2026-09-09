@@ -1,0 +1,29 @@
+/* EvTooltip — tooltip 样式 */
+
+.ev-popper.ev-tooltip {
+  padding: 6px 10px;
+  font-size: var(--ev-font-size-xs);
+  line-height: 1.4;
+  border: none;
+}
+
+.ev-popper.ev-tooltip.is-dark {
+  background: var(--ev-text-color-primary);
+  color: #fff;
+  box-shadow: var(--ev-shadow-2);
+}
+/* 箭头实际形体是 ::before（窗口裁剪结构），配色必须落在伪元素上 */
+.ev-popper.ev-tooltip.is-dark .ev-popper__arrow::before {
+  background: var(--ev-text-color-primary);
+  border: none;
+}
+
+.ev-popper.ev-tooltip.is-light {
+  background: var(--ev-bg-color-overlay);
+  color: var(--ev-text-color-regular);
+  border: 1px solid var(--ev-border-color-light);
+}
+.ev-popper.ev-tooltip.is-light .ev-popper__arrow::before {
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+}

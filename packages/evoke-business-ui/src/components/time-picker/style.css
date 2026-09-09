@@ -1,0 +1,158 @@
+/* EvTimePicker — 复用 date-picker 编辑器/滚轮样式 + 区间组合 */
+
+@import '../date-picker/time-panel.css';
+
+/* 编辑器结构复用 date-editor 规则（通过 ev-date-editor 类） */
+.ev-time-editor.ev-time-picker .ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  width: 100%;
+  min-height: var(--ev-component-size);
+  padding: 1px 11px;
+  line-height: var(--ev-component-size);
+  background-color: var(--ev-fill-color-blank);
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out);
+}
+.ev-time-editor.ev-time-picker {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 220px;
+  font-size: var(--ev-font-size-base);
+}
+.ev-time-editor.ev-time-picker.ev-input--large .ev-input__wrapper {
+  min-height: var(--ev-component-size-large);
+}
+.ev-time-editor.ev-time-picker.ev-input--small .ev-input__wrapper {
+  min-height: var(--ev-component-size-small);
+}
+.ev-time-editor.ev-time-picker .ev-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--ev-text-color-placeholder) inset;
+}
+.ev-time-editor.ev-time-picker .ev-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}
+.ev-time-editor.ev-time-picker .ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+.ev-time-editor.ev-time-picker .ev-input__prefix {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ev-text-color-placeholder);
+  flex-shrink: 0;
+}
+.ev-time-editor.ev-time-picker .ev-input__inner {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: inherit;
+  height: calc(var(--ev-component-size) - 2px);
+  line-height: 1;
+  cursor: pointer;
+}
+.ev-time-editor.ev-time-picker .ev-input__inner::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-time-editor.ev-time-picker .ev-range__close-icon {
+  cursor: pointer;
+  color: var(--ev-text-color-placeholder);
+}
+.ev-time-editor.ev-time-picker .ev-range__close-icon:hover {
+  color: var(--ev-text-color-secondary);
+}
+
+/* 区间编辑器（复用 ev-range-editor 视觉） */
+.ev-time-editor.ev-time-picker .ev-range-editor.ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--ev-component-size);
+  padding: 1px 11px;
+  background-color: var(--ev-fill-color-blank);
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.ev-time-editor.ev-time-picker .ev-range-editor.ev-input__wrapper.is-active {
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}
+.ev-time-editor.ev-time-picker .ev-range-editor.ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+.ev-time-editor.ev-time-picker .ev-range__icon {
+  color: var(--ev-text-color-placeholder);
+  margin-right: var(--ev-space-1);
+}
+.ev-time-editor.ev-time-picker .ev-range-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: inherit;
+  height: calc(var(--ev-component-size) - 4px);
+  line-height: 1;
+  cursor: pointer;
+}
+.ev-time-editor.ev-time-picker .ev-range-separator {
+  flex-shrink: 0;
+  padding: 0 5px;
+  color: var(--ev-text-color-regular);
+}
+
+/* 弹层 */
+.ev-time-picker__popper.ev-picker__popper {
+  position: fixed;
+  z-index: 2000;
+}
+.ev-time-picker__popper.ev-picker__popper > .ev-time-panel {
+  position: relative;
+}
+
+/* 区间组合 */
+.ev-time-picker__popper .ev-time-range-picker {
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-3);
+}
+.ev-time-picker__popper .ev-time-range-picker__content {
+  display: flex;
+}
+.ev-time-picker__popper .ev-time-range-picker__cell {
+  flex: 1;
+  padding: 4px 0;
+  text-align: center;
+}
+.ev-time-picker__popper .ev-time-range-picker__cell + .ev-time-range-picker__cell {
+  border-left: 1px solid var(--ev-border-color-lighter);
+}
+.ev-time-picker__popper .ev-time-range-picker__header {
+  font-size: 12px;
+  color: var(--ev-text-color-secondary);
+  padding: 4px 0;
+}
+.ev-time-picker__popper .ev-time-picker__cell-panel.ev-time-panel {
+  border: none;
+  box-shadow: none;
+  width: 160px;
+  z-index: 1;
+}
+.ev-time-picker__popper .ev-time-range-picker .ev-time-panel__footer {
+  border-top: 1px solid var(--ev-border-color-lighter);
+  padding: 4px 8px;
+}

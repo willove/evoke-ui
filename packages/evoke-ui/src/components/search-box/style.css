@@ -1,0 +1,87 @@
+/* EwSearchBox — 大搜索框（remixicon 签名组件） */
+
+.ew-search-box {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-4);
+  height: 60px;
+  padding: 0 var(--ew-space-5);
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: 16px;
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-2);
+  transition: box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.ew-search-box:focus-within {
+  border-color: var(--ew-color-primary-light-5);
+  box-shadow: var(--ew-shadow-3);
+}
+
+.ew-search-box--large {
+  height: 68px;
+  padding: 0 var(--ew-space-6);
+  border-radius: 18px;
+}
+
+/* ─── 分类下拉（EwSelect bare 嵌入形态）─── */
+.ew-search-box__category {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-right: var(--ew-space-4);
+  border-right: 1px solid var(--ew-border-color-light);
+}
+
+.ew-search-box__category .ew-select__trigger {
+  font-weight: var(--ew-font-weight-medium);
+}
+
+.ew-search-box__category .ew-select__label {
+  max-width: 140px;
+}
+
+/* ─── 放大镜 ─── */
+.ew-search-box__magnifier {
+  flex-shrink: 0;
+  color: var(--ew-text-placeholder);
+}
+
+/* ─── 输入区 ─── */
+.ew-search-box__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-regular);
+  color: var(--ew-text-primary);
+  outline: none;
+}
+
+.ew-search-box__input::placeholder {
+  color: var(--ew-text-placeholder);
+}
+
+/* 焦点光环由整条搜索框（:focus-within）承担，内部 input 不再自绘 */
+.ew-search-box__input:focus,
+.ew-search-box__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.ew-search-box__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* ─── 后缀动作位 ─── */
+.ew-search-box__suffix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: var(--ew-space-4);
+  border-left: 1px solid var(--ew-border-color-light);
+}

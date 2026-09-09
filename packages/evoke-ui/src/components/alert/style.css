@@ -1,0 +1,131 @@
+/* EwAlert — 公告/提示条 */
+
+.ew-alert {
+  --alert-tone: var(--ew-color-primary);
+  --alert-tone-bg: var(--ew-color-primary-light-9);
+  --alert-tone-rgb: var(--ew-color-primary-rgb);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ew-space-3);
+  padding: var(--ew-space-4) var(--ew-space-5);
+  border: 1px solid color-mix(in srgb, var(--alert-tone) 22%, transparent);
+  border-radius: var(--ew-radius-lg);
+  background-color: var(--alert-tone-bg);
+  font-size: var(--ew-font-size-sm);
+  line-height: var(--ew-line-height-base);
+  color: var(--ew-text-primary);
+}
+
+.ew-alert.is-success {
+  --alert-tone: var(--ew-color-success);
+  --alert-tone-bg: var(--ew-color-success-light-9);
+  --alert-tone-rgb: var(--ew-color-success-rgb);
+}
+
+.ew-alert.is-warning {
+  --alert-tone: var(--ew-color-warning);
+  --alert-tone-bg: var(--ew-color-warning-light-9);
+  --alert-tone-rgb: var(--ew-color-warning-rgb);
+}
+
+.ew-alert.is-danger {
+  --alert-tone: var(--ew-color-danger);
+  --alert-tone-bg: var(--ew-color-danger-light-9);
+  --alert-tone-rgb: var(--ew-color-danger-rgb);
+}
+
+.ew-alert.is-neutral {
+  --alert-tone: var(--ew-color-info);
+  --alert-tone-bg: var(--ew-fill-1);
+  --alert-tone-rgb: var(--ew-color-info-rgb);
+}
+
+/* ─── 横幅胶囊形态（remixicon 顶部 sponsor 横幅语言）─── */
+.ew-alert.is-pill {
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 6px 6px 6px;
+  border: none;
+  border-radius: var(--ew-radius-full);
+  background-color: color-mix(in srgb, var(--alert-tone-rgb) 0%, var(--ew-bg-soft));
+  box-shadow: var(--ew-shadow-1);
+}
+
+/* ─── 图标 ─── */
+.ew-alert__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--alert-tone);
+}
+
+.ew-alert.is-pill .ew-alert__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-color-ink);
+  color: #ffffff;
+}
+
+html.dark .ew-alert.is-pill .ew-alert__icon {
+  background-color: var(--ew-text-primary);
+  color: var(--ew-color-ink);
+}
+
+/* ─── 内容 ─── */
+.ew-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ew-alert.is-pill .ew-alert__content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  font-weight: var(--ew-font-weight-medium);
+}
+
+.ew-alert__title {
+  margin-right: var(--ew-space-1);
+  font-weight: var(--ew-font-weight-semibold);
+}
+
+/* ─── 动作位 ─── */
+.ew-alert__action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: var(--ew-space-2);
+  color: var(--alert-tone);
+  font-weight: var(--ew-font-weight-medium);
+}
+
+/* ─── 关闭钮 ─── */
+.ew-alert__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: -2px -2px 0 0;
+  padding: 2px;
+  border: none;
+  border-radius: var(--ew-radius-sm);
+  background: transparent;
+  color: var(--ew-text-secondary);
+  cursor: pointer;
+  transition: color var(--ew-duration-fast) var(--ew-ease-in-out),
+    background-color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-alert__close:hover {
+  color: var(--ew-text-primary);
+  background-color: rgba(var(--alert-tone-rgb), 0.12);
+}
+
+/* 关闭后隐藏（visible=false → is-hidden） */
+.ew-alert.is-hidden {
+  display: none;
+}

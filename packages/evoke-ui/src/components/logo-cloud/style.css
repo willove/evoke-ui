@@ -1,0 +1,50 @@
+/* EwLogoCloud — 用户/合作品牌墙 */
+
+.ew-logo-cloud__title {
+  margin-bottom: var(--ew-space-6);
+  text-align: center;
+  font-size: var(--ew-font-size-sm);
+  letter-spacing: 0.08em;
+  color: var(--ew-text-secondary);
+}
+
+.ew-logo-cloud__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--ew-space-3);
+}
+
+.ew-logo-cloud__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ew-space-2);
+  padding: 18px 12px;
+  border-radius: var(--ew-radius-md);
+  color: var(--ew-text-secondary);
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out),
+    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-logo-cloud__item:hover {
+  color: var(--ew-text-primary);
+  background-color: var(--ew-fill-1);
+}
+
+.ew-logo-cloud__label {
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+  font-size: var(--ew-font-size-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-logo-cloud .ew-logo-cloud__title {
+  margin: 0 0 var(--ew-space-6);
+  font-size: var(--ew-font-size-sm);
+}

@@ -1,0 +1,128 @@
+/* EvMsgbox —消息框 */
+
+.ev-overlay.is-message-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ev-message-box.ev-message-box {
+  display: inline-block;
+  width: 420px;
+  max-width: calc(100% - 32px);
+  padding-bottom: var(--ev-space-4);
+  vertical-align: middle;
+  background-color: var(--ev-bg-color);
+  border-radius: var(--ev-radius-md);
+  border: 1px solid var(--ev-border-color-lighter);
+  font-size: var(--ev-font-size-base);
+  box-shadow: var(--ev-shadow-4);
+  text-align: left;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+/* header */
+.ev-message-box.ev-message-box .ev-message-box__header {
+  position: relative;
+  padding: var(--ev-messagebox-padding-primary, 20px) var(--ev-messagebox-padding-primary, 20px) var(--ev-space-3);
+}
+.ev-message-box.ev-message-box .ev-message-box__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  font-size: var(--ev-font-size-md);
+  line-height: 24px;
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-semibold);
+}
+.ev-message-box.ev-message-box .ev-message-box__status {
+  flex-shrink: 0;
+}
+.ev-message-box.ev-message-box .ev-message-box__status.is-success { color: var(--ev-color-success); }
+.ev-message-box.ev-message-box .ev-message-box__status.is-warning { color: var(--ev-color-warning); }
+.ev-message-box.ev-message-box .ev-message-box__status.is-info { color: var(--ev-color-info); }
+.ev-message-box.ev-message-box .ev-message-box__status.is-error { color: var(--ev-color-danger); }
+
+.ev-message-box.ev-message-box .ev-message-box__headerbtn {
+  position: absolute;
+  top: var(--ev-messagebox-padding-primary, 20px);
+  right: var(--ev-messagebox-padding-primary, 20px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ev-text-color-secondary);
+  border-radius: var(--ev-radius-sm);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-message-box.ev-message-box .ev-message-box__headerbtn:hover {
+  color: var(--ev-color-primary);
+  background: var(--ev-fill-color-light);
+}
+
+/* content */
+.ev-message-box.ev-message-box .ev-message-box__content {
+  padding: var(--ev-space-2) var(--ev-messagebox-padding-primary, 20px);
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-base);
+}
+.ev-message-box.ev-message-box .ev-message-box__message p {
+  margin: 0;
+}
+
+/* prompt 输入 */
+.ev-message-box.ev-message-box .ev-message-box__input {
+  padding-top: var(--ev-space-2);
+}
+.ev-message-box.ev-message-box .ev-message-box__errormsg {
+  color: var(--ev-color-danger);
+  font-size: var(--ev-font-size-xs);
+  line-height: 1.6;
+  margin-top: var(--ev-space-1);
+  min-height: 18px;
+}
+
+/* btns */
+.ev-message-box.ev-message-box .ev-message-box__btns {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-3) var(--ev-messagebox-padding-primary, 20px) 0;
+}
+
+/* center 模式 */
+.ev-message-box.ev-message-box.is-center {
+  text-align: center;
+}
+.ev-message-box.ev-message-box.is-center .ev-message-box__title {
+  justify-content: center;
+}
+.ev-message-box.ev-message-box.is-center .ev-message-box__btns {
+  justify-content: center;
+}
+
+/* 过渡 */
+.ev-msgbox-fade-enter-active,
+.ev-msgbox-fade-leave-active {
+  transition: opacity var(--ev-duration-slow) var(--ev-ease-out);
+}
+.ev-msgbox-fade-enter-active .ev-message-box,
+.ev-msgbox-fade-leave-active .ev-message-box {
+  transition: transform var(--ev-duration-slow) var(--ev-ease-out-back);
+}
+.ev-msgbox-fade-enter-from,
+.ev-msgbox-fade-leave-to {
+  opacity: 0;
+}
+.ev-msgbox-fade-enter-from .ev-message-box,
+.ev-msgbox-fade-leave-to .ev-message-box {
+  transform: scale(0.96);
+}

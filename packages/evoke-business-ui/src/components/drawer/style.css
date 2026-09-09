@@ -1,0 +1,158 @@
+/* EvDrawer —抽屉 */
+
+/* 抽屉遮罩不滚动（内容滚动在 .ev-drawer__body 内部）：
+   overflow:auto 会让 enter 起始态屏外的抽屉撑出滚动区，聚焦时被浏览器滚进视口，动画方向表现反转 */
+.ev-overlay.ev-overlay.ev-overlay--drawer {
+  overflow: hidden;
+}
+
+.ev-overlay.ev-overlay .ev-drawer.ev-drawer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ev-bg-color);
+  box-shadow: var(--ev-shadow-4);
+  overflow: hidden;
+  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+}
+
+/* 方向定位 */
+.ev-overlay .ev-drawer.ev-drawer--rtl.ev-drawer {
+  left: auto;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.ev-overlay .ev-drawer.ev-drawer--ltr.ev-drawer {
+  right: auto;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.ev-overlay .ev-drawer.ev-drawer--ttb.ev-drawer {
+  bottom: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.ev-overlay .ev-drawer.ev-drawer--btt.ev-drawer {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* header */
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ev-dialog-padding-primary, 20px);
+  padding-bottom: var(--ev-space-3);
+  margin-bottom: var(--ev-space-4);
+  color: var(--ev-text-color-primary);
+}
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+}
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ev-text-color-secondary);
+  border-radius: var(--ev-radius-sm);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__close-btn:hover {
+  color: var(--ev-color-primary);
+  background-color: var(--ev-fill-color-light);
+}
+
+/* body / footer */
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__body {
+  flex: 1;
+  padding: 0 var(--ev-dialog-padding-primary, 20px);
+  overflow: auto;
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-base);
+}
+.ev-overlay .ev-drawer.ev-drawer .ev-drawer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-4) var(--ev-dialog-padding-primary, 20px);
+  border-top: 1px solid var(--ev-border-color-lighter);
+}
+
+/* ─── 按方向滑入滑出 ─── */
+/* 遮罩 fade */
+.ev-drawer-fade-rtl-enter-active,
+.ev-drawer-fade-rtl-leave-active,
+.ev-drawer-fade-ltr-enter-active,
+.ev-drawer-fade-ltr-leave-active,
+.ev-drawer-fade-ttb-enter-active,
+.ev-drawer-fade-ttb-leave-active,
+.ev-drawer-fade-btt-enter-active,
+.ev-drawer-fade-btt-leave-active {
+  transition: opacity var(--ev-duration-slow) var(--ev-ease-out);
+}
+.ev-drawer-fade-rtl-enter-active .ev-drawer,
+.ev-drawer-fade-rtl-leave-active .ev-drawer,
+.ev-drawer-fade-ltr-enter-active .ev-drawer,
+.ev-drawer-fade-ltr-leave-active .ev-drawer,
+.ev-drawer-fade-ttb-enter-active .ev-drawer,
+.ev-drawer-fade-ttb-leave-active .ev-drawer,
+.ev-drawer-fade-btt-enter-active .ev-drawer,
+.ev-drawer-fade-btt-leave-active .ev-drawer {
+  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+}
+
+/* rtl：右侧滑入 */
+.ev-drawer-fade-rtl-enter-from,
+.ev-drawer-fade-rtl-leave-to {
+  opacity: 0;
+}
+.ev-drawer-fade-rtl-enter-from .ev-drawer,
+.ev-drawer-fade-rtl-leave-to .ev-drawer {
+  transform: translateX(100%);
+}
+
+/* ltr：左侧滑入 */
+.ev-drawer-fade-ltr-enter-from,
+.ev-drawer-fade-ltr-leave-to {
+  opacity: 0;
+}
+.ev-drawer-fade-ltr-enter-from .ev-drawer,
+.ev-drawer-fade-ltr-leave-to .ev-drawer {
+  transform: translateX(-100%);
+}
+
+/* ttb：顶部滑入 */
+.ev-drawer-fade-ttb-enter-from,
+.ev-drawer-fade-ttb-leave-to {
+  opacity: 0;
+}
+.ev-drawer-fade-ttb-enter-from .ev-drawer,
+.ev-drawer-fade-ttb-leave-to .ev-drawer {
+  transform: translateY(-100%);
+}
+
+/* btt：底部滑入 */
+.ev-drawer-fade-btt-enter-from,
+.ev-drawer-fade-btt-leave-to {
+  opacity: 0;
+}
+.ev-drawer-fade-btt-enter-from .ev-drawer,
+.ev-drawer-fade-btt-leave-to .ev-drawer {
+  transform: translateY(100%);
+}

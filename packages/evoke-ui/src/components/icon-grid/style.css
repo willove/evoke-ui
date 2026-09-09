@@ -1,0 +1,135 @@
+/* EwIconGrid — 可搜索图标网格（remixicon 核心界面语言） */
+
+.ew-icon-grid__search {
+  margin-bottom: 56px;
+}
+
+/* ─── 状态行（加载/空态）─── */
+.ew-icon-grid__state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ew-space-2);
+  padding: var(--ew-space-16) 0;
+  color: var(--ew-text-secondary);
+  font-size: var(--ew-font-size-md);
+}
+
+/* ─── 分类分节 ─── */
+.ew-icon-grid__section {
+  margin-bottom: 48px;
+}
+
+.ew-icon-grid__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-3);
+  margin-bottom: var(--ew-space-5);
+  font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-regular);
+  letter-spacing: 0;
+  color: var(--ew-text-primary);
+}
+
+/* 计数胶囊（remixicon「Arrows 178」语言） */
+.ew-icon-grid__count {
+  padding: 2px 9px;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-fill-1);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-regular);
+  color: var(--ew-text-secondary);
+}
+
+/* ─── 网格 ─── */
+.ew-icon-grid__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--ew-space-2);
+}
+
+.ew-icon-grid__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px var(--ew-space-2) 14px;
+  border: 1px solid transparent;
+  border-radius: var(--ew-radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-icon-grid__cell > svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--ew-text-primary);
+}
+
+.ew-icon-grid__name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+/* 悬浮：极淡底 + 右上角加号徽标弹入（remixicon 交互语言） */
+.ew-icon-grid__cell:hover {
+  background-color: var(--ew-fill-1);
+}
+
+.ew-icon-grid__cell:hover .ew-icon-grid__name {
+  color: var(--ew-text-primary);
+}
+
+.ew-icon-grid__plus {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--ew-radius-circle);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-1);
+  color: var(--ew-text-secondary);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-spring),
+    background-color var(--ew-duration-fast) var(--ew-ease-in-out),
+    color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-icon-grid__cell:hover .ew-icon-grid__plus,
+.ew-icon-grid__cell.is-copied .ew-icon-grid__plus {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 点击复制后的成功反馈 */
+.ew-icon-grid__cell.is-copied {
+  border-color: var(--ew-color-primary-light-5);
+}
+
+.ew-icon-grid__cell.is-copied .ew-icon-grid__plus {
+  background-color: var(--ew-color-primary);
+  color: #ffffff;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-icon-grid .ew-icon-grid__title {
+  margin: 0 0 var(--ew-space-5);
+  font-size: var(--ew-font-size-md);
+}

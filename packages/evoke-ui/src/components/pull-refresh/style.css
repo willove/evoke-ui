@@ -1,0 +1,42 @@
+/* EwPullRefresh — 下拉刷新 */
+.ew-pull-refresh {
+  position: relative;
+  overflow: hidden;
+}
+.ew-pull-refresh__track {
+  position: relative;
+}
+.ew-pull-refresh__head {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: var(--ew-text-regular);
+  font-size: var(--ew-font-size-sm);
+  overflow: hidden;
+  pointer-events: none;
+}
+.ew-pull-refresh__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ew-pull-refresh__text.is-loosing {
+  color: var(--ew-color-primary);
+}
+.ew-pull-refresh__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ew-border-color-dark);
+  border-top-color: var(--ew-color-primary);
+  border-radius: 50%;
+  animation: ew-pull-refresh-spin 0.8s linear infinite;
+}
+@keyframes ew-pull-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

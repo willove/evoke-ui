@@ -1,0 +1,60 @@
+/* EvImportExportPanel — 导入导出面板（业务封装） */
+
+.ev-import-export-panel {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--ev-space-5);
+  padding: var(--ev-space-5);
+  background: var(--ev-bg-color);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  box-sizing: border-box;
+}
+
+.ev-import-export-panel__divider {
+  width: 1px;
+  background: var(--ev-border-color-lighter);
+}
+
+.ev-import-export-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-2);
+  min-width: 0;
+}
+
+.ev-import-export-panel__section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-medium);
+}
+
+.ev-import-export-panel__section-title {
+  font-size: var(--ev-font-size-base);
+}
+
+.ev-import-export-panel__tip {
+  margin: 0;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  line-height: var(--ev-line-height-base);
+}
+
+.ev-import-export-panel__section-body {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-3);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .ev-import-export-panel {
+    grid-template-columns: 1fr;
+  }
+  .ev-import-export-panel__divider {
+    width: auto;
+    height: 1px;
+  }
+}

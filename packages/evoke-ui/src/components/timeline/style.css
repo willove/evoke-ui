@@ -1,0 +1,87 @@
+/* EwTimeline — 时间线/更新日志 */
+
+.ew-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.ew-timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background-color: var(--ew-border-color);
+}
+
+.ew-timeline__item {
+  position: relative;
+  padding-bottom: var(--ew-space-8);
+}
+
+.ew-timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+.ew-timeline__dot {
+  position: absolute;
+  left: -24px;
+  top: 7px;
+  width: 11px;
+  height: 11px;
+  border-radius: var(--ew-radius-circle);
+  background-color: var(--ew-bg-page);
+  border: 2px solid var(--ew-border-color-dark);
+  box-sizing: border-box;
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-timeline__item.is-latest .ew-timeline__dot {
+  border-color: var(--ew-color-primary);
+  background-color: var(--ew-color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--ew-color-primary-rgb), 0.15);
+}
+
+.ew-timeline__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  margin-bottom: var(--ew-space-2);
+}
+
+.ew-timeline__date {
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ew-timeline__title {
+  font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0;
+  color: var(--ew-text-primary);
+}
+
+.ew-timeline__description {
+  margin-top: var(--ew-space-1);
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
+  max-width: 560px;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-timeline .ew-timeline__title {
+  margin: 0;
+  font-size: var(--ew-font-size-md);
+}
+
+.ew-timeline .ew-timeline__description {
+  margin: var(--ew-space-1) 0 0;
+  font-size: var(--ew-font-size-sm);
+}

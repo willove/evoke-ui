@@ -1,0 +1,142 @@
+/* EvGanttProgress — 甘特式阶段进度（设计令牌驱动） */
+
+.ev-gantt-progress {
+  position: relative;
+  padding: var(--ev-space-5) 0 0;
+}
+
+.ev-gantt-progress__connector {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ev-border-color-lighter);
+  border-radius: 1px;
+  z-index: 0;
+  transform: translateY(-14px);
+}
+.ev-gantt-progress__connector-fill {
+  height: 100%;
+  background: var(--ev-color-primary);
+  border-radius: 1px;
+  transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.ev-gantt-progress__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+  min-height: 80px;
+}
+
+.ev-gantt-progress__bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ev-space-2);
+}
+
+.ev-gantt-progress__bar-outer {
+  height: 64px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ev-gantt-progress__bar {
+  width: 100%;
+  max-width: 32px;
+  min-width: 16px;
+  border-radius: var(--ev-radius-sm) var(--ev-radius-sm) 2px 2px;
+  position: relative;
+  transition:
+    height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+    background var(--ev-duration-base) var(--ev-ease-out);
+  animation: ev-bar-rise 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) backwards;
+}
+.ev-gantt-progress__bar--completed {
+  opacity: 0.85;
+}
+.ev-gantt-progress__bar--active {
+  opacity: 1;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ev-color-primary) 15%, transparent);
+}
+.ev-gantt-progress__bar--pending {
+  opacity: 0.45;
+}
+
+.ev-gantt-progress__pulse {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-color-primary);
+  animation: ev-pulse-ring 2s ease infinite;
+}
+.ev-gantt-progress__pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--ev-radius-full);
+  border: 2px solid var(--ev-color-primary);
+  animation: ev-pulse-expand 2s ease infinite;
+}
+
+.ev-gantt-progress__label {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ev-gantt-progress__label-name {
+  font-size: var(--ev-font-size-xs, 12px);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-regular);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+.ev-gantt-progress__label-date {
+  font-size: 11px;
+  color: var(--ev-text-color-placeholder);
+  font-family: monospace;
+}
+
+.ev-gantt-progress__bar-wrap:has(.ev-gantt-progress__bar--active) .ev-gantt-progress__label-name {
+  color: var(--ev-color-primary);
+  font-weight: var(--ev-font-weight-bold);
+}
+
+@keyframes ev-bar-rise {
+  from {
+    height: 0 !important;
+  }
+}
+@keyframes ev-pulse-ring {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+@keyframes ev-pulse-expand {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}

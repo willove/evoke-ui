@@ -1,0 +1,837 @@
+<template>
+  <div
+    ref="rootRef"
+    class="ev-table ev-table"
+    :class="[
+      sizeClass,
+      {
+        'ev-table--border': border,
+        'ev-table--striped': stripe,
+        'ev-table--enable-row-hover': true,
+        'ev-table--enable-row-transition': true,
+      },
+    ]"
+    :style="tableStyle"
+  >
+    <div class="ev-table__inner-wrapper">
+      <!-- 列挂载区（EvTableColumn 自身渲染 null，仅触发注册） -->
+      <div class="ev-table__column-slot" style="display: none">
+        <slot />
+      </div>
+      <!-- 表头 -->
+      <div class="ev-table__header-wrapper">
+        <table class="ev-table__header" :style="{ width: bodyWidth }">
+          <colgroup>
+            <col
+              v-for="col in renderColumns"
+              :key="col.uid"
+              :style="colStyle(col)"
+            />
+          </colgroup>
+          <thead>
+            <tr>
+              <th
+                v-for="(col, i) in renderColumns"
+                :key="col.uid"
+                class="ev-table__cell"
+                :class="[headerCellClass(col), fixedClass(col)]"
+                :style="fixedStyle(col, i)"
+                @click="handleHeaderClick(col, $event)"
+              >
+                <div class="cell" :class="[`is-${col.headerAlign || col.align}`, col.labelClassName]">
+                  <!-- selection 列：全选 -->
+                  <template v-if="col.type === 'selection'">
+                    <ev-checkbox
+                      :model-value="isAllSelected"
+                      :indeterminate="isIndeterminate"
+                      :disabled="data.length === 0"
+                      @change="toggleAllSelection"
+                    />
+                  </template>
+                  <!-- expand 列：占位 -->
+                  <template v-else-if="col.type === 'expand'" />
+                  <!-- 默认 -->
+                  <template v-else>
+                    <vnodes
+                      v-if="col.slots?.header"
+                      :vnodes="renderHeader(col, i)"
+                    />
+                    <template v-else>{{ col.label }}</template>
+                    <!-- 排序指示 -->
+                    <span
+                      v-if="col.sortable"
+                      class="ev-table__sort-wrapper"
+                      @click.stop="handleSortClick(col)"
+                    >
+                      <span class="sort-caret ascending" :class="{ active: sortState.prop === col.prop && sortState.order === 'ascending' }" />
+                      <span class="sort-caret descending" :class="{ active: sortState.prop === col.prop && sortState.order === 'descending' }" />
+                    </span>
+                    <!-- 列筛选 -->
+                    <span
+                      v-if="col.filters && col.filters.length"
+                      class="ev-table__column-filter-trigger"
+                      :class="{ 'is-open': openFilterKey === col.id }"
+                      @click.stop="toggleFilter(col, $event)"
+                    >
+                      <ev-icon name="filter" :size="12" />
+                    </span>
+                  </template>
+                </div>
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+
+      <!-- 表体 -->
+      <div
+        class="ev-table__body-wrapper"
+        :style="bodyWrapperStyle"
+        @scroll="onBodyScroll"
+      >
+        <table class="ev-table__body" :style="{ width: bodyWidth }">
+          <colgroup>
+            <col
+              v-for="col in renderColumns"
+              :key="col.uid"
+              :style="colStyle(col)"
+            />
+          </colgroup>
+          <tbody>
+            <template v-for="(row, rowIndex) in displayData" :key="rowKeyOf(row, rowIndex)">
+              <tr
+                class="ev-table__row"
+                :class="[
+                  { 'ev-table__row--striped': stripe && rowIndex % 2 === 1 },
+                  { 'current-row': currentRow === row },
+                  { 'hover-row': hoverRowIndex === rowIndex },
+                  { 'ev-table__row--level': false },
+                ]"
+                @click="handleRowClick(row, rowIndex, $event)"
+                @dblclick="emit('row-dblclick', row, rowIndex, $event)"
+                @contextmenu="emit('row-contextmenu', row, rowIndex, $event)"
+                @mouseenter="hoverRowIndex = rowIndex"
+                @mouseleave="hoverRowIndex = -1"
+              >
+                <td
+                  v-for="(col, i) in renderColumns"
+                  :key="col.uid"
+                  class="ev-table__cell"
+                  :class="[cellClass(col), fixedClass(col)]"
+                  :style="fixedStyle(col, i)"
+                  @click="emit('cell-click', row, colProp(col), row?.[colProp(col)], $event)"
+                >
+                  <div
+                    class="cell"
+                    :class="[`is-${col.align}`, col.className, { 'is-ellipsis': col.showOverflowTooltip }]"
+                    :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
+                  >
+                    <!-- selection -->
+                    <template v-if="col.type === 'selection'">
+                      <ev-checkbox
+                        :model-value="isSelected(row)"
+                        :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
+                        @change="toggleRowSelection(row, $event, rowIndex)"
+                      />
+                    </template>
+                    <!-- expand -->
+                    <template v-else-if="col.type === 'expand'">
+                      <span
+                        class="ev-table__expand-icon"
+                        :class="{ 'ev-table__expand-icon--expanded': expandedRows.has(row) }"
+                        @click.stop="toggleRowExpansion(row)"
+                      >
+                        <ev-icon name="arrow-right" :size="12" />
+                      </span>
+                    </template>
+                    <!-- index -->
+                    <template v-else-if="col.type === 'index'">
+                      {{ indexText(col, rowIndex) }}
+                    </template>
+                    <!-- 默认数据列 -->
+                    <template v-else>
+                      <template v-if="i === firstNormalColIndex && rowHasChildren(row)">
+                        <span class="ev-table__indent" :style="indentStyle(rowLevel(row))" />
+                        <span
+                          class="ev-table__expand-icon"
+                          :class="{ 'ev-table__expand-icon--expanded': rowExpanded(row) }"
+                          @click.stop="toggleTreeExpand(row)"
+                        >
+                          <ev-icon name="arrow-right" :size="12" />
+                        </span>
+                      </template>
+                      <template v-else-if="i === firstNormalColIndex && rowLevel(row) > 0">
+                        <span class="ev-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
+                      </template>
+                      <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
+                      <template v-else>{{ textOf(col, row, rowIndex) }}</template>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              <!-- 展开行 -->
+              <tr
+                v-if="hasExpandColumn && expandedRows.has(row)"
+                class="ev-table__row ev-table__expanded-row"
+              >
+                <td class="ev-table__cell" :colspan="renderColumns.length">
+                  <div class="cell">
+                    <vnodes :vnodes="renderExpand(row, rowIndex)" />
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <!-- 空态 -->
+        <div v-if="displayData.length === 0" class="ev-table__empty-block">
+          <span class="ev-table__empty-text">
+            <slot name="empty">{{ emptyText || t('table.emptyText') }}</slot>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 列筛选浮层（Teleport + useFloating） -->
+    <Teleport to="body">
+      <div
+        v-if="openFilterColumn"
+        ref="filterPanelRef"
+        class="ev-table__filter ev-table__filter"
+        :style="filterPanelStyle"
+      >
+        <div class="ev-table__filter-list">
+          <div
+            v-for="f in openFilterColumn.filters"
+            :key="f.value"
+            class="ev-table__filter-list-item"
+            @click="toggleFilterValue(openFilterColumn, f.value)"
+          >
+            <ev-checkbox
+              :label="f.value"
+              :model-value="(filterValues[openFilterColumn.id] || []).includes(f.value)"
+            >
+              {{ f.text }}
+            </ev-checkbox>
+          </div>
+        </div>
+        <div class="ev-table__filter-bottom">
+          <ev-button size="small" @click="resetFilter(openFilterColumn)">重置</ev-button>
+          <ev-button size="small" type="primary" @click="applyFilter(openFilterColumn)">筛选</ev-button>
+        </div>
+      </div>
+    </Teleport>
+  </div>
+</template>
+
+<script setup>
+/**
+ * EvTable — 表格
+ * 列注册模式（EvTableColumn）；colgroup 定宽；固定列 position:sticky；
+ * selection/sort/filter/expand + TableInstance 全套方法
+ */
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRef, useSlots } from 'vue'
+import EvIcon from '../icon/index.vue'
+import EvCheckbox from '../checkbox/index.vue'
+import EvButton from '../button/index.vue'
+import { useFloating } from '../../composables/useFloating'
+import { provideTableContext } from './table-context'
+import { useLocale } from '../../composables/useLocale'
+import { useFormItem } from '../../composables/useFormItem'
+
+/** 函数式渲染组件：渲染作用域插槽产出的 vnode（数组或单节点） */
+const Vnodes = defineComponent({
+  name: 'EvTableVnodes',
+  props: { vnodes: { type: [Object, Array], default: null } },
+  setup(props) {
+    return () => props.vnodes
+  },
+})
+
+defineOptions({ name: 'EvTable' })
+
+const props = defineProps({
+  data: { type: Array, default: () => [] },
+  height: { type: [String, Number], default: undefined },
+  maxHeight: { type: [String, Number], default: undefined },
+  border: { type: Boolean, default: false },
+  stripe: { type: Boolean, default: false },
+  size: { type: String, default: '' },
+  fit: { type: Boolean, default: true },
+  showHeader: { type: Boolean, default: true },
+  highlightCurrentRow: { type: Boolean, default: false },
+  rowKey: { type: [String, Function], default: undefined },
+  defaultExpandAll: { type: Boolean, default: false },
+  expandRowKeys: { type: Array, default: () => [] },
+  defaultSort: { type: Object, default: () => ({ prop: '', order: '' }) },
+  selectOnIndeterminate: { type: Boolean, default: true },
+  emptyText: { type: String, default: '' },
+  treeProps: { type: Object, default: () => ({ children: 'children' }) },
+  /** 表尾合计（简化：函数返回行数组） */
+  summaryMethod: { type: Function, default: null },
+  showSummary: { type: Boolean, default: false },
+})
+
+const emit = defineEmits([
+  'select',
+  'select-all',
+  'selection-change',
+  'cell-click',
+  'row-click',
+  'row-dblclick',
+  'row-contextmenu',
+  'sort-change',
+  'filter-change',
+  'expand-change',
+  'current-change',
+  'header-click',
+])
+
+const slots = useSlots()
+const { t } = useLocale()
+const { size: formSize } = useFormItem({ size: toRef(props, 'size') })
+
+const rootRef = ref(null)
+const columns = ref([])
+const uidSeed = { n: 0 }
+
+// ─── 列注册 ───
+function registerColumn(col) {
+  if (!columns.value.includes(col)) {
+    // id 加唯一 uid（同 prop 多列场景）
+    col.uid = `${col.id || 'col'}-${++uidSeed.n}`
+    columns.value.push(col)
+  }
+}
+
+function unregisterColumn(col) {
+  columns.value = columns.value.filter((c) => c !== col)
+}
+
+provideTableContext({
+  registerColumn,
+  unregisterColumn,
+})
+
+const renderColumns = computed(() => columns.value)
+// 树形缩进/箭头挂在第一个业务列上
+const firstNormalColIndex = computed(() => {
+  const special = new Set(['selection', 'expand', 'index'])
+  return renderColumns.value.findIndex((c) => !special.has(c.type))
+})
+
+const hasExpandColumn = computed(() => columns.value.some((c) => c.type === 'expand'))
+const hasSelectionColumn = computed(() => columns.value.some((c) => c.type === 'selection'))
+
+// ─── 尺寸/布局 ───
+const sizeClass = computed(() => {
+  const s = props.size || formSize.value
+  if (s === 'large') return 'ev-table--large'
+  if (s === 'small') return 'ev-table--small'
+  return ''
+})
+
+const tableStyle = computed(() => {
+  const style = {}
+  if (props.height !== undefined) {
+    style.height = typeof props.height === 'number' ? `${props.height}px` : props.height
+  }
+  if (props.maxHeight !== undefined) {
+    style.maxHeight = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
+  }
+  return style
+})
+
+const bodyWrapperStyle = computed(() => {
+  const style = {}
+  if (props.height !== undefined) {
+    style.height = '100%'
+    style.overflowY = 'auto'
+  } else if (props.maxHeight !== undefined) {
+    style.maxHeight = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
+    style.overflowY = 'auto'
+  }
+  return style
+})
+
+// 特殊功能列的默认窄宽（checkbox / 展开箭头 / 序号），用户显式 width 优先
+const SPECIAL_COL_WIDTH = { selection: 48, expand: 48, index: 64 }
+
+// 无单位数字字符串补 px（width="44" 这类写法是非法 CSS，会把列压成 0 宽）
+const toCssWidth = (w) =>
+  typeof w === 'number' || (typeof w === 'string' && /^\d+(\.\d+)?$/.test(w)) ? `${w}px` : w
+
+function colStyle(col) {
+  const style = {}
+  if (col.width === undefined && col.minWidth === undefined && SPECIAL_COL_WIDTH[col.type]) {
+    col = { ...col, width: SPECIAL_COL_WIDTH[col.type] }
+  }
+  if (col.width !== undefined) {
+    style.width = toCssWidth(col.width)
+    style.minWidth = style.width
+  } else if (col.minWidth !== undefined) {
+    style.minWidth = toCssWidth(col.minWidth)
+    style.width = props.fit ? 'auto' : undefined
+  } else {
+    style.width = 'auto'
+  }
+  return style
+}
+
+const bodyWidth = computed(() => '100%')
+
+const headerAlignOf = (col) => col.headerAlign || col.align
+const colProp = (col) => col.prop
+
+function headerCellClass(col) {
+  return [
+    `is-${headerAlignOf(col)}`,
+    { 'is-sortable': col.sortable },
+  ]
+}
+
+function cellClass(col) {
+  return [`is-${col.align}`]
+}
+
+// ─── 固定列（sticky 偏移计算） ───
+function fixedClass(col) {
+  if (col.fixed === true || col.fixed === 'left') return 'ev-table-fixed-column--left'
+  if (col.fixed === 'right') return 'ev-table-fixed-column--right'
+  return ''
+}
+
+const stickyOffsets = computed(() => {
+  const list = renderColumns.value
+  const left = []
+  const right = []
+  let accLeft = 0
+  let accRight = 0
+  for (let i = 0; i < list.length; i++) {
+    const col = list[i]
+    if (col.fixed === true || col.fixed === 'left') {
+      left[i] = accLeft
+      accLeft += widthOf(col)
+    }
+  }
+  for (let i = list.length - 1; i >= 0; i--) {
+    const col = list[i]
+    if (col.fixed === 'right') {
+      right[i] = accRight
+      accRight += widthOf(col)
+    }
+  }
+  return { left, right }
+})
+
+function widthOf(col) {
+  if (typeof col.width === 'number') return col.width
+  if (typeof col.width === 'string' && col.width.endsWith('px')) return Number.parseFloat(col.width)
+  return 0
+}
+
+function fixedStyle(col, index) {
+  const style = {}
+  if (col.fixed === true || col.fixed === 'left') {
+    style.position = 'sticky'
+    style.left = `${stickyOffsets.value.left[index] ?? 0}px`
+    style.zIndex = 2
+  } else if (col.fixed === 'right') {
+    style.position = 'sticky'
+    style.right = `${stickyOffsets.value.right[index] ?? 0}px`
+    style.zIndex = 2
+  }
+  return style
+}
+
+// ─── 行 key ───
+function rowKeyOf(row, index) {
+  if (typeof props.rowKey === 'function') return props.rowKey(row)
+  if (typeof props.rowKey === 'string' && props.rowKey) return row?.[props.rowKey]
+  return index
+}
+
+// ─── 单元格渲染 ───
+function textOf(col, row, rowIndex) {
+  if (col.formatter) return col.formatter(row, col, row?.[col.prop], rowIndex)
+  const v = row?.[col.prop]
+  return v === null || v === undefined ? '' : String(v)
+}
+
+function renderCell(col, row, rowIndex) {
+  return col.slots?.default?.({ row, $index: rowIndex, column: col })
+}
+
+function renderHeader(col, index) {
+  return col.slots?.header?.({ column: col, $index: index })
+}
+
+const expandColumn = computed(() => columns.value.find((c) => c.type === 'expand'))
+
+function renderExpand(row, rowIndex) {
+  return expandColumn.value?.slots?.default?.({ row, $index: rowIndex })
+}
+
+function indexText(col, rowIndex) {
+  if (typeof col.index === 'function') return col.index(rowIndex)
+  if (typeof col.index === 'number') return col.index + rowIndex + 1
+  return rowIndex + 1
+}
+
+// ─── 排序 ───
+const sortState = reactive({
+  prop: props.defaultSort?.prop || '',
+  order: props.defaultSort?.order || '',
+})
+
+function handleSortClick(col) {
+  const orders = col.sortOrders?.length ? col.sortOrders : ['ascending', 'descending', null]
+  const currentIdx = sortState.prop === col.prop ? orders.indexOf(sortState.order) : -1
+  const nextOrder = orders[(currentIdx + 1) % orders.length] ?? null
+  applySort(col.prop, nextOrder)
+}
+
+function applySort(prop, order) {
+  sortState.prop = order ? prop : ''
+  sortState.order = order || ''
+  const col = columns.value.find((c) => c.prop === prop)
+  emit('sort-change', {
+    prop,
+    order: order || null,
+    column: col,
+  })
+}
+
+/** 实例方法：sort(prop, order) */
+function sort(prop, order) {
+  applySort(prop, order)
+}
+
+/** 实例方法：clearSort() */
+function clearSort() {
+  sortState.prop = ''
+  sortState.order = ''
+}
+
+function handleHeaderClick(col, e) {
+  emit('header-click', col, e)
+}
+
+const sortedData = computed(() => {
+  if (!sortState.prop || !sortState.order) return props.data
+  const col = columns.value.find((c) => c.prop === sortState.prop)
+  const dir = sortState.order === 'ascending' ? 1 : -1
+  const getVal = (row) => {
+    if (col?.sortBy) {
+      if (typeof col.sortBy === 'function') return col.sortBy(row)
+      if (typeof col.sortBy === 'string') return row?.[col.sortBy]
+      return col.sortBy.map((k) => row?.[k])
+    }
+    return row?.[sortState.prop]
+  }
+  return [...props.data].sort((a, b) => {
+    if (col?.sortMethod) return col.sortMethod(a, b) * (sortState.order === 'ascending' ? 1 : -1)
+    const va = getVal(a)
+    const vb = getVal(b)
+    if (va === vb) return 0
+    if (va === undefined || va === null) return 1
+    if (vb === undefined || vb === null) return -1
+    if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir
+    return String(va).localeCompare(String(vb), 'zh-Hans-CN', { numeric: true }) * dir
+  })
+})
+
+// ─── 筛选 ───
+const filterValues = reactive({})
+const appliedFilters = reactive({})
+const openFilterKey = ref('')
+const filterAnchorEl = ref(null)
+const filterPanelRef = ref(null)
+const openFilterColumn = computed(() =>
+  openFilterKey.value ? columns.value.find((c) => c.id === openFilterKey.value) || null : null
+)
+
+const { x: filterX, y: filterY, update: updateFilterPos } = useFloating({
+  reference: filterAnchorEl,
+  floating: filterPanelRef,
+  placement: 'bottom-start',
+  offset: 4,
+  autoUpdate: false,
+})
+
+const filterPanelStyle = computed(() => ({
+  position: 'fixed',
+  left: `${filterX.value}px`,
+  top: `${filterY.value}px`,
+  zIndex: 2100,
+}))
+
+/** 打开/关闭筛选面板（以触发元素为锚点） */
+async function toggleFilter(col, e) {
+  if (openFilterKey.value === col.id) {
+    closeFilterPanel()
+    return
+  }
+  filterAnchorEl.value = e?.currentTarget || null
+  openFilterKey.value = col.id
+  await nextTick()
+  await updateFilterPos()
+}
+
+function toggleFilterValue(col, value) {
+  const list = filterValues[col.id] ? [...filterValues[col.id]] : []
+  if (col.filterMultiple === false) {
+    filterValues[col.id] = [value]
+    return
+  }
+  const idx = list.indexOf(value)
+  if (idx >= 0) {
+    list.splice(idx, 1)
+  } else {
+    list.push(value)
+  }
+  filterValues[col.id] = list
+}
+
+function applyFilter(col) {
+  appliedFilters[col.id] = [...(filterValues[col.id] || [])]
+  closeFilterPanel()
+  emitFilterChange()
+}
+
+function resetFilter(col) {
+  filterValues[col.id] = []
+  appliedFilters[col.id] = []
+  closeFilterPanel()
+  emitFilterChange()
+}
+
+function closeFilterPanel() {
+  openFilterKey.value = ''
+  filterAnchorEl.value = null
+}
+
+function emitFilterChange() {
+  const active = {}
+  for (const [key, values] of Object.entries(appliedFilters)) {
+    if (values?.length) active[key] = values
+  }
+  emit('filter-change', active)
+}
+
+const filteredData = computed(() => {
+  let list = sortedData.value
+  for (const col of columns.value) {
+    const values = appliedFilters[col.id]
+    if (!values?.length || !col.filterMethod) continue
+    list = list.filter((row) => values.some((v) => col.filterMethod(v, row, col)))
+  }
+  return list
+})
+
+/** 实例方法：clearFilter(columnKey?) */
+function clearFilter(columnKeys) {
+  const keys = columnKeys === undefined ? Object.keys(appliedFilters) : [].concat(columnKeys)
+  keys.forEach((k) => {
+    const col = columns.value.find((c) => c.id === k || c.columnKey === k || c.prop === k)
+    const id = col ? col.id : k
+    filterValues[id] = []
+    appliedFilters[id] = []
+  })
+  emitFilterChange()
+}
+
+// ─── 展开行 ───
+const expandedRows = ref(new Set())
+
+function initExpanded() {
+  const set = new Set()
+  if (props.defaultExpandAll) {
+    props.data.forEach((row) => set.add(row))
+  } else if (props.expandRowKeys?.length && props.rowKey) {
+    props.data.forEach((row) => {
+      const key = rowKeyOf(row)
+      if (props.expandRowKeys.includes(key)) set.add(row)
+    })
+  }
+  expandedRows.value = set
+}
+initExpanded()
+
+function toggleRowExpansion(row, expanded) {
+  const set = new Set(expandedRows.value)
+  const next = expanded === undefined ? !set.has(row) : expanded
+  if (next) {
+    set.add(row)
+  } else {
+    set.delete(row)
+  }
+  expandedRows.value = set
+  emit('expand-change', row, [...set].filter((r) => r === row).length > 0 ? [...set] : set)
+}
+
+// ─── 多选 ───
+const selection = ref([])
+const hoverRowIndex = ref(-1)
+
+function isSelected(row) {
+  return selection.value.includes(row)
+}
+
+function toggleRowSelection(row, selected, rowIndex) {
+  const selectableCol = columns.value.find((c) => c.type === 'selection')
+  if (selectableCol?.selectable && !selectableCol.selectable(row, rowIndex)) return
+  const next = selected === undefined || typeof selected === 'object' ? !isSelected(row) : selected
+  if (next && !selection.value.includes(row)) {
+    selection.value = [...selection.value, row]
+  } else if (!next) {
+    selection.value = selection.value.filter((r) => r !== row)
+  }
+  emit('select', selection.value, row)
+  emit('selection-change', selection.value)
+}
+
+const isAllSelected = computed(() => {
+  if (!displayData.value.length) return false
+  return displayData.value.every((row, i) => {
+    const col = columns.value.find((c) => c.type === 'selection')
+    if (col?.selectable && !col.selectable(row, i)) return true
+    return selection.value.includes(row)
+  })
+})
+
+const isIndeterminate = computed(() => {
+  if (!displayData.value.length) return false
+  const selectableRows = displayData.value.filter((row, i) => {
+    const col = columns.value.find((c) => c.type === 'selection')
+    return !col?.selectable || col.selectable(row, i)
+  })
+  const selectedCount = selectableRows.filter((row) => selection.value.includes(row)).length
+  return selectedCount > 0 && selectedCount < selectableRows.length
+})
+
+function toggleAllSelection() {
+  if (isAllSelected.value) {
+    // 取消全部
+    const dataRows = new Set(displayData.value)
+    selection.value = selection.value.filter((r) => !dataRows.has(r))
+  } else {
+    // 选中全部可选行
+    const set = new Set(selection.value)
+    displayData.value.forEach((row, i) => {
+      const col = columns.value.find((c) => c.type === 'selection')
+      if (!col?.selectable || col.selectable(row, i)) set.add(row)
+    })
+    selection.value = [...set]
+  }
+  emit('select-all', selection.value)
+  emit('selection-change', selection.value)
+}
+
+function clearSelection() {
+  selection.value = []
+  emit('selection-change', selection.value)
+}
+
+// ─── 当前行 ───
+const currentRow = ref(null)
+
+function handleRowClick(row, index, e) {
+  if (props.highlightCurrentRow) {
+    const prev = currentRow.value
+    currentRow.value = row
+    if (prev !== row) emit('current-change', row, prev)
+  }
+  emit('row-click', row, index, e)
+}
+
+/** 实例方法：setCurrentRow(row) */
+function setCurrentRow(row) {
+  const prev = currentRow.value
+  currentRow.value = row
+  if (prev !== row) emit('current-change', row, prev)
+}
+
+// ─── 最终渲染数据 ───
+// ─── 树形数据：children 字段扁平化渲染（level 缩进 + 展开箭头） ───
+const treeChildrenField = computed(() => props.treeProps?.children ?? 'children')
+const expandedTreeKeys = ref(new Set())
+const treeLevelMap = ref(new Map())
+const treeNodeKeyMap = ref(new Map())
+let treeInitDone = false
+
+const displayData = computed(() => {
+  const field = treeChildrenField.value
+  const list = filteredData.value
+  const hasTree = list.some((r) => Array.isArray(r?.[field]) && r[field].length > 0)
+  if (!hasTree) {
+    treeLevelMap.value = new Map()
+    return list
+  }
+
+  const levels = new Map()
+  const nodeKeys = new Map()
+  const out = []
+  const expandInit = props.defaultExpandAll && !treeInitDone
+  const walk = (rows, base, level) => rows.forEach((r, i) => {
+    const key = `${base}${i}`
+    nodeKeys.set(r, key)
+    levels.set(r, level)
+    out.push(r)
+    const kids = Array.isArray(r?.[field]) ? r[field] : []
+    if (kids.length) {
+      if (expandInit && !expandedTreeKeys.value.has(key)) expandedTreeKeys.value.add(key)
+      if (expandedTreeKeys.value.has(key)) walk(kids, `${key}-`, level + 1)
+    }
+  })
+  walk(list, '', 0)
+  treeLevelMap.value = levels
+  treeNodeKeyMap.value = nodeKeys
+  treeInitDone = true
+  return out
+})
+
+const treeKeyOf = (row) => treeNodeKeyMap.value.get(row)
+const rowLevel = (row) => treeLevelMap.value.get(row) ?? 0
+const rowHasChildren = (row) => {
+  const kids = row?.[treeChildrenField.value]
+  return Array.isArray(kids) && kids.length > 0
+}
+const rowExpanded = (row) => expandedTreeKeys.value.has(treeKeyOf(row))
+function toggleTreeExpand(row) {
+  const key = treeKeyOf(row)
+  const set = new Set(expandedTreeKeys.value)
+  const willExpand = !set.has(key)
+  set.has(key) ? set.delete(key) : set.add(key)
+  expandedTreeKeys.value = set
+  emit('expand-change', row, willExpand)
+}
+const indentStyle = (level) => ({ width: `${level * 18}px`, display: 'inline-block' })
+
+// ─── 滚动同步（预留：横向滚动阴影） ───
+function onBodyScroll() {
+  /* 预留 */
+}
+
+/** 实例方法：doLayout()（sticky 布局自适应，保留 API 兼容） */
+function doLayout() {
+  return nextTick()
+}
+
+defineExpose({
+  sort,
+  clearSort,
+  toggleRowSelection,
+  toggleAllSelection,
+  clearSelection,
+  clearFilter,
+  doLayout,
+  toggleRowExpansion,
+  setCurrentRow,
+  /** 扩展：当前选中 */
+  getSelection: () => selection.value,
+  ref: rootRef,
+})
+</script>
+
+<style src="./style.css"></style>

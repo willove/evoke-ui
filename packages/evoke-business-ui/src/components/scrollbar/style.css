@@ -1,0 +1,72 @@
+/* EvScrollbar —滚动条 */
+
+.ev-scrollbar.ev-scrollbar {
+  position: relative;
+  overflow: hidden;
+}
+
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__wrap {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: none; /* Firefox 隐藏原生滚动条（自绘替代） */
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__wrap::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__wrap.ev-scrollbar__wrap--hidden-default {
+  scrollbar-width: auto;
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__wrap.ev-scrollbar__wrap--hidden-default::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+  height: 8px;
+  -webkit-appearance: none;
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__wrap.ev-scrollbar__wrap--hidden-default::-webkit-scrollbar-thumb {
+  background-color: var(--ev-text-color-placeholder);
+  border-radius: var(--ev-radius-full);
+}
+
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__view {
+  box-sizing: border-box;
+}
+
+/* ── 自绘滚动条 ── */
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__bar {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 1;
+  border-radius: var(--ev-radius-full);
+  opacity: 0;
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-scrollbar.ev-scrollbar:hover .ev-scrollbar__bar,
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__bar.is-always {
+  opacity: 1;
+}
+
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__bar.is-horizontal {
+  left: 2px;
+  height: 6px;
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__bar.is-vertical {
+  top: 2px;
+  width: 6px;
+}
+
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-text-color-placeholder);
+  opacity: 0.6;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-scrollbar.ev-scrollbar .ev-scrollbar__bar:hover .ev-scrollbar__thumb {
+  background-color: var(--ev-text-color-secondary);
+}

@@ -1,0 +1,25 @@
+/* EwAvatarGroup — 头像组 */
+
+.ew-avatar-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ew-avatar-group > *:not(:first-child) {
+  margin-left: -8px;
+}
+
+.ew-avatar-group > * {
+  box-shadow: 0 0 0 2px var(--ew-bg-page);
+}
+
+.ew-avatar-group__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ew-radius-circle);
+  background-color: var(--ew-fill-2);
+  color: var(--ew-text-secondary);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+}

@@ -1,0 +1,525 @@
+<template>
+  <div
+    class="ev-cascader ev-cascader"
+    :class="[sizeClass, { 'is-disabled': isDisabled }]"
+  >
+    <div
+      ref="referenceRef"
+      class="ev-input__wrapper"
+      :class="{ 'is-focus': dropdownVisible, 'is-disabled': isDisabled, 'is-hovering': hovering }"
+      @click="handleWrapperClick"
+      @mouseenter="hovering = true"
+      @mouseleave="hovering = false"
+    >
+      <!-- multiple 标签 -->
+      <span v-if="multiple && checkedTags.length" class="ev-cascader__tags">
+        <span
+          v-for="tag in collapsedTags"
+          :key="tag.key"
+          class="ev-tag ev-tag--info ev-tag--light ev-cascader__tag"
+        >
+          <span class="ev-tag__content">{{ tag.label }}</span>
+          <ev-icon
+            v-if="!isDisabled"
+            class="ev-tag__close"
+            name="close"
+            @click.stop="removeTag(tag.path)"
+          />
+        </span>
+        <span v-if="overflowCount > 0" class="ev-select__tags-collapse-item">
+          + {{ overflowCount }}
+        </span>
+      </span>
+      <span v-else-if="hasSelection" class="ev-cascader__label">{{ selectedLabel }}</span>
+      <span v-else class="ev-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+
+      <input
+        ref="inputRef"
+        class="ev-input__inner ev-cascader__input"
+        :value="query"
+        :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
+        :readonly="!filterable || isDisabled"
+        :disabled="isDisabled"
+        @input="handleQueryInput"
+        @focus="handleFocus"
+      />
+
+      <span class="ev-cascader__suffix">
+        <ev-icon
+          v-if="clearable && hasSelection && !isDisabled"
+          class="ev-cascader__clear"
+          name="circle-close"
+          @click.stop="handleClear"
+        />
+        <ev-icon
+          class="ev-cascader__arrow"
+          :class="{ 'is-reverse': dropdownVisible }"
+          name="arrow-down"
+        />
+      </span>
+    </div>
+
+    <Teleport to="body">
+      <Transition name="ev-picker-dropdown">
+        <div
+          v-if="dropdownVisible"
+          ref="floatingRef"
+          class="ev-cascader__dropdown ev-popper ev-cascader__dropdown"
+          :style="popperStyle"
+        >
+          <!-- 过滤建议 -->
+          <div v-if="filterActive" class="ev-cascader__suggestion-panel">
+            <div
+              v-for="item in suggestions"
+              :key="item.key"
+              class="ev-cascader__suggestion-item"
+              :class="{ 'is-checked': isPathChecked(item.path) }"
+              @click="handleSuggestionClick(item)"
+            >
+              {{ item.text }}
+            </div>
+            <div v-if="suggestions.length === 0" class="ev-cascader__suggestion-item is-empty">
+              {{ t('select.noMatch') }}
+            </div>
+          </div>
+          <!-- 多级菜单 -->
+          <div v-else class="ev-cascader-panel">
+            <div v-for="(menu, mi) in menus" :key="mi" class="ev-cascader-menu">
+              <div class="ev-cascader-menu__wrap">
+                <ul class="ev-cascader-menu__list">
+                  <li
+                    v-for="node in menu"
+                    :key="String(node.value)"
+                    class="ev-cascader-node"
+                    :class="{
+                      'is-active': activePath.includes(node.value),
+                      'in-active-path': activePath.includes(node.value),
+                      'is-disabled': node.disabled,
+                      'is-selectable': isNodeSelectable(node),
+                    }"
+                    @click="handleNodeClick(node)"
+                    @mouseenter="handleNodeHover(node)"
+                  >
+                    <ev-checkbox
+                      v-if="multiple"
+                      class="ev-cascader-node__checkbox"
+                      :model-value="isNodeChecked(node)"
+                      :indeterminate="isNodeIndeterminate(node)"
+                      :disabled="node.disabled"
+                      @click.stop
+                      @change="handleNodeCheck(node)"
+                    />
+                    <span class="ev-cascader-node__label">{{ node.label }}</span>
+                    <span v-if="!node.isLeaf" class="ev-cascader-node__postfix">
+                      <ev-icon name="arrow-right" :size="12" />
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+  </div>
+</template>
+
+<script setup>
+/**
+ * EvCascader — 级联选择器（.ev-cascader / .ev-cascader-panel / .ev-cascader-node 结构类）
+ * 多级菜单浮层；emitPath（值=路径 or 叶值）；check-strictly 任意层级可选；
+ * multiple 复选（父子级联勾选叶路径）；filterable 路径建议
+ */
+import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
+import EvIcon from '../icon/index.vue'
+import EvCheckbox from '../checkbox/index.vue'
+import {
+  normalizeOptions, walkNodes, findByValue, pathToNodes,
+  nodeToPath, nodeToLabels, leafPathsOf, filterNodes, arrayEqual,
+} from './utils'
+import { useFloating } from '../../composables/useFloating'
+import { useZIndex } from '../../composables/useZIndex'
+import { useClickOutside } from '../../composables/useClickOutside'
+import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
+import { useLocale } from '../../composables/useLocale'
+
+defineOptions({ name: 'EvCascader', inheritAttrs: false })
+
+const props = defineProps({
+  modelValue: { type: [Array, String, Number], default: null },
+  options: { type: Array, default: () => [] },
+  /** 字段/行为映射 { value, label, children, disabled, checkStrictly, emitPath } */
+  props: { type: Object, default: () => ({}) },
+  multiple: { type: Boolean, default: false },
+  size: { type: String, default: '' },
+  placeholder: { type: String, default: '' },
+  disabled: { type: Boolean, default: false },
+  clearable: { type: Boolean, default: true },
+  filterable: { type: Boolean, default: false },
+  filterMethod: { type: Function, default: null },
+  separator: { type: String, default: ' / ' },
+  showAllLevels: { type: Boolean, default: true },
+  collapseTags: { type: Boolean, default: false },
+  maxCollapseTags: { type: Number, default: 1 },
+  /** 展开触发方式 click / hover */
+  expandTrigger: { type: String, default: '' },
+})
+
+const emit = defineEmits([
+  'update:modelValue', 'change', 'expand-change', 'visible-change',
+  'remove-tag', 'blur', 'focus', 'clear',
+])
+
+const { t } = useLocale()
+
+const config = computed(() => ({
+  value: props.props?.value || 'value',
+  label: props.props?.label || 'label',
+  children: props.props?.children || 'children',
+  disabled: props.props?.disabled || 'disabled',
+}))
+
+const checkStrictly = computed(() => !!props.props?.checkStrictly)
+const emitPath = computed(() => props.props?.emitPath !== false)
+const expandOnHover = computed(() =>
+  props.expandTrigger === 'hover' || props.props?.expandTrigger === 'hover'
+)
+
+const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
+  size: toRef(props, 'size'),
+  disabled: toRef(props, 'disabled'),
+})
+const isDisabled = computed(() => formDisabled.value || props.disabled)
+const sizeClass = computed(() => {
+  const s = props.size || formSize.value
+  if (s === 'large') return 'ev-cascader--large'
+  if (s === 'small') return 'ev-cascader--small'
+  return ''
+})
+
+// ─── 选项树 ───
+const tree = computed(() => normalizeOptions(props.options, config.value))
+
+// ─── 菜单栈（activePath 驱动） ───
+const activePath = ref([])
+const menus = computed(() => {
+  const list = [tree.value]
+  let level = tree.value
+  for (const key of activePath.value) {
+    const hit = level.find((n) => n.value === key)
+    if (!hit || hit.isLeaf) break
+    level = hit.children
+    list.push(level)
+  }
+  return list
+})
+
+// ─── 值解析 ───
+/** 单选：modelValue → { node, path } */
+const selected = computed(() => {
+  if (props.multiple || props.modelValue == null) return null
+  return findByValue(tree.value, props.modelValue, Array.isArray(props.modelValue) ? props.modelValue : null)
+})
+
+const selectedNodes = computed(() => (selected.value ? [selected.value.node] : []))
+
+/** 多选：modelValue（路径数组）→ 节点数组 */
+const checkedNodes = computed(() => {
+  if (!props.multiple || !Array.isArray(props.modelValue)) return []
+  const out = []
+  for (const item of props.modelValue) {
+    const path = Array.isArray(item) ? item : [item]
+    const nodes = pathToNodes(tree.value, path)
+    if (nodes) out.push(nodes[nodes.length - 1])
+  }
+  return out
+})
+
+const hasSelection = computed(() =>
+  props.multiple ? checkedNodes.value.length > 0 : !!selected.value
+)
+
+function labelOfNode(node) {
+  const labels = nodeToLabels(node)
+  return props.showAllLevels ? labels.join(props.separator) : labels[labels.length - 1]
+}
+
+const selectedLabel = computed(() =>
+  selected.value ? labelOfNode(selected.value.node) : ''
+)
+
+const checkedTags = computed(() =>
+  checkedNodes.value.map((n) => ({ key: nodeToPath(n).join('/'), label: labelOfNode(n), path: nodeToPath(n) }))
+)
+
+const collapsedTags = computed(() => {
+  if (!props.collapseTags) return checkedTags.value
+  return checkedTags.value.slice(0, props.maxCollapseTags)
+})
+
+const overflowCount = computed(() => {
+  if (!props.collapseTags) return 0
+  return Math.max(0, checkedTags.value.length - props.maxCollapseTags)
+})
+
+// 选中值 → activePath 回放（声明移至 dropdownVisible 之后）
+
+// ─── 弹层 ───
+const referenceRef = ref(null)
+const floatingRef = ref(null)
+const inputRef = ref(null)
+const dropdownVisible = ref(false)
+const isFocused = ref(false)
+const hovering = ref(false)
+const query = ref('')
+
+const filterActive = computed(() => props.filterable && query.value !== '')
+
+const { zIndex, next: nextZIndex } = useZIndex()
+const { x, y, update } = useFloating({
+  reference: referenceRef,
+  floating: floatingRef,
+  placement: 'bottom-start',
+  offset: 4,
+  flip: true,
+  shift: true,
+  autoUpdate: true,
+})
+
+const popperStyle = computed(() => ({
+  position: 'fixed',
+  left: `${x.value}px`,
+  top: `${y.value}px`,
+  zIndex: zIndex.value,
+  minWidth: `${referenceRef.value?.offsetWidth ?? 0}px`,
+}))
+
+// 选中值 → activePath 回放（打开前/清空后重置）
+watch(selectedNodes, (nodes) => {
+  if (props.multiple) return
+  if (nodes[0]) {
+    if (!activePath.value.length) activePath.value = nodeToPath(nodes[0])
+  } else if (!dropdownVisible.value) {
+    activePath.value = []
+  }
+}, { immediate: true })
+
+async function openDropdown() {
+  if (isDisabled.value || dropdownVisible.value) return
+  nextZIndex()
+  dropdownVisible.value = true
+  emit('visible-change', true)
+  await nextTick()
+  await update()
+  if (props.filterable) inputRef.value?.focus?.()
+}
+
+function closeDropdown() {
+  if (!dropdownVisible.value) return
+  dropdownVisible.value = false
+  emit('visible-change', false)
+  query.value = ''
+  isFocused.value = false
+  emit('blur')
+}
+
+function handleWrapperClick() {
+  if (isDisabled.value) return
+  dropdownVisible.value ? closeDropdown() : openDropdown()
+}
+
+const { stop: stopClickOutside } = useClickOutside(
+  [referenceRef, floatingRef],
+  () => closeDropdown(),
+  true
+)
+onBeforeUnmount(stopClickOutside)
+
+function handleFocus() {
+  isFocused.value = true
+  emit('focus')
+}
+
+// ─── 过滤 ───
+const suggestions = computed(() => {
+  if (!filterActive.value) return []
+  return filterNodes(tree.value, query.value, props.filterMethod).map((n) => ({
+    key: nodeToPath(n).join('/'),
+    node: n,
+    path: nodeToPath(n),
+    text: nodeToLabels(n).join(props.separator),
+  }))
+})
+
+function handleQueryInput(e) {
+  query.value = e.target.value
+  if (!dropdownVisible.value) openDropdown()
+}
+
+// ─── 选择 ───
+function emitValue(next) {
+  emit('update:modelValue', next)
+  emit('change', next)
+  triggerFormValidate(formItem, 'change')
+}
+
+function outOfPath(path) {
+  return emitPath.value ? path : path[path.length - 1]
+}
+
+function isNodeSelectable(node) {
+  return node.isLeaf || checkStrictly.value
+}
+
+function handleNodeClick(node) {
+  if (node.disabled) return
+  if (expandOnHover.value) return // hover 模式下点击仅选择
+  if (!node.isLeaf) {
+    expandNode(node)
+    if (!checkStrictly.value && !props.multiple) return
+  }
+  if (!isNodeSelectable(node)) return
+  selectNode(node)
+}
+
+function handleNodeHover(node) {
+  if (!expandOnHover.value || node.disabled || node.isLeaf) return
+  expandNode(node)
+}
+
+function expandNode(node) {
+  const path = nodeToPath(node)
+  activePath.value = path
+  emit('expand-change', path.slice(0, -1))
+}
+
+function selectNode(node) {
+  const path = nodeToPath(node)
+  if (props.multiple) {
+    // 多选点击节点：切换勾选
+    handleNodeCheck(node)
+    return
+  }
+  activePath.value = path
+  emitValue(outOfPath(path))
+  // checkStrictly 单选保持面板打开
+  if (!checkStrictly.value) closeDropdown()
+}
+
+/** 多选：节点勾选状态 */
+function collectCheckedPaths() {
+  return (props.multiple && Array.isArray(props.modelValue))
+    ? props.modelValue.map((item) => (Array.isArray(item) ? item : [item]))
+    : []
+}
+
+function isNodeChecked(node) {
+  if (checkStrictly.value) {
+    const path = nodeToPath(node)
+    return collectCheckedPaths().some((p) => arrayEqual(p, path))
+  }
+  // 级联：自身或全部后代叶路径被勾选 → checked
+  const path = nodeToPath(node)
+  if (node.isLeaf) {
+    return collectCheckedPaths().some((p) => arrayEqual(p, path))
+  }
+  const leaves = leafPathsOf(node)
+  if (!leaves.length) return false
+  return leaves.every((lp) => collectCheckedPaths().some((p) => arrayEqual(p, lp)))
+}
+
+function isNodeIndeterminate(node) {
+  if (checkStrictly.value || node.isLeaf) return false
+  const leaves = leafPathsOf(node)
+  if (!leaves.length) return false
+  const some = leaves.some((lp) => collectCheckedPaths().some((p) => arrayEqual(p, lp)))
+  const every = leaves.every((lp) => collectCheckedPaths().some((p) => arrayEqual(p, lp)))
+  return some && !every
+}
+
+function isPathChecked(path) {
+  return collectCheckedPaths().some((p) => arrayEqual(p, path))
+}
+
+function handleNodeCheck(node) {
+  if (node.disabled) return
+  const path = nodeToPath(node)
+  const checked = collectCheckedPaths()
+  const contains = (p) => checked.some((c) => arrayEqual(c, p))
+  let next
+  if (checkStrictly.value) {
+    next = contains(path)
+      ? checked.filter((c) => !arrayEqual(c, path))
+      : [...checked, path]
+  } else {
+    const leaves = node.isLeaf ? [path] : leafPathsOf(node)
+    const allChecked = leaves.every((lp) => contains(lp))
+    if (allChecked) {
+      // 取消：移除这些叶路径（并清理其父级严格路径残留）
+      next = checked.filter((c) => !leaves.some((lp) => arrayEqual(c, lp)))
+    } else {
+      // 勾选：合并叶路径（去重）
+      const set = new Map(checked.map((p) => [p.join('/'), p]))
+      leaves.forEach((lp) => set.set(lp.join('/'), lp))
+      next = [...set.values()]
+    }
+  }
+  emitValue(next.map((p) => outOfPath(p)))
+}
+
+function handleSuggestionClick(item) {
+  const node = item.node
+  if (node.disabled) return
+  if (props.multiple) {
+    handleNodeCheck(node)
+  } else {
+    activePath.value = item.path
+    emitValue(outOfPath(item.path))
+    closeDropdown()
+  }
+}
+
+function removeTag(path) {
+  const checked = collectCheckedPaths().filter((p) => !arrayEqual(p, path))
+  emitValue(checked.map((p) => outOfPath(p)))
+  emit('remove-tag', path)
+}
+
+function handleClear() {
+  emitValue(props.multiple ? [] : null)
+  emit('clear')
+  closeDropdown()
+}
+
+// ─── expose ───
+function getCheckedNodes(leafOnly) {
+  const paths = collectCheckedPaths()
+  const nodes = paths
+    .map((p) => pathToNodes(tree.value, p)?.[p.length - 1])
+    .filter(Boolean)
+  return (leafOnly ? nodes.filter((n) => n.isLeaf) : nodes).map((n) => n.data)
+}
+
+function focus() {
+  inputRef.value?.focus?.()
+  openDropdown()
+}
+
+function blur() {
+  closeDropdown()
+}
+
+defineExpose({
+  focus,
+  blur,
+  getCheckedNodes,
+  /** 面板激活路径 */
+  getActivePath: () => [...activePath.value],
+  toggleDropDownVisible: (val) => {
+    if (val) openDropdown()
+    else closeDropdown()
+  },
+})
+</script>
+
+<style src="./style.css"></style>

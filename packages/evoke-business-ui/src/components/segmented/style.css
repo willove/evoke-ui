@@ -1,0 +1,148 @@
+/* EvSegmented — 分段控制器（设计令牌驱动） */
+
+.ev-segmented {
+  --seg-radius: var(--ev-radius-sm);
+  --seg-h: 28px;
+  --seg-px: 12px;
+  --seg-gap: 6px;
+  --seg-font-size: var(--ev-font-size-base);
+  --seg-icon-size: 16px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: var(--ev-fill-color-light);
+  border-radius: var(--seg-radius);
+  line-height: 1;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.ev-segmented--large {
+  --seg-h: 34px;
+  --seg-px: 14px;
+  --seg-gap: 8px;
+  --seg-font-size: var(--ev-font-size-md);
+}
+.ev-segmented--small {
+  --seg-h: 24px;
+  --seg-px: 10px;
+  --seg-gap: 4px;
+  --seg-font-size: var(--ev-font-size-xs);
+}
+
+.ev-segmented--shape-round {
+  --seg-radius: var(--ev-radius-full);
+}
+
+.ev-segmented.is-block {
+  display: flex;
+  width: 100%;
+}
+
+.ev-segmented.is-vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.ev-segmented.is-disabled {
+  opacity: 0.55;
+}
+.ev-segmented.is-disabled .ev-segmented__item {
+  cursor: not-allowed;
+}
+
+/* ─── 滑动高亮块 ─── */
+.ev-segmented__thumb {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  bottom: 2px;
+  background: var(--ev-bg-color);
+  border-radius: var(--seg-radius);
+  box-shadow: var(--ev-box-shadow-lighter);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ev-segmented.is-vertical .ev-segmented__thumb {
+  top: 0;
+  bottom: auto;
+  left: 2px;
+  right: 2px;
+}
+
+.ev-segmented__thumb.is-animating {
+  transition:
+    left var(--ev-duration-base) var(--ev-ease-in-out),
+    top var(--ev-duration-base) var(--ev-ease-in-out),
+    width var(--ev-duration-base) var(--ev-ease-in-out),
+    height var(--ev-duration-base) var(--ev-ease-in-out);
+}
+
+/* ─── 选项 ─── */
+.ev-segmented__items {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+.ev-segmented.is-vertical .ev-segmented__items {
+  flex-direction: column;
+}
+
+.ev-segmented__item {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--seg-gap);
+  height: var(--seg-h);
+  padding: 0 var(--seg-px);
+  border: none;
+  background: transparent;
+  border-radius: var(--seg-radius);
+  font-family: inherit;
+  font-size: var(--seg-font-size);
+  color: var(--ev-text-color-regular);
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-segmented__item:hover {
+  background: var(--ev-fill-color);
+}
+.ev-segmented__item.is-selected {
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-medium);
+}
+.ev-segmented__item.is-disabled {
+  color: var(--ev-text-color-placeholder);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+/* block：选项等分撑满 */
+.ev-segmented.is-block .ev-segmented__item {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* 图标上下排列 */
+.ev-segmented.is-label-vertical .ev-segmented__item {
+  flex-direction: column;
+  gap: 2px;
+  height: auto;
+  min-height: var(--seg-h);
+  padding: 6px var(--seg-px);
+}
+
+.ev-segmented__label {
+  line-height: 1;
+}

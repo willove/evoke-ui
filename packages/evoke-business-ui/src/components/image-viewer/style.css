@@ -1,0 +1,102 @@
+/* EvImageViewer —图片查看器 */
+
+.ev-image-viewer__wrapper.ev-image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+}
+
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__mask {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__btn {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--ev-overlay-color, rgba(0, 0, 0, 0.5));
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out), opacity var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__btn:hover {
+  background-color: var(--ev-overlay-color-lighter, rgba(0, 0, 0, 0.7));
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__btn.is-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__close {
+  top: 40px;
+  right: 40px;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__prev {
+  top: 50%;
+  transform: translateY(-50%);
+  left: 40px;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__next {
+  top: 50%;
+  transform: translateY(-50%);
+  right: 40px;
+}
+
+/* 操作栏 */
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__actions {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 1;
+  background-color: var(--ev-overlay-color, rgba(0, 0, 0, 0.5));
+  border-radius: var(--ev-radius-full);
+  padding: 0 12px;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__actions__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-4);
+  height: 44px;
+  color: #fff;
+  font-size: 14px;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__action {
+  cursor: pointer;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__counter {
+  font-size: var(--ev-font-size-sm);
+  opacity: 0.85;
+}
+
+/* 画布 */
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__canvas {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ev-image-viewer__wrapper.ev-image-viewer .ev-image-viewer__img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* 过渡 */
+.ev-image-viewer-fade-enter-active,
+.ev-image-viewer-fade-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-image-viewer-fade-enter-from,
+.ev-image-viewer-fade-leave-to {
+  opacity: 0;
+}

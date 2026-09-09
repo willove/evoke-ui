@@ -1,0 +1,68 @@
+/* EwSwitch — 开关 */
+
+.ew-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 40px;
+  height: 22px;
+  padding: 2px;
+  border: none;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-fill-3);
+  cursor: pointer;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-switch--small {
+  width: 32px;
+  height: 18px;
+  padding: 2px;
+}
+
+.ew-switch--large {
+  width: 48px;
+  height: 26px;
+  padding: 3px;
+}
+
+.ew-switch__knob {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--ew-radius-circle);
+  background-color: #ffffff;
+  box-shadow: var(--ew-shadow-1);
+  transform: translateX(0);
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.ew-switch--small .ew-switch__knob {
+  width: 14px;
+  height: 14px;
+}
+
+.ew-switch--large .ew-switch__knob {
+  width: 20px;
+  height: 20px;
+}
+
+.ew-switch.is-on {
+  background-color: var(--ew-color-primary);
+}
+
+.ew-switch.is-on .ew-switch__knob {
+  transform: translateX(18px);
+}
+
+.ew-switch--small.is-on .ew-switch__knob {
+  transform: translateX(14px);
+}
+
+.ew-switch--large.is-on .ew-switch__knob {
+  transform: translateX(22px);
+}
+
+.ew-switch.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

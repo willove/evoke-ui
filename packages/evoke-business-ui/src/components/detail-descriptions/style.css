@@ -1,0 +1,5 @@
+/* EvDetailDescriptions — 详情描述（业务封装，样式走 EvDescriptions） */
+
+.ev-detail-descriptions {
+  display: block;
+}

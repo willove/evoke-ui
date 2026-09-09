@@ -1,0 +1,14 @@
+/* ============================================
+   Evoke Business UI — 统一样式入口
+
+   import '@wil-works/evoke-business-ui/styles'
+   ============================================ */
+
+/* 设计变量（天亮蓝 #175DFF，--ev-* 语义层 + --ev-* 设计层） */
+@import './variables.css';
+
+/* 暗色模式重映射（html.dark） */
+@import './dark.css';
+
+/* 基础样式（reset + 动效 + 焦点 + 滚动条） */
+@import './base.css';

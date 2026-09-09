@@ -1,0 +1,139 @@
+/* EvPagination —分页 */
+
+.ev-pagination.ev-pagination {
+  --ev-pagination-button-width: 32px;
+  --ev-pagination-button-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-3);
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  flex-wrap: wrap;
+}
+.ev-pagination.ev-pagination--small.ev-pagination {
+  --ev-pagination-button-width: 24px;
+  --ev-pagination-button-height: 24px;
+  font-size: var(--ev-font-size-xs);
+  gap: var(--ev-space-2);
+}
+.ev-pagination.ev-pagination--large.ev-pagination {
+  --ev-pagination-button-width: 40px;
+  --ev-pagination-button-height: 40px;
+}
+.ev-pagination.ev-pagination.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* total / jumper / sizes 文本 */
+.ev-pagination.ev-pagination .ev-pagination__total,
+.ev-pagination.ev-pagination .ev-pagination__jump {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-regular);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+}
+
+/* prev / next 按钮 */
+.ev-pagination.ev-pagination .btn-prev,
+.ev-pagination.ev-pagination .btn-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ev-pagination-button-width);
+  height: var(--ev-pagination-button-height);
+  background: var(--ev-pagination-bg-color, var(--ev-fill-color-blank));
+  color: var(--ev-text-color-regular);
+  border: none;
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-pagination.ev-pagination.is-background .btn-prev,
+.ev-pagination.ev-pagination.is-background .btn-next {
+  background-color: var(--ev-pagination-hover-bg-color, var(--ev-fill-color));
+}
+.ev-pagination.ev-pagination .btn-prev:not(.is-disabled):hover,
+.ev-pagination.ev-pagination .btn-next:not(.is-disabled):hover {
+  color: var(--ev-color-primary);
+}
+.ev-pagination.ev-pagination .btn-prev.is-disabled,
+.ev-pagination.ev-pagination .btn-next.is-disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+  background-color: var(--ev-fill-color-light);
+}
+
+/* pager */
+.ev-pagination.ev-pagination .ev-pager {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ev-pagination.ev-pagination .ev-pager li.number,
+.ev-pagination.ev-pagination .ev-pager li.btn-quickprev,
+.ev-pagination.ev-pagination .ev-pager li.btn-quicknext {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ev-pagination-button-width);
+  height: var(--ev-pagination-button-height);
+  padding: 0 6px;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+  user-select: none;
+  font-size: inherit;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+  box-sizing: border-box;
+}
+.ev-pagination.ev-pagination.is-background .ev-pager li.number,
+.ev-pagination.ev-pagination.is-background .ev-pager li.btn-quickprev,
+.ev-pagination.ev-pagination.is-background .ev-pager li.btn-quicknext {
+  background-color: var(--ev-fill-color);
+}
+.ev-pagination.ev-pagination .ev-pager li.number:hover,
+.ev-pagination.ev-pagination .ev-pager li.btn-quickprev:hover,
+.ev-pagination.ev-pagination .ev-pager li.btn-quicknext:hover {
+  color: var(--ev-color-primary);
+}
+.ev-pagination.ev-pagination.is-background .ev-pager li.number:hover {
+  background-color: var(--ev-color-primary-light-9);
+}
+.ev-pagination.ev-pagination .ev-pager li.number.is-active {
+  color: var(--ev-color-primary);
+  font-weight: var(--ev-font-weight-medium);
+}
+.ev-pagination.ev-pagination.is-background .ev-pager li.number.is-active {
+  background-color: var(--ev-color-primary);
+  color: #fff;
+}
+
+/* jumper 输入框 */
+.ev-pagination.ev-pagination .ev-pagination__editor {
+  width: 48px;
+  height: calc(var(--ev-pagination-button-height) - 6px);
+  padding: 0 4px;
+  border: none;
+  outline: none;
+  border-radius: var(--ev-radius-sm);
+  background: var(--ev-fill-color-light);
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-xs);
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.ev-pagination.ev-pagination .ev-pagination__editor::-webkit-outer-spin-button,
+.ev-pagination.ev-pagination .ev-pagination__editor::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.ev-pagination.ev-pagination .ev-pagination__editor:focus {
+  background: var(--ev-fill-color-blank);
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}

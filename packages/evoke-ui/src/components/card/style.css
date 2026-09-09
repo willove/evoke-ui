@@ -1,0 +1,60 @@
+/* EwCard — 卡片 */
+
+.ew-card {
+  position: relative;
+  padding: var(--ew-space-6);
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-xl);
+  background-color: var(--ew-bg-container);
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-card.is-flat {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ─── 粉彩底（remixdesign 作品卡）─── */
+.ew-card.is-soft { background-color: var(--ew-fill-1); }
+.ew-card.is-cream { background-color: var(--ew-pastel-cream); }
+.ew-card.is-blue { background-color: var(--ew-pastel-blue); }
+.ew-card.is-mint { background-color: var(--ew-pastel-mint); }
+.ew-card.is-pink { background-color: var(--ew-pastel-pink); }
+.ew-card.is-lime { background-color: var(--ew-pastel-lime); }
+
+/* ─── 贴纸风：厚白描边 + 轻投影 ─── */
+.ew-card.is-sticker {
+  border: 3px solid var(--ew-border-sticker);
+  box-shadow: var(--ew-shadow-2);
+}
+
+/* ─── 深色精选（launchos 主推定价卡）─── */
+.ew-card.is-featured {
+  border-color: transparent;
+  background:
+    radial-gradient(120% 90% at 85% 0%, rgba(var(--ew-color-primary-rgb), 0.14), transparent 60%),
+    linear-gradient(165deg, #232329 0%, #121215 70%);
+  color: var(--ew-text-on-dark);
+  box-shadow: var(--ew-shadow-4);
+}
+
+.ew-card.is-featured :deep(h1),
+.ew-card.is-featured :deep(h2),
+.ew-card.is-featured :deep(h3),
+.ew-card.is-featured :deep(h4) {
+  color: #ffffff;
+}
+
+.ew-card.is-featured :deep(p) {
+  color: rgba(245, 247, 252, 0.68);
+}
+
+/* ─── 悬浮：轻抬 + 光影上移 ─── */
+.ew-card.is-hoverable:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ew-shadow-3);
+  border-color: var(--ew-border-color);
+}

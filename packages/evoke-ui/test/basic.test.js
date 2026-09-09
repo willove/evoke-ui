@@ -1,0 +1,115 @@
+import { mount, describe, it, expect, EwButton, EwIconButton, EwTag, EwBadge, EwKeycap } from './helpers'
+
+describe('EwButton', () => {
+  it('默认渲染 primary 变体与中等尺寸', () => {
+    const wrapper = mount(EwButton, { slots: { default: 'Get Started' } })
+    expect(wrapper.classes()).toContain('ew-button')
+    expect(wrapper.classes()).toContain('is-primary')
+    expect(wrapper.classes()).toContain('ew-button--md')
+    expect(wrapper.text()).toBe('Get Started')
+  })
+
+  it('pill 胶囊形态（launchos CTA）', () => {
+    const wrapper = mount(EwButton, { props: { variant: 'dark', pill: true }, slots: { default: 'DOWNLOAD' } })
+    expect(wrapper.classes()).toContain('is-pill')
+    expect(wrapper.classes()).toContain('is-dark')
+  })
+
+  it('disabled 阻止 click 事件', async () => {
+    const wrapper = mount(EwButton, { props: { disabled: true }, slots: { default: 'x' } })
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')).toBeUndefined()
+    expect(wrapper.classes()).toContain('is-disabled')
+  })
+
+  it('loading 渲染旋转图标并禁点', async () => {
+    const wrapper = mount(EwButton, { props: { loading: true }, slots: { default: 'Go' } })
+    expect(wrapper.find('.is-rotating').exists()).toBe(true)
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')).toBeUndefined()
+  })
+
+  it('icon / iconRight 图标位', () => {
+    const wrapper = mount(EwButton, {
+      props: { icon: 'download', iconRight: 'arrow-right' },
+      slots: { default: 'Install' },
+    })
+    expect(wrapper.findAll('.ew-button__icon').length).toBe(2)
+  })
+
+  it('无默认插槽且有图标时进入 icon-only 形态', () => {
+    const wrapper = mount(EwButton, { props: { icon: 'search' } })
+    expect(wrapper.classes()).toContain('is-icon-only')
+  })
+
+  it('slot 触发 click', async () => {
+    const wrapper = mount(EwButton, { slots: { default: 'OK' } })
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')).toHaveLength(1)
+  })
+})
+
+describe('EwIconButton', () => {
+  it('渲染图标与 aria-label（缺省取 icon 名）', () => {
+    const wrapper = mount(EwIconButton, { props: { icon: 'moon' } })
+    expect(wrapper.classes()).toContain('ew-icon-button')
+    expect(wrapper.attributes('aria-label')).toBe('moon')
+    expect(wrapper.find('svg').exists()).toBe(true)
+  })
+
+  it('round 正圆形态', () => {
+    const wrapper = mount(EwIconButton, { props: { icon: 'sun', round: true } })
+    expect(wrapper.classes()).toContain('is-round')
+  })
+})
+
+describe('EwTag', () => {
+  it('默认 neutral soft 胶囊', () => {
+    const wrapper = mount(EwTag, { slots: { default: 'Open Source' } })
+    expect(wrapper.classes()).toContain('ew-tag')
+    expect(wrapper.classes()).toContain('is-neutral')
+    expect(wrapper.classes()).toContain('is-soft')
+  })
+
+  it('lime 促销徽章 tone（launchos SAVE 50%）', () => {
+    const wrapper = mount(EwTag, { props: { tone: 'lime' }, slots: { default: 'SAVE 50%' } })
+    expect(wrapper.classes()).toContain('is-lime')
+  })
+
+  it('closable 渲染关闭钮并派发 close', async () => {
+    const wrapper = mount(EwTag, { props: { closable: true }, slots: { default: 'x' } })
+    await wrapper.find('.ew-tag__close').trigger('click')
+    expect(wrapper.emitted('close')).toHaveLength(1)
+  })
+})
+
+describe('EwBadge', () => {
+  it('渲染计数值', () => {
+    const wrapper = mount(EwBadge, { props: { value: 7 } })
+    expect(wrapper.text()).toBe('7')
+  })
+
+  it('超过 max 显示 max+', () => {
+    const wrapper = mount(EwBadge, { props: { value: 150, max: 99 } })
+    expect(wrapper.text()).toBe('99+')
+  })
+
+  it('dot 圆点模式', () => {
+    const wrapper = mount(EwBadge, { props: { dot: true } })
+    expect(wrapper.classes()).toContain('is-dot')
+    expect(wrapper.text()).toBe('')
+  })
+})
+
+describe('EwKeycap', () => {
+  it('字符串拆成单键', () => {
+    const wrapper = mount(EwKeycap, { props: { keys: 'c' } })
+    expect(wrapper.findAll('kbd')).toHaveLength(1)
+    expect(wrapper.text()).toBe('c')
+  })
+
+  it('数组渲染组合键', () => {
+    const wrapper = mount(EwKeycap, { props: { keys: ['Cmd', 'K'] } })
+    expect(wrapper.findAll('kbd')).toHaveLength(2)
+  })
+})

@@ -1,0 +1,108 @@
+/* EvTimeSelect — 时间下拉 */
+
+.ev-time-select.ev-time-select {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 220px;
+  font-size: var(--ev-font-size-base);
+}
+.ev-time-select.ev-time-select .ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  width: 100%;
+  min-height: var(--ev-component-size);
+  padding: 1px 11px;
+  line-height: var(--ev-component-size);
+  background-color: var(--ev-fill-color-blank);
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out);
+}
+.ev-time-select.ev-time-select.ev-input--large .ev-input__wrapper {
+  min-height: var(--ev-component-size-large);
+}
+.ev-time-select.ev-time-select.ev-input--small .ev-input__wrapper {
+  min-height: var(--ev-component-size-small);
+}
+.ev-time-select.ev-time-select .ev-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--ev-text-color-placeholder) inset;
+}
+.ev-time-select.ev-time-select .ev-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}
+.ev-time-select.ev-time-select .ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+.ev-time-select.ev-time-select .ev-input__prefix {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ev-text-color-placeholder);
+  flex-shrink: 0;
+}
+.ev-time-select.ev-time-select .ev-input__inner {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: inherit;
+  height: calc(var(--ev-component-size) - 2px);
+  line-height: 1;
+  cursor: pointer;
+}
+.ev-time-select.ev-time-select .ev-input__inner::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-time-select.ev-time-select .ev-range__close-icon {
+  cursor: pointer;
+  color: var(--ev-text-color-placeholder);
+}
+.ev-time-select.ev-time-select .ev-range__close-icon:hover {
+  color: var(--ev-text-color-secondary);
+}
+
+/* 下拉 */
+.ev-time-select-dropdown.ev-popper {
+  position: fixed;
+  z-index: 2000;
+  max-height: 274px;
+  overflow: auto;
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-3);
+  padding: var(--ev-space-1) 0;
+  box-sizing: border-box;
+}
+.ev-time-select-dropdown .ev-time-select__wrap {
+  margin: 0;
+  padding: 0;
+}
+.ev-time-select-dropdown .ev-time-select__item {
+  margin: 0;
+  padding: 0 12px;
+  font-size: var(--ev-font-size-base);
+  line-height: 30px;
+  color: var(--ev-text-color-regular);
+  cursor: pointer;
+  user-select: none;
+}
+.ev-time-select-dropdown .ev-time-select__item:hover:not(.is-disabled) {
+  background-color: var(--ev-fill-color-light);
+  color: var(--ev-color-primary);
+}
+.ev-time-select-dropdown .ev-time-select__item.is-active:not(.is-disabled) {
+  color: var(--ev-color-primary);
+  font-weight: 700;
+}
+.ev-time-select-dropdown .ev-time-select__item.is-disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}

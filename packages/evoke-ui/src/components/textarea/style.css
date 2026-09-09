@@ -1,0 +1,55 @@
+/* EwTextarea — 多行文本 */
+
+.ew-textarea {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+}
+
+.ew-textarea__inner {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--ew-border-color);
+  border-radius: var(--ew-radius-md);
+  background-color: var(--ew-bg-container);
+  font-family: var(--ew-font-family);
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-primary);
+  resize: vertical;
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-textarea__inner::placeholder {
+  color: var(--ew-text-placeholder);
+}
+
+.ew-textarea__inner:focus,
+.ew-textarea__inner:focus-visible {
+  outline: none;
+  border-color: var(--ew-color-primary-light-5);
+  box-shadow: var(--ew-focus-ring);
+}
+
+.ew-textarea.is-error .ew-textarea__inner {
+  border-color: var(--ew-color-danger-light-5);
+}
+
+.ew-textarea.is-disabled .ew-textarea__inner {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background-color: var(--ew-fill-1);
+}
+
+/* 字数计数（右下角悬浮） */
+.ew-textarea__count {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-placeholder);
+  background: linear-gradient(transparent, var(--ew-bg-container) 30%);
+  padding-left: 4px;
+  pointer-events: none;
+}

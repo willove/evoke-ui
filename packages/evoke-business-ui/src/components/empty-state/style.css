@@ -1,0 +1,109 @@
+/* EvEmptyState — 统一空态（设计令牌驱动） */
+
+.ev-empty-state {
+  display: flex;
+  box-sizing: border-box;
+  color: var(--ev-text-color-primary);
+}
+
+/* ─── 纵向（default 页面级）─── */
+.ev-empty-state--default {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ev-space-3);
+  padding: 40px var(--ev-space-6);
+  text-align: center;
+}
+.ev-empty-state--default .ev-empty-state__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--ev-radius-xl);
+}
+.ev-empty-state--default .ev-empty-state__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-semibold);
+  line-height: var(--ev-line-height-tight);
+}
+.ev-empty-state--default .ev-empty-state__description {
+  max-width: 360px;
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-base);
+}
+
+/* ─── 横向（compact 面板内嵌）─── */
+.ev-empty-state--compact {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-4);
+  text-align: left;
+}
+.ev-empty-state--compact .ev-empty-state__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ev-radius-md);
+  flex-shrink: 0;
+}
+.ev-empty-state--compact .ev-empty-state__title {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  line-height: var(--ev-line-height-tight);
+}
+.ev-empty-state--compact .ev-empty-state__description {
+  max-width: 320px;
+  font-size: var(--ev-font-size-xs);
+  line-height: var(--ev-line-height-base);
+}
+.ev-empty-state--compact .ev-empty-state__actions {
+  margin-top: var(--ev-space-1);
+}
+
+/* ─── 图标容器与语义底色 ─── */
+.ev-empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ev-fill-color-light);
+  color: var(--ev-text-color-secondary);
+}
+.ev-empty-state--tone-primary .ev-empty-state__icon {
+  background: var(--ev-color-primary-light-9);
+  color: var(--ev-color-primary);
+}
+.ev-empty-state--tone-success .ev-empty-state__icon {
+  background: var(--ev-color-success-light-9);
+  color: var(--ev-color-success);
+}
+.ev-empty-state--tone-warning .ev-empty-state__icon {
+  background: var(--ev-color-warning-light-9);
+  color: var(--ev-color-warning);
+}
+.ev-empty-state--tone-danger .ev-empty-state__icon {
+  background: var(--ev-color-danger-light-9);
+  color: var(--ev-color-danger);
+}
+
+/* ─── 文本与按钮 ─── */
+.ev-empty-state__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ev-space-1);
+  min-width: 0;
+}
+.ev-empty-state--compact .ev-empty-state__body {
+  align-items: flex-start;
+}
+.ev-empty-state__title {
+  color: var(--ev-text-color-primary);
+}
+.ev-empty-state__description {
+  color: var(--ev-text-color-secondary);
+}
+.ev-empty-state__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  margin-top: var(--ev-space-2);
+}

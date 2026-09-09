@@ -1,0 +1,86 @@
+/* EvTour — 新手引导 */
+.ev-tour__mask {
+  position: fixed;
+  border-radius: var(--ev-radius-md);
+  /* 挖洞靠超大 box-shadow 外扩遮罩（JS 注入阴影值） */
+  pointer-events: auto;
+  transition:
+    top var(--ev-duration-base) var(--ev-ease-out),
+    left var(--ev-duration-base) var(--ev-ease-out),
+    width var(--ev-duration-base) var(--ev-ease-out),
+    height var(--ev-duration-base) var(--ev-ease-out);
+}
+
+.ev-tour__card {
+  position: fixed;
+  background: var(--ev-bg-color-overlay);
+  border-radius: var(--ev-radius-lg);
+  box-shadow: var(--ev-shadow-4);
+  padding: var(--ev-space-4);
+  box-sizing: border-box;
+  animation: ev-tour-card-in var(--ev-duration-base) var(--ev-ease-out);
+}
+
+@keyframes ev-tour-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ev-tour__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ev-space-2);
+}
+
+.ev-tour__title {
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+}
+
+.ev-tour__close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ev-text-color-secondary);
+  padding: 2px;
+  display: flex;
+  border-radius: var(--ev-radius-sm);
+}
+
+.ev-tour__close:hover {
+  color: var(--ev-text-color-primary);
+  background-color: var(--ev-fill-color);
+}
+
+.ev-tour__body {
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-color-regular);
+  line-height: var(--ev-line-height-loose);
+  min-height: 40px;
+}
+
+.ev-tour__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--ev-space-4);
+}
+
+.ev-tour__indicator {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ev-tour__actions {
+  display: flex;
+  gap: var(--ev-space-2);
+}

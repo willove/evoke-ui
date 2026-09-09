@@ -1,0 +1,26 @@
+/* EwKeycap — 键盘按键展示 */
+
+.ew-keycap {
+  display: inline-flex;
+  gap: 4px;
+  vertical-align: baseline;
+}
+
+.ew-keycap__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid var(--ew-border-color);
+  border-bottom-width: 2px;
+  border-radius: var(--ew-radius-sm);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-1);
+  font-family: var(--ew-font-family);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-primary);
+  line-height: 1;
+}

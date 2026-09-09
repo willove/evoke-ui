@@ -1,0 +1,261 @@
+/* ============================================
+   Evoke Web Design System — Clean Navy · Delightful
+
+   设计语言源自对三个站点的实地调研与提炼：
+   - remixicon.com   —— 藏青墨色 #1A2947 + 柔和蓝灰底 + 大搜索栏 + 致密图标网格 + 软阴影
+   - remixdesign.app —— 淡雾底 #F9FAFD + 奶油/淡蓝粉彩卡片 + 厚白描边贴纸风 + 胶囊标签
+   - launchosapp.com —— 特大号紧字距标题 + 暖色渐变 Hero + 黑色胶囊 CTA + 精选深色卡片
+
+   Token 双层架构（隔离铁律：全库仅使用 --ew-* 单一命名空间，
+   由 scripts/check-token-rule.mjs 构建期强制检查）：
+   - 语义层（颜色/文字/背景/边框/填充）：消费方的主题 API 入口
+   - 设计层（动效/间距/字号/阴影/圆角）：本库设计语言
+   ============================================ */
+
+:root {
+  /* ══════ 主色：Launch Blue ══════ */
+  --ew-color-primary:         #0D70FF;
+  --ew-color-primary-light-3: #4c91ff;
+  --ew-color-primary-light-5: #86b7ff;
+  --ew-color-primary-light-7: #bdd6ff;
+  --ew-color-primary-light-8: #d9e7ff;
+  --ew-color-primary-light-9: #ebf3ff;
+  --ew-color-primary-dark-2:  #0a5acc;
+  --ew-color-primary-rgb:     13, 112, 255;
+
+  /* ══════ 墨色体系（remixicon 藏青）══════ */
+  --ew-color-ink:        #1a2947;
+  --ew-color-ink-secondary: #5d667a;
+  --ew-color-ink-muted:  #8b93a7;
+
+  /* ─── 文本语义 ─── */
+  --ew-text-primary:   var(--ew-color-ink);
+  --ew-text-regular:   var(--ew-color-ink-secondary);
+  --ew-text-secondary: var(--ew-color-ink-muted);
+  --ew-text-disabled:  #c0c5d2;
+  --ew-text-placeholder: #a6adc0;
+  --ew-text-on-dark:   #f5f7fc;
+
+  /* ─── 背景语义 ─── */
+  --ew-bg-page:      #ffffff;
+  --ew-bg-soft:      #f5f7fc;  /* hero / 大区块淡蓝灰底（remixicon hero） */
+  --ew-bg-muted:     #fafbfd;  /* 页面淡雾底（remixdesign） */
+  --ew-bg-container: #ffffff;
+  --ew-bg-hover:     #f5f7fc;
+  /* 首屏渐变（导航+hero 一体的淡蓝灰光带，向下融入纯白） */
+  --ew-gradient-hero: linear-gradient(180deg, #f2f5fb 0%, #f7f9fd 55%, #ffffff 100%);
+
+  /* ─── 粉彩卡片底色（remixdesign 作品卡）─── */
+  --ew-pastel-cream: #fff8eb;
+  --ew-pastel-blue:  #e3efff;
+  --ew-pastel-mint:  #e8f8ef;
+  --ew-pastel-pink:  #fdeef8;
+  --ew-pastel-lime:  #f4fbdf;
+
+  /* ─── 强调点缀（launchos 促销/徽章）─── */
+  --ew-color-accent-orange: #f97316;
+  --ew-color-accent-lime:   #c8f169;
+  --ew-color-accent-lime-ink: #3d5205;
+
+  /* ══════ 边框（更轻：结构靠留白而非线）══════ */
+  --ew-border-color:        #e8ebf2;
+  --ew-border-color-light:  #f0f2f8;
+  --ew-border-color-dark:   #d9dee8;
+  --ew-border-sticker:      #ffffff; /* 贴纸卡厚白描边 */
+
+  /* ─── 填充层级 ─── */
+  --ew-fill-1: #f5f7fc;
+  --ew-fill-2: #f0f3f9;
+  --ew-fill-3: #e4e8f1;
+
+  /* ══════ 语义色 ══════ */
+
+  /* 成功 */
+  --ew-color-success:         #16a34a;
+  --ew-color-success-light-3: #52ba78;
+  --ew-color-success-light-5: #8bd1a5;
+  --ew-color-success-light-7: #c0e7d1;
+  --ew-color-success-light-8: #d7f1e2;
+  --ew-color-success-light-9: #ebf8f1;
+  --ew-color-success-dark-2:  #12823b;
+  --ew-color-success-rgb:     22, 163, 74;
+
+  /* 警告 */
+  --ew-color-warning:         #f97316;
+  --ew-color-warning-light-3: #fb9550;
+  --ew-color-warning-light-5: #fdb68a;
+  --ew-color-warning-light-7: #fedac2;
+  --ew-color-warning-light-8: #fee7d5;
+  --ew-color-warning-light-9: #fff3ea;
+  --ew-color-warning-dark-2:  #c75c12;
+  --ew-color-warning-rgb:     249, 115, 22;
+
+  /* 危险 */
+  --ew-color-danger:          #e5484d;
+  --ew-color-danger-light-3:  #ec767a;
+  --ew-color-danger-light-5:  #f2a3a6;
+  --ew-color-danger-light-7:  #f8ced0;
+  --ew-color-danger-light-8:  #fbe0e1;
+  --ew-color-danger-light-9:  #fef2f2;
+  --ew-color-danger-dark-2:   #b73a3e;
+  --ew-color-danger-rgb:      229, 72, 77;
+
+  /* 信息 */
+  --ew-color-info:            #5d667a;
+  --ew-color-info-light-3:    #858da0;
+  --ew-color-info-light-5:    #aeb4c2;
+  --ew-color-info-light-7:    #d6d9e0;
+  --ew-color-info-light-8:    #e6e8ed;
+  --ew-color-info-light-9:    #f3f4f7;
+  --ew-color-info-dark-2:     #4a5262;
+  --ew-color-info-rgb:        93, 102, 122;
+
+  /* 危险/错误别名 */
+  --ew-color-error:           var(--ew-color-danger);
+  --ew-color-error-light-3:   var(--ew-color-danger-light-3);
+  --ew-color-error-light-5:   var(--ew-color-danger-light-5);
+  --ew-color-error-light-7:   var(--ew-color-danger-light-7);
+  --ew-color-error-light-8:   var(--ew-color-danger-light-8);
+  --ew-color-error-light-9:   var(--ew-color-danger-light-9);
+
+  /* ══════ Evoke Web 设计令牌 ══════ */
+
+  /* ─── 动效曲线 ─── */
+  --ew-ease-out:      cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ew-ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ew-ease-spring:   cubic-bezier(0.3, 1.3, 0.3, 1);  /* 弹性入场（remixicon 弹出微交互） */
+  --ew-ease-smooth:   cubic-bezier(0.34, 0.69, 0.1, 1); /* 位移滑动（remixicon transform） */
+  --ew-ease-linear:   linear;
+
+  /* ─── 动效时长 ─── */
+  --ew-duration-fast:   0.15s;
+  --ew-duration-base:   0.2s;   /* remixicon 主过渡：0.2s ease-in-out */
+  --ew-duration-slow:   0.3s;
+  --ew-duration-slower: 0.5s;
+
+  /* ─── 间距系统（4px 网格）─── */
+  --ew-space-1:  4px;
+  --ew-space-2:  8px;
+  --ew-space-3:  12px;
+  --ew-space-4:  16px;
+  --ew-space-5:  20px;
+  --ew-space-6:  24px;
+  --ew-space-8:  32px;
+  --ew-space-10: 40px;
+  --ew-space-12: 48px;
+  --ew-space-16: 64px;
+  --ew-space-20: 80px;
+
+  /* ─── 字号层级 ─── */
+  --ew-font-size-xs:  12px;
+  --ew-font-size-sm:  13px;
+  --ew-font-size-base: 15px;
+  --ew-font-size-md:  16px;
+  --ew-font-size-lg:  18px;
+  --ew-font-size-xl:  22px;
+  --ew-font-size-2xl: 28px;
+  --ew-font-size-3xl: 36px;
+  --ew-font-size-4xl: 48px;
+  --ew-font-size-5xl: 60px;
+
+  /* ─── 行高 ─── */
+  --ew-line-height-tight: 1.2;
+  --ew-line-height-base:  1.6;
+  --ew-line-height-loose: 1.8;
+
+  /* ─── 字重 ─── */
+  --ew-font-weight-regular:  400;
+  --ew-font-weight-medium:   500;
+  --ew-font-weight-semibold: 600;
+  --ew-font-weight-bold:     700;
+
+  /* ─── 展示型标题（remixicon 的优雅核心：细字重大字，quiet 而有腔调）─── */
+  --ew-font-family: "Inter", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --ew-display-weight:        400;  /* 展示标题默认细字重（remixicon hero 实测 weight 400） */
+  --ew-display-weight-strong: 600;  /* 强调型标题（launchos 语言，需冲击力时用） */
+  --ew-display-letter-spacing: -0.02em;
+  --ew-display-line-height: 1.15;
+
+  /* ─── 阴影层级（更轻更弥散：光是"托起"不是"投影"）─── */
+  --ew-shadow-1: 0 1px 2px rgba(26, 41, 71, 0.04), 0 2px 8px rgba(26, 41, 71, 0.03);
+  --ew-shadow-2: 0 1px 3px rgba(26, 41, 71, 0.04), 0 8px 24px rgba(26, 41, 71, 0.06);
+  --ew-shadow-3: 0 4px 12px rgba(26, 41, 71, 0.06), 0 16px 40px rgba(26, 41, 71, 0.08);
+  --ew-shadow-4: 0 24px 64px rgba(26, 41, 71, 0.12);
+  --ew-shadow-primary: 0 4px 14px rgba(var(--ew-color-primary-rgb), 0.24);
+
+  /* ─── 焦点光晕 ─── */
+  --ew-focus-ring: 0 0 0 2px var(--ew-color-primary-light-7);
+  --ew-focus-ring-offset: 2px;
+
+  /* ─── 圆角阶（官网语言整体更圆润）─── */
+  --ew-radius-sm:   6px;
+  --ew-radius-md:   10px;
+  --ew-radius-lg:   14px;
+  --ew-radius-xl:   20px;
+  --ew-radius-2xl:  28px;
+  --ew-radius-full: 999px;
+  --ew-radius-circle: 50%;
+
+  /* ─── 布局 ─── */
+  --ew-container-width: 1152px;
+  --ew-navbar-height: 64px;
+
+  /* ─── z-index 层级基准 ─── */
+  --ew-z-index-normal: 1;
+  --ew-z-index-sticky: 100;
+  --ew-z-index-overlay: 2000;
+}
+
+/* ══════ 暗色模式令牌重映射（html.dark，useTheme 驱动）══════
+   暗色表面取自 remixicon 暗色实测：#17171A / #232324 / #2A2A2B / #373739 */
+html.dark {
+  --ew-color-primary:         #4c91ff;
+  --ew-color-primary-light-3: #6ea6ff;
+  --ew-color-primary-light-5: #93bdff;
+  --ew-color-primary-light-7: #bdd6ff;
+  --ew-color-primary-light-8: #2c3b55;
+  --ew-color-primary-light-9: #1d2a42;
+  --ew-color-primary-dark-2:  #3d7ae0;
+  --ew-color-primary-rgb:     76, 145, 255;
+
+  --ew-text-primary:     #f2f4f8;
+  --ew-text-regular:     #a5adc0;
+  --ew-text-secondary:   #7a8194;
+  --ew-text-disabled:    #4d5261;
+  --ew-text-placeholder: #5b6172;
+  --ew-text-on-dark:     #f5f7fc;
+
+  --ew-bg-page:      #17171a;
+  --ew-bg-soft:      #1d1d21;
+  --ew-bg-muted:     #1a1a1e;
+  --ew-bg-container: #232324;
+  --ew-bg-hover:     #2a2a2b;
+  --ew-gradient-hero: linear-gradient(180deg, #1c1c20 0%, #19191c 55%, #17171a 100%);
+
+  --ew-pastel-cream: #2a2721;
+  --ew-pastel-blue:  #1e2a3d;
+  --ew-pastel-mint:  #1d2f26;
+  --ew-pastel-pink:  #32222e;
+  --ew-pastel-lime:  #272d1b;
+
+  --ew-color-accent-lime:     #a8d94e;
+  --ew-color-accent-lime-ink: #1c2606;
+
+  --ew-border-color:       #333335;
+  --ew-border-color-light: #2b2b2d;
+  --ew-border-color-dark:  #3d3d40;
+  --ew-border-sticker:     #232324;
+
+  --ew-fill-1: #232324;
+  --ew-fill-2: #2a2a2b;
+  --ew-fill-3: #373739;
+
+  --ew-shadow-1: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --ew-shadow-2: 0 1px 4px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --ew-shadow-3: 0 2px 8px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --ew-shadow-4: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --ew-shadow-primary: 0 4px 14px rgba(0, 0, 0, 0.4);
+
+  --ew-focus-ring: 0 0 0 2px rgba(var(--ew-color-primary-rgb), 0.45);
+}

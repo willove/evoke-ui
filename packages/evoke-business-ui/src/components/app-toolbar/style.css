@@ -1,0 +1,25 @@
+/* EvAppToolbar — 应用工具条（设计令牌驱动） */
+
+.ev-app-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-3);
+  flex-wrap: wrap;
+}
+.ev-app-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-3);
+}
+.ev-app-toolbar__search {
+  width: 220px;
+}
+.ev-app-toolbar__search .ev-input {
+  width: 100%;
+}
+.ev-app-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+}

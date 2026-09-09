@@ -1,0 +1,78 @@
+/* EvTypography — 排版家族（Title / Paragraph / 共享复制按钮） */
+
+/* ─── 标题刻度：对齐 --ev-font-size 阶梯 ─── */
+.ev-title {
+  margin: 0;
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-semibold);
+  line-height: var(--ev-line-height-tight);
+}
+
+.ev-title--level-1 {
+  font-size: var(--ev-font-size-2xl);
+  font-weight: var(--ev-font-weight-bold);
+}
+
+.ev-title--level-2 {
+  font-size: var(--ev-font-size-xl);
+}
+
+.ev-title--level-3 {
+  font-size: var(--ev-font-size-lg);
+}
+
+.ev-title--level-4 {
+  font-size: var(--ev-font-size-md);
+}
+
+.ev-title--level-5 {
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-regular);
+}
+
+/* ─── 段落 ─── */
+.ev-paragraph {
+  margin: 0;
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-loose);
+  word-break: break-word;
+}
+
+.ev-paragraph + .ev-paragraph {
+  margin-top: var(--ev-space-2);
+}
+
+.ev-paragraph:not(.is-ellipsis) {
+  max-width: 100%;
+}
+
+/* ─── 共享复制按钮 ─── */
+.ev-typography__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--ev-space-1);
+  color: var(--ev-text-color-secondary);
+  cursor: pointer;
+  opacity: 0;
+  vertical-align: middle;
+  border-radius: var(--ev-radius-sm);
+  padding: 2px;
+  transition:
+    opacity var(--ev-duration-fast) var(--ev-ease-out),
+    color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-title:hover .ev-typography__copy,
+.ev-paragraph:hover .ev-typography__copy,
+.ev-typography__copy:focus-visible {
+  opacity: 1;
+}
+
+.ev-typography__copy:hover {
+  color: var(--ev-color-primary);
+  background-color: var(--ev-fill-color);
+}

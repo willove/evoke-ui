@@ -1,0 +1,149 @@
+/* EvSpin — 加载指示器 */
+
+/* ─── 基础容器 ─── */
+.ev-spin-wrapper {
+  position: relative;
+}
+.ev-spin-wrapper--nested {
+  display: inline-block;
+  width: 100%;
+}
+
+/* ─── 加载状态 ─── */
+.ev-spin {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ev-space-2);
+}
+.ev-spin--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ev-spin--nested {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ev-spin--standalone {
+  display: inline-flex;
+}
+
+/* ─── 遮罩 ─── */
+.ev-spin__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--ev-bg-color);
+  opacity: 0.6;
+  pointer-events: all;
+}
+.ev-spin--fullscreen .ev-spin__overlay {
+  opacity: 0.8;
+}
+
+/* ─── 内容 ─── */
+.ev-spin__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ev-space-2);
+}
+
+/* ─── 旋转指示器 ─── */
+.ev-spin__spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ev-spin__dot-container {
+  position: relative;
+  width: var(--spin-size, 32px);
+  height: var(--spin-size, 32px);
+  animation: ev-spin-rotate 1.2s linear infinite;
+}
+.ev-spin__dot {
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: var(--ev-color-primary);
+  animation: ev-spin-bounce 1.2s ease-in-out infinite;
+}
+.ev-spin__dot:nth-child(1) { top: 0; left: 36%; animation-delay: 0s; }
+.ev-spin__dot:nth-child(2) { top: 36%; right: 0; animation-delay: -0.3s; }
+.ev-spin__dot:nth-child(3) { bottom: 0; left: 36%; animation-delay: -0.6s; }
+.ev-spin__dot:nth-child(4) { top: 36%; left: 0; animation-delay: -0.9s; }
+
+/* ─── 描述文字 ─── */
+.ev-spin__description {
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-base);
+  text-align: center;
+  line-height: 1.5;
+}
+.ev-spin__spinner--small ~ .ev-spin__description {
+  font-size: 12px;
+}
+.ev-spin__spinner--large ~ .ev-spin__description {
+  font-size: 16px;
+}
+
+/* ─── 进度条 ─── */
+.ev-spin__progress {
+  width: 100%;
+  max-width: 120px;
+}
+.ev-spin__progress-bar {
+  height: 2px;
+  background: var(--ev-fill-color);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.ev-spin__progress-inner {
+  height: 100%;
+  background: var(--ev-color-primary);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+/* ─── 内容模糊 ─── */
+.ev-spin__container {
+  transition: opacity 0.3s, filter 0.3s;
+}
+.ev-spin__container--blur {
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── 动画 ─── */
+@keyframes ev-spin-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ev-spin-bounce {
+  0%, 100% { opacity: 0.3; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── 过渡 ─── */
+.ev-spin-fade-enter-active,
+.ev-spin-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.ev-spin-fade-enter-from,
+.ev-spin-fade-leave-to {
+  opacity: 0;
+}

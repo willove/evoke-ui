@@ -1,0 +1,113 @@
+/* EwHero — 首屏区块 */
+
+.ew-hero {
+  padding: 96px 0 88px;
+}
+
+.ew-hero.is-tinted {
+  background-image: var(--ew-gradient-hero);
+}
+
+.ew-hero__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-16);
+}
+
+.ew-hero__inner.has-aside {
+  justify-content: space-between;
+}
+
+.ew-hero__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ew-hero.is-center .ew-hero__inner {
+  flex-direction: column;
+  text-align: center;
+}
+
+.ew-hero.is-center .ew-hero__description {
+  margin-inline: auto;
+}
+
+.ew-hero.is-center .ew-hero__actions,
+.ew-hero.is-center .ew-hero__badge {
+  justify-content: center;
+}
+
+/* ─── 顶部胶囊位 ─── */
+.ew-hero__badge {
+  display: flex;
+  margin-bottom: var(--ew-space-6);
+}
+
+/* ─── 展示标题：细字重大字（remixicon「Simply Delightful」气质核心）─── */
+.ew-hero__title {
+  font-size: clamp(34px, 4.6vw, 56px);
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+  color: var(--ew-text-primary);
+  text-wrap: balance;
+}
+
+.ew-hero__description {
+  max-width: 540px;
+  margin-top: var(--ew-space-5);
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ew-text-secondary);
+}
+
+/* ─── 动作区 ─── */
+.ew-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ew-space-3);
+  margin-top: var(--ew-space-8);
+}
+
+/* ─── 主体插槽（搜索框等大件）─── */
+.ew-hero__body {
+  margin-top: var(--ew-space-10);
+}
+
+/* ─── 右侧视觉位 ─── */
+.ew-hero__aside {
+  flex-shrink: 0;
+}
+
+@media (max-width: 960px) {
+  .ew-hero {
+    padding: 64px 0 56px;
+  }
+
+  .ew-hero__inner.has-aside {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ew-hero__aside {
+    display: none;
+  }
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-hero .ew-hero__title {
+  margin: 0;
+  font-size: clamp(34px, 4.6vw, 56px);
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+}
+
+.ew-hero .ew-hero__description {
+  margin: var(--ew-space-5) 0 0;
+  font-size: 17px;
+}

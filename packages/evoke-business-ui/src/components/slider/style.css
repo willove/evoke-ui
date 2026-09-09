@@ -1,0 +1,156 @@
+/* EvSlider —滑块 */
+
+.ev-slider.ev-slider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--ev-space-3);
+}
+
+.ev-slider.ev-slider .ev-slider__runway {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-border-color-light);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.ev-slider.ev-slider .ev-slider__runway.show-input {
+  flex: 1;
+}
+.ev-slider.ev-slider .ev-slider__runway.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ev-slider.ev-slider .ev-slider__bar {
+  position: absolute;
+  height: 100%;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-color-primary);
+  transition: width var(--ev-duration-fast) var(--ev-ease-out), left var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-slider.ev-slider .ev-slider__button-wrapper {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: grab;
+}
+.ev-slider.ev-slider .ev-slider__button-wrapper.is-dragging {
+  cursor: grabbing;
+}
+.ev-slider.ev-slider .ev-slider__button-wrapper:focus-visible .ev-slider__button {
+  box-shadow: var(--ev-focus-ring);
+}
+
+.ev-slider.ev-slider .ev-slider__button {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-bg-color);
+  border: 2px solid var(--ev-color-primary);
+  box-sizing: border-box;
+  transition: transform var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-slider.ev-slider .ev-slider__button-wrapper:hover .ev-slider__button,
+.ev-slider.ev-slider .ev-slider__button-wrapper.is-dragging .ev-slider__button {
+  transform: scale(1.15);
+}
+
+.ev-slider.ev-slider .ev-slider__stop {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-border-color);
+}
+
+.ev-slider.ev-slider .ev-slider__mark {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.ev-slider.ev-slider .ev-slider__mark-text {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  white-space: nowrap;
+}
+
+/* tooltip 气泡 */
+.ev-slider.ev-slider .ev-slider__tooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: var(--ev-radius-sm);
+  background-color: var(--ev-text-color-primary);
+  color: var(--ev-bg-color);
+  font-size: var(--ev-font-size-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 数值输入宽度 */
+.ev-slider.ev-slider .ev-slider__input {
+  width: 130px;
+  flex-shrink: 0;
+}
+
+/* 垂直模式 */
+.ev-slider.ev-slider.is-vertical {
+  display: inline-flex;
+  height: 100%;
+  width: auto;
+  gap: 0;
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__runway {
+  width: 6px;
+  height: 100%;
+  flex: none;
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__bar {
+  width: 100%;
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__button-wrapper {
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__stop {
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__mark {
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__mark-text {
+  top: auto;
+  left: 14px;
+  transform: translateY(-50%);
+}
+.ev-slider.ev-slider.is-vertical .ev-slider__tooltip {
+  bottom: auto;
+  left: calc(100% + 4px);
+  top: 50%;
+  transform: translateY(-50%);
+}

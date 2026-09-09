@@ -1,0 +1,7 @@
+packages:
+  - 'packages/*'
+  - 'docs'
+  - 'docs-web'
+  - 'examples/*'
+allowBuilds:
+  esbuild: true

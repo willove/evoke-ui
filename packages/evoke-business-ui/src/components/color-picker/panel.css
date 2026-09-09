@@ -1,0 +1,163 @@
+/* EvColorPickerPanel —取色面板 */
+
+.ev-color-dropdown.ev-color-dropdown {
+  width: 240px;
+  padding: var(--ev-space-3);
+  box-sizing: border-box;
+  background-color: var(--ev-bg-color);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-box-shadow-light);
+}
+
+.ev-color-dropdown.ev-color-dropdown.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__main-wrapper {
+  margin-bottom: var(--ev-space-2);
+}
+
+/* SV 面板 */
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel {
+  position: relative;
+  height: 140px;
+  border-radius: var(--ev-radius-sm);
+  cursor: crosshair;
+  overflow: hidden;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel__white,
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel__black {
+  position: absolute;
+  inset: 0;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel__white {
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel__black {
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-svpanel__cursor {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--ev-radius-full);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px rgba(0, 0, 0, 0.25);
+}
+
+/* 色相条 */
+.ev-color-dropdown.ev-color-dropdown .ev-color-hue-slider {
+  position: relative;
+  height: 12px;
+  margin-top: var(--ev-space-2);
+  border-radius: var(--ev-radius-sm);
+  background: linear-gradient(
+    to right,
+    #f00 0%,
+    #ff0 17%,
+    #0f0 33%,
+    #0ff 50%,
+    #00f 67%,
+    #f0f 83%,
+    #f00 100%
+  );
+  cursor: pointer;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-hue-slider__bar {
+  position: absolute;
+  inset: 0;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-hue-slider__thumb,
+.ev-color-dropdown.ev-color-dropdown .ev-color-alpha-slider__thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 14px;
+  border-radius: var(--ev-radius-xs);
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* 透明度条 */
+.ev-color-dropdown.ev-color-dropdown .ev-color-alpha-slider {
+  position: relative;
+  height: 12px;
+  margin-top: var(--ev-space-2);
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+  background-image: linear-gradient(45deg, var(--ev-fill-color-dark) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--ev-fill-color-dark) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--ev-fill-color-dark) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--ev-fill-color-dark) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-alpha-slider__bar {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* 预设色 */
+.ev-color-dropdown.ev-color-dropdown .ev-color-predefine {
+  margin-bottom: var(--ev-space-2);
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-predefine__colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ev-space-1);
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-predefine__color-selector {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--ev-border-color-lighter);
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+  transition: transform var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-predefine__color-selector:hover {
+  transform: scale(1.1);
+}
+
+/* 底部按钮区 */
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-2);
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__value-input {
+  width: 90px;
+  padding: 3px 6px;
+  font-size: var(--ev-font-size-xs);
+  font-family: inherit;
+  color: var(--ev-text-color-primary);
+  background: transparent;
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-sm);
+  outline: none;
+  box-sizing: border-box;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__value-input:focus {
+  border-color: var(--ev-color-primary);
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__link-btn {
+  padding: 4px 10px;
+  font-size: var(--ev-font-size-xs);
+  font-family: inherit;
+  color: var(--ev-color-primary);
+  background: transparent;
+  border: none;
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+}
+.ev-color-dropdown.ev-color-dropdown .ev-color-dropdown__link-btn:hover {
+  color: var(--ev-color-primary-light-3);
+  background-color: var(--ev-color-primary-light-9);
+}

@@ -1,0 +1,39 @@
+{
+  "name": "evoke-ui-project",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evoke UI Monorepo — Vue 3 中后台组件库（evoke-business-ui）+ 官网站点组件库（evoke-ui）+ 文档站 + 示例工程",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "build:ebui": "pnpm --filter @wil-works/evoke-business-ui build",
+    "build:eui": "pnpm --filter @wil-works/evoke-ui build",
+    "gen:icons:eui": "pnpm --filter @wil-works/evoke-ui gen:icons",
+    "docs:dev": "pnpm --filter @wil-works/evoke-business-ui-docs docs:dev",
+    "docs:build": "pnpm --filter @wil-works/evoke-business-ui-docs docs:build",
+    "docs:preview": "pnpm --filter @wil-works/evoke-business-ui-docs docs:preview",
+    "docs-web:dev": "pnpm --filter @wil-works/evoke-ui-docs docs:dev",
+    "docs-web:build": "pnpm --filter @wil-works/evoke-ui-docs docs:build",
+    "docs-web:preview": "pnpm --filter @wil-works/evoke-ui-docs docs:preview",
+    "playground:ebui": "pnpm --filter @wil-works/evoke-business-ui-playground dev",
+    "example:ebui-dashboard": "pnpm --filter @wil-works/ebui-example-dashboard dev",
+    "example:ebui-crud-list": "pnpm --filter @wil-works/ebui-example-crud-list dev",
+    "example:ebui-step-form": "pnpm --filter @wil-works/ebui-example-step-form dev",
+    "example:ebui-detail": "pnpm --filter @wil-works/ebui-example-detail dev",
+    "example:ebui-project": "pnpm --filter @wil-works/ebui-example-project dev",
+    "example:ebui-approval": "pnpm --filter @wil-works/ebui-example-approval dev",
+    "example:ebui-knowledge": "pnpm --filter @wil-works/ebui-example-knowledge dev",
+    "example:ebui-mobile": "pnpm --filter @wil-works/ebui-example-mobile dev",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.9",
+    "jsdom": "^29.1.0",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5",
+    "vue": "^3.5.33"
+  }
+}

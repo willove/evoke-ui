@@ -1,0 +1,100 @@
+/* EwInput — 文本输入 */
+
+.ew-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--ew-border-color);
+  border-radius: var(--ew-radius-md);
+  background-color: var(--ew-bg-container);
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-input:focus-within,
+.ew-input__inner:focus-visible {
+  outline: none;
+}
+
+.ew-input:focus-within {
+  border-color: var(--ew-color-primary-light-5);
+  box-shadow: var(--ew-focus-ring);
+}
+
+.ew-input__inner {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  border: none;
+  background: transparent;
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-primary);
+}
+
+.ew-input__inner::placeholder {
+  color: var(--ew-text-placeholder);
+}
+
+.ew-input__inner:focus,
+.ew-input__inner:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ─── 尺寸 ─── */
+.ew-input.is-small .ew-input__inner {
+  height: 30px;
+  font-size: var(--ew-font-size-xs);
+}
+
+.ew-input.is-large .ew-input__inner {
+  height: 46px;
+  font-size: var(--ew-font-size-base);
+}
+
+/* ─── 状态 ─── */
+.ew-input.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background-color: var(--ew-fill-1);
+}
+
+.ew-input.is-error {
+  border-color: var(--ew-color-danger-light-5);
+}
+
+.ew-input.is-error:focus-within {
+  border-color: var(--ew-color-danger);
+  box-shadow: 0 0 0 2px rgba(var(--ew-color-danger-rgb), 0.15);
+}
+
+.ew-input__prefix,
+.ew-input__suffix {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ew-text-placeholder);
+}
+
+.ew-input__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--ew-radius-circle);
+  background-color: var(--ew-fill-2);
+  color: var(--ew-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out),
+    color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-input__clear:hover {
+  background-color: var(--ew-fill-3);
+  color: var(--ew-text-primary);
+}

@@ -1,0 +1,67 @@
+/* EvFloatButtonGroup — 悬浮按钮组 */
+.ev-float-button-group {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ev-space-2);
+  z-index: var(--ev-z-index-popper);
+}
+
+.ev-float-button-group--up {
+  flex-direction: column;
+}
+
+.ev-float-button-group--down {
+  flex-direction: column-reverse;
+}
+
+/* ─── 子按钮列表 ─── */
+.ev-float-button-group__list {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+}
+
+.ev-float-button-group__list--up {
+  flex-direction: column;
+}
+
+.ev-float-button-group__list--down {
+  flex-direction: column-reverse;
+}
+
+/* ─── 展开动画：子项从主按钮方向滑入 ─── */
+.ev-float-list-enter-active {
+  transition:
+    opacity var(--ev-duration-base) var(--ev-ease-out),
+    transform var(--ev-duration-base) var(--ev-ease-out-back);
+}
+
+.ev-float-list-leave-active {
+  transition:
+    opacity var(--ev-duration-fast) var(--ev-ease-in),
+    transform var(--ev-duration-fast) var(--ev-ease-in);
+}
+
+.ev-float-list-enter-from,
+.ev-float-list-leave-to {
+  opacity: 0;
+}
+
+.ev-float-button-group--up .ev-float-list-enter-from,
+.ev-float-button-group--up .ev-float-list-leave-to {
+  transform: translateY(12px) scale(0.85);
+}
+
+.ev-float-button-group--down .ev-float-list-enter-from,
+.ev-float-button-group--down .ev-float-list-leave-to {
+  transform: translateY(-12px) scale(0.85);
+}
+
+/* ─── 触发主按钮：展开时旋转图标 ─── */
+.ev-float-button-group__trigger .ev-button .ev-button__icon {
+  transition: transform var(--ev-duration-base) var(--ev-ease-out-back);
+}
+
+.ev-float-button-group.is-open .ev-float-button-group__trigger .ev-button .ev-button__icon {
+  transform: rotate(135deg);
+}

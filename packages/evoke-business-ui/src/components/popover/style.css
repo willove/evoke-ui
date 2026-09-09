@@ -1,0 +1,21 @@
+/* EvPopover —气泡卡片 */
+
+.ev-popper.ev-popover.ev-popover {
+  min-width: 150px;
+  padding: 12px;
+  border-radius: var(--ev-radius-md);
+}
+
+.ev-popper.ev-popover.ev-popover .ev-popover__title {
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+  line-height: 1.4;
+  margin-bottom: var(--ev-space-2);
+}
+
+.ev-popper.ev-popover.ev-popover .ev-popover__content {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-regular);
+  line-height: 1.6;
+}

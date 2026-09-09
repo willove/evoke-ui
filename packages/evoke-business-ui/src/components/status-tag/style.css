@@ -1,0 +1,5 @@
+/* EvStatusTag — 状态标签（业务封装，样式走 EvTag） */
+
+.ev-status-tag {
+  display: inline-flex;
+}

@@ -1,0 +1,24 @@
+/* EvPageHeader — 页头（设计令牌驱动） */
+
+.ev-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--ev-space-6);
+}
+.ev-page-header__main h2 {
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+  margin: 0;
+}
+.ev-page-header__main p {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  margin: 2px 0 0;
+}
+.ev-page-header__actions {
+  display: flex;
+  gap: var(--ev-space-2);
+  flex-shrink: 0;
+}

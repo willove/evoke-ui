@@ -1,0 +1,90 @@
+/* EvCheckboxButton — 按钮风格多选 */
+
+.ev-checkbox-button.ev-checkbox-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--ev-button-bg-color, var(--ev-fill-color-blank));
+  border: 1px solid var(--ev-border-color);
+  color: var(--ev-text-color-regular);
+  -webkit-appearance: none;
+  user-select: none;
+}
+.ev-checkbox-button.ev-checkbox-button--large.ev-checkbox-button {
+  height: 40px;
+}
+.ev-checkbox-button.ev-checkbox-button--small.ev-checkbox-button {
+  height: 24px;
+  font-size: var(--ev-font-size-xs);
+}
+
+.ev-checkbox-button.ev-checkbox-button + .ev-checkbox-button.ev-checkbox-button {
+  margin-left: -1px;
+}
+.ev-checkbox-button.ev-checkbox-button:first-child {
+  border-radius: var(--ev-radius-md) 0 0 var(--ev-radius-md);
+}
+.ev-checkbox-button.ev-checkbox-button:last-child {
+  border-radius: 0 var(--ev-radius-md) var(--ev-radius-md) 0;
+}
+
+.ev-checkbox-button.ev-checkbox-button .ev-checkbox-button__inner {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 15px;
+  font-size: var(--ev-font-size-base);
+  line-height: 1;
+  border-radius: inherit;
+  transition:
+    color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-checkbox-button.ev-checkbox-button--small.ev-checkbox-button .ev-checkbox-button__inner {
+  padding: 0 11px;
+}
+
+.ev-checkbox-button.ev-checkbox-button .ev-checkbox-button__original-checkbox {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin: 0;
+  cursor: inherit;
+}
+
+.ev-checkbox-button.ev-checkbox-button:not(.is-disabled):not(.is-checked):hover {
+  color: var(--ev-color-primary);
+  z-index: 1;
+}
+
+.ev-checkbox-button.ev-checkbox-button.is-checked .ev-checkbox-button__inner {
+  color: #fff;
+  background-color: var(--ev-color-primary);
+  border-color: var(--ev-color-primary);
+  box-shadow: -1px 0 0 0 var(--ev-color-primary);
+  position: relative;
+  z-index: 1;
+}
+.ev-checkbox-button.ev-checkbox-button.is-checked {
+  border-color: var(--ev-color-primary);
+  z-index: 1;
+}
+
+.ev-checkbox-button.ev-checkbox-button.is-disabled {
+  cursor: not-allowed;
+  color: var(--ev-text-color-placeholder);
+  background-color: var(--ev-fill-color-light);
+  border-color: var(--ev-border-color-light);
+}
+.ev-checkbox-button.ev-checkbox-button.is-disabled .ev-checkbox-button__inner {
+  color: inherit;
+  background: transparent;
+}
+.ev-checkbox-button.ev-checkbox-button.is-disabled.is-checked .ev-checkbox-button__inner {
+  background-color: var(--ev-color-primary-light-5);
+  box-shadow: none;
+}

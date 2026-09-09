@@ -1,0 +1,150 @@
+/* EwButton — 按钮 */
+
+.ew-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ew-space-2);
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: var(--ew-radius-md);
+  font-size: var(--ew-font-size-base);
+  font-weight: var(--ew-font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-button:active:not(.is-disabled) {
+  transform: scale(0.98);
+}
+
+/* ─── 尺寸 ─── */
+.ew-button--small {
+  height: 32px;
+  padding: 0 12px;
+  font-size: var(--ew-font-size-sm);
+  border-radius: var(--ew-radius-sm);
+}
+
+.ew-button--large {
+  height: 46px;
+  padding: 0 26px;
+  font-size: var(--ew-font-size-md);
+}
+
+/* ─── 胶囊形态 ─── */
+.ew-button.is-pill,
+.ew-button.is-pill.ew-button--small,
+.ew-button.is-pill.ew-button--large {
+  border-radius: var(--ew-radius-full);
+}
+
+/* ─── 块级 ─── */
+.ew-button.is-block {
+  display: flex;
+  width: 100%;
+}
+
+/* ─── 变体 ─── */
+.ew-button.is-primary {
+  background-color: var(--ew-color-primary);
+  color: #ffffff;
+}
+
+.ew-button.is-primary:hover:not(.is-disabled) {
+  background-color: var(--ew-color-primary-light-3);
+  box-shadow: var(--ew-shadow-primary);
+}
+
+.ew-button.is-primary:active:not(.is-disabled) {
+  background-color: var(--ew-color-primary-dark-2);
+}
+
+.ew-button.is-dark {
+  background-color: var(--ew-color-ink);
+  color: #ffffff;
+}
+
+html.dark .ew-button.is-dark {
+  background-color: var(--ew-text-primary);
+  color: var(--ew-color-ink);
+}
+
+.ew-button.is-dark:hover:not(.is-disabled) {
+  background-color: #2a3a5c;
+  box-shadow: var(--ew-shadow-2);
+}
+
+html.dark .ew-button.is-dark:hover:not(.is-disabled) {
+  background-color: #ffffff;
+}
+
+.ew-button.is-soft {
+  background-color: var(--ew-fill-1);
+  color: var(--ew-text-primary);
+}
+
+.ew-button.is-soft:hover:not(.is-disabled) {
+  background-color: var(--ew-fill-2);
+  box-shadow: var(--ew-shadow-1);
+}
+
+.ew-button.is-outline {
+  background-color: transparent;
+  border-color: var(--ew-border-color-dark);
+  color: var(--ew-text-primary);
+}
+
+.ew-button.is-outline:hover:not(.is-disabled) {
+  border-color: var(--ew-color-primary-light-5);
+  color: var(--ew-color-primary);
+  background-color: var(--ew-color-primary-light-9);
+}
+
+.ew-button.is-ghost {
+  background-color: transparent;
+  color: var(--ew-text-secondary);
+}
+
+.ew-button.is-ghost:hover:not(.is-disabled) {
+  color: var(--ew-text-primary);
+  background-color: var(--ew-fill-1);
+}
+
+/* ─── 状态 ─── */
+.ew-button.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ─── 仅图标 ─── */
+.ew-button.is-icon-only {
+  width: 40px;
+  padding: 0;
+}
+
+.ew-button--small.is-icon-only {
+  width: 32px;
+}
+
+.ew-button--large.is-icon-only {
+  width: 46px;
+}
+
+.ew-button__content {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ew-button__icon--right {
+  margin-left: calc(var(--ew-space-1) * -1);
+}

@@ -1,0 +1,108 @@
+/* EvStack — 堆叠卡片（设计令牌驱动） */
+
+.ev-stack {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.ev-stack__inner {
+  position: absolute;
+  inset: 0;
+}
+
+.ev-stack__item {
+  will-change: transform;
+  transition:
+    top var(--ev-stack-duration, 450ms) var(--ev-ease-in-out),
+    left var(--ev-stack-duration, 450ms) var(--ev-ease-in-out);
+}
+
+/* 顶卡 hover 微位移 */
+.ev-stack__item.is-top {
+  transition:
+    top var(--ev-stack-duration, 450ms) var(--ev-ease-in-out),
+    left var(--ev-stack-duration, 450ms) var(--ev-ease-in-out),
+    transform calc(var(--ev-stack-duration) / 2) var(--ev-ease-out);
+}
+.ev-stack__item.is-top:hover {
+  transform: translate(var(--ev-stack-hover-x, 0px), var(--ev-stack-hover-y, -2px));
+}
+
+/* hover peel：被提升的卡浮出，其上卡片沿 direction 错位让位 */
+.ev-stack__item.is-peeled {
+  z-index: calc(var(--ev-stack-total, 10) + 2) !important;
+  transform: translate(0, 0);
+}
+.ev-stack__item.is-above-peeled {
+  transform: translate(var(--ev-stack-peel-x, 0px), var(--ev-stack-peel-y, -24px));
+}
+
+/* 顶卡飞出（cycle/remove） */
+.ev-stack__item.is-leaving {
+  opacity: 1;
+}
+.ev-stack__item.is-leaving-active {
+  opacity: 0;
+  transform: translate(var(--ev-stack-fly-x, 0px), var(--ev-stack-fly-y, -48px)) rotate(var(--ev-stack-rotate, 8deg));
+  transition:
+    transform var(--ev-stack-duration-leave, 270ms) var(--ev-ease-in-out),
+    opacity var(--ev-stack-duration-leave, 270ms) var(--ev-ease-in-out);
+}
+
+/* 新顶卡进入 */
+.ev-stack__item.is-entering {
+  animation: ev-stack-enter var(--ev-stack-duration-enter, 315ms) var(--ev-ease-out);
+}
+
+@keyframes ev-stack-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--ev-stack-enter-x, 0px), var(--ev-stack-enter-y, 24px)) rotate(calc(var(--ev-stack-rotate, 8deg) / -2));
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* card 变体 */
+.ev-stack__card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--ev-space-3);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-bg-color);
+  border: 1px solid var(--ev-border-color-light);
+  box-shadow: var(--ev-stack-item-shadow, var(--ev-shadow-1));
+  color: var(--ev-text-color-primary);
+  font-size: var(--ev-font-size-base);
+  display: flex;
+  align-items: center;
+  transform: scale(var(--ev-stack-card-scale, 1));
+  transform-origin: center;
+  overflow: hidden;
+}
+
+/* circular 变体 */
+.ev-stack__circle {
+  box-sizing: border-box;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-fill-color-light);
+  border: 1px solid var(--ev-border-color-light);
+  box-shadow: var(--ev-stack-item-shadow, var(--ev-shadow-1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: scale(var(--ev-stack-card-scale, 1));
+}
+.ev-stack__circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ev-stack__circle .ev-stack__text {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-regular);
+}

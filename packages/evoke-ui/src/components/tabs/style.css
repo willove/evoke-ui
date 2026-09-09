@@ -1,0 +1,120 @@
+/* EwTabs — 标签页/分段控件 */
+
+.ew-tabs {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* ══════ capsule 分段胶囊 ══════ */
+.ew-tabs.is-capsule {
+  position: relative;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-fill-1);
+}
+
+/* 弹性滑块：跟随激活项平滑移动 */
+.ew-tabs.is-capsule .ew-tabs__thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-1);
+  transition: transform var(--ew-duration-slow) var(--ew-ease-spring),
+    width var(--ew-duration-slow) var(--ew-ease-spring);
+}
+
+.ew-tabs.is-capsule .ew-tabs__item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--ew-radius-full);
+  background: transparent;
+  font-size: var(--ew-font-size-sm);
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-tabs.is-capsule .ew-tabs__item:hover:not(.is-active):not(.is-disabled) {
+  color: var(--ew-text-primary);
+}
+
+.ew-tabs.is-capsule .ew-tabs__item.is-active {
+  color: var(--ew-text-primary);
+}
+
+.ew-tabs.is-capsule.is-small .ew-tabs__item {
+  height: 26px;
+  padding: 0 11px;
+  font-size: var(--ew-font-size-xs);
+}
+
+.ew-tabs.is-capsule.is-large .ew-tabs__item {
+  height: 36px;
+  padding: 0 18px;
+  font-size: var(--ew-font-size-base);
+}
+
+/* ══════ underline 下划线 ══════ */
+.ew-tabs.is-underline {
+  gap: var(--ew-space-2);
+  border-bottom: 1px solid var(--ew-border-color-light);
+}
+
+.ew-tabs.is-underline .ew-tabs__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  margin-bottom: -1px;
+  border: none;
+  background: transparent;
+  font-size: var(--ew-font-size-base);
+  color: var(--ew-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-tabs.is-underline .ew-tabs__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--ew-radius-full);
+  background-color: transparent;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-tabs.is-underline .ew-tabs__item:hover:not(.is-active):not(.is-disabled) {
+  color: var(--ew-text-primary);
+}
+
+.ew-tabs.is-underline .ew-tabs__item.is-active {
+  color: var(--ew-color-primary);
+}
+
+.ew-tabs.is-underline .ew-tabs__item.is-active::after {
+  background-color: var(--ew-color-primary);
+}
+
+/* ─── 禁用 ─── */
+.ew-tabs .ew-tabs__item.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}

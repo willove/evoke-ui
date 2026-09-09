@@ -1,0 +1,83 @@
+/* EvLink —文字链接 */
+
+.ev-link.ev-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+  outline: none;
+  cursor: pointer;
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-base);
+  color: var(--ev-text-color-regular);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-link.ev-link:hover {
+  color: var(--ev-color-primary-light-3);
+}
+
+.ev-link.ev-link.ev-link--default:hover {
+  color: var(--ev-color-primary);
+}
+.ev-link.ev-link.ev-link--primary {
+  color: var(--ev-color-primary);
+}
+.ev-link.ev-link.ev-link--primary:hover {
+  color: var(--ev-color-primary-light-3);
+}
+.ev-link.ev-link.ev-link--success {
+  color: var(--ev-color-success);
+}
+.ev-link.ev-link.ev-link--success:hover {
+  color: var(--ev-color-success-light-3);
+}
+.ev-link.ev-link.ev-link--warning {
+  color: var(--ev-color-warning);
+}
+.ev-link.ev-link.ev-link--warning:hover {
+  color: var(--ev-color-warning-light-3);
+}
+.ev-link.ev-link.ev-link--info {
+  color: var(--ev-text-color-secondary);
+}
+.ev-link.ev-link.ev-link--info:hover {
+  color: var(--ev-text-color-secondary);
+}
+.ev-link.ev-link.ev-link--danger {
+  color: var(--ev-color-danger);
+}
+.ev-link.ev-link.ev-link--danger:hover {
+  color: var(--ev-color-danger-light-3);
+}
+
+/* underline: always（默认） */
+.ev-link.ev-link.is-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  border-bottom: 1px solid currentColor;
+}
+/* underline: hover（仅显式声明 hover 策略时生效，never / false 不出现下划线） */
+.ev-link.ev-link.is-underline-hover:not(.is-disabled):hover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  border-bottom: 1px solid currentColor;
+}
+
+.ev-link.ev-link.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ev-link.ev-link .ev-link__inner {
+  display: inline-flex;
+  align-items: center;
+}

@@ -1,0 +1,75 @@
+/* EwProfileCard — 个人名片 */
+
+.ew-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--ew-space-8) var(--ew-space-6);
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-xl);
+  background-color: var(--ew-bg-container);
+}
+
+.ew-profile-card.is-plain {
+  border-color: transparent;
+  background: transparent;
+  padding: 0;
+}
+
+.ew-profile-card__avatar {
+  margin-bottom: var(--ew-space-4);
+}
+
+.ew-profile-card__name {
+  font-size: var(--ew-font-size-lg);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+  color: var(--ew-text-primary);
+}
+
+.ew-profile-card__role {
+  margin-top: 4px;
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-secondary);
+}
+
+.ew-profile-card__bio {
+  margin-top: var(--ew-space-3);
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-regular);
+  max-width: 320px;
+}
+
+.ew-profile-card__stats {
+  display: flex;
+  gap: var(--ew-space-6);
+  margin-top: var(--ew-space-5);
+}
+
+.ew-profile-card__social {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  margin-top: var(--ew-space-5);
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-profile-card .ew-profile-card__name {
+  margin: 0;
+  font-size: var(--ew-font-size-lg);
+}
+
+.ew-profile-card .ew-profile-card__role {
+  margin: 4px 0 0;
+  font-size: var(--ew-font-size-sm);
+}
+
+.ew-profile-card .ew-profile-card__bio {
+  margin: var(--ew-space-3) 0 0;
+  font-size: var(--ew-font-size-sm);
+}

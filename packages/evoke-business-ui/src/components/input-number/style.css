@@ -1,0 +1,146 @@
+/* EvInputNumber — 计数器
+   单一描边容器三段式（对齐 antd 视觉）：[-│输入│+] 共用一个圆角边框，
+   分隔线为中缝 1px，按钮不再各自带底色圆角 */
+
+.ev-input-number.ev-input-number {
+  --ev-input-number-height: var(--ev-component-size);
+  position: relative;
+  /* flex 布局：按钮与输入框贴合，消除 inline 空白间隔 */
+  display: inline-flex;
+  align-items: stretch;
+  width: 180px;
+  height: var(--ev-input-number-height);
+  line-height: 1;
+  background-color: var(--ev-fill-color-blank);
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  overflow: hidden;
+  transition: border-color var(--ev-transition-duration-fast) var(--ev-ease-out);
+}
+.ev-input-number.ev-input-number--large.ev-input-number {
+  --ev-input-number-height: var(--ev-component-size-large);
+}
+.ev-input-number.ev-input-number--small.ev-input-number {
+  --ev-input-number-height: var(--ev-component-size-small);
+}
+
+.ev-input-number.ev-input-number:hover {
+  border-color: var(--ev-border-color-hover);
+}
+.ev-input-number.ev-input-number:focus-within {
+  border-color: var(--ev-input-focus-border-color);
+}
+
+.ev-input-number.ev-input-number .ev-input__wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.ev-input-number.ev-input-number .ev-input__inner {
+  flex: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-base);
+  text-align: center;
+  padding: 0 6px;
+  height: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.ev-input-number.ev-input-number .ev-input__inner::-webkit-outer-spin-button,
+.ev-input-number.ev-input-number .ev-input__inner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.ev-input-number.ev-input-number .ev-input__inner::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+
+.ev-input-number.ev-input-number.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  border-color: var(--ev-disabled-border-color);
+  cursor: not-allowed;
+}
+.ev-input-number.ev-input-number.is-disabled .ev-input__inner {
+  color: var(--ev-disabled-text-color);
+  cursor: not-allowed;
+}
+
+/* ─── 控制按钮（默认：两侧，与 wrapper 为 flex 兄弟节点，中缝分隔线） ─── */
+.ev-input-number.ev-input-number .ev-input-number__decrease,
+.ev-input-number.ev-input-number .ev-input-number__increase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  align-self: stretch;
+  color: var(--ev-text-color-regular);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+  user-select: none;
+}
+.ev-input-number.ev-input-number .ev-input-number__decrease {
+  border-right: 1px solid var(--ev-border-color);
+}
+.ev-input-number.ev-input-number .ev-input-number__increase {
+  border-left: 1px solid var(--ev-border-color);
+}
+.ev-input-number.ev-input-number .ev-input-number__decrease:hover:not(.is-disabled),
+.ev-input-number.ev-input-number .ev-input-number__increase:hover:not(.is-disabled) {
+  color: var(--ev-color-primary);
+  background-color: var(--ev-fill-color-light);
+}
+.ev-input-number.ev-input-number .ev-input-number__decrease.is-disabled,
+.ev-input-number.ev-input-number .ev-input-number__increase.is-disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+.ev-input-number.ev-input-number.is-disabled .ev-input-number__decrease,
+.ev-input-number.ev-input-number.is-disabled .ev-input-number__increase {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+
+/* ─── controls-position="right"（右上/右下，覆盖式绝对定位） ─── */
+.ev-input-number.ev-input-number.is-controls-right .ev-input__inner {
+  padding: 0 36px;
+}
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__decrease,
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__increase {
+  position: absolute;
+  right: 0;
+  width: 32px;
+  height: 50%;
+  background: transparent;
+  border-left: 1px solid var(--ev-border-color);
+}
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__increase {
+  top: 0;
+  border-bottom: 1px solid var(--ev-border-color);
+}
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__decrease {
+  bottom: 0;
+}
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__decrease .ev-icon,
+.ev-input-number.ev-input-number.is-controls-right .ev-input-number__increase .ev-icon {
+  transform: scale(0.8);
+}
+
+/* 无控制按钮：仅输入框 */
+.ev-input-number.ev-input-number:not(.is-controls-right) .ev-input__inner {
+  padding: 0 6px;
+}
+.ev-input-number.ev-input-number.is-without-controls .ev-input__inner {
+  padding: 0 12px;
+  text-align: left;
+}

@@ -1,0 +1,173 @@
+/* EwTag — 胶囊标签 */
+
+.ew-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: var(--ew-radius-full);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-tag--small {
+  height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.ew-tag--large {
+  height: 28px;
+  padding: 0 12px;
+  font-size: var(--ew-font-size-sm);
+}
+
+/* ─── 关闭钮 ─── */
+.ew-tag__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-tag__close:hover {
+  opacity: 1;
+}
+
+/* ══════ neutral（remixdesign 灰 pill / remixicon 计数胶囊）══════ */
+.ew-tag.is-neutral.is-soft {
+  background-color: var(--ew-fill-1);
+  color: var(--ew-text-regular);
+}
+
+.ew-tag.is-neutral.is-soft:hover {
+  background-color: var(--ew-fill-2);
+}
+
+.ew-tag.is-neutral.is-solid {
+  background-color: var(--ew-color-info);
+  color: #ffffff;
+}
+
+.ew-tag.is-neutral.is-outline {
+  border-color: var(--ew-border-color-dark);
+  color: var(--ew-text-regular);
+}
+
+/* ══════ 语义 tone（soft 淡底 / solid 实底 / outline 描边）══════ */
+.ew-tag.is-primary.is-soft {
+  background-color: var(--ew-color-primary-light-9);
+  color: var(--ew-color-primary);
+}
+
+.ew-tag.is-primary.is-solid {
+  background-color: var(--ew-color-primary);
+  color: #ffffff;
+}
+
+.ew-tag.is-primary.is-outline {
+  border-color: var(--ew-color-primary-light-5);
+  color: var(--ew-color-primary);
+}
+
+.ew-tag.is-success.is-soft {
+  background-color: var(--ew-color-success-light-9);
+  color: var(--ew-color-success);
+}
+
+.ew-tag.is-success.is-solid {
+  background-color: var(--ew-color-success);
+  color: #ffffff;
+}
+
+.ew-tag.is-success.is-outline {
+  border-color: var(--ew-color-success-light-5);
+  color: var(--ew-color-success);
+}
+
+.ew-tag.is-warning.is-soft {
+  background-color: var(--ew-color-warning-light-9);
+  color: var(--ew-color-warning);
+}
+
+.ew-tag.is-warning.is-solid {
+  background-color: var(--ew-color-warning);
+  color: #ffffff;
+}
+
+.ew-tag.is-warning.is-outline {
+  border-color: var(--ew-color-warning-light-5);
+  color: var(--ew-color-warning);
+}
+
+.ew-tag.is-danger.is-soft {
+  background-color: var(--ew-color-danger-light-9);
+  color: var(--ew-color-danger);
+}
+
+.ew-tag.is-danger.is-solid {
+  background-color: var(--ew-color-danger);
+  color: #ffffff;
+}
+
+.ew-tag.is-danger.is-outline {
+  border-color: var(--ew-color-danger-light-5);
+  color: var(--ew-color-danger);
+}
+
+.ew-tag.is-info.is-soft {
+  background-color: var(--ew-color-info-light-9);
+  color: var(--ew-color-info);
+}
+
+.ew-tag.is-info.is-solid {
+  background-color: var(--ew-color-info);
+  color: #ffffff;
+}
+
+.ew-tag.is-info.is-outline {
+  border-color: var(--ew-color-info-light-5);
+  color: var(--ew-color-info);
+}
+
+/* ══════ lime（launchos「SAVE 50%」黄绿促销徽章）══════ */
+.ew-tag.is-lime.is-soft,
+.ew-tag.is-lime.is-solid {
+  background-color: var(--ew-color-accent-lime);
+  color: var(--ew-color-accent-lime-ink);
+}
+
+.ew-tag.is-lime.is-outline {
+  border-color: var(--ew-color-accent-lime);
+  color: var(--ew-color-accent-lime-ink);
+}
+
+/* ══════ orange（launchos「Public Beta Offer」促销橙）══════ */
+.ew-tag.is-orange.is-soft {
+  background-color: var(--ew-color-warning-light-9);
+  color: var(--ew-color-accent-orange);
+}
+
+.ew-tag.is-orange.is-solid {
+  background-color: var(--ew-color-accent-orange);
+  color: #ffffff;
+}
+
+.ew-tag.is-orange.is-outline {
+  border-color: var(--ew-color-accent-orange);
+  color: var(--ew-color-accent-orange);
+}

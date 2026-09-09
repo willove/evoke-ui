@@ -1,0 +1,146 @@
+/* EvMenu —菜单 */
+
+.ev-menu.ev-menu {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--ev-menu-bg-color, var(--ev-bg-color));
+  color: var(--ev-menu-text-color, var(--ev-text-color-primary));
+}
+
+/* ── 菜单项 ── */
+.ev-menu.ev-menu .ev-menu-item,
+.ev-menu.ev-menu .ev-sub-menu__title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  box-sizing: border-box;
+  height: var(--ev-menu-item-height, 40px);
+  padding: 0 var(--ev-space-4);
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-menu-item-height, 40px);
+  list-style: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out),
+    border-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-menu.ev-menu .ev-menu-item:hover,
+.ev-menu.ev-menu .ev-sub-menu__title:hover {
+  background-color: var(--ev-menu-hover-bg-color, var(--ev-fill-color-light));
+}
+
+.ev-menu.ev-menu .ev-menu-item.is-active {
+  color: var(--ev-menu-active-color, var(--ev-color-primary));
+  font-weight: var(--ev-font-weight-medium);
+}
+
+.ev-menu.ev-menu .ev-menu-item.is-disabled,
+.ev-menu.ev-menu .ev-sub-menu.is-disabled > .ev-sub-menu__title {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* ── 子菜单标题/箭头 ── */
+.ev-menu.ev-menu .ev-sub-menu__title {
+  justify-content: flex-start;
+}
+.ev-menu.ev-menu .ev-sub-menu__title > * {
+  flex-shrink: 0;
+}
+.ev-menu.ev-menu .ev-sub-menu__icon-arrow {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ev-text-color-secondary);
+  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-menu.ev-menu .ev-sub-menu.is-opened > .ev-sub-menu__title .ev-sub-menu__icon-arrow {
+  transform: rotate(180deg);
+}
+
+/* inline 子菜单 */
+.ev-menu.ev-menu .ev-menu--inline {
+  overflow: hidden;
+  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+  will-change: height;
+  background-color: var(--ev-menu-bg-color, var(--ev-bg-color));
+}
+.ev-menu.ev-menu .ev-menu--inline .ev-menu-item {
+  padding-left: calc(var(--ev-space-4) + var(--ev-space-4));
+  min-width: 0;
+}
+
+/* ── 水平模式 ── */
+.ev-menu.ev-menu.ev-menu--horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  border-bottom: 1px solid var(--ev-border-color-light);
+}
+.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item,
+.ev-menu.ev-menu.ev-menu--horizontal > .ev-sub-menu > .ev-sub-menu__title {
+  height: var(--ev-menu-horizontal-height, 48px);
+  line-height: var(--ev-menu-horizontal-height, 48px);
+  padding: 0 var(--ev-space-4);
+  border-bottom: 2px solid transparent;
+}
+.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item.is-active {
+  border-bottom-color: var(--ev-menu-active-color, var(--ev-color-primary));
+}
+.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item:hover,
+.ev-menu.ev-menu.ev-menu--horizontal > .ev-sub-menu > .ev-sub-menu__title:hover {
+  background-color: transparent;
+}
+
+/* ── 折叠 ── */
+.ev-menu.ev-menu.ev-menu--collapse {
+  width: 64px;
+}
+.ev-menu.ev-menu.ev-menu--collapse > .ev-menu-item,
+.ev-menu.ev-menu.ev-menu--collapse > .ev-sub-menu > .ev-sub-menu__title {
+  justify-content: center;
+  padding: 0;
+}
+.ev-menu.ev-menu.ev-menu--collapse .ev-sub-menu__icon-arrow {
+  display: none;
+}
+
+/* ── 分组 ── */
+.ev-menu.ev-menu .ev-menu-item-group__title {
+  padding: var(--ev-space-3) var(--ev-space-4) var(--ev-space-1);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  line-height: 1.5;
+}
+.ev-menu.ev-menu .ev-menu-item-group__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ── popper 弹层面板 ── */
+.ev-menu.ev-menu.ev-menu__popper {
+  padding: var(--ev-space-1) 0;
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-box-shadow-light);
+}
+.ev-menu.ev-menu.ev-menu__popper .ev-menu-item,
+.ev-menu.ev-menu.ev-menu__popper .ev-sub-menu__title {
+  height: 34px;
+  line-height: 34px;
+}
+
+/* inline 展开过渡 */
+.ev-sub-menu-collapse-enter-active,
+.ev-sub-menu-collapse-leave-active {
+  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+}

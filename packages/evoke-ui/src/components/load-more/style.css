@@ -1,0 +1,49 @@
+/* EwLoadMore — 上拉加载 / 加载更多 */
+.ew-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+  color: var(--ew-text-regular);
+  font-size: var(--ew-font-size-sm);
+}
+.ew-load-more__sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+}
+.ew-load-more__body {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+.ew-load-more__body:disabled {
+  cursor: default;
+}
+.ew-load-more.is-noMore .ew-load-more__body {
+  color: var(--ew-text-disabled);
+}
+.ew-load-more.is-error .ew-load-more__body {
+  color: var(--ew-color-danger);
+}
+.ew-load-more__text {
+  line-height: 20px;
+}
+.ew-load-more__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ew-border-color-dark);
+  border-top-color: var(--ew-color-primary);
+  border-radius: 50%;
+  animation: ew-load-more-spin 0.8s linear infinite;
+}
+@keyframes ew-load-more-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

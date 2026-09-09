@@ -1,0 +1,176 @@
+/* EvCommandPalette — 命令面板（设计令牌驱动） */
+
+.ev-command-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh var(--ev-space-4) var(--ev-space-4);
+}
+
+.ev-command-palette__panel {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  background: var(--ev-bg-color);
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-xl);
+  box-shadow: var(--ev-shadow-4, var(--ev-box-shadow-dark));
+  overflow: hidden;
+}
+
+/* ─── 搜索区 ─── */
+.ev-command-palette__search {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-3) var(--ev-space-4);
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+.ev-command-palette__search-icon {
+  color: var(--ev-text-color-secondary);
+  flex-shrink: 0;
+}
+.ev-command-palette__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-primary);
+  font-size: var(--ev-font-size-md);
+  font-family: inherit;
+}
+.ev-command-palette__input::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+
+/* ─── 列表区 ─── */
+.ev-command-palette__list {
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: var(--ev-space-2);
+}
+.ev-command-palette__group-label {
+  padding: var(--ev-space-2) var(--ev-space-3) var(--ev-space-1);
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ev-command-palette__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-2) var(--ev-space-3);
+  border: none;
+  border-radius: var(--ev-radius-md);
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-sm);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-command-palette__item.is-active {
+  background: var(--ev-color-primary-light-9);
+  color: var(--ev-color-primary);
+}
+.ev-command-palette__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--ev-text-color-secondary);
+}
+.ev-command-palette__item.is-active .ev-command-palette__item-icon {
+  color: var(--ev-color-primary);
+}
+.ev-command-palette__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ev-command-palette__item-hint {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+/* ─── 空态 / 底栏 ─── */
+.ev-command-palette__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ev-space-2);
+  padding: 32px 0;
+  color: var(--ev-text-color-placeholder);
+  font-size: var(--ev-font-size-sm);
+}
+.ev-command-palette__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-4);
+  padding: var(--ev-space-2) var(--ev-space-4);
+  border-top: 1px solid var(--ev-border-color-lighter);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-placeholder);
+}
+.ev-command-palette__kbd {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: 1px solid var(--ev-border-color);
+  border-bottom-width: 2px;
+  border-radius: var(--ev-radius-xs);
+  background: var(--ev-fill-color-light);
+  color: var(--ev-text-color-secondary);
+  text-transform: uppercase;
+}
+.ev-command-palette__kbd--item {
+  margin-left: auto;
+}
+
+/* ─── 过渡 ─── */
+.ev-cp-enter-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-cp-enter-active .ev-command-palette__panel {
+  transition:
+    transform var(--ev-duration-slow) var(--ev-ease-out-back),
+    opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-cp-leave-active {
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-cp-enter-from,
+.ev-cp-leave-to {
+  opacity: 0;
+}
+.ev-cp-enter-from .ev-command-palette__panel {
+  transform: translateY(-12px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-cp-enter-active,
+  .ev-cp-enter-active .ev-command-palette__panel,
+  .ev-cp-leave-active {
+    transition: none;
+  }
+}

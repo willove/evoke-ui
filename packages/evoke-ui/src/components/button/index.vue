@@ -1,0 +1,100 @@
+<template>
+  <button
+    ref="btnRef"
+    :class="[
+      'ew-button',
+      `ew-button--${sizeClass}`,
+      `is-${variant}`,
+      {
+        'is-pill': pill,
+        'is-block': block,
+        'is-disabled': disabled || loading,
+        'is-loading': loading,
+        'is-icon-only': iconOnly,
+      },
+    ]"
+    :type="nativeType"
+    :disabled="disabled || loading"
+    :aria-disabled="disabled || loading"
+    @click="handleClick"
+  >
+    <span v-if="loading" class="ew-button__loading">
+      <EwIcon name="loading" :size="iconSize" class="is-rotating" />
+    </span>
+    <EwIcon v-else-if="icon" :name="icon" :size="iconSize" class="ew-button__icon" />
+    <span v-if="$slots.default" class="ew-button__content"><slot /></span>
+    <EwIcon
+      v-if="iconRight && !loading"
+      :name="iconRight"
+      :size="iconSize"
+      class="ew-button__icon ew-button__icon--right"
+    />
+  </button>
+</template>
+
+<script setup>
+/**
+ * EwButton — 按钮（官网 CTA 语言）
+ * variant：primary 蓝色实心 / dark 墨色实心（launchos 黑胶囊 CTA）/
+ *          soft 柔和底（remixicon 头部下载钮）/ outline / ghost
+ * 默认 radius-lg 圆润矩形，pill 转全圆胶囊
+ */
+import { ref, computed, useSlots } from 'vue'
+import EwIcon from '../icon/index.vue'
+
+const props = defineProps({
+  /** 视觉变体 */
+  variant: {
+    type: String,
+    default: 'primary',
+    validator: (v) => ['primary', 'dark', 'soft', 'outline', 'ghost'].includes(v),
+  },
+  size: {
+    type: String,
+    default: 'default',
+    validator: (v) => ['small', 'default', 'large'].includes(v),
+  },
+  /** 全圆胶囊形态（launchos CTA 语言） */
+  pill: { type: Boolean, default: false },
+  /** 块级铺满 */
+  block: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  /** 左侧图标名（kebab-case） */
+  icon: { type: String, default: undefined },
+  /** 右侧图标名（如 arrow-right 引导跳转） */
+  iconRight: { type: String, default: undefined },
+  nativeType: {
+    type: String,
+    default: 'button',
+    validator: (v) => ['button', 'submit', 'reset'].includes(v),
+  },
+})
+
+const emit = defineEmits(['click'])
+const slots = useSlots()
+const btnRef = ref(null)
+
+// 仅图标无文本时自动方/圆形态
+const iconOnly = computed(() => !slots.default && (!!props.icon || !!props.loading))
+
+const sizeClass = computed(() => (props.size === 'default' ? 'md' : props.size))
+
+const iconSize = computed(() => (props.size === 'small' ? 14 : props.size === 'large' ? 18 : 16))
+
+function handleClick(e) {
+  if (props.disabled || props.loading) {
+    e.preventDefault()
+    return
+  }
+  emit('click', e)
+}
+
+defineExpose({
+  ref: btnRef,
+  focus: (...args) => btnRef.value?.focus?.(...args),
+  blur: (...args) => btnRef.value?.blur?.(...args),
+})
+</script>
+
+<style src="./style.css"></style>

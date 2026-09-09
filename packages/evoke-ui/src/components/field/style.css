@@ -1,0 +1,32 @@
+/* EwField — 表单字段包装 */
+
+.ew-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ew-field__label {
+  font-size: var(--ew-font-size-sm);
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-primary);
+}
+
+.ew-field__required {
+  margin-left: 2px;
+  color: var(--ew-color-danger);
+}
+
+.ew-field__control {
+  min-width: 0;
+}
+
+.ew-field__error {
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-color-danger);
+}
+
+.ew-field__hint {
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+}

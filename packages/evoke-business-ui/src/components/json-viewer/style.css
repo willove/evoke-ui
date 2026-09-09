@@ -1,0 +1,117 @@
+/* EvJsonViewer — JSON 查看器（设计令牌驱动） */
+
+.ev-json-viewer {
+  --jv-string: #16a34a;
+  --jv-number: #175dff;
+  --jv-boolean: #9333ea;
+  --jv-null: #9ca3af;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.ev-json-viewer__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-1) var(--ev-space-2);
+  margin-bottom: var(--ev-space-1);
+  background: var(--ev-fill-color-light);
+  border-radius: var(--ev-radius-sm);
+}
+
+.ev-json-viewer__type {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+
+.ev-json-viewer__btn {
+  border: none;
+  background: transparent;
+  color: var(--ev-text-color-secondary);
+  font-size: var(--ev-font-size-xs);
+  padding: 2px var(--ev-space-2);
+  border-radius: var(--ev-radius-xs);
+  cursor: pointer;
+  transition:
+    color var(--ev-duration-fast) var(--ev-ease-out),
+    background var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-json-viewer__btn:hover {
+  color: var(--ev-color-primary);
+  background: var(--ev-fill-color);
+}
+
+.ev-json-viewer__content {
+  font-size: var(--ev-font-size-xs);
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.ev-json-viewer__line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.ev-json-viewer__line--head {
+  cursor: pointer;
+}
+.ev-json-viewer__line--head:hover .ev-json-viewer__key {
+  color: var(--ev-color-primary);
+}
+
+.ev-json-viewer__key {
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-medium);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-json-viewer__value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--ev-space-1);
+}
+
+.ev-json-viewer__preview {
+  color: var(--ev-text-color-placeholder);
+  margin: 0 var(--ev-space-1);
+}
+
+.ev-json-viewer__bracket {
+  color: var(--ev-text-color-secondary);
+}
+
+.ev-json-viewer__caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: var(--ev-space-1);
+  border-left: 4px solid var(--ev-text-color-placeholder);
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  transition: transform var(--ev-duration-fast) var(--ev-ease-out);
+  cursor: pointer;
+  flex-shrink: 0;
+  align-self: center;
+}
+.ev-json-viewer__caret.is-open {
+  transform: rotate(90deg);
+}
+
+.ev-json-viewer__children {
+  padding-left: var(--ev-space-4);
+  border-left: 1px solid var(--ev-border-color-lighter);
+  margin-left: var(--ev-space-1);
+}
+
+.ev-json-viewer__toggle-inline {
+  border: none;
+  background: transparent;
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-xs);
+  cursor: pointer;
+  padding: 0;
+}

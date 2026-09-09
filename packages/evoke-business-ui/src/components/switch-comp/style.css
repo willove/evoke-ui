@@ -1,0 +1,136 @@
+/* EvSwitch —开关 */
+
+.ev-switch.ev-switch {
+  --ev-switch-on-color: var(--ev-color-primary);
+  --ev-switch-off-color: var(--ev-border-color);
+  --ev-switch-core-height: 20px;
+  --ev-switch-core-width: 40px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  height: 32px;
+  cursor: pointer;
+  font-size: var(--ev-font-size-base);
+  vertical-align: middle;
+  user-select: none;
+}
+.ev-switch.ev-switch--large.ev-switch {
+  --ev-switch-core-height: 24px;
+  --ev-switch-core-width: 48px;
+  height: 40px;
+}
+.ev-switch.ev-switch--small.ev-switch {
+  --ev-switch-core-height: 16px;
+  --ev-switch-core-width: 32px;
+  height: 24px;
+}
+
+.ev-switch.ev-switch.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.ev-switch.ev-switch.is-loading {
+  cursor: wait;
+}
+
+.ev-switch.ev-switch .ev-switch__input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  margin: 0;
+}
+
+.ev-switch.ev-switch {
+  --ev-switch-core-width: 40px;
+  --ev-switch-core-height: 20px;
+}
+.ev-switch.ev-switch .ev-switch__core {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: var(--ev-switch-core-width);
+  height: var(--ev-switch-core-height);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-switch-off-color);
+  transition: background-color var(--ev-duration-base) var(--ev-ease-out);
+  box-sizing: border-box;
+  outline: none;
+}
+.ev-switch.ev-switch.is-checked .ev-switch__core {
+  background-color: var(--ev-switch-on-color);
+}
+
+.ev-switch.ev-switch .ev-switch__action {
+  position: absolute;
+  left: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--ev-switch-core-height) - 4px);
+  height: calc(var(--ev-switch-core-height) - 4px);
+  border-radius: var(--ev-radius-circle);
+  background-color: var(--ev-color-white);
+  color: var(--ev-color-primary);
+  transition: transform var(--ev-duration-base) var(--ev-ease-out-back);
+  box-shadow: var(--ev-shadow-1);
+  z-index: 1;
+}
+.ev-switch.ev-switch.is-checked .ev-switch__action {
+  transform: translateX(calc(var(--ev-switch-core-width) - var(--ev-switch-core-height) + 2px));
+}
+
+/* 文本（非 inline-prompt：core 内两侧） */
+.ev-switch.ev-switch .ev-switch__inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 6px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.ev-switch.ev-switch .ev-switch__inner-left,
+.ev-switch.ev-switch .ev-switch__inner-right {
+  font-size: 12px;
+  color: #fff;
+  line-height: 1;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ev-switch.ev-switch .ev-switch__inner-left.is-hidden,
+.ev-switch.ev-switch .ev-switch__inner-right.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.ev-switch.ev-switch:not(.is-checked) .ev-switch__inner-left {
+  padding-left: 14px;
+}
+.ev-switch.ev-switch.is-checked .ev-switch__inner-right {
+  padding-right: 14px;
+}
+
+/* 焦点反馈 */
+.ev-switch.ev-switch .ev-switch__core:focus-visible {
+  box-shadow: 0 0 0 2px var(--ev-color-primary-light-5);
+}
+
+/* 非 inline 文案：开关外侧两侧（checked 时激活侧文案呈主色） */
+.ev-switch.ev-switch .ev-switch__label {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  line-height: 1;
+  user-select: none;
+}
+/* 文案与开关本体的间距 */
+.ev-switch.ev-switch .ev-switch__label:not(:last-child) {
+  margin-right: 10px;
+}
+.ev-switch.ev-switch .ev-switch__label:last-child {
+  margin-left: 10px;
+}
+.ev-switch.ev-switch.is-checked .ev-switch__label--active {
+  color: var(--ev-color-primary);
+}

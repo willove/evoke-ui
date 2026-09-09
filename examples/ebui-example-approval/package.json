@@ -1,0 +1,20 @@
+{
+  "name": "@wil-works/ebui-example-approval",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Evoke Business UI 企业示例 — 报销与审批中心",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@wil-works/evoke-business-ui": "workspace:*",
+    "vue": "^3.5.42"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.0.10"
+  }
+}

@@ -1,0 +1,247 @@
+/* ============================================
+   Evoke Business UI — 基础样式
+   reset + 动效规范 + 焦点样式 + 滚动条 + 主题过渡
+   ============================================ */
+
+/* ─── CSS Reset ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ══════ 全局动效规范 ══════ */
+
+/* 可访问性：尊重用户减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 基础过渡类 — 状态切换统一使用 */
+.ev-transition {
+  transition: all var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-transition-fast {
+  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-transition-slow {
+  transition: all var(--ev-duration-slow) var(--ev-ease-out);
+}
+
+/* 进入/退出动效 */
+@keyframes ev-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ev-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes ev-slide-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ev-slide-up-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes ev-slide-down-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ev-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes ev-zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes ev-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+@keyframes ev-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ev-anim-fade-in {
+  animation: ev-fade-in var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-anim-slide-up {
+  animation: ev-slide-up-in var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-anim-slide-down {
+  animation: ev-slide-down-in var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-anim-zoom-in {
+  animation: ev-zoom-in var(--ev-duration-slow) var(--ev-ease-out-back);
+}
+.ev-anim-shake {
+  animation: ev-shake 0.4s var(--ev-ease-in-out);
+}
+
+/* ══════ 焦点样式统一 ══════ */
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ev-focus-ring);
+  outline-offset: var(--ev-focus-ring-offset);
+  transition: box-shadow var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+/* 重置 button/input 等原生 focus 样式（由组件 wrapper 控制聚焦态） */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* 输入类组件 — 由 wrapper 控制聚焦样式，禁用原生 focus-visible 外发光 */
+.ev-input__inner:focus-visible,
+.ev-select__input:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+
+/* textarea 聚焦样式在 inner 元素上，只清除 outline 保留 inset 边框 */
+.ev-textarea__inner:focus-visible {
+  outline: none;
+}
+
+/* 按钮组件 focus 样式增强 */
+.ev-button:focus-visible {
+  box-shadow: var(--ev-focus-ring) !important;
+}
+
+/* ══════ 文档基准 ══════ */
+
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+  font-family: var(--ev-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 主题过渡：html 也需过渡，避免首次切换瞬间背景突变 */
+html {
+  transition:
+    background-color var(--ev-duration-base) ease,
+    color var(--ev-duration-base) ease;
+}
+
+/* 原生 UI 适配：颜色方案声明，让浏览器原生控件/滚动条等跟随主题 */
+:root {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--ev-bg-color-page);
+  color: var(--ev-text-color-primary);
+  font-size: var(--ev-font-size-base);
+  line-height: 1.6;
+  transition:
+    background-color var(--ev-duration-base) ease,
+    color var(--ev-duration-base) ease,
+    border-color var(--ev-duration-base) ease;
+}
+
+/* ─── Scrollbar（细滚动条，中后台密集数据友好） ─── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ev-border-color);
+  border-radius: 3px;
+}
+
+/* ══════ 数据字体规范 ══════
+   表格与统计数字启用等宽数字（tabular-nums），多行数值纵向严格对齐 */
+.ev-table,
+.ev-data-table,
+.ev-stat-card__value,
+.ev-stat-row,
+.ev-descriptions__content {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════ 双 class 规范说明 ══════
+   组件根节点挂 `ev-xxx ev-xxx` 双类；数据组件内部结构类名保持稳定
+   （.ev-table__row / .ev-form-item__label / .cell 等），保证消费方
+   既有 .ev-* CSS 覆盖在新库下继续生效。详见 docs/COMPONENT_GUIDE.md
+   ═══════════════════════════════════ */

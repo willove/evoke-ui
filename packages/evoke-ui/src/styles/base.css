@@ -1,0 +1,71 @@
+/* ============================================
+   Evoke UI — 全局基础样式
+   元素级 reset + 排版基线 + 链接
+   （工具类/焦点/滚动条/reveal 在 utilities.css，由 index.css 聚合）
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* 平滑主题切换 */
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out),
+    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+body {
+  font-family: var(--ew-font-family);
+  font-size: var(--ew-font-size-base);
+  line-height: 1.7; /* 官网排版：正文更透气 */
+  color: var(--ew-text-primary);
+  background-color: var(--ew-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 官网排版基线：标题默认细字重展示体（remixicon 语言），需要冲击时用 strong */
+h1, h2, h3, h4 {
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+  color: var(--ew-text-primary);
+}
+
+p {
+  color: var(--ew-text-regular);
+}
+
+a {
+  color: var(--ew-color-primary);
+  text-decoration: none;
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+a:hover {
+  color: var(--ew-color-primary-light-3);
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+::selection {
+  background: rgba(var(--ew-color-primary-rgb), 0.18);
+}

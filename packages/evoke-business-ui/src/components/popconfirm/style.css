@@ -1,0 +1,44 @@
+/* EvPopconfirm —气泡确认框 */
+
+.ev-popper.ev-popconfirm.ev-popconfirm {
+  min-width: 200px;
+  padding: 12px;
+}
+
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__main {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  margin-bottom: var(--ev-space-3);
+}
+
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon {
+  flex-shrink: 0;
+}
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon.is-warning {
+  color: var(--ev-color-warning);
+}
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon.is-primary {
+  color: var(--ev-color-primary);
+}
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon.is-success {
+  color: var(--ev-color-success);
+}
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon.is-danger {
+  color: var(--ev-color-danger);
+}
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__icon.is-info {
+  color: var(--ev-color-info);
+}
+
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__title {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-primary);
+  line-height: 1.4;
+}
+
+.ev-popper.ev-popconfirm.ev-popconfirm .ev-popconfirm__action {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ev-space-2);
+}

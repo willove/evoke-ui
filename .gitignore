@@ -1,0 +1,17 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+.env
+.env.local
+*.local
+
+# VitePress：只忽略构建产物与缓存，config / theme / 插件源码必须进 git
+**/.vitepress/cache/
+**/.vitepress/dist/
+
+# AI 工具会话状态
+.mimosa/
+
+# 内部开发文档（路线图 / 迁移计划等，不随仓库发布）
+.dev-docs/

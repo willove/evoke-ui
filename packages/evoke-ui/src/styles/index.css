@@ -1,0 +1,14 @@
+/* ============================================
+   Evoke UI — 统一样式入口
+
+   import '@wil-works/evoke-ui/styles'
+   ============================================ */
+
+/* 设计变量（Launch Blue #0D70FF，--ew-* 语义层 + --ew-* 设计层） */
+@import './variables.css';
+
+/* 工具类（容器/焦点/滚动条/reveal 浮现） */
+@import './utilities.css';
+
+/* 基础样式（元素级 reset + 排版基线 + 链接） */
+@import './base.css';

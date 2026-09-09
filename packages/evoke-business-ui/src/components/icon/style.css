@@ -1,0 +1,30 @@
+/* EvIcon — 图标容器 */
+.ev-icon {
+  --font-size: 16px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  fill: currentColor;
+  /* 跟随上下文文字色（如 primary 按钮内呈白），独立使用时继承父级 */
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+  height: 1em;
+  width: 1em;
+  cursor: inherit;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ev-icon > svg {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 旋转动画（loading 类图标消费） */
+.ev-icon.is-rotating > svg {
+  animation: ev-rotate 1s linear infinite;
+}

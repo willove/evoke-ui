@@ -1,0 +1,46 @@
+/* EvSectionCard — 区块卡片（设计令牌驱动） */
+
+.ev-section-card {
+  background: var(--ev-bg-color);
+  border-radius: var(--ev-radius-lg);
+  border: 1px solid var(--ev-border-color-light);
+  box-sizing: border-box;
+  transition:
+    border-color var(--ev-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-section-card:hover {
+  border-color: var(--ev-border-color);
+}
+.ev-section-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ev-space-3) var(--ev-space-5);
+  border-bottom: 1px solid var(--ev-border-color-light);
+}
+.ev-section-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+}
+.ev-section-card__header-left h3 {
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+  margin: 0;
+}
+.ev-section-card__body {
+  padding: var(--ev-space-5);
+}
+.ev-section-card__body--no-padding {
+  padding: 0;
+}
+
+/* extra 插槽容器：多个根节点保持成组靠右，避免被 header 的 space-between 摊开 */
+.ev-section-card__extra {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  flex-shrink: 0;
+}

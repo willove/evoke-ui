@@ -1,0 +1,48 @@
+/* EvBadge —徽标 */
+
+.ev-badge.ev-badge {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.ev-badge.ev-badge .ev-badge__content {
+  --ev-badge-bg-color: var(--ev-color-danger);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 6px;
+  font-size: var(--ev-font-size-xs);
+  line-height: 1;
+  color: var(--ev-color-white);
+  background-color: var(--ev-badge-bg-color);
+  border-radius: var(--ev-radius-full);
+  white-space: nowrap;
+}
+.ev-badge.ev-badge .ev-badge__content--primary { --ev-badge-bg-color: var(--ev-color-primary); }
+.ev-badge.ev-badge .ev-badge__content--success { --ev-badge-bg-color: var(--ev-color-success); }
+.ev-badge.ev-badge .ev-badge__content--warning { --ev-badge-bg-color: var(--ev-color-warning); }
+.ev-badge.ev-badge .ev-badge__content--info { --ev-badge-bg-color: var(--ev-color-info); }
+
+/* fixed：右上角 */
+.ev-badge.ev-badge .ev-badge__content.is-fixed {
+  position: absolute;
+  top: 0;
+  right: calc(1 * var(--ev-badge-size, 18px) / 2 + 1px);
+  transform: translateY(-50%) translateX(100%);
+  z-index: calc(var(--ev-index-normal, 1) + 1);
+}
+
+/* dot */
+.ev-badge.ev-badge .ev-badge__content.is-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: var(--ev-radius-circle);
+}
+.ev-badge.ev-badge .ev-badge__content.is-dot.is-fixed {
+  top: 4px;
+  right: 4px;
+  transform: none;
+}

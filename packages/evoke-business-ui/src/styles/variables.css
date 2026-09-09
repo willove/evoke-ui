@@ -1,0 +1,300 @@
+/* ============================================
+   Evoke Business Design System — Minimal Deep Blue
+   深蓝主色 · 极简风格 · 明暗自适应
+
+   Token 双层架构（隔离铁律：本库不依赖、不引用任何第三方
+   组件库命名；全库仅使用 --ev-* 单一命名空间，
+   由 scripts/check-token-rule.mjs 构建期强制检查）：
+   - 语义层（颜色/文字/背景/边框/填充）：消费方的主题 API 入口
+   - 设计层（动效/间距/字号/阴影/圆角/密度）：本库设计语言
+   ============================================ */
+
+:root {
+  /* ══════ 主色：天亮蓝 ══════ */
+  --ev-color-primary:         #175DFF;
+  --ev-color-primary-light-3: #5c89ff;
+  --ev-color-primary-light-5: #8baeff;
+  --ev-color-primary-light-7: #b9d2ff;
+  --ev-color-primary-light-8: #d0e1ff;
+  --ev-color-primary-light-9: #e8f0ff;
+  --ev-color-primary-dark-2:  #124acc;
+  --ev-color-primary-rgb:     23, 93, 255;
+
+  /* ══════ Evoke 设计令牌 ══════ */
+
+  /* ─── 动效曲线 ─── */
+  --ev-ease-out:     cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ev-ease-in:      cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ev-ease-in-out:  cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ev-ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --ev-ease-out-back:cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ev-ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ev-ease-linear:  linear;
+
+  /* ─── 动效时长 ─── */
+  --ev-duration-fast:   0.1s;
+  --ev-duration-base:   0.2s;
+  --ev-duration-slow:   0.3s;
+  --ev-duration-slower: 0.45s;
+
+  /* ─── 间距系统（4px 网格）─── */
+  --ev-space-1:  4px;
+  --ev-space-2:  8px;
+  --ev-space-3:  12px;
+  --ev-space-4:  16px;
+  --ev-space-5:  20px;
+  --ev-space-6:  24px;
+  --ev-space-7:  28px;
+  --ev-space-8:  32px;
+  --ev-space-10: 40px;
+  --ev-space-12: 48px;
+
+  /* ─── 字号层级（统一为单一刻度）─── */
+  --ev-font-size-xs:  12px;
+  --ev-font-size-sm:  13px;
+  --ev-font-size-base: 14px;
+  --ev-font-size-md:  16px;
+  --ev-font-size-lg:  20px;
+  --ev-font-size-xl:  24px;
+  --ev-font-size-2xl: 32px;
+  --ev-font-size-3xl: 40px;
+
+  /* ─── 行高 ─── */
+  --ev-line-height-tight: 1.3;
+  --ev-line-height-base:  1.5714;
+  --ev-line-height-loose: 1.8;
+
+  /* ─── 字重 ─── */
+  --ev-font-weight-regular: 400;
+  --ev-font-weight-medium:  500;
+  --ev-font-weight-semibold: 600;
+  --ev-font-weight-bold:   700;
+
+  /* ─── 字体（系统字体栈，无 CDN 依赖，Electron 离线安全）─── */
+  --ev-font-family: "Inter", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+
+  /* ─── 阴影层级（5 级）─── */
+  --ev-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
+  --ev-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --ev-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --ev-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --ev-shadow-5: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+
+  /* ─── 焦点光晕 ─── */
+  --ev-focus-ring: 0 0 0 2px var(--ev-color-primary-light-7);
+  --ev-focus-ring-offset: 2px;
+
+  /* ─── 圆角阶（唯一圆角刻度）─── */
+  --ev-radius-xs: 2px;
+  --ev-radius-sm: 4px;
+  --ev-radius-md: 6px;
+  --ev-radius-lg: 8px;
+  --ev-radius-xl: 12px;
+  --ev-radius-full: 9999px;
+  --ev-radius-circle: 50%;
+
+  /* ─── z-index 层级基准（浮层管理器消费）─── */
+  --ev-index-normal: 1;
+  --ev-z-index-popper: 2000;
+  --ev-z-index-overlay: 2000;
+
+  /* ══════ 语义色 ══════ */
+
+  /* 成功 */
+  --ev-color-success:         #16a34a;
+  --ev-color-success-light-3: #52ba78;
+  --ev-color-success-light-5: #8bd1a5;
+  --ev-color-success-light-7: #c0e7d1;
+  --ev-color-success-light-8: #d7f1e2;
+  --ev-color-success-light-9: #ebf8f1;
+  --ev-color-success-dark-2:  #12823b;
+  --ev-color-success-rgb:     22, 163, 74;
+
+  /* 警告 */
+  --ev-color-warning:         #d97706;
+  --ev-color-warning-light-3: #e49a43;
+  --ev-color-warning-light-5: #ecbb83;
+  --ev-color-warning-light-7: #f5dcbf;
+  --ev-color-warning-light-8: #f8ebd7;
+  --ev-color-warning-light-9: #fcf5eb;
+  --ev-color-warning-dark-2:  #ae5f05;
+  --ev-color-warning-rgb:     217, 119, 6;
+
+  /* 危险 */
+  --ev-color-danger:          #dc2626;
+  --ev-color-danger-light-3:  #e65b5b;
+  --ev-color-danger-light-5:  #ee9393;
+  --ev-color-danger-light-7:  #f6c9c9;
+  --ev-color-danger-light-8:  #fbe0e0;
+  --ev-color-danger-light-9:  #fef2f2;
+  --ev-color-danger-dark-2:   #b01e1e;
+  --ev-color-danger-rgb:      220, 38, 38;
+
+  /* 信息 */
+  --ev-color-info:            #64748b;
+  --ev-color-info-light-3:    #8b98aa;
+  --ev-color-info-light-5:    #b2bac9;
+  --ev-color-info-light-7:    #d9dde4;
+  --ev-color-info-light-8:    #e8ebee;
+  --ev-color-info-light-9:    #f4f5f7;
+  --ev-color-info-dark-2:     #505d6f;
+  --ev-color-info-rgb:        100, 116, 139;
+
+  /* 危险/错误别名 */
+  --ev-color-error:           var(--ev-color-danger);
+  --ev-color-error-light-3:   var(--ev-color-danger-light-3);
+  --ev-color-error-light-5:   var(--ev-color-danger-light-5);
+  --ev-color-error-light-7:   var(--ev-color-danger-light-7);
+  --ev-color-error-light-8:   var(--ev-color-danger-light-8);
+  --ev-color-error-light-9:   var(--ev-color-danger-light-9);
+  --ev-color-error-dark-2:    var(--ev-color-danger-dark-2);
+  --ev-color-error-rgb:       var(--ev-color-danger-rgb);
+  --ev-text-color-danger:     var(--ev-color-danger);
+
+  /* ══════ 扩展分类色（标签 / 徽标 / 图表多系列；浅底档经 color-mix 派生）══════ */
+  --ev-color-ext-cyan:    #0891B2;
+  --ev-color-ext-teal:    #14B8A6;
+  --ev-color-ext-violet:  #8B5CF6;
+  --ev-color-ext-magenta: #DB2777;
+  --ev-color-ext-indigo:  #4F46E5;
+  --ev-color-ext-lime:    #65A30D;
+  --ev-color-ext-amber:   #F59E0B;
+  --ev-color-ext-slate:   #475569;
+
+  --ev-color-ext-cyan-light:    color-mix(in srgb, var(--ev-color-ext-cyan) 12%, white);
+  --ev-color-ext-teal-light:    color-mix(in srgb, var(--ev-color-ext-teal) 12%, white);
+  --ev-color-ext-violet-light:  color-mix(in srgb, var(--ev-color-ext-violet) 12%, white);
+  --ev-color-ext-magenta-light: color-mix(in srgb, var(--ev-color-ext-magenta) 12%, white);
+  --ev-color-ext-indigo-light:  color-mix(in srgb, var(--ev-color-ext-indigo) 12%, white);
+  --ev-color-ext-lime-light:    color-mix(in srgb, var(--ev-color-ext-lime) 12%, white);
+  --ev-color-ext-amber-light:   color-mix(in srgb, var(--ev-color-ext-amber) 12%, white);
+  --ev-color-ext-slate-light:   color-mix(in srgb, var(--ev-color-ext-slate) 12%, white);
+
+  /* ─── 文字 ─── */
+  --ev-text-color-primary:    #111827;
+  --ev-text-color-regular:    #374151;
+  --ev-text-color-secondary:  #6b7280;
+  --ev-text-color-placeholder:#9ca3af;
+  --ev-text-color-disabled:   #d1d5db;
+
+  /* ─── 背景 ─── */
+  --ev-bg-color:              #ffffff;
+  --ev-bg-color-page:         #f9fafb;
+  --ev-bg-color-overlay:      #ffffff;
+  --ev-color-white:           #ffffff;
+  --ev-color-black:           #000000;
+
+  /* ─── 边框（整体调淡一档：仍可辨识，但不过重）─── */
+  --ev-border-color:          #e0e3ea;
+  --ev-border-color-hover:    #c9ced9;
+  --ev-border-color-light:    #e8ebf1;
+  --ev-border-color-lighter:  #eef1f6;
+  --ev-border-color-extra-light: #f4f6f9;
+  --ev-border-color-dark:     #d6d9e0;
+
+  /* ─── 填充 ─── */
+  --ev-fill-color:            #f3f4f6;
+  --ev-fill-color-light:      #f9fafb;
+  --ev-fill-color-lighter:    #fcfcfd;
+  --ev-fill-color-extra-light:#fefefe;
+  --ev-fill-color-blank:      #ffffff;
+  --ev-fill-color-dark:       #e5e7eb;
+  --ev-fill-color-darker:     #d1d5db;
+
+  /* ─── 禁用态 ─── */
+  --ev-disabled-bg-color:     var(--ev-fill-color-light);
+  --ev-disabled-text-color:   var(--ev-text-color-placeholder);
+  --ev-disabled-border-color: var(--ev-border-color-light);
+
+  /* ─── 遮罩 ─── */
+  --ev-overlay-color:         rgba(0, 0, 0, 0.5);
+  --ev-overlay-color-lighter: rgba(0, 0, 0, 0.3);
+  --ev-mask-color:            rgba(0, 0, 0, 0.5);
+
+  /* ─── 圆角别名（历史引用过渡）─── */
+  --ev-border-radius-base:    var(--ev-radius-md);
+
+  /* ─── 阴影 — 极简 ─── */
+  --ev-box-shadow:            0 1px 2px rgba(0,0,0,.04);
+  --ev-box-shadow-light:      0 1px 2px rgba(0,0,0,.03);
+  --ev-box-shadow-lighter:    none;
+  --ev-box-shadow-dark:       0 2px 8px rgba(0,0,0,.06);
+
+  /* ─── 弹窗 ─── */
+  --ev-dialog-padding-primary: 20px;
+  --ev-messagebox-padding-primary: 20px;
+  --ev-dialog-margin-top: 15vh;
+
+  /* ─── 过渡 ─── */
+  --ev-transition-duration:     0.2s;
+  --ev-transition-duration-fast: 0.12s;
+  --ev-transition-fast: all var(--ev-duration-fast) var(--ev-ease-out);
+  --ev-transition-all: all var(--ev-transition-duration) var(--ev-ease-out);
+
+  /* ══════ 控件尺寸与密度 ══════
+     数据应用密度三档；全局切换：html 设置 data-ev-density="compact | default | loose" */
+  --ev-control-h-sm: 24px;   /* 紧凑工具栏：内嵌操作、表格行内按钮 */
+  --ev-control-h-md: 28px;   /* 标准工具栏：筛选、搜索、分段控件 */
+  --ev-control-h-lg: 32px;   /* 主操作：主按钮、对话框表单 */
+
+  --ev-component-size-small: 24px;
+  --ev-component-size:       32px;
+  --ev-component-size-large: 40px;
+
+  /* ══════ 表单控件变量兜底（组件内可局部覆盖）══════ */
+  --ev-input-text-color:        var(--ev-text-color-regular);
+  --ev-input-placeholder-color: var(--ev-text-color-placeholder);
+  --ev-input-icon-color:        var(--ev-text-color-placeholder);
+  --ev-input-border-color:      var(--ev-border-color);
+  --ev-input-hover-border-color: var(--ev-border-color-hover);
+  --ev-input-focus-border-color: var(--ev-color-primary);
+  --ev-input-border-radius:     var(--ev-radius-md);
+  --ev-input-height: var(--ev-component-size);
+  --ev-input-number-height: var(--ev-component-size);
+
+  /* ══════ 布局令牌 ══════ */
+  --ev-sidebar-width:           224px;
+  --ev-sidebar-collapsed-width: 64px;
+  --ev-header-height:           52px;
+
+  /* 侧边栏 */
+  --ev-sidebar-bg:               #ffffff;
+  --ev-sidebar-text:             #6b7280;
+  --ev-sidebar-text-hover:       #374151;
+  --ev-sidebar-text-active:      var(--ev-color-primary);
+  --ev-sidebar-hover-bg:         #f3f4f6;
+  --ev-sidebar-active-bg:        var(--ev-color-primary-light-9);
+  --ev-sidebar-border:           #f0f1f3;
+  --ev-sidebar-indicator:        var(--ev-color-primary);
+
+  /* 顶栏 */
+  --ev-header-bg:                #ffffff;
+  --ev-header-border:            #f0f1f3;
+
+  /* 卡片 */
+  --ev-app-card-shadow:          none;
+  --ev-app-card-shadow-hover:    0 4px 12px rgba(0,0,0,.06);
+  --ev-app-card-border:          #f5f6f8;
+
+  /* Table 固定列阴影 — 暗色模式下需要更深的值才能在深色背景上可见 */
+  --ev-table-fixed-shadow:    0 0 8px rgba(0, 0, 0, 0.04);
+}
+
+/* ══════ 密度切换（html[data-ev-density]）══════ */
+[data-ev-density='compact'] {
+  --ev-control-h-sm: 20px;
+  --ev-control-h-md: 24px;
+  --ev-control-h-lg: 28px;
+  --ev-component-size-small: 20px;
+  --ev-component-size: 28px;
+  --ev-component-size-large: 32px;
+}
+[data-ev-density='loose'] {
+  --ev-control-h-sm: 28px;
+  --ev-control-h-md: 32px;
+  --ev-control-h-lg: 36px;
+  --ev-component-size-small: 28px;
+  --ev-component-size: 36px;
+  --ev-component-size-large: 44px;
+}

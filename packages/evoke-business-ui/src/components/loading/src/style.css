@@ -1,0 +1,77 @@
+/* EvLoading —加载遮罩 */
+
+.ev-loading-mask.ev-loading-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 2000;
+  background-color: var(--ev-mask-color, rgba(255, 255, 255, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-loading-mask.ev-loading-mask.is-fullscreen {
+  position: fixed;
+}
+
+.ev-loading-mask.ev-loading-mask .ev-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ev-space-2);
+}
+
+/* 旋转圈 */
+.ev-loading-mask.ev-loading-mask .ev-loading-spinner .circular {
+  width: 42px;
+  height: 42px;
+  animation: ev-loading-rotate 2s linear infinite;
+}
+.ev-loading-mask.ev-loading-mask .ev-loading-spinner .path {
+  stroke: var(--ev-color-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: ev-loading-dash 1.5s ease-in-out infinite;
+}
+
+.ev-loading-mask.ev-loading-mask .ev-loading-text {
+  margin: 0;
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-xs);
+}
+
+@keyframes ev-loading-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ev-loading-dash {
+  0% {
+    stroke-dasharray: 1, 126;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 95, 126;
+    stroke-dashoffset: -31px;
+  }
+  100% {
+    stroke-dasharray: 6, 126;
+    stroke-dashoffset: -120px;
+  }
+}
+
+/* v-loading 目标容器 */
+.ev-loading-parent--relative {
+  position: relative !important;
+}
+
+/* 过渡 */
+.ev-loading-fade-enter-active,
+.ev-loading-fade-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-loading-fade-enter-from,
+.ev-loading-fade-leave-to {
+  opacity: 0;
+}

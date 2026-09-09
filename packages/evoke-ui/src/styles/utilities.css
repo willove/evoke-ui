@@ -1,0 +1,93 @@
+/* ============================================
+   Evoke UI — 工具类与通用层
+   容器 / 视觉隐藏 / 滚动浮现 / 焦点 / 选区 / 滚动条
+   （base.css 与文档站均可独立引用；元素级 reset 只在 base.css）
+   ============================================ */
+
+/* ─── 焦点可达性 ─── */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ew-focus-ring);
+  border-radius: var(--ew-radius-sm);
+}
+
+/* ─── 选区 ─── */
+.ew-selection ::selection,
+::selection {
+  background: rgba(var(--ew-color-primary-rgb), 0.18);
+}
+
+/* ─── 滚动条 ─── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ew-fill-3);
+  border-radius: var(--ew-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ew-text-secondary);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ─── v-reveal 滚动入场（轻盈浮现语言，四种入场方向 + 缩放/淡入）─── */
+.ew-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--ew-duration-slower) var(--ew-ease-out),
+    transform var(--ew-duration-slower) var(--ew-ease-smooth);
+  will-change: opacity, transform;
+}
+
+.ew-reveal[data-ew-reveal='left'] {
+  transform: translateX(-20px);
+}
+
+.ew-reveal[data-ew-reveal='right'] {
+  transform: translateX(20px);
+}
+
+.ew-reveal[data-ew-reveal='zoom'] {
+  transform: scale(0.94);
+}
+
+.ew-reveal[data-ew-reveal='fade'] {
+  transform: none;
+}
+
+.ew-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ew-reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── 布局容器 ─── */
+.ew-container {
+  width: 100%;
+  max-width: var(--ew-container-width);
+  margin-inline: auto;
+  padding-inline: var(--ew-space-6);
+}
+
+/* ─── 视觉隐藏（无障碍）─── */
+.ew-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

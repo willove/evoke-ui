@@ -1,0 +1,18 @@
+/**
+ * Locale 入口
+ */
+export { zhCN } from './zh-CN'
+export { en } from './en'
+export { ja } from './ja'
+export { zhTW } from './zh-TW'
+
+/**
+ * @param {string} name
+ * @param {Object} lang 语言包
+ */
+export function useLocaleEntry(name, lang) {
+  const languages = { [name]: lang }
+  return {
+    lang: (n) => languages[n] ?? languages[name],
+  }
+}

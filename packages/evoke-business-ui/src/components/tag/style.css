@@ -1,0 +1,151 @@
+/* EvTag —标签样式 */
+
+.ev-tag.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-info-light-9);
+  --ev-tag-border-color: var(--ev-color-info-light-5);
+  --ev-tag-text-color: var(--ev-color-info);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ev-space-1);
+  height: 24px;
+  padding: 0 9px;
+  font-size: var(--ev-font-size-xs);
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid var(--ev-tag-border-color);
+  border-radius: var(--ev-radius-sm);
+  background-color: var(--ev-tag-bg-color);
+  color: var(--ev-tag-text-color);
+  vertical-align: middle;
+  user-select: none;
+  box-sizing: border-box;
+}
+.ev-tag--small.ev-tag {
+  height: 20px;
+  padding: 0 7px;
+  font-size: var(--ev-font-size-xs);
+}
+.ev-tag--large.ev-tag {
+  height: 32px;
+  padding: 0 11px;
+  font-size: var(--ev-font-size-base);
+}
+.ev-tag.ev-tag.is-round {
+  border-radius: var(--ev-radius-full);
+}
+.ev-tag.ev-tag.is-hit {
+  border-color: var(--ev-tag-text-color);
+}
+
+/* ─── 类型 × 效果（plain / light / dark） ─── */
+/* plain */
+.ev-tag.ev-tag--primary.ev-tag--plain.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-primary-light-9);
+  --ev-tag-border-color: var(--ev-color-primary-light-5);
+  --ev-tag-text-color: var(--ev-color-primary);
+}
+.ev-tag.ev-tag--success.ev-tag--plain.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-success-light-9);
+  --ev-tag-border-color: var(--ev-color-success-light-5);
+  --ev-tag-text-color: var(--ev-color-success);
+}
+.ev-tag.ev-tag--warning.ev-tag--plain.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-warning-light-9);
+  --ev-tag-border-color: var(--ev-color-warning-light-5);
+  --ev-tag-text-color: var(--ev-color-warning);
+}
+.ev-tag.ev-tag--danger.ev-tag--plain.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-danger-light-9);
+  --ev-tag-border-color: var(--ev-color-danger-light-5);
+  --ev-tag-text-color: var(--ev-color-danger);
+}
+.ev-tag.ev-tag--info.ev-tag--plain.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-info-light-9);
+  --ev-tag-border-color: var(--ev-color-info-light-5);
+  --ev-tag-text-color: var(--ev-color-info);
+}
+
+/* light */
+.ev-tag.ev-tag--primary.ev-tag--light.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-primary-light-9);
+  --ev-tag-border-color: var(--ev-color-primary-light-8);
+  --ev-tag-text-color: var(--ev-color-primary);
+}
+.ev-tag.ev-tag--success.ev-tag--light.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-success-light-9);
+  --ev-tag-border-color: var(--ev-color-success-light-8);
+  --ev-tag-text-color: var(--ev-color-success);
+}
+.ev-tag.ev-tag--warning.ev-tag--light.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-warning-light-9);
+  --ev-tag-border-color: var(--ev-color-warning-light-8);
+  --ev-tag-text-color: var(--ev-color-warning);
+}
+.ev-tag.ev-tag--danger.ev-tag--light.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-danger-light-9);
+  --ev-tag-border-color: var(--ev-color-danger-light-8);
+  --ev-tag-text-color: var(--ev-color-danger);
+}
+.ev-tag.ev-tag--info.ev-tag--light.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-info-light-9);
+  --ev-tag-border-color: var(--ev-color-info-light-8);
+  --ev-tag-text-color: var(--ev-color-info);
+}
+
+/* dark */
+.ev-tag.ev-tag--primary.ev-tag--dark.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-primary);
+  --ev-tag-border-color: var(--ev-color-primary);
+  --ev-tag-text-color: #fff;
+}
+.ev-tag.ev-tag--success.ev-tag--dark.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-success);
+  --ev-tag-border-color: var(--ev-color-success);
+  --ev-tag-text-color: #fff;
+}
+.ev-tag.ev-tag--warning.ev-tag--dark.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-warning);
+  --ev-tag-border-color: var(--ev-color-warning);
+  --ev-tag-text-color: #fff;
+}
+.ev-tag.ev-tag--danger.ev-tag--dark.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-danger);
+  --ev-tag-border-color: var(--ev-color-danger);
+  --ev-tag-text-color: #fff;
+}
+.ev-tag.ev-tag--info.ev-tag--dark.ev-tag {
+  --ev-tag-bg-color: var(--ev-color-info);
+  --ev-tag-border-color: var(--ev-color-info);
+  --ev-tag-text-color: #fff;
+}
+
+/* ─── 关闭按钮 ─── */
+.ev-tag.ev-tag .ev-tag__close {
+  color: var(--ev-tag-text-color);
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-tag.ev-tag .ev-tag__close:hover {
+  color: var(--ev-color-primary);
+  background-color: var(--ev-color-primary-light-9);
+}
+
+.ev-tag.ev-tag .ev-tag__content {
+  display: inline-flex;
+  align-items: center;
+  /* 行高略放大：line-height:1 时西文降部（g/y/p）会溢出行盒被 overflow 裁掉 */
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 过渡 */
+.ev-tag.ev-tag:not(.is-disable-transitions) {
+  transition:
+    background-color var(--ev-duration-fast) var(--ev-ease-out),
+    border-color var(--ev-duration-fast) var(--ev-ease-out),
+    color var(--ev-duration-fast) var(--ev-ease-out);
+}

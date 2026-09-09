@@ -1,0 +1,115 @@
+/* EwCodeBlock — macOS 窗框式命令/代码块
+   颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随 */
+
+.ew-code-block {
+  overflow: hidden;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background-color: var(--ew-bg-container);
+  color: var(--ew-text-primary);
+  box-shadow: var(--ew-shadow-1);
+}
+
+/* ─── 窗框标题栏：红绿灯 + 标题 + 复制 ─── */
+.ew-code-block__titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-3);
+  padding: var(--ew-space-3) var(--ew-space-4);
+  border-bottom: 1px solid var(--ew-border-color-light);
+  background-color: var(--ew-bg-muted);
+}
+
+.ew-code-block__lights {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ew-code-block__light {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--ew-radius-circle);
+}
+
+.ew-code-block__light.is-red { background-color: #ff5f57; }
+.ew-code-block__light.is-yellow { background-color: #febc2e; }
+.ew-code-block__light.is-green { background-color: #28c840; }
+
+.ew-code-block__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+}
+
+.ew-code-block__body {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-3);
+  padding: var(--ew-space-4) var(--ew-space-5);
+  overflow-x: auto;
+}
+
+.ew-code-block__prefix {
+  flex-shrink: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-color-success);
+  user-select: none;
+}
+
+.ew-code-block__code {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  white-space: pre;
+  color: var(--ew-text-primary);
+}
+
+/* ─── 复制钮（标题栏右侧）─── */
+.ew-code-block__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--ew-radius-sm);
+  background: transparent;
+  color: var(--ew-text-secondary);
+  font-size: var(--ew-font-size-xs);
+  cursor: pointer;
+  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out),
+    color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-code-block__copy:hover {
+  background: var(--ew-fill-2);
+  color: var(--ew-text-primary);
+}
+
+.ew-code-block__copy.is-copied {
+  color: var(--ew-color-success);
+}
+
+.ew-code-block__copy-text {
+  white-space: nowrap;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   markdown/文档站宿主的行内 code 规则（底色/内边距）会以更高优先级
+   渗透进组件的 code 元素，用双类选择器重申自有排版 */
+.ew-code-block .ew-code-block__code {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-primary);
+}

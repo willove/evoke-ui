@@ -1,0 +1,92 @@
+/* EwIconButton — 图标按钮 */
+
+.ew-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--ew-radius-md);
+  background-color: transparent;
+  color: var(--ew-text-regular);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-icon-button:hover {
+  color: var(--ew-text-primary);
+}
+
+/* ─── 尺寸 ─── */
+.ew-icon-button--small {
+  width: 30px;
+  height: 30px;
+}
+
+.ew-icon-button--large {
+  width: 46px;
+  height: 46px;
+}
+
+/* ─── 正圆 ─── */
+.ew-icon-button.is-round {
+  border-radius: var(--ew-radius-full);
+}
+
+/* ─── 变体 ─── */
+.ew-icon-button.is-soft {
+  background-color: var(--ew-fill-1);
+}
+
+.ew-icon-button.is-soft:hover {
+  background-color: var(--ew-fill-2);
+}
+
+.ew-icon-button.is-outline {
+  border-color: var(--ew-border-color);
+}
+
+.ew-icon-button.is-outline:hover {
+  border-color: var(--ew-border-color-dark);
+}
+
+.ew-icon-button.is-primary {
+  background-color: var(--ew-color-primary);
+  color: #ffffff;
+}
+
+.ew-icon-button.is-primary:hover {
+  background-color: var(--ew-color-primary-light-3);
+  color: #ffffff;
+}
+
+.ew-icon-button.is-dark {
+  background-color: var(--ew-color-ink);
+  color: #ffffff;
+}
+
+html.dark .ew-icon-button.is-dark {
+  background-color: var(--ew-text-primary);
+  color: var(--ew-color-ink);
+}
+
+.ew-icon-button.is-dark:hover {
+  color: #ffffff;
+  background-color: #2a3a5c;
+}
+
+html.dark .ew-icon-button.is-dark:hover {
+  color: var(--ew-color-ink);
+  background-color: #ffffff;
+}
+
+/* ─── 状态 ─── */
+.ew-icon-button.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

@@ -1,0 +1,48 @@
+/* EvOption —选项 */
+
+.ev-select-dropdown__item.ev-select-option {
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 20px;
+  height: 34px;
+  line-height: 34px;
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  border-radius: var(--ev-radius-sm);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  list-style: none;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out), color var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-select-dropdown__item.ev-select-option.is-hovering {
+  background-color: var(--ev-fill-color-light);
+}
+
+.ev-select-dropdown__item.ev-select-option.is-selected {
+  color: var(--ev-color-primary);
+  font-weight: var(--ev-font-weight-medium);
+}
+
+/* 选中对勾（伪元素） */
+.ev-select-dropdown__item.ev-select-option.is-selected::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 5px;
+  height: 9px;
+  border: 1.5px solid var(--ev-color-primary);
+  border-top: 0;
+  border-left: 0;
+  transform: translateY(-70%) rotate(45deg);
+}
+
+.ev-select-dropdown__item.ev-select-option.is-disabled {
+  color: var(--ev-text-color-disabled);
+  cursor: not-allowed;
+  background-color: transparent;
+}

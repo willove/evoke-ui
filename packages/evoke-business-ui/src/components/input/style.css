@@ -1,0 +1,199 @@
+/* EvInput —输入框样式（--ev-* token 驱动） */
+
+.ev-input.ev-input {
+  --ev-input-height: var(--ev-component-size);
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  font-size: var(--ev-font-size-base);
+}
+.ev-input.ev-input--large.ev-input {
+  --ev-input-height: var(--ev-component-size-large);
+  font-size: 14px;
+}
+.ev-input.ev-input--small.ev-input {
+  --ev-input-height: var(--ev-component-size-small);
+  font-size: var(--ev-font-size-xs);
+}
+
+.ev-input.ev-input .ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: var(--ev-space-1);
+  padding: 1px 11px;
+  width: 100%;
+  min-height: var(--ev-input-height);
+  line-height: var(--ev-input-height);
+  background-color: var(--ev-fill-color-blank);
+  background-image: none;
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  transition:
+    box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+  box-shadow: 0 0 0 1px var(--ev-input-border-color, var(--ev-border-color)) inset;
+  cursor: text;
+}
+
+.ev-input.ev-input--large.ev-input .ev-input__wrapper {
+  padding: 1px 15px;
+}
+.ev-input.ev-input--small.ev-input .ev-input__wrapper {
+  padding: 1px 7px;
+}
+
+.ev-input.ev-input .ev-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--ev-input-hover-border-color, var(--ev-border-color-hover, var(--ev-text-color-placeholder))) inset;
+}
+
+.ev-input.ev-input .ev-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--ev-input-focus-border-color, var(--ev-color-primary)) inset;
+}
+
+.ev-input.ev-input .ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+
+.ev-input.ev-input .ev-input__wrapper.is-error {
+  box-shadow: 0 0 0 1px var(--ev-color-danger) inset;
+}
+
+.ev-input.ev-input .ev-input__inner {
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-input-text-color, var(--ev-text-color-regular));
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1.5;
+  height: calc(var(--ev-input-height) - 2px);
+  padding: 0;
+  cursor: inherit;
+  -webkit-appearance: none;
+}
+.ev-input.ev-input .ev-input__inner::placeholder {
+  color: var(--ev-input-placeholder-color, var(--ev-text-color-placeholder));
+}
+.ev-input.ev-input.is-disabled .ev-input__inner {
+  color: var(--ev-disabled-text-color);
+  -webkit-text-fill-color: var(--ev-disabled-text-color);
+  cursor: not-allowed;
+}
+
+/* prefix / suffix */
+.ev-input.ev-input .ev-input__prefix,
+.ev-input.ev-input .ev-input__suffix {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  color: var(--ev-input-icon-color, var(--ev-text-color-placeholder));
+  flex-shrink: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* clear / password 图标（hover 才显示） */
+.ev-input.ev-input .ev-input__clear,
+.ev-input.ev-input .ev-input__password {
+  color: var(--ev-input-icon-color, var(--ev-text-color-placeholder));
+  cursor: pointer;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-input.ev-input .ev-input__clear:hover {
+  color: var(--ev-text-color-secondary);
+}
+
+/* 字数统计 */
+.ev-input.ev-input .ev-input__count {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-placeholder);
+}
+.ev-input.ev-input .ev-input__count.is-exceed,
+.ev-textarea.ev-textarea .ev-input__count.is-exceed {
+  color: var(--ev-color-danger);
+}
+
+/* ─── textarea ─── */
+.ev-textarea.ev-textarea {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  font-size: var(--ev-font-size-base);
+}
+.ev-textarea.ev-textarea .ev-textarea__inner {
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 11px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  background-color: var(--ev-fill-color-blank);
+  background-image: none;
+  border-radius: var(--ev-radius-md);
+  box-shadow: 0 0 0 1px var(--ev-input-border-color, var(--ev-border-color)) inset;
+  color: var(--ev-input-text-color, var(--ev-text-color-regular));
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1.5;
+  transition:
+    box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out),
+    background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-textarea.ev-textarea .ev-textarea__inner::placeholder {
+  color: var(--ev-input-placeholder-color, var(--ev-text-color-placeholder));
+}
+.ev-textarea.ev-textarea .ev-textarea__inner:hover {
+  box-shadow: 0 0 0 1px var(--ev-input-hover-border-color, var(--ev-text-color-placeholder)) inset;
+}
+.ev-textarea.ev-textarea .ev-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--ev-input-focus-border-color, var(--ev-color-primary)) inset;
+}
+.ev-textarea.ev-textarea.is-disabled .ev-textarea__inner {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  color: var(--ev-disabled-text-color);
+  cursor: not-allowed;
+  resize: none;
+}
+.ev-textarea.ev-textarea .ev-input__count {
+  align-self: flex-end;
+  margin-top: var(--ev-space-1);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-placeholder);
+}
+
+/* ─── 扩展：error / help 提示 ─── */
+.ev-input.ev-input .ev-input-hint,
+.ev-textarea.ev-textarea .ev-input-hint {
+  font-size: var(--ev-font-size-xs);
+  line-height: var(--ev-line-height-base);
+  min-height: 18px;
+  padding: 0 var(--ev-space-1);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-input.ev-input .ev-input-hint .hint-help,
+.ev-textarea.ev-textarea .ev-input-hint .hint-help {
+  color: var(--ev-text-color-secondary);
+}
+.ev-input.ev-input .ev-input-hint .hint-error,
+.ev-textarea.ev-textarea .ev-input-hint .hint-error {
+  color: var(--ev-color-danger);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ev-input.ev-input .ev-input-hint.is-error,
+.ev-textarea.ev-textarea .ev-input-hint.is-error {
+  animation: ev-fade-in var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+/* shake 动画 */
+.ev-input.ev-input.is-shake {
+  animation: ev-shake 0.4s var(--ev-ease-in-out);
+}

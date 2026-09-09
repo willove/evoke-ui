@@ -1,0 +1,68 @@
+/* EvPopper — 浮层基座 */
+
+.ev-popper {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2000;
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-3);
+  padding: 6px 12px;
+  font-size: var(--ev-font-size-base);
+  line-height: 1.5;
+  color: var(--ev-text-color-regular);
+  word-break: break-word;
+}
+
+/* 箭头 — 窗口式裁剪：外层 8×8 overflow hidden 只露出 ::before 旋转方块的朝外半角，
+   避免整颗菱形压在边框上（floating-ui 定位窗口，静态侧偏移由 JS 注入 -8px） */
+.ev-popper__arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ev-popper__arrow::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+  transform: rotate(45deg);
+}
+
+/* 各方向的 ::before 几何：菱形中心落在窗口靠浮层边框的一侧边缘 */
+.ev-popper[data-popper-side='bottom'] .ev-popper__arrow::before {
+  left: 0;
+  top: 4px;
+}
+.ev-popper[data-popper-side='top'] .ev-popper__arrow::before {
+  left: 0;
+  top: -4px;
+}
+.ev-popper[data-popper-side='left'] .ev-popper__arrow::before {
+  top: 0;
+  left: -4px;
+}
+.ev-popper[data-popper-side='right'] .ev-popper__arrow::before {
+  top: 0;
+  left: 4px;
+}
+
+/* 过渡 */
+.ev-popper-fade-enter-active,
+.ev-popper-fade-leave-active {
+  transition:
+    opacity var(--ev-duration-fast) var(--ev-ease-out),
+    transform var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-popper-fade-enter-from,
+.ev-popper-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

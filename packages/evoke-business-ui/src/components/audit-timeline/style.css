@@ -1,0 +1,101 @@
+/* EvAuditTimeline — 审计时间线（业务封装） */
+
+.ev-audit-timeline {
+  --ev-timeline-item-padding-bottom: 18px;
+  /* placement=start 时时间列绝对定位于轴左侧（item 外），根部预留等宽空间避免溢出容器被裁 */
+  padding-left: 120px;
+}
+
+.ev-audit-timeline__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-1);
+  min-width: 0;
+}
+
+.ev-audit-timeline__item-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  flex-wrap: wrap;
+}
+
+.ev-audit-timeline__operator {
+  font-weight: var(--ev-font-weight-medium);
+}
+
+.ev-audit-timeline__action {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-primary);
+}
+
+.ev-audit-timeline__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--ev-space-2);
+  border: none;
+  border-radius: var(--ev-radius-sm);
+  background: var(--ev-fill-color-light);
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-xs);
+  cursor: pointer;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-audit-timeline__toggle:hover {
+  background: var(--ev-fill-color);
+}
+.ev-audit-timeline__toggle .is-flipped {
+  transform: rotate(180deg);
+}
+
+.ev-audit-timeline__detail {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  line-height: var(--ev-line-height-base);
+}
+
+/* diff 明细 */
+.ev-audit-timeline__diff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-1);
+  padding: var(--ev-space-2) var(--ev-space-3);
+  border: 1px solid var(--ev-border-color-lighter);
+  border-radius: var(--ev-radius-md);
+  background: var(--ev-fill-color-lighter);
+}
+
+.ev-audit-timeline__diff-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  font-size: var(--ev-font-size-xs);
+  min-width: 0;
+}
+
+.ev-audit-timeline__diff-field {
+  flex-shrink: 0;
+  color: var(--ev-text-color-regular);
+  font-weight: var(--ev-font-weight-medium);
+  min-width: 72px;
+}
+
+.ev-audit-timeline__diff-before {
+  color: var(--ev-color-danger);
+  text-decoration: line-through;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ev-audit-timeline__diff-before.is-empty {
+  color: var(--ev-text-color-placeholder);
+  text-decoration: none;
+}
+
+.ev-audit-timeline__diff-after {
+  color: var(--ev-color-success);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

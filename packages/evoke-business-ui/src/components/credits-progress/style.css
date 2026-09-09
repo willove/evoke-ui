@@ -1,0 +1,149 @@
+/* EvCreditsProgress — 额度条形进度（设计令牌驱动） */
+
+.ev-credits-progress {
+  /* 默认干净无外框：需要卡片质感时由外层容器（section-card 等）提供 */
+  background: transparent;
+  border: none;
+  border-radius: var(--ev-radius-lg);
+  padding: var(--ev-space-2) 0;
+  box-sizing: border-box;
+}
+
+.ev-credits-progress--small {
+  padding: var(--ev-space-2) var(--ev-space-4);
+}
+.ev-credits-progress--small .ev-credits-progress__header {
+  margin-bottom: var(--ev-space-2);
+  font-size: var(--ev-font-size-xs, 12px);
+}
+.ev-credits-progress--small .ev-credits-progress__fence {
+  height: 22px;
+  margin-bottom: var(--ev-space-2);
+}
+.ev-credits-progress--small .ev-credits-progress__used strong {
+  font-size: var(--ev-font-size-md);
+}
+.ev-credits-progress--small .ev-credits-progress__total {
+  font-size: var(--ev-font-size-xs, 12px);
+}
+.ev-credits-progress--small .ev-credits-progress__pct {
+  font-size: 11px;
+}
+.ev-credits-progress--small .ev-credits-progress__remain {
+  font-size: var(--ev-font-size-xs, 12px);
+}
+.ev-credits-progress--small .ev-credits-progress__remain strong {
+  font-size: var(--ev-font-size-base);
+}
+
+.ev-credits-progress--large {
+  padding: var(--ev-space-6) var(--ev-space-7, 28px);
+}
+.ev-credits-progress--large .ev-credits-progress__header {
+  margin-bottom: var(--ev-space-5);
+  font-size: var(--ev-font-size-base);
+}
+.ev-credits-progress--large .ev-credits-progress__fence {
+  height: 48px;
+  margin-bottom: var(--ev-space-4);
+}
+.ev-credits-progress--large .ev-credits-progress__used strong {
+  font-size: var(--ev-font-size-xl);
+}
+.ev-credits-progress--large .ev-credits-progress__total {
+  font-size: var(--ev-font-size-md);
+}
+.ev-credits-progress--large .ev-credits-progress__pct {
+  font-size: var(--ev-font-size-base);
+}
+.ev-credits-progress--large .ev-credits-progress__remain {
+  font-size: var(--ev-font-size-md);
+}
+.ev-credits-progress--large .ev-credits-progress__remain strong {
+  font-size: var(--ev-font-size-lg);
+}
+
+.ev-credits-progress__header {
+  margin-bottom: var(--ev-space-4);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  /* 刷新头单行省略：窄列下不折行，保持四项行行对齐 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ev-credits-progress__header strong {
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-semibold);
+}
+
+.ev-credits-progress__fence {
+  display: grid;
+  gap: var(--bar-gap, 1.5px);
+  margin-bottom: var(--ev-space-3);
+  overflow: hidden;
+  height: 36px;
+}
+
+.ev-credits-progress__bar {
+  height: 100%;
+  border-radius: 1px;
+  background: var(--bar-empty, var(--ev-border-color-lighter));
+  transition: background var(--ev-duration-base) var(--ev-ease-out);
+  min-width: 0;
+}
+.ev-credits-progress__bar--filled {
+  background: var(--bar-filled, var(--ev-color-primary));
+}
+.ev-credits-progress__fence--over .ev-credits-progress__bar--filled {
+  background: var(--ev-color-danger);
+}
+
+.ev-credits-progress__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--ev-space-3);
+  /* 用量与剩余各自成行基线，禁止数字折行（大数值如 184,200 / 15,800 换行会撑乱对齐） */
+  white-space: nowrap;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+.ev-credits-progress__used {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ev-credits-progress__remain {
+  flex-shrink: 0;
+}
+.ev-credits-progress__used strong {
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-bold);
+  color: var(--ev-text-color-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.ev-credits-progress__total {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-secondary);
+  margin-left: 2px;
+}
+.ev-credits-progress__pct {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  margin-left: var(--ev-space-1);
+}
+.ev-credits-progress__remain {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+}
+.ev-credits-progress__remain strong {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-bold);
+  color: var(--ev-color-primary);
+  font-variant-numeric: tabular-nums;
+}
+.ev-credits-progress__remain--warn {
+  color: var(--ev-color-warning);
+}

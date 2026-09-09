@@ -1,0 +1,80 @@
+/* EwCarousel — 轮播 */
+
+.ew-carousel {
+  position: relative;
+}
+
+.ew-carousel__viewport {
+  overflow: hidden;
+  border-radius: var(--ew-radius-lg);
+}
+
+.ew-carousel__track {
+  display: flex;
+  transition: transform var(--ew-duration-slower) var(--ew-ease-smooth);
+}
+
+.ew-carousel__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 2px;
+}
+
+/* ─── 箭头 ─── */
+.ew-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--ew-radius-circle);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-2);
+  color: var(--ew-text-primary);
+  cursor: pointer;
+  opacity: 0.92;
+  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-carousel__arrow:hover {
+  opacity: 1;
+  box-shadow: var(--ew-shadow-3);
+}
+
+.ew-carousel__arrow.is-prev {
+  left: -14px;
+}
+
+.ew-carousel__arrow.is-next {
+  right: -14px;
+}
+
+/* ─── 圆点 ─── */
+.ew-carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: var(--ew-space-4);
+}
+
+.ew-carousel__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-fill-3);
+  cursor: pointer;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    width var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.ew-carousel__dot.is-active {
+  width: 18px;
+  background-color: var(--ew-color-primary);
+}

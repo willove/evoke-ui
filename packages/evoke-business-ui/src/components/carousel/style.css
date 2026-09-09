@@ -1,0 +1,104 @@
+/* EvCarousel —走马灯 */
+
+.ev-carousel.ev-carousel {
+  position: relative;
+}
+
+.ev-carousel.ev-carousel .ev-carousel__container {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__container {
+  height: 100%;
+}
+
+/* ─── 箭头 ─── */
+.ev-carousel.ev-carousel .ev-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ev-radius-full);
+  background-color: rgba(31, 45, 61, 0.35);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-carousel.ev-carousel .ev-carousel__arrow:hover {
+  background-color: rgba(31, 45, 61, 0.55);
+}
+.ev-carousel.ev-carousel .ev-carousel__arrow--left {
+  left: var(--ev-space-4);
+}
+.ev-carousel.ev-carousel .ev-carousel__arrow--right {
+  right: var(--ev-space-4);
+}
+.ev-carousel.ev-carousel .ev-carousel__arrow.is-hover-only {
+  opacity: 0;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-carousel.ev-carousel:hover .ev-carousel__arrow.is-hover-only {
+  opacity: 1;
+}
+
+/* ─── 指示器 ─── */
+.ev-carousel.ev-carousel .ev-carousel__indicators {
+  position: absolute;
+  left: 50%;
+  bottom: var(--ev-space-2);
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__indicators {
+  left: auto;
+  right: var(--ev-space-2);
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.ev-carousel.ev-carousel .ev-carousel__indicator {
+  padding: var(--ev-space-2) var(--ev-space-1);
+  cursor: pointer;
+}
+.ev-carousel.ev-carousel .ev-carousel__button {
+  display: block;
+  width: 30px;
+  height: 2px;
+  padding: 0;
+  border: none;
+  background-color: var(--ev-text-color-placeholder);
+  opacity: 0.48;
+  cursor: pointer;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__button {
+  width: 2px;
+  height: 30px;
+}
+.ev-carousel.ev-carousel .ev-carousel__indicator.is-active .ev-carousel__button {
+  opacity: 1;
+  background-color: var(--ev-color-primary);
+}
+
+/* ─── 项 ─── */
+.ev-carousel.ev-carousel .ev-carousel__item {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}

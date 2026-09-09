@@ -1,0 +1,67 @@
+/* EwSection — 内容区块 */
+
+.ew-section {
+  margin-bottom: 96px;
+}
+
+.ew-section.is-center {
+  text-align: center;
+}
+
+/* 眉题：小而安静的大写字距小标（remixdesign「WORK」语言） */
+.ew-section__eyebrow {
+  margin-bottom: var(--ew-space-3);
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ew-text-secondary);
+}
+
+/* 区块标题：细字重展示体，与 hero 同一声音 */
+.ew-section__title {
+  margin-bottom: var(--ew-space-3);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+}
+
+.ew-section__description {
+  max-width: 560px;
+  font-size: var(--ew-font-size-md);
+  line-height: 1.75;
+  color: var(--ew-text-secondary);
+}
+
+.ew-section.is-center .ew-section__description {
+  margin-inline: auto;
+}
+
+.ew-section__body {
+  margin-top: var(--ew-space-10);
+}
+
+.ew-section__eyebrow + .ew-section__title {
+  margin-top: 0;
+}
+
+/* 无主体内容时收尾不留白 */
+.ew-section:not(:has(.ew-section__body)) .ew-section__description {
+  margin-bottom: 0;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-section .ew-section__title {
+  margin: 0 0 var(--ew-space-3);
+  padding-top: 0;
+  border-top: none;
+  font-size: clamp(26px, 3vw, 34px);
+}
+
+.ew-section .ew-section__description {
+  margin: 0;
+}

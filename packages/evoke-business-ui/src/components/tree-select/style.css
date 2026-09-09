@@ -1,0 +1,21 @@
+/* EvTreeSelect — 复用 EvSelect 触发器/弹层样式 + 树弹层扩展 */
+
+@import '../select/style.css';
+
+/* 弹层内嵌树 */
+.ev-tree-select__popper.ev-tree-select__popper .ev-tree-select__content {
+  max-height: 274px;
+  overflow: auto;
+  padding: var(--ev-space-1);
+}
+
+/* 弹层内树节点缩进视觉（展开图标右移） */
+.ev-tree-select__popper.ev-tree-select__popper .ev-tree-node__expand-icon {
+  margin-left: 8px;
+}
+
+/* 弹层内树去外边距，行高收紧 */
+.ev-tree-select__popper.ev-tree-select__popper .ev-tree {
+  --ev-tree-node-content-height: 24px;
+  background: transparent;
+}

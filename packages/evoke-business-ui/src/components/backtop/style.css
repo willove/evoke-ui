@@ -1,0 +1,37 @@
+/* EvBacktop —返回顶部 */
+
+.ev-backtop.ev-backtop {
+  --ev-backtop-bg-color: var(--ev-bg-color);
+  --ev-backtop-text-color: var(--ev-color-primary);
+  --ev-backtop-hover-bg-color: var(--ev-border-color-extra-light);
+  position: fixed;
+  top: auto;
+  left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-backtop-bg-color);
+  color: var(--ev-backtop-text-color);
+  font-size: var(--ev-font-size-md);
+  box-shadow: var(--ev-box-shadow-lighter);
+  cursor: pointer;
+  z-index: var(--ev-z-index-overlay);
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+
+.ev-backtop.ev-backtop:hover {
+  background-color: var(--ev-backtop-hover-bg-color);
+}
+
+/* 渐隐渐现过渡 */
+.ev-fade-in-linear-enter-active,
+.ev-fade-in-linear-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-linear);
+}
+.ev-fade-in-linear-enter-from,
+.ev-fade-in-linear-leave-to {
+  opacity: 0;
+}

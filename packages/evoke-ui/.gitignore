@@ -1,0 +1,7 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# 内部设计调研记录，不入库
+DESIGN.md

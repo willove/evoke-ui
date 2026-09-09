@@ -1,0 +1,41 @@
+/* EvContainer / Header / Aside / Main / Footer —布局 */
+
+.ev-container.ev-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  flex-basis: auto;
+  box-sizing: border-box;
+  min-width: 0;
+}
+.ev-container.ev-container.is-vertical {
+  flex-direction: column;
+}
+
+.ev-header.ev-header {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 0 var(--ev-space-4);
+}
+
+.ev-aside.ev-aside {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background-color: var(--ev-bg-color);
+  overflow: auto;
+}
+
+.ev-main.ev-main {
+  display: block;
+  flex: 1;
+  flex-basis: auto;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: var(--ev-space-4);
+}
+
+.ev-footer.ev-footer {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 0 var(--ev-space-4);
+}

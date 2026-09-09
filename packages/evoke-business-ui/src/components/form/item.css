@@ -1,0 +1,133 @@
+/* EvForm / EvFormItem —表单 */
+
+.ev-form.ev-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.ev-form.ev-form--inline.ev-form {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--ev-space-4) var(--ev-space-6);
+  align-items: flex-start;
+}
+
+.ev-form-item.ev-form-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  /* 错误态下边距 18→24 的变化走过渡：下方内容平滑推挤，不产生突兀跳动 */
+  transition: margin-bottom var(--ev-duration-fast, 0.15s) ease-out;
+}
+/* 错误态扩容：错误提示悬浮在项下方约 21px，加宽下边距避免与下一项贴合 */
+.ev-form-item.ev-form-item.is-error {
+  margin-bottom: 24px;
+}
+.ev-form--inline .ev-form-item.ev-form-item {
+  margin-bottom: 0;
+  margin-right: var(--ev-space-6);
+}
+
+/* ─── label ─── */
+.ev-form-item.ev-form-item .ev-form-item__label {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 32px;
+  line-height: 32px;
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  padding-right: var(--ev-space-3);
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.ev-form-item.ev-form-item--small .ev-form-item__label {
+  height: 24px;
+  line-height: 24px;
+  font-size: var(--ev-font-size-xs);
+}
+.ev-form-item.ev-form-item--large .ev-form-item__label {
+  height: 40px;
+  line-height: 40px;
+}
+
+/* label-position top */
+.ev-form.ev-form--label-top .ev-form-item.ev-form-item {
+  flex-direction: column;
+  align-items: stretch;
+}
+.ev-form.ev-form--label-top .ev-form-item__label {
+  height: auto;
+  line-height: 1.5;
+  padding-bottom: var(--ev-space-1);
+  justify-content: flex-start !important;
+}
+
+/* label-position left/right：class 兜底，保证任意层级设置 labelWidth 后对齐都生效 */
+.ev-form.ev-form--label-left .ev-form-item__label {
+  justify-content: flex-start;
+}
+.ev-form.ev-form--label-right .ev-form-item__label {
+  justify-content: flex-end;
+}
+
+/* 必填星号 */
+.ev-form-item.ev-form-item.is-required:not(.is-no-asterisk) > .ev-form-item__label::before {
+  content: '*';
+  color: var(--ev-color-danger);
+  margin-right: 4px;
+  font-weight: var(--ev-font-weight-semibold);
+}
+
+/* ─── content ─── */
+.ev-form-item.ev-form-item .ev-form-item__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  line-height: 32px;
+  position: relative;
+  gap: 0;
+}
+
+/* ─── 错误提示 ─── */
+.ev-form-item.ev-form-item .ev-form-item__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding-top: 3px;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-danger);
+  line-height: 18px;
+  white-space: nowrap;
+  z-index: 1;
+}
+.ev-form-item.ev-form-item .ev-form-item__error--inline {
+  position: static;
+  margin-left: var(--ev-space-2);
+  padding-top: 0;
+}
+
+/* 校验态视觉（错误反馈给内嵌控件：.ev-input__wrapper 红框） */
+.ev-form-item.ev-form-item.is-error .ev-input__wrapper,
+.ev-form-item.ev-form-item.is-error .ev-textarea__inner,
+.ev-form-item.ev-form-item.is-error .ev-input-number .ev-input__wrapper {
+  box-shadow: 0 0 0 1px var(--ev-color-danger) inset !important;
+}
+.ev-form-item.ev-form-item.is-success .ev-input__wrapper,
+.ev-form-item.ev-form-item.is-success .ev-textarea__inner {
+  box-shadow: 0 0 0 1px var(--ev-color-success) inset;
+}
+
+/* 错误提示过渡 */
+.ev-form-item-fade-enter-active,
+.ev-form-item-fade-leave-active {
+  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-form-item-fade-enter-from,
+.ev-form-item-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

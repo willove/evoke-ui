@@ -1,0 +1,25 @@
+/* EvSpace —间距 */
+
+.ev-space.ev-space {
+  display: inline-flex;
+  gap: var(--ev-space-gap-y, 8px) var(--ev-space-gap-x, 8px);
+}
+.ev-space.ev-space.ev-space--vertical {
+  flex-direction: column;
+}
+.ev-space.ev-space.is-wrap {
+  flex-wrap: wrap;
+}
+.ev-space.ev-space.is-fill {
+  display: flex;
+}
+
+.ev-space.ev-space .ev-space__item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.ev-space.ev-space.ev-space--vertical .ev-space__item {
+  align-items: stretch;
+  flex-direction: column;
+}

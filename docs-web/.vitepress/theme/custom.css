@@ -1,0 +1,678 @@
+/* 文档站套用 Evoke UI 设计语言
+   将 VitePress 的界面变量重映射到 --ew-* 令牌：
+   主色/文字/背景/边框随库的主题配置（含定制器）即时联动，明暗双模式自动跟随 */
+
+:root {
+  /* 与首页 EwNavbar 同高 */
+  --vp-nav-height: 68px;
+
+  /* 品牌色 → Launch Blue（联动 EwConfigProvider / useThemeConfig） */
+  --vp-c-brand-1: var(--ew-color-primary);
+  --vp-c-brand-2: var(--ew-color-primary-light-3);
+  --vp-c-brand-3: var(--ew-color-primary-dark-2);
+  --vp-c-brand-soft: rgba(var(--ew-color-primary-rgb), 0.14);
+
+  /* 字体 → 库的字体栈（Inter + 系统栈） */
+  --vp-font-family-base: var(--ew-font-family);
+
+  /* 背景与表面 → 库的背景令牌 */
+  --vp-c-bg: var(--ew-bg-page);
+  --vp-c-bg-alt: var(--ew-bg-muted);
+  --vp-c-bg-soft: var(--ew-fill-1);
+  --vp-c-bg-elv: var(--ew-bg-container);
+
+  /* 边框与分割 → 库的边框令牌（最轻一档） */
+  --vp-c-divider: var(--ew-border-color-light);
+  --vp-c-border: var(--ew-border-color);
+  --vp-c-gutter: var(--ew-border-color-light);
+
+  /* 文字 → 库的墨色层级 */
+  --vp-c-text-1: var(--ew-text-primary);
+  --vp-c-text-2: var(--ew-text-regular);
+  --vp-c-text-3: var(--ew-text-secondary);
+
+  /* 首页 hero 名字与强调 */
+  --vp-home-hero-name-color: var(--ew-color-primary);
+
+  /* 按钮与控件圆角跟随库的圆角令牌 */
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-bg: var(--ew-color-primary);
+  --vp-button-brand-hover-bg: var(--ew-color-primary-light-3);
+  --vp-button-brand-active-bg: var(--ew-color-primary-dark-2);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-hover-text: #ffffff;
+
+  --vp-border-radius: 8px;
+}
+
+/* 首页 hero 区铺淡蓝灰光带（与库的 hero 同一渐变） */
+.VPHero {
+  background-image: var(--ew-gradient-hero);
+}
+
+/* 首页 hero 标题两排：名称一行、副题一行 */
+.VPHero h1 > span.name,
+.VPHero h1 > span.text {
+  display: block !important;
+}
+
+.VPFeature {
+  border-radius: var(--ew-radius-lg) !important;
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.VPFeature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ew-shadow-2);
+  border-color: var(--ew-color-primary-light-7) !important;
+}
+
+/* 侧栏/导航条更安静 */
+.VPSidebar,
+.VPNavBar:not(.home) {
+  background-color: color-mix(in srgb, var(--ew-bg-page) 88%, transparent);
+}
+
+/* 文档正文标题采用细字重展示体 */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+}
+
+/* 演示区内的普通段落间距（markdown reset 后紧凑）；
+   Ew 组件内部的 p 自带排版，交由组件样式接管 */
+.vp-doc .demo-block p:not([class*='ew-']) {
+  margin: 0;
+}
+
+/* 图标网格演示在文档内的最大宽度 */
+.vp-doc .ew-icon-grid {
+  max-width: 100%;
+}
+
+.VPContent li {
+  margin: 0;
+}
+
+/* ══════ 内页与首页的观感对齐 ══════ */
+
+/* 导航栏品牌名：与首页 EwNavbar 同一套强字距展示体 */
+.VPNavBarTitle .title {
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+}
+
+/* 导航布局与首页 EwNavbar 对齐：
+   链接紧随品牌名靠左排列，动作区（主题切换/GitHub/下载）由插槽推到右侧；
+   未配置搜索但 VPNavBarSearch 仍渲染且带 flex:1，会把菜单推到右边 —— 隐藏 */
+.VPNavBar .content,
+.VPNavBar .content-body {
+  justify-content: flex-start;
+}
+
+.VPNavBar .VPNavBarSearch {
+  display: none;
+}
+
+.VPNavBarMenu {
+  margin-left: 12px;
+  gap: 2px;
+}
+
+.VPNavBarMenuLink {
+  padding: 6px 12px;
+  border-radius: var(--ew-radius-sm);
+  line-height: 1.5;
+  font-size: var(--ew-font-size-base);
+  font-weight: var(--ew-font-weight-regular);
+  color: var(--ew-text-regular);
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.VPNavBarMenuLink:hover {
+  color: var(--ew-text-primary);
+  background: transparent;
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--ew-color-primary);
+}
+
+/* 正文栏放宽一档，呼应首页 1152px 容器的舒展感
+   （特异性压过默认主题 688px 上限，避免受样式注入顺序影响） */
+.VPDoc.has-sidebar.has-aside .content-container {
+  max-width: 848px;
+}
+
+/* 一级标题再抬一档，靠近首页展示标题的体量 */
+.vp-doc h1 {
+  font-size: 34px;
+}
+
+/* 代码块：淡雾底 + 最轻边框 + 库的圆角，与卡面语言一致 */
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-md);
+  overflow: hidden;
+}
+
+.vp-doc div[class*='language-'] code {
+  font-size: 13.5px;
+}
+
+/* 表格：表头铺淡雾底，行线用最轻一档 */
+.vp-doc th {
+  background-color: var(--ew-bg-muted);
+}
+
+/* 侧栏：分组标题小而安静（与首页区块眉题同一语言），
+   激活项从纯文字色升级为主色淡底胶囊 */
+.VPSidebarItem.level-0 > .item .text {
+  font-size: 13px;
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.06em;
+  color: var(--ew-text-secondary);
+}
+
+.VPSidebarItem.is-active > .item {
+  background-color: var(--vp-c-brand-soft);
+  border-radius: var(--ew-radius-sm);
+  /* 负外边距让底色向两侧扩展 8px，文字与其他项保持同一基线 */
+  margin-inline: -8px;
+  padding-inline: 8px;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+/* 提示块（tip/info 等）随令牌走，明暗两套自动跟随 */
+:root {
+  --vp-custom-block-info-border: var(--ew-border-color-light);
+  --vp-custom-block-info-bg: var(--ew-bg-muted);
+  --vp-custom-block-info-text: var(--ew-text-regular);
+  --vp-custom-block-tip-border: transparent;
+  --vp-custom-block-tip-bg: rgba(var(--ew-color-primary-rgb), 0.08);
+  --vp-custom-block-tip-text: var(--ew-text-regular);
+}
+
+/* ══════ 案例（/cases/）：整页案例的浏览器舞台窗框 ══════ */
+
+.case-stage {
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-3);
+  overflow: hidden;
+}
+
+.case-stage__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ew-border-color-light);
+  background: var(--ew-bg-muted);
+}
+
+.case-stage__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--ew-radius-circle);
+}
+
+.case-stage__dot:nth-child(1) { background: #f6726f; }
+.case-stage__dot:nth-child(2) { background: #f6bd3b; }
+.case-stage__dot:nth-child(3) { background: #43c463; }
+
+.case-stage__url {
+  margin-left: 10px;
+  padding: 3px 14px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-full);
+  background: var(--ew-bg-container);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ew-text-secondary);
+}
+
+/* 窗框右侧的「新窗口打开」按钮：跳转到原生全屏版本 */
+.case-stage__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 4px 11px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-full);
+  background: var(--ew-bg-container);
+  font-size: 12px;
+  color: var(--ew-text-secondary);
+  text-decoration: none;
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.case-stage__open:hover {
+  color: var(--ew-color-primary);
+  border-color: var(--ew-color-primary-light-7);
+  text-decoration: none;
+}
+
+/* 舞台内的整页案例：铺页面底色，版块之间不额外加文档间距 */
+.case-stage__viewport {
+  background: var(--ew-bg-page);
+}
+
+/* 案例舞台模拟真实站点：抵消 .vp-doc a 的文档式链接配色（蓝字下划线）。
+   只复原会渲染成 <a> 的库组件与裸链接，不碰 .ew-button 等自带配色的组件 */
+.vp-doc .case-stage a:not([class]),
+.vp-doc .case-stage a.ew-article-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+.vp-doc .case-stage .ew-navbar__logo {
+  color: var(--ew-text-primary);
+  text-decoration: none;
+}
+
+.vp-doc .case-stage .ew-navbar__link {
+  color: var(--ew-text-regular);
+  text-decoration: none;
+}
+
+.vp-doc .case-stage .ew-navbar__link:hover {
+  color: var(--ew-text-primary);
+}
+
+.vp-doc .case-stage .ew-footer__link {
+  color: var(--ew-text-secondary);
+  text-decoration: none;
+}
+
+.vp-doc .case-stage .ew-footer__link:hover {
+  color: var(--ew-text-primary);
+}
+
+/* 案例总览页的场景卡片（同样位于 .vp-doc 内） */
+.vp-doc a.case-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ══════ 案例站点的容器结构（舞台缩放版与全屏 live 版共用）：
+   EwSection 自身不带容器，版块内容需要限宽居中，不能随舞台/视窗顶到边上；
+   色带类元素（公告/hero/指标带/页脚）保持通栏，由 .ew-container 或页面级样式控制内部 */
+.case-site .ew-section {
+  max-width: var(--ew-container-width, 1152px);
+  margin-inline: auto;
+}
+
+.case-site .ew-comparison-table,
+.case-site .ew-faq {
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+/* EwSection 只有 margin-bottom，跟在全幅色带后面的版块要补回上间距；
+   反向（gap=0 的版块 → 色带）同理补上，避免文章流与热榜贴死 */
+.case-site .case-band + .ew-section,
+.case-site .ew-section + .case-band {
+  margin-top: 96px;
+}
+
+/* 全屏 live 版右下角的「返回案例文档」浮标 */
+.case-live-back {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+}
+
+.case-live-back a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-full);
+  background: color-mix(in srgb, var(--ew-bg-container) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--ew-shadow-2);
+  font-size: 13px;
+  color: var(--ew-text-regular);
+  text-decoration: none;
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.case-live-back a:hover {
+  color: var(--ew-color-primary);
+  border-color: var(--ew-color-primary-light-7);
+  text-decoration: none;
+}
+
+/* 案例内的指标带 / 分隔带（与首页 stats 带同一语言） */
+.case-band {
+  padding: 56px 0;
+  border-top: 1px solid var(--ew-border-color-light);
+  border-bottom: 1px solid var(--ew-border-color-light);
+  background-color: var(--ew-bg-muted);
+}
+
+/* 案例总览页的场景卡片 */
+.case-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background: var(--ew-bg-container);
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.case-card:hover {
+  border-color: var(--ew-color-primary-light-7);
+  box-shadow: var(--ew-shadow-2);
+  transform: translateY(-2px);
+}
+
+.case-card__icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--ew-radius-md);
+  background: var(--vp-c-brand-soft);
+  color: var(--ew-color-primary);
+}
+
+.case-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.case-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-primary);
+}
+
+.case-card__desc {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ew-text-secondary);
+}
+
+.case-card__arrow {
+  flex: none;
+  color: var(--ew-text-secondary);
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
+    color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.case-card:hover .case-card__arrow {
+  color: var(--ew-color-primary);
+  transform: translateX(3px);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MobileStage — 移动端演示壳（手机视口容器）
+   屏幕层 transform 使内联弹层（append-to-body=false）以舞台为包含块
+   ────────────────────────────────────────────────────────────── */
+.mob-stage {
+  box-sizing: border-box;
+  width: 395px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 46px;
+  background: #101317;
+  box-shadow:
+    0 24px 48px -24px rgba(26, 41, 71, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.mob-stage__device {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  aspect-ratio: 375 / 667; /* 标准手机比例（16:9）：未显式传 height 时生效 */
+  border-radius: 36px;
+  overflow: hidden;
+  background: var(--ew-bg-container);
+  transform: translateZ(0);
+}
+.mob-stage__status {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 22px;
+  color: var(--ew-text-primary);
+  background: var(--ew-bg-container);
+}
+.mob-stage__time {
+  font-family: var(--ew-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+.mob-stage__signals {
+  display: inline-flex;
+}
+.mob-stage__island {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+  border-radius: 16px;
+  background: #101317;
+}
+.mob-stage__navbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  height: 46px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--ew-border-color-light);
+  background: var(--ew-bg-container);
+}
+.mob-stage__back,
+.mob-stage__action {
+  display: inline-flex;
+  align-items: center;
+  min-width: 28px;
+  color: var(--ew-text-primary);
+}
+.mob-stage__action {
+  justify-content: flex-end;
+}
+.mob-stage__title {
+  flex: 1;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ew-text-primary);
+}
+.mob-stage__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: var(--ew-bg-container);
+}
+.mob-stage__body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.mob-stage__bottom {
+  flex-shrink: 0;
+  background: var(--ew-bg-container);
+}
+.mob-stage__indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 7px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 120px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--ew-text-disabled);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* 舞台内弹层遮罩用 absolute 贴合屏幕层：fixed 在 transform 容器内不随文档页滚动跟随（Chrome 行为），
+   absolute 则始终盖住「手机屏幕」；真机（Teleport 到 body）不受此规则影响 */
+.mob-stage .ew-action-sheet__overlay.ew-action-sheet__overlay {
+  position: absolute;
+}
+
+/* ── 移动端演示辅助类（mb- 前缀，与中后台文档站同名同义） ── */
+.mb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 16px 28px;
+}
+.mb-card {
+  background: var(--ew-bg-container);
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  overflow: hidden;
+}
+.mb-card--pad {
+  padding: 12px;
+}
+.mb-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mb-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ew-text-primary);
+}
+.mb-card__rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-top: 10px;
+}
+.mb-card__label {
+  font-size: 12px;
+  color: var(--ew-text-secondary);
+}
+.mb-card__value {
+  font-size: 13px;
+  color: var(--ew-text-primary);
+}
+.mb-list-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mb-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px calc(12px + 14px);
+}
+/* 单元行：图标 + 文本 + 右侧值/箭头（个人中心、设置类页面） */
+.mb-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  cursor: pointer;
+}
+.mb-cell + .mb-cell {
+  border-top: 1px solid var(--ew-border-color-light);
+}
+.mb-cell__icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--ew-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ew-color-primary-light-9);
+  color: var(--ew-color-primary);
+}
+.mb-cell__body {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--ew-text-primary);
+}
+.mb-cell__value {
+  font-size: 12px;
+  color: var(--ew-text-secondary);
+}
+.mb-cell__arrow {
+  flex: none;
+  display: inline-flex;
+  color: var(--ew-text-placeholder);
+}
+/* 快捷入口宫格（订单四宫格等） */
+.mb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.mb-grid__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0 14px;
+  color: var(--ew-text-regular);
+  font-size: 12px;
+  cursor: pointer;
+}
+/* 三列统计行 */
+.mb-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+}
+.mb-stats__value {
+  font-size: 18px;
+  font-weight: var(--ew-display-weight);
+  color: var(--ew-text-primary);
+  line-height: 1.2;
+}
+.mb-stats__label {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--ew-text-secondary);
+}

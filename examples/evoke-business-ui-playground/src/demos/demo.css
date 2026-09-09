@@ -1,0 +1,26 @@
+/* 公共 demo 布局 */
+.demo h2 {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-semibold);
+  margin-bottom: var(--ev-space-4);
+}
+.demo h3 {
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-medium);
+  margin: var(--ev-space-6) 0 var(--ev-space-3);
+  color: var(--ev-text-color-primary);
+}
+.demo-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--ev-space-3);
+  margin-bottom: var(--ev-space-4);
+}
+.demo-label {
+  width: 90px;
+  flex-shrink: 0;
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-color-secondary);
+  line-height: 32px;
+}

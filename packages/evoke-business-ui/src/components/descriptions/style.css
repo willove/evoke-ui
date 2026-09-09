@@ -1,0 +1,71 @@
+/* EvDescriptions —描述列表 */
+
+.ev-descriptions.ev-descriptions {
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-primary);
+  box-sizing: border-box;
+}
+
+.ev-descriptions.ev-descriptions .ev-descriptions__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ev-space-3);
+}
+.ev-descriptions.ev-descriptions .ev-descriptions__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+}
+.ev-descriptions.ev-descriptions .ev-descriptions__extra {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+
+.ev-descriptions.ev-descriptions .ev-descriptions__table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.ev-descriptions.ev-descriptions .ev-descriptions__cell {
+  box-sizing: border-box;
+  padding: var(--ev-space-2) var(--ev-space-3);
+  line-height: 1.5;
+  font-size: var(--ev-font-size-base);
+  vertical-align: top;
+}
+.ev-descriptions.ev-descriptions .ev-descriptions--small .ev-descriptions__cell {
+  padding: var(--ev-space-1) var(--ev-space-2);
+  font-size: var(--ev-font-size-xs);
+}
+.ev-descriptions.ev-descriptions .ev-descriptions--large .ev-descriptions__cell {
+  padding: var(--ev-space-3) var(--ev-space-4);
+}
+
+/* label / content 颜色分层 */
+.ev-descriptions.ev-descriptions .ev-descriptions__label {
+  color: var(--ev-text-color-regular);
+  font-weight: var(--ev-font-weight-regular);
+  white-space: nowrap;
+}
+.ev-descriptions.ev-descriptions .ev-descriptions__content {
+  color: var(--ev-text-color-primary);
+}
+
+/* bordered 变体 */
+.ev-descriptions.ev-descriptions.is-bordered .ev-descriptions__cell {
+  border: 1px solid var(--ev-border-color-lighter);
+  padding: var(--ev-space-2) var(--ev-space-3);
+}
+.ev-descriptions.ev-descriptions.is-bordered .ev-descriptions__label {
+  background-color: var(--ev-fill-color-light);
+  color: var(--ev-text-color-secondary);
+  font-weight: var(--ev-font-weight-regular);
+}
+.ev-descriptions.ev-descriptions.is-bordered.ev-descriptions--small .ev-descriptions__cell {
+  padding: var(--ev-space-1) var(--ev-space-2);
+}
+.ev-descriptions.ev-descriptions.is-bordered.ev-descriptions--large .ev-descriptions__cell {
+  padding: var(--ev-space-3) var(--ev-space-4);
+}

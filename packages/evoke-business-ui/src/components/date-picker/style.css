@@ -1,0 +1,607 @@
+/* EvDatePicker —样式（editor/panel/table/time-panel） */
+@import './time-panel.css';
+
+/* ─── 单值编辑器（输入框结构） ─── */
+.ev-date-editor.ev-date-editor {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 220px;
+  font-size: var(--ev-font-size-base);
+}
+.ev-date-editor.ev-date-editor.ev-input--large {
+  font-size: 14px;
+}
+.ev-date-editor.ev-date-editor.ev-input--small {
+  font-size: var(--ev-font-size-xs);
+  width: 180px;
+}
+.ev-date-editor.ev-date-editor .ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  width: 100%;
+  min-height: var(--ev-component-size);
+  padding: 1px 11px;
+  line-height: var(--ev-component-size);
+  background-color: var(--ev-fill-color-blank);
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out);
+}
+.ev-date-editor.ev-date-editor.ev-input--large .ev-input__wrapper {
+  min-height: var(--ev-component-size-large);
+  line-height: var(--ev-component-size-large);
+}
+.ev-date-editor.ev-date-editor.ev-input--small .ev-input__wrapper {
+  min-height: var(--ev-component-size-small);
+  line-height: var(--ev-component-size-small);
+}
+.ev-date-editor.ev-date-editor .ev-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--ev-text-color-placeholder) inset;
+}
+.ev-date-editor.ev-date-editor .ev-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}
+.ev-date-editor.ev-date-editor .ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+.ev-date-editor.ev-date-editor .ev-input__prefix,
+.ev-date-editor.ev-date-editor .ev-input__suffix {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ev-text-color-placeholder);
+  flex-shrink: 0;
+}
+.ev-date-editor.ev-date-editor .ev-input__inner {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: inherit;
+  height: calc(var(--ev-component-size) - 2px);
+  line-height: 1;
+  cursor: pointer;
+}
+.ev-date-editor.ev-date-editor .ev-input__inner::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-date-editor.ev-date-editor .ev-input__inner:disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+.ev-date-editor.ev-date-editor .ev-range__close-icon,
+.ev-date-editor.ev-date-editor .ev-input__icon.ev-range__close-icon {
+  cursor: pointer;
+  color: var(--ev-text-color-placeholder);
+}
+.ev-date-editor.ev-date-editor .ev-range__close-icon:hover {
+  color: var(--ev-text-color-secondary);
+}
+
+/* ─── 区间编辑器 ─── */
+.ev-date-editor.ev-date-editor .ev-range-editor.ev-input__wrapper {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--ev-component-size);
+  padding: 1px 11px;
+  background-color: var(--ev-fill-color-blank);
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
+  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out);
+}
+.ev-date-editor.ev-date-editor .ev-range-editor.ev-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--ev-text-color-placeholder) inset;
+}
+.ev-date-editor.ev-date-editor .ev-range-editor.ev-input__wrapper.is-active {
+  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+}
+.ev-date-editor.ev-date-editor .ev-range-editor.ev-input__wrapper.is-disabled {
+  background-color: var(--ev-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+  cursor: not-allowed;
+}
+.ev-date-editor.ev-date-editor .ev-range-editor--large.ev-input__wrapper {
+  min-height: var(--ev-component-size-large);
+}
+.ev-date-editor.ev-date-editor .ev-range-editor--small.ev-input__wrapper {
+  min-height: var(--ev-component-size-small);
+  padding: 1px 7px;
+}
+.ev-date-editor.ev-date-editor .ev-range__icon {
+  color: var(--ev-text-color-placeholder);
+  margin-right: var(--ev-space-1);
+  flex-shrink: 0;
+}
+.ev-date-editor.ev-date-editor .ev-range-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: inherit;
+  height: calc(var(--ev-component-size) - 4px);
+  line-height: 1;
+  cursor: pointer;
+}
+.ev-date-editor.ev-date-editor .ev-range-input::placeholder {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-date-editor.ev-date-editor .ev-range-input:disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+.ev-date-editor.ev-date-editor .ev-range-separator {
+  flex-shrink: 0;
+  padding: 0 5px;
+  color: var(--ev-text-color-regular);
+  font-size: 14px;
+}
+.ev-date-editor.ev-date-editor .ev-range__close-icon {
+  cursor: pointer;
+  color: var(--ev-text-color-placeholder);
+  margin-left: var(--ev-space-1);
+  flex-shrink: 0;
+}
+.ev-date-editor.ev-date-editor .ev-range__close-icon:hover {
+  color: var(--ev-text-color-secondary);
+}
+
+/* ─── 弹层 ─── */
+.ev-picker__popper.ev-picker__popper {
+  position: fixed;
+  z-index: 2000;
+  background: var(--ev-bg-color-overlay);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-3);
+}
+.ev-picker-dropdown-enter-active,
+.ev-picker-dropdown-leave-active {
+  transition:
+    opacity var(--ev-duration-fast) var(--ev-ease-out),
+    transform var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-picker-dropdown-enter-from,
+.ev-picker-dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* ─── 面板骨架 ─── */
+.ev-picker__popper.ev-picker__popper .ev-picker-panel {
+  position: relative;
+  color: var(--ev-text-color-regular);
+  background: var(--ev-bg-color-overlay);
+  border-radius: var(--ev-radius-md);
+  font-size: var(--ev-font-size-base);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 110px;
+  padding: 6px 0;
+  border-right: 1px solid var(--ev-border-color-lighter);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__shortcut {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0 16px;
+  line-height: 28px;
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  cursor: pointer;
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__shortcut:hover {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__body-wrapper {
+  display: flex;
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel.has-sidebar .ev-picker-panel__body-wrapper {
+  margin-left: 110px;
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__body {
+  position: relative;
+  min-width: 292px;
+  padding: 12px;
+}
+
+/* 头部 */
+.ev-picker__popper.ev-picker__popper .ev-date-picker__header,
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__header-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ev-text-color-regular);
+  cursor: pointer;
+  padding: 0 4px;
+  user-select: none;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__header-label:hover,
+.ev-picker__popper.ev-picker__popper .ev-date-picker__header-label.active {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  cursor: pointer;
+  border-radius: var(--ev-radius-sm);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__icon-btn:hover {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__icon-btn:disabled {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+
+/* footer */
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__footer {
+  padding: 4px 12px;
+  border-top: 1px solid var(--ev-border-color-lighter);
+  text-align: right;
+  background: var(--ev-bg-color-overlay);
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__btn {
+  border: none;
+  background: transparent;
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-base);
+  line-height: 24px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+.ev-picker__popper.ev-picker__popper .ev-picker-panel__btn:hover {
+  color: var(--ev-color-primary-light-3);
+}
+
+/* datetime 时间头 */
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-1);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__editor-wrap,
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__editors-wrap,
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__time-picker-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__editor,
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-btn {
+  border: none;
+  background: transparent;
+  color: var(--ev-text-color-regular);
+  font-size: var(--ev-font-size-base);
+  padding: 2px 6px;
+  outline: none;
+  cursor: pointer;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-btn:hover,
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-btn.is-open {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__time-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-2);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__time-header-icon {
+  color: var(--ev-text-color-placeholder);
+}
+
+/* 区间面板双内容 */
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker .ev-picker-panel__body {
+  min-width: 646px;
+  display: flex;
+  gap: 4px;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__content {
+  flex: 1;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-range-picker__header {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ev-text-color-regular);
+}
+
+/* ─── 日期表 ─── */
+.ev-picker__popper.ev-picker__popper .ev-date-table {
+  user-select: none;
+  font-size: 12px;
+  border-collapse: collapse;
+  width: 100%;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table th {
+  color: var(--ev-text-color-regular);
+  border-bottom: solid 1px var(--ev-border-color-lighter);
+  padding: 5px;
+  font-weight: 400;
+  text-align: center;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td {
+  box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
+  width: 32px;
+  height: 30px;
+  padding: 4px 0;
+  position: relative;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td .ev-date-table-cell {
+  box-sizing: border-box;
+  height: 30px;
+  padding: 3px 0;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td .ev-date-table-cell .ev-date-table-cell__text {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+  line-height: 24px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--ev-text-color-regular);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.next-month,
+.ev-picker__popper.ev-picker__popper .ev-date-table td.prev-month {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.today .ev-date-table-cell__text {
+  color: var(--ev-color-primary);
+  font-weight: 700;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.available:hover .ev-date-table-cell__text {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.in-range .ev-date-table-cell {
+  background-color: var(--ev-color-primary-light-9);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.in-range .ev-date-table-cell:hover {
+  background-color: var(--ev-color-primary-light-8);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.current:not(.disabled) .ev-date-table-cell__text {
+  color: #fff;
+  background-color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.start-date .ev-date-table-cell,
+.ev-picker__popper.ev-picker__popper .ev-date-table td.end-date .ev-date-table-cell {
+  color: #fff;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.start-date .ev-date-table-cell__text,
+.ev-picker__popper.ev-picker__popper .ev-date-table td.end-date .ev-date-table-cell__text {
+  background-color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.start-date .ev-date-table-cell {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  margin-left: 5px;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.end-date .ev-date-table-cell {
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  margin-right: 5px;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.disabled .ev-date-table-cell {
+  background-color: var(--ev-fill-color-light);
+  opacity: 1;
+  cursor: not-allowed;
+  color: var(--ev-text-color-placeholder);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td.disabled .ev-date-table-cell__text {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-picker__popper.ev-picker__popper .ev-date-table td:focus {
+  outline: none;
+}
+
+/* ─── 月份表 ─── */
+.ev-picker__popper.ev-picker__popper .ev-month-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  margin: -1px;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td {
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 0;
+  position: relative;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td .ev-date-table-cell {
+  box-sizing: border-box;
+  height: 48px;
+  padding: 6px 0;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td .ev-date-table-cell__text {
+  width: 54px;
+  height: 36px;
+  display: block;
+  margin: 0 auto;
+  line-height: 36px;
+  border-radius: 18px;
+  position: static;
+  transform: none;
+  color: var(--ev-text-color-regular);
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.today .ev-date-table-cell__text {
+  color: var(--ev-color-primary);
+  font-weight: 700;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td:not(.disabled):hover .ev-date-table-cell__text {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.in-range .ev-date-table-cell {
+  background-color: var(--ev-color-primary-light-9);
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.start-date .ev-date-table-cell__text,
+.ev-picker__popper.ev-picker__popper .ev-month-table td.end-date .ev-date-table-cell__text {
+  background-color: var(--ev-color-primary);
+  color: #fff;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.start-date .ev-date-table-cell {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  margin-left: 5px;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.end-date .ev-date-table-cell {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+  margin-right: 5px;
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.current:not(.disabled) .ev-date-table-cell__text {
+  color: #fff;
+  background-color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-month-table td.disabled .ev-date-table-cell__text {
+  background-color: var(--ev-fill-color-light);
+  cursor: not-allowed;
+  color: var(--ev-text-color-placeholder);
+}
+
+/* ─── 年份表 ─── */
+.ev-picker__popper.ev-picker__popper .ev-year-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  margin: -1px;
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td {
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td .cell {
+  display: inline-block;
+  width: 54px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 18px;
+  color: var(--ev-text-color-regular);
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td.today .cell {
+  color: var(--ev-color-primary);
+  font-weight: 700;
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td:not(.disabled):hover .cell {
+  color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td.current:not(.disabled) .cell {
+  color: #fff;
+  background-color: var(--ev-color-primary);
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td.prev-decade .cell,
+.ev-picker__popper.ev-picker__popper .ev-year-table td.next-decade .cell {
+  color: var(--ev-text-color-placeholder);
+}
+.ev-picker__popper.ev-picker__popper .ev-year-table td.disabled .cell {
+  background-color: var(--ev-fill-color-light);
+  cursor: not-allowed;
+  color: var(--ev-text-color-placeholder);
+}
+
+/* ─── 内嵌时间滚轮下拉 ─── */
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-dropdown {
+  position: absolute;
+  left: 12px;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 10;
+}
+.ev-picker__popper.ev-picker__popper .ev-date-picker__time-dropdown.is-right {
+  left: auto;
+  right: 12px;
+}
+
+/* ── 移动端（platform=mobile）：底部弹出日历面板 ── */
+.ev-picker__sheet-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+.ev-picker__sheet {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--ev-bg-color);
+  border-radius: 14px 14px 0 0;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0));
+}
+.ev-picker__sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 8px;
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+}
+.ev-picker__sheet-head .ev-icon {
+  color: var(--ev-text-color-secondary);
+  cursor: pointer;
+}
+.ev-picker__sheet-panel {
+  min-width: 0;
+}
+.ev-picker__sheet-panel .ev-picker-panel {
+  border: none;
+  box-shadow: none;
+  width: 100%;
+}
+.ev-picker-sheet-enter-active,
+.ev-picker-sheet-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-picker-sheet-enter-active .ev-picker__sheet,
+.ev-picker-sheet-leave-active .ev-picker__sheet {
+  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-picker-sheet-enter-from,
+.ev-picker-sheet-leave-to {
+  opacity: 0;
+}
+.ev-picker-sheet-enter-from .ev-picker__sheet,
+.ev-picker-sheet-leave-to .ev-picker__sheet {
+  transform: translateY(100%);
+}

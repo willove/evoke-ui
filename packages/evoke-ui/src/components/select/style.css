@@ -1,0 +1,210 @@
+/* EwSelect — 下拉选择 */
+
+.ew-select {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  min-width: 140px;
+}
+
+.ew-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--ew-border-color);
+  border-radius: var(--ew-radius-md);
+  background-color: var(--ew-bg-container);
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-primary);
+  cursor: pointer;
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-select__trigger:hover {
+  border-color: var(--ew-border-color-dark);
+}
+
+.ew-select.is-open .ew-select__trigger,
+.ew-select__trigger:focus-visible {
+  outline: none;
+  border-color: var(--ew-color-primary-light-5);
+}
+
+.ew-select.is-open .ew-select__trigger {
+  box-shadow: var(--ew-focus-ring);
+}
+
+.ew-select__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.ew-select__label.is-placeholder {
+  color: var(--ew-text-placeholder);
+}
+
+.ew-select__icon {
+  color: var(--ew-text-secondary);
+  flex-shrink: 0;
+}
+
+.ew-select__caret {
+  flex-shrink: 0;
+  color: var(--ew-text-secondary);
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.ew-select__caret.is-open {
+  transform: rotate(180deg);
+}
+
+/* ─── 尺寸 ─── */
+.ew-select.is-small .ew-select__trigger {
+  height: 30px;
+  font-size: var(--ew-font-size-xs);
+}
+
+.ew-select.is-large .ew-select__trigger {
+  height: 46px;
+  font-size: var(--ew-font-size-base);
+}
+
+/* ─── bare 嵌入形态（搜索栏等复合控件内部）─── */
+.ew-select.is-bare {
+  min-width: 0;
+  width: auto;
+}
+
+.ew-select.is-bare .ew-select__trigger {
+  height: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: inherit;
+  color: var(--ew-text-primary);
+}
+
+.ew-select.is-bare .ew-select__trigger:focus-visible {
+  box-shadow: none;
+}
+
+.ew-select.is-bare.is-error .ew-select__trigger {
+  border: none;
+}
+
+/* ─── 状态 ─── */
+.ew-select.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ew-select.is-disabled .ew-select__trigger {
+  cursor: not-allowed;
+  background-color: var(--ew-fill-1);
+}
+
+.ew-select.is-error .ew-select__trigger {
+  border-color: var(--ew-color-danger-light-5);
+}
+
+/* ══════ 下拉菜单 ══════ */
+.ew-select__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: var(--ew-z-index-overlay, 2000);
+  min-width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-md);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-3);
+}
+
+.ew-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  padding: 6px 10px;
+  border-radius: var(--ew-radius-sm);
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-regular);
+  cursor: pointer;
+  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out),
+    color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+
+.ew-select__option:hover:not(.is-disabled) {
+  background-color: var(--ew-fill-1);
+  color: var(--ew-text-primary);
+}
+
+.ew-select__option.is-selected {
+  color: var(--ew-color-primary);
+  font-weight: var(--ew-font-weight-medium);
+}
+
+.ew-select__option.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ew-select__option-icon {
+  color: var(--ew-text-secondary);
+}
+
+.ew-select__option-label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.ew-select__option-check {
+  flex-shrink: 0;
+}
+
+/* ─── 展开收起动效 ─── */
+.ew-select-drop-enter-active,
+.ew-select-drop-leave-active {
+  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-spring);
+}
+
+.ew-select-drop-enter-from,
+.ew-select-drop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* ─── 下拉菜单宿主屏蔽 ───
+   vp-doc 等宿主的 ul 规则（padding-left / list-style）会以更高优先级渗透，
+   导致菜单内选项缩进错位、出现列表符 */
+.ew-select .ew-select__menu {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+}
+
+/* bare 嵌入形态：展开态不铺光环（caret 旋转已是展开信号），
+   键盘聚焦保留细描边保证可达性 */
+.ew-select.is-bare.is-open .ew-select__trigger {
+  box-shadow: none;
+}
+
+.ew-select.is-bare .ew-select__trigger:focus-visible {
+  outline: 2px solid var(--ew-color-primary-light-7);
+  outline-offset: 2px;
+  border-radius: var(--ew-radius-sm);
+}

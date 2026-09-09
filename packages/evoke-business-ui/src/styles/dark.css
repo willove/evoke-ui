@@ -1,0 +1,142 @@
+/* ============================================
+   Evoke Business UI — Dark Mode
+   html.dark 触发，重映射 --ev-* 语义层与阴影层
+   ============================================ */
+
+html.dark {
+  --ev-color-primary:         #4d8bff;
+  --ev-color-primary-light-3: #3e70cc;
+  --ev-color-primary-light-5: #274680;
+  --ev-color-primary-light-7: #17294d;
+  --ev-color-primary-light-8: #0f1a33;
+  --ev-color-primary-light-9: #080e1a;
+  --ev-color-primary-dark-2:  #80b0ff;
+  --ev-color-primary-rgb:     77, 139, 255;
+
+  /* Evoke 设计令牌 — 暗色覆盖 */
+  --ev-focus-ring: 0 0 0 2px var(--ev-color-primary-light-5);
+  --ev-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 6px -1px rgba(0, 0, 0, 0.2);
+  --ev-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --ev-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --ev-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --ev-shadow-5: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+
+  --ev-color-success:         #4ade80;
+  --ev-color-success-light-3: #34a05a;
+  --ev-color-success-light-5: #257340;
+  --ev-color-success-light-7: #164526;
+  --ev-color-success-light-8: #0f2e1a;
+  --ev-color-success-light-9: #08180d;
+  --ev-color-success-dark-2:  #86efac;
+  --ev-color-success-rgb:     74, 222, 128;
+
+  --ev-color-warning:         #fbbf24;
+  --ev-color-warning-light-3: #b0861a;
+  --ev-color-warning-light-5: #7e6012;
+  --ev-color-warning-light-7: #4c3a0b;
+  --ev-color-warning-light-8: #322607;
+  --ev-color-warning-light-9: #191304;
+  --ev-color-warning-dark-2:  #fcd34d;
+  --ev-color-warning-rgb:     251, 191, 36;
+
+  --ev-color-danger:          #f87171;
+  --ev-color-danger-light-3:  #ae4f4f;
+  --ev-color-danger-light-5:  #7c3939;
+  --ev-color-danger-light-7:  #4b2222;
+  --ev-color-danger-light-8:  #321717;
+  --ev-color-danger-light-9:  #190c0c;
+  --ev-color-danger-dark-2:   #fca5a5;
+  --ev-color-danger-rgb:      248, 113, 113;
+
+  --ev-color-info:            #94a3b8;
+  --ev-color-info-light-3:    #687281;
+  --ev-color-info-light-5:    #4a525c;
+  --ev-color-info-light-7:    #2c3137;
+  --ev-color-info-light-8:    #1e2125;
+  --ev-color-info-light-9:    #0f1113;
+  --ev-color-info-dark-2:     #cbd5e1;
+  --ev-color-info-rgb:        148, 163, 184;
+
+  --ev-color-error:           var(--ev-color-danger);
+  --ev-color-error-light-3:   var(--ev-color-danger-light-3);
+  --ev-color-error-light-5:   var(--ev-color-danger-light-5);
+  --ev-color-error-light-7:   var(--ev-color-danger-light-7);
+  --ev-color-error-light-8:   var(--ev-color-danger-light-8);
+  --ev-color-error-light-9:   var(--ev-color-danger-light-9);
+  --ev-color-error-dark-2:    var(--ev-color-danger-dark-2);
+  --ev-color-error-rgb:       var(--ev-color-danger-rgb);
+
+  /* 扩展分类色 — 暗色下提亮一档，浅底档向页面底色混合 */
+  --ev-color-ext-cyan:    #22D3EE;
+  --ev-color-ext-teal:    #2DD4BF;
+  --ev-color-ext-violet:  #A78BFA;
+  --ev-color-ext-magenta: #F472B6;
+  --ev-color-ext-indigo:  #818CF8;
+  --ev-color-ext-lime:    #A3E635;
+  --ev-color-ext-amber:   #FCD34D;
+  --ev-color-ext-slate:   #94A3B8;
+
+  --ev-color-ext-cyan-light:    color-mix(in srgb, var(--ev-color-ext-cyan) 18%, var(--ev-bg-color));
+  --ev-color-ext-teal-light:    color-mix(in srgb, var(--ev-color-ext-teal) 18%, var(--ev-bg-color));
+  --ev-color-ext-violet-light:  color-mix(in srgb, var(--ev-color-ext-violet) 18%, var(--ev-bg-color));
+  --ev-color-ext-magenta-light: color-mix(in srgb, var(--ev-color-ext-magenta) 18%, var(--ev-bg-color));
+  --ev-color-ext-indigo-light:  color-mix(in srgb, var(--ev-color-ext-indigo) 18%, var(--ev-bg-color));
+  --ev-color-ext-lime-light:    color-mix(in srgb, var(--ev-color-ext-lime) 18%, var(--ev-bg-color));
+  --ev-color-ext-amber-light:   color-mix(in srgb, var(--ev-color-ext-amber) 18%, var(--ev-bg-color));
+  --ev-color-ext-slate-light:   color-mix(in srgb, var(--ev-color-ext-slate) 18%, var(--ev-bg-color));
+
+  --ev-text-color-primary:    #f3f4f6;
+  --ev-text-color-regular:    #d1d5db;
+  --ev-text-color-secondary:  #9ca3af;
+  --ev-text-color-placeholder:#4b5563;
+  --ev-text-color-disabled:   #374151;
+
+  --ev-bg-color:              #111827;
+  --ev-bg-color-page:         #030712;
+  --ev-bg-color-overlay:      #1f2937;
+  --ev-color-white:           #ffffff;
+  --ev-color-black:           #000000;
+
+  --ev-border-color:          #1f2937;
+  --ev-border-color-hover:    #3b4759;
+  --ev-border-color-light:    #1f2937;
+  --ev-border-color-lighter:  #172033;
+  --ev-border-color-extra-light: #111827;
+  --ev-border-color-dark:     #374151;
+
+  --ev-fill-color:            #1f2937;
+  --ev-fill-color-light:      #172033;
+  --ev-fill-color-lighter:    #111827;
+  --ev-fill-color-extra-light:#0d1117;
+  --ev-fill-color-blank:      #111827;
+  --ev-fill-color-dark:       #374151;
+  --ev-fill-color-darker:     #4b5563;
+
+  --ev-disabled-bg-color:     var(--ev-fill-color-light);
+  --ev-disabled-text-color:   var(--ev-text-color-placeholder);
+  --ev-disabled-border-color: var(--ev-border-color-light);
+
+  --ev-box-shadow:            0 1px 2px rgba(0,0,0,.2);
+  --ev-box-shadow-light:      0 1px 2px rgba(0,0,0,.15);
+  --ev-box-shadow-lighter:    none;
+  --ev-box-shadow-dark:       0 2px 8px rgba(0,0,0,.3);
+
+  --ev-sidebar-bg:               #111827;
+  --ev-sidebar-text:             #9ca3af;
+  --ev-sidebar-text-hover:       #d1d5db;
+  --ev-sidebar-text-active:      #93c5fd;
+  --ev-sidebar-hover-bg:         #1f2937;
+  --ev-sidebar-active-bg:        rgba(23,93,255,.12);
+  --ev-sidebar-border:           #1f2937;
+  --ev-sidebar-indicator:        var(--ev-color-primary);
+
+  --ev-header-bg:                #111827;
+  --ev-header-border:            #1f2937;
+
+  --ev-app-card-shadow:          none;
+  --ev-app-card-shadow-hover:    0 4px 12px rgba(0,0,0,.2);
+  --ev-app-card-border:          #1f2937;
+
+  /* 暗色模式：固定列阴影加深以呈现层次 */
+  --ev-table-fixed-shadow:    -4px 0 8px rgba(0, 0, 0, 0.5);
+}

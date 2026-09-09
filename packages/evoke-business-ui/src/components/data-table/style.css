@@ -1,0 +1,67 @@
+/* EvDataTable — CRUD 表格封装（业务封装） */
+
+.ev-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-3);
+  min-width: 0;
+}
+
+/* ─── 工具栏 ─── */
+.ev-data-table__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-3);
+  flex-wrap: wrap;
+}
+.ev-data-table__toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  min-width: 0;
+}
+.ev-data-table__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-color-primary);
+}
+.ev-data-table__total-badge {
+  padding: 1px var(--ev-space-2);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-color-primary-light-9);
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-xs);
+  white-space: nowrap;
+}
+.ev-data-table__total-badge strong {
+  font-weight: var(--ev-font-weight-semibold);
+}
+.ev-data-table__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  flex-wrap: wrap;
+}
+
+/* ─── 表格与加载遮罩 ─── */
+.ev-data-table__table-wrapper {
+  position: relative;
+  min-width: 0;
+}
+.ev-data-table__loading-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ev-mask-color, rgba(255, 255, 255, 0.7));
+  border-radius: var(--ev-radius-md);
+}
+
+/* ─── 分页 ─── */
+.ev-data-table__pagination {
+  display: flex;
+  justify-content: flex-end;
+}

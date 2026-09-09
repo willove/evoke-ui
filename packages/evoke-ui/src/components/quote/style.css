@@ -1,0 +1,75 @@
+/* EwQuote — 引用/评价卡 */
+
+.ew-quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ew-space-4);
+  padding: var(--ew-space-6);
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background-color: var(--ew-bg-container);
+  margin: 0;
+}
+
+.ew-quote.is-sticker {
+  border: 3px solid var(--ew-border-sticker);
+  border-radius: var(--ew-radius-xl);
+  background-color: var(--ew-fill-1);
+  box-shadow: var(--ew-shadow-2);
+}
+
+.ew-quote__text {
+  position: relative;
+  margin: 0;
+  font-size: var(--ew-font-size-base);
+  line-height: 1.75;
+  color: var(--ew-text-regular);
+}
+
+/* 引号装饰 */
+.ew-quote__text::before {
+  content: '\201C';
+  display: block;
+  margin-bottom: var(--ew-space-1);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: var(--ew-display-weight-strong);
+  color: var(--ew-color-primary-light-5);
+}
+
+.ew-quote__author {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ew-space-2);
+  font-size: var(--ew-font-size-sm);
+}
+
+.ew-quote__name {
+  font-weight: var(--ew-font-weight-semibold);
+  color: var(--ew-text-primary);
+}
+
+.ew-quote__role {
+  color: var(--ew-text-secondary);
+}
+
+.ew-quote__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  color: var(--ew-color-primary);
+  font-weight: var(--ew-font-weight-medium);
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-quote .ew-quote__text {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: var(--ew-font-size-base);
+}

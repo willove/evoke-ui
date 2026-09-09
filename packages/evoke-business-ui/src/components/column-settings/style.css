@@ -1,0 +1,82 @@
+/* EvColumnSettings — 表格列设置（业务封装） */
+
+/* 触发器复用 ev-button（size=small），仅补文字间距 */
+.ev-column-settings__trigger .ev-column-settings__trigger-text {
+  font-size: var(--ev-font-size-xs);
+}
+
+.ev-column-settings__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-2);
+}
+
+.ev-column-settings__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--ev-space-1);
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+.ev-column-settings__head-title {
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-primary);
+}
+.ev-column-settings__reset {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-xs);
+  cursor: pointer;
+}
+.ev-column-settings__reset:hover {
+  color: var(--ev-color-primary-light-3);
+}
+
+.ev-column-settings__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.ev-column-settings__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-1) var(--ev-space-1);
+  border-radius: var(--ev-radius-sm);
+  cursor: grab;
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-column-settings__item:hover {
+  background: var(--ev-fill-color-light);
+}
+.ev-column-settings__item.is-dragging {
+  opacity: 0.5;
+}
+.ev-column-settings__item.is-drag-over {
+  box-shadow: inset 0 2px 0 var(--ev-color-primary);
+}
+
+.ev-column-settings__drag-handle {
+  color: var(--ev-text-color-placeholder);
+  cursor: grab;
+  font-size: var(--ev-font-size-xs);
+  user-select: none;
+}
+
+.ev-column-settings__item-label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-regular);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,159 @@
+/* EwNavbar — 站点导航 */
+
+.ew-navbar {
+  position: relative;
+  z-index: var(--ew-z-index-sticky);
+  background-color: transparent;
+  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-slow) var(--ew-ease-smooth);
+}
+
+/* 下滑隐藏、上滑浮现 */
+.ew-navbar.is-sticky.is-hidden {
+  transform: translateY(-100%);
+}
+
+.ew-navbar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-8);
+  height: 68px;
+}
+
+/* ─── 吸顶状态 ─── */
+.ew-navbar.is-sticky {
+  position: sticky;
+  top: 0;
+}
+
+.ew-navbar.is-sticky.is-blur.is-scrolled {
+  background-color: color-mix(in srgb, var(--ew-bg-page) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--ew-border-color-light);
+}
+
+.ew-navbar.is-sticky:not(.is-blur).is-scrolled {
+  background-color: var(--ew-bg-page);
+  box-shadow: 0 1px 0 var(--ew-border-color-light), var(--ew-shadow-1);
+}
+
+/* ─── 左侧 logo ─── */
+.ew-navbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-4);
+  flex-shrink: 0;
+}
+
+.ew-navbar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  color: var(--ew-text-primary);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+}
+
+.ew-navbar__logo:hover {
+  color: var(--ew-text-primary);
+}
+
+.ew-navbar__logo-text {
+  font-size: var(--ew-font-size-md);
+  letter-spacing: 0.01em;
+}
+
+.ew-navbar__logo-img {
+  height: 28px;
+  width: auto;
+}
+
+/* ─── 中部导航 ─── */
+.ew-navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.ew-navbar__link {
+  padding: 6px 12px;
+  border-radius: var(--ew-radius-sm);
+  color: var(--ew-text-regular);
+  font-size: var(--ew-font-size-base);
+  font-weight: var(--ew-font-weight-regular);
+  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-navbar__link:hover {
+  color: var(--ew-text-primary);
+}
+
+.ew-navbar__link.is-active {
+  color: var(--ew-color-primary);
+}
+
+/* ─── 右侧动作区 ─── */
+.ew-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ─── 移动端 ─── */
+.ew-navbar__burger {
+  display: none;
+}
+
+.ew-navbar__mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .ew-navbar__nav {
+    display: none;
+  }
+
+  .ew-navbar__burger {
+    display: inline-flex;
+  }
+
+  .ew-navbar__mobile {
+    display: flex;
+    flex-direction: column;
+    padding: var(--ew-space-2) var(--ew-space-6) var(--ew-space-4);
+    border-top: 1px solid var(--ew-border-color-light);
+    background-color: var(--ew-bg-page);
+  }
+
+  .ew-navbar__mobile-link {
+    padding: var(--ew-space-3) var(--ew-space-2);
+    border-radius: var(--ew-radius-md);
+    color: var(--ew-text-regular);
+    font-weight: var(--ew-font-weight-medium);
+  }
+
+  .ew-navbar__mobile-link:hover {
+    color: var(--ew-text-primary);
+    background-color: var(--ew-bg-hover);
+  }
+}
+
+/* ─── 展开动效 ─── */
+.ew-navbar-collapse-enter-active,
+.ew-navbar-collapse-leave-active {
+  transition: opacity var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+
+.ew-navbar-collapse-enter-from,
+.ew-navbar-collapse-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}

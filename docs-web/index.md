@@ -1,0 +1,515 @@
+---
+layout: false
+---
+
+<script setup>
+import { ref } from 'vue'
+import { useThemeConfig } from '../packages/evoke-ui/src/composables/useThemeConfig'
+import { useTheme } from '../packages/evoke-ui/src/composables/useTheme'
+import { EW_COLOR_PRESETS, EW_PALETTE_PRESETS } from '../packages/evoke-ui/src/presets'
+
+const { config, setPrimary, setSemantic, reset } = useThemeConfig()
+const { isDark, toggleTheme } = useTheme()
+const swatches = Object.values(EW_COLOR_PRESETS)
+const query = ref('')
+const category = ref('')
+
+// 首页换色点：主色 + 经典语义色整套回归（覆盖此前可能套用的色系语义）
+function pickPrimary(color) {
+  setPrimary(color)
+  setSemantic(EW_PALETTE_PRESETS.classic.semantic)
+}
+
+// 首页搜索的站内索引：关键词命中即回车直达对应页
+const searchIndex = [
+  { cat: '文档', label: '快速开始', path: '/guide/getting-started', kw: '安装 install 引入 上手 npm pnpm 全量 按需' },
+  { cat: '文档', label: '设计语言', path: '/guide/design', kw: '设计 clean navy 令牌 原则 排版 留白 气质' },
+  { cat: '文档', label: '主题与暗色模式', path: '/guide/theming', kw: '主题 暗色 dark 令牌 变量 token' },
+  { cat: '文档', label: '主题定制器', path: '/guide/customizer', kw: '定制器 换色 色系 主色 圆角 间距 莫兰迪 温柔安静 马卡龙 美拉德 马蒂斯 敦煌 多巴胺' },
+  { cat: '文档', label: '动效', path: '/guide/motion', kw: '动效 动画 reveal 滚动 浮现 spring 弹性' },
+  { cat: '组件', label: 'Icon 图标', path: '/components/icon', kw: '图标 icon remix svg 核心集' },
+  { cat: '组件', label: '全部图标', path: '/components/icons', kw: '全部图标 图标库 remix 浏览 搜索' },
+  { cat: '组件', label: 'Button 按钮', path: '/components/button', kw: '按钮 button cta 点击 胶囊' },
+  { cat: '组件', label: 'IconButton 图标按钮', path: '/components/icon-button', kw: '图标按钮 icon button 紧凑' },
+  { cat: '组件', label: 'Tag 标签', path: '/components/tag', kw: '标签 tag 状态 胶囊' },
+  { cat: '组件', label: 'Badge 徽标', path: '/components/badge', kw: '徽标 badge 红点 计数 未读' },
+  { cat: '组件', label: 'Keycap 键帽', path: '/components/keycap', kw: '键帽 keycap 快捷键 键盘' },
+  { cat: '组件', label: 'Input 输入框', path: '/components/input', kw: '输入框 input 表单 文本 邮箱' },
+  { cat: '组件', label: 'Textarea 多行输入', path: '/components/textarea', kw: '多行 输入 文本域 textarea 评论' },
+  { cat: '组件', label: 'Select 下拉选择', path: '/components/select', kw: '下拉 选择 select 菜单 选项' },
+  { cat: '组件', label: 'Field 字段包装', path: '/components/field', kw: '表单 字段 label 标签 校验 提示 外壳' },
+  { cat: '组件', label: 'Tabs 标签页', path: '/components/tabs', kw: '标签页 tabs 分段 胶囊 切换 视图' },
+  { cat: '组件', label: 'Switch 开关', path: '/components/switch', kw: '开关 switch 布尔 切换 设置' },
+  { cat: '组件', label: 'Avatar 头像', path: '/components/avatar', kw: '头像 avatar 用户 图片' },
+  { cat: '组件', label: 'AvatarGroup 头像组', path: '/components/avatar-group', kw: '头像组 团队 avatar 层叠 折叠' },
+  { cat: '组件', label: 'Container 容器', path: '/components/container', kw: '容器 container 栅格 限宽 居中 宽度' },
+  { cat: '组件', label: 'Section 区块', path: '/components/section', kw: '区块 section 眉题 标题 分节' },
+  { cat: '组件', label: 'Card 卡片', path: '/components/card', kw: '卡片 card 粉彩 贴纸 容器' },
+  { cat: '组件', label: 'Hero 首屏', path: '/components/hero', kw: '首屏 hero banner 大标题 第一印象' },
+  { cat: '组件', label: 'Navbar 导航', path: '/components/navbar', kw: '导航 navbar header 菜单 吸顶' },
+  { cat: '组件', label: 'Footer 页脚', path: '/components/footer', kw: '页脚 footer 链接 版权 社交' },
+  { cat: '组件', label: 'SearchBox 搜索框', path: '/components/search-box', kw: '搜索框 search 搜索 三段 分类' },
+  { cat: '组件', label: 'IconGrid 图标网格', path: '/components/icon-grid', kw: '图标网格 icon grid 浏览 复制' },
+  { cat: '组件', label: 'FeatureGrid 特性', path: '/components/feature-grid', kw: '特性 feature 功能 三栏 亮点 介绍' },
+  { cat: '组件', label: 'Statistic 指标', path: '/components/statistic', kw: '指标 statistic 数字 统计 滚动 计数' },
+  { cat: '组件', label: 'LogoCloud 品牌墙', path: '/components/logo-cloud', kw: '品牌墙 logo 合作 客户 背书' },
+  { cat: '组件', label: 'PricingCard 定价卡', path: '/components/pricing-card', kw: '定价 pricing 价格 会员 套餐 付费' },
+  { cat: '组件', label: 'ComparisonTable 对比表', path: '/components/comparison-table', kw: '对比 comparison 表格 套餐 差异' },
+  { cat: '组件', label: 'Faq 手风琴', path: '/components/faq', kw: '常见问题 faq 手风琴 问答 折叠 疑问' },
+  { cat: '组件', label: 'Quote 评价', path: '/components/quote', kw: '评价 quote 引言 用户说 口碑' },
+  { cat: '组件', label: 'ArticleCard 文章卡', path: '/components/article-card', kw: '文章 blog 博客 列表 卡片' },
+  { cat: '组件', label: 'ProfileCard 个人名片', path: '/components/profile-card', kw: '个人 名片 团队 介绍 profile 成员' },
+  { cat: '组件', label: 'Timeline 时间线', path: '/components/timeline', kw: '时间线 timeline 更新日志 里程碑 版本' },
+  { cat: '组件', label: 'Cta 行动召唤', path: '/components/cta', kw: 'cta 行动召唤 转化 收尾 按钮' },
+  { cat: '组件', label: 'Newsletter 订阅', path: '/components/newsletter', kw: '订阅 newsletter 邮件 订阅框' },
+  { cat: '组件', label: 'Alert 公告', path: '/components/alert', kw: '公告 alert 提示 通告 横幅 警告' },
+  { cat: '组件', label: 'Video 视频', path: '/components/video', kw: '视频 video 播放 画幅' },
+  { cat: '组件', label: 'Audio 音频', path: '/components/audio', kw: '音频 audio 播客 播放 音乐' },
+  { cat: '组件', label: 'Carousel 轮播', path: '/components/carousel', kw: '轮播 carousel 幻灯 滑动 自动' },
+  { cat: '组件', label: 'Marquee 跑马灯', path: '/components/marquee', kw: '跑马灯 marquee 滚动 横幅 无限 循环' },
+  { cat: '组件', label: 'ContactForm 留言表单', path: '/components/contact-form', kw: '留言 表单 联系 contact 合作' },
+  { cat: '组件', label: 'CodeBlock 命令块', path: '/components/code-block', kw: '命令 code 终端 复制 安装 代码' },
+  { cat: '组件', label: 'ThemeToggle 主题切换', path: '/components/theme-toggle', kw: '主题 切换 暗色 dark 明暗' },
+  { cat: '组件', label: 'ConfigProvider 主题配置', path: '/components/config-provider', kw: '配置 主题 provider 换肤 全局 换色' },
+  { cat: '案例', label: '案例总览', path: '/cases/', kw: '案例 场景 模板 整页 示例 examples 全部' },
+  { cat: '案例', label: '企业官网案例', path: '/cases/corporate', kw: '案例 官网 企业 营销页 landing 定价 hero 首页 公司' },
+  { cat: '案例', label: '个人博客案例', path: '/cases/blog', kw: '案例 博客 博客首页 blog 文章 内容站 专栏 订阅' },
+  { cat: '案例', label: '云笔记工作台案例', path: '/cases/notes', kw: '案例 笔记 工作台 应用 工具 nimbus 编辑 卡片 轻应用' },
+]
+
+function goSearch() {
+  const cat = category.value || '全部'
+  const pool = searchIndex.filter((it) => cat === '全部' || it.cat === cat)
+  const q = query.value.trim().toLowerCase()
+  if (!q) {
+    window.location.href = '/components/overview'
+    return
+  }
+  const terms = q.split(/\s+/)
+  const hits = pool
+    .map((it) => {
+      const hay = `${it.label} ${it.kw}`.toLowerCase()
+      return { it, score: terms.reduce((n, t) => n + (hay.includes(t) ? 1 : 0), 0) }
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+  window.location.href = hits[0]?.it.path ?? '/components/overview'
+}
+</script>
+
+<EwNavbar logo-text="Evoke UI" :items="[
+  { label: '首页', href: '/' },
+  { label: '快速开始', href: '/guide/getting-started' },
+  { label: '设计语言', href: '/guide/design' },
+  { label: '组件', href: '/components/overview' },
+  { label: '案例', href: '/cases/' },
+  { label: '主题定制器', href: '/guide/customizer' },
+  { label: '动效', href: '/guide/motion' },
+]">
+  <template #logo>
+    <a href="/" class="home-brand">
+      <span class="home-brand__name">Evoke UI</span>
+      <EwTag size="small">v0.1.0</EwTag>
+    </a>
+  </template>
+  <template #actions>
+    <EwThemeToggle />
+    <EwIconButton icon="github" aria-label="GitHub" />
+    <EwButton size="small" variant="soft" icon="download">下载</EwButton>
+  </template>
+</EwNavbar>
+
+<EwHero
+  reveal
+  title="官网的气质，从首屏开始"
+  description="一套为官网与营销页而生的 Vue3 组件库：排版疏朗、动效轻盈，明暗双主题与运行时换色开箱即用。"
+>
+  <template #badge>
+    <EwAlert pill>
+      <span>v0.1.0 正式发布：主题定制器与 43 个组件</span>
+      <template #action>
+        <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
+      </template>
+    </EwAlert>
+  </template>
+  <template #actions>
+    <EwFeatureGrid
+      variant="bullets"
+      :items="[
+        { icon: 'device-line', title: '杂志感的大标题' },
+        { icon: 'compass-3-line', title: '疏朗的留白节奏' },
+        { icon: 'flashlight-line', title: '灵动的微交互' },
+      ]"
+    />
+  </template>
+  <EwSearchBox
+    v-model="query"
+    v-model:category="category"
+    large
+    placeholder="搜索组件、文档或案例，回车直达…"
+    :categories="['全部', '组件', '文档', '案例']"
+    style="max-width:760px;"
+    @keydown.enter="goSearch"
+  >
+    <template #suffix>
+      <EwKeycap :keys="['⌘', 'K']" />
+    </template>
+  </EwSearchBox>
+  <template #aside>
+    <div class="home-collage">
+      <EwCard tone="cream" sticker class="home-collage__card is-a">
+        <div class="home-collage__label">运行时换色</div>
+        <div class="home-collage__dots">
+          <button
+            v-for="c in swatches"
+            :key="c.primary"
+            class="home-collage__dot"
+            :class="{ 'is-active': config.primary === c.primary }"
+            :style="{ '--swatch': c.primary }"
+            :aria-label="`换主色为 ${c.label}`"
+            @click="pickPrimary(c.primary)"
+          />
+        </div>
+      </EwCard>
+      <EwCard tone="blue" sticker class="home-collage__card is-b">
+        <EwStatistic value="43" label="个组件" animated />
+        <div class="home-collage__meta">内置 960+ 图标 · MIT 开源</div>
+      </EwCard>
+      <EwCard tone="mint" sticker class="home-collage__card is-c">
+        <label class="home-collage__theme">
+          <EwSwitch :model-value="isDark" @update:model-value="toggleTheme()" />
+          <span>明暗双主题</span>
+        </label>
+      </EwCard>
+      <div class="home-collage__chip">
+        <EwTag tone="primary" size="small">v0.1.0</EwTag>
+        <EwTag size="small">Vue 3</EwTag>
+      </div>
+    </div>
+  </template>
+</EwHero>
+
+<div class="home-band">
+  <EwMarquee
+    :items="['EVOKE UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL', '明暗一体', '安静优雅']"
+    separator="star-fill"
+    :duration="20000"
+    text-size="40px"
+  />
+
+  <EwSection eyebrow="playground" title="一键为品牌换装" description="点一个色板，整个页面——包括这套文档站——的主色会立刻跟着切换，这就是 EwConfigProvider 在做的事。" align="center">
+    <div class="home-swatch-row">
+      <button
+        v-for="c in swatches"
+        :key="c.primary"
+        class="home-swatch"
+        :class="{ 'is-active': config.primary === c.primary }"
+        :style="{ '--swatch': c.primary }"
+        @click="setPrimary(c.primary)"
+      >
+        <span class="home-swatch__dot" />
+        {{ c.label }}
+      </button>
+      <EwButton size="small" variant="ghost" @click="reset">恢复默认</EwButton>
+    </div>
+    <div class="home-preview">
+      <EwButton pill>立即开始</EwButton>
+      <EwButton variant="soft">了解定价</EwButton>
+      <EwTag tone="primary">运行时换色</EwTag>
+      <EwSwitch :model-value="true" />
+    </div>
+  </EwSection>
+
+  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，43 个组件基本都齐了。" align="center">
+    <EwFeatureGrid
+      variant="cards"
+      :columns="3"
+      :stagger="80"
+      :items="[
+        { icon: 'brush-line', title: '统一的设计语言', description: 'Clean Navy 设计令牌驱动：粉彩贴纸卡、藏青色软阴影与灵动的微交互，装进项目就能用。' },
+        { icon: 'search', title: '标志性的大搜索框', description: '分类、输入、按钮三段一体，大圆角配藏青软阴影，放在首屏就是全页焦点。' },
+        { icon: 'device-line', title: '响应式栅格', description: '特性卡、文章卡与图标网格全自适应，窄屏自动降列。' },
+        { icon: 'star-fill', title: '转化组件', description: '定价卡、对比表、FAQ 与订阅框，产品介绍页的下半部分一次配齐。' },
+        { icon: 'heart', title: '媒体与表单', description: '音视频、轮播与留言表单，个人站与企业站都用得上。' },
+        { icon: 'flashlight-line', title: '轻量动效', description: 'v-reveal 滚动浮现、数字滚动与跑马灯，并自动跟随系统的减弱动效设置。' },
+      ]"
+    />
+    <div class="home-links">
+      <EwButton variant="outline" icon-right="arrow-right" href="/components/overview">浏览全部组件</EwButton>
+    </div>
+  </EwSection>
+
+  <EwSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center">
+    <div class="home-cases">
+      <a class="home-case" href="/cases/corporate">
+        <span class="home-case__icon"><EwIcon name="building-line" :size="22" /></span>
+        <span class="home-case__title">企业官网</span>
+        <span class="home-case__desc">从首屏到页脚的完整营销页，定价、对比表与 FAQ 一次配齐。</span>
+        <span class="home-case__meta">14 个组件 · 整页</span>
+      </a>
+      <a class="home-case" href="/cases/blog">
+        <span class="home-case__icon"><EwIcon name="article-line" :size="22" /></span>
+        <span class="home-case__title">个人博客</span>
+        <span class="home-case__desc">分类筛选的文章流、热榜轮播与订阅框，内容站的经典结构。</span>
+        <span class="home-case__meta">10 个组件 · 可交互</span>
+      </a>
+      <a class="home-case" href="/cases/notes">
+        <span class="home-case__icon"><EwIcon name="book-open-line" :size="22" /></span>
+        <span class="home-case__title">云笔记工作台</span>
+        <span class="home-case__desc">搜索、筛选、编辑与归档，用官网组件拼出一台轻应用。</span>
+        <span class="home-case__meta">12 个组件 · 可交互</span>
+      </a>
+    </div>
+    <div class="home-links">
+      <EwButton variant="outline" icon-right="arrow-right" href="/cases/">查看全部案例</EwButton>
+    </div>
+  </EwSection>
+</div>
+
+<div class="home-stats-band">
+  <div class="ew-container home-stats">
+    <EwStatistic value="43" label="组件" align="center" animated />
+    <EwStatistic value="960+" label="内置图标" align="center" animated />
+    <EwStatistic value="4" label="主题维度" align="center" animated />
+    <EwStatistic value="2" label="明暗主题" align="center" animated />
+  </div>
+</div>
+
+<EwCta title="用 Evoke UI 搭你的下一个官网" description="免费开源，MIT 协议，npm install 即用。">
+  <template #actions>
+    <EwButton size="large" pill icon="download" href="/guide/getting-started">开始使用</EwButton>
+    <EwButton size="large" pill variant="dark" icon="github" href="https://github.com">GitHub</EwButton>
+  </template>
+</EwCta>
+
+<EwFooter
+  soft
+  logo-text="Evoke UI"
+  slogan="轻盈优雅的 Vue3 官网组件库。"
+  copyright="© 2026 willove · MIT"
+  :columns="[
+    { title: '文档', links: [{ label: '快速开始', href: '/guide/getting-started' }, { label: '设计语言', href: '/guide/design' }, { label: '主题定制', href: '/guide/customizer' }] },
+    { title: '组件', links: [{ label: '组件总览', href: '/components/overview' }, { label: '站点区块', href: '/components/hero' }, { label: '媒体交互', href: '/components/video' }] },
+    { title: '案例', links: [{ label: '企业官网', href: '/cases/corporate' }, { label: '个人博客', href: '/cases/blog' }, { label: '云笔记工作台', href: '/cases/notes' }] },
+    { title: '更多', links: [{ label: 'GitHub', href: 'https://github.com' }, { label: '更新日志', href: '/components/timeline' }] },
+  ]"
+/>
+
+<style>
+.home-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ew-text-primary);
+}
+.home-brand__name {
+  font-size: 18px;
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+}
+.home-collage {
+  position: relative;
+  width: 360px;
+}
+.home-collage__card {
+  box-shadow: var(--ew-shadow-3);
+  animation: home-collage-float 7s ease-in-out infinite;
+}
+.home-collage__card.is-a {
+  transform: rotate(-4deg);
+}
+.home-collage__card.is-b {
+  transform: rotate(3deg) translate(-18px, -10px);
+  animation-delay: -2.4s;
+}
+.home-collage__card.is-c {
+  transform: rotate(-2deg) translate(14px, -8px);
+  width: fit-content;
+  animation-delay: -4.8s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-collage__card {
+    animation: none;
+  }
+}
+@keyframes home-collage-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
+.home-collage__label {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.06em;
+  color: var(--ew-text-secondary);
+}
+.home-collage__dots {
+  display: flex;
+  gap: 10px;
+}
+.home-collage__dot {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--ew-radius-circle);
+  background: var(--swatch);
+  box-shadow: 0 1px 4px rgba(26, 41, 71, 0.2);
+  cursor: pointer;
+  transition: transform var(--ew-duration-base) var(--ew-ease-spring),
+    box-shadow var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+.home-collage__dot:hover {
+  transform: scale(1.15);
+}
+.home-collage__dot.is-active {
+  box-shadow: 0 0 0 2px var(--swatch);
+  transform: scale(1.12);
+}
+.home-collage__meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ew-text-secondary);
+}
+.home-collage__theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ew-text-regular);
+  cursor: pointer;
+}
+.home-collage__chip {
+  position: absolute;
+  top: -16px;
+  right: -20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-full);
+  background: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-2);
+  transform: rotate(5deg);
+}
+.home-band {
+  padding: 64px 0 40px;
+}
+/* 区块内容随容器令牌限宽，超宽屏不再无限拉伸 */
+.home-band .ew-section {
+  max-width: var(--ew-container-width, 1152px);
+  margin-inline: auto;
+}
+.home-band .ew-marquee {
+  margin-bottom: 96px;
+}
+.home-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.home-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-full);
+  background: var(--ew-bg-container);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ew-text-secondary);
+  transition: border-color .2s, box-shadow .2s, color .2s;
+}
+.home-swatch:hover { border-color: var(--ew-border-color); color: var(--ew-text-primary); }
+.home-swatch.is-active {
+  border-color: var(--swatch);
+  color: var(--ew-text-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--swatch) 25%, transparent);
+}
+.home-swatch__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--swatch); }
+.home-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 40px 24px;
+  border: 1px dashed var(--ew-border-color);
+  border-radius: var(--ew-radius-lg);
+  max-width: 620px;
+  margin-inline: auto;
+}
+.home-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+.home-cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  max-width: 960px;
+  margin-inline: auto;
+}
+.home-case {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 24px 22px;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background: var(--ew-bg-container);
+  text-align: left;
+  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+.home-case:hover {
+  border-color: var(--ew-color-primary-light-7);
+  box-shadow: var(--ew-shadow-2);
+  transform: translateY(-3px);
+}
+.home-case__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ew-radius-md);
+  background: var(--vp-c-brand-soft);
+  color: var(--ew-color-primary);
+}
+.home-case__title {
+  font-size: 16px;
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-primary);
+}
+.home-case__desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
+}
+.home-case__meta {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ew-text-secondary);
+}
+.home-stats-band {
+  padding: 88px 0;
+  border-top: 1px solid var(--ew-border-color-light);
+  border-bottom: 1px solid var(--ew-border-color-light);
+  background-color: var(--ew-bg-muted);
+}
+.home-stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+</style>

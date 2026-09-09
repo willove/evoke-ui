@@ -1,0 +1,62 @@
+/* EvCard — 卡片 */
+
+.ev-card.ev-card {
+  --ev-card-border-color: var(--ev-border-color-light);
+  --ev-card-border-radius: var(--ev-radius-lg);
+  --ev-card-padding: var(--ev-space-4);
+  --ev-card-bg-color: var(--ev-bg-color);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border: 1px solid var(--ev-card-border-color);
+  border-radius: var(--ev-card-border-radius);
+  background-color: var(--ev-card-bg-color);
+  overflow: hidden;
+  color: var(--ev-text-color-primary);
+  transition:
+    transform var(--ev-duration-base) var(--ev-ease-out),
+    border-color var(--ev-duration-base) var(--ev-ease-out),
+    box-shadow var(--ev-duration-base) var(--ev-ease-out);
+}
+/* 悬浮动效仅在 hoverable 时执行（hoverable=false 完全静态） */
+.ev-card.ev-card.is-hoverable:hover {
+  transform: translateY(-2px);
+  border-color: var(--ev-color-primary-light-5);
+  box-shadow: var(--ev-card-shadow-hover);
+}
+.ev-card.ev-card.is-hoverable:active {
+  transform: scale(0.99);
+}
+
+.ev-card.ev-card .ev-card__header {
+  padding: calc(var(--ev-card-padding) - 2px) var(--ev-card-padding);
+  border-bottom: 1px solid var(--ev-card-border-color);
+  box-sizing: border-box;
+  font-weight: var(--ev-font-weight-medium);
+}
+
+.ev-card.ev-card .ev-card__body {
+  flex: 1;
+  padding: var(--ev-card-padding);
+}
+
+.ev-card.ev-card .ev-card__footer {
+  padding: calc(var(--ev-card-padding) - 2px) var(--ev-card-padding);
+  border-top: 1px solid var(--ev-card-border-color);
+  box-sizing: border-box;
+}
+
+/* shadow 变体；阴影为可见的层级投影而非描边 */
+.ev-card.ev-card {
+  --ev-card-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.06);
+  --ev-card-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+.ev-card.ev-card.is-always-shadow {
+  box-shadow: var(--ev-card-shadow);
+}
+.ev-card.ev-card.is-hover-shadow.is-hoverable:hover {
+  box-shadow: var(--ev-card-shadow);
+}
+.ev-card.ev-card.is-never-shadow {
+  box-shadow: none;
+}

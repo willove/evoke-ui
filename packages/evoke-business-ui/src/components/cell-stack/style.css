@@ -1,0 +1,25 @@
+/* EvCellStack — 双行单元格（业务封装） */
+
+.ev-cell-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.ev-cell-stack__main {
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ev-cell-stack__sub {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

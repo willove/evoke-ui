@@ -1,0 +1,55 @@
+/* EvComment — 评论 */
+.ev-comment {
+  display: flex;
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-3) 0;
+}
+
+.ev-comment__avatar {
+  flex-shrink: 0;
+}
+
+.ev-comment__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ev-comment__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ev-space-2);
+  flex-wrap: wrap;
+}
+
+.ev-comment__author {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-primary);
+}
+
+.ev-comment__datetime {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+
+.ev-comment__content {
+  margin-top: var(--ev-space-1);
+  font-size: var(--ev-font-size-sm);
+  line-height: var(--ev-line-height-loose);
+  color: var(--ev-text-color-regular);
+  word-break: break-word;
+}
+
+.ev-comment__actions {
+  margin-top: var(--ev-space-2);
+  display: flex;
+  gap: var(--ev-space-3);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+
+.ev-comment__replies {
+  margin-top: var(--ev-space-2);
+  padding-left: var(--ev-space-4);
+  border-left: 2px solid var(--ev-border-color-lighter);
+}

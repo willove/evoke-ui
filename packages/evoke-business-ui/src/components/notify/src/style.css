@@ -1,0 +1,93 @@
+/* EvNotify —通知 */
+
+.ev-notification.ev-notification {
+  position: fixed;
+  display: flex;
+  width: 330px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: var(--ev-radius-md);
+  border: 1px solid var(--ev-border-color-lighter);
+  background-color: var(--ev-bg-color-overlay);
+  box-shadow: var(--ev-shadow-3);
+  transition: opacity var(--ev-duration-base) var(--ev-ease-out), transform var(--ev-duration-base) var(--ev-ease-out), top var(--ev-duration-slow) var(--ev-ease-out), bottom var(--ev-duration-slow) var(--ev-ease-out);
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.ev-notification.ev-notification .ev-notification__icon {
+  flex-shrink: 0;
+  margin-right: var(--ev-space-3);
+  margin-top: 1px;
+  font-size: 18px;
+  color: var(--ev-text-color-secondary);
+}
+.ev-notification.ev-notification.is-success .ev-notification__icon { color: var(--ev-color-success); }
+.ev-notification.ev-notification.is-warning .ev-notification__icon { color: var(--ev-color-warning); }
+.ev-notification.ev-notification.is-error .ev-notification__icon { color: var(--ev-color-danger); }
+.ev-notification.ev-notification.is-info .ev-notification__icon { color: var(--ev-color-info); }
+
+.ev-notification.ev-notification .ev-notification__group {
+  flex: 1;
+  position: relative;
+}
+
+.ev-notification.ev-notification .ev-notification__title {
+  margin: 0;
+  font-size: var(--ev-font-size-base);
+  line-height: var(--ev-line-height-tight);
+  color: var(--ev-text-color-primary);
+  font-weight: var(--ev-font-weight-semibold);
+}
+
+.ev-notification.ev-notification .ev-notification__content {
+  margin-top: var(--ev-space-1);
+  font-size: var(--ev-font-size-xs);
+  line-height: 1.5;
+  color: var(--ev-text-color-regular);
+}
+.ev-notification.ev-notification .ev-notification__content p {
+  margin: 0;
+}
+
+.ev-notification.ev-notification .ev-notification__closeBtn {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  color: var(--ev-text-color-placeholder);
+  border-radius: var(--ev-radius-sm);
+  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-notification.ev-notification .ev-notification__closeBtn:hover {
+  color: var(--ev-text-color-secondary);
+  background: var(--ev-fill-color-light);
+}
+
+/* 过渡 */
+.ev-notify-fade-enter-active,
+.ev-notify-fade-leave-active {
+  transition:
+    opacity var(--ev-duration-base) var(--ev-ease-out),
+    transform var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-notify-fade-enter-from.ev-notification--top-right,
+.ev-notify-fade-leave-to.ev-notification--top-right,
+.ev-notify-fade-enter-from.ev-notification--bottom-right,
+.ev-notify-fade-leave-to.ev-notification--bottom-right {
+  opacity: 0;
+  transform: translateX(16px);
+}
+.ev-notify-fade-enter-from.ev-notification--top-left,
+.ev-notify-fade-leave-to.ev-notification--top-left,
+.ev-notify-fade-enter-from.ev-notification--bottom-left,
+.ev-notify-fade-leave-to.ev-notification--bottom-left {
+  opacity: 0;
+  transform: translateX(-16px);
+}

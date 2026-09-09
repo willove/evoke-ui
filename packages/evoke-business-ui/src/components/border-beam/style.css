@@ -1,0 +1,71 @@
+/* EvBorderBeam — conic-gradient 边框流光（设计令牌驱动） */
+
+@property --ev-bb-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.ev-border-beam {
+  position: relative;
+  border-radius: var(--ev-bb-radius, 8px);
+  padding: var(--ev-bb-padding, 0px);
+  background: var(--ev-bb-bg, transparent);
+  isolation: isolate;
+  /* 占位边框：关闭时也保留一圈淡边，避免布局抖动 */
+  box-shadow: 0 0 0 1px var(--ev-border-color-light);
+}
+
+.ev-border-beam__inner {
+  position: relative;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+/* 流光层：mask 挖空中心只留边框带 */
+.ev-border-beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--ev-bb-size, 2px);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  background: conic-gradient(
+    from var(--ev-bb-angle, 0deg),
+    transparent 0deg,
+    var(--ev-bb-color, var(--ev-color-primary)) 60deg,
+    var(--ev-bb-color-to, transparent) 120deg,
+    transparent 180deg,
+    transparent 360deg
+  );
+  opacity: 0;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ev-border-beam.is-active::before {
+  opacity: 1;
+  animation: ev-bb-rotate var(--ev-bb-duration, 6s) linear infinite;
+  animation-delay: var(--ev-bb-delay, 0s);
+}
+
+@keyframes ev-bb-rotate {
+  to {
+    --ev-bb-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-border-beam.is-active::before {
+    animation: none;
+    --ev-bb-angle: 90deg;
+  }
+}

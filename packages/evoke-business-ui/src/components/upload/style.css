@@ -1,0 +1,199 @@
+/* EvUpload —上传 */
+
+.ev-upload.ev-upload {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ev-space-2);
+}
+
+.ev-upload.ev-upload .ev-upload__trigger {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  outline: none;
+}
+.ev-upload.ev-upload .ev-upload--text,
+.ev-upload.ev-upload .ev-upload--picture-card {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+}
+.ev-upload.ev-upload .ev-upload--text {
+  height: var(--ev-component-size);
+  padding: 8px 15px;
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  background-color: var(--ev-fill-color-blank);
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-out), color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-upload.ev-upload .ev-upload--text:hover {
+  border-color: var(--ev-color-primary);
+  color: var(--ev-color-primary);
+}
+/* 默认插槽套了 ev-button 时：去掉触发区自身的框与内边距，避免"按钮套按钮" */
+.ev-upload.ev-upload .ev-upload--text:has(> .ev-button),
+.ev-upload.ev-upload .ev-upload--text:has(> .ev-button) {
+  height: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--ev-radius-md);
+  overflow: hidden;
+}
+.ev-upload.ev-upload .ev-upload--picture-card {
+  width: 148px;
+  height: 148px;
+  border: 1px dashed var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-fill-color-lighter);
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-upload.ev-upload .ev-upload--picture-card:hover {
+  border-color: var(--ev-color-primary);
+}
+
+/* 隐藏 input：绝对定位铺满 + opacity 0（可聚焦可点击，不占视觉） */
+.ev-upload.ev-upload .ev-upload__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  /* 视觉隐藏即可，点击统一由触发区 handler 程序化 input.click()，
+     否则覆盖层原生点击 + handler 各触发一次文件选择 */
+  pointer-events: none;
+  cursor: pointer;
+  z-index: 1;
+}
+.ev-upload.ev-upload .ev-upload--text.is-disabled .ev-upload__input {
+  cursor: not-allowed;
+}
+.ev-upload.ev-upload .is-disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 拖拽区（drag 模式下它就是触发元素本体，不被 --text 的按钮级高度裁剪） */
+.ev-upload.ev-upload .ev-upload-dragger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ev-space-2);
+  width: 100%;
+  min-width: 280px;
+  min-height: 140px;
+  padding: var(--ev-space-6);
+  border: 1px dashed var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-fill-color-lighter);
+  text-align: center;
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-out);
+  box-sizing: border-box;
+}
+.ev-upload.ev-upload .ev-upload-dragger.is-dragover {
+  border-color: var(--ev-color-primary);
+  background-color: var(--ev-color-primary-light-9);
+}
+.ev-upload.ev-upload .ev-upload__text {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+}
+.ev-upload.ev-upload .ev-upload__text em {
+  color: var(--ev-color-primary);
+  font-style: normal;
+}
+
+/* 文件列表 */
+.ev-upload.ev-upload .ev-upload-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-1);
+}
+.ev-upload.ev-upload .ev-upload-list__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-1);
+  padding: var(--ev-space-2);
+  border-radius: var(--ev-radius-sm);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-regular);
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-upload.ev-upload .ev-upload-list__item:hover {
+  background-color: var(--ev-fill-color-light);
+}
+.ev-upload.ev-upload .ev-upload-list--picture-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.ev-upload.ev-upload .ev-upload-list__item--card {
+  width: 148px;
+  height: 148px;
+  border: 1px solid var(--ev-border-color-lighter);
+  border-radius: var(--ev-radius-md);
+  align-items: center;
+  justify-content: center;
+}
+
+.ev-upload.ev-upload .ev-upload-list__item-info {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-2);
+  min-width: 0;
+}
+.ev-upload.ev-upload .ev-upload-list__item-name {
+  color: var(--ev-text-color-regular);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.ev-upload.ev-upload .ev-upload-list__item.is-success .ev-upload-list__item-name {
+  color: var(--ev-text-color-regular);
+}
+.ev-upload.ev-upload .ev-upload-list__item.is-fail .ev-upload-list__item-name {
+  color: var(--ev-color-danger);
+}
+
+.ev-upload.ev-upload .ev-upload-list__item-close {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--ev-text-color-placeholder);
+  cursor: pointer;
+  border-radius: var(--ev-radius-xs);
+}
+.ev-upload.ev-upload .ev-upload-list__item-close:hover {
+  color: var(--ev-color-danger);
+  background-color: var(--ev-fill-color);
+}
+
+.ev-upload.ev-upload .ev-upload-list__item-progress {
+  height: 4px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-fill-color);
+  overflow: hidden;
+}
+.ev-upload.ev-upload .ev-upload-list__item-progress-inner {
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--ev-color-primary);
+  transition: width var(--ev-duration-base) var(--ev-ease-out);
+}

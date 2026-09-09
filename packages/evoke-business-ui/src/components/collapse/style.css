@@ -1,0 +1,71 @@
+/* EvCollapse —折叠面板 */
+
+.ev-collapse.ev-collapse {
+  --ev-collapse-header-height: 48px;
+  border-top: 1px solid var(--ev-border-color-lighter);
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+
+.ev-collapse.ev-collapse .ev-collapse-item {
+  border-bottom: 1px solid var(--ev-border-color-lighter);
+}
+.ev-collapse.ev-collapse .ev-collapse-item:last-child {
+  border-bottom: none;
+}
+
+.ev-collapse.ev-collapse .ev-collapse-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--ev-collapse-header-height);
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-color-primary);
+  text-align: left;
+  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+}
+.ev-collapse.ev-collapse .ev-collapse-item__header:hover {
+  color: var(--ev-color-primary);
+}
+.ev-collapse.ev-collapse .ev-collapse-item__header.is-active {
+  color: var(--ev-color-primary);
+  border-bottom-color: var(--ev-border-color-lighter);
+}
+.ev-collapse.ev-collapse .ev-collapse-item__header.is-disabled,
+.ev-collapse.ev-collapse .ev-collapse-item.is-disabled .ev-collapse-item__header {
+  color: var(--ev-text-color-placeholder);
+  cursor: not-allowed;
+}
+.ev-collapse.ev-collapse .ev-collapse-item__header.is-disabled:hover {
+  color: var(--ev-text-color-placeholder);
+}
+
+.ev-collapse.ev-collapse .ev-collapse-item__arrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ev-text-color-secondary);
+  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+}
+.ev-collapse.ev-collapse .ev-collapse-item__header.is-active .ev-collapse-item__arrow {
+  transform: rotate(90deg);
+}
+
+.ev-collapse.ev-collapse .ev-collapse-item__wrap {
+  overflow: hidden;
+  background-color: var(--ev-fill-color-blank);
+  box-sizing: border-box;
+  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+  will-change: height;
+}
+
+.ev-collapse.ev-collapse .ev-collapse-item__content {
+  padding: var(--ev-space-3) var(--ev-space-4);
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-color-regular);
+  line-height: var(--ev-line-height-loose);
+}

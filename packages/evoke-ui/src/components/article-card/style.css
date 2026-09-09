@@ -1,0 +1,108 @@
+/* EwArticleCard — 文章卡 */
+
+.ew-article-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background-color: var(--ew-bg-container);
+  color: inherit;
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-article-card.is-hoverable:hover {
+  transform: translateY(-3px);
+  border-color: var(--ew-border-color);
+  box-shadow: var(--ew-shadow-2);
+}
+
+/* ─── 封面 ─── */
+.ew-article-card__cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--ew-fill-1);
+}
+
+.ew-article-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--ew-duration-slow) var(--ew-ease-smooth);
+}
+
+.ew-article-card.is-hoverable:hover .ew-article-card__cover img {
+  transform: scale(1.04);
+}
+
+.ew-article-card__cover-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  color: var(--ew-text-secondary);
+}
+
+/* ─── 内容 ─── */
+.ew-article-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ew-space-2);
+  padding: var(--ew-space-5);
+}
+
+.ew-article-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--ew-space-2);
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+}
+
+.ew-article-card__tag {
+  padding: 2px 8px;
+  border-radius: var(--ew-radius-full);
+  background-color: var(--ew-color-primary-light-9);
+  color: var(--ew-color-primary);
+}
+
+.ew-article-card__title {
+  font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.4;
+  color: var(--ew-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ew-article-card__excerpt {
+  margin: 0;
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── 宿主环境屏蔽 ───
+   在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
+   会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
+
+.ew-article-card .ew-article-card__title {
+  margin: 0;
+  font-size: var(--ew-font-size-md);
+}
+
+.ew-article-card .ew-article-card__excerpt {
+  margin: 0;
+  font-size: var(--ew-font-size-sm);
+}

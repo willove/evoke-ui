@@ -1,0 +1,133 @@
+/* EwActionSheet — 底部动作面板 */
+
+/* 遮罩
+   flex-end 沉底面板；overflow hidden：面板自身做内部滚动，遮罩永远不出滚动条 */
+.ew-action-sheet__overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: rgba(26, 41, 71, 0.4);
+  overflow: hidden;
+}
+
+.ew-action-sheet {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* 内容沉底：矮内容贴底、高内容顶部收敛 */
+  max-height: 100%;
+  padding: 8px var(--ew-space-4) calc(8px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+}
+.ew-action-sheet.is-round .ew-action-sheet__title,
+.ew-action-sheet.is-round .ew-action-sheet__cancel {
+  border-radius: var(--ew-radius-xl);
+}
+/* 有标题时：标题块圆顶部、列表圆底部（上块整体四角圆）；无标题时列表圆全部角 */
+.ew-action-sheet.is-round .ew-action-sheet__title {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.ew-action-sheet.is-round .ew-action-sheet__list {
+  border-radius: 0 0 var(--ew-radius-xl) var(--ew-radius-xl);
+}
+.ew-action-sheet.is-round .ew-action-sheet__list:first-child {
+  border-radius: var(--ew-radius-xl);
+}
+
+/* 标题：白色块与动作列表连成一体，无标题时列表顶到标题位 */
+.ew-action-sheet__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 14px var(--ew-space-4);
+  background: var(--ew-bg-container);
+  color: var(--ew-text-regular);
+  font-size: var(--ew-font-size-sm);
+  text-align: center;
+}
+
+/* 动作列表：紧贴标题（无缝）；超高时列表内部滚动，标题/取消栏恒定可见 */
+.ew-action-sheet__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 1 auto;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-2);
+}
+.ew-action-sheet__list::-webkit-scrollbar {
+  display: none;
+}
+.ew-action-sheet__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 14px var(--ew-space-4);
+  border: none;
+  background: var(--ew-bg-container);
+  color: var(--ew-text-primary);
+  font-size: var(--ew-font-size-base);
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+.ew-action-sheet__item:active:not(.is-disabled) {
+  background: var(--ew-bg-hover);
+}
+.ew-action-sheet__item.is-disabled {
+  color: var(--ew-text-disabled);
+  cursor: not-allowed;
+}
+.ew-action-sheet__name {
+  font-weight: var(--ew-font-weight-regular);
+}
+.ew-action-sheet__subname {
+  color: var(--ew-text-regular);
+  font-size: var(--ew-font-size-sm);
+}
+
+/* 取消栏：与动作列表之间留缝，视觉上独立成组 */
+.ew-action-sheet__cancel {
+  flex-shrink: 0;
+  margin-top: 8px;
+  padding: 14px var(--ew-space-4);
+  border: none;
+  background: var(--ew-bg-container);
+  color: var(--ew-text-primary);
+  font-size: var(--ew-font-size-base);
+  font-weight: var(--ew-font-weight-medium);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out);
+}
+.ew-action-sheet__cancel:active {
+  background: var(--ew-bg-hover);
+}
+
+/* 过渡：遮罩淡入淡出 + 面板底部滑入 */
+.ew-action-sheet-fade-enter-active,
+.ew-action-sheet-fade-leave-active {
+  transition: opacity var(--ew-duration-base) var(--ew-ease-in-out);
+}
+.ew-action-sheet-fade-enter-active .ew-action-sheet,
+.ew-action-sheet-fade-leave-active .ew-action-sheet {
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth);
+}
+.ew-action-sheet-fade-enter-from,
+.ew-action-sheet-fade-leave-to {
+  opacity: 0;
+}
+.ew-action-sheet-fade-enter-from .ew-action-sheet,
+.ew-action-sheet-fade-leave-to .ew-action-sheet {
+  transform: translateY(100%);
+}
