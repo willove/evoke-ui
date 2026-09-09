@@ -43,6 +43,11 @@
   ],
   "author": "willove",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willove/evoke-ui.git",
+    "directory": "packages/evoke-ui"
+  },
   "publishConfig": {
     "access": "public"
   }
