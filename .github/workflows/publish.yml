@@ -43,19 +43,16 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: steps.gate.outputs.skip == 'false'
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/setup@v1
         if: steps.gate.outputs.skip == 'false'
         with:
           version: 11
-
-      - uses: actions/setup-node@v4
-        if: steps.gate.outputs.skip == 'false'
-        with:
-          node-version: "22"
-          registry-url: "https://registry.npmjs.org"
+          runtime: node@22
+          cache: true
+          install: false
 
       - name: Install dependencies
         if: steps.gate.outputs.skip == 'false'
@@ -64,6 +61,12 @@ jobs:
       - name: Build
         if: steps.gate.outputs.skip == 'false'
         run: pnpm --filter ${{ matrix.pkg }} build
+
+      - name: Configure npm auth
+        if: steps.gate.outputs.skip == 'false'
+        run: echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
         if: steps.gate.outputs.skip == 'false'
