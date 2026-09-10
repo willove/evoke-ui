@@ -6,6 +6,9 @@ dist/
 .env.local
 *.local
 
+# 服务器部署配置（含真实 IP，不进 git）
+scripts/.env.deploy
+
 # VitePress：只忽略构建产物与缓存，config / theme / 插件源码必须进 git
 **/.vitepress/cache/
 **/.vitepress/dist/
