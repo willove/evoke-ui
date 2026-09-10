@@ -27,6 +27,11 @@
   transform: scale(0.98);
 }
 
+/* ─── 链接形态（href 传入时渲染为 <a>） ─── */
+a.ew-button {
+  text-decoration: none;
+}
+
 /* ─── 尺寸 ─── */
 .ew-button--small {
   height: 32px;

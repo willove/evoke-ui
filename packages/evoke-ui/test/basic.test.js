@@ -47,6 +47,38 @@ describe('EwButton', () => {
     await wrapper.trigger('click')
     expect(wrapper.emitted('click')).toHaveLength(1)
   })
+
+  it('href 传入时渲染为 <a> 链接按钮', () => {
+    const wrapper = mount(EwButton, {
+      props: { href: 'https://example.com' },
+      slots: { default: '访问文档' },
+    })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('https://example.com')
+    expect(wrapper.attributes('type')).toBeUndefined()
+  })
+
+  it('href + target=_blank 自动补 noopener', () => {
+    const wrapper = mount(EwButton, {
+      props: { href: 'https://example.com', target: '_blank' },
+      slots: { default: '外链' },
+    })
+    expect(wrapper.attributes('target')).toBe('_blank')
+    expect(wrapper.attributes('rel')).toBe('noopener')
+  })
+
+  it('disabled 链接按钮阻止默认跳转且不派发 click', async () => {
+    const wrapper = mount(EwButton, {
+      props: { href: '/next', disabled: true },
+      slots: { default: '禁用链接' },
+    })
+    expect(wrapper.classes()).toContain('is-disabled')
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')).toBeUndefined()
+    const evt = new Event('click', { bubbles: true, cancelable: true })
+    wrapper.element.dispatchEvent(evt)
+    expect(evt.defaultPrevented).toBe(true)
+  })
 })
 
 describe('EwIconButton', () => {

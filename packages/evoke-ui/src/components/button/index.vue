@@ -1,5 +1,6 @@
 <template>
-  <button
+  <component
+    :is="href ? 'a' : 'button'"
     ref="btnRef"
     :class="[
       'ew-button',
@@ -13,8 +14,11 @@
         'is-icon-only': iconOnly,
       },
     ]"
-    :type="nativeType"
-    :disabled="disabled || loading"
+    :type="href ? undefined : nativeType"
+    :href="href || undefined"
+    :target="href ? target || undefined : undefined"
+    :rel="href ? rel || (target === '_blank' ? 'noopener' : undefined) : undefined"
+    :disabled="href ? undefined : disabled || loading"
     :aria-disabled="disabled || loading"
     @click="handleClick"
   >
@@ -29,7 +33,7 @@
       :size="iconSize"
       class="ew-button__icon ew-button__icon--right"
     />
-  </button>
+  </component>
 </template>
 
 <script setup>
@@ -38,6 +42,7 @@
  * variant：primary 蓝色实心 / dark 墨色实心（launchos 黑胶囊 CTA）/
  *          soft 柔和底（remixicon 头部下载钮）/ outline / ghost
  * 默认 radius-lg 圆润矩形，pill 转全圆胶囊
+ * href 传入时渲染为 <a>（站内/外链跳转），target="_blank" 自动补 noopener
  */
 import { ref, computed, useSlots } from 'vue'
 import EwIcon from '../icon/index.vue'
@@ -69,6 +74,12 @@ const props = defineProps({
     default: 'button',
     validator: (v) => ['button', 'submit', 'reset'].includes(v),
   },
+  /** 链接地址：传入时按钮渲染为 <a>，站内/外链跳转直接可用 */
+  href: { type: String, default: undefined },
+  /** 链接打开方式（href 存在时生效） */
+  target: { type: String, default: undefined },
+  /** rel 属性（href + target="_blank" 时默认 noopener） */
+  rel: { type: String, default: undefined },
 })
 
 const emit = defineEmits(['click'])
