@@ -21,7 +21,7 @@ const categories = ['全部', '前端', '设计', '随想']
 const active = ref('全部')
 
 const posts = [
-  { title: '把一个官网拆成 43 个组件的取舍', excerpt: '组件粒度、插槽设计与令牌边界——一次开源组件库 API 设计的完整复盘。', date: '2026-08-30', tags: ['组件设计'], category: '前端', icon: 'code-line' },
+  { title: '把一个官网拆成 49 个组件的取舍', excerpt: '组件粒度、插槽设计与令牌边界——一次开源组件库 API 设计的完整复盘。', date: '2026-08-30', tags: ['组件设计'], category: '前端', icon: 'code-line' },
   { title: 'Vue3 指令的工程化实践：以 v-reveal 为例', excerpt: '一个滚动浮现指令，值得写一篇长文：观察器复用、减弱动效与 SSR 兜底。', date: '2026-08-12', tags: ['动效'], category: '前端', icon: 'flashlight-line' },
   { title: '给博客配明暗主题的正确姿势', excerpt: 'CSS 变量重映射 + html.dark 一键切换，一篇讲透双主题的落地方式。', date: '2026-07-30', tags: ['主题'], category: '前端', icon: 'device-line' },
   { title: '留白是内容的一部分', excerpt: '排版节奏、字重层级与 8px 网格，在长文页面里的具体用法。', date: '2026-07-28', tags: ['排版'], category: '设计', icon: 'brush-line' },
@@ -41,7 +41,7 @@ const hot = [
 ]
 
 const updates = [
-  { date: '2026-08-30', title: '《把一个官网拆成 43 个组件的取舍》发布' },
+  { date: '2026-08-30', title: '《把一个官网拆成 49 个组件的取舍》发布' },
   { date: '2026-08-12', title: '「动效」专栏开更，第一篇讲 v-reveal' },
   { date: '2026-07-02', tag: '设计', tagTone: 'orange', title: 'Clean Navy 配色系统长文完稿' },
 ]

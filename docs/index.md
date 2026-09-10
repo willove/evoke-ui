@@ -20,10 +20,10 @@ layout: home
     <a class="bd-hero__btn bd-hero__btn--ghost" href="/examples/live/dashboard">在线示例中心</a>
   </div>
   <div class="bd-hero__stats">
-    <div class="bd-hero__stat"><strong>50+</strong><span>通用与业务组件</span></div>
+    <div class="bd-hero__stat"><strong>150+</strong><span>通用与业务组件</span></div>
     <div class="bd-hero__stat"><strong>20+</strong><span>图表类型（Canvas 自绘）</span></div>
     <div class="bd-hero__stat"><strong>8 套</strong><span>场景示例工程</span></div>
-    <div class="bd-hero__stat"><strong>182</strong><span>内置图标（可按需扩展）</span></div>
+    <div class="bd-hero__stat"><strong>433</strong><span>内置图标（可按需扩展）</span></div>
   </div>
 </div>
 
@@ -136,4 +136,14 @@ app.mount('#app')
 ```
 
   <p class="bd-quickstart__more">更多能力见<a href="/guide/getting-started">快速开始</a>与<a href="/components/overview">组件总览</a>。</p>
+</div>
+
+<div class="bd-sibling">
+  <p class="bd-sibling__eyebrow">sibling</p>
+  <h2 class="bd-sibling__title">做官网或营销页？</h2>
+  <p class="bd-sibling__desc">看看同族的姊妹库 Evoke UI：Clean Navy 设计语言的 Vue3 官网组件库，49 个组件、明暗双主题与运行时换色，官网、落地页与个人主页开箱即用。</p>
+  <a class="bd-sibling__btn" href="https://evoke-ui.wil-works.com" target="_blank" rel="noopener">
+    访问 Evoke UI 文档
+    <BdIcon name="arrow-right" :size="14" />
+  </a>
 </div>

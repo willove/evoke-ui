@@ -126,7 +126,7 @@ function goSearch() {
 >
   <template #badge>
     <EwAlert pill>
-      <span>v0.1.0 正式发布：主题定制器与 43 个组件</span>
+      <span>v0.1.0 正式发布：主题定制器与 49 个组件</span>
       <template #action>
         <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -172,7 +172,7 @@ function goSearch() {
         </div>
       </EwCard>
       <EwCard tone="blue" sticker class="home-collage__card is-b">
-        <EwStatistic value="43" label="个组件" animated />
+        <EwStatistic value="49" label="个组件" animated />
         <div class="home-collage__meta">内置 960+ 图标 · MIT 开源</div>
       </EwCard>
       <EwCard tone="mint" sticker class="home-collage__card is-c">
@@ -220,7 +220,7 @@ function goSearch() {
     </div>
   </EwSection>
 
-  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，43 个组件基本都齐了。" align="center">
+  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，49 个组件基本都齐了。" align="center">
     <EwFeatureGrid
       variant="cards"
       :columns="3"
@@ -266,9 +266,15 @@ function goSearch() {
   </EwSection>
 </div>
 
+<div class="home-sibling-band">
+  <EwSection eyebrow="sibling" title="做中后台管理系统？" description="看看同族的姊妹库 Evoke Business UI：150+ 中后台组件、8 个业务场景组件与 20+ 种 Canvas 自绘图表，与 Evoke UI 同一设计血统。" align="center">
+    <EwButton variant="outline" icon-right="arrow-right" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">访问 Evoke Business UI 文档</EwButton>
+  </EwSection>
+</div>
+
 <div class="home-stats-band">
   <div class="ew-container home-stats">
-    <EwStatistic value="43" label="组件" align="center" animated />
+    <EwStatistic value="49" label="组件" align="center" animated />
     <EwStatistic value="960+" label="内置图标" align="center" animated />
     <EwStatistic value="4" label="主题维度" align="center" animated />
     <EwStatistic value="2" label="明暗主题" align="center" animated />
@@ -291,7 +297,7 @@ function goSearch() {
     { title: '文档', links: [{ label: '快速开始', href: '/guide/getting-started' }, { label: '设计语言', href: '/guide/design' }, { label: '主题定制', href: '/guide/customizer' }] },
     { title: '组件', links: [{ label: '组件总览', href: '/components/overview' }, { label: '站点区块', href: '/components/hero' }, { label: '媒体交互', href: '/components/video' }] },
     { title: '案例', links: [{ label: '企业官网', href: '/cases/corporate' }, { label: '个人博客', href: '/cases/blog' }, { label: '云笔记工作台', href: '/cases/notes' }] },
-    { title: '更多', links: [{ label: 'GitHub', href: 'https://github.com' }, { label: '更新日志', href: '/components/timeline' }] },
+    { title: '更多', links: [{ label: 'GitHub', href: 'https://github.com' }, { label: 'Evoke Business UI', href: 'https://evoke-business-ui.wil-works.com' }, { label: '更新日志', href: '/components/timeline' }] },
   ]"
 />
 
@@ -448,6 +454,13 @@ function goSearch() {
   display: flex;
   justify-content: center;
   margin-top: 40px;
+}
+.home-sibling-band {
+  padding: 8px 24px 72px;
+}
+.home-sibling-band .ew-section {
+  max-width: var(--ew-container-width, 1152px);
+  margin-inline: auto;
 }
 .home-cases {
   display: grid;

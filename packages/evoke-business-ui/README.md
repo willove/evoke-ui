@@ -1,6 +1,8 @@
 # @wil-works/evoke-business-ui
 
-面向中后台管理界面的 Vue 3 组件库：50+ 通用组件、8 个业务场景组件（筛选表单 / 数据表格 / 状态标签 / 双行单元格 / 详情描述 / 导入导出面板 / 审计时间线 / 列设置）与 20+ 种 Canvas 自绘图表，内置图标体系与暗色模式。
+面向中后台管理界面的 Vue 3 组件库：150+ 通用组件、8 个业务场景组件（筛选表单 / 数据表格 / 状态标签 / 双行单元格 / 详情描述 / 导入导出面板 / 审计时间线 / 列设置）与 20+ 种 Canvas 自绘图表，内置图标体系与暗色模式。
+
+[![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) · **在线文档**：[evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com)
 
 ## 安装
 
@@ -45,7 +47,7 @@ EvMessage.success('保存成功')
 
 ## 图标
 
-内置 356 个常用单色图标（Remix 形状，`currentColor` 跟随文字色，覆盖商务/财务/品牌 Logo/开发/设备等类目）：
+内置 433 个常用单色图标（Remix 形状，`currentColor` 跟随文字色，覆盖商务/财务/品牌 Logo/开发/设备等类目）：
 
 ```vue
 <ev-icon name="search" :size="16" />
@@ -73,12 +75,12 @@ loadFullIcons()
 
 ## 运行环境
 
-- Vue `^3.4`，现代浏览器（Chrome / Edge / Safari / Firefox 近两年版本）
+- Vue `^3.5`，现代浏览器（Chrome / Edge / Safari / Firefox 近两年版本）
 - 桌面 Electron 与 `file://` 场景可直接运行：无 CDN 请求、无顶层 window/document 访问
 
 ## 文档
 
-组件 API、在线示例与场景工程见仓库文档站（`pnpm docs:dev`）。
+组件 API、在线示例与场景工程见在线文档站：[evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com)（本地开发在仓库根目录执行 `pnpm docs:dev`）。
 
 ## License
 

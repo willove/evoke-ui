@@ -892,7 +892,7 @@ html.dark .api-table__type {
 
 .bd-features {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
@@ -1196,6 +1196,50 @@ html.dark .api-table__type {
   transition: transform 0.2s;
 }
 .bd-banner__btn:hover {
+  transform: translateY(-1px);
+}
+.bd-sibling {
+  max-width: 960px;
+  margin: 56px auto 80px;
+  text-align: center;
+}
+.bd-sibling__eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bd-primary);
+}
+.bd-sibling__title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: var(--bd-text, #1f2329);
+}
+.bd-sibling__desc {
+  max-width: 640px;
+  margin: 0 auto 22px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--bd-text-secondary, #646a73);
+}
+.bd-sibling__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--bd-primary);
+  background: transparent;
+  border: 1px solid var(--bd-primary);
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+.bd-sibling__btn:hover {
+  color: #fff;
+  background: var(--bd-primary);
+  border-color: var(--bd-primary);
   transform: translateY(-1px);
 }
 .bd-cats {

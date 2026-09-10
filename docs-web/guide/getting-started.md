@@ -63,3 +63,7 @@ import '@wil-works/evoke-ui/styles' // 样式聚合为单一产物，一次引�
   <EwFooter :columns="footerCols" copyright="© 2026 Nimbus Labs" />
 </template>
 ```
+
+::: tip 姊妹库推荐
+做中后台管理系统？推荐同族的 [Evoke Business UI](https://evoke-business-ui.wil-works.com) —— 150+ 中后台组件、8 个业务场景组件与 20+ 种 Canvas 自绘图表，包名 [`@wil-works/evoke-business-ui`](https://www.npmjs.com/package/@wil-works/evoke-business-ui)。
+:::

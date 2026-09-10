@@ -47,6 +47,7 @@ export default defineConfig({
       { text: '案例', link: '/cases/' },
       { text: '主题定制器', link: '/guide/customizer' },
       { text: '动效', link: '/guide/motion' },
+      { text: 'Business UI ↗', link: 'https://evoke-business-ui.wil-works.com' },
     ],
     // 暗色切换与 GitHub 入口由 Layout 插槽注入（与首页同一套 Ew 组件）
     outline: { label: '本页目录' },
