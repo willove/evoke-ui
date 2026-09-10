@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# 同分支新推送取消旧运行，省构建时长
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/setup@v1
+        with:
+          version: 11
+          runtime: node@22
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 包构建自带 check-token-rule 铁律与 compat-check（Ew ⊂ Ev）校验
+      - name: Build packages
+        run: |
+          pnpm build:eui
+          pnpm build:ebui
+
+      - name: Unit tests
+        run: pnpm test
+
+      # 文档站从本地脚本部署上线，部署前先在 CI 验证两侧构建（含 SSR）可通过
+      - name: Build docs (business)
+        run: pnpm docs:build
+
+      - name: Build docs (ui)
+        run: pnpm docs-web:build
