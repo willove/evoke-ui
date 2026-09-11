@@ -11,19 +11,14 @@
   background: var(--eb-text-color-primary);
   color: #fff;
   box-shadow: var(--eb-shadow-2);
-}
-/* 箭头实际形体是 ::before（窗口裁剪结构），配色必须落在伪元素上 */
-.eb-popper.eb-tooltip.is-dark .eb-popper__arrow::before {
-  background: var(--eb-text-color-primary);
-  border: none;
+  --eb-arrow-color: var(--eb-text-color-primary);
+  --eb-arrow-edge: var(--eb-text-color-primary);
 }
 
 .eb-popper.eb-tooltip.is-light {
   background: var(--eb-bg-color-overlay);
   color: var(--eb-text-color-regular);
   border: 1px solid var(--eb-border-color-light);
-}
-.eb-popper.eb-tooltip.is-light .eb-popper__arrow::before {
-  background: var(--eb-bg-color-overlay);
-  border: 1px solid var(--eb-border-color-light);
+  --eb-arrow-color: var(--eb-bg-color-overlay);
+  --eb-arrow-edge: var(--eb-border-color-light);
 }

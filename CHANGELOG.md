@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — Tooltip 箭头纯三角化与暗色可读性修复
+
+- **修复箭头显示为菱形残角**：原「旋转方块 + overflow 裁剪」结构对亚像素渲染敏感，
+  部分环境下整颗菱形露出、不呈纯三角；改为 `::before` 填充 + `::after` 描边双层
+  border 三角，随方向贴浮层边缘、不依赖任何裁剪
+- 箭头配色走新增的 `--eb-arrow-color` / `--eb-arrow-edge` 令牌（默认值落浮层根，
+  主题可覆盖）：深色主题描边与填充同色，浅色主题保留 1px 斜边描边
+- **修复暗色模式白底白字**：is-dark 气泡底色原跟随 `--eb-text-color-primary`，
+  暗色下该令牌翻转为浅色导致不可读；暗色下改用浮层抬升面 `--eb-bg-color-overlay`，
+  箭头随底色
+
 ### @wil-works/evoke-business-ui — 容器组件新增 blur 磨砂强度 prop
 
 - **组件级磨砂模糊半径**：card / dialog / drawer / section-card 新增 `blur`

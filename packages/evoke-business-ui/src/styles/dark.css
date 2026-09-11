@@ -139,3 +139,12 @@ html.dark {
   /* 暗色模式：固定列阴影加深以呈现层次 */
   --eb-table-fixed-shadow:    -4px 0 8px rgba(0, 0, 0, 0.5);
 }
+
+/* Tooltip is-dark 气泡：其底色令牌（--eb-text-color-primary）在暗色下翻转为浅色，
+   会呈现白底白字不可读；暗色下改用浮层抬升面，箭头随底色 */
+html.dark .eb-popper.eb-tooltip.is-dark {
+  background: var(--eb-bg-color-overlay);
+  color: var(--eb-text-color-primary);
+  --eb-arrow-color: var(--eb-bg-color-overlay);
+  --eb-arrow-edge: var(--eb-bg-color-overlay);
+}

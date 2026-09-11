@@ -14,44 +14,77 @@
   line-height: 1.5;
   color: var(--eb-text-color-regular);
   word-break: break-word;
+  /* 箭头配色默认值必须落在浮层根上：主题（如 tooltip is-dark）在同元素覆盖后
+     才能沿继承传入子级箭头；若定义在 .eb-popper__arrow 自身，own 声明会压过继承 */
+  --eb-arrow-color: var(--eb-bg-color-overlay);
+  --eb-arrow-edge: var(--eb-border-color-light);
 }
 
-/* 箭头 — 窗口式裁剪：外层 8×8 overflow hidden 只露出 ::before 旋转方块的朝外半角，
-   避免整颗菱形压在边框上（floating-ui 定位窗口，静态侧偏移由 JS 注入 -8px） */
+/* 箭头 — border 纯三角：::before 填充层贴浮层边缘，::after 同形描边层向浮层内侧偏 1px
+   （深色主题 edge=填充色即隐形）。不再用旋转菱形 + overflow 裁剪，杜绝菱形残角 */
 .eb-popper__arrow {
   position: absolute;
   width: 8px;
   height: 8px;
-  overflow: hidden;
   pointer-events: none;
 }
 
-.eb-popper__arrow::before {
+.eb-popper__arrow::before,
+.eb-popper__arrow::after {
   content: '';
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--eb-bg-color-overlay);
-  border: 1px solid var(--eb-border-color-light);
-  transform: rotate(45deg);
+  width: 0;
+  height: 0;
+  border: 0 solid transparent;
 }
 
-/* 各方向的 ::before 几何：菱形中心落在窗口靠浮层边框的一侧边缘 */
-.eb-popper[data-popper-side='bottom'] .eb-popper__arrow::before {
-  left: 0;
-  top: 4px;
-}
 .eb-popper[data-popper-side='top'] .eb-popper__arrow::before {
+  top: 0;
   left: 0;
-  top: -4px;
+  border-width: 5px 4px 0;
+  border-top-color: var(--eb-arrow-color);
+}
+.eb-popper[data-popper-side='top'] .eb-popper__arrow::after {
+  top: -1px;
+  left: 0;
+  border-width: 5px 4px 0;
+  border-top-color: var(--eb-arrow-edge);
+}
+.eb-popper[data-popper-side='bottom'] .eb-popper__arrow::before {
+  bottom: 0;
+  left: 0;
+  border-width: 0 4px 5px;
+  border-bottom-color: var(--eb-arrow-color);
+}
+.eb-popper[data-popper-side='bottom'] .eb-popper__arrow::after {
+  bottom: -1px;
+  left: 0;
+  border-width: 0 4px 5px;
+  border-bottom-color: var(--eb-arrow-edge);
 }
 .eb-popper[data-popper-side='left'] .eb-popper__arrow::before {
+  left: 0;
   top: 0;
-  left: -4px;
+  border-width: 4px 0 4px 5px;
+  border-left-color: var(--eb-arrow-color);
+}
+.eb-popper[data-popper-side='left'] .eb-popper__arrow::after {
+  left: -1px;
+  top: 0;
+  border-width: 4px 0 4px 5px;
+  border-left-color: var(--eb-arrow-edge);
 }
 .eb-popper[data-popper-side='right'] .eb-popper__arrow::before {
+  right: 0;
   top: 0;
-  left: 4px;
+  border-width: 4px 5px 4px 0;
+  border-right-color: var(--eb-arrow-color);
+}
+.eb-popper[data-popper-side='right'] .eb-popper__arrow::after {
+  right: -1px;
+  top: 0;
+  border-width: 4px 5px 4px 0;
+  border-right-color: var(--eb-arrow-edge);
 }
 
 /* 过渡 */
