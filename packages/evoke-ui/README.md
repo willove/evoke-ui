@@ -13,7 +13,7 @@ Evoke UI — 纯 JS Vue3 **官网/纯前端站点**组件库，Clean Navy 设计
 - **零运行时依赖**：仅 peer vue；图标为生成期静态快照，展示集独立 chunk 按需加载
 - **轻量动效**：spring 弹性微交互 + `v-reveal` 滚动浮现指令
 
-> 图标：核心集 39 个语义名内置；展示集 922 个原生名按需加载。组件 class 前缀 `ev-`、令牌前缀 `--ev-*` 为本库独立命名空间（构建期 `lint:tokens` 强制校验）。
+> 图标：核心集 39 个语义名内置；展示集 922 个原生名按需加载。组件 class 前缀 `ev-`、令牌前缀 `--ev-*` 为本库独立命名空间。
 
 ## 安装
 
@@ -27,7 +27,7 @@ import EvokeUI from '@wil-works/evoke-ui'
 import '@wil-works/evoke-ui/styles'
 
 const app = createApp(App)
-app.use(EvokeUI) // 全量注册 Ew* 组件 + v-reveal 指令 + 主题初始化
+app.use(EvokeUI) // 全量注册 Ev* 组件 + v-reveal 指令 + 主题初始化
 ```
 
 ## 组件一览
@@ -43,20 +43,12 @@ app.use(EvokeUI) // 全量注册 Ew* 组件 + v-reveal 指令 + 主题初始化
 | 移动端 | `EvNavBar` `EvTabbar` `EvTabbarItem` `EvActionSheet` `EvPullRefresh` `EvLoadMore` |
 
 组合式 API：`useTheme`（明暗切换）/ `useCopy`（剪贴板）/ `useThemeConfig`（主题四维定制 + `applyPreset` 风格方案）；
-预设：`EW_STYLE_PRESETS`（企业官网/个人站/设计工作室等一键方案）与颜色/圆角/间距/容器四组单项预设；
+预设：`EV_STYLE_PRESETS`（企业官网/个人站/设计工作室等一键方案）与颜色/圆角/间距/容器四组单项预设；
 指令：`v-reveal`（滚动浮现，五种变体）；图标注册表：`registerIcons` / `getIconByName` / `loadShowcaseIcons`。
-
-## 脚本
-
-```bash
-pnpm build       # 令牌铁律检查 + vite lib 构建
-pnpm gen:icons   # 重新生成图标数据（核心集 + 展示集）
-pnpm lint:tokens # 单独跑 --ev-* 命名空间铁律检查
-```
 
 ## 文档
 
-组件 API、用法示例与主题定制器见在线文档站：[evoke-ui.wil-works.com](https://evoke-ui.wil-works.com)（本地开发在仓库根目录执行 `pnpm docs-web:dev`）。
+组件 API、用法示例与主题定制器见在线文档站：[evoke-ui.wil-works.com](https://evoke-ui.wil-works.com)。
 
 ## License
 

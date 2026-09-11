@@ -1,6 +1,6 @@
 # Evoke Charts
 
-`@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库；与 `@wil-works/evoke-business-ui` 同仓（monorepo）管理。
+`@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
 
 ## 特性
 
@@ -101,13 +101,6 @@ const { options, chartProps, chartRef, resize, exportPNG, setTheme } = useChart(
 
 ```vue
 <EvChart v-bind="chartProps" ref="chartRef" />
-```
-
-## 开发（monorepo 内）
-
-```bash
-pnpm --filter @wil-works/evoke-charts build   # 铁律检查 + vite 库模式构建
-pnpm test                                     # 仓库根统一 vitest
 ```
 
 ## License
