@@ -18,14 +18,16 @@
     border-color var(--eb-duration-base) var(--eb-ease-out),
     box-shadow var(--eb-duration-base) var(--eb-ease-out);
 }
-/* 悬浮动效仅在 hoverable 时执行（hoverable=false 完全静态） */
+/* 悬浮动效仅在 hoverable 时执行（hoverable=false 完全静态）；
+   边框交互态走中性加深（border-color-hover），不用强调色 */
 .eb-card.eb-card.is-hoverable:hover {
   transform: translateY(-2px);
-  border-color: var(--eb-color-primary-light-5);
+  border-color: var(--eb-border-color-hover);
   box-shadow: var(--eb-card-shadow-hover);
 }
 .eb-card.eb-card.is-hoverable:active {
   transform: scale(0.99);
+  border-color: var(--eb-border-color-hover);
 }
 
 .eb-card.eb-card .eb-card__header {
