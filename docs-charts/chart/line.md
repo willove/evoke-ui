@@ -28,6 +28,24 @@
   />
 </DemoBlock>
 
+趋势类数据想要柔和的观感时，给系列加 `smooth: true`：单调三次插值平滑，曲线仍过每个数据点且不过冲。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'line',
+      title: '平滑曲线（smooth: true）',
+      labels: ['周一', '周二', '周三', '周四', '周五'],
+      series: [
+        { name: '自然流量', data: [120, 132, 101, 134, 90], smooth: true },
+        { name: '广告投放', data: [80, 92, 91, 94, 70], smooth: true },
+      ],
+      legend: { show: true },
+    }"
+    :height="260"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - 系列颜色可逐项指定：`series` 项传 `color`；

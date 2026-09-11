@@ -187,6 +187,30 @@ function resolveUserPadding(options) {
   if (typeof p === "number") return { top: p, right: p, bottom: p, left: p };
   return p;
 }
+/**
+ * y 轴左侧留白按刻度标签实测宽度自适应（替代固定 65）：
+ * 取数据范围 → nice 刻度值 → 逐个测宽，留 26px（10 间隙 + 刻度短横 + 余量）。
+ * 对数轴/自定义 formatter 场景不可预估时回落 65；结果夹在 [40, 140]。
+ */
+function estimateYAxisLeft(options) {
+  const axisConfig = options.yAxis || {};
+  if (axisConfig.type === "log") return 65;
+  try {
+    const range = calculateRange(options, new Set(), false);
+    const min = axisConfig.min ?? range?.min;
+    const max = axisConfig.max ?? range?.max;
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return 65;
+    const { tickValues } = resolveTickExtendedRange(min, max, axisConfig.ticks || 5);
+    const maxW = tickValues.reduce((m, t) => {
+      const label = axisConfig.formatter ? axisConfig.formatter(t) : Number.isInteger(t) ? t.toString() : parseFloat(t.toFixed(6)).toString();
+      return Math.max(m, estimateTextWidth(String(label), 12));
+    }, 0);
+    if (!maxW) return 65;
+    return Math.max(40, Math.min(140, Math.round(maxW + 26)));
+  } catch {
+    return 65;
+  }
+}
 function getPadding(options, containerWidth = 600) {
   const legend = options.legend || {};
   const legendEnabled = legend.show !== false && hasLegendContent(options);
@@ -278,7 +302,7 @@ function getPadding(options, containerWidth = 600) {
   const xAxisHidden = options.xAxis?.show === false;
   let top = (pad.top ?? 18) + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
   let bottom = (pad.bottom ?? (xAxisHidden ? 12 : 46)) + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
-  let left = pad.left ?? 65;
+  let left = pad.left ?? estimateYAxisLeft(options);
   let right = pad.right ?? (hasYAxisRight ? 65 : 24);
   if (legendPosition === "left") left += 80;
   if (legendPosition === "right") right += 80;

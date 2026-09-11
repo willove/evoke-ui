@@ -151,8 +151,20 @@ describe('EvChart（提取冒烟（ev 命名空间））', () => {
 describe('getPadding 绘图区空间利用', () => {
   const LINE = { type: 'line', labels: ['一', '二'], series: [{ name: 'x', data: [1, 2] }], legend: { show: false } }
 
-  it('轴类默认留白（上 18 / 右 24 / 下 46 / 左 65）', () => {
-    expect(getPadding(LINE, 800)).toEqual({ top: 18, right: 24, bottom: 46, left: 65 })
+  it('轴类默认留白：left 按刻度标签宽度自适应，其余定值', () => {
+    const p = getPadding(LINE, 800)
+    expect(p.top).toBe(18)
+    expect(p.right).toBe(24)
+    expect(p.bottom).toBe(46)
+    expect(p.left).toBeGreaterThanOrEqual(40)
+    expect(p.left).toBeLessThanOrEqual(140)
+  })
+
+  it('大数量级标签自适应加宽 left，零截断', () => {
+    const p = getPadding({ ...LINE, yAxis: { min: 0, max: 1000000 } }, 800)
+    expect(p.left).toBeGreaterThan(65)
+    const small = getPadding({ ...LINE, yAxis: { min: 0, max: 10, ticks: 2 } }, 800)
+    expect(small.left).toBeLessThan(65)
   })
 
   it('默认底部图例带叠加（46 + 26）', () => {

@@ -19,7 +19,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed', type: 'string', default: '—' },
   { name: 'title / subtitle', desc: '主标题 / 副标题', type: 'string', default: '—' },
   { name: 'labels', desc: 'x 轴类目数组，直角系与 sparkline / waterfall / mixed 的数据基线', type: 'array', default: '[]' },
-  { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth? }，data 与 labels 对齐；数据点圆点默认不绘制，showSymbol: true 显示', type: 'array', default: '[]' },
+  { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth?, smooth? }，data 与 labels 对齐；数据点圆点默认不绘制（showSymbol: true 显示）；smooth: true 单调插值平滑', type: 'array', default: '[]' },
   { name: 'legend', desc: '图例：{ show, position（top / bottom）, interactive, hoverEmphasis }', type: 'object', default: '{ show: true }' },
   { name: 'tooltip', desc: '提示框：{ show, trigger（hover / click）, showAllSeries, formatter }', type: 'object', default: '—' },
   { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing }', type: 'object', default: '—' },
@@ -28,7 +28,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'dataZoom', desc: '缩放：{ enabled, start, end, position（bottom / top）, height, mouseWheel }', type: 'object', default: '—' },
   { name: 'toolbox', desc: '工具按钮：{ show, filename }（导出 PNG / 恢复复位）', type: 'object', default: '—' },
   { name: 'theme', desc: '主题覆盖（colors、textColor 等），暗色模式自动切换', type: 'object', default: '—' },
-  { name: 'padding', desc: '绘图区内边距覆写：数字（四边）或 { top, right, bottom, left }（未提供的边回落默认值）；标题、图例、dataZoom 的空间照常叠加。x 轴隐藏（xAxis.show: false）时底部自动收窄', type: 'number | object', default: '—' },
+  { name: 'padding', desc: '绘图区内边距覆写：数字（四边）或 { top, right, bottom, left }（未提供的边回落默认值）；标题、图例、dataZoom 的空间照常叠加。x 轴隐藏（xAxis.show: false）时底部自动收窄；left 未提供时按 y 刻度标签宽度自适应（40–140）', type: 'number | object', default: '—' },
   { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
   { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
 ]" />

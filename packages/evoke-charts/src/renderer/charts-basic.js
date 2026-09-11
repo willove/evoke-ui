@@ -31,6 +31,32 @@ function computePieMaxRadius(pieData, options, plotArea) {
 function alphaHex(opacity) {
   return Math.round(Math.max(0, Math.min(1, opacity)) * 255).toString(16).padStart(2, "0");
 }
+/** 单调三次插值切线（Fritsch–Carlson 限幅）：平滑但不过冲，曲线必过每个数据点 */
+function monotoneTangents(pts) {
+  const n = pts.length;
+  const m = new Array(n).fill(0);
+  const d = [];
+  for (let i = 0; i < n - 1; i++) d.push((pts[i + 1][1] - pts[i][1]) / (pts[i + 1][0] - pts[i][0]));
+  m[0] = d[0];
+  m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) {
+    if (d[i] === 0) {
+      m[i] = 0;
+      m[i + 1] = 0;
+      continue;
+    }
+    const a = m[i] / d[i];
+    const b = m[i + 1] / d[i];
+    const s = a * a + b * b;
+    if (s > 9) {
+      const tk = 3 / Math.sqrt(s);
+      m[i] = tk * a * d[i];
+      m[i + 1] = tk * b * d[i];
+    }
+  }
+  return m;
+}
 function renderLineChart(ctx, yRange, side = "left") {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries, valueFormatter } = ctx;
   const allPoints = [];
@@ -82,16 +108,26 @@ function renderLineChart(ctx, yRange, side = "left") {
     if (currentPts.length > 0) segments.push({ pts: currentPts, idxs: currentIdxs });
     if (segments.length === 0) return;
     const step = series.step || options.step;
+    const smooth = !!(series.smooth ?? options.smooth);
     const tracePath = (pts, startMove) => {
       startMove(canvasCtx, pts[0]);
+      if (smooth && pts.length > 2) {
+        // 单调三次插值：过点、无过冲；控制点横向各取 1/3 段长
+        const m = monotoneTangents(pts);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const x0 = pts[i][0];
+          const y0 = pts[i][1];
+          const x1 = pts[i + 1][0];
+          const y1 = pts[i + 1][1];
+          const h = (x1 - x0) / 3;
+          canvasCtx.bezierCurveTo(x0 + h, y0 + h * m[i], x1 - h, y1 - h * m[i + 1], x1, y1);
+        }
+        return;
+      }
       for (let i = 0; i < pts.length - 1; i++) {
         const curr = pts[i];
         const next = pts[i + 1];
-        if (series.smooth && pts.length > 2 && !step) {
-          const cp1x = curr[0] + (next[0] - curr[0]) / 3;
-          const cp2x = next[0] - (next[0] - curr[0]) / 3;
-          canvasCtx.bezierCurveTo(cp1x, curr[1], cp2x, next[1], next[0], next[1]);
-        } else if (step) {
+        if (step) {
           if (step === "start") {
             canvasCtx.lineTo(next[0], curr[1]);
             canvasCtx.lineTo(next[0], next[1]);

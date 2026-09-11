@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — y 轴留白自适应与单调平滑曲线
+
+- 左留白按 y 刻度标签实测宽度自适应（夹在 40–140，替代固定 65）——大数量级
+  零截断，小量级不再浪费绘图宽度；尊重 `padding.left` 与 `yAxis.min/max`
+- 新增平滑曲线：`series.smooth` / `options.smooth` 单调三次插值
+  （Fritsch–Carlson 限幅），曲线过每个数据点且无过冲；SVG 导出同步支持
+
 ### @wil-works/evoke-charts — 数据系列色板与状态语义色解耦
 
 - 系列色改读专用令牌 `--ev-color-series-1..8`（逐槽回落成套数据色板），不再读取
