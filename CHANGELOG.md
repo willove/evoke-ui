@@ -4,7 +4,7 @@
 
 ## [0.2.0] — 2026-09-11
 
-### @wil-works/evoke-business-ui — 企业级能力补全与主题动态配置
+### @wil-works/evoke-business-ui@0.2.0 — 企业级能力补全与主题动态配置
 
 ### Breaking
 
@@ -151,7 +151,7 @@
 - `tsconfig.json` 脚手架 + TS 试点模块 `utils/color.ts`
 - 新增测试 60+ 用例（总计 680+ 全绿）
 
-### @wil-works/evoke-ui — 官网组件与体验增强
+### @wil-works/evoke-ui@1.5.0 — 官网组件与体验增强
 
 #### Added — 组件
 
