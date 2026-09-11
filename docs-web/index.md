@@ -110,7 +110,7 @@ function goSearch() {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EwTag size="small">v1.5.0</EwTag>
+      <EwTag size="small">v0.2.0</EwTag>
     </a>
   </template>
   <template #actions>
@@ -134,7 +134,7 @@ function goSearch() {
 >
   <template #badge>
     <EwAlert pill>
-      <span>v1.5.0 发布：边框流光、图片墙、弹出层与更多</span>
+      <span>v0.2.0 发布：边框流光、图片墙、弹出层与更多</span>
       <template #action>
         <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -190,7 +190,7 @@ function goSearch() {
         </label>
       </EwCard>
       <div class="home-collage__chip">
-        <EwTag tone="primary" size="small">v1.5.0</EwTag>
+        <EwTag tone="primary" size="small">v0.2.0</EwTag>
         <EwTag size="small">Vue 3</EwTag>
       </div>
     </div>

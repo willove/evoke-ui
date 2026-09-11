@@ -1,0 +1,23 @@
+name: npm rollback (temporary)
+
+# 临时工作流：撤回误发的 @wil-works/evoke-ui@1.5.0 并将 latest 定位到 0.2.0
+# 执行完毕后删除本文件
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Unpublish 1.5.0 and retag latest to 0.2.0
+        run: |
+          npm unpublish @wil-works/evoke-ui@1.5.0 --force
+          npm dist-tag add @wil-works/evoke-ui@0.2.0 latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
