@@ -90,13 +90,16 @@ export const CHART_NAV = [
   },
 ]
 
-/** 案例分区导航 — 侧栏在 /examples 路由下展示（案例页后续迭代补充） */
+/** 案例分区导航 — 侧栏在 /examples 路由下展示 */
 export const EXAMPLES_NAV = [
   {
     name: '案例',
     key: 'examples',
     components: [
       { name: '案例总览', zh: '', path: '/examples/' },
+      { name: '运营数据看板', zh: '', path: '/examples/dashboard' },
+      { name: '服务监控屏', zh: '', path: '/examples/monitor' },
+      { name: '报表嵌入', zh: '', path: '/examples/report' },
     ],
   },
 ]

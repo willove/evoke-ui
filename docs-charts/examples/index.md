@@ -1,16 +1,63 @@
 # 案例总览
 
-案例板块用于展示 EvChart 在真实场景里的组合用法——把多个图表类型、交互与主题接线放进一个完整页面里讲。案例正在制作中，会陆续补充在这里。
+案例把多个图表类型与交互能力放进一个完整页面里讲：每个案例都是可运行的真实场景，源码面板可以看到完整实现。
 
-## 规划中的案例
+<div class="case-cards">
+  <a class="case-card" href="/examples/dashboard">
+    <strong class="case-card__title">运营数据看板</strong>
+    <p class="case-card__desc">KPI 卡 + 营收趋势 + 渠道构成 + 区域排行，看板的经典四件套；附一键导出趋势图 PNG。</p>
+    <span class="case-card__tags">sparkline · area · doughnut · horizontal-bar · toDataURL</span>
+  </a>
+  <a class="case-card" href="/examples/monitor">
+    <strong class="case-card__title">服务监控屏</strong>
+    <p class="case-card__desc">四张时序图同组联动：图例与缩放全组同步，定时器每秒推进数据点，曲线平滑生长，可随时暂停。</p>
+    <span class="case-card__tags">line · area · connectGroup · dataZoom · 运行时更新</span>
+  </a>
+  <a class="case-card" href="/examples/report">
+    <strong class="case-card__title">报表嵌入</strong>
+    <p class="case-card__desc">图表嵌进表格行：迷你趋势图回答「在涨还是在跌」，子弹图回答「目标完成了没有」。</p>
+    <span class="case-card__tags">sparkline · bullet · 令牌取色</span>
+  </a>
+</div>
 
-- **运营数据看板**：指标卡 + 趋势折线 + 占比环形 + 排行条形的经典组合；
-- **监控大屏**：实时刷新、dataZoom 窗口滚动与多图 connect 联动的落地用法；
-- **报表嵌入**：与表格并排的迷你趋势图（sparkline）与子弹图指标列。
+## 挑案例还是挑图？
 
-在等案例的日子里，这些场景的零件都能在图表类型页找到：从左侧导航进入，或从[总览与快速上手](/chart/)的选型表按问题挑图。
+按场景找完整组合看案例；只想回答一个数据问题，去[总览与快速上手](/chart/)的选型表按问题挑图，每个图表类型页都有独立的可运行演示。
 
-## 相关
-
-- 交互能力的逐项演示：[交互与联动](/chart/interaction)
-- 宿主主题与暗色接入：[主题接入](/guide/theme)
+<style scoped>
+.case-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+.case-card {
+  display: block;
+  padding: 18px 18px 14px;
+  border: 1px solid var(--ev-app-card-border, var(--ev-border-color));
+  border-radius: 10px;
+  background: var(--ev-bg-color-overlay, var(--ev-bg-color));
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.case-card:hover {
+  border-color: var(--ev-color-primary);
+}
+.case-card .case-card__title.case-card__title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--ev-text-color-primary, #1f2329);
+}
+.case-card .case-card__desc.case-card__desc {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ev-text-color-secondary, #646a73);
+}
+.case-card .case-card__tags.case-card__tags {
+  font-size: 11px;
+  color: var(--ev-text-color-tertiary, #8f959e);
+  font-family: var(--ev-font-family-code, monospace);
+}
+</style>
