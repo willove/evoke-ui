@@ -20,12 +20,11 @@
 
 ## 令牌清单
 
-图表按组读取以下令牌，任一缺失即整组回落到内置色板：
+图表按槽位读取以下令牌，未定义的槽位逐槽回落到内置成套色板：
 
 | 令牌组 | 令牌 | 用途 |
 | --- | --- | --- |
-| 系列色 | `--ev-color-primary` / `-success` / `-warning` / `-danger` / `-info` | 数据系列主色板 |
-| 扩展系列色 | `--ev-color-ext-violet` / `-cyan` / `-magenta` | 系列数超过基础色板时启用 |
+| 系列色 | `--ev-color-series-1` … `--ev-color-series-8` | 数据系列专用色板（与状态语义色解耦；槽 1 未定义时回读 `--ev-color-primary`） |
 | 表面 | `--ev-bg-color`、`--ev-bg-color-overlay`、`--ev-app-card-border` | 画布底、浮层底、边框 |
 | 文字 | `--ev-text-color-primary` / `-secondary` / `-danger` | 标题、轴标签、图例文字 |
 | 边线 | `--ev-border-color` / `-light` / `-dark` | 轴线、网格线 |

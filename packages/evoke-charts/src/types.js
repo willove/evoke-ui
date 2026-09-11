@@ -30,18 +30,20 @@ const DEFAULT_I18N_EN = {
 };
 
 /**
- * 系列色令牌表 — 图表分类色板从 CSS 令牌实时读取（换主题/暗色即跟随），
+ * 系列色令牌槽位 — 每槽按顺序尝试读取专用数据色令牌（--ev-color-series-N），
+ * 槽 1 回退 --ev-color-primary（品牌主色跟随）；
+ * 任一槽无令牌时该槽回落内置成套色板（与语义状态色解耦的数据色板）。
  * CHART_COLORS 仅作为 SSR / 无 DOM 环境的静态兜底。
  */
-const SERIES_COLOR_TOKENS = [
-  "--ev-color-primary",
-  "--ev-color-success",
-  "--ev-color-warning",
-  "--ev-color-ext-violet",
-  "--ev-color-ext-cyan",
-  "--ev-color-danger",
-  "--ev-color-ext-magenta",
-  "--ev-color-info"
+const SERIES_COLOR_SLOTS = [
+  ["--ev-color-series-1", "--ev-color-primary"],
+  ["--ev-color-series-2"],
+  ["--ev-color-series-3"],
+  ["--ev-color-series-4"],
+  ["--ev-color-series-5"],
+  ["--ev-color-series-6"],
+  ["--ev-color-series-7"],
+  ["--ev-color-series-8"]
 ];
 function readChartToken(name, fallback) {
   try {
@@ -53,54 +55,58 @@ function readChartToken(name, fallback) {
   }
 }
 function getSeriesColors(fallbackColors) {
-  const live = SERIES_COLOR_TOKENS.map((t) => readChartToken(t, ""));
-  const missing = live.some((v) => !v);
-  return missing ? [...fallbackColors] : live;
+  return SERIES_COLOR_SLOTS.map((tokens, i) => {
+    for (const t of tokens) {
+      const v = readChartToken(t, "");
+      if (v) return v;
+    }
+    return fallbackColors[i];
+  });
 }
 const CHART_COLORS = {
   /**
-   * 主色板 — 对齐 evoke 设计令牌：
-   * 前位使用功能色（primary/success/warning/danger/info），
-   * 扩展色选取与深蓝体系协调的色相；相邻色相拉开对比度。
+   * 主色板 — 品牌蓝锚定的成套数据色板（与语义状态色解耦）：
+   * 色相按取色顺序相邻差 ≥ 30°，明度带 44–68，青绿/金黄/天蓝/珊瑚/紫/石板
+   * 取材 AntV 经典系并经品牌蓝调协调；暗色板同色相提亮。
    */
   primary: [
     "#175DFF",
-    // primary 天亮蓝
-    "#16a34a",
-    // success 翠绿
-    "#d97706",
-    // warning 琥珀
-    "#8b5cf6",
-    // 紫罗兰（扩展）
-    "#0891b2",
-    // 青（扩展）
-    "#dc2626",
-    // danger 红
-    "#db2777",
-    // 玫红（扩展）
-    "#64748b"
-    // info 石板灰
+    // 蓝（品牌主色）
+    "#5AD8A6",
+    // 青绿
+    "#F6BD16",
+    // 金黄
+    "#6DC8EC",
+    // 天蓝
+    "#E8684A",
+    // 珊瑚红
+    "#9270CA",
+    // 紫
+    "#FF9D4D",
+    // 橙
+    "#5D7092"
+    // 石板灰蓝（中性槽）
   ],
   /** 浅色系列 — primary 的 light-9/light-8/light-7 阶梯 */
   light: ["#e8f0ff", "#d0e1ff", "#b9d2ff"],
-  /** 暗色模式系列 — 对齐 evoke 暗色功能色令牌 */
+  /** 暗色模式系列 — 同色相提亮（对齐 evoke 暗色主色） */
   dark: [
     "#4d8bff",
-    // primary（暗色）
-    "#4ade80",
-    // success（暗色）
-    "#fbbf24",
-    // warning（暗色）
-    "#a78bfa",
-    // 紫罗兰（暗色）
-    "#22d3ee",
-    // 青（暗色）
-    "#f87171",
-    // danger（暗色）
-    "#f472b6",
-    // 玫红（暗色）
-    "#94a3b8"
-    // info（暗色）
+    // 蓝（暗色）
+    "#5ad8a6",
+    // 青绿
+    "#f6bd16",
+    // 金黄
+    "#6dc8ec",
+    // 天蓝
+    "#f08568",
+    // 珊瑚红（暗色提亮）
+    "#a585e8",
+    // 紫（暗色）
+    "#ff9d4d",
+    // 橙
+    "#8da3bf"
+    // 石板灰蓝（暗色）
   ],
   /** 热力图默认色阶（天亮蓝由浅到深） */
   heatmapScale: ["#f0f5ff", "#c6d9ff", "#8ab0ff", "#4d86ff", "#175DFF", "#0040c2"]
@@ -207,7 +213,7 @@ function formatValue(value, options) {
 }
 export {
   CHART_COLORS,
-  SERIES_COLOR_TOKENS,
+  SERIES_COLOR_SLOTS,
   getSeriesColors,
   readChartToken,
   DEFAULT_I18N_EN,

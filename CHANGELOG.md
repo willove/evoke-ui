@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 数据系列色板与状态语义色解耦
+
+- 系列色改读专用令牌 `--ev-color-series-1..8`（逐槽回落成套数据色板），不再读取
+  success / warning / danger / info 状态语义色——消除多系列图上"红绿黄"杂耍感；
+  槽 1 回读 `--ev-color-primary`，品牌换肤跟随不变
+- 内置成套色板以品牌蓝锚定、取材 AntV 经典系：蓝 → 青绿 → 金黄 → 天蓝 → 珊瑚 →
+  紫 → 橙 → 石板灰蓝；暗色板同色相提亮
+- 业务侧如需沿用旧观感，在 `--ev-color-series-1..8` 上定义原语义色即可
+
 ### @wil-works/evoke-charts — 绘图区空间利用：padding 覆写与隐藏轴回收
 
 - 新增 `options.padding`（数字或 { top, right, bottom, left }）覆写绘图区静态留白；

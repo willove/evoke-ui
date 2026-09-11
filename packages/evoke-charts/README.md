@@ -58,9 +58,9 @@ const options = {
 
 ## 主题接入
 
-图表颜色按以下 `--ev-*` 令牌实时读取（`document.documentElement` 上取值），任一缺失即整组回落到内置色板：
+图表颜色按以下 `--ev-*` 令牌实时读取（`document.documentElement` 上取值），未定义的槽位逐槽回落到内置成套色板：
 
-- 系列色：`--ev-color-primary / -success / -warning / -danger / -info`、`--ev-color-ext-violet / -cyan / -magenta`
+- 系列色：`--ev-color-series-1` … `--ev-color-series-8`（数据系列专用色板，与状态语义色解耦；槽 1 未定义时回读 `--ev-color-primary`，主题跟随不受影响）
 - 表面：`--ev-bg-color`、`--ev-bg-color-overlay`、`--ev-app-card-border`
 - 文字：`--ev-text-color-primary / -secondary / -danger`
 - 边线：`--ev-border-color / -light / -dark`
