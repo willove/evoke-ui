@@ -3,7 +3,7 @@ layout: home
 ---
 
 <div class="bd-hero">
-  <p class="bd-hero__badge">v0.3.0 · 中后台组件库</p>
+  <p class="bd-hero__badge">v0.3.2 · 中后台组件库</p>
   <h1 class="bd-hero__title">
     Evoke <span class="accent">Business</span> UI
   </h1>

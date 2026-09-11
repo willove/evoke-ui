@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-09-11
+
 ### @wil-works/evoke-business-ui — Tooltip 箭头纯三角化与暗色可读性修复
 
 - **修复箭头显示为菱形残角**：原「旋转方块 + overflow 裁剪」结构对亚像素渲染敏感，
