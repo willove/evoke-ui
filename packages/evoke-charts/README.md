@@ -2,6 +2,8 @@
 
 `@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
 
+**在线文档**：[evoke-business-ui.wil-works.com/chart](https://evoke-business-ui.wil-works.com/chart/) — 收录在 Evoke Business UI 文档站的图表分区，含全部图表类型、完整配置项与在线示例。
+
 ## 特性
 
 - **20+ 图表类型**：折线 / 面积 / 柱状 / 堆叠柱 / 条形 / 饼图 / 环形 / 玫瑰图 / 散点（含趋势线）/ 雷达 / 漏斗 / 仪表盘 / 热力图 / K 线 / 子弹图 / 直方图 / 矩形树图 / 旭日图 / 瀑布图 / 箱线图 / 混合图 / 迷你图
@@ -72,6 +74,8 @@ const options = {
 `evoke-business-ui` 依赖本包并以 `EbChart`（模板 `<eb-chart>`）提供同一组件，其样式包内置了 `--eb-*` 令牌到 `--ev-*`（本包读取面）的映射，两库同用时图表自动跟随其主题、暗色与运行时换肤（其换肤时会派发 `ev-theme-change` 事件），无需额外配置。
 
 ## 组件 API（摘要）
+
+以下为常用项摘要，各图表类型的独立文档页与完整配置项见[在线文档图表分区](https://evoke-business-ui.wil-works.com/chart/)。
 
 ### Props
 
