@@ -1,21 +1,22 @@
-# 监控大屏
+# 服务器指标监控
 
-四张时序图共用一个 `connectGroup` 联动组：图例显隐与 dataZoom 缩放范围在四图间同步；定时器每秒推进一个数据点，数值补间动画让曲线平滑生长。顶栏按钮可暂停/恢复刷新。
+云控制台式的批量指标监控：每个指标一行，细线小图看走势，右侧 Max / Min / Avg 统计列看量化区间。定时器每秒推进一个数据点，曲线即时重绘、统计列同步刷新，可随时暂停。
 
 <DocExample :code="monitorSource"><MonitorCase /></DocExample>
 
 ## 用到的能力
 
-- [折线图](/chart/line) / [面积图](/chart/area) —— 时序曲线
-- [交互与联动](/chart/interaction) —— `connectGroup` 多图联动与 `dataZoom` 滚轮缩放
-- 运行时更新 —— `options` 响应式变化后自动增量重绘，无需手动调方法
+- [折线图](/chart/line) —— 批量指标小图
+- `showSymbol: false` + 细 `lineWidth` —— 密集点位下的心电图式细线
+- `animation: { enabled: false }` —— 实时推进数据点时不做补间
+- [迷你趋势图](/chart/sparkline) —— 同款「为嵌入而生」的思路，本例在完整折线上实现
 
 ## 实现要点
 
-- 四张图 `options` 里的 `connectGroup` 设为同名即可联动，图例点选与缩放窗口全组同步；
-- 系列统一 `showSymbol: false`：点位密集时圆圈会叠成一个个气泡，纯线条才是心电图式的监控观感；
-- 定时器只做一件事：往 `labels` 尾部推新时间点、`series` 尾部推新值并 `shift` 掉最旧的点，窗口长度固定；
-- 初始 30 个点写死在代码里，保证文档构建（SSR）与浏览器首屏渲染一致；
+- 七个指标共用一套 `labels`，每行一个独立的 60 点窗口；行高只有 56px，靠 `showSymbol: false` 与 `lineWidth: 1.5` 压成细线；
+- `animation: { enabled: false }` 是实时刷新的关键——数据点每秒都在推进，若走默认补间，整条曲线会跟着反复变形；关掉后新点即划即走，观感才稳定；
+- Max / Min / Avg 在每次推进后对窗口内全部点重新求值，展示格式按指标各自的小数位走；
+- 曲线形态是「平缓底噪 + 偶发尖峰」：底噪用正弦叠加生成，尖峰按小概率随机注入，写死的初始数据保证文档构建（SSR）与浏览器首屏渲染一致；
 - 组件卸载时 `clearInterval`，避免定时器泄漏。
 
 <script setup>

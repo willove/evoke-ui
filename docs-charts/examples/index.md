@@ -9,9 +9,9 @@
     <span class="case-card__tags">sparkline · area · doughnut · horizontal-bar · toDataURL</span>
   </a>
   <a class="case-card" href="/examples/monitor">
-    <strong class="case-card__title">服务监控屏</strong>
-    <p class="case-card__desc">四张时序图同组联动：图例与缩放全组同步，定时器每秒推进数据点，曲线平滑生长，可随时暂停。</p>
-    <span class="case-card__tags">line · area · connectGroup · dataZoom · 运行时更新</span>
+    <strong class="case-card__title">服务器指标监控</strong>
+    <p class="case-card__desc">云控制台式的批量指标列表：CPU / 内存 / 内网带宽七项指标细线小图，Max / Min / Avg 统计列每秒随窗口重算。</p>
+    <span class="case-card__tags">line · showSymbol · animation · 批量时序</span>
   </a>
   <a class="case-card" href="/examples/report">
     <strong class="case-card__title">报表嵌入</strong>

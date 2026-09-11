@@ -98,7 +98,7 @@ export const EXAMPLES_NAV = [
     components: [
       { name: '案例总览', zh: '', path: '/examples/' },
       { name: '运营数据看板', zh: '', path: '/examples/dashboard' },
-      { name: '服务监控屏', zh: '', path: '/examples/monitor' },
+      { name: '服务器指标监控', zh: '', path: '/examples/monitor' },
       { name: '报表嵌入', zh: '', path: '/examples/report' },
     ],
   },
