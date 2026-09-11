@@ -157,7 +157,7 @@ function renderLineChart(ctx, yRange, side = "left") {
     }
     canvasCtx.beginPath();
     canvasCtx.strokeStyle = color;
-    canvasCtx.lineWidth = series.lineWidth || 2;
+    canvasCtx.lineWidth = series.lineWidth || 1.5;
     canvasCtx.lineJoin = "round";
     canvasCtx.lineCap = "round";
     canvasCtx.setLineDash(resolveLineDash(series));
@@ -167,7 +167,8 @@ function renderLineChart(ctx, yRange, side = "left") {
     if (!series.area && options.type !== "area") {
       canvasCtx.restore();
     }
-    if (series.showSymbol !== false && series.symbol !== "none") {
+    // 数据点圆点默认不绘制（大平台折线惯例：平时纯线条，hover 才有反馈），showSymbol: true 显式打开
+    if (series.showSymbol === true && series.symbol !== "none") {
       const baseR = series.symbolSize ?? 4;
       points.forEach((p, i) => {
         if (!p) return;

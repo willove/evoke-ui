@@ -83,7 +83,7 @@ function buildOptions(def) {
   return {
     type: 'line',
     labels: store.labels,
-    series: [{ name: def.name, data: store.series[def.key], showSymbol: false, lineWidth: 1.25 }],
+    series: [{ name: def.name, data: store.series[def.key], lineWidth: 1.25 }],
     // 云监控小图定制：无横网格、仅 3 档 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）；
     // padding 收紧静态留白，绘图区几乎占满画布高度
     yAxis: { grid: { show: false }, ticks: 3 },

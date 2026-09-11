@@ -6,14 +6,14 @@ function renderTitle(ctx, paddingTop) {
   if (!options.title) return;
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColor;
-  canvasCtx.font = "bold 16px Inter, sans-serif";
-  canvasCtx.textAlign = "center";
+  canvasCtx.font = "600 13px Inter, sans-serif";
+  canvasCtx.textAlign = "left";
   canvasCtx.textBaseline = "top";
-  canvasCtx.fillText(options.title, plotArea.x + plotArea.width / 2, paddingTop);
+  canvasCtx.fillText(options.title, plotArea.x, paddingTop);
   if (options.subtitle) {
-    canvasCtx.font = "12px Inter, sans-serif";
+    canvasCtx.font = "11px Inter, sans-serif";
     canvasCtx.fillStyle = theme.textColorSecondary;
-    canvasCtx.fillText(options.subtitle, plotArea.x + plotArea.width / 2, paddingTop + 22);
+    canvasCtx.fillText(options.subtitle, plotArea.x, paddingTop + 20);
   }
   canvasCtx.restore();
 }
@@ -144,12 +144,13 @@ function renderLegend(ctx) {
     } else if (icon === "rect") {
       canvasCtx.fillRect(bound.x, bound.y + 5, 12, 12);
     } else {
-      roundRect(canvasCtx, bound.x, bound.y + 5, 12, 12, 2);
+      // 默认图例样式：细圆角短横条（云监控/大厂折线图惯例，替代厚重的方块色块）
+      roundRect(canvasCtx, bound.x, bound.y + 9.5, 12, 3, 1.5);
       canvasCtx.fill();
     }
     canvasCtx.restore();
     canvasCtx.save();
-    canvasCtx.fillStyle = isHidden ? theme.textColorSecondary : theme.textColor;
+    canvasCtx.fillStyle = theme.textColorSecondary;
     canvasCtx.globalAlpha = isHidden ? 0.6 : 1;
     canvasCtx.textAlign = "left";
     canvasCtx.textBaseline = "middle";

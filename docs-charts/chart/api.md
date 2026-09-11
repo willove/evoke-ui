@@ -19,7 +19,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed', type: 'string', default: '—' },
   { name: 'title / subtitle', desc: '主标题 / 副标题', type: 'string', default: '—' },
   { name: 'labels', desc: 'x 轴类目数组，直角系与 sparkline / waterfall / mixed 的数据基线', type: 'array', default: '[]' },
-  { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol? }，data 与 labels 对齐；showSymbol: false 隐藏线上的数据点圆圈', type: 'array', default: '[]' },
+  { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth? }，data 与 labels 对齐；数据点圆点默认不绘制，showSymbol: true 显示', type: 'array', default: '[]' },
   { name: 'legend', desc: '图例：{ show, position（top / bottom）, interactive, hoverEmphasis }', type: 'object', default: '{ show: true }' },
   { name: 'tooltip', desc: '提示框：{ show, trigger（hover / click）, showAllSeries, formatter }', type: 'object', default: '—' },
   { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing }', type: 'object', default: '—' },

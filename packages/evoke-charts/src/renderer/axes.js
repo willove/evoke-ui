@@ -97,6 +97,15 @@ function renderYAxis(ctx, side = "left", dataRange) {
     }
     label = truncateLabel(canvasCtx, label, maxLabelWidth);
     canvasCtx.fillText(label, xPos, y);
+    // 刻度短横：标签与绘图区之间的「20 –」式对位标记（参考云监控/大厂坐标轴）
+    if (side === "left") {
+      canvasCtx.strokeStyle = theme.gridColor;
+      canvasCtx.lineWidth = 1;
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(plotArea.x - 6, y);
+      canvasCtx.lineTo(plotArea.x, y);
+      canvasCtx.stroke();
+    }
   });
   drawAxisLine(
     canvasCtx,

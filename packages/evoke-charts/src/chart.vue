@@ -1875,11 +1875,11 @@ defineExpose({
   position: absolute;
   pointer-events: none;
   z-index: 100;
-  padding: 10px 14px;
+  padding: 9px 12px;
   background: var(--ev-bg-color-overlay, #ffffff);
   border: 1px solid var(--ev-border-color, #e2e8f0);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
   font-size: 13px;
   line-height: 1.6;
   white-space: nowrap;
