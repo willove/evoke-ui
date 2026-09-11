@@ -243,7 +243,7 @@ function goSearch() {
       :columns="3"
       :stagger="80"
       :items="[
-        { icon: 'brush-line', title: '统一的设计语言', description: 'Clean Navy 设计令牌驱动：粉彩贴纸卡、藏青色软阴影与灵动的微交互，装进项目就能用。' },
+        { icon: 'brush-line', title: '统一的设计语言', description: 'Clean Navy 设计基调：粉彩贴纸卡、藏青色软阴影与灵动的微交互，装进项目就能用。' },
         { icon: 'search', title: '标志性的大搜索框', description: '分类、输入、按钮三段一体，大圆角配藏青软阴影，放在首屏就是全页焦点。' },
         { icon: 'device-line', title: '响应式栅格', description: '特性卡、文章卡与图标网格全自适应，窄屏自动降列。' },
         { icon: 'star-fill', title: '转化组件', description: '定价卡、对比表、FAQ 与订阅框，产品介绍页的下半部分一次配齐。' },

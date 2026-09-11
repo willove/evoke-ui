@@ -45,8 +45,8 @@ layout: home
   </div>
   <div class="bd-feature">
     <div class="bd-feature__icon"><BdIcon name="moon" :size="20" /></div>
-    <h3 class="bd-feature__title">设计令牌与暗色模式</h3>
-    <p class="bd-feature__desc">语义化 CSS 变量分层（颜色 / 字体 / 间距 / 圆角 / 动效），切换暗色只需一个类名，品牌主色可覆盖。</p>
+    <h3 class="bd-feature__title">暗色模式与品牌换色</h3>
+    <p class="bd-feature__desc">切换暗色只需一个类名；品牌主色可整体覆盖，状态色梯度自动成套。</p>
   </div>
   <div class="bd-feature">
     <div class="bd-feature__icon"><BdIcon name="globe" :size="20" /></div>

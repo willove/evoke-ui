@@ -1,6 +1,6 @@
 # 主题定制器
 
-整库的**颜色 / 圆角 / 间距 / 容器宽**全部由 `--ev-*` 令牌驱动，可在运行时调整并即时生效。下面的控件修改的是**整个文档站的真实主题**——切主色后注意观察按钮、链接、选中态与侧栏高亮。
+下面的控件修改的是**整个文档站的真实主题**，调整即时生效——切主色后注意观察按钮、链接、选中态与侧栏高亮。
 
 <script setup>
 import { ref } from 'vue'
@@ -119,7 +119,7 @@ const containerItems = Object.entries(EV_CONTAINER_PRESETS).map(([value, v]) => 
 
 ## 实时预览
 
-<DemoBlock title="同一套令牌驱动的一切" description="不同作用用不同的语义色：操作用主色、成功/警告/危险/信息各就其位 —— 切换上方色系后整排联动。">
+<DemoBlock title="语义色各就其位" description="操作用主色、成功/警告/危险/信息各有分工 —— 切换上方色系后整排联动。">
 
 <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
   <EvButton pill>主按钮</EvButton>
