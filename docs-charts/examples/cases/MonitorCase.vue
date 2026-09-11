@@ -18,7 +18,7 @@
             {{ m.name }}<span class="case-mon__unit">{{ m.unit }}</span>
           </div>
           <div class="case-mon__chart">
-            <EvChart type="line" :options="m.options" :height="120" />
+            <EvChart type="line" :options="m.options" :height="64" />
           </div>
           <div class="case-mon__stat">
             <span>Max:</span>
@@ -88,7 +88,9 @@ function buildOptions(def) {
     // padding 收紧静态留白，绘图区几乎占满画布高度
     yAxis: { grid: { show: false }, ticks: 3 },
     xAxis: { show: false },
-    padding: { top: 8, right: 10, bottom: 10, left: 44 },
+    // 云监控小图定制：无横网格、3 档小字 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）；
+    // padding 收紧到贴边，画布几乎全给曲线——长条监控带的观感
+    padding: { top: 6, right: 8, bottom: 6, left: 34 },
     animation: { enabled: false },
     legend: { show: false },
     tooltip: {
@@ -239,10 +241,10 @@ onUnmounted(stop)
 }
 .case-mon__row {
   display: grid;
-  grid-template-columns: 118px minmax(0, 1fr) repeat(3, 76px);
+  grid-template-columns: 104px minmax(0, 1fr) repeat(3, 72px);
   align-items: center;
-  gap: 12px;
-  padding: 7px 0;
+  gap: 14px;
+  padding: 5px 0;
 }
 .case-mon__row + .case-mon__row {
   border-top: 1px dashed var(--ev-border-color-light);
@@ -270,7 +272,7 @@ onUnmounted(stop)
 .case-mon__stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 .case-mon__stat span {
@@ -278,7 +280,7 @@ onUnmounted(stop)
   color: var(--ev-text-color-tertiary, var(--ev-text-color-secondary));
 }
 .case-mon__stat strong {
-  font-size: 13px;
+  font-size: 12.5px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   color: var(--ev-text-color-primary);
