@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-09-11
+
+### @wil-works/evoke-business-ui@0.3.1 — README 同步 eb-* 命名
+
+- 随 0.3.0 发布的 README 未同步更名，仍沿用旧命名：`EvMessage` / `EvNotify` /
+  `EvMsgbox` 命令式 API 示例、`<ev-button>` / `<ev-input>` / `<ev-data-table>` /
+  `<ev-icon>` 模板示例、`--ev-color-primary` 换肤示例全部更正为
+  `Eb*` / `eb-*` / `--eb-*`
+- 新增「图表」使用段：`EbChart` 随库注册无需单独安装、需引入
+  `@wil-works/evoke-charts/styles`、主题/暗色/运行时换肤自动跟随
+- 仅文档修正，代码无变化
+
 ## [0.3.0] — 2026-09-11
 
 ### @wil-works/evoke-business-ui@0.3.0 — 全线更名 eb-* 与图表能力独立（破坏性）
