@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — showSymbol 关闭时保留悬浮点标注
+
+- 折线 / 面积系列 `showSymbol: false`（或 `symbol: 'none'`）时不再绘制常驻数据点，
+  但悬浮点仍以空心圆环标注位置——实时监控等点位密集场景「平时纯线条、悬浮有反馈」
+  两全；十字准线与 tooltip 行为不变
+
 ## [0.3.2] — 2026-09-11
 
 ### @wil-works/evoke-business-ui — Tooltip 箭头纯三角化与暗色可读性修复

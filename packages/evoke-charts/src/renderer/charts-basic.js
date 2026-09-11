@@ -188,6 +188,16 @@ function renderLineChart(ctx, yRange, side = "left") {
           canvasCtx.stroke();
         }
       });
+    } else if (hoverIndex >= 0 && points[hoverIndex]) {
+      // showSymbol 关闭时不画常驻圆点，悬浮点仍以空心圆环标注位置（实时监控小图依赖此反馈）
+      const p = points[hoverIndex];
+      canvasCtx.beginPath();
+      canvasCtx.arc(p[0], p[1], 4.5, 0, Math.PI * 2);
+      canvasCtx.fillStyle = theme.backgroundColor;
+      canvasCtx.fill();
+      canvasCtx.strokeStyle = color;
+      canvasCtx.lineWidth = 2;
+      canvasCtx.stroke();
     }
     const showValues = series.showValues !== void 0 ? series.showValues : options.showValues;
     if (showValues && progress > 0.9) {

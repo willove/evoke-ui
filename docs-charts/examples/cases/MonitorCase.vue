@@ -18,7 +18,7 @@
             {{ m.name }}<span class="case-mon__unit">{{ m.unit }}</span>
           </div>
           <div class="case-mon__chart">
-            <EvChart type="line" :options="m.options" :height="80" />
+            <EvChart type="line" :options="m.options" :height="120" />
           </div>
           <div class="case-mon__stat">
             <span>Max:</span>
@@ -44,10 +44,12 @@ import { EvChart } from '@wil-works/evoke-charts'
 
 // 窗口固定 60 个点；初始数据写死保证文档构建（SSR）与浏览器首屏一致
 const WINDOW = 60
-const INIT_TIMES = Array.from({ length: WINDOW }, (_, i) => {
-  const s = 9 * 3600 + 41 * 60 + 1 + i
-  return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
-})
+const fmtDateTime = (ms) => {
+  const d = new Date(ms)
+  const p = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+}
+const INIT_TIMES = Array.from({ length: WINDOW }, (_, i) => fmtDateTime(new Date(2026, 8, 12, 9, 41, 1, 0).getTime() + i * 1000))
 
 /** 确定性伪噪声（SSR 与浏览器首屏一致）：平缓底噪 + 指定位置的偶发尖峰，贴近云监控曲线的毛刺观感 */
 function noise(i) {
@@ -87,7 +89,19 @@ function buildOptions(def) {
     xAxis: { show: false },
     animation: { enabled: false },
     legend: { show: false },
+    tooltip: {
+      show: true,
+      formatter: (p) => `
+        <div class="ev-chart__tooltip-title">${p.name}</div>
+        <div style="font-size:16px;font-weight:700;line-height:1.5;color:var(--ev-text-color-primary,#1f2329);">${fmtVal(def, p.value)}</div>
+        <div style="font-size:12px;color:var(--ev-text-color-tertiary,#8f959e);margin-top:2px;">粒度：1秒</div>
+      `,
+    },
   }
+}
+
+function fmtVal(def, v) {
+  return `${Number(v).toFixed(def.decimals)}${def.unit}`
 }
 
 function fmt(def, v) {
@@ -115,21 +129,13 @@ const running = ref(false)
 let timer = null
 
 function nowLabel() {
-  const d = new Date()
-  const p = (n) => String(n).padStart(2, '0')
-  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+  return fmtDateTime(Date.now())
 }
 
 /** 挂载后把初始窗口换成真实当前时间的连续 60 秒，避免时间轴与访客时钟对不上 */
 function resetLabelsToNow() {
-  const total = (h, m, s) => h * 3600 + m * 60 + s
-  const now = new Date()
-  const base = total(now.getHours(), now.getMinutes(), now.getSeconds()) - WINDOW + 1
-  const labelAt = (sec) => {
-    const s = ((sec % 86400) + 86400) % 86400
-    return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
-  }
-  store.labels = Array.from({ length: WINDOW }, (_, i) => labelAt(base + i))
+  const now = Date.now()
+  store.labels = Array.from({ length: WINDOW }, (_, i) => fmtDateTime(now - (WINDOW - 1 - i) * 1000))
 }
 
 function tick() {
