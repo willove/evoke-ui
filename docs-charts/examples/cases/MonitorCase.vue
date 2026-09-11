@@ -40,21 +40,21 @@ const buffers = reactive({
   qps: {
     labels: [...INIT_TIMES],
     series: [
-      { name: '入口', data: wave(4200, 380, 12) },
-      { name: '出口', data: wave(3600, 320, 10) },
+      { name: '入口', data: wave(4200, 380, 12), showSymbol: false },
+      { name: '出口', data: wave(3600, 320, 10), showSymbol: false },
     ],
   },
   rt: {
     labels: [...INIT_TIMES],
-    series: [{ name: '平均响应', data: wave(86, 18, -0.4) }],
+    series: [{ name: '平均响应', data: wave(86, 18, -0.4), showSymbol: false }],
   },
   cpu: {
     labels: [...INIT_TIMES],
-    series: [{ name: 'CPU', data: wave(46, 12, 0.15) }],
+    series: [{ name: 'CPU', data: wave(46, 12, 0.15), showSymbol: false }],
   },
   mem: {
     labels: [...INIT_TIMES],
-    series: [{ name: '内存', data: wave(63, 6, 0.05) }],
+    series: [{ name: '内存', data: wave(63, 6, 0.05), showSymbol: false }],
   },
 })
 

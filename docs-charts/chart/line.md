@@ -34,6 +34,7 @@
 - 需要强调量的填充改用[面积图](/chart/area)；
 - 对比两组图时固定量纲：`yAxis: { min, max }`；
 - 数据点密集时开 `dataZoom` 缩放，见[交互与联动](/chart/interaction)；
+- 实时曲线、大窗口等点位密集的场景，给系列加 `showSymbol: false` 隐藏数据点圆圈，得到心电图式的纯线条；
 - 数值统一格式化：`valueFormat: { decimals, thousandSeparator }`。
 
 ## 相关
