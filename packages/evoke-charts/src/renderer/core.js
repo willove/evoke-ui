@@ -180,6 +180,13 @@ function hasLegendContent(options) {
 function titleBlockHeight(options) {
   return (options.title ? 26 : 0) + (options.subtitle ? 18 : 0);
 }
+/** options.padding 覆写：数字（四边一致）或 { top, right, bottom, left }（未提供的边回落默认值） */
+function resolveUserPadding(options) {
+  const p = options.padding;
+  if (!p) return {};
+  if (typeof p === "number") return { top: p, right: p, bottom: p, left: p };
+  return p;
+}
 function getPadding(options, containerWidth = 600) {
   const legend = options.legend || {};
   const legendEnabled = legend.show !== false && hasLegendContent(options);
@@ -202,7 +209,13 @@ function getPadding(options, containerWidth = 600) {
   const zoomHeight = (zoom?.height || 40) + 14;
   if (options.type === "sparkline") {
     // 迷你图默认无chrome；带 title 时为其留出绘制空间
-    return { top: options.title ? 32 : 6, right: 6, bottom: 6, left: 6 };
+    const sparkPad = resolveUserPadding(options);
+    return {
+      top: sparkPad.top ?? (options.title ? 32 : 6),
+      right: sparkPad.right ?? 6,
+      bottom: sparkPad.bottom ?? 6,
+      left: sparkPad.left ?? 6
+    };
   }
   const legendRowsExtra = (() => {
     if (legendPosition !== "top" && legendPosition !== "bottom") return 0;
@@ -224,14 +237,15 @@ function getPadding(options, containerWidth = 600) {
     "sunburst"
   ];
   if (noAxisTypes.includes(options.type)) {
-    let top2 = 18 + titleBlockHeight(options);
-    let bottom2 = 18;
-    let left2 = 20;
-    let right2 = 20;
+    const pad = resolveUserPadding(options);
+    let top2 = (pad.top ?? 18) + titleBlockHeight(options);
+    let bottom2 = pad.bottom ?? 18;
+    let left2 = pad.left ?? 20;
+    let right2 = pad.right ?? 20;
     if (options.type === "heatmap") {
       const yCats = Array.from(new Set((options.heatmapData || []).map((d) => d.y)));
       const maxYLabel = yCats.reduce((m, s) => Math.max(m, estimateTextWidth(s, 11)), 0);
-      left2 = Math.min(130, Math.max(24, maxYLabel + 14));
+      left2 = pad.left ?? Math.min(130, Math.max(24, maxYLabel + 14));
       bottom2 = Math.max(bottom2, 26);
       if (options.heatmap?.colorBar === true || options.heatmapColorBar === true) {
         right2 += 44;
@@ -242,7 +256,7 @@ function getPadding(options, containerWidth = 600) {
       (options.series || []).forEach((s) => allValues.push(...s.data.filter((v) => !isMissingValue(v))));
       const maxFreq = allValues.length;
       const tickLabelWidth = String(maxFreq).length * 7;
-      left2 = Math.min(90, Math.max(36, tickLabelWidth + 16));
+      left2 = pad.left ?? Math.min(90, Math.max(36, tickLabelWidth + 16));
       bottom2 = Math.max(bottom2, 30);
     }
     if (options.type === "bullet") {
@@ -258,21 +272,27 @@ function getPadding(options, containerWidth = 600) {
     bottom2 += legendRowsExtra;
     return { top: top2, right: right2, bottom: bottom2, left: left2 };
   }
-  let top = 18 + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
-  let bottom = 46 + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
-  let left = 65;
-  let right = hasYAxisRight ? 65 : 40;
+  // 轴类图表：padding 覆写静态留白（标题/图例/缩放条等 chrome 带照常叠加）；
+  // x 轴整体隐藏时回收底部 46px 的轴位预留
+  const pad = resolveUserPadding(options);
+  const xAxisHidden = options.xAxis?.show === false;
+  let top = (pad.top ?? 18) + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
+  let bottom = (pad.bottom ?? (xAxisHidden ? 12 : 46)) + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
+  let left = pad.left ?? 65;
+  let right = pad.right ?? (hasYAxisRight ? 65 : 24);
   if (legendPosition === "left") left += 80;
   if (legendPosition === "right") right += 80;
-  if (hasXAxis && hasXAxisTitle) bottom += 15;
+  if (hasXAxis && hasXAxisTitle) {
+    return { top, right, bottom: bottom + 15, left };
+  }
   const xRotate = options.xAxis?.rotate || 0;
   if (hasXAxis && xRotate) {
     const maxLabelWidth = (options.labels || []).reduce((m, s) => Math.max(m, estimateTextWidth(String(s), 12)), 0);
-    bottom += Math.min(90, 12 + maxLabelWidth * Math.sin(Math.min(60, Math.abs(xRotate)) * Math.PI / 180));
+    return { top, right, bottom: bottom + Math.min(90, 12 + maxLabelWidth * Math.sin(Math.min(60, Math.abs(xRotate)) * Math.PI / 180)), left };
   }
   if (hasDataZoom) {
-    if ((zoom?.position || "bottom") === "top") top += zoomHeight;
-    else bottom += zoomHeight;
+    if ((zoom?.position || "bottom") === "top") return { top: top + zoomHeight, right, bottom, left };
+    return { top, right, bottom: bottom + zoomHeight, left };
   }
   return { top, right, bottom, left };
 }

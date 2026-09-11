@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 绘图区空间利用：padding 覆写与隐藏轴回收
+
+- 新增 `options.padding`（数字或 { top, right, bottom, left }）覆写绘图区静态留白；
+  标题、图例、dataZoom、轴标题等 chrome 空间照常叠加，不被挤掉
+- `xAxis.show: false` 时底部 46px 轴位预留自动收窄为 12px——隐藏轴的批量小图
+  （监控列表等）绘图区高度不再被压扁
+- 轴类图表默认右留白 40 → 24：右侧无内容时不再浪费绘图宽度
+
 ### @wil-works/evoke-charts — showSymbol 关闭时保留悬浮点标注
 
 - 折线 / 面积系列 `showSymbol: false`（或 `symbol: 'none'`）时不再绘制常驻数据点，

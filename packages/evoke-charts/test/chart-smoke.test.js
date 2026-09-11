@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
+import { getPadding } from '../src/renderer/core.js'
 
 // Chart 渲染走 canvas 2d + rAF；jsdom 无 2d context，用 Proxy 兜底任意 ctx 方法
 function mockCanvas() {
@@ -144,5 +145,46 @@ describe('EvChart（提取冒烟（ev 命名空间））', () => {
     await flushRender()
     expect(wrapper.find('.ev-chart').exists()).toBe(true)
     wrapper.unmount()
+  })
+})
+
+describe('getPadding 绘图区空间利用', () => {
+  const LINE = { type: 'line', labels: ['一', '二'], series: [{ name: 'x', data: [1, 2] }], legend: { show: false } }
+
+  it('轴类默认留白（上 18 / 右 24 / 下 46 / 左 65）', () => {
+    expect(getPadding(LINE, 800)).toEqual({ top: 18, right: 24, bottom: 46, left: 65 })
+  })
+
+  it('默认底部图例带叠加（46 + 26）', () => {
+    const p = getPadding({ ...LINE, legend: { show: true } }, 800)
+    expect(p.bottom).toBe(46 + 26)
+  })
+
+  it('x 轴整体隐藏时回收底部轴位预留（46 → 12）', () => {
+    const p = getPadding({ ...LINE, xAxis: { show: false } }, 800)
+    expect(p.bottom).toBe(12)
+    expect(p.top).toBe(18)
+  })
+
+  it('padding 数字覆写四边', () => {
+    expect(getPadding({ ...LINE, padding: 10 }, 800)).toEqual({ top: 10, right: 10, bottom: 10, left: 10 })
+  })
+
+  it('padding 对象覆写部分字段，未提供边回落默认', () => {
+    const p = getPadding({ ...LINE, padding: { top: 8, left: 40 } }, 800)
+    expect(p.top).toBe(8)
+    expect(p.left).toBe(40)
+    expect(p.right).toBe(24)
+    expect(p.bottom).toBe(46)
+  })
+
+  it('padding 与顶部图例带叠加（图例空间不被挤掉）', () => {
+    const p = getPadding({ ...LINE, padding: { top: 8 }, legend: { show: true, position: 'top' } }, 800)
+    expect(p.top).toBe(8 + 26)
+  })
+
+  it('sparkline padding 覆写', () => {
+    const p = getPadding({ type: 'sparkline', labels: ['一'], series: [{ name: 'x', data: [1] }], padding: 4 }, 800)
+    expect(p).toEqual({ top: 4, right: 4, bottom: 4, left: 4 })
   })
 })

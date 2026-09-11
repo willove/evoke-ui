@@ -6,7 +6,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
 
 <ApiTable title="Chart Props" :rows="[
   { name: 'options', desc: '图表配置，声明式驱动（见下方 Options 字段）', type: 'object', default: '—' },
-  { name: 'width / height', desc: '画布尺寸，数字按 px，height 支持任意 CSS 值', type: 'string | number', default: '100% / 400' },
+  { name: 'width / height', desc: '画布尺寸，数字按 px，字符串原样生效（height 设「100%」跟随父级高度，父级需有确定高度）', type: 'string | number', default: '100% / 400' },
   { name: 'responsive', desc: '跟随容器尺寸自适应重绘', type: 'boolean', default: 'true' },
   { name: 'devicePixelRatio', desc: '渲染倍率（缺省取设备实际值，高清屏自动适配）', type: 'number', default: '—' },
 ]" />
@@ -28,6 +28,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'dataZoom', desc: '缩放：{ enabled, start, end, position（bottom / top）, height, mouseWheel }', type: 'object', default: '—' },
   { name: 'toolbox', desc: '工具按钮：{ show, filename }（导出 PNG / 恢复复位）', type: 'object', default: '—' },
   { name: 'theme', desc: '主题覆盖（colors、textColor 等），暗色模式自动切换', type: 'object', default: '—' },
+  { name: 'padding', desc: '绘图区内边距覆写：数字（四边）或 { top, right, bottom, left }（未提供的边回落默认值）；标题、图例、dataZoom 的空间照常叠加。x 轴隐藏（xAxis.show: false）时底部自动收窄', type: 'number | object', default: '—' },
   { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
   { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
 ]" />
