@@ -53,3 +53,28 @@
   padding-left: 4px;
   pointer-events: none;
 }
+
+/* ─── 边框激活波纹：聚焦时边框向外扩散两圈涟漪；
+   全局关闭 html[data-ew-ripple='off']；prefers-reduced-motion 自动停用 ─── */
+
+.ew-textarea::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 1px solid color-mix(in srgb, var(--ew-color-primary) 45%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-ew-ripple='off']) .ew-textarea:focus-within::after {
+    animation: ew-border-ripple 0.7s ease-out 2;
+  }
+}
+
+@keyframes ew-border-ripple {
+  0% { opacity: 0.9; transform: scale(1); }
+  70% { opacity: 0.25; }
+  100% { opacity: 0; transform: scale(1.04); }
+}

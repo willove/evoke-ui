@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :class="['ew-article-card', { 'is-hoverable': hoverable }]" :href="tag === 'a' ? href : undefined">
+  <component :is="tag" :class="['ew-article-card', { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]" :href="tag === 'a' ? href : undefined">
     <div class="ew-article-card__cover" :style="coverStyle">
       <img v-if="cover" :src="cover" :alt="title" loading="lazy" />
       <EwIcon v-else-if="icon" :name="icon" :size="28" class="ew-article-card__cover-icon" />
@@ -28,6 +28,8 @@ import { computed } from 'vue'
 import EwIcon from '../icon/index.vue'
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   title: { type: String, default: '' },
   excerpt: { type: String, default: '' },
   cover: { type: String, default: '' },

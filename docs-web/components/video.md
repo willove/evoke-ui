@@ -7,7 +7,7 @@
 
 <DemoBlock title="占位与画幅" description="未传 src 时渲染占位态，适合先排版后接视频。">
 
-<EwVideo caption="30 秒了解 Nimbus 的新编辑器" style="max-width:560px;" />
+<EwVideo caption="30 秒了解 cumubase 的新编辑器" style="max-width:560px;" />
 
 ```vue
 <EwVideo src="/demo.mp4" poster="/cover.jpg" caption="30 秒了解新编辑器" />

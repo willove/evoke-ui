@@ -42,6 +42,12 @@ import EwCarousel from '../../../packages/evoke-ui/src/components/carousel/index
 import EwArticleCard from '../../../packages/evoke-ui/src/components/article-card/index.vue'
 import EwProfileCard from '../../../packages/evoke-ui/src/components/profile-card/index.vue'
 import EwMarquee from '../../../packages/evoke-ui/src/components/marquee/index.vue'
+import EwBorderBeam from '../../../packages/evoke-ui/src/components/border-beam/index.vue'
+import EwExecCard from '../../../packages/evoke-ui/src/components/exec-card/index.vue'
+import EwArticle from '../../../packages/evoke-ui/src/components/article/index.vue'
+import EwImageWall from '../../../packages/evoke-ui/src/components/image-wall/index.vue'
+import EwImagePreview from '../../../packages/evoke-ui/src/components/image-preview/index.vue'
+import EwModal from '../../../packages/evoke-ui/src/components/modal/index.vue'
 import EwInput from '../../../packages/evoke-ui/src/components/input/index.vue'
 import EwTextarea from '../../../packages/evoke-ui/src/components/textarea/index.vue'
 import EwSelect from '../../../packages/evoke-ui/src/components/select/index.vue'
@@ -75,6 +81,7 @@ export default {
       EwConfigProvider, EwTabs, EwSwitch, EwContainer, EwAvatar, EwAvatarGroup,
       EwTimeline, EwComparisonTable, EwCta, EwNewsletter, EwLogoCloud,
       EwVideo, EwAudio, EwContactForm, EwCarousel, EwArticleCard, EwProfileCard,
+      EwBorderBeam, EwExecCard, EwArticle, EwImageWall, EwImagePreview, EwModal,
       EwMarquee, EwInput, EwTextarea, EwSelect, EwField,
       EwPullRefresh, EwLoadMore, EwActionSheet, EwTabbar, EwTabbarItem, EwNavBar,
       DemoBlock, MobileStage,

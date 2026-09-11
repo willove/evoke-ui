@@ -439,6 +439,15 @@ body.ev-scroll-locked .bd-header {
 .bd-doc .demo-block li * {
   margin: 0;
 }
+
+/* 演示区内的裸 p（组件插槽内容）同样按 reset 后的继承观感渲染，
+   抵消 .bd-doc p 的文档式字号/行高/颜色渗透 */
+.bd-doc .demo-block p:not([class*='ev-']) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
 .bd-doc li::marker {
   color: var(--bd-text-tertiary);
 }
@@ -1200,7 +1209,7 @@ html.dark .api-table__type {
 }
 .bd-sibling {
   max-width: 960px;
-  margin: 56px auto 80px;
+  margin: 40px auto 0;
   text-align: center;
 }
 .bd-sibling__eyebrow {
@@ -1779,4 +1788,9 @@ html.dark .ov-card__art {
   font-size: 12px;
   color: var(--bd-text-tertiary);
   text-align: center;
+}
+
+/* 顶栏下载入口（锚点形态）：去除链接默认下划线，hover 与按钮一致 */
+a.bd-header__btn {
+  text-decoration: none;
 }

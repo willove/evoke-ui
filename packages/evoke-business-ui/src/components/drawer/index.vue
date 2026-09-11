@@ -14,7 +14,7 @@
         <div
           ref="drawerRef"
           class="ev-drawer ev-drawer"
-          :class="[`ev-drawer--${direction}`, { 'is-with-header': withHeader }]"
+          :class="[`ev-drawer--${direction}`, { 'is-with-header': withHeader, 'is-glass': glass === true, 'no-glass': glass === false }]"
           :style="drawerStyle"
           role="dialog"
           aria-modal="true"
@@ -60,6 +60,8 @@ import { useZIndex } from '../../composables/useZIndex'
 defineOptions({ name: 'EvDrawer' })
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '' },
   direction: {

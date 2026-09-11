@@ -1,5 +1,5 @@
 <template>
-  <div :class="['ew-profile-card', { 'is-plain': plain }]">
+  <div :class="['ew-profile-card', { 'is-plain': plain, 'is-glass': glass === true, 'no-glass': glass === false }]">
     <EwAvatar :src="avatar" :name="name" :size="avatarSize" class="ew-profile-card__avatar" />
     <h3 class="ew-profile-card__name">
       <slot name="name">{{ name }}</slot>
@@ -27,6 +27,8 @@
 import EwAvatar from '../avatar/index.vue'
 
 defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   name: { type: String, default: '' },
   role: { type: String, default: '' },
   bio: { type: String, default: '' },

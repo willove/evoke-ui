@@ -9,9 +9,9 @@
 
 <EwFooter
   soft
-  logo-text="Nimbus"
+  logo-text="cumubase"
   slogan="为专注写作与团队协作而生的云笔记。"
-  copyright="© 2026 Nimbus Labs"
+  copyright="© 2026 积云数合"
   :columns="[
     { title: '产品', links: [{ label: '功能', href: '#' }, { label: '定价', href: '#' }, { label: '更新日志', href: '#' }] },
     { title: '资源', links: [{ label: '帮助中心', href: '#' }, { label: '开发者 API', href: '#' }] },
@@ -26,7 +26,7 @@
 </EwFooter>
 
 ```vue
-<EwFooter logo-text="Nimbus" :columns="footerCols" copyright="© 2026 Nimbus Labs">
+<EwFooter logo-text="cumubase" :columns="footerCols" copyright="© 2026 积云数合">
   <template #social>
     <EwIconButton icon="github" size="small" />
   </template>

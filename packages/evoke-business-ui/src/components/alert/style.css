@@ -81,6 +81,7 @@
 .ev-alert.ev-alert .ev-alert__description {
   margin: 0;
   font-size: var(--ev-font-size-xs);
+  line-height: var(--ev-line-height-base);
   color: var(--ev-alert-text-color);
   opacity: 0.85;
 }

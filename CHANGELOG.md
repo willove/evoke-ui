@@ -2,7 +2,9 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased] — 2026-09 企业级能力补全
+## [0.2.0] — 2026-09-11
+
+### @wil-works/evoke-business-ui — 企业级能力补全与主题动态配置
 
 ### Breaking
 
@@ -64,6 +66,20 @@
 - 扩展分类色令牌：`--ev-color-ext-{cyan,teal,violet,magenta,indigo,lime,amber,slate}`（含 `-light` 派生）
 - 图表色板/主题色实时读取 CSS 令牌，明暗与换肤自动跟随
 - 表格/统计数字启用 `tabular-nums`
+- `setSemanticColors(map)`：语义色（success / warning / danger / info）运行时部分更新，梯度规则同主色
+- `resetTheme()` / `getPrimaryColor()`：移除注入令牌回到样式表默认 / 查询当前运行时主色
+- `saveThemeConfig` / `loadThemeConfig` / `clearThemeConfig`：主题持久化（localStorage `ev-theme-config`）
+- `EV_THEME_PRESETS`：常用预设色板，可直接生成换色选项
+- **暗色感知梯度**：运行时注入的主色/语义色在 `html.dark` 下自动反向派生（light 档向深底混合，
+  与暗色手调梯度同向），明暗切换跟随重注入，不再发灰发亮
+- `ConfigProvider` 新增 `semantic`（语义色）与 `persist-theme`（持久化，存档优先于声明式配置）
+- 文档站新增「主题定制器」页（/guide/customizer）：主色 / 语义色 / 密度 / 磨砂实时预览并生成等效配置
+
+### Added — 动效与体验
+
+- 输入/选择类组件聚焦边框波纹：`ev-input__wrapper` 家族与 `ev-select__wrapper` 聚焦时边框
+  向外扩散两圈涟漪；`data-ev-ripple='off'` 全局关闭，prefers-reduced-motion 自动停用
+- `ConfigProvider` 新增 `glass` / 组件级三态 prop：容器类组件磨砂玻璃质感（HTML data-attr 全局开关）
 
 ### Added — 排版与导航（对标 ant-design v6 盘点后补齐）
 
@@ -124,9 +140,46 @@
 - `EvAutoComplete` 下拉面板补齐边框与阴影（此前仅圆角底色，悬浮层级感不足）
 - `EvList` 列表项悬停背景由 `--ev-fill-color-light` 提升为 `--ev-fill-color`（原悬停效果几乎不可见），并补 `cursor: pointer`
 - 铁律脚本新增**令牌引用完整性检查**：`var(--ev-*)` 不带 fallback 时必须存在库内定义，杜绝「变量未定义导致 border/box-shadow 声明整体失效」一类样式静默丢失
+- **`ev-theme-change` 事件不冒泡**：事件派发在 documentElement 而图表监听在 document，
+  运行时换主色后图表换肤重绘实际收不到通知；已改为冒泡派发（两处监听均可收到）
+- **EvCascader filterable 占位双写**：输入关键字时占位文案与关键字并排显示；有关键字时
+  占位/已选文案让位给过滤输入框，清空后恢复
 
 ### Added — 国际化 / 工程
 
 - locale 新增 `ja`（日语）、`zh-TW`（繁体中文）
 - `tsconfig.json` 脚手架 + TS 试点模块 `utils/color.ts`
 - 新增测试 60+ 用例（总计 680+ 全绿）
+
+### @wil-works/evoke-ui — 官网组件与体验增强
+
+#### Added — 组件
+
+- `EwBorderBeam`：边框流光（conic 光带沿边框循环，宽度/速度/方向/双色可调；@property 插值，不支持的浏览器退化静态环）
+- `EwExecCard`：高管/团队介绍卡（透明 PNG 半身图锚定舞台底边，内置人物剪影占位，展示体标题排版）
+- `EwArticle`：文章内容（眉题/标题/摘要/元信息页头 + 正文插槽自带阅读排版，作用域收敛）
+- `EwImageWall` / `EwImagePreview`：图片墙与灯箱预览（键盘 ← → 切换、Esc、滚动锁定、计数）
+- `EwModal`：弹出层（Esc / 遮罩 / 滚动锁定 / 焦点归还，open / opened / close / closed 完整事件）
+
+#### Added — 能力
+
+- `EwSearchBox` 远程搜索：`remote` 异步接口 + 防抖（默认 300ms）+ select 下拉形态结果 +
+  ↑↓ / Enter / Esc 键盘导航 + `select` 事件回填
+- `EwCarousel` 新增 `variant`：`image` 纯图片 / `banner` 图片+渐变遮罩文字注释（`aspect` 控画幅）
+- 输入/选择类组件聚焦边框波纹（input / textarea / select / search-box；`data-ew-ripple='off'`
+  全局关闭，prefers-reduced-motion 自动停用）
+- `EwNavbar` / `EwButton` 链接形态支持 `rel` 透传
+
+#### Changed
+
+- Cta / 首页动作按钮形状统一（此前 pill 与方角混排）
+- 首页跑马灯文案调整（为官网而生 / 开箱即用 / 即插即用…）
+- 首页「下载」按钮挂接 npm 包页（此前无链接，点击无效）
+
+#### 文档与案例
+
+- 新增 6 个组件文档页与侧栏入口；输入组件文档补波纹说明
+- 企业官网案例：核心团队板块（ExecCard）、流光定价卡（BorderBeam）、预约演示弹层（Modal + 表单）
+- 个人博客案例：本期长文阅读区（EwArticle）
+- 案例品牌定名：积云数合 / cumubase（企业官网品牌、云笔记更名 cumubase 笔记、假域名同步更换）
+- 双站导航互链：business 顶栏新增 Evoke UI 外链，evoke 首页下载按钮挂接 npm

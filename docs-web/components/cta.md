@@ -13,7 +13,7 @@
 >
   <template #actions>
     <EwButton size="large" pill>免费开始</EwButton>
-    <EwButton size="large" variant="outline">联系销售</EwButton>
+    <EwButton size="large" pill variant="outline">联系销售</EwButton>
   </template>
 </EwCta>
 
@@ -21,6 +21,7 @@
 <EwCta title="现在就开始" description="…">
   <template #actions>
     <EwButton size="large" pill>免费开始</EwButton>
+    <EwButton size="large" pill variant="outline">联系销售</EwButton>
   </template>
 </EwCta>
 ```

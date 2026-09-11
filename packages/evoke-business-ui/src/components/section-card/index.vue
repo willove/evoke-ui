@@ -1,5 +1,5 @@
 <template>
-  <div class="ev-section-card">
+  <div class="ev-section-card" :class="{ 'is-glass': glass === true, 'no-glass': glass === false }">
     <div v-if="title || $slots.header || $slots.extra" class="ev-section-card__header">
       <div class="ev-section-card__header-left">
         <h3 v-if="title">{{ title }}</h3>
@@ -20,6 +20,8 @@
  * EvSectionCard — 区块卡片
  */
 defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   title: { type: String, default: '' },
   padding: { type: Boolean, default: true },
 })

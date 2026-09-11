@@ -83,6 +83,25 @@ const updates = [
       <p v-if="!filtered.length" class="cb-empty">这个分类下还没有文章。</p>
     </EwSection>
 
+    <EwSection id="featured" eyebrow="本期长文" title="把一个官网拆成 49 个组件的取舍" align="center">
+      <div class="cb-article">
+        <EwArticle
+          eyebrow="组件设计"
+          description="组件粒度、插槽设计与令牌边界——一次开源组件库 API 设计的完整复盘。"
+          author="陈山月"
+          date="2026-08-30"
+          read-time="12 min"
+          :tags="['组件设计', 'v-reveal']"
+        >
+          <p>官网和应用的分水岭在于：<strong>应用强调密度，官网强调呼吸</strong>。把行高放宽、把标题做成细字重展示体，界面的气质立刻就不一样了。</p>
+          <h2>一句话说不清的，不配做组件</h2>
+          <p>粒度过细会让组合成本爆炸，过粗又失去灵活性。我们给自己立的规矩是：能被一句话描述清楚的，才配成为一个组件。</p>
+          <blockquote>安静优雅不是没有设计，而是设计完成之后，退到了内容的后面。</blockquote>
+          <p>剩下的部分，都是在这条原则之下的反复权衡——这也是这篇文章想讲清楚的事。</p>
+        </EwArticle>
+      </div>
+    </EwSection>
+
     <div class="case-band">
       <EwSection id="hot" eyebrow="热榜" title="读者转得最多的三段话" align="center">
         <div class="cb-hot">
@@ -181,6 +200,11 @@ const updates = [
 .cb-hot {
   max-width: 720px;
   margin-inline: auto;
+}
+.cb-article {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: left;
 }
 .cb-about {
   display: grid;

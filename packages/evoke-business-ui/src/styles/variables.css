@@ -298,3 +298,12 @@
   --ev-component-size: 36px;
   --ev-component-size-large: 44px;
 }
+
+/* ═══ 磨砂（glass）配方令牌：容器 is-glass 态取值，明暗共用；
+   全局开关 = EvConfigProvider glass（html[data-ev-glass]） ═══ */
+:root {
+  --ev-glass-blur: 14px;
+  --ev-glass-saturate: 1.4;
+  /* 磨砂底色一次配好：color-mix 的百分比不能走 var()，必须整体出令牌 */
+  --ev-glass-bg: color-mix(in srgb, var(--ev-bg-color) 78%, transparent);
+}

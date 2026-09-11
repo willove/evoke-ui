@@ -3,7 +3,7 @@ layout: home
 ---
 
 <div class="bd-hero">
-  <p class="bd-hero__badge">v0.1.0 · 中后台组件库</p>
+  <p class="bd-hero__badge">v0.2.0 · 中后台组件库</p>
   <h1 class="bd-hero__title">
     Evoke <span class="accent">Business</span> UI
   </h1>
@@ -58,6 +58,16 @@ layout: home
     <h3 class="bd-feature__title">Electron / 离线可用</h3>
     <p class="bd-feature__desc">模块顶层不访问 DOM、字体 base64 内联、file:// 协议可运行，适配桌面端与内网环境。</p>
   </div>
+</div>
+
+<div class="bd-sibling">
+  <p class="bd-sibling__eyebrow">sibling</p>
+  <h2 class="bd-sibling__title">做官网或营销页？</h2>
+  <p class="bd-sibling__desc">看看同族的姊妹库 Evoke UI：Clean Navy 设计语言的 Vue3 官网组件库，49 个组件、明暗双主题与运行时换色，官网、落地页与个人主页开箱即用。</p>
+  <a class="bd-sibling__btn" href="https://evoke-ui.wil-works.com" target="_blank" rel="noopener">
+    访问 Evoke UI 文档
+    <BdIcon name="arrow-right" :size="14" />
+  </a>
 </div>
 
 <div class="bd-banner">
@@ -138,12 +148,3 @@ app.mount('#app')
   <p class="bd-quickstart__more">更多能力见<a href="/guide/getting-started">快速开始</a>与<a href="/components/overview">组件总览</a>。</p>
 </div>
 
-<div class="bd-sibling">
-  <p class="bd-sibling__eyebrow">sibling</p>
-  <h2 class="bd-sibling__title">做官网或营销页？</h2>
-  <p class="bd-sibling__desc">看看同族的姊妹库 Evoke UI：Clean Navy 设计语言的 Vue3 官网组件库，49 个组件、明暗双主题与运行时换色，官网、落地页与个人主页开箱即用。</p>
-  <a class="bd-sibling__btn" href="https://evoke-ui.wil-works.com" target="_blank" rel="noopener">
-    访问 Evoke UI 文档
-    <BdIcon name="arrow-right" :size="14" />
-  </a>
-</div>

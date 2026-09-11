@@ -11,7 +11,7 @@ import CaseStage from '../.vitepress/theme/CaseStage.vue'
 import NotesSite from '../.vitepress/theme/case-sites/NotesSite.vue'
 </script>
 
-<CaseStage url="app.nimbus.notes" live-url="/cases/live/notes">
+<CaseStage url="notes.cumubase.cn" live-url="/cases/live/notes">
   <NotesSite />
 </CaseStage>
 

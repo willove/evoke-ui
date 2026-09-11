@@ -87,6 +87,23 @@
    Ew 组件内部的 p 自带排版，交由组件样式接管 */
 .vp-doc .demo-block p:not([class*='ew-']) {
   margin: 0;
+  line-height: 1.7;
+}
+
+/* 演示区内用户插槽的裸元素（如 card 默认插槽里的 h3/h4、alert 动作位的裸 <a>）：
+   按 base.css 的元素级默认渲染，抵消 .vp-doc 文档式排版/链接样式的渗透；
+   :not([class]) 避免碰组件自有的带类标题 */
+.vp-doc .demo-block a:not([class]) {
+  color: var(--ew-color-primary);
+  text-decoration: none;
+}
+
+.vp-doc .demo-block :is(h1, h2, h3, h4):not([class]) {
+  margin: 0;
+  font-size: inherit;
+  font-weight: var(--ew-display-weight);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
 }
 
 /* 图标网格演示在文档内的最大宽度 */

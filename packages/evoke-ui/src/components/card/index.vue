@@ -9,6 +9,8 @@
         'is-featured': featured,
         'is-hoverable': hoverable,
         'is-flat': flat,
+        'is-glass': glass === true,
+        'no-glass': glass === false,
       },
     ]"
     :style="customBg ? { backgroundColor: customBg } : undefined"
@@ -25,6 +27,8 @@
  * featured：深色精选卡（launchos 定价主推卡语言）
  */
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   tone: {
     type: String,
     default: 'plain',

@@ -12,3 +12,6 @@
 
 /* 基础样式（reset + 动效 + 焦点 + 滚动条） */
 @import './base.css';
+
+/* 边框激活波纹（focus ripple，输入/选择类组件） */
+@import './focus-ripple.css';

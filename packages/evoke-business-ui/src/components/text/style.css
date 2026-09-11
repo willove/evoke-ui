@@ -3,6 +3,7 @@
 .ev-text.ev-text {
   display: inline-flex;
   align-items: center;
+  margin: 0;
   color: var(--ev-text-color-regular);
   font-size: var(--ev-font-size-base);
   line-height: var(--ev-line-height-base);

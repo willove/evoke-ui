@@ -1,5 +1,8 @@
 # Input 输入框
 
+> 聚焦时边框带波纹动效（向外扩散两圈后消失）：级联、日期、时间选择等选择器组件同样生效。
+> 全局关闭：`<html data-ev-ripple="off">`；`prefers-reduced-motion` 下自动停用。
+
 <script setup>
 import { ref } from 'vue'
 

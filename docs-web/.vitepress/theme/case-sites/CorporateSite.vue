@@ -1,6 +1,6 @@
 <script setup>
 /**
- * CorporateSite — 案例「云澈科技」企业官网的站点内容
+ * CorporateSite — 案例「积云数合」企业官网的站点内容
  * 同一份源码用于两处：案例文档页的缩放舞台（CaseStage 内）
  * 与独立全屏窗口（/cases/live/corporate，传 sticky 开启导航吸顶）
  */
@@ -78,18 +78,33 @@ const faqs = [
   { question: '支持哪些数据源？', answer: '主流关系型数据库、数仓与 60+ SaaS 应用开箱即连；其余来源可以通过开放 API 或自定义连接器接入。' },
   { question: '迁移成本高吗？', answer: '提供从常见 BI 与报表工具的一键迁移脚本，多数团队在一个下午内完成第一份数据的接入与校验。' },
 ]
+
+const team = [
+  { name: '林一舟', role: '创始人 / CEO', description: '连续创业者，相信好的工具应该安静地站在人的身后。' },
+  { name: '苏晚晴', role: '产品合伙人', description: '主导 cumubase 的信息架构与交互语言，前咨询顾问。' },
+  { name: '程亦风', role: '工程合伙人', description: '负责同步引擎与查询层，坚持延迟是可以设计出来的。' },
+]
+
+const demoVisible = ref(false)
+const demoEmail = ref('')
+const demoSent = ref(false)
+const demoDone = ref(false)
+
+function submitDemo() {
+  demoDone.value = true
+}
 </script>
 
 <template>
   <div class="case-site">
     <EwAlert icon="bell-line" closable style="border-radius:0;border-inline:none;border-top:none;">
-      CloudSure 3.0 发布：查询引擎全面提速，老用户升级后平均查询耗时下降 68%。
+      cumubase 3.0 发布：查询引擎全面提速，老用户升级后平均查询耗时下降 68%。
       <template #action>
         <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">看看更新<EwIcon name="arrow-right" :size="14" /></a>
       </template>
     </EwAlert>
 
-    <EwNavbar :items="nav" :sticky="sticky" logo-text="云澈科技">
+    <EwNavbar :items="nav" :sticky="sticky" logo-text="积云数合">
       <template #actions>
         <EwThemeToggle />
         <EwButton size="small" variant="soft">登录</EwButton>
@@ -100,11 +115,11 @@ const faqs = [
     <EwHero
       reveal
       title="让数据安静地工作"
-      description="云澈数据云把采集、同步与分析装进同一个工作台：连接数据源只要五分钟，剩下的时间留给业务判断。"
+      description="cumubase 数据云把采集、同步与分析装进同一个工作台：连接数据源只要五分钟，剩下的时间留给业务判断。"
     >
       <template #badge>
         <EwAlert pill icon="flashlight-line">
-          <span>CloudSure 3.0 正式发布</span>
+          <span>cumubase 3.0 正式发布</span>
           <template #action>
             <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
           </template>
@@ -137,7 +152,7 @@ const faqs = [
     </EwHero>
 
     <EwSection align="center" gap="0" style="padding:40px 0 64px;">
-      <EwLogoCloud title="超过 2,000 个团队的日常数据工作跑在云澈上" :items="clients" />
+      <EwLogoCloud title="超过 2,000 个团队的日常数据工作跑在 cumubase 上" :items="clients" />
     </EwSection>
 
     <EwSection id="features" eyebrow="产品能力" title="从数据源到决策，一条线打通" description="六个模块覆盖数据团队 80% 的日常工作，剩下的 20% 交给开放 API。">
@@ -155,11 +170,17 @@ const faqs = [
 
     <EwSection id="pricing" eyebrow="定价" title="按团队规模选择，随时升级" description="所有付费方案都包含 14 天全功能试用，不需要绑定信用卡。" align="center">
       <div class="cs-pricing">
-        <EwPricingCard
-          v-for="p in plans"
-          :key="p.title"
-          v-bind="p"
-        />
+        <template v-for="p in plans" :key="p.title">
+          <EwBorderBeam
+            v-if="p.badge"
+            :width="2"
+            :duration="5000"
+            style="border-radius: var(--ew-radius-xl); display: grid;"
+          >
+            <EwPricingCard v-bind="p" style="border-radius: calc(var(--ew-radius-xl) - 2px); height: 100%;" />
+          </EwBorderBeam>
+          <EwPricingCard v-else v-bind="p" />
+        </template>
       </div>
     </EwSection>
 
@@ -171,10 +192,10 @@ const faqs = [
       <EwFaq :items="faqs" :default-open="0" />
     </EwSection>
 
-    <EwSection eyebrow="客户评价" title="他们已经在用云澈开会了" align="center">
+    <EwSection eyebrow="客户评价" title="他们已经在用 cumubase 开会了" align="center">
       <div class="cs-quote">
         <EwQuote
-          quote="把三张内部报表搬上云澈只花了一个下午，第二天早会大家第一次看到同一份实时数据——争论数字的会议少了一半。"
+          quote="把三张内部报表搬上 cumubase 只花了一个下午，第二天早会大家第一次看到同一份实时数据——争论数字的会议少了一半。"
           author="沈知远"
           role="南杉资本 · 数据负责人"
           sticker
@@ -182,21 +203,46 @@ const faqs = [
       </div>
     </EwSection>
 
+    <EwSection eyebrow="核心团队" title="一群把数据当产品做的人" description="小而专注的团队，一半时间在写代码，另一半在听客户怎么用。" align="center">
+      <div class="cs-team">
+        <EwExecCard
+          v-for="m in team"
+          :key="m.name"
+          v-bind="m"
+          :portrait-height="170"
+        />
+      </div>
+    </EwSection>
+
     <EwCta
-      title="把下一份报表交给云澈"
+      title="把下一份报表交给 cumubase"
       description="14 天全功能试用，免费版永久可用。"
     >
       <template #actions>
         <EwButton size="large" pill icon="download">免费开始</EwButton>
-        <EwButton size="large" variant="dark" icon="chat-3-line">预约演示</EwButton>
+        <EwButton size="large" pill variant="dark" icon="chat-3-line" @click="demoVisible = true">预约演示</EwButton>
       </template>
     </EwCta>
 
+    <EwModal v-model="demoVisible" title="预约产品演示" width="440px" @close="demoDone = false">
+      <p style="margin:0 0 14px;">留下工作邮箱，我们的解决方案顾问会与你约定 30 分钟的一对一演示，按你的业务场景现场连线真实数据。</p>
+      <EwField label="工作邮箱" required>
+        <EwInput v-model="demoEmail" type="email" placeholder="you@company.com" />
+      </EwField>
+      <p v-if="demoDone" style="margin:12px 0 0; font-size:13px; color:var(--ew-color-success);">
+        ✓ 预约成功，确认邮件已发送至 {{ demoEmail }}，请注意查收。
+      </p>
+      <template #footer>
+        <EwButton variant="outline" size="small" @click="demoVisible = false">取消</EwButton>
+        <EwButton size="small" :disabled="!demoEmail" @click="submitDemo">{{ demoDone ? '已提交' : '提交预约' }}</EwButton>
+      </template>
+    </EwModal>
+
     <EwFooter
       soft
-      logo-text="云澈科技"
+      logo-text="积云数合"
       slogan="让数据安静地工作。"
-      copyright="© 2026 CloudSure, Inc."
+      copyright="© 2026 积云数合"
       :columns="[
         { title: '产品', links: [{ label: '产品能力', href: '#features' }, { label: '定价', href: '#pricing' }, { label: '常见问题', href: '#faq' }] },
         { title: '资源', links: [{ label: '帮助中心', href: '#' }, { label: '开发者 API', href: '#' }, { label: '博客', href: '#' }] },
@@ -269,6 +315,13 @@ const faqs = [
 }
 .cs-quote {
   max-width: 640px;
+  margin-inline: auto;
+}
+.cs-team {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 920px;
   margin-inline: auto;
 }
 </style>

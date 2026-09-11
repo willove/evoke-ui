@@ -35,7 +35,7 @@
   font-size: var(--ev-font-size-base);
 }
 
-.ev-import-export-panel__tip {
+.ev-import-export-panel.ev-import-export-panel .ev-import-export-panel__tip {
   margin: 0;
   font-size: var(--ev-font-size-xs);
   color: var(--ev-text-color-secondary);

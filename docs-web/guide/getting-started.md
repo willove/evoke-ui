@@ -50,7 +50,7 @@ import '@wil-works/evoke-ui/styles' // 样式聚合为单一产物，一次引�
 
 ```vue
 <template>
-  <EwNavbar :items="nav" logo-text="Nimbus" />
+  <EwNavbar :items="nav" logo-text="cumubase" />
   <EwHero title="轻盈优雅的云端笔记" description="一句话讲清价值主张。">
     <template #actions>
       <EwButton pill size="large">立即下载</EwButton>
@@ -60,7 +60,7 @@ import '@wil-works/evoke-ui/styles' // 样式聚合为单一产物，一次引�
   <EwSection eyebrow="features" title="为什么选择我们">
     <EwFeatureGrid variant="cards" :items="features" />
   </EwSection>
-  <EwFooter :columns="footerCols" copyright="© 2026 Nimbus Labs" />
+  <EwFooter :columns="footerCols" copyright="© 2026 积云数合" />
 </template>
 ```
 

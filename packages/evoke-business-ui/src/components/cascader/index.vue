@@ -30,8 +30,8 @@
           + {{ overflowCount }}
         </span>
       </span>
-      <span v-else-if="hasSelection" class="ev-cascader__label">{{ selectedLabel }}</span>
-      <span v-else class="ev-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+      <span v-else-if="hasSelection && !filterActive" class="ev-cascader__label">{{ selectedLabel }}</span>
+      <span v-else-if="!filterActive" class="ev-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
 
       <input
         ref="inputRef"
@@ -274,6 +274,7 @@ const hovering = ref(false)
 const query = ref('')
 
 const filterActive = computed(() => props.filterable && query.value !== '')
+/** 有过滤关键字时，占位/已选文案让位给过滤输入框；清空关键字后恢复 */
 
 const { zIndex, next: nextZIndex } = useZIndex()
 const { x, y, update } = useFloating({

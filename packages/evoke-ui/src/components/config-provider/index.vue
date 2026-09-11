@@ -15,7 +15,7 @@
  * props：primary(hex) / radius('sharp'|'soft'|'default'|'round') /
  *        space('compact'|'default'|'loose') / container('narrow'|'default'|'wide'|'full')
  */
-import { computed, watch } from 'vue'
+import { computed, watch, onUnmounted } from 'vue'
 import { resolveThemeVars } from '../../presets'
 
 const props = defineProps({
@@ -38,6 +38,8 @@ const props = defineProps({
   },
   /** 写入 :root 全局生效；false 时写入包裹元素（局部换肤） */
   global: { type: Boolean, default: true },
+  /** 全局磨砂：开启后容器类组件（card/section/footer/navbar…）默认玻璃质感，组件级 glass prop 可单独覆盖 */
+  glass: { type: Boolean, default: false },
 })
 
 const scopedStyle = computed(() => {
@@ -62,6 +64,23 @@ watch(
   },
   { immediate: true }
 )
+
+// 全局磨砂开关：写在 documentElement 上，弹层（Teleport 到 body）同样命中；
+// 卸载时还原，避免局部演示污染站点其余页面
+watch(
+  () => props.glass,
+  (on) => {
+    if (typeof document === 'undefined') return
+    if (on) document.documentElement.setAttribute('data-ew-glass', 'on')
+    else document.documentElement.removeAttribute('data-ew-glass')
+  },
+  { immediate: true }
+)
+
+onUnmounted(() => {
+  if (typeof document === 'undefined') return
+  document.documentElement.removeAttribute('data-ew-glass')
+})
 </script>
 
 <style src="./style.css"></style>

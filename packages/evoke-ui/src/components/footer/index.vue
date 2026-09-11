@@ -1,5 +1,5 @@
 <template>
-  <footer :class="['ew-footer', { 'is-soft': soft }]">
+  <footer :class="['ew-footer', { 'is-soft': soft, 'is-glass': glass === true, 'no-glass': glass === false }]">
     <div class="ew-container">
       <div v-if="columns.length || $slots.default" class="ew-footer__main">
         <div class="ew-footer__brand">
@@ -44,6 +44,8 @@
  * columns [{ title, links: [{ label, href, target }] }] 多栏链接 + 品牌区 + 底部版权条
  */
 defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   /** 链接栏 [{ title, links: [{ label, href, target }] }] */
   columns: { type: Array, default: () => [] },
   /** 品牌名（logo 槽缺省渲染） */

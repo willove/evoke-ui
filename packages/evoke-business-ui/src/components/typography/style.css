@@ -1,38 +1,40 @@
 /* EvTypography — 排版家族（Title / Paragraph / 共享复制按钮） */
 
 /* ─── 标题刻度：对齐 --ev-font-size 阶梯 ─── */
-.ev-title {
+.ev-title.ev-title {
   margin: 0;
+  padding: 0;
+  border: none;
   color: var(--ev-text-color-primary);
   font-weight: var(--ev-font-weight-semibold);
   line-height: var(--ev-line-height-tight);
 }
 
-.ev-title--level-1 {
+.ev-title.ev-title--level-1 {
   font-size: var(--ev-font-size-2xl);
   font-weight: var(--ev-font-weight-bold);
 }
 
-.ev-title--level-2 {
+.ev-title.ev-title--level-2 {
   font-size: var(--ev-font-size-xl);
 }
 
-.ev-title--level-3 {
+.ev-title.ev-title--level-3 {
   font-size: var(--ev-font-size-lg);
 }
 
-.ev-title--level-4 {
+.ev-title.ev-title--level-4 {
   font-size: var(--ev-font-size-md);
 }
 
-.ev-title--level-5 {
+.ev-title.ev-title--level-5 {
   font-size: var(--ev-font-size-base);
   font-weight: var(--ev-font-weight-medium);
   color: var(--ev-text-color-regular);
 }
 
 /* ─── 段落 ─── */
-.ev-paragraph {
+.ev-paragraph.ev-paragraph {
   margin: 0;
   color: var(--ev-text-color-regular);
   font-size: var(--ev-font-size-base);

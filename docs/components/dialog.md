@@ -116,6 +116,7 @@ function guardClose(done) {
   { name: 'lock-scroll', desc: '打开期间锁定页面滚动（计数式，多层叠加安全）', type: 'boolean', default: 'true' },
   { name: 'center', desc: '头部与底部操作区水平居中', type: 'boolean', default: 'false' },
   { name: 'align-center', desc: '对话框在视口水平垂直双居中', type: 'boolean', default: 'false' },
+  { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EvConfigProvider 的 glass）', type: 'boolean', default: '—' },
   { name: 'before-close', desc: '关闭前拦截，不调用入参 done 则阻止关闭', type: '(done) => void', default: '—' },
 ]" />
 

@@ -78,8 +78,15 @@ import EwContactForm from './components/contact-form/index.vue'
 import EwCarousel from './components/carousel/index.vue'
 import EwArticleCard from './components/article-card/index.vue'
 import EwProfileCard from './components/profile-card/index.vue'
+// Components — 内容与展示增强
+import EwArticle from './components/article/index.vue'
+import EwExecCard from './components/exec-card/index.vue'
+import EwImageWall from './components/image-wall/index.vue'
+import EwImagePreview from './components/image-preview/index.vue'
+import EwModal from './components/modal/index.vue'
 // Components — 动效
 import EwMarquee from './components/marquee/index.vue'
+import EwBorderBeam from './components/border-beam/index.vue'
 // Components — 表单
 import EwInput from './components/input/index.vue'
 import EwTextarea from './components/textarea/index.vue'
@@ -132,7 +139,13 @@ const components = {
   EwCarousel,
   EwArticleCard,
   EwProfileCard,
+  EwArticle,
+  EwExecCard,
+  EwImageWall,
+  EwImagePreview,
+  EwModal,
   EwMarquee,
+  EwBorderBeam,
   EwInput,
   EwTextarea,
   EwSelect,
@@ -194,7 +207,13 @@ export {
   EwCarousel,
   EwArticleCard,
   EwProfileCard,
+  EwArticle,
+  EwExecCard,
+  EwImageWall,
+  EwImagePreview,
+  EwModal,
   EwMarquee,
+  EwBorderBeam,
   EwInput,
   EwTextarea,
   EwSelect,

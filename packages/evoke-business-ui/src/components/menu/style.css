@@ -7,6 +7,17 @@
   list-style: none;
   background-color: var(--ev-menu-bg-color, var(--ev-bg-color));
   color: var(--ev-menu-text-color, var(--ev-text-color-primary));
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* 宿主环境屏蔽：文档站 .bd-doc ul/li 的字号/行高/颜色侵入菜单结构层 */
+.ev-menu.ev-menu li.ev-menu-item-group,
+.ev-menu.ev-menu li.ev-sub-menu,
+.ev-menu.ev-menu ul.ev-menu-item-group__list {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 /* ── 菜单项 ── */

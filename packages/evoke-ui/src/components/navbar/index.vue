@@ -8,6 +8,8 @@
         'is-scrolled': isScrolled && sticky,
         'is-blur': blur && sticky,
         'is-hidden': hidden && sticky,
+        'is-glass': glass === true,
+        'no-glass': glass === false,
       },
     ]"
   >
@@ -31,6 +33,7 @@
             :key="item.label"
             :href="item.href"
             :target="item.target"
+            :rel="item.rel"
             class="ew-navbar__link"
             :class="{ 'is-active': isActive(item) }"
           >
@@ -62,6 +65,7 @@
           :key="item.label"
           :href="item.href"
           :target="item.target"
+          :rel="item.rel"
           class="ew-navbar__mobile-link"
           @click="menuOpen = false"
         >
@@ -84,6 +88,8 @@ import EwIcon from '../icon/index.vue'
 import EwIconButton from '../icon-button/index.vue'
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   /** 吸顶 */
   sticky: { type: Boolean, default: true },
   /** 滚动后背景磨砂 */

@@ -55,6 +55,28 @@
 `tag="a"` 渲染为链接卡；搭配 `hoverable` 即获得悬浮轻抬反馈。自定义底色用 `custom-bg` 覆写 tone。
 :::
 
+## 磨砂玻璃
+
+<DemoBlock title="glass 叠层" description="渐变底上的两张玻璃卡；glass 三态：true 强制开 / false 强制关 / 缺省跟随全局。">
+
+<div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px; display:grid; gap:14px;">
+  <EwCard glass>
+    <p style="font-weight:600;">玻璃卡 A</p>
+    <p style="font-size:13px;">半透明底 + 背景模糊，透出渐变底色。</p>
+  </EwCard>
+  <EwCard glass style="margin-left:36px;">
+    <p style="font-weight:600;">玻璃卡 B（错位叠放）</p>
+    <p style="font-size:13px;">上下叠加时透出彼此的边缘，层次立刻出来。</p>
+  </EwCard>
+</div>
+
+```vue
+<EwCard glass>半透明卡片</EwCard>
+<EwCard :glass="false">显式退回实底</EwCard>
+```
+
+</DemoBlock>
+
 ## API
 
 ### Props
@@ -66,6 +88,7 @@
 | featured | 深色精选形态 | boolean | `false` |
 | hoverable | 悬浮轻抬 | boolean | `false` |
 | flat | 去边框与阴影（嵌入场景） | boolean | `false` |
+| glass | 磨砂玻璃质感；缺省跟随全局（ConfigProvider glass） | boolean | — |
 | tag | 渲染标签（可传 `'a'`） | string | `'div'` |
 | custom-bg | 自定义底色（覆盖 tone） | string | — |
 

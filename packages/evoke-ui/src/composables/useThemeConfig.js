@@ -20,6 +20,7 @@ const DEFAULT_CONFIG = {
   radius: 'default',
   space: 'default',
   container: 'default',
+  glass: false,
 }
 
 const config = reactive({ ...DEFAULT_CONFIG })
@@ -116,9 +117,17 @@ export function useThemeConfig() {
     apply()
   }
 
+  function setGlass(on) {
+    config.glass = !!on
+    if (typeof document === 'undefined') return
+    if (config.glass) document.documentElement.setAttribute('data-ew-glass', 'on')
+    else document.documentElement.removeAttribute('data-ew-glass')
+  }
+
   function reset() {
     Object.assign(config, DEFAULT_CONFIG)
     clearApplied()
+    setGlass(false)
   }
 
   /**
@@ -137,6 +146,7 @@ export function useThemeConfig() {
     config,
     setPrimary,
     setSemantic,
+    setGlass,
     setRadius,
     setSpace,
     setContainer,

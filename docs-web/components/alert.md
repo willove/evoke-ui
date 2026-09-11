@@ -9,7 +9,7 @@
 
 <div style="display:flex; flex-direction:column; gap:12px;">
   <EwAlert pill>
-    <span>Nimbus 2.0 发布：全新编辑器与团队空间</span>
+    <span>cumubase 2.0 发布：全新编辑器与团队空间</span>
     <template #action>
       <a href="#" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
     </template>
@@ -18,7 +18,7 @@
 
 ```vue
 <EwAlert pill>
-  <span>Nimbus 2.0 发布：全新编辑器与团队空间</span>
+  <span>cumubase 2.0 发布：全新编辑器与团队空间</span>
   <template #action><a href="#">查看</a></template>
 </EwAlert>
 ```

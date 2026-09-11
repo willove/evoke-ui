@@ -55,6 +55,12 @@ export { default as EwInput } from '../src/components/input/index.vue'
 export { default as EwTextarea } from '../src/components/textarea/index.vue'
 export { default as EwSelect } from '../src/components/select/index.vue'
 export { default as EwField } from '../src/components/field/index.vue'
+export { default as EwBorderBeam } from '../src/components/border-beam/index.vue'
+export { default as EwExecCard } from '../src/components/exec-card/index.vue'
+export { default as EwArticle } from '../src/components/article/index.vue'
+export { default as EwImageWall } from '../src/components/image-wall/index.vue'
+export { default as EwImagePreview } from '../src/components/image-preview/index.vue'
+export { default as EwModal } from '../src/components/modal/index.vue'
 
 // Components — 移动组件
 export { default as EwPullRefresh } from '../src/components/pull-refresh/index.vue'

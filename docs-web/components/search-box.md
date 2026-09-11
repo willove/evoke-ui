@@ -30,6 +30,36 @@
 
 </DemoBlock>
 
+## 远程搜索（下拉结果）
+
+`remote` 传入异步函数后进入远程模式：输入经防抖（默认 300ms）调用接口，
+结果以 select 下拉形态呈现；`↑↓` 选择、`Enter` 确认、`Esc` 关闭，选中回填搜索词并派发 `select`。
+
+<DemoBlock title="远程接口 + 下拉建议" description="演示用 600ms 延迟模拟接口；实际接入时把 remote 换成你的搜索接口即可。">
+
+<EwSearchBox
+  large
+  placeholder="搜索组件，试试「按钮」或「表单」…"
+  :remote="remoteSearch"
+  :debounce="200"
+  style="max-width:640px;"
+  @select="onPick"
+/>
+<p v-if="pickTip" style="margin:10px 0 0; font-size:13px; color:var(--ew-text-secondary);">{{ pickTip }}</p>
+
+```vue
+<EwSearchBox
+  v-model="keyword"
+  :remote="async (kw) => {
+    const res = await fetch('/api/search?q=' + kw)
+    return (await res.json()).map(r => ({ title: r.name, description: r.desc }))
+  }"
+  @select="onPick"
+/>
+```
+
+</DemoBlock>
+
 ## 受控使用
 
 <DemoBlock title="双向绑定" description="搜索词与分类分别双向绑定，search 事件在输入与切换分类时触发。">

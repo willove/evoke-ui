@@ -158,6 +158,7 @@ export const GUIDE_NAV = [
     key: 'guide',
     components: [
       { name: '快速开始', zh: '', path: '/guide/getting-started' },
+      { name: '主题定制器', zh: '', path: '/guide/customizer' },
       { name: '主题与暗色模式', zh: '', path: '/guide/theming' },
       { name: '企业级能力', zh: '', path: '/guide/enterprise' },
     ],
@@ -334,5 +335,5 @@ export const ALL_COMPONENTS = CATEGORIES.flatMap((c) =>
 export const BRAND = {
   name: 'Evoke Business UI',
   primary: '#175DFF',
-  version: '0.1.0',
+  version: '0.2.0',
 }

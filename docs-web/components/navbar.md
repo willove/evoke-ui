@@ -9,7 +9,7 @@
 
 <EwNavbar
   :sticky="false"
-  logo-text="Nimbus"
+  logo-text="cumubase"
   :items="[
     { label: '产品', href: '#' },
     { label: '定价', href: '#' },
@@ -26,7 +26,7 @@
 </EwNavbar>
 
 ```vue
-<EwNavbar logo-text="Nimbus" :items="navItems">
+<EwNavbar logo-text="cumubase" :items="navItems">
   <template #actions>
     <EwThemeToggle />
     <EwIconButton icon="github" aria-label="GitHub" />
@@ -43,14 +43,14 @@
 
 <EwNavbar
   :sticky="false"
-  logo-text="Nimbus"
+  logo-text="cumubase"
   active="定价"
   :items="[{ label: '产品', href: '#' }, { label: '定价', href: '#' }]"
   style="border:1px solid var(--ew-border-color-light); border-radius:14px;"
 />
 
 ```vue
-<EwNavbar logo-text="Nimbus" active="定价" :items="navItems" />
+<EwNavbar logo-text="cumubase" active="定价" :items="navItems" />
 ```
 
 </DemoBlock>
@@ -64,6 +64,7 @@
 | items | 导航项 `[{ label, href, target, active }]` | array | `[]` |
 | sticky | 吸顶 | boolean | `true` |
 | blur | 滚动后背景磨砂 | boolean | `true` |
+| glass | 常驻磨砂（不滚动也有玻璃质感）；缺省跟随全局（ConfigProvider glass） | boolean | — |
 | hide-on-scroll | 下滑隐藏、上滑浮现（沉浸式长页面） | boolean | `false` |
 | logo | 是否渲染默认品牌位 | boolean | `true` |
 | logo-text | 品牌名 | string | — |

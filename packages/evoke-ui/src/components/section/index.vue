@@ -1,5 +1,5 @@
 <template>
-  <section :class="['ew-section', `is-${align}`]" :style="sectionStyle">
+  <section :class="['ew-section', `is-${align}`, { 'is-glass': glass === true, 'no-glass': glass === false }]" :style="sectionStyle">
     <div v-if="eyebrow || $slots.eyebrow" class="ew-section__eyebrow">
       <slot name="eyebrow">{{ eyebrow }}</slot>
     </div>
@@ -23,6 +23,8 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   /** 眉题（自动大写字距拉开） */
   eyebrow: { type: String, default: '' },
   title: { type: String, default: '' },

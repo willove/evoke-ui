@@ -104,9 +104,37 @@
 .ew-footer .ew-footer__slogan {
   margin: var(--ew-space-3) 0 0;
   font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
 }
 
 .ew-footer .ew-footer__col-title {
   margin: 0 0 var(--ew-space-2);
   font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.14em;
+  color: var(--ew-text-secondary);
+}
+
+/* 链接渲染为 <a>：压过宿主链接样式的颜色/下划线/字重 */
+.ew-footer a.ew-footer__link {
+  font-size: var(--ew-font-size-sm);
+  font-weight: var(--ew-font-weight-regular);
+  color: var(--ew-text-secondary);
+  text-decoration: none;
+}
+
+.ew-footer a.ew-footer__link:hover {
+  color: var(--ew-text-primary);
+}
+
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+   backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ew-footer.is-glass,
+  html[data-ew-glass='on'] .ew-footer:not(.no-glass) {
+    background-color: var(--ew-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  }
 }

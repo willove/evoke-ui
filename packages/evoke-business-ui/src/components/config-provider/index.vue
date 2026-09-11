@@ -9,7 +9,15 @@
  */
 import { provide, toRef, watchEffect, onUnmounted } from 'vue'
 import { configProviderContextKey } from '../../composables/useConfigProvider'
-import { setPrimaryColor, setDensity } from '../../utils/theme'
+import {
+  setPrimaryColor,
+  setSemanticColors,
+  setDensity,
+  setGlass,
+  resetTheme,
+  loadThemeConfig,
+  saveThemeConfig,
+} from '../../utils/theme'
 
 const props = defineProps({
   /** 全局尺寸 */
@@ -28,6 +36,12 @@ const props = defineProps({
   density: { type: String, default: undefined },
   /** 权限码表：v-permission 指令 / EvAuth 组件 / usePermission 的判定来源 */
   permissions: { type: Array, default: undefined },
+  /** 全局磨砂：开启后容器类组件（card/section-card/dialog/drawer…）默认玻璃质感，组件级 glass prop 可单独覆盖 */
+  glass: { type: Boolean, default: false },
+  /** 运行时语义色（{ success, warning, danger, info } 十六进制），梯度随主色规则自动生成 */
+  semantic: { type: Object, default: undefined },
+  /** 持久化主题（localStorage）：挂载时若有存档则优先生效，变更时自动保存 */
+  persistTheme: { type: Boolean, default: false },
 })
 
 provide(configProviderContextKey, {
@@ -39,15 +53,31 @@ provide(configProviderContextKey, {
   permissions: toRef(props, 'permissions'),
 })
 
-// 主题注入作用于 documentElement（全局语义）；卸载时恢复默认
+// 主题注入作用于 documentElement（全局语义）；卸载时移除注入令牌回到样式表默认
+// persistTheme 开启时：挂载即应用持久化存档（用户上次选择优先于声明式 prop），变更自动保存
+const savedTheme = props.persistTheme ? loadThemeConfig() : null
 watchEffect(() => {
-  if (props.themeColor) setPrimaryColor(props.themeColor)
+  const primary = savedTheme?.primary || props.themeColor
+  if (primary) setPrimaryColor(primary)
+})
+watchEffect(() => {
+  const semantic = savedTheme?.semantic || props.semantic
+  if (semantic) setSemanticColors(semantic)
 })
 watchEffect(() => {
   if (props.density) setDensity(props.density)
 })
+watchEffect(() => {
+  setGlass(props.glass)
+})
+watchEffect(() => {
+  if (props.persistTheme && (props.themeColor || props.semantic)) {
+    saveThemeConfig({ primary: props.themeColor, semantic: props.semantic })
+  }
+})
 onUnmounted(() => {
-  if (props.themeColor) setPrimaryColor('#175DFF')
+  resetTheme()
   if (props.density) setDensity('default')
+  setGlass(false)
 })
 </script>

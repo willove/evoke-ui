@@ -47,4 +47,7 @@
 .ew-logo-cloud .ew-logo-cloud__title {
   margin: 0 0 var(--ew-space-6);
   font-size: var(--ew-font-size-sm);
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
 }

@@ -8,12 +8,12 @@ hover 时字标回到墨色并浮现淡底；也可传图标名代替纯文字�
 <DemoBlock title="文字字标墙" description="字标用强字距展示体，弱灰呈现，hover 回到墨色。">
 
 <EwLogoCloud
-  title="这些团队每天都在用 Nimbus"
+  title="这些团队每天都在用 cumubase"
   :items="['Horizon', 'Fieldnote', 'Mono Studio', 'Arcadia', 'Northwind', 'Papercup']"
 />
 
 ```vue
-<EwLogoCloud title="这些团队每天都在用 Nimbus" :items="['Horizon', 'Mono Studio']" />
+<EwLogoCloud title="这些团队每天都在用 cumubase" :items="['Horizon', 'Mono Studio']" />
 ```
 
 </DemoBlock>
@@ -24,14 +24,14 @@ hover 时字标回到墨色并浮现淡底；也可传图标名代替纯文字�
 
 <EwLogoCloud
   :items="[
-    { label: 'Nimbus', icon: 'compass-3-line' },
+    { label: 'cumubase', icon: 'compass-3-line' },
     { label: 'Fieldnote', icon: 'brush-line' },
     { label: 'Arcadia', icon: 'device-line' },
   ]"
 />
 
 ```vue
-<EwLogoCloud :items="[{ label: 'Nimbus', icon: 'compass-3-line' }]" />
+<EwLogoCloud :items="[{ label: 'cumubase', icon: 'compass-3-line' }]" />
 ```
 
 </DemoBlock>

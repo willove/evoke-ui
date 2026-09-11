@@ -73,6 +73,9 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 .ev-pagination.ev-pagination .ev-pager li.number,
 .ev-pagination.ev-pagination .ev-pager li.btn-quickprev,
@@ -89,6 +92,7 @@
   cursor: pointer;
   user-select: none;
   font-size: inherit;
+  line-height: inherit;
   transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
   box-sizing: border-box;
 }

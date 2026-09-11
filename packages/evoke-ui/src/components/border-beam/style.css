@@ -1,0 +1,49 @@
+/* EwBorderBeam — 边框流光 */
+
+/* 角度可插值注册：不支持的浏览器退化为静态渐变细环（不影响内容） */
+@property --ew-beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.ew-border-beam {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 光带环：conic 渐变沿角度旋转，mask 只保留边框宽度一圈 */
+.ew-border-beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: var(--ew-beam-width);
+  background: conic-gradient(
+    from var(--ew-beam-angle),
+    var(--ew-beam-from) 0deg,
+    var(--ew-beam-from) 250deg,
+    var(--ew-beam-to) 310deg,
+    var(--ew-beam-from) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: ew-beam-spin var(--ew-beam-duration) var(--ew-beam-direction) linear infinite;
+  animation-delay: var(--ew-beam-delay);
+  pointer-events: none;
+}
+
+@keyframes ew-beam-spin {
+  to {
+    --ew-beam-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ew-border-beam::before {
+    animation: none;
+  }
+}

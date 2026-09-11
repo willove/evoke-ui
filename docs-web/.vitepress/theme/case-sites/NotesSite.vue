@@ -1,6 +1,6 @@
 <script setup>
 /**
- * NotesSite — 案例「Nimbus 云笔记」工作台的站点内容
+ * NotesSite — 案例「cumubase 云笔记」工作台的站点内容
  * 同一份源码用于案例文档页的缩放舞台（CaseStage 内）
  * 与独立全屏窗口（/cases/live/notes，传 sticky 开启导航吸顶）
  */
@@ -74,7 +74,7 @@ const activities = [
 
 <template>
   <div class="case-site">
-    <EwNavbar :sticky="sticky" logo-text="Nimbus 笔记">
+    <EwNavbar :sticky="sticky" logo-text="cumubase 笔记">
       <template #actions>
         <EwInput
           v-model="query"
@@ -163,9 +163,9 @@ const activities = [
 
     <EwFooter
       soft
-      logo-text="Nimbus 笔记"
+      logo-text="cumubase 笔记"
       slogan="轻盈优雅的云端笔记。"
-      copyright="© 2026 Nimbus Labs"
+      copyright="© 2026 积云数合"
       :columns="[
         { title: '产品', links: [{ label: '下载客户端', href: '#' }, { label: '网页版', href: '#' }, { label: '更新日志', href: '#' }] },
         { title: '支持', links: [{ label: '帮助中心', href: '#' }, { label: '快捷键一览', href: '#' }, { label: '联系我们', href: '#' }] },

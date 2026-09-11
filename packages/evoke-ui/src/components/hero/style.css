@@ -110,4 +110,6 @@
 .ew-hero .ew-hero__description {
   margin: var(--ew-space-5) 0 0;
   font-size: 17px;
+  line-height: 1.75;
+  color: var(--ew-text-secondary);
 }

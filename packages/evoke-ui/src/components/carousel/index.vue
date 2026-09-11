@@ -1,13 +1,31 @@
 <template>
   <div
     class="ew-carousel"
+    :class="{ 'is-media': variant !== 'default' }"
     @mouseenter="paused = true"
     @mouseleave="paused = false"
   >
-    <div class="ew-carousel__viewport">
+    <div class="ew-carousel__viewport" :style="viewportStyle">
       <div class="ew-carousel__track" :style="{ transform: `translateX(-${index * 100}%)` }">
         <div v-for="(item, i) in items" :key="i" class="ew-carousel__slide">
-          <slot name="item" :item="item" :index="i">{{ item }}</slot>
+          <!-- 纯图片形态 -->
+          <img
+            v-if="variant === 'image'"
+            class="ew-carousel__img"
+            :src="item.src"
+            :alt="item.alt || ''"
+            loading="lazy"
+          />
+          <!-- 图片 + 文字注释形态 -->
+          <div v-else-if="variant === 'banner'" class="ew-carousel__banner">
+            <img class="ew-carousel__img" :src="item.src" :alt="item.alt || ''" loading="lazy" />
+            <div v-if="item.title || item.desc" class="ew-carousel__caption">
+              <h3 v-if="item.title" class="ew-carousel__caption-title">{{ item.title }}</h3>
+              <p v-if="item.desc" class="ew-carousel__caption-desc">{{ item.desc }}</p>
+            </div>
+          </div>
+          <!-- 自定义内容形态 -->
+          <slot v-else name="item" :item="item" :index="i">{{ item }}</slot>
         </div>
       </div>
     </div>
@@ -36,13 +54,25 @@
 <script setup>
 /**
  * EwCarousel — 轮播（评价墙、案例展示、横幅）
- * items 提供数据，#item 作用域插槽自定义每张内容；autoplay 毫秒数（0 关闭），hover 暂停
+ * 三种形态（variant）：
+ * - default：items 提供数据，#item 作用域插槽自定义每张内容
+ * - image：纯图片轮播，items 项 { src, alt? }，aspect 控制画幅
+ * - banner：图片 + 文字注释，items 项 { src, title?, desc?, alt? }，注释带渐变遮罩贴底
+ * autoplay 毫秒数（0 关闭），hover 暂停
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import EwIcon from '../icon/index.vue'
 
 const props = defineProps({
   items: { type: Array, default: () => [] },
+  /** 形态：default 自定义插槽 / image 纯图片 / banner 图片+文字注释 */
+  variant: {
+    type: String,
+    default: 'default',
+    validator: (v) => ['default', 'image', 'banner'].includes(v),
+  },
+  /** image / banner 形态的画幅比例（CSS aspect-ratio 值） */
+  aspect: { type: String, default: '16 / 9' },
   /** 自动轮播间隔 ms（0 关闭） */
   autoplay: { type: Number, default: 0 },
   dots: { type: Boolean, default: true },
@@ -53,6 +83,11 @@ const paused = ref(false)
 let timer = null
 
 const count = computed(() => props.items.length)
+
+const viewportStyle = computed(() => {
+  if (props.variant === 'default') return null
+  return { aspectRatio: props.aspect }
+})
 
 function go(i) {
   if (!count.value) return

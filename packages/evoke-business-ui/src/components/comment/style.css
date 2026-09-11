@@ -40,6 +40,14 @@
   word-break: break-word;
 }
 
+/* 宿主环境屏蔽：文档站 .bd-doc p 的字号/行高/颜色/外距侵入正文插槽 */
+.ev-comment.ev-comment .ev-comment__content p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
 .ev-comment__actions {
   margin-top: var(--ev-space-2);
   display: flex;

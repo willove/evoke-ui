@@ -259,3 +259,12 @@ html.dark {
 
   --ew-focus-ring: 0 0 0 2px rgba(var(--ew-color-primary-rgb), 0.45);
 }
+
+/* ═══ 磨砂（glass）配方令牌：容器 is-glass 态取值，明暗共用；
+   全局开关 = ConfigProvider glass / useThemeConfig.setGlass（html[data-ew-glass]） ═══ */
+:root {
+  --ew-glass-blur: 16px;
+  --ew-glass-saturate: 1.5;
+  /* 磨砂底色一次配好：color-mix 的百分比不能走 var()，必须整体出令牌 */
+  --ew-glass-bg: color-mix(in srgb, var(--ew-bg-container) 72%, transparent);
+}

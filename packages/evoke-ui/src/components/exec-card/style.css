@@ -1,0 +1,113 @@
+/* EwExecCard — 高管/团队介绍卡 */
+
+.ew-exec-card {
+  --ew-exec-portrait-h: 190px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-lg);
+  background-color: var(--ew-bg-container);
+  text-align: center;
+  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
+    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
+    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+}
+
+.ew-exec-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--ew-border-color);
+  box-shadow: var(--ew-shadow-2);
+}
+
+/* ─── 人物舞台：渐变底 + 透明 PNG 锚定底边 ─── */
+.ew-exec-card__stage {
+  position: relative;
+  height: var(--ew-exec-portrait-h);
+  background-image: var(--ew-gradient-hero);
+  overflow: hidden;
+}
+
+.ew-exec-card__portrait {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 78%;
+  height: 96%;
+  object-fit: contain;
+  object-position: bottom;
+  color: var(--ew-color-primary-light-5);
+  transition: transform var(--ew-duration-slow) var(--ew-ease-smooth);
+}
+
+.ew-exec-card:hover .ew-exec-card__portrait {
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ─── 介绍文本：展示体标题 + 小标签职务 + 次级简介 ─── */
+.ew-exec-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ew-space-2);
+  padding: var(--ew-space-5) var(--ew-space-5) var(--ew-space-6);
+}
+
+.ew-exec-card__name {
+  margin: 0;
+  font-size: var(--ew-font-size-lg);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+  color: var(--ew-text-primary);
+}
+
+.ew-exec-card__role {
+  margin: 0;
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ew-text-secondary);
+}
+
+.ew-exec-card__description {
+  margin: var(--ew-space-1) 0 0;
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-regular);
+}
+
+.ew-exec-card__actions {
+  display: flex;
+  gap: var(--ew-space-2);
+  margin-top: var(--ew-space-2);
+}
+
+/* ─── 宿主环境屏蔽 ───
+   文档站等宿主的元素级排版（.vp-doc h3/p）会以更高优先级侵入，这里双类重申 */
+.ew-exec-card .ew-exec-card__name {
+  margin: 0;
+  font-size: var(--ew-font-size-lg);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+  line-height: var(--ew-display-line-height);
+  color: var(--ew-text-primary);
+}
+
+.ew-exec-card .ew-exec-card__role {
+  margin: 0;
+  font-size: var(--ew-font-size-xs);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0.14em;
+  color: var(--ew-text-secondary);
+}
+
+.ew-exec-card .ew-exec-card__description {
+  margin: var(--ew-space-1) 0 0;
+  font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-regular);
+}

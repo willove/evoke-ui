@@ -104,6 +104,16 @@
 </ev-row>
 </DemoBlock>
 
+## 磨砂玻璃
+
+<DemoBlock>
+  <div style="background: linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius: 10px; padding: 20px; display: grid; gap: 12px;">
+    <ev-card glass>玻璃卡 A：半透明底 + 背景模糊</ev-card>
+    <ev-card glass>玻璃卡 B：上下叠加透出彼此的边缘</ev-card>
+    <ev-card :glass="false">实底卡：显式 glass=false 脱离全局开关</ev-card>
+  </div>
+</DemoBlock>
+
 ## API
 
 <ApiTable title="Card Props" :rows="[
@@ -111,6 +121,7 @@
   { name: 'shadow', desc: '阴影显示时机', type: 'always | hover | never', default: 'never' },
   { name: 'hoverable', desc: '悬浮时是否执行浮起动画（上移/描边/投影），false 时完全静态', type: 'boolean', default: 'true' },
   { name: 'body-style', desc: '内容区样式，支持对象与字符串两种写法', type: 'object | string', default: '{}' },
+  { name: 'glass', desc: '磨砂玻璃质感；缺省跟随全局（EvConfigProvider 的 glass）', type: 'boolean', default: '—' },
 ]" />
 
 <ApiTable title="Card Slots" :rows="[

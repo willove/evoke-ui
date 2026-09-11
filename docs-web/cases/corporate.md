@@ -2,7 +2,7 @@
 
 企业官网是 Evoke UI 最典型的场景：首屏讲清价值，中段给出证据（品牌墙、特性、指标），
 下半段完成转化（定价、对比、FAQ、CTA）。本案例用 14 个组件拼出一份完整的营销页，
-品牌与文案均为虚构，源码就在本页，可以直接拷走改文案。
+案例以积云数合为演示品牌，文案为演示内容；源码就在本页，可以直接拷走改文案。
 
 **用到的组件**：[EwAlert](/components/alert) · [EwNavbar](/components/navbar) · [EwHero](/components/hero) · [EwLogoCloud](/components/logo-cloud) · [EwSection](/components/section) · [EwFeatureGrid](/components/feature-grid) · [EwStatistic](/components/statistic) · [EwCard](/components/card) · [EwPricingCard](/components/pricing-card) · [EwComparisonTable](/components/comparison-table) · [EwFaq](/components/faq) · [EwQuote](/components/quote) · [EwCta](/components/cta) · [EwFooter](/components/footer)
 
@@ -11,7 +11,7 @@ import CaseStage from '../.vitepress/theme/CaseStage.vue'
 import CorporateSite from '../.vitepress/theme/case-sites/CorporateSite.vue'
 </script>
 
-<CaseStage url="www.cloudsure.cn" live-url="/cases/live/corporate">
+<CaseStage url="www.cumubase.cn" live-url="/cases/live/corporate">
   <CorporateSite />
 </CaseStage>
 
@@ -29,7 +29,7 @@ import CorporateSite from '../.vitepress/theme/case-sites/CorporateSite.vue'
 首屏的骨架，其实就是导航、Hero 与右栏示意卡：
 
 ```vue
-<EwNavbar :items="nav" :sticky="false" logo-text="云澈科技">
+<EwNavbar :items="nav" :sticky="false" logo-text="积云数合">
   <template #actions>
     <EwThemeToggle />
     <EwButton size="small" variant="soft">登录</EwButton>

@@ -79,9 +79,15 @@
 .ew-timeline .ew-timeline__title {
   margin: 0;
   font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0;
+  line-height: var(--ew-display-line-height);
+  color: var(--ew-text-primary);
 }
 
 .ew-timeline .ew-timeline__description {
   margin: var(--ew-space-1) 0 0;
   font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
 }

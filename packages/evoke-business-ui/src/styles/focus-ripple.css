@@ -1,0 +1,37 @@
+/* ============================================
+   Evoke Business UI — 边框激活波纹（focus ripple）
+   输入/选择类组件聚焦时，边框向外扩散两圈涟漪后消失；
+   覆盖 ev-input__wrapper 家族（input / cascader / date-picker /
+   input-number / time-select / time-picker）与 ev-select__wrapper。
+   全局关闭：html[data-ev-ripple='off']；
+   prefers-reduced-motion 下自动停用。
+   ============================================ */
+
+.ev-input__wrapper,
+.ev-select__wrapper {
+  position: relative;
+}
+
+.ev-input__wrapper::after,
+.ev-select__wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 1px solid color-mix(in srgb, var(--ev-color-primary) 45%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-ev-ripple='off']) .ev-input__wrapper.is-focus::after,
+  html:not([data-ev-ripple='off']) .ev-select__wrapper.is-focused::after {
+    animation: ev-border-ripple 0.7s ease-out 2;
+  }
+}
+
+@keyframes ev-border-ripple {
+  0% { opacity: 0.9; transform: scale(1); }
+  70% { opacity: 0.25; }
+  100% { opacity: 0; transform: scale(1.04); }
+}

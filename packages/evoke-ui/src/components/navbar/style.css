@@ -97,6 +97,43 @@
   color: var(--ew-color-primary);
 }
 
+/* <a> 形态的自防御：宿主页（浏览器默认样式、文档站 .vp-doc a）会给链接
+   加下划线、链接色和 500 字重，这里的优先级必须压得过 .vp-doc a / .vp-doc a:hover */
+.ew-navbar a.ew-navbar__logo,
+.ew-navbar a.ew-navbar__link,
+.ew-navbar a.ew-navbar__mobile-link {
+  text-decoration: none;
+}
+
+.ew-navbar a.ew-navbar__logo {
+  color: var(--ew-text-primary);
+  font-weight: var(--ew-display-weight-strong);
+  letter-spacing: var(--ew-display-letter-spacing);
+}
+
+.ew-navbar a.ew-navbar__link {
+  color: var(--ew-text-regular);
+  font-weight: var(--ew-font-weight-regular);
+}
+
+.ew-navbar a.ew-navbar__link:hover {
+  color: var(--ew-text-primary);
+}
+
+.ew-navbar a.ew-navbar__link.is-active {
+  color: var(--ew-color-primary);
+}
+
+.ew-navbar a.ew-navbar__mobile-link {
+  color: var(--ew-text-regular);
+  font-weight: var(--ew-font-weight-medium);
+}
+
+.ew-navbar a.ew-navbar__mobile-link:hover {
+  color: var(--ew-text-primary);
+  background-color: var(--ew-bg-hover);
+}
+
 /* ─── 右侧动作区 ─── */
 .ew-navbar__actions {
   display: flex;
@@ -156,4 +193,15 @@
 .ew-navbar-collapse-leave-to {
   opacity: 0;
   transform: translateY(-6px);
+}
+
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+   backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ew-navbar.is-glass,
+  html[data-ew-glass='on'] .ew-navbar:not(.no-glass) {
+    background-color: var(--ew-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  }
 }

@@ -132,4 +132,8 @@
 .ew-icon-grid .ew-icon-grid__title {
   margin: 0 0 var(--ew-space-5);
   font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-regular);
+  letter-spacing: 0;
+  line-height: 1.7;
+  color: var(--ew-text-primary);
 }

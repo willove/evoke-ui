@@ -22,6 +22,8 @@
 
 ### 方式一：运行时换主色（推荐）
 
+> 交互式预览见[主题定制器](/guide/customizer)：主色 / 语义色 / 密度 / 磨砂即改即见，并生成等效配置代码。
+
 `setPrimaryColor` 一条语句注入全部 7 档梯度 + rgb 三元组，图表色板自动跟随重绘：
 
 ```js
@@ -30,10 +32,33 @@ import { setPrimaryColor } from '@wil-works/evoke-business-ui'
 setPrimaryColor('#16a34a')   // 财务绿，其余梯度自动派生
 ```
 
-也可通过 `EvConfigProvider` 声明式配置（卸载时自动恢复默认）：
+**语义色同样可动态配置**——只更新传入的键，其余保持不变：
+
+```js
+import { setSemanticColors, EV_THEME_PRESETS } from '@wil-works/evoke-business-ui'
+
+setSemanticColors({ success: '#16a34a', danger: '#dc2626' })
+EV_THEME_PRESETS             // 常用预设色板 [{ name, value }]，可直接生成换色选项
+```
+
+**暗色自适应**：暗色模式下梯度自动反向派生（light 档向深底混合，与暗色手调梯度同向），
+且运行时注入过主题后，`html.dark` 切换会跟随重注入，明暗来回切换不发灰。相关 API：
+
+```js
+import {
+  resetTheme,        // 移除全部注入的内联令牌，回到样式表默认
+  getPrimaryColor,   // 当前运行时主色（未注入返回 null）
+  saveThemeConfig,   // 持久化：localStorage 存取 { primary, semantic }
+  loadThemeConfig,
+  clearThemeConfig,
+} from '@wil-works/evoke-business-ui'
+```
+
+也可通过 `EvConfigProvider` 声明式配置（卸载时自动恢复默认）；`persist-theme` 开启后
+主题跨刷新生效，存档优先于声明式 prop：
 
 ```vue
-<ev-config-provider theme-color="#16a34a">
+<ev-config-provider theme-color="#16a34a" :semantic="semantic" persist-theme>
   <router-view />
 </ev-config-provider>
 ```

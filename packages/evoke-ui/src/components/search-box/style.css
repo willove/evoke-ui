@@ -1,6 +1,7 @@
 /* EwSearchBox — 大搜索框（remixicon 签名组件） */
 
 .ew-search-box {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--ew-space-4);
@@ -84,4 +85,92 @@
   flex-shrink: 0;
   padding-left: var(--ew-space-4);
   border-left: 1px solid var(--ew-border-color-light);
+}
+
+/* ─── 边框激活波纹：聚焦时边框向外扩散两圈涟漪；
+   全局关闭 html[data-ew-ripple='off']；prefers-reduced-motion 自动停用 ─── */
+/* 定位锚点：波纹环定位参考 */
+.ew-search-box {
+  position: relative;
+}
+
+
+.ew-search-box::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  border: 1px solid color-mix(in srgb, var(--ew-color-primary) 45%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-ew-ripple='off']) .ew-search-box:focus-within::after {
+    animation: ew-border-ripple 0.7s ease-out 2;
+  }
+}
+
+@keyframes ew-border-ripple {
+  0% { opacity: 0.9; transform: scale(1); }
+  70% { opacity: 0.25; }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+
+/* ─── 远程搜索结果下拉（select 菜单同款语言） ─── */
+.ew-search-box__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: var(--ew-z-index-overlay, 2000);
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  border: 1px solid var(--ew-border-color-light);
+  border-radius: var(--ew-radius-md);
+  background-color: var(--ew-bg-container);
+  box-shadow: var(--ew-shadow-2);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ew-search-box__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: var(--ew-radius-sm);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ew-search-box__option-title {
+  font-size: var(--ew-font-size-sm);
+  font-weight: var(--ew-font-weight-medium);
+  color: var(--ew-text-primary);
+}
+
+.ew-search-box__option-desc {
+  font-size: var(--ew-font-size-xs);
+  color: var(--ew-text-secondary);
+}
+
+.ew-search-box__option.is-active {
+  background-color: var(--ew-color-primary-light-9);
+}
+
+.ew-search-box__option.is-active .ew-search-box__option-title {
+  color: var(--ew-color-primary);
+}
+
+.ew-search-box__option.is-state {
+  padding: 12px;
+  text-align: center;
+  font-size: var(--ew-font-size-sm);
+  color: var(--ew-text-secondary);
+  cursor: default;
 }

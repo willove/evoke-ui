@@ -1,5 +1,5 @@
 <template>
-  <div :class="['ew-pricing-card', { 'is-featured': featured }]">
+  <div :class="['ew-pricing-card', { 'is-featured': featured, 'is-glass': glass === true, 'no-glass': glass === false }]">
     <span v-if="badge" class="ew-pricing-card__badge">
       <slot name="badge">{{ badge }}</slot>
     </span>
@@ -55,6 +55,8 @@ import EwButton from '../button/index.vue'
 import EwIcon from '../icon/index.vue'
 
 defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   title: { type: String, default: '' },
   description: { type: String, default: '' },
   /** 价格文案（如「¥46」或「Free」） */

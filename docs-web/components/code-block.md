@@ -7,10 +7,10 @@
 
 <DemoBlock title="窗框 + 提示符 + 一键复制" description="复制按钮在标题栏右侧；试试点它，观察成功反馈。">
 
-<EwCodeBlock prefix="$" code="brew install --cask nimbus" />
+<EwCodeBlock prefix="$" code="brew install --cask cumubase" />
 
 ```vue
-<EwCodeBlock prefix="$" code="brew install --cask nimbus" />
+<EwCodeBlock prefix="$" code="brew install --cask cumubase" />
 ```
 
 </DemoBlock>
@@ -19,10 +19,10 @@
 
 <DemoBlock title="title / show-copy-text" description="title 显示在红绿灯旁；复制按钮可带文字。">
 
-<EwCodeBlock title="Terminal" code="npx nimbus init my-site" show-copy-text />
+<EwCodeBlock title="Terminal" code="npx cumubase init my-site" show-copy-text />
 
 ```vue
-<EwCodeBlock title="Terminal" code="npx nimbus init my-site" show-copy-text />
+<EwCodeBlock title="Terminal" code="npx cumubase init my-site" show-copy-text />
 ```
 
 </DemoBlock>

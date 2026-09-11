@@ -247,6 +247,18 @@ describe('EvCascader 过滤', () => {
     expect(empty?.textContent).toBe('无匹配数据')
   })
 
+  it('输入关键字时占位文案隐藏，清空关键字后恢复', async () => {
+    const { wrapper } = mountCascader({ filterable: true, placeholder: '输入「杭州」试试' })
+    const input = wrapper.find('.ev-cascader__input')
+    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(true)
+    await input.setValue('杭州')
+    await flush()
+    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(false)
+    await input.setValue('')
+    await flush()
+    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(true)
+  })
+
   it('disabled 不可打开', async () => {
     const { wrapper } = mountCascader({ disabled: true })
     await wrapper.find('.ev-input__wrapper').trigger('click')

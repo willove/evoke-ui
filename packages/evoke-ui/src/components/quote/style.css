@@ -73,3 +73,13 @@
   border: none;
   font-size: var(--ew-font-size-base);
 }
+
+/* <a> 形态来源链接：压过宿主链接样式（.vp-doc a 的下划线与链接色） */
+.ew-quote a.ew-quote__source {
+  color: var(--ew-color-primary);
+  text-decoration: none;
+}
+
+.ew-quote a.ew-quote__source:hover {
+  color: var(--ew-color-primary-dark-2);
+}

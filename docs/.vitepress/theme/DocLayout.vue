@@ -25,8 +25,10 @@
             v-for="item in navItems"
             :key="item.key"
             :class="['bd-nav__item', { 'is-active': item.active }]"
-            href="#"
-            @click.prevent="go(item.path)"
+            :href="item.external ? item.path : '#'"
+            :target="item.external ? '_blank' : undefined"
+            :rel="item.external ? 'noopener' : undefined"
+            @click="onNavClick(item, $event)"
           >
             <Icon :name="item.icon" :size="14" class="bd-nav__icon" />
             <span>{{ item.label }}</span>
@@ -60,6 +62,16 @@
               </ul>
             </transition>
           </div>
+          <a
+            class="bd-header__btn bd-header__download"
+            href="https://www.npmjs.com/package/@wil-works/evoke-business-ui"
+            target="_blank"
+            rel="noopener"
+            aria-label="下载"
+            title="npm 下载"
+          >
+            <Icon name="download" :size="16" />
+          </a>
           <button class="bd-header__btn" type="button" :aria-label="isDark ? '切换到浅色' : '切换到深色'" @click="toggleDark">
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
@@ -178,6 +190,7 @@ const navItems = computed(() => [
   { key: 'charts', label: '图表', icon: 'chart', path: '/chart', active: isChart.value },
   { key: 'mobile', label: '移动端', icon: 'smartphone', path: '/mobile/', active: isMobileDocs.value },
   { key: 'examples', label: '示例', icon: 'play', path: '/examples/', active: isExamples.value },
+  { key: 'evoke', label: 'Evoke UI', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
 ])
 
 const results = computed(() => {
@@ -195,6 +208,12 @@ function isActive(path) {
     route.path === `${path}.html` ||
     (path === '/examples/' && route.path === '/examples/index.html')
   )
+}
+
+function onNavClick(item, event) {
+  if (item.external) return // 外链：放行原生跳转（新窗口打开）
+  event.preventDefault()
+  go(item.path)
 }
 
 function go(path) {

@@ -24,6 +24,8 @@
                 'is-fullscreen': fullscreen,
                 'is-align-center': alignCenter,
                 'is-draggable': false,
+                'is-glass': glass === true,
+                'no-glass': glass === false,
               },
             ]"
             :style="dialogStyle"
@@ -119,6 +121,8 @@ import { useZIndex } from '../../composables/useZIndex'
 defineOptions({ name: 'EvDialog' })
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '' },
   width: { type: [String, Number], default: '520px' },

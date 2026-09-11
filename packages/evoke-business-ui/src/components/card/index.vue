@@ -1,5 +1,5 @@
 <template>
-  <div class="ev-card ev-card" :class="[`is-${shadow}-shadow`, { 'is-hoverable': hoverable }]">
+  <div class="ev-card ev-card" :class="[`is-${shadow}-shadow`, { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]">
     <div v-if="$slots.header || header" class="ev-card__header">
       <slot name="header">{{ header }}</slot>
     </div>
@@ -20,6 +20,8 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
   header: { type: String, default: '' },
   shadow: {
     type: String,

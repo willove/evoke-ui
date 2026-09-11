@@ -8,7 +8,7 @@
 <DemoBlock title="大字 + 实心/描边交替 + 分隔符" description="alternate-outline 让奇偶词条交替使用实心与描边字；separator 挂主色分隔图标。">
 
 <EwMarquee
-  :items="['Evoke UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL MOTION', '明暗一体']"
+  :items="['Evoke UI', '为官网而生', '轻与快', '开箱即用', 'SIMPLY DELIGHTFUL']"
   separator="star-fill"
   :duration="14000"
   text-size="44px"
@@ -16,7 +16,7 @@
 
 ```vue
 <EwMarquee
-  :items="['Evoke UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL MOTION']"
+  :items="['Evoke UI', '为官网而生', '轻与快', '开箱即用']"
   separator="star-fill"
   alternate-outline
   :duration="14000"
@@ -46,7 +46,7 @@
 
 <DemoBlock title="reverse + 高速" description="两行反向滚动组成对流横幅墙。">
 
-<EwMarquee text-size="28px" :duration="10000" :items="['Nimbus', 'Horizon', 'Fieldnote', 'Arcadia', 'Mono Studio']" :alternate-outline="false" />
+<EwMarquee text-size="28px" :duration="10000" :items="['cumubase', 'Horizon', 'Fieldnote', 'Arcadia', 'Mono Studio']" :alternate-outline="false" />
 
 <div style="height:12px" />
 

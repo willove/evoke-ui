@@ -119,6 +119,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
   gap: var(--ev-space-1);
 }
 .ev-upload.ev-upload .ev-upload-list__item {

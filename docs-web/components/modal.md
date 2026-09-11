@@ -1,0 +1,114 @@
+# Modal 弹出层
+
+<script setup>
+import { ref } from 'vue'
+const basicVisible = ref(false)
+const mailVisible = ref(false)
+const email = ref('')
+const code = ref('')
+const sent = ref(false)
+</script>
+
+`EwModal` 全屏遮罩 + 居中面板：Teleport 到 body，Esc / 点击遮罩 / 关闭按钮关闭（均可配），
+打开期间锁定页面滚动，焦点自动移入、关闭后归还触发元素。
+适合订阅邀请、邮箱验证、确认对话等轻量弹出场景。
+
+## 基础用法
+
+<DemoBlock title="标题 + 内容 + 底部动作" description="遮罩点击与 Esc 默认可关闭；footer 插槽放动作按钮。">
+
+<EwModal v-model="basicVisible" title="开通团队空间">
+  <p style="margin:0 0 12px;">团队空间支持多人协作、统一账单与集中管理成员权限。</p>
+  <p style="margin:0; font-size:13px; color:var(--ew-text-secondary);">升级后随时可以降级回个人版，已产生的费用按天折算。</p>
+  <template #footer>
+    <EwButton variant="outline" size="small" @click="basicVisible = false">再想想</EwButton>
+    <EwButton size="small" @click="basicVisible = false">开通</EwButton>
+  </template>
+</EwModal>
+<EwButton @click="basicVisible = true">打开弹出层</EwButton>
+
+```vue
+<EwModal v-model="visible" title="开通团队空间">
+  <p>内容区…</p>
+  <template #footer>
+    <EwButton @click="visible = false">再想想</EwButton>
+    <EwButton type="primary">开通</EwButton>
+  </template>
+</EwModal>
+```
+
+</DemoBlock>
+
+## 弹出层 + 表单：邮箱验证
+
+<DemoBlock title="弹出输入邮箱并验证" description="两步式邮箱验证：填邮箱 → 收验证码 → 提交；Esc / 遮罩点击关闭均已内置。">
+
+<EwModal v-model="mailVisible" title="验证你的邮箱" width="440px">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <EwField label="邮箱" required>
+      <EwInput v-model="email" type="email" placeholder="you@example.com" />
+    </EwField>
+    <EwField label="验证码" required hint="验证码 10 分钟内有效">
+      <div style="display:flex; gap:10px;">
+        <EwInput v-model="code" placeholder="6 位验证码" style="flex:1;" />
+        <EwButton variant="outline" size="small" :disabled="!email" @click="sent = true">
+          {{ sent ? '已发送 ✓' : '发送验证码' }}
+        </EwButton>
+      </div>
+    </EwField>
+    <p v-if="sent && code.length >= 6" style="margin:0; font-size:13px; color:var(--ew-color-success);">
+      ✓ 验证通过，欢迎加入 Evoke UI
+    </p>
+  </div>
+  <template #footer>
+    <EwButton variant="outline" size="small" @click="mailVisible = false">取消</EwButton>
+    <EwButton size="small" :disabled="!sent || code.length < 6" @click="mailVisible = false">完成验证</EwButton>
+  </template>
+</EwModal>
+<EwButton @click="mailVisible = true; sent = false; code = ''">邮箱验证示例</EwButton>
+
+```vue
+<EwModal v-model="visible" title="验证你的邮箱" width="440px">
+  <EwField label="邮箱" required>
+    <EwInput v-model="email" type="email" />
+  </EwField>
+  <EwField label="验证码">
+    <EwInput v-model="code" placeholder="6 位验证码" />
+  </EwField>
+  <template #footer>
+    <EwButton :disabled="!sent" @click="done">完成验证</EwButton>
+  </template>
+</EwModal>
+```
+
+</DemoBlock>
+
+## API
+
+### Props
+
+| 属性 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| modelValue (v-model) | 可见性 | boolean | `false` |
+| title | 标题（header 插槽优先） | string | `''` |
+| width | 面板宽度（数字按 px） | string \| number | `'560px'` |
+| overlay-close | 点击遮罩关闭 | boolean | `true` |
+| esc-close | Esc 关闭 | boolean | `true` |
+| lock-scroll | 打开期间锁定页面滚动 | boolean | `true` |
+| show-close | 右上角关闭按钮 | boolean | `true` |
+
+### 事件
+
+| 事件 | 说明 |
+| --- | --- |
+| update:modelValue | 可见性双向绑定 |
+| open / opened | 开始打开 / 进出场结束 |
+| close / closed | 开始关闭 / 离场结束 |
+
+### 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| default | 内容区 |
+| header | 头部覆写（含标题） |
+| footer | 底部动作区 |

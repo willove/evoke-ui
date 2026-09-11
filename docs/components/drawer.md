@@ -118,6 +118,7 @@ function guardClose(done) {
   { name: 'close-on-click-modal', desc: '点击遮罩关闭', type: 'boolean', default: 'true' },
   { name: 'close-on-press-escape', desc: 'ESC 关闭', type: 'boolean', default: 'true' },
   { name: 'lock-scroll', desc: '打开时锁定页面滚动', type: 'boolean', default: 'true' },
+  { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EvConfigProvider 的 glass）', type: 'boolean', default: '—' },
   { name: 'before-close', desc: '关闭前拦截，调用 done() 完成关闭', type: '(done) => void', default: '—' },
 ]" />
 

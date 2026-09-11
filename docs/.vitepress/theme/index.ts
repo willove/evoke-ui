@@ -6,6 +6,7 @@ import MobileStage from './MobileStage.vue'
 import ApiTable from './ApiTable.vue'
 import IconGallery from './IconGallery.vue'
 import Icon from './Icon.vue'
+import ThemeCustomizer from './ThemeCustomizer.vue'
 import EvokeBusinessUI from '@wil-works/evoke-business-ui'
 import '@wil-works/evoke-business-ui/styles'
 import './style.css'
@@ -24,5 +25,6 @@ export default {
     app.component('ApiTable', ApiTable)
     app.component('IconGallery', IconGallery)
     app.component('BdIcon', Icon)
+    app.component('ThemeCustomizer', ThemeCustomizer)
   },
 }

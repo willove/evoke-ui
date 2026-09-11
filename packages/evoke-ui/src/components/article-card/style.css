@@ -100,9 +100,33 @@
 .ew-article-card .ew-article-card__title {
   margin: 0;
   font-size: var(--ew-font-size-md);
+  font-weight: var(--ew-font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.4;
+  color: var(--ew-text-primary);
 }
 
 .ew-article-card .ew-article-card__excerpt {
   margin: 0;
   font-size: var(--ew-font-size-sm);
+  line-height: 1.7;
+  color: var(--ew-text-secondary);
+}
+
+/* 根元素渲染为 <a>（href 传入）时，压过宿主链接样式的字重/颜色/下划线 */
+a.ew-article-card {
+  font-weight: var(--ew-font-weight-regular);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+   backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ew-article-card.is-glass,
+  html[data-ew-glass='on'] .ew-article-card:not(.no-glass) {
+    background-color: var(--ew-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  }
 }

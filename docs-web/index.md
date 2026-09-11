@@ -74,7 +74,7 @@ const searchIndex = [
   { cat: '案例', label: '案例总览', path: '/cases/', kw: '案例 场景 模板 整页 示例 examples 全部' },
   { cat: '案例', label: '企业官网案例', path: '/cases/corporate', kw: '案例 官网 企业 营销页 landing 定价 hero 首页 公司' },
   { cat: '案例', label: '个人博客案例', path: '/cases/blog', kw: '案例 博客 博客首页 blog 文章 内容站 专栏 订阅' },
-  { cat: '案例', label: '云笔记工作台案例', path: '/cases/notes', kw: '案例 笔记 工作台 应用 工具 nimbus 编辑 卡片 轻应用' },
+  { cat: '案例', label: '云笔记工作台案例', path: '/cases/notes', kw: '案例 笔记 工作台 应用 工具 cumubase 编辑 卡片 轻应用' },
 ]
 
 function goSearch() {
@@ -105,17 +105,25 @@ function goSearch() {
   { label: '案例', href: '/cases/' },
   { label: '主题定制器', href: '/guide/customizer' },
   { label: '动效', href: '/guide/motion' },
+  { label: 'Business UI ↗', href: 'https://evoke-business-ui.wil-works.com', target: '_blank', rel: 'noopener' },
 ]">
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EwTag size="small">v0.1.0</EwTag>
+      <EwTag size="small">v0.2.0</EwTag>
     </a>
   </template>
   <template #actions>
     <EwThemeToggle />
     <EwIconButton icon="github" aria-label="GitHub" />
-    <EwButton size="small" variant="soft" icon="download">下载</EwButton>
+    <EwButton
+      size="small"
+      variant="soft"
+      icon="download"
+      href="https://www.npmjs.com/package/@wil-works/evoke-ui"
+      target="_blank"
+      rel="noopener"
+    >下载</EwButton>
   </template>
 </EwNavbar>
 
@@ -126,7 +134,7 @@ function goSearch() {
 >
   <template #badge>
     <EwAlert pill>
-      <span>v0.1.0 正式发布：主题定制器与 49 个组件</span>
+      <span>v0.2.0 发布：边框流光、图片墙、弹出层与更多</span>
       <template #action>
         <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -182,7 +190,7 @@ function goSearch() {
         </label>
       </EwCard>
       <div class="home-collage__chip">
-        <EwTag tone="primary" size="small">v0.1.0</EwTag>
+        <EwTag tone="primary" size="small">v0.2.0</EwTag>
         <EwTag size="small">Vue 3</EwTag>
       </div>
     </div>
@@ -191,7 +199,7 @@ function goSearch() {
 
 <div class="home-band">
   <EwMarquee
-    :items="['EVOKE UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL', '明暗一体', '安静优雅']"
+    :items="['EVOKE UI', '为官网而生', '轻与快', '开箱即用', '明暗双主题', '即插即用']"
     separator="star-fill"
     :duration="20000"
     text-size="40px"

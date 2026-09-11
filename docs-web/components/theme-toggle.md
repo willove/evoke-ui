@@ -14,7 +14,7 @@
 </div>
 
 ```vue
-<EwNavbar logo-text="Nimbus" :items="navItems">
+<EwNavbar logo-text="cumubase" :items="navItems">
   <template #actions>
     <EwThemeToggle />
   </template>
