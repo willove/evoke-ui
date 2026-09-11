@@ -18,7 +18,7 @@
             {{ m.name }}<span class="case-mon__unit">{{ m.unit }}</span>
           </div>
           <div class="case-mon__chart">
-            <EvChart type="line" :options="m.options" :height="72" />
+            <EvChart type="line" :options="m.options" :height="80" />
           </div>
           <div class="case-mon__stat">
             <span>Max:</span>
@@ -49,19 +49,23 @@ const INIT_TIMES = Array.from({ length: WINDOW }, (_, i) => {
   return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 })
 
-/** 平缓底噪 + 指定位置的偶发尖峰，贴近云监控曲线的观感 */
+/** 确定性伪噪声（SSR 与浏览器首屏一致）：平缓底噪 + 指定位置的偶发尖峰，贴近云监控曲线的毛刺观感 */
+function noise(i) {
+  const x = Math.sin(i * 12.9898) * 43758.5453
+  return x - Math.floor(x)
+}
 function gen(base, amp, spikes = []) {
   return Array.from({ length: WINDOW }, (_, i) => {
-    let v = base + Math.sin(i * 1.7) * amp * 0.5 + Math.sin(i * 0.55) * amp * 0.35
+    let v = base + (noise(i) - 0.5) * 2 * amp
     if (spikes.includes(i)) v += base * 1.4 + amp * 5
     return Math.round(v * 1000) / 1000
   })
 }
 
 const defs = [
-  { key: 'cpu', group: 'CPU 监控', name: 'CPU 利用率', unit: '%', decimals: 1, base: 8, amp: 2, spikeAmp: 26, spikes: [24, 43, 44] },
+  { key: 'cpu', group: 'CPU 监控', name: 'CPU 利用率', unit: '%', decimals: 1, base: 8, amp: 2, spikeAmp: 26, spikes: [24, 43, 44], max: 100 },
   { key: 'memMB', group: '内存监控', name: '内存使用量', unit: 'MB', decimals: 0, base: 580, amp: 6, spikeAmp: 0, spikes: [] },
-  { key: 'memPct', group: '内存监控', name: '内存利用率', unit: '%', decimals: 2, base: 39, amp: 1.2, spikeAmp: 0, spikes: [] },
+  { key: 'memPct', group: '内存监控', name: '内存利用率', unit: '%', decimals: 2, base: 39, amp: 1.2, spikeAmp: 0, spikes: [], max: 100 },
   { key: 'netOut', group: '内网带宽监控', name: '内网出带宽', unit: 'Mbps', decimals: 3, base: 0.04, amp: 0.01, spikeAmp: 0.5, spikes: [17, 33] },
   { key: 'netIn', group: '内网带宽监控', name: '内网入带宽', unit: 'Mbps', decimals: 3, base: 0.035, amp: 0.01, spikeAmp: 0.45, spikes: [29, 52] },
   { key: 'pktOut', group: '内网带宽监控', name: '内网出包量', unit: '个/秒', decimals: 0, base: 12, amp: 3, spikeAmp: 52, spikes: [12, 26, 44] },
@@ -77,8 +81,10 @@ function buildOptions(def) {
   return {
     type: 'line',
     labels: store.labels,
-    series: [{ name: def.name, data: store.series[def.key], showSymbol: false, lineWidth: 1.5 }],
-    xAxis: { interval: 15, formatter: (t) => t.slice(3) },
+    series: [{ name: def.name, data: store.series[def.key], showSymbol: false, lineWidth: 1.25 }],
+    // 云监控小图定制：无横网格、仅 3 档 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）
+    yAxis: { grid: { show: false }, ticks: 3 },
+    xAxis: { show: false },
     animation: { enabled: false },
     legend: { show: false },
   }
@@ -133,8 +139,11 @@ function tick() {
   for (const def of defs) {
     const data = store.series[def.key]
     const last = data[data.length - 1]
-    let next = last + (def.base - last) * 0.08 + (Math.random() - 0.5) * def.amp
-    if (def.spikeAmp > 0 && Math.random() < 0.05) next += def.base * 1.4 + def.spikeAmp
+    const ceiling = def.max ?? Infinity
+    let next = last + (def.base - last) * 0.08 + (Math.random() - 0.5) * 2 * def.amp
+    // 尖峰只在远离上限时注入，且最终值钳制在指标上限内（利用率不超 100%）
+    if (def.spikeAmp > 0 && last < ceiling * 0.9 && Math.random() < 0.05) next += def.base * 1.4 + def.spikeAmp
+    next = Math.min(next, ceiling)
     data.push(Math.max(0, Math.round(next * 1000) / 1000))
     data.shift()
   }
@@ -243,6 +252,12 @@ onUnmounted(stop)
 }
 .case-mon__chart {
   min-width: 0;
+}
+/* 图表小图的定制外观：去掉自带白底/圆角/描边，直接浮在行底色上 */
+.case-mon__chart :deep(.ev-chart) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 .case-mon__stat {
   display: flex;
