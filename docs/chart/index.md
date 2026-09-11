@@ -103,8 +103,8 @@ function switchType() {
 
 <DemoBlock>
 <div style="display:flex;gap:12px;margin-bottom:12px;">
-  <ev-button @click="switchData">切换一组数据</ev-button>
-  <ev-button type="primary" @click="switchType">line / bar 切换</ev-button>
+  <eb-button @click="switchData">切换一组数据</eb-button>
+  <eb-button type="primary" @click="switchType">line / bar 切换</eb-button>
 </div>
 <ev-chart :options="dynOptions" :height="260" />
 </DemoBlock>
