@@ -4,12 +4,14 @@
 
 ## [Unreleased]
 
-### @wil-works/evoke-business-ui — Card 交互边框去强调色
+### @wil-works/evoke-business-ui — Card 交互反馈降噪
 
-- **悬浮/按压边框不再用强调色**：hoverable 卡片悬浮（hover）时边框由
-  `--eb-color-primary-light-5`（主色浅阶）改为中性加深一档的
-  `--eb-border-color-hover`（明暗主题自动适配）；按压（active）态同步补上
-  同款边框加深，与浮起、投影共同构成层次反馈，色彩语义不再与可点击强调混淆
+- **悬浮边框不再用强调色，仅轻微加深**：hoverable 卡片悬浮时边框由
+  `--eb-color-primary-light-5`（主色浅阶）改为 `--eb-border-color-dark`
+  （中性色深一档，明暗主题自动适配），避免与可点击强调语义混淆
+- **默认悬浮移除位移动效**：不再上移、移除按压缩放，悬浮反馈仅剩
+  边框微深 + 投影；组件不再自带 transform，需要浮起/缩放等效果时
+  由使用方自行叠加自定义样式实现
 
 ## [0.3.1] — 2026-09-11
 

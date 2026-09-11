@@ -1,6 +1,6 @@
 # Card 卡片
 
-信息聚合的卡片容器：头部（`header` 插槽或 `header` 属性）、内容区与底部插槽，内置 hover 浮起（上移 2px + 阴影 + 边框高亮）与 active 按压反馈，适合仪表盘、列表、详情等信息块。内容区默认内边距由 `--eb-card-padding` 变量控制，可用 `body-style` 覆盖。
+信息聚合的卡片容器：头部（`header` 插槽或 `header` 属性）、内容区与底部插槽，悬浮时边框微深并浮现投影，适合仪表盘、列表、详情等信息块。内容区默认内边距由 `--eb-card-padding` 变量控制，可用 `body-style` 覆盖。
 
 ## 基础用法
 
@@ -19,14 +19,14 @@
 
 ## 阴影
 
-`shadow` 默认 never；always 常驻投影，hover 悬停时显示，均为可见的层级投影（非描边）。默认所有卡片悬浮时有浮起动画（上移 + 描边 + 投影），传 `:hoverable="false"` 可完全关闭动效（如纯信息展示的静态卡片墙）。
+`shadow` 默认 never；always 常驻投影，hover 悬停时显示，均为可见的层级投影（非描边）。默认所有卡片悬浮时边框微深并显示投影，传 `:hoverable="false"` 可完全关闭悬浮反馈（如纯信息展示的静态卡片墙）。
 
 <DemoBlock>
 <div style="display:flex;gap:16px;flex-wrap:wrap;">
   <eb-card shadow="never" header="never" style="flex:1;min-width:160px;">默认无阴影</eb-card>
   <eb-card shadow="hover" header="hover" style="flex:1;min-width:160px;">悬停显示阴影</eb-card>
   <eb-card shadow="always" header="always" :body-style="{ color: '#409eff' }" style="flex:1;min-width:160px;">常驻阴影，body-style 着色</eb-card>
-  <eb-card shadow="always" header="hoverable=false" :hoverable="false" style="flex:1;min-width:160px;">静态卡片（无悬浮动效）</eb-card>
+  <eb-card shadow="always" header="hoverable=false" :hoverable="false" style="flex:1;min-width:160px;">静态卡片（无悬浮反馈）</eb-card>
 </div>
 </DemoBlock>
 
@@ -107,7 +107,7 @@
 ## 磨砂玻璃
 
 <DemoBlock>
-  <div style="background: linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius: 10px; padding: 20px; display: grid; gap: 12px;">
+  <div style="background: url(/images/card-glass-landscape.jpg) center/cover no-repeat; border-radius: 10px; padding: 20px; display: grid; gap: 12px;">
     <eb-card glass>玻璃卡 A：半透明底 + 背景模糊</eb-card>
     <eb-card glass>玻璃卡 B：上下叠加透出彼此的边缘</eb-card>
     <eb-card :glass="false">实底卡：显式 glass=false 脱离全局开关</eb-card>
@@ -119,7 +119,7 @@
 <ApiTable title="Card Props" :rows="[
   { name: 'header', desc: '头部标题文字（有 header 插槽时以插槽为准）', type: 'string', default: '' },
   { name: 'shadow', desc: '阴影显示时机', type: 'always | hover | never', default: 'never' },
-  { name: 'hoverable', desc: '悬浮时是否执行浮起动画（上移/描边/投影），false 时完全静态', type: 'boolean', default: 'true' },
+  { name: 'hoverable', desc: '悬浮时是否应用交互反馈（边框微深 + 投影），false 时完全静态', type: 'boolean', default: 'true' },
   { name: 'body-style', desc: '内容区样式，支持对象与字符串两种写法', type: 'object | string', default: '{}' },
   { name: 'glass', desc: '磨砂玻璃质感；缺省跟随全局（EbConfigProvider 的 glass）', type: 'boolean', default: '—' },
 ]" />

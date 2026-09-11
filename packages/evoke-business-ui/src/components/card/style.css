@@ -14,20 +14,14 @@
   overflow: hidden;
   color: var(--eb-text-color-primary);
   transition:
-    transform var(--eb-duration-base) var(--eb-ease-out),
     border-color var(--eb-duration-base) var(--eb-ease-out),
     box-shadow var(--eb-duration-base) var(--eb-ease-out);
 }
-/* 悬浮动效仅在 hoverable 时执行（hoverable=false 完全静态）；
-   边框交互态走中性加深（border-color-hover），不用强调色 */
+/* 悬浮反馈仅边框微深 + 投影，默认不带位移动效（需要浮起/缩放等由使用方自行叠加）；
+   深度取 border-color-dark，轻于交互态的 border-color-hover */
 .eb-card.eb-card.is-hoverable:hover {
-  transform: translateY(-2px);
-  border-color: var(--eb-border-color-hover);
+  border-color: var(--eb-border-color-dark);
   box-shadow: var(--eb-card-shadow-hover);
-}
-.eb-card.eb-card.is-hoverable:active {
-  transform: scale(0.99);
-  border-color: var(--eb-border-color-hover);
 }
 
 .eb-card.eb-card .eb-card__header {
