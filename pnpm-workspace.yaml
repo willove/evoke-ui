@@ -2,6 +2,7 @@ packages:
   - 'packages/*'
   - 'docs'
   - 'docs-web'
+  - 'docs-charts'
   - 'examples/*'
 allowBuilds:
   esbuild: true

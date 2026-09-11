@@ -1,0 +1,78 @@
+# API 参考
+
+EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章节。
+
+## Chart Props
+
+<ApiTable title="Chart Props" :rows="[
+  { name: 'options', desc: '图表配置，声明式驱动（见下方 Options 字段）', type: 'object', default: '—' },
+  { name: 'width / height', desc: '画布尺寸，数字按 px，height 支持任意 CSS 值', type: 'string | number', default: '100% / 400' },
+  { name: 'responsive', desc: '跟随容器尺寸自适应重绘', type: 'boolean', default: 'true' },
+  { name: 'devicePixelRatio', desc: '渲染倍率（缺省取设备实际值，高清屏自动适配）', type: 'number', default: '—' },
+]" />
+
+## Options 通用字段
+
+所有类型共用；数据字段按图表类型二选一（见下一节）。
+
+<ApiTable title="Options 通用字段" :rows="[
+  { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed', type: 'string', default: '—' },
+  { name: 'title / subtitle', desc: '主标题 / 副标题', type: 'string', default: '—' },
+  { name: 'labels', desc: 'x 轴类目数组，直角系与 sparkline / waterfall / mixed 的数据基线', type: 'array', default: '[]' },
+  { name: 'series', desc: '系列数组，每项 { name, data, color? }，data 与 labels 对齐', type: 'array', default: '[]' },
+  { name: 'legend', desc: '图例：{ show, position（top / bottom）, interactive, hoverEmphasis }', type: 'object', default: '{ show: true }' },
+  { name: 'tooltip', desc: '提示框：{ show, trigger（hover / click）, showAllSeries, formatter }', type: 'object', default: '—' },
+  { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing }', type: 'object', default: '—' },
+  { name: 'valueFormat', desc: '数值格式：{ decimals, thousandSeparator, prefix, suffix, abbreviate }（abbreviate 开启后按 万 / 亿 / K 缩写）', type: 'object', default: '—' },
+  { name: 'xAxis / yAxis', desc: '轴配置：{ min, max, ticks, grid: { show, style: dashed } }', type: 'object', default: '—' },
+  { name: 'dataZoom', desc: '缩放：{ enabled, start, end, position（bottom / top）, height, mouseWheel }', type: 'object', default: '—' },
+  { name: 'toolbox', desc: '工具按钮：{ show, filename }（导出 PNG / 恢复复位）', type: 'object', default: '—' },
+  { name: 'theme', desc: '主题覆盖（colors、textColor 等），暗色模式自动切换', type: 'object', default: '—' },
+  { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
+  { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
+]" />
+
+## Options 按类型数据字段
+
+<ApiTable title="Options 按类型数据字段" :rows="[
+  { name: 'pieData', desc: 'pie / doughnut / rose 数据源', type: '{ name, value }[]', default: '—' },
+  { name: 'scatterData', desc: 'scatter 散点', type: '{ x, y, label?, color? }[]', default: '—' },
+  { name: 'funnelData', desc: 'funnel 漏斗', type: '{ label, value }[]', default: '—' },
+  { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle }', type: 'object', default: '—' },
+  { name: 'radarIndicators', desc: 'radar 维度：{ name, max, min? }', type: 'array', default: '—' },
+  { name: 'radarSeries', desc: 'radar 系列：{ name, data, color?, area? }', type: 'array', default: '—' },
+  { name: 'heatmapData', desc: 'heatmap 热力格', type: '{ x, y, value }[]', default: '—' },
+  { name: 'candleData', desc: 'candle K 线', type: '{ label, open, close, high, low }[]', default: '—' },
+  { name: 'boxData', desc: 'boxplot 箱线', type: '{ label, min, q1, median, q3, max }[]', default: '—' },
+  { name: 'treemapData / sunburstData', desc: '矩形树图 / 旭日图的层级数据', type: '{ name, value?, children? }[]', default: '—' },
+  { name: 'bulletData', desc: 'bullet 子弹图', type: '{ name, value, target? }[]', default: '—' },
+]" />
+
+## Chart Events
+
+<ApiTable title="Chart Events" :rows="[
+  { name: 'ready', desc: '首次渲染完成', type: '() => void', default: '—' },
+  { name: 'click', desc: '点击图形元素（可做钻取）', type: '(e: { seriesName, name, value, color, dataIndex, seriesIndex }) => void', default: '—' },
+  { name: 'legend-click', desc: '点击图例切换显隐', type: '(name: string, hidden: boolean) => void', default: '—' },
+  { name: 'hover / unhover', desc: '悬浮进入 / 离开图形元素', type: '(e) => void', default: '—' },
+  { name: 'animation-end / data-update', desc: '动画结束 / 数据补间更新完成', type: '() => void', default: '—' },
+  { name: 'zoom', desc: 'dataZoom 范围变化', type: '(e: { start, end }) => void', default: '—' },
+  { name: 'brush-select', desc: '框选完成', type: '(e: { startIndex, endIndex }) => void', default: '—' },
+]" />
+
+## Chart Methods
+
+通过组件 ref 调用。
+
+<ApiTable title="Chart Methods" :rows="[
+  { name: 'update', desc: '增量合并配置并重绘（同结构数据自动补间）', type: '(newOptions) => void', default: '—' },
+  { name: 'refresh / resize', desc: '强制重绘（含入场动画）/ 手动触发尺寸更新', type: '() => void', default: '—' },
+  { name: 'toDataURL', desc: '导出画布图片', type: '(type?, quality?) => string', default: '—' },
+  { name: 'exportSVG', desc: '导出真 SVG（指令重放，非 PNG 嵌入）', type: '(options?) => string', default: '—' },
+  { name: 'toggleSeries / getHiddenSeries', desc: '切换系列显隐 / 获取隐藏系列', type: '(name) => void / () => string[]', default: '—' },
+  { name: 'highlightSeries / clearHighlight', desc: '高亮某系列 / 清除高亮', type: '(name) => void / () => void', default: '—' },
+  { name: 'setDataZoomRange / getDataZoomRange', desc: '设置 / 获取缩放范围', type: '(start, end) => void / () => { start, end }', default: '—' },
+  { name: 'getDataExtent / getPlotArea', desc: '获取数据极值 / 实际绘图区域', type: '() => object', default: '—' },
+  { name: 'setTheme / getOption', desc: '运行时切换主题 / 获取当前配置', type: '(theme) => void / () => object', default: '—' },
+  { name: 'getCanvas / destroy', desc: '获取 canvas 元素 / 销毁实例与监听', type: '() => HTMLCanvasElement / () => void', default: '—' },
+]" />

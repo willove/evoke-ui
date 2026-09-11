@@ -2,7 +2,7 @@
 
 `@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
 
-**在线文档**：[evoke-business-ui.wil-works.com/chart](https://evoke-business-ui.wil-works.com/chart/) — 收录在 Evoke Business UI 文档站的图表分区，含全部图表类型、完整配置项与在线示例。
+**在线文档**：[evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) — 全部图表类型、完整配置项与在线示例。
 
 ## 特性
 
@@ -75,7 +75,7 @@ const options = {
 
 ## 组件 API（摘要）
 
-以下为常用项摘要，各图表类型的独立文档页与完整配置项见[在线文档图表分区](https://evoke-business-ui.wil-works.com/chart/)。
+以下为常用项摘要，各图表类型的独立文档页与完整配置项见[在线文档](https://evoke-charts.wil-works.com/chart)。
 
 ### Props
 
