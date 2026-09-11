@@ -1,6 +1,6 @@
 # 组件总览
 
-Evoke UI 共内置 **48 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
+Evoke UI 共内置 **57 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
 反馈与主题、移动端专属。每个组件卡片右上角带**平台兼容标识**：
 
 <span class="ov-legend"><ew-icon name="desktop" :size="13" /><ew-icon name="smartphone" :size="13" /> 双端兼容</span>
@@ -54,7 +54,9 @@ const groups = [
       { name: 'Faq', cn: '手风琴', desc: '平滑展开的常见问题', path: '/components/faq', platform: 'desktop' },
       { name: 'Quote', cn: '评价', desc: '引号装饰的用户评价', path: '/components/quote', platform: 'both' },
       { name: 'ArticleCard', cn: '文章卡', desc: '封面 + 摘要的博客条目', path: '/components/article-card', platform: 'desktop' },
+      { name: 'Article', cn: '文章内容', desc: '页头 + 阅读排版正文的内容骨架', path: '/components/article', platform: 'desktop' },
       { name: 'ProfileCard', cn: '个人名片', desc: '团队墙与自我介绍位', path: '/components/profile-card', platform: 'desktop' },
+      { name: 'ExecCard', cn: '高管介绍卡', desc: '人物图走出卡片的团队介绍卡', path: '/components/exec-card', platform: 'desktop' },
       { name: 'Timeline', cn: '时间线', desc: '更新日志与里程碑', path: '/components/timeline', platform: 'both' },
       { name: 'Cta', cn: '行动召唤', desc: '页面收尾的转化区', path: '/components/cta', platform: 'desktop' },
       { name: 'Newsletter', cn: '订阅', desc: '一体式邮箱订阅框', path: '/components/newsletter', platform: 'desktop' },
@@ -67,7 +69,12 @@ const groups = [
       { name: 'Video', cn: '视频', desc: '固定画幅承载视频与 iframe', path: '/components/video', platform: 'desktop' },
       { name: 'Audio', cn: '音频', desc: '胶囊卡片式播放器', path: '/components/audio', platform: 'desktop' },
       { name: 'Carousel', cn: '轮播', desc: '自动轮播，hover 暂停', path: '/components/carousel', platform: 'desktop' },
+      { name: 'ImageWall', cn: '图片墙', desc: '均匀网格图片墙，点击打开灯箱', path: '/components/image-wall', platform: 'both' },
+      { name: 'Waterfall', cn: '瀑布流', desc: '最短列优先的多列瀑布流，比例自适应', path: '/components/waterfall', platform: 'both' },
+      { name: 'ImagePreview', cn: '图片预览', desc: '全屏灯箱，键盘切换与滚动锁定', path: '/components/image-preview', platform: 'both' },
+      { name: 'Modal', cn: '弹出层', desc: '居中对话框，尺寸与底部动作可配', path: '/components/modal', platform: 'both' },
       { name: 'Marquee', cn: '跑马灯', desc: '无限循环的大字横幅', path: '/components/marquee', platform: 'desktop' },
+      { name: 'BorderBeam', cn: '边框流光', desc: '沿边框循环扫过的流光描边', path: '/components/border-beam', platform: 'both' },
       { name: 'ContactForm', cn: '留言表单', desc: '联系我们三字段表单', path: '/components/contact-form', platform: 'desktop' },
     ],
   },
@@ -75,6 +82,8 @@ const groups = [
     name: '反馈与主题',
     items: [
       { name: 'CodeBlock', cn: '命令块', desc: '深色终端形态，一键复制', path: '/components/code-block', platform: 'desktop' },
+      { name: 'Markdown', cn: 'Markdown 渲染', desc: '零依赖 Markdown 渲染与高亮', path: '/components/markdown', platform: 'desktop' },
+      { name: 'MarkdownEditor', cn: 'Markdown 编辑器', desc: '工具栏 + 编辑预览双栏', path: '/components/markdown-editor', platform: 'desktop' },
       { name: 'ThemeToggle', cn: '主题切换', desc: '明暗切换按钮', path: '/components/theme-toggle', platform: 'both' },
       { name: 'ConfigProvider', cn: '主题配置', desc: '运行时换色/圆角/间距/容器宽', path: '/components/config-provider', platform: 'both' },
     ],

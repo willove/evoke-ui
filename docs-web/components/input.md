@@ -2,8 +2,6 @@
 
 `EwInput` 是前台内容提交的基础件：评论昵称、搜索词、邮箱订阅、资料填写都从这里出发。
 支持前缀图标、一键清空、错误态与三档尺寸；`type` 直接透传（email / search / password…）。
-聚焦时边框会向外扩散两圈波纹（textarea / select / search-box 同样生效）；
-全局关闭：`<html data-ew-ripple="off">`，`prefers-reduced-motion` 下自动停用。
 
 ## 基础用法
 

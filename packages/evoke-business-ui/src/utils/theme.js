@@ -29,6 +29,8 @@ const RAMP_LIGHT_STEPS = [
 const RAMP_DARK_STEPS = [['dark-2', 0.2]]
 
 const THEME_CHANGE_EVENT = 'ev-theme-change'
+// 外接图表库监听的令牌变更事件（--ec-* 命名空间），换色时一并派发
+const CHART_THEME_CHANGE_EVENT = 'ec-theme-change'
 export const THEME_STORAGE_KEY = 'ev-theme-config'
 
 function isDarkMode() {
@@ -100,6 +102,9 @@ function dispatchThemeChange(dark) {
   // 派发在 documentElement 上并冒泡：兼容监听 documentElement 与 document 的两方（图表）
   document.documentElement.dispatchEvent(
     new CustomEvent(THEME_CHANGE_EVENT, { bubbles: true, detail: { dark } }),
+  )
+  document.documentElement.dispatchEvent(
+    new CustomEvent(CHART_THEME_CHANGE_EVENT, { bubbles: true, detail: { dark } }),
   )
 }
 

@@ -13,7 +13,7 @@
 专属数据字段 `scatterData`（`{ x, y, label?, color? }`），不依赖 `labels` 类目基线。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'scatter',
       title: '广告投入与转化关系',

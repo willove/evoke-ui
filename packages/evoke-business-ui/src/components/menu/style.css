@@ -39,7 +39,8 @@
   text-overflow: ellipsis;
   transition: color var(--ev-duration-fast) var(--ev-ease-out),
     background-color var(--ev-duration-fast) var(--ev-ease-out),
-    border-color var(--ev-duration-fast) var(--ev-ease-out);
+    border-color var(--ev-duration-fast) var(--ev-ease-out),
+    padding var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ev-menu.ev-menu .ev-menu-item:hover,
@@ -114,11 +115,31 @@
 /* ── 折叠 ── */
 .ev-menu.ev-menu.ev-menu--collapse {
   width: 64px;
+  /* 宿主容器因边框等原因略窄于 64px 时不产生横向溢出（避免自绘横向滚动条） */
+  max-width: 100%;
 }
 .ev-menu.ev-menu.ev-menu--collapse > .ev-menu-item,
 .ev-menu.ev-menu.ev-menu--collapse > .ev-sub-menu > .ev-sub-menu__title {
   justify-content: center;
   padding: 0;
+}
+/* 折叠/展开时文字随容器宽度淡出收拢、淡入展开，只留图标（弹层菜单由 submenu 自行浮出） */
+.ev-menu.ev-menu .ev-menu-item > span,
+.ev-menu.ev-menu .ev-sub-menu__title > span {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    opacity var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
+    max-width var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
+    margin-left var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ev-menu.ev-menu.ev-menu--collapse > .ev-menu-item > span,
+.ev-menu.ev-menu.ev-menu--collapse > .ev-sub-menu > .ev-sub-menu__title > span {
+  opacity: 0;
+  max-width: 0;
+  /* 抵消菜单项 gap，保证折叠态图标完全居中 */
+  margin-left: calc(var(--ev-space-2) * -1);
 }
 .ev-menu.ev-menu.ev-menu--collapse .ev-sub-menu__icon-arrow {
   display: none;

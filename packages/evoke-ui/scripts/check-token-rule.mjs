@@ -8,18 +8,23 @@
  *   3. package.json 禁止声明上述相关依赖
  *   4. var(--ew-xxx) 不带 fallback 时，--ew-xxx 必须在库内某处有定义
  *
+ * 范围：src/ + test/
+ *
  * 用法: node scripts/check-token-rule.mjs （已挂入 build，违规即构建失败）
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join, extname, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const SRC = resolve(__dirname, '../src')
+const ROOTS = [
+  resolve(__dirname, '../src'),
+  resolve(__dirname, '../test'),
+].filter((p) => existsSync(p))
 const PKG = resolve(__dirname, '../package.json')
 
 const EXTS = new Set(['.vue', '.js', '.mjs', '.ts', '.css', '.scss'])
-const SKIP_DIRS = new Set(['node_modules', 'dist'])
+const SKIP_DIRS = new Set(['node_modules', 'dist', 'coverage'])
 
 function walk(dir) {
   const out = []
@@ -35,12 +40,13 @@ function walk(dir) {
 
 const violations = []
 
-for (const file of walk(SRC)) {
+const files = ROOTS.flatMap(walk)
+for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n')
   lines.forEach((line, i) => {
     if (/--el-/.test(line)) violations.push(`${file}:${i + 1}  出现 --el-* 令牌（应使用 --ew-*）: ${line.trim().slice(0, 100)}`)
     if (/--ev-/.test(line)) violations.push(`${file}:${i + 1}  出现 --ev-* 令牌（应使用 --ew-*）: ${line.trim().slice(0, 100)}`)
-    if (/\bel-[a-z]{2,}(-|__)/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
+    if (/\bel-[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
     if (/evoke-business-ui/i.test(line)) violations.push(`${file}:${i + 1}  出现 evoke-business-ui 引用（两库完全隔离）: ${line.trim().slice(0, 100)}`)
   })
 }
@@ -59,7 +65,6 @@ for (const key of depKeys) {
 // var(--ew-xxx) 不带 fallback 时，--ew-xxx 必须在库内某处有定义
 // （CSS 声明 / JS style 绑定对象键 / 模板内联样式均算定义点）
 {
-  const files = walk(SRC)
   const defined = new Set()
   const usedNoFallback = []
   for (const file of files) {

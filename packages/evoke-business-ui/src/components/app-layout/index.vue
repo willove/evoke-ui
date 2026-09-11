@@ -21,18 +21,11 @@
       </ev-scrollbar>
 
       <div class="ev-layout__sidebar-footer">
-        <slot name="theme-toggle">
-          <div v-show="!isCollapsed" class="ev-layout__theme-toggle">
-            <span class="ev-layout__toggle-label">
-              <ev-icon :name="isDark ? 'moon' : 'sunny'" :size="14" />
-              {{ isDark ? '深色' : '浅色' }}
-            </span>
-            <ev-switch :model-value="isDark" :inline-prompt="true" size="small" @change="toggle" />
-          </div>
-        </slot>
         <button type="button" class="ev-layout__collapse-btn" @click="toggleCollapse">
           <ev-icon :name="isCollapsed ? 'expand' : 'fold'" :size="18" />
-          <span v-show="!isCollapsed">收起</span>
+          <transition name="ev-layout__label-fade">
+            <span v-show="!isCollapsed">收起</span>
+          </transition>
         </button>
       </div>
     </aside>
@@ -51,6 +44,17 @@
           </slot>
         </div>
         <div class="ev-layout__topbar-right">
+          <slot name="theme-toggle">
+            <button
+              type="button"
+              class="ev-layout__theme-btn"
+              :title="isDark ? '切换为浅色模式' : '切换为深色模式'"
+              :aria-label="isDark ? '切换为浅色模式' : '切换为深色模式'"
+              @click="toggle"
+            >
+              <ev-icon :name="isDark ? 'sunny' : 'moon'" :size="18" />
+            </button>
+          </slot>
           <slot name="topbar-right" />
         </div>
       </header>
@@ -65,15 +69,15 @@
 <script setup>
 /**
  * EvAppLayout — 应用壳布局
- * 侧边栏（logo/菜单/主题切换/折叠）+ 顶栏（移动端菜单钮/面包屑）+ 内容区；
- * 内部由本库的 EvScrollbar / EvMenu / EvSwitch / EvBreadcrumb / EvIcon 组合而成。
+ * 侧边栏（logo/菜单/折叠）+ 顶栏（移动端菜单钮/面包屑/主题切换）+ 内容区；
+ * 主题切换默认渲染在顶栏右侧（theme-toggle 插槽可整体覆盖），避免收起展开时侧栏底部抖动。
+ * 内部由本库的 EvScrollbar / EvMenu / EvIcon / EvBreadcrumb 组合而成。
  * 菜单 router 模式依赖外部 provide('router')（vue-router 注入）。
  */
 import { ref, computed } from 'vue'
 import EvIcon from '../icon/index.vue'
 import EvScrollbar from '../scrollbar/index.vue'
 import EvMenu from '../menu/index.vue'
-import EvSwitch from '../switch-comp/index.vue'
 import EvBreadcrumb from '../breadcrumb/index.vue'
 
 const props = defineProps({

@@ -13,7 +13,7 @@
 把 `type` 从 `pie` 换成 `doughnut`，其余配置完全一致。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'doughnut',
       title: '渠道分布',

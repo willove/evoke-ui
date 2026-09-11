@@ -24,7 +24,7 @@
     <div class="ew-code-block__body">
       <span v-if="prefix" class="ew-code-block__prefix">{{ prefix }}</span>
       <code class="ew-code-block__code">
-        <slot>{{ code }}</slot>
+        <slot><span v-html="rendered" /></slot>
       </code>
     </div>
   </div>
@@ -33,15 +33,21 @@
 <script setup>
 /**
  * EwCodeBlock — 命令/代码块（macOS 窗框式终端语言）
- * 红绿灯标题栏 + 提示符前缀 + 一键复制（成功打勾反馈）；
+ * 窗口控制点标题栏 + 提示符前缀 + 一键复制（成功打勾反馈）；
+ * 代码内容经内置零依赖高亮（highlight.js 模块）渲染 token 配色，
+ * 默认插槽可整体覆写渲染内容。
  * 颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随
  */
+import { computed } from 'vue'
 import EwIcon from '../icon/index.vue'
 import { useCopy } from '../../composables/useCopy'
+import { highlightCode } from './highlight'
 
-defineProps({
-  /** 代码/命令文案（亦可用默认插槽承载高亮内容） */
+const props = defineProps({
+  /** 代码/命令文案（亦可用默认插槽承载自定义渲染内容） */
   code: { type: String, default: '' },
+  /** 语法高亮语言：'auto'（按内容识别）| 'shell' | 'js' | 'json' */
+  language: { type: String, default: 'auto' },
   /** 提示符前缀（如 $） */
   prefix: { type: String, default: '' },
   title: { type: String, default: '' },
@@ -53,6 +59,9 @@ defineProps({
 
 const emit = defineEmits(['copy'])
 const { copy, copied } = useCopy(2000)
+
+// highlightCode 对原文全量转义后仅注入自有 token span，v-html 渲染安全
+const rendered = computed(() => highlightCode(props.code, props.language))
 
 async function onCopy(e) {
   const root = e.currentTarget.closest('.ew-code-block')

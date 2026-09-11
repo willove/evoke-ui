@@ -30,8 +30,11 @@ const ADDED_WHITELIST = new Set([
   'EvPullRefresh', 'EvLoadMore', 'EvActionSheet', 'EvTabbar', 'EvTabbarItem', 'EvNavBar',
 ])
 
-/** 已知排除项：暂缺组件在此登记，补齐后移除；当前已全量覆盖，白名单为空 */
-const PENDING_WHITELIST = new Set([])
+/** 已知排除项：暂缺组件在此登记，补齐后移除 */
+const PENDING_WHITELIST = new Set([
+  // 图表组件已拆分为独立包 @wil-works/evoke-charts（EcChart），本库不再提供、不会补回
+  'EvChart',
+])
 
 function extractRegistry(source, marker) {
   // 提取 `const components = { EvButton, EvCard, ... }` 注册表名列表

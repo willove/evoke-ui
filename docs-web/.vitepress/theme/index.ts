@@ -21,6 +21,8 @@ import EwPricingCard from '../../../packages/evoke-ui/src/components/pricing-car
 import EwFaq from '../../../packages/evoke-ui/src/components/faq/index.vue'
 import EwAlert from '../../../packages/evoke-ui/src/components/alert/index.vue'
 import EwCodeBlock from '../../../packages/evoke-ui/src/components/code-block/index.vue'
+import EwMarkdown from '../../../packages/evoke-ui/src/components/markdown/index.vue'
+import EwMarkdownEditor from '../../../packages/evoke-ui/src/components/markdown-editor/index.vue'
 import EwStatistic from '../../../packages/evoke-ui/src/components/statistic/index.vue'
 import EwThemeToggle from '../../../packages/evoke-ui/src/components/theme-toggle/index.vue'
 import EwQuote from '../../../packages/evoke-ui/src/components/quote/index.vue'
@@ -47,6 +49,7 @@ import EwExecCard from '../../../packages/evoke-ui/src/components/exec-card/inde
 import EwArticle from '../../../packages/evoke-ui/src/components/article/index.vue'
 import EwImageWall from '../../../packages/evoke-ui/src/components/image-wall/index.vue'
 import EwImagePreview from '../../../packages/evoke-ui/src/components/image-preview/index.vue'
+import EwWaterfall from '../../../packages/evoke-ui/src/components/waterfall/index.vue'
 import EwModal from '../../../packages/evoke-ui/src/components/modal/index.vue'
 import EwInput from '../../../packages/evoke-ui/src/components/input/index.vue'
 import EwTextarea from '../../../packages/evoke-ui/src/components/textarea/index.vue'
@@ -78,10 +81,11 @@ export default {
       EwSection, EwCard, EwHero, EwNavbar, EwFooter,
       EwSearchBox, EwIconGrid, EwFeatureGrid, EwPricingCard,
       EwFaq, EwAlert, EwCodeBlock, EwStatistic, EwThemeToggle, EwQuote,
+      EwMarkdown, EwMarkdownEditor,
       EwConfigProvider, EwTabs, EwSwitch, EwContainer, EwAvatar, EwAvatarGroup,
       EwTimeline, EwComparisonTable, EwCta, EwNewsletter, EwLogoCloud,
       EwVideo, EwAudio, EwContactForm, EwCarousel, EwArticleCard, EwProfileCard,
-      EwBorderBeam, EwExecCard, EwArticle, EwImageWall, EwImagePreview, EwModal,
+      EwBorderBeam, EwExecCard, EwArticle, EwImageWall, EwImagePreview, EwWaterfall, EwModal,
       EwMarquee, EwInput, EwTextarea, EwSelect, EwField,
       EwPullRefresh, EwLoadMore, EwActionSheet, EwTabbar, EwTabbarItem, EwNavBar,
       DemoBlock, MobileStage,

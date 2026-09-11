@@ -130,7 +130,6 @@ import EvCarousel from './components/carousel/index.vue'
 import EvCarouselItem from './components/carousel/item.vue'
 import EvCascaderPanel from './components/cascader-panel/index.vue'
 import EvCommandPalette from './components/command-palette/index.vue'
-import EvChart from './components/chart/index.vue'
 // Chatbot 家族
 import EvChatbot from './components/chatbot/Chatbot.vue'
 import EvChatList from './components/chatbot/ChatList.vue'
@@ -367,7 +366,6 @@ const components = {
   EvCarouselItem,
   EvCascaderPanel,
   EvCommandPalette,
-  EvChart,
   EvChatbot,
   EvChatList,
   EvChatMessage,
@@ -569,8 +567,6 @@ export {
   EvCascaderPanel,
   // 命令面板
   EvCommandPalette,
-  // 图表
-  EvChart,
   // Chatbot 家族
   EvChatbot,
   EvChatList,

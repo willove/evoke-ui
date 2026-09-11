@@ -58,7 +58,9 @@ const searchIndex = [
   { cat: '组件', label: 'Faq 手风琴', path: '/components/faq', kw: '常见问题 faq 手风琴 问答 折叠 疑问' },
   { cat: '组件', label: 'Quote 评价', path: '/components/quote', kw: '评价 quote 引言 用户说 口碑' },
   { cat: '组件', label: 'ArticleCard 文章卡', path: '/components/article-card', kw: '文章 blog 博客 列表 卡片' },
+  { cat: '组件', label: 'Article 文章内容', path: '/components/article', kw: '文章 内容 正文 长文 阅读 article' },
   { cat: '组件', label: 'ProfileCard 个人名片', path: '/components/profile-card', kw: '个人 名片 团队 介绍 profile 成员' },
+  { cat: '组件', label: 'ExecCard 高管介绍卡', path: '/components/exec-card', kw: '高管 团队 管理 介绍 人物 executive' },
   { cat: '组件', label: 'Timeline 时间线', path: '/components/timeline', kw: '时间线 timeline 更新日志 里程碑 版本' },
   { cat: '组件', label: 'Cta 行动召唤', path: '/components/cta', kw: 'cta 行动召唤 转化 收尾 按钮' },
   { cat: '组件', label: 'Newsletter 订阅', path: '/components/newsletter', kw: '订阅 newsletter 邮件 订阅框' },
@@ -66,9 +68,16 @@ const searchIndex = [
   { cat: '组件', label: 'Video 视频', path: '/components/video', kw: '视频 video 播放 画幅' },
   { cat: '组件', label: 'Audio 音频', path: '/components/audio', kw: '音频 audio 播客 播放 音乐' },
   { cat: '组件', label: 'Carousel 轮播', path: '/components/carousel', kw: '轮播 carousel 幻灯 滑动 自动' },
+  { cat: '组件', label: 'ImageWall 图片墙', path: '/components/image-wall', kw: '图片墙 图集 网格 相册 wall 灯箱' },
+  { cat: '组件', label: 'Waterfall 瀑布流', path: '/components/waterfall', kw: '瀑布流 waterfall 错落 多列 图片流 砌砖' },
+  { cat: '组件', label: 'ImagePreview 图片预览', path: '/components/image-preview', kw: '图片预览 灯箱 lightbox 放大 全屏 预览' },
+  { cat: '组件', label: 'Modal 弹出层', path: '/components/modal', kw: '弹窗 对话框 模态 dialog modal 弹出层' },
   { cat: '组件', label: 'Marquee 跑马灯', path: '/components/marquee', kw: '跑马灯 marquee 滚动 横幅 无限 循环' },
+  { cat: '组件', label: 'BorderBeam 边框流光', path: '/components/border-beam', kw: '边框 流光 光边 描边 动效 beam' },
   { cat: '组件', label: 'ContactForm 留言表单', path: '/components/contact-form', kw: '留言 表单 联系 contact 合作' },
   { cat: '组件', label: 'CodeBlock 命令块', path: '/components/code-block', kw: '命令 code 终端 复制 安装 代码' },
+  { cat: '组件', label: 'Markdown 渲染', path: '/components/markdown', kw: 'markdown md 渲染 文档 富文本 高亮' },
+  { cat: '组件', label: 'MarkdownEditor 编辑器', path: '/components/markdown-editor', kw: 'markdown 编辑器 editor 写作 预览 工具栏' },
   { cat: '组件', label: 'ThemeToggle 主题切换', path: '/components/theme-toggle', kw: '主题 切换 暗色 dark 明暗' },
   { cat: '组件', label: 'ConfigProvider 主题配置', path: '/components/config-provider', kw: '配置 主题 provider 换肤 全局 换色' },
   { cat: '案例', label: '案例总览', path: '/cases/', kw: '案例 场景 模板 整页 示例 examples 全部' },
@@ -228,7 +237,7 @@ function goSearch() {
     </div>
   </EwSection>
 
-  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，49 个组件基本都齐了。" align="center">
+  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，57 个组件基本都齐了。" align="center">
     <EwFeatureGrid
       variant="cards"
       :columns="3"

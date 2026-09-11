@@ -7,19 +7,25 @@
  *   2. 源码禁止第三方类名/组件名前缀（el-* / El*，import / 字符串 / 注释均不允许）
  *   3. package.json 运行时依赖白名单制，禁止引入第三方组件库
  *
+ * 范围：src/ + test/ + 示例工程（examples/，历史曾在示例页漏网 el-* 类名）
+ *
  * 用法: node scripts/check-token-rule.mjs （已挂入 build，违规即构建失败）
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join, extname } from 'node:path'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const SRC = resolve(__dirname, '../src')
+const ROOTS = [
+  resolve(__dirname, '../src'),
+  resolve(__dirname, '../test'),
+  resolve(__dirname, '../../examples'),
+].filter((p) => existsSync(p))
 const PKG = resolve(__dirname, '../package.json')
 
 const EXTS = new Set(['.vue', '.js', '.mjs', '.ts', '.css', '.scss'])
-const SKIP_DIRS = new Set(['node_modules', 'dist'])
+const SKIP_DIRS = new Set(['node_modules', 'dist', 'coverage'])
 
 function walk(dir) {
   const out = []
@@ -35,11 +41,12 @@ function walk(dir) {
 
 const violations = []
 
-for (const file of walk(SRC)) {
+const files = ROOTS.flatMap(walk)
+for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n')
   lines.forEach((line, i) => {
     if (/--el-/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 --el-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
-    if (/\bel-[a-z]{2,}(-|__)/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
+    if (/\bel-[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
     if (/\bEl[A-Z]/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 El* 组件命名: ${line.trim().slice(0, 100)}`)
   })
 }
@@ -56,7 +63,6 @@ for (const key of depKeys) {
 // var(--ev-xxx) 不带 fallback 时，--ev-xxx 必须在库内某处有定义
 // （CSS 声明 / JS style 绑定对象键 / 模板内联样式均算定义点）
 {
-  const files = walk(SRC)
   const defined = new Set()
   const usedNoFallback = []
   for (const file of files) {

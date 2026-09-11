@@ -1,7 +1,7 @@
 {
   "name": "@wil-works/evoke-business-ui",
   "version": "0.2.0",
-  "description": "Evoke Business UI — 纯 JS Vue3 中后台组件库，内置 Remix Icon 图标体系与 Canvas 图表",
+  "description": "Evoke Business UI — 纯 JS Vue3 中后台组件库，内置 Remix Icon 图标体系（图表能力由 @wil-works/evoke-charts 提供）",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

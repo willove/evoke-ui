@@ -1,11 +1,12 @@
 # Evoke UI Monorepo
 
-同一设计血统的两个 Vue 3 组件库：**Evoke UI** 面向官网与营销页，**Evoke Business UI** 面向中后台管理系统。均基于纯 JS 实现、设计令牌驱动、MIT 开源。
+同一设计血统的三个 Vue 3 库：**Evoke UI** 面向官网与营销页，**Evoke Business UI** 面向中后台管理系统，**Evoke Charts** 是零依赖 Canvas 自绘图表库（与 business-ui 样式打通主题适配）。均基于纯 JS 实现、设计令牌驱动、MIT 开源。
 
 | 包 | 定位 | 文档站 | npm |
 |----|------|--------|-----|
 | [@wil-works/evoke-ui](packages/evoke-ui) | 官网 / 营销页 / 纯前端站点组件库，Clean Navy 设计语言 | [evoke-ui.wil-works.com](https://evoke-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-ui) |
-| [@wil-works/evoke-business-ui](packages/evoke-business-ui) | 中后台管理组件库：150+ 通用组件、8 个业务场景组件、20+ 种 Canvas 自绘图表 | [evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) |
+| [@wil-works/evoke-business-ui](packages/evoke-business-ui) | 中后台管理组件库：150+ 通用组件、8 个业务场景组件 | [evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) |
+| [@wil-works/evoke-charts](packages/evoke-charts) | 零依赖 Canvas 自绘图表库：20+ 种图表类型，主题令牌驱动 | [evoke-business-ui.wil-works.com/chart/](https://evoke-business-ui.wil-works.com/chart/) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-charts.svg)](https://www.npmjs.com/package/@wil-works/evoke-charts) |
 
 ---
 

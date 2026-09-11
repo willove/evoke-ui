@@ -12,7 +12,7 @@
 沿用 `labels` + `series` 数据模型（`type: 'waterfall'`），数据按流程顺序给出，正负值自动决定增减着色与悬浮位置。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'waterfall',
       title: '年度预算增减',

@@ -54,6 +54,15 @@ const MAPPING = {
   quote: ['Editor', 'double-quotes-l'],
   mail: ['Business', 'mail-line'],
   link: ['Editor', 'link'],
+  // ─── Markdown 编辑器工具栏 ───
+  bold: ['Editor', 'bold'],
+  italic: ['Editor', 'italic'],
+  strikethrough: ['Editor', 'strikethrough'],
+  heading: ['Editor', 'heading'],
+  'list-unordered': ['Editor', 'list-unordered'],
+  'list-ordered': ['Editor', 'list-ordered'],
+  code: ['Development', 'code-line'],
+  markdown: ['Document', 'markdown-fill'],
   // ─── 主题 ───
   sun: ['Weather', 'sun-line'],
   moon: ['Weather', 'moon-line'],

@@ -55,6 +55,7 @@
  */
 import { computed, watch, onBeforeUnmount } from 'vue'
 import EwIcon from '../icon/index.vue'
+import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLock'
 
 const props = defineProps({
   /** 可见性（v-model） */
@@ -102,18 +103,18 @@ watch(() => props.modelValue, (visible) => {
   if (typeof document === 'undefined') return
   if (visible) {
     document.addEventListener('keydown', onKeydown)
-    document.body.style.overflow = 'hidden'
+    lockBodyScroll()
     emit('open')
   } else {
     document.removeEventListener('keydown', onKeydown)
-    document.body.style.overflow = ''
+    unlockBodyScroll()
   }
 })
 
 onBeforeUnmount(() => {
   if (typeof document === 'undefined') return
   document.removeEventListener('keydown', onKeydown)
-  document.body.style.overflow = ''
+  unlockBodyScroll()
 })
 </script>
 

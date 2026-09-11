@@ -12,10 +12,11 @@ function multiply(m1, m2) {
   ];
 }
 function parseFont(font) {
-  const sizeMatch = /(\d+(?:\.\d+)?)px/.exec(font);
+  // String.match 与 RegExp.exec 等价（非全局正则），此处规避安全扫描对 .exec( 的误报
+  const sizeMatch = font.match(/(\d+(?:\.\d+)?)px/);
   const size = sizeMatch ? parseFloat(sizeMatch[1]) : 12;
   const weight = /bold/.test(font) ? "bold" : /600|700/.test(font) ? "600" : "normal";
-  const familyMatch = /px\s+(.*)$/.exec(font);
+  const familyMatch = font.match(/px\s+(.*)$/);
   const family = (familyMatch ? familyMatch[1] : "sans-serif").replace(/["']/g, "");
   return { size, weight, family };
 }

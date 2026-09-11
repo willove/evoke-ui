@@ -1,6 +1,6 @@
 /**
  * 移动组件四件套 — EwPullRefresh / EwLoadMore / EwActionSheet / EwTabbar
- * 与 evoke-business-ui 的 ev- 版本同 API（移动范式跨库一致，降低接入成本）
+ * 与 B 端库的 ev- 版本同 API（移动范式跨库一致，降低接入成本）
  */
 import { mount, defineComponent, h, ref, nextTick, describe, it, expect } from './helpers.js'
 import EwPullRefresh from '../src/components/pull-refresh/index.vue'

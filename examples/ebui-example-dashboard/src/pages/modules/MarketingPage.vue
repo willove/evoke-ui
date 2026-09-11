@@ -85,11 +85,12 @@ function finish(row) {
 .mk-block {
   margin-top: 16px;
 }
-/* KPI 行三张卡等高拉伸（有无趋势行高度不一致时以最高者为准） */
-.mk-block :deep(.el-col) {
+/* KPI 行三张卡等高拉伸（有无趋势行高度不一致时以最高者为准）；列内多卡保持纵向堆叠 */
+.mk-block :deep(.ev-col) {
   display: flex;
+  flex-direction: column;
 }
-.mk-block :deep(.el-col > *) {
+.mk-block :deep(.ev-col > *) {
   flex: 1;
   width: 100%;
 }

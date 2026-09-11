@@ -54,6 +54,8 @@ import EwPricingCard from './components/pricing-card/index.vue'
 import EwFaq from './components/faq/index.vue'
 import EwAlert from './components/alert/index.vue'
 import EwCodeBlock from './components/code-block/index.vue'
+import EwMarkdown from './components/markdown/index.vue'
+import EwMarkdownEditor from './components/markdown-editor/index.vue'
 import EwKeycap from './components/keycap/index.vue'
 import EwStatistic from './components/statistic/index.vue'
 import EwThemeToggle from './components/theme-toggle/index.vue'
@@ -83,6 +85,7 @@ import EwArticle from './components/article/index.vue'
 import EwExecCard from './components/exec-card/index.vue'
 import EwImageWall from './components/image-wall/index.vue'
 import EwImagePreview from './components/image-preview/index.vue'
+import EwWaterfall from './components/waterfall/index.vue'
 import EwModal from './components/modal/index.vue'
 // Components — 动效
 import EwMarquee from './components/marquee/index.vue'
@@ -118,6 +121,8 @@ const components = {
   EwFaq,
   EwAlert,
   EwCodeBlock,
+  EwMarkdown,
+  EwMarkdownEditor,
   EwKeycap,
   EwStatistic,
   EwThemeToggle,
@@ -143,6 +148,7 @@ const components = {
   EwExecCard,
   EwImageWall,
   EwImagePreview,
+  EwWaterfall,
   EwModal,
   EwMarquee,
   EwBorderBeam,
@@ -186,6 +192,8 @@ export {
   EwFaq,
   EwAlert,
   EwCodeBlock,
+  EwMarkdown,
+  EwMarkdownEditor,
   EwKeycap,
   EwStatistic,
   EwThemeToggle,
@@ -211,6 +219,7 @@ export {
   EwExecCard,
   EwImageWall,
   EwImagePreview,
+  EwWaterfall,
   EwModal,
   EwMarquee,
   EwBorderBeam,

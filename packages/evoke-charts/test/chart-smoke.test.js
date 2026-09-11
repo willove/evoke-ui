@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import EvChart from '../src/components/chart/index.vue'
+import EvChart from '../src/chart.vue'
 
 // Chart 渲染走 canvas 2d + rAF；jsdom 无 2d context，用 Proxy 兜底任意 ctx 方法
 function mockCanvas() {
@@ -35,7 +35,7 @@ const LINE_OPTIONS = () => ({
   legend: { show: true },
 })
 
-describe('EvChart（移植冒烟）', () => {
+describe('EvChart（提取冒烟（ev 命名空间））', () => {
   let ctx
   beforeEach(() => {
     // 异步调度 + 巨大时间戳：一帧内动画到终点，且不与渲染同步递归

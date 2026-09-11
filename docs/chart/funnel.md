@@ -13,7 +13,7 @@
 专属数据字段 `funnelData`（`{ label, value }` 数组），按数组顺序自上而下排列。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'funnel',
       title: '注册转化漏斗',

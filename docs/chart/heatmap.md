@@ -13,7 +13,7 @@
 专属数据字段 `heatmapData`（`{ x, y, value }`），色阶取默认蓝阶，数值越大颜色越深。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'heatmap',
       title: '活跃热力（星期 × 时段）',

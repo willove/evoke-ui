@@ -1,13 +1,13 @@
 # 交互与联动
 
-EvChart 的交互能力开箱即用：图例点选、tooltip、dataZoom 缩放、框选、多图联动、工具导出。绝大多数能力只在 `options` 里开字段，进阶控制走实例方法与事件。
+EcChart 的交互能力开箱即用：图例点选、tooltip、dataZoom 缩放、框选、多图联动、工具导出。绝大多数能力只在 `options` 里开字段，进阶控制走实例方法与事件。
 
 ## 图例：点选显隐与悬浮强调
 
 多系列图表自动出现图例。`legend.interactive` 控制点选显隐（默认开启），`position` 支持 `top` / `bottom`，`hoverEmphasis` 控制悬浮时强调对应系列。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'line',
       title: '图例点选试试',
@@ -41,7 +41,7 @@ options.tooltip = {
 类目多、曲线密时开启 `dataZoom`：`position` 支持 `bottom` / `top`，`start` / `end` 设初始窗口（百分比），`mouseWheel` 开启滚轮缩放。拖动窗口或滚轮即可聚焦数据段。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'line',
       title: '全年订单量（拖动下方窗口缩放）',
@@ -66,7 +66,7 @@ options.tooltip = {
 给多张图相同的 `connectGroup` 分组名，图例显隐与缩放范围自动同步——运营看板里"点一次图例，上下两张图一起切"就是它。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'line',
       title: '订单量（联动组 ops）',
@@ -82,7 +82,7 @@ options.tooltip = {
     :height="240"
     style="margin-bottom: 20px;"
   />
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'bar',
       title: '成交额（联动组 ops）',

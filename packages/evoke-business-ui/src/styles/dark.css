@@ -128,7 +128,6 @@ html.dark {
   --ev-sidebar-hover-bg:         #1f2937;
   --ev-sidebar-active-bg:        rgba(23,93,255,.12);
   --ev-sidebar-border:           #1f2937;
-  --ev-sidebar-indicator:        var(--ev-color-primary);
 
   --ev-header-bg:                #111827;
   --ev-header-border:            #1f2937;

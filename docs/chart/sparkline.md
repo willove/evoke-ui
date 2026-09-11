@@ -12,7 +12,7 @@
 沿用 `labels` + `series` 数据模型；画布高度压小即可直接嵌入卡片。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'sparkline',
       title: '近 7 日活跃',

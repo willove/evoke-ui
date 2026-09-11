@@ -84,7 +84,7 @@ describe('EvTreeSelect 渲染契约', () => {
     expect(wrapper.find('.ev-select__suffix').exists()).toBe(true)
   })
 
-  it('弹层内嵌树（el-tree-select__popper + ev-tree）', async () => {
+  it('弹层内嵌树（ev-tree-select__popper + ev-tree）', async () => {
     const { wrapper } = mountTreeSelect()
     await openDropdown(wrapper)
     const popper = document.querySelector('.ev-tree-select__popper')

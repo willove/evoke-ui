@@ -60,6 +60,7 @@ export { default as EwExecCard } from '../src/components/exec-card/index.vue'
 export { default as EwArticle } from '../src/components/article/index.vue'
 export { default as EwImageWall } from '../src/components/image-wall/index.vue'
 export { default as EwImagePreview } from '../src/components/image-preview/index.vue'
+export { default as EwWaterfall } from '../src/components/waterfall/index.vue'
 export { default as EwModal } from '../src/components/modal/index.vue'
 
 // Components — 移动组件

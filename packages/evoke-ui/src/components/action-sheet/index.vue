@@ -47,9 +47,10 @@
  * EwActionSheet — 底部动作面板
  * 移动端「更多操作」的标准形态：底部滑入的纵向动作列表 + 取消栏，
  * 替代 hover 类菜单在触屏上的缺位。动作项 { name, subname, color, disabled }。
- * 前台库保持零外部依赖：滚动锁定 / ESC 关闭 / 层级自增均在组件内实现。
+ * 前台库保持零外部依赖：ESC 关闭 / 层级自增在组件内实现，滚动锁定走共享 useScrollLock。
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLock'
 
 defineOptions({ name: 'EwActionSheet' })
 
@@ -85,23 +86,11 @@ const emit = defineEmits([
 const panelRef = ref(null)
 let zSeed = 0
 const zIndex = computed(() => 2000 + zSeed)
-let lockCount = 0
 
 const visible = computed(() => props.modelValue)
 
 // SSR 安全：构建期无 window/document，watch immediate 的关闭分支不能触碰 DOM
 const hasDom = typeof window !== 'undefined'
-
-function lock() {
-  if (lockCount > 0) return
-  lockCount = 1
-  document.body.style.overflow = 'hidden'
-}
-function unlock() {
-  if (lockCount === 0) return
-  lockCount = 0
-  document.body.style.overflow = ''
-}
 
 function onKeydown(e) {
   if (e.key === 'Escape' && props.closeOnPressEscape) handleClose()
@@ -113,10 +102,10 @@ watch(
     if (val) {
       emit('open')
       zSeed += 1
-      if (props.lockScroll && hasDom) lock()
+      if (props.lockScroll && hasDom) lockBodyScroll()
       if (hasDom) window.addEventListener('keydown', onKeydown)
     } else {
-      if (props.lockScroll && hasDom) unlock()
+      if (props.lockScroll && hasDom) unlockBodyScroll()
       if (hasDom) window.removeEventListener('keydown', onKeydown)
     }
   },
@@ -124,7 +113,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  unlock()
+  if (hasDom) unlockBodyScroll()
   window.removeEventListener('keydown', onKeydown)
 })
 

@@ -31,6 +31,7 @@ jobs:
         run: |
           pnpm build:eui
           pnpm build:ebui
+          pnpm build:charts
 
       - name: Unit tests
         run: pnpm test

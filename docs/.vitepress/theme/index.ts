@@ -9,6 +9,7 @@ import Icon from './Icon.vue'
 import ThemeCustomizer from './ThemeCustomizer.vue'
 import EvokeBusinessUI from '@wil-works/evoke-business-ui'
 import '@wil-works/evoke-business-ui/styles'
+import { EvokeCharts } from '@wil-works/evoke-charts'
 import './style.css'
 
 /**
@@ -19,6 +20,7 @@ export default {
   Layout: DocLayout,
   enhanceApp({ app }) {
     app.use(EvokeBusinessUI)
+    app.use(EvokeCharts)
     app.component('DemoBlock', DemoBlock)
     app.component('DocExample', DocExample)
     app.component('MobileStage', MobileStage)

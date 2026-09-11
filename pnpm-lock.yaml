@@ -32,6 +32,9 @@ importers:
       '@wil-works/evoke-business-ui':
         specifier: workspace:*
         version: link:../packages/evoke-business-ui
+      '@wil-works/evoke-charts':
+        specifier: workspace:*
+        version: link:../packages/evoke-charts
       vue:
         specifier: ^3.5.0
         version: 3.5.42
@@ -93,6 +96,9 @@ importers:
       '@wil-works/evoke-business-ui':
         specifier: workspace:*
         version: link:../../packages/evoke-business-ui
+      '@wil-works/evoke-charts':
+        specifier: workspace:*
+        version: link:../../packages/evoke-charts
       vue:
         specifier: ^3.5.42
         version: 3.5.42
@@ -227,6 +233,21 @@ importers:
       remixicon:
         specifier: ^4.9.1
         version: 4.9.1
+      vite:
+        specifier: ^8.0.10
+        version: 8.2.2
+      vue:
+        specifier: ^3.5.42
+        version: 3.5.42
+
+  packages/evoke-charts:
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.8
+        version: 6.0.8(vite@8.2.2)(vue@3.5.42)
+      '@vue/compiler-sfc':
+        specifier: ^3.5.42
+        version: 3.5.42
       vite:
         specifier: ^8.0.10
         version: 8.2.2

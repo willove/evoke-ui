@@ -210,10 +210,13 @@ describe('EvAppLayout', () => {
     wrapper.unmount()
   })
 
-  it('主题切换：isDark 文案 + toggle 事件', async () => {
+  it('主题切换：顶栏图标按钮 + toggle 事件（侧栏 footer 不再有开关）', async () => {
     const wrapper = mountLayout({ isDark: true })
-    expect(wrapper.find('.ev-layout__toggle-label').text()).toContain('深色')
-    await wrapper.find('.ev-switch').trigger('click')
+    const btn = wrapper.find('.ev-layout__topbar .ev-layout__theme-btn')
+    expect(btn.exists()).toBe(true)
+    expect(btn.attributes('aria-label')).toBe('切换为浅色模式')
+    expect(wrapper.find('.ev-layout__sidebar-footer .ev-switch').exists()).toBe(false)
+    await btn.trigger('click')
     expect(wrapper.findComponent(EvAppLayout).emitted('toggle')).toHaveLength(1)
     wrapper.unmount()
   })
@@ -226,6 +229,7 @@ describe('EvAppLayout', () => {
           <ev-app-layout>
             <template #topbar-left><span class="tl">自定义左</span></template>
             <template #topbar-right><span class="tr">自定义右</span></template>
+            <template #theme-toggle><span class="tt">自定义切换</span></template>
           </ev-app-layout>
         `,
       },
@@ -233,6 +237,8 @@ describe('EvAppLayout', () => {
     )
     expect(wrapper.find('.tl').text()).toBe('自定义左')
     expect(wrapper.find('.tr').text()).toBe('自定义右')
+    expect(wrapper.find('.ev-layout__topbar .tt').text()).toBe('自定义切换')
+    expect(wrapper.find('.ev-layout__theme-btn').exists()).toBe(false)
     wrapper.unmount()
   })
 })

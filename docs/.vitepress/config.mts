@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { demoSourcePlugin } from './demo-source.mjs'
 
 const pkgRoot = resolve(__dirname, '../../packages/evoke-business-ui')
+const chartsRoot = resolve(__dirname, '../../packages/evoke-charts')
 const examplesRoot = resolve(__dirname, '../../examples')
 
 /**
@@ -27,10 +28,14 @@ export default defineConfig({
           find: /^@wil-works\/evoke-business-ui\/styles$/,
           replacement: resolve(pkgRoot, 'src/styles/index.css'),
         },
+        {
+          find: /^@wil-works\/evoke-charts$/,
+          replacement: resolve(chartsRoot, 'src/index.js'),
+        },
       ],
       dedupe: ['vue'],
     },
-    server: { fs: { allow: [pkgRoot, examplesRoot, resolve(__dirname)] } },
+    server: { fs: { allow: [pkgRoot, chartsRoot, examplesRoot, resolve(__dirname)] } },
   },
 
   markdown: {

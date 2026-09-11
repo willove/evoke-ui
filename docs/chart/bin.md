@@ -13,7 +13,7 @@
 沿用 `series.data` 直接传原始数值数组，分箱与频数统计自动完成。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'bin',
       title: '接口耗时分布（ms）',

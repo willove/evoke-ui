@@ -25,7 +25,7 @@ import dashboardSource from '../../examples/ebui-example-dashboard/src/pages/Das
 | Menu / MenuItem / SubMenu | 侧边导航；示例未引入 vue-router，用 `index` 驱动视图切换 |
 | PageHeader | 内容页页头（标题 + 副标题 + `#actions` 操作区） |
 | StatCard | KPI 指标卡：数值千分位滚动、环比趋势、语义色图标 |
-| Chart（EvChart） | 折线图（`labels + series`）与环形图（`pieData`），Canvas 自绘、容器自适应 |
+| Chart（EcChart） | 折线图（`labels + series`）与环形图（`pieData`），Canvas 自绘、容器自适应 |
 | DataTable + StatusTag | 最新订单 / 商品列表 / 营销活动的表格载体（含 `operations` 插槽） |
 | Tree | 分类管理的**左树右详情**布局：`highlight-current` 选中、`filter-node-method` + `filter()` 搜索过滤、默认插槽自定义节点（名称 + 数量徽标） |
 | DetailDescriptions | 分类属性条与订单详情弹窗的配置式回显 |
@@ -85,5 +85,5 @@ examples/ebui-example-dashboard/
 
 ## 接入真实业务
 
-- 把 `mock.js` 的各数据源换成接口返回；`ev-chart` 的 `options` 是响应式的，数据到达后自动重绘（同结构数据走补间动画）。
+- 把 `mock.js` 的各数据源换成接口返回；`ec-chart` 的 `options` 是响应式的，数据到达后自动重绘（同结构数据走补间动画）。
 - 菜单接 vue-router 时无需改动：AppLayout 内部菜单自带 router 集成，`index` 即路由路径。

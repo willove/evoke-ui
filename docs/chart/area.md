@@ -12,7 +12,7 @@
 数据模型与折线图完全一致：`labels` + `series`，把 `type` 换成 `area` 即可。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'area',
       title: '周活趋势',

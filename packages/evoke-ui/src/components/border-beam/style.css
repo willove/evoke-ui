@@ -10,6 +10,8 @@
 .ew-border-beam {
   position: relative;
   isolation: isolate;
+  /* 静态 1px 描边：流光未扫过时卡片仍有边界，光带经过时叠加提亮 */
+  box-shadow: 0 0 0 1px var(--ew-border-color-light);
 }
 
 /* 光带环：conic 渐变沿角度旋转，mask 只保留边框宽度一圈 */

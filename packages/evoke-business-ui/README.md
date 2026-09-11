@@ -1,6 +1,6 @@
 # @wil-works/evoke-business-ui
 
-面向中后台管理界面的 Vue 3 组件库：150+ 通用组件、8 个业务场景组件（筛选表单 / 数据表格 / 状态标签 / 双行单元格 / 详情描述 / 导入导出面板 / 审计时间线 / 列设置）与 20+ 种 Canvas 自绘图表，内置图标体系与暗色模式。
+面向中后台管理界面的 Vue 3 组件库：150+ 通用组件与 8 个业务场景组件（筛选表单 / 数据表格 / 状态标签 / 双行单元格 / 详情描述 / 导入导出面板 / 审计时间线 / 列设置），内置图标体系与暗色模式。图表能力由独立包 [@wil-works/evoke-charts](../evoke-charts) 提供，两库样式已打通主题适配。
 
 [![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) · **在线文档**：[evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com)
 

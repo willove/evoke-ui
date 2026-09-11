@@ -266,7 +266,6 @@
   --ev-sidebar-hover-bg:         #f3f4f6;
   --ev-sidebar-active-bg:        var(--ev-color-primary-light-9);
   --ev-sidebar-border:           #f0f1f3;
-  --ev-sidebar-indicator:        var(--ev-color-primary);
 
   /* 顶栏 */
   --ev-header-bg:                #ffffff;
@@ -306,4 +305,32 @@
   --ev-glass-saturate: 1.4;
   /* 磨砂底色一次配好：color-mix 的百分比不能走 var()，必须整体出令牌 */
   --ev-glass-bg: color-mix(in srgb, var(--ev-bg-color) 78%, transparent);
+}
+
+/* ═══ 图表库主题适配层：--ec-*（外接 Canvas 图表包的读取面）映射到本库令牌。
+   var() 取值延迟解析，html.dark 的暗色重映射自动跟随，无需在此重复声明。
+   两库同用时图表自动跟随本库主题 / 暗色 / 运行时换肤；单用图表库时
+   由其内置色板兜底（任一 --ec-* 缺失即整组回落）。 ═══ */
+:root {
+  --ec-color-primary: var(--ev-color-primary);
+  --ec-color-primary-rgb: var(--ev-color-primary-rgb);
+  --ec-color-success: var(--ev-color-success);
+  --ec-color-warning: var(--ev-color-warning);
+  --ec-color-danger: var(--ev-color-danger);
+  --ec-color-danger-light-3: var(--ev-color-danger-light-3);
+  --ec-color-info: var(--ev-color-info);
+  --ec-color-ext-violet: var(--ev-color-ext-violet);
+  --ec-color-ext-cyan: var(--ev-color-ext-cyan);
+  --ec-color-ext-magenta: var(--ev-color-ext-magenta);
+  --ec-bg-color: var(--ev-bg-color);
+  --ec-bg-color-overlay: var(--ev-bg-color-overlay);
+  --ec-text-color-primary: var(--ev-text-color-primary);
+  --ec-text-color-secondary: var(--ev-text-color-secondary);
+  --ec-text-color-danger: var(--ev-text-color-danger);
+  --ec-border-color: var(--ev-border-color);
+  --ec-border-color-light: var(--ev-border-color-light);
+  --ec-border-color-dark: var(--ev-border-color-dark);
+  --ec-fill-color-light: var(--ev-fill-color-light);
+  --ec-fill-color-dark: var(--ev-fill-color-dark);
+  --ec-app-card-border: var(--ev-app-card-border);
 }

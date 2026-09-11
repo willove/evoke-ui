@@ -53,6 +53,7 @@
  */
 import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
 import EwIcon from '../icon/index.vue'
+import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLock'
 
 const props = defineProps({
   /** 可见性（v-model） */
@@ -101,11 +102,11 @@ watch(visible, (show) => {
   if (show) {
     lastFocused = document.activeElement
     emit('open')
-    if (props.lockScroll) document.body.style.overflow = 'hidden'
+    if (props.lockScroll) lockBodyScroll()
     document.addEventListener('keydown', onKeydown)
     nextTick(() => panelRef.value?.focus?.())
   } else {
-    if (props.lockScroll) document.body.style.overflow = ''
+    if (props.lockScroll) unlockBodyScroll()
     document.removeEventListener('keydown', onKeydown)
     nextTick(() => lastFocused?.focus?.())
   }
@@ -114,7 +115,7 @@ watch(visible, (show) => {
 onBeforeUnmount(() => {
   if (typeof document === 'undefined') return
   document.removeEventListener('keydown', onKeydown)
-  if (props.lockScroll) document.body.style.overflow = ''
+  if (props.lockScroll) unlockBodyScroll()
 })
 </script>
 

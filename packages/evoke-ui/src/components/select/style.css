@@ -20,8 +20,8 @@
   font-size: var(--ew-font-size-sm);
   color: var(--ew-text-primary);
   cursor: pointer;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: border-color var(--ew-duration-slow) var(--ew-ease-smooth),
+    box-shadow var(--ew-duration-slow) var(--ew-ease-smooth);
 }
 
 .ew-select__trigger:hover {
@@ -32,10 +32,6 @@
 .ew-select__trigger:focus-visible {
   outline: none;
   border-color: var(--ew-color-primary-light-5);
-}
-
-.ew-select.is-open .ew-select__trigger {
-  box-shadow: var(--ew-focus-ring);
 }
 
 .ew-select__label {
@@ -209,27 +205,34 @@
   border-radius: var(--ew-radius-sm);
 }
 
-/* ─── 边框激活波纹：聚焦时边框向外扩散两圈涟漪；
-   全局关闭 html[data-ew-ripple='off']；prefers-reduced-motion 自动停用 ─── */
+/* ─── 聚焦涟漪：聚焦/展开瞬间一块与选择器同形状的实体色层自框体向外扩展约 4px 后消散（单次）；
+   错误态色层跟随 danger 色；全局关闭 html[data-ew-ripple='off']；
+   prefers-reduced-motion 自动停用 ─── */
+
+.ew-select.is-error {
+  --ew-field-ring-color: var(--ew-color-danger);
+}
 
 .ew-select::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: 0;
+  z-index: -1;
   border-radius: inherit;
-  border: 1px solid color-mix(in srgb, var(--ew-color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--ew-field-ring-color, var(--ew-color-primary)) 30%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-ew-ripple='off']) .ew-select:focus-within, .ew-select.is-open::after {
-    animation: ew-border-ripple 0.7s ease-out 2;
+  html:not([data-ew-ripple='off']) .ew-select:focus-within::after,
+  html:not([data-ew-ripple='off']) .ew-select.is-open::after {
+    animation: ew-field-ring 0.5s var(--ew-ease-out) 1;
   }
 }
 
-@keyframes ew-border-ripple {
-  0% { opacity: 0.9; transform: scale(1); }
-  70% { opacity: 0.25; }
-  100% { opacity: 0; transform: scale(1.04); }
+@keyframes ew-field-ring {
+  0% { opacity: 1; inset: 0; }
+  55% { opacity: 1; inset: -4px; }
+  100% { opacity: 0; inset: -4px; }
 }

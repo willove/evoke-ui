@@ -87,34 +87,34 @@
   border-left: 1px solid var(--ew-border-color-light);
 }
 
-/* ─── 边框激活波纹：聚焦时边框向外扩散两圈涟漪；
+/* ─── 聚焦涟漪：聚焦瞬间一块与搜索框同形状的实体色层自框体向外扩展约 4px 后消散（单次）；
    全局关闭 html[data-ew-ripple='off']；prefers-reduced-motion 自动停用 ─── */
-/* 定位锚点：波纹环定位参考 */
+/* 定位锚点：涟漪层定位参考 */
 .ew-search-box {
   position: relative;
 }
 
-
 .ew-search-box::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: 0;
+  z-index: -1;
   border-radius: inherit;
-  border: 1px solid color-mix(in srgb, var(--ew-color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--ew-field-ring-color, var(--ew-color-primary)) 30%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html:not([data-ew-ripple='off']) .ew-search-box:focus-within::after {
-    animation: ew-border-ripple 0.7s ease-out 2;
+    animation: ew-field-ring 0.5s var(--ew-ease-out) 1;
   }
 }
 
-@keyframes ew-border-ripple {
-  0% { opacity: 0.9; transform: scale(1); }
-  70% { opacity: 0.25; }
-  100% { opacity: 0; transform: scale(1.04); }
+@keyframes ew-field-ring {
+  0% { opacity: 1; inset: 0; }
+  55% { opacity: 1; inset: -4px; }
+  100% { opacity: 0; inset: -4px; }
 }
 
 /* ─── 远程搜索结果下拉（select 菜单同款语言） ─── */

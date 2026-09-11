@@ -49,9 +49,9 @@ const sent = ref(false)
       <EwInput v-model="email" type="email" placeholder="you@example.com" />
     </EwField>
     <EwField label="验证码" required hint="验证码 10 分钟内有效">
-      <div style="display:flex; gap:10px;">
+      <div style="display:flex; gap:10px; align-items:center;">
         <EwInput v-model="code" placeholder="6 位验证码" style="flex:1;" />
-        <EwButton variant="outline" size="small" :disabled="!email" @click="sent = true">
+        <EwButton variant="outline" :disabled="!email" @click="sent = true">
           {{ sent ? '已发送 ✓' : '发送验证码' }}
         </EwButton>
       </div>

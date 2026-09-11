@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, h } from "vue";
 import {
   renderChart,
   createAnimation,
@@ -94,8 +94,14 @@ import {
 } from "./renderer";
 import { DEFAULT_I18N_ZH } from "./types";
 import { registerConnector, broadcastConnect } from "./connect";
-import { getIconByNameSync } from "../icon/iconRegistry";
-const DataLine = getIconByNameSync("data-line");
+// 空态占位图标（折线）— 内联 SVG，保持本库零跨库依赖
+const DataLine = () =>
+  h("svg", { viewBox: "0 0 24 24", width: "1em", height: "1em", "aria-hidden": "true" }, [
+    h("path", {
+      fill: "currentColor",
+      d: "M5 3V19H21V21H3V3H5ZM20.2929 6.29289L21.7071 7.70711L16 13.4142L13 10.415L8.70711 14.7071L7.29289 13.2929L13 7.58579L16 10.585L20.2929 6.29289Z"
+    })
+  ]);
 defineOptions({ name: "EvChart" });
 // 运行时 props 由 EvChartProps 接口手工还原（esbuild 剥泛型时一并剥掉；默认值并入声明，替代 withDefaults）
 const props = defineProps({
@@ -1575,7 +1581,7 @@ function setupDarkModeObserver() {
     attributes: true,
     attributeFilter: ["class"]
   });
-  // 运行时换肤（setPrimaryColor / setDensity）派发的全局事件 — 图表重绘以拾取新令牌
+  // 运行时换肤派发的全局事件 — 图表重绘以拾取新令牌
   document.addEventListener("ev-theme-change", handleThemeChange);
 }
 function handleThemeChange() {
@@ -1717,13 +1723,13 @@ defineExpose({
   getHiddenSeries() {
     return Array.from(hiddenSeries.value);
   },
-  // @since v1.4 — 手动触发尺寸更新
+  // @since v0.1 — 手动触发尺寸更新
   resize() {
     lastWidth = 0;
     lastHeight = 0;
     debouncedRender(false);
   },
-  // @since v1.4 — 高亮某个系列（通过给该系列添加特殊样式）
+  // @since v0.1 — 高亮某个系列（通过给该系列添加特殊样式）
   highlightSeries(name) {
     const opt = props.options;
     if (opt.series.length > 0) {
@@ -1735,12 +1741,12 @@ defineExpose({
       render(true);
     }
   },
-  // @since v1.4 — 清除系列高亮
+  // @since v0.1 — 清除系列高亮
   clearHighlight() {
     hiddenSeries.value = /* @__PURE__ */ new Set();
     render(true);
   },
-  // @since v1.4 — 获取数据极值
+  // @since v0.1 — 获取数据极值
   getDataExtent() {
     if (cachedDataExtent) return cachedDataExtent;
     const opt = props.options;
@@ -1769,7 +1775,7 @@ defineExpose({
     cachedDataExtent = { min, max };
     return cachedDataExtent;
   },
-  // @since v1.4 — 获取实际绘图区域（基于当前 canvas 尺寸与 padding）
+  // @since v0.1 — 获取实际绘图区域（基于当前 canvas 尺寸与 padding）
   getPlotArea() {
     if (cachedPlotArea) return cachedPlotArea;
     const canvas = canvasRef.value;
@@ -1785,12 +1791,12 @@ defineExpose({
     };
     return cachedPlotArea;
   },
-  // @since v1.4 — 运行时切换主题
+  // @since v0.1 — 运行时切换主题
   setTheme(theme) {
     props.options.theme = { ...props.options.theme, ...theme };
     redraw();
   },
-  // @since v1.6 — 导出真 SVG（录制渲染指令重放，非 PNG 嵌入）
+  // @since v0.1 — 导出真 SVG（录制渲染指令重放，非 PNG 嵌入）
   exportSVG(options = {}) {
     const canvas = canvasRef.value;
     if (!canvas) return "";
@@ -1824,11 +1830,11 @@ defineExpose({
       return "";
     }
   },
-  // @since v1.4 — 获取当前 options
+  // @since v0.1 — 获取当前 options
   getOption() {
     return props.options;
   },
-  // @since v1.4 — data zoom 范围（v1.5 起完整支持）
+  // @since v0.1 — data zoom 范围
   setDataZoomRange(start, end) {
     if (!isZoomEnabled()) {
       console.warn("[EvChart] setDataZoomRange: dataZoom is not enabled");
@@ -2068,7 +2074,7 @@ html.dark .ev-chart__tooltip {
   background: var(--ev-bg-color-overlay, #1f2937);
   border-color: var(--ev-border-color-dark, #374151);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: var(--ev-text-color-primary);
+  color: var(--ev-text-color-primary, #f3f4f6);
 }
 
 html.dark .ev-chart__loading {

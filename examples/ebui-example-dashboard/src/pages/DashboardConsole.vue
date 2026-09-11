@@ -77,18 +77,18 @@
       <ev-row :gutter="16" class="dash-block">
         <ev-col :xs="24" :lg="16">
           <ev-section-card title="近 7 日 GMV 趋势">
-            <ev-chart :options="gmvOptions" :height="280" />
+            <ec-chart :options="gmvOptions" :height="280" />
           </ev-section-card>
         </ev-col>
         <ev-col :xs="24" :lg="8">
           <ev-section-card title="销售渠道占比">
-            <ev-chart :options="channelOptions" :height="280" />
+            <ec-chart :options="channelOptions" :height="280" />
           </ev-section-card>
         </ev-col>
       </ev-row>
 
       <!-- 明细区 -->
-      <ev-row :gutter="16">
+      <ev-row :gutter="16" class="dash-block">
         <ev-col :xs="24" :lg="16">
           <ev-section-card title="最新订单" :padding="false">
             <ev-data-table
@@ -217,11 +217,12 @@ const orderColumns = [
 .dash-block {
   margin-top: 16px;
 }
-/* 行内卡片等高拉伸（如 KPI 卡有无趋势行时以最高者为准） */
-.dash-block :deep(.el-col) {
+/* 行内卡片等高拉伸（如 KPI 卡有无趋势行时以最高者为准）；列内多卡保持纵向堆叠 */
+.dash-block :deep(.ev-col) {
   display: flex;
+  flex-direction: column;
 }
-.dash-block :deep(.el-col > *) {
+.dash-block :deep(.ev-col > *) {
   flex: 1;
   width: 100%;
 }

@@ -13,7 +13,7 @@
 专属数据字段 `candleData`（`{ label, open, close, high, low }`），涨跌自动着色。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'candle',
       title: '近期行情',

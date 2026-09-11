@@ -180,6 +180,7 @@ export default defineConfig({
             { text: 'Audio 音频', link: '/components/audio' },
             { text: 'Carousel 轮播', link: '/components/carousel' },
             { text: 'ImageWall 图片墙', link: '/components/image-wall' },
+            { text: 'Waterfall 瀑布流', link: '/components/waterfall' },
             { text: 'ImagePreview 图片预览', link: '/components/image-preview' },
             { text: 'Modal 弹出层', link: '/components/modal' },
             { text: 'Marquee 跑马灯', link: '/components/marquee' },
@@ -191,6 +192,8 @@ export default defineConfig({
           text: '反馈与主题',
           items: [
             { text: 'CodeBlock 命令块', link: '/components/code-block' },
+            { text: 'Markdown 渲染', link: '/components/markdown' },
+            { text: 'MarkdownEditor 编辑器', link: '/components/markdown-editor' },
             { text: 'ThemeToggle 主题切换', link: '/components/theme-toggle' },
             { text: 'ConfigProvider 主题配置', link: '/components/config-provider' },
           ],

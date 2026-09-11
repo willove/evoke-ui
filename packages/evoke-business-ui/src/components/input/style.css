@@ -124,6 +124,8 @@
   flex-direction: column;
   position: relative;
   width: 100%;
+  /* 涟漪层 border-radius: inherit 的取值来源 */
+  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
   font-size: var(--ev-font-size-base);
 }
 .ev-textarea.ev-textarea .ev-textarea__inner {

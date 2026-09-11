@@ -19,7 +19,7 @@ pnpm --filter @wil-works/ebui-example-dashboard dev
 | Breadcrumb | 面包屑 |
 | PageHeader | 页头（标题 + 操作区） |
 | StatCard | KPI 指标卡（数值 + 环比趋势） |
-| Chart（EvChart） | 折线趋势图 / 环形占比图 |
+| Chart（EcChart） | 折线趋势图 / 环形占比图 |
 | DataTable + StatusTag | 最新订单、商品列表、营销活动 |
 | Tree | 分类管理左树导航（选中高亮、搜索过滤、数量徽标） |
 | SearchFilter + Pagination | 订单筛选与分页 |

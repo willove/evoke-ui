@@ -1,37 +1,57 @@
 /* ============================================
-   Evoke Business UI — 边框激活波纹（focus ripple）
-   输入/选择类组件聚焦时，边框向外扩散两圈涟漪后消失；
+   Evoke Business UI — 边框激活涟漪（focus ripple）
+   与 evoke-ui EwInput 同款实体涟漪：聚焦瞬间一块与输入体同形状的
+   实体色层自框体向外扩展约 4px 后消散（0.7s 单次，
+   扩散时圆角同步放大并跟随输入圆角令牌 --ev-input-border-radius）。
+   层级：::before 铺在包装器背景之上、内容之下
+   （直接子元素统一 position: relative 提升到色层上方），
+   不用负 z-index，避免沉入文档站/业务容器的不透明背景之下不可见。
    覆盖 ev-input__wrapper 家族（input / cascader / date-picker /
-   input-number / time-select / time-picker）与 ev-select__wrapper。
+   input-number / time-select / time-picker）、ev-textarea 与 ev-select__wrapper。
+   错误态色层跟随 danger 色（--ev-field-ring-color 可覆盖）；
    全局关闭：html[data-ev-ripple='off']；
    prefers-reduced-motion 下自动停用。
    ============================================ */
 
 .ev-input__wrapper,
-.ev-select__wrapper {
+.ev-select__wrapper,
+.ev-textarea {
   position: relative;
 }
 
-.ev-input__wrapper::after,
-.ev-select__wrapper::after {
+.ev-input__wrapper::before,
+.ev-select__wrapper::before,
+.ev-textarea::before {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: 0;
   border-radius: inherit;
-  border: 1px solid color-mix(in srgb, var(--ev-color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--ev-field-ring-color, var(--ev-color-primary)) 30%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
+/* 内容提升到涟漪层之上（涟漪层是各包装器的首个定位子元素） */
+.ev-input__wrapper > *,
+.ev-select__wrapper > *,
+.ev-textarea > * {
+  position: relative;
+}
+
+.ev-input__wrapper.is-error {
+  --ev-field-ring-color: var(--ev-color-danger);
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-ev-ripple='off']) .ev-input__wrapper.is-focus::after,
-  html:not([data-ev-ripple='off']) .ev-select__wrapper.is-focused::after {
-    animation: ev-border-ripple 0.7s ease-out 2;
+  html:not([data-ev-ripple='off']) .ev-input__wrapper.is-focus::before,
+  html:not([data-ev-ripple='off']) .ev-select__wrapper.is-focused::before,
+  html:not([data-ev-ripple='off']) .ev-textarea.is-focus::before {
+    animation: ev-field-ring 0.7s var(--ev-ease-out) 1;
   }
 }
 
-@keyframes ev-border-ripple {
-  0% { opacity: 0.9; transform: scale(1); }
-  70% { opacity: 0.25; }
-  100% { opacity: 0; transform: scale(1.04); }
+@keyframes ev-field-ring {
+  0% { opacity: 1; inset: 0; }
+  55% { opacity: 1; inset: -4px; border-radius: calc(var(--ev-input-border-radius, var(--ev-radius-md)) + 4px); }
+  100% { opacity: 0; inset: -4px; border-radius: calc(var(--ev-input-border-radius, var(--ev-radius-md)) + 4px); }
 }

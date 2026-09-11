@@ -1,0 +1,48 @@
+/* 高亮 token 配色 — EwCodeBlock / EwMarkdown 共享
+   语义令牌驱动，明暗双主题自动跟随 */
+
+.ew-code-block__code .tok-cmd,
+.ew-markdown .tok-cmd {
+  font-weight: 600;
+}
+.ew-code-block__code .tok-flag,
+.ew-markdown .tok-flag {
+  color: var(--ew-color-warning);
+}
+.ew-code-block__code .tok-string,
+.ew-markdown .tok-string {
+  color: var(--ew-color-success);
+}
+.ew-code-block__code .tok-comment,
+.ew-markdown .tok-comment {
+  color: var(--ew-text-secondary);
+  font-style: italic;
+}
+.ew-code-block__code .tok-keyword,
+.ew-markdown .tok-keyword,
+.ew-code-block__code .tok-key,
+.ew-markdown .tok-key {
+  color: var(--ew-color-primary);
+}
+.ew-code-block__code .tok-atom,
+.ew-markdown .tok-atom {
+  color: var(--ew-color-primary-light-3);
+}
+.ew-code-block__code .tok-number,
+.ew-markdown .tok-number {
+  color: var(--ew-color-warning);
+}
+.ew-code-block__code .tok-env,
+.ew-markdown .tok-env {
+  color: var(--ew-color-danger);
+}
+.ew-code-block__code .tok-fn,
+.ew-markdown .tok-fn {
+  color: var(--ew-color-primary-light-3);
+}
+.ew-code-block__code .tok-op,
+.ew-markdown .tok-op,
+.ew-code-block__code .tok-punct,
+.ew-markdown .tok-punct {
+  color: var(--ew-text-secondary);
+}

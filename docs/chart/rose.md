@@ -13,7 +13,7 @@
 与饼图同源：`pieData` 驱动，`type: 'rose'` 即可。
 
 <DemoBlock>
-  <ev-chart
+  <ec-chart
     :options="{
       type: 'rose',
       title: '故障类型分布',
