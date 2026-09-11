@@ -117,6 +117,7 @@ function guardClose(done) {
   { name: 'center', desc: '头部与底部操作区水平居中', type: 'boolean', default: 'false' },
   { name: 'align-center', desc: '对话框在视口水平垂直双居中', type: 'boolean', default: 'false' },
   { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EbConfigProvider 的 glass）', type: 'boolean', default: '—' },
+  { name: 'blur', desc: '面板磨砂模糊半径（px），仅磨砂生效时应用；缺省跟随 --eb-glass-blur 令牌（14px）', type: 'number | string', default: '—' },
   { name: 'before-close', desc: '关闭前拦截，不调用入参 done 则阻止关闭', type: '(done) => void', default: '—' },
 ]" />
 

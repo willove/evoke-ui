@@ -119,6 +119,7 @@ function guardClose(done) {
   { name: 'close-on-press-escape', desc: 'ESC 关闭', type: 'boolean', default: 'true' },
   { name: 'lock-scroll', desc: '打开时锁定页面滚动', type: 'boolean', default: 'true' },
   { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EbConfigProvider 的 glass）', type: 'boolean', default: '—' },
+  { name: 'blur', desc: '面板磨砂模糊半径（px），仅磨砂生效时应用；缺省跟随 --eb-glass-blur 令牌（14px）', type: 'number | string', default: '—' },
   { name: 'before-close', desc: '关闭前拦截，调用 done() 完成关闭', type: '(done) => void', default: '—' },
 ]" />
 

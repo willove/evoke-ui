@@ -106,11 +106,21 @@
 
 ## 磨砂玻璃
 
+<script setup>
+import { ref } from 'vue'
+const glassBlur = ref(14)
+</script>
+
 <DemoBlock>
   <div style="background: url(/images/card-glass-landscape.jpg) center/cover no-repeat; border-radius: 10px; padding: 20px; display: grid; gap: 12px;">
-    <eb-card glass>玻璃卡 A：半透明底 + 背景模糊</eb-card>
-    <eb-card glass>玻璃卡 B：上下叠加透出彼此的边缘</eb-card>
+    <eb-card glass :blur="glassBlur">玻璃卡 A：独立 blur = {{ glassBlur }}px</eb-card>
+    <eb-card glass>玻璃卡 B：跟随令牌默认 14px</eb-card>
     <eb-card :glass="false">实底卡：显式 glass=false 脱离全局开关</eb-card>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:12px;">
+    <span style="color:#909399;font-size:13px;white-space:nowrap;">blur</span>
+    <eb-slider v-model="glassBlur" :min="0" :max="40" :step="2" style="flex:1;" />
+    <eb-tag>{{ glassBlur }}px</eb-tag>
   </div>
 </DemoBlock>
 
@@ -122,6 +132,7 @@
   { name: 'hoverable', desc: '悬浮时是否应用交互反馈（边框微深 + 投影），false 时完全静态', type: 'boolean', default: 'true' },
   { name: 'body-style', desc: '内容区样式，支持对象与字符串两种写法', type: 'object | string', default: '{}' },
   { name: 'glass', desc: '磨砂玻璃质感；缺省跟随全局（EbConfigProvider 的 glass）', type: 'boolean', default: '—' },
+  { name: 'blur', desc: '磨砂模糊半径（px），仅磨砂生效时应用；缺省跟随 --eb-glass-blur 令牌（14px）', type: 'number | string', default: '—' },
 ]" />
 
 <ApiTable title="Card Slots" :rows="[

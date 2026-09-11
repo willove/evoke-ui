@@ -15,6 +15,21 @@ describe('EbCard', () => {
     expect(wrapper.find('.eb-card__body').text()).toBe('内容')
   })
 
+  it('blur prop 内联覆盖 --eb-glass-blur；缺省不产出内联样式', () => {
+    const numberBlur = mount(EbCard, { props: { glass: true, blur: 24 } })
+    expect(numberBlur.attributes('style')).toContain('--eb-glass-blur')
+    expect(numberBlur.attributes('style')).toContain('24px')
+    numberBlur.unmount()
+
+    const stringBlur = mount(EbCard, { props: { blur: '8px' } })
+    expect(stringBlur.attributes('style')).toContain('--eb-glass-blur')
+    stringBlur.unmount()
+
+    const noBlur = mount(EbCard, { slots: { default: 'x' } })
+    expect(noBlur.attributes('style') || '').not.toContain('--eb-glass-blur')
+    noBlur.unmount()
+  })
+
   it('header/footer 插槽与字符串 header', () => {
     const wrapper = mount(EbCard, {
       props: { header: '标题' },

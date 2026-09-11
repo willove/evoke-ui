@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 容器组件新增 blur 磨砂强度 prop
+
+- **组件级磨砂模糊半径**：card / dialog / drawer / section-card 新增 `blur`
+  （number | string，px），内联覆盖 `--eb-glass-blur` 令牌实现单组件独立调节，
+  缺省不产出内联样式、跟随令牌（14px）；仅磨砂生效时应用
+- dialog 内联模式（appendToBody=false）补齐 glass 类绑定，与 Teleport 分支行为一致
+
 ### @wil-works/evoke-business-ui — Card 交互反馈降噪
 
 - **悬浮边框不再用强调色，仅轻微加深**：hoverable 卡片悬浮时边框由
