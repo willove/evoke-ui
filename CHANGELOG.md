@@ -79,6 +79,16 @@
 
 ### Fixed
 
+- **EvSelect 根节点不透传 class/style**：`inheritAttrs:false` 后根 div 未绑定 `$attrs`，
+  消费方传的宽度类（如 `w-full`、`class="tsel"`）静默丢失；已在根节点补 `v-bind="$attrs"`
+  （class/style 由 Vue 自动合并，语义同前）
+- **EvSelect filterable 选中态文本双写**：选中后未聚焦时，选中项 span 与 filter input 的
+  placeholder 镜像同一 label，视觉左右重复；input 不再镜像 label，改为聚焦输入时
+  `v-show` 隐藏选中项 span（typing 态无重叠）
+- **EvInput/EvTextarea 根节点丢 class**：attrs 分流注释声称「class/style 留在根节点」，
+  实际只绑了 `:style="attrs.style"`，class 被 `inheritAttrs:false` 静默丢弃
+  （消费方的 `w-full`/定制宽度类全部失效）；两个分支（input/textarea）补
+  `attrs.class` 绑定
 - **Tooltip 深色主题箭头出现菱形/白角**：popper 箭头重构为「8×8 裁剪窗口 + ::before 形体」后，
   Tooltip 的箭头配色仍写在窗口元素上（窗口自身不被裁剪，深色方块露出）；已将深/浅两套配色
   全部迁移到 `::before` 伪元素，组件库内其余覆写排查无同类问题

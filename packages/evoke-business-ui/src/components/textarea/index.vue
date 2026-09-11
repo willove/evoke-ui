@@ -1,7 +1,7 @@
 <template>
   <div
     class="ev-textarea ev-textarea"
-    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass]"
+    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea

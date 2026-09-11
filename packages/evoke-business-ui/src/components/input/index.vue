@@ -2,7 +2,7 @@
   <div
     v-if="type === 'textarea'"
     class="ev-textarea ev-textarea"
-    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass]"
+    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
@@ -38,6 +38,7 @@
     class="ev-input ev-input"
     :class="[
       sizeClass,
+      attrs.class,
       {
         'is-disabled': isDisabled,
         'is-clearable': clearable && !isDisabled,

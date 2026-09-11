@@ -1,6 +1,7 @@
 <template>
   <div
-    class="ev-select ev-select"
+    v-bind="$attrs"
+    class="ev-select"
     :class="[{ 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable, 'is-focus': isFocused }, sizeClass]"
     @click="handleClick"
     @mouseenter="hovering = true"
@@ -29,7 +30,11 @@
           + {{ overflowCount }}
         </span>
       </span>
-      <span v-else-if="hasSelection" class="ev-select__selected-item ev-select__placeholder is-transparent">
+      <span
+        v-else-if="hasSelection"
+        v-show="!(filterable && isFocused)"
+        class="ev-select__selected-item ev-select__placeholder"
+      >
         <span class="ev-select__selected-item-text">{{ selectedLabel }}</span>
       </span>
       <span
@@ -44,7 +49,7 @@
         class="ev-select__input"
         :value="query"
         :disabled="isDisabled"
-        :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
+        placeholder=""
         @input="handleQueryInput"
         @keydown="handleKeydown"
         @focus="isFocused = true"
