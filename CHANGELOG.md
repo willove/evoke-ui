@@ -4,28 +4,101 @@
 
 ## [Unreleased]
 
-### 生态命名空间对齐 — ev-* 归基础生态（evoke-ui / evoke-charts），eb-* 归 business-ui（破坏性）
+## [0.3.0] — 2026-09-11
 
-- **`@wil-works/evoke-business-ui` 组件名整体切换 `Ev*` → `Eb*`**（如 `EvButton` → `EbButton`，
-  模板标签 `<ev-button>` → `<eb-button>`），类名 `ev-*` → `eb-*`，令牌 `--ev-*` → `--eb-*`，
-  主题事件 `ev-theme-change` → `eb-theme-change`，持久化键 `ev-theme-config` → `eb-theme-config`，
-  密度/磨砂属性 `data-ev-*` → `data-eb-*`，locale 键路径 `zhCN.ev.*` → `zhCN.eb.*`，
-  `EV_THEME_PRESETS` → `EB_THEME_PRESETS`。compat-check 改为校验 Eb 注册表纯度 + EbChart 别名
-- **`@wil-works/evoke-ui` 组件名整体切换 `Ew*` → `Ev*`**（如 `EwButton` → `EvButton`），
+### @wil-works/evoke-business-ui@0.3.0 — 全线更名 eb-* 与图表能力独立（破坏性）
+
+- **组件名整体切换 `Ev*` → `Eb*`**（如 `EvButton` → `EbButton`，模板标签
+  `<ev-button>` → `<eb-button>`），类名 `ev-*` → `eb-*`，令牌 `--ev-*` → `--eb-*`，
+  主题事件 `ev-theme-change` → `eb-theme-change`，持久化键 `ev-theme-config` →
+  `eb-theme-config`，密度/磨砂属性 `data-ev-*` → `data-eb-*`，
+  locale 键路径 `zhCN.ev.*` → `zhCN.eb.*`，`EV_THEME_PRESETS` → `EB_THEME_PRESETS`；
+  compat-check 改为校验 Eb 注册表纯度 + EbChart 别名。
+  升级方式：组件名与标签、类名、令牌前缀同步替换
+- **图表改为依赖独立包**：以 npm 依赖引入 `@wil-works/evoke-charts`，
+  对外以 `EbChart`（`<eb-chart>`）提供，样式仍从 `@wil-works/evoke-charts/styles` 引入；
+  样式包内置 `--ev-*` ← `--eb-*` 映射适配层，换肤时同步派发 `ev-theme-change`，
+  两库同用时图表自动跟随业务主题、暗色与运行时换肤；business-ui 不再自带图表实现
+- **输入涟漪升级为实体色层**：`focus-ripple.css` 由「双圈细环 scale 扩散」改为与
+  evoke-ui 同款的实体涟漪——与输入体同形状的实体色层（z-index: -1 衬底）自框体
+  向外扩展约 4px 后消散（0.7s 单次，圆角随扩散同步放大且跟随输入圆角令牌
+  `--eb-input-border-radius` 适配定制圆角，避免直角与圆角偏差），
+  错误态跟随 danger 色（`--eb-field-ring-color` 可覆盖）；
+  覆盖 eb-input__wrapper 家族与 eb-select__wrapper，`data-eb-ripple='off'` 开关不变
+- **主题切换移至顶栏**：明暗切换由侧边栏底部的开关改为顶栏右侧的图标按钮
+  （`isDark` / `@toggle` 接口不变；`#theme-toggle` 插槽仍可整体覆盖，渲染位置跟随到顶栏）。
+  同时消除侧栏收起/展开时 footer 高度瞬跳造成的抖动，折叠按钮「收起」文字改为随宽度过渡淡入淡出；
+  侧栏菜单激活态去掉左侧竖条指示器，仅保留激活背景色 + 文字变色
+  （`--eb-sidebar-indicator` 令牌随之移除）；侧栏 LOGO 区与菜单之间增加默认 12px 间距
+- **明暗切换过渡动效**：`useDarkMode` 的 `toggleDark` 优先走 View Transitions 整页交叉淡入淡出
+  （浅→深 / 深→浅柔和过渡），不支持的浏览器与 `prefers-reduced-motion` 用户自动退化为直接切换
+- **EbMenu 折叠/展开动效与滚动条修复**：`collapse` 模式下菜单文字随容器宽度淡出收拢/淡入展开
+  （时长与侧栏宽度过渡同步 0.45s，负 margin 抵消 gap 保证图标居中），修复此前折叠后文字被
+  侧栏裁切露出的破相；菜单项 padding 参与过渡；折叠宽度补 `max-width: 100%`，
+  消除宿主容器略窄时的 1px 横向溢出导致的自绘横向滚动条；
+  侧栏折叠按钮补 `white-space: nowrap`，消除展开初期文字折行引起的 footer 高度抖动
+- **铁律检查扩面**：`check-token-rule` 扫描范围从仅 `src/` 扩至 `src/ + test/`
+  （business-ui 另含 `examples/` 示例工程）；类名正则收紧，
+  修复 `el-col`/`el-row` 等单词类名因缺少尾随连字符而漏检的盲区
+- **business 文档站**：全站演示改为 `eb-*`；`/chart/` 分区以 `ev-chart`
+  演示 charts 独立包并注明 business 集成方式
+
+### @wil-works/evoke-ui@0.3.0 — 全线更名 ev-* 与官网新组件（破坏性）
+
+- **组件名整体切换 `Ew*` → `Ev*`**（如 `EwButton` → `EvButton`），
   类名/令牌 `ew-*` / `--ew-*` → `ev-*` / `--ev-*`，磨砂属性 `data-ew-glass` → `data-ev-glass`，
   暗色持久化键 `ew-theme` → `ev-theme`；从此与 evoke-charts 共享 `--ev-*` 令牌面，
-  图表在其站点内自动跟随主题（对已按 `Ew*` 接入的消费方为破坏性变更）
-- **图表接入方式变化**：evoke-business-ui 以 npm 依赖引入 `@wil-works/evoke-charts`，
-  对外以 `EbChart`（`<eb-chart>`）提供；样式仍从 `@wil-works/evoke-charts/styles` 引入；
-  business-ui 图表适配层改为 `--ev-*` ← `--eb-*` 映射，换肤时同步派发 `ev-theme-change`
-- **business 文档站**全站演示改为 `eb-*`；`/chart/` 分区以 `ev-chart` 演示 charts 独立包并
-  注明 business 集成方式；docs-web 全站与 evoke-ui 测试/脚本同步完成前缀切换
-- 升级方式：`Ev*`/`Ew*` 组件名按对应库改为 `Eb*`/`Ev*`，令牌与类名前缀同步替换
+  图表在其站点内自动跟随主题。docs-web 全站与测试/脚本同步完成前缀切换。
+  升级方式：`Ew*` 组件名改为 `Ev*`，令牌与类名前缀同步替换
+- **聚焦动效改为实体涟漪**：input / textarea / select / search-box 聚焦（select 含展开下拉）时，
+  原双重 1px 波纹环（连续两次扩散，视觉上像细线闪烁）替换为单次实体涟漪——一块与输入体同形状的
+  实体色层（`z-index: -1` 衬底）自框体向外扩展约 4px 后消散（0.5s，先扩展后消散，非环线非光晕）；
+  同时移除常驻焦点环（input / textarea 聚焦环与错误聚焦环、select 展开环），
+  聚焦态只保留主色 1px 边框，search-box 保留其原有浮起阴影；
+  错误态色层自动跟随 danger 色（`--ev-field-ring-color` 令牌可覆盖）；
+  `data-ev-ripple='off'` 全局开关与 `prefers-reduced-motion` 自动停用行为不变；
+  顺手修复 select 展开态动效此前不受 `data-ev-ripple` 开关控制的问题
+- **EvWaterfall 瀑布流**：新增 `EvWaterfall`，多列瀑布流布局，条目按「最短列优先」分发，
+  列高随内容比例自动均衡（`columns` / `gap` / `radius` 可调）
+  - items 支持 url 字符串或 `{ src, alt, caption, ratio, width, height }`；
+    未声明比例时按 4:3 占位、图片加载后按真实比例重新归位；
+    声明 `ratio`（高/宽）或 `width/height` 则首屏即按真实比例排布
+  - 默认图片卡：底部 `caption` 渐变蒙层、hover 缩放，点击打开 EvImagePreview 灯箱
+    （`preview` 可关，关闭后仅派发 select 事件）
+  - `#item` 作用插槽（参数 `{ item, index }`）完全接管单元格，
+    可承载任意高度不一的内容实现内容瀑布流
+- **文档**：新增 Waterfall 组件页（基础用法 / 列数与间距 / 蒙层与声明比例 / 自定义内容瀑布流）；
+  组件总览补齐此前漏列的 Article / ExecCard / ImageWall / ImagePreview / Modal / BorderBeam，
+  首页搜索补齐对应条目；组件总数口径统一为 57（首页 49、总览 48 为旧口径）
+- **EvCodeBlock 语法高亮 / Markdown 组件**：
+  - **弹层滚动锁定防抖动**：新增共享 `useScrollLock`（引用计数，支持多弹层叠加），
+    锁定期间按滚动条宽度为 body 补偿 `padding-right`，
+    消除「滚动条消失 → 视口变宽 → 内容回流」的抖动；Modal / ImagePreview / ActionSheet 统一接入
+  - **BorderBeam 静态描边**：`EvBorderBeam` 自带 1px 细描边（box-shadow 实现，
+    `--ev-border-color-light`，圆角自动跟随），流光未扫过时卡片仍有边界
+  - **Markdown 组件**：新增 `EvMarkdown`（渲染）与 `EvMarkdownEditor`（编辑器）
+    - 解析器零依赖内置（markdown.js）：标题/段落/有序·无序列表（缩进嵌套）/引用/
+      分隔线/GFM 表格（含对齐）/围栏代码块 + 行内格式（加粗/斜体/删除线/行内代码/链接/图片）；
+      代码围栏复用 EvCodeBlock 高亮分词器（js/json/shell，auto 识别）
+    - 安全模型：原文全量 HTML 转义后渲染，链接/图片地址仅放行安全协议，
+      阻断 `javascript:` 注入，v-html 安全
+    - 编辑器：工具栏快捷排版（Ctrl/⌘+B / I 快捷键）、`split` 双栏实时预览与
+      `toggle` 编辑/预览切换、v-model、placeholder/height/disabled；
+      编辑区聚焦不做主色光环（屏蔽全局 ：focus-visible 焦点环），由面板边框加深一档承担反馈
+    - 核心图标集新增 8 个工具栏图标（bold/italic/strikethrough/heading/
+      list-unordered/list-ordered/code/markdown，72 个）
+  - **内置语法高亮**：新增零依赖轻量分词器，覆盖 shell / js / json 三种语言
+    （`language` 属性，默认 `auto` 按内容特征识别）；代码区按语义令牌渲染 token 配色，
+    明暗主题自动跟随；原文全量转义后渲染，v-html 安全；默认插槽仍可整体覆写；
+    代码块支持多行内容（提示符与代码行高对齐）；
+    窗口控制点增加悬浮/按压反馈（悬停组显现 ×/−/+ 符号、单点缩放提亮）
+  - **文档措辞**：macOS 窗框的「红绿灯」口语化表述统一改为「窗口控制点」；
+    gauge 文档的「红绿灯」语义改为「状态灯（绿/黄/红）」
 
-### @wil-works/evoke-charts — 新增：图表能力独立包（v0.1.0）
+### @wil-works/evoke-charts@0.1.0 — 新增：图表能力独立包（已先行发布）
 
 - **新包 `@wil-works/evoke-charts`**：Canvas 自绘图表引擎自 evoke-business-ui 整体迁出，
-  以独立 npm 包发布（本 monorepo `packages/evoke-charts`，零运行时依赖、仅 peer Vue 3）。
+  以独立 npm 包发布（零运行时依赖、仅 peer Vue 3）。
   20+ 图表类型、交互（tooltip / 图例点选 / dataZoom / 框选 / connect 联动）、
   PNG / 真 SVG 导出与无障碍能力原样保留
 - **组件命名 `EvChart`**：模板标签 `<ev-chart>`，类名 `ev-chart__*`；令牌读取面 `--ev-*`
@@ -36,90 +109,13 @@
   （模板 `<eb-chart>`）提供同一组件，其样式包内置 `--eb-*` → `--ev-*` 映射、
   换肤时同步派发 `ev-theme-change`，两库同用时图表自动跟随其主题、暗色与运行时换肤；
   单用图表库时按 README 声明 `--ev-*` 即可接入任意主题
-- **evoke-business-ui 不再自带图表**：图表能力全部由本包提供
 - **工程**：新包自带 check-token-rule 铁律（禁第三方与跨库命名空间回流 + `--ev-*` 令牌
   完整性），挂入 build；CI 构建矩阵与 publish 工作流新增 charts；根脚本新增 `build:charts`
 
-### @wil-works/evoke-ui — 输入类聚焦动效调整
+### @wil-works/evoke-charts@0.1.1 — README 去开发视角
 
-- **聚焦动效改为实体涟漪**：input / textarea / select / search-box 聚焦（select 含展开下拉）时，
-  原双重 1px 波纹环（连续两次扩散，视觉上像细线闪烁）替换为单次实体涟漪——一块与输入体同形状的
-  实体色层（`z-index: -1` 衬底）自框体向外扩展约 4px 后消散（0.5s，先扩展后消散，非环线非光晕）；
-  同时移除常驻焦点环（input / textarea 聚焦环与错误聚焦环、select 展开环），
-  聚焦态只保留主色 1px 边框，search-box 保留其原有浮起阴影；
-  错误态色层自动跟随 danger 色（`--ew-field-ring-color` 令牌可覆盖）；
-  `data-ew-ripple='off'` 全局开关与 `prefers-reduced-motion` 自动停用行为不变；
-  顺手修复 select 展开态动效此前不受 `data-ew-ripple` 开关控制的问题
-
-### @wil-works/evoke-ui — EwWaterfall 瀑布流
-
-- **瀑布流组件**：新增 `EwWaterfall`，多列瀑布流布局，条目按「最短列优先」分发，
-  列高随内容比例自动均衡（`columns` / `gap` / `radius` 可调）
-  - items 支持 url 字符串或 `{ src, alt, caption, ratio, width, height }`；
-    未声明比例时按 4:3 占位、图片加载后按真实比例重新归位；
-    声明 `ratio`（高/宽）或 `width/height` 则首屏即按真实比例排布
-  - 默认图片卡：底部 `caption` 渐变蒙层、hover 缩放，点击打开 EwImagePreview 灯箱
-    （`preview` 可关，关闭后仅派发 select 事件）
-  - `#item` 作用插槽（参数 `{ item, index }`）完全接管单元格，
-    可承载任意高度不一的内容实现内容瀑布流
-- **文档**：新增 Waterfall 组件页（基础用法 / 列数与间距 / 蒙层与声明比例 / 自定义内容瀑布流）；
-  组件总览补齐此前漏列的 Article / ExecCard / ImageWall / ImagePreview / Modal / BorderBeam，
-  首页搜索补齐对应条目；组件总数口径统一为 57（首页 49、总览 48 为旧口径）
-
-### @wil-works/evoke-ui — EwCodeBlock 语法高亮 / Markdown 组件
-
-- **弹层滚动锁定防抖动**：新增共享 `useScrollLock`（引用计数，支持多弹层叠加），
-  锁定期间按滚动条宽度为 body 补偿 `padding-right`，
-  消除「滚动条消失 → 视口变宽 → 内容回流」的抖动；Modal / ImagePreview / ActionSheet 统一接入
-- **BorderBeam 静态描边**：`EwBorderBeam` 自带 1px 细描边（box-shadow 实现，
-  `--ew-border-color-light`，圆角自动跟随），流光未扫过时卡片仍有边界
-- **Markdown 组件**：新增 `EwMarkdown`（渲染）与 `EwMarkdownEditor`（编辑器）
-  - 解析器零依赖内置（markdown.js）：标题/段落/有序·无序列表（缩进嵌套）/引用/
-    分隔线/GFM 表格（含对齐）/围栏代码块 + 行内格式（加粗/斜体/删除线/行内代码/链接/图片）；
-    代码围栏复用 EwCodeBlock 高亮分词器（js/json/shell，auto 识别）
-  - 安全模型：原文全量 HTML 转义后渲染，链接/图片地址仅放行安全协议，
-    阻断 `javascript:` 注入，v-html 安全
-  - 编辑器：工具栏快捷排版（Ctrl/⌘+B / I 快捷键）、`split` 双栏实时预览与
-    `toggle` 编辑/预览切换、v-model、placeholder/height/disabled；
-    编辑区聚焦不做主色光环（屏蔽全局 ：focus-visible 焦点环），由面板边框加深一档承担反馈
-  - 核心图标集新增 8 个工具栏图标（bold/italic/strikethrough/heading/
-    list-unordered/list-ordered/code/markdown，72 个）
-
-- **内置语法高亮**：新增零依赖轻量分词器，覆盖 shell / js / json 三种语言
-  （`language` 属性，默认 `auto` 按内容特征识别）；代码区按语义令牌渲染 token 配色，
-  明暗主题自动跟随；原文全量转义后渲染，v-html 安全；默认插槽仍可整体覆写；
-  代码块支持多行内容（提示符与代码行高对齐）；
-  窗口控制点增加悬浮/按压反馈（悬停组显现 ×/−/+ 符号、单点缩放提亮）
-- **文档措辞**：macOS 窗框的「红绿灯」口语化表述统一改为「窗口控制点」；
-  gauge 文档的「红绿灯」语义改为「状态灯（绿/黄/红）」
-
-### @wil-works/evoke-business-ui — EvAppLayout 调整
-
-- **输入涟漪升级为实体色层**：`focus-ripple.css` 由「双圈细环 scale 扩散」改为与
-  evoke-ui 同款的实体涟漪——与输入体同形状的实体色层（z-index: -1 衬底）自框体
-  向外扩展约 4px 后消散（0.7s 单次，圆角随扩散同步放大且跟随输入圆角令牌
-  `--ev-input-border-radius` 适配定制圆角，避免直角与圆角偏差），
-  错误态跟随 danger 色（`--ev-field-ring-color` 可覆盖）；
-  覆盖 ev-input__wrapper 家族与 ev-select__wrapper，`data-ev-ripple='off'` 开关不变
-
-- **主题切换移至顶栏**：明暗切换由侧边栏底部的开关改为顶栏右侧的图标按钮
-  （`isDark` / `@toggle` 接口不变；`#theme-toggle` 插槽仍可整体覆盖，渲染位置跟随到顶栏）。
-  同时消除侧栏收起/展开时 footer 高度瞬跳造成的抖动，折叠按钮「收起」文字改为随宽度过渡淡入淡出；
-  侧栏菜单激活态去掉左侧竖条指示器，仅保留激活背景色 + 文字变色
-  （`--ev-sidebar-indicator` 令牌随之移除）；侧栏 LOGO 区与菜单之间增加默认 12px 间距
-- **明暗切换过渡动效**：`useDarkMode` 的 `toggleDark` 优先走 View Transitions 整页交叉淡入淡出
-  （浅→深 / 深→浅柔和过渡），不支持的浏览器与 `prefers-reduced-motion` 用户自动退化为直接切换
-- **EvMenu 折叠/展开动效与滚动条修复**：`collapse` 模式下菜单文字随容器宽度淡出收拢/淡入展开
-  （时长与侧栏宽度过渡同步 0.45s，负 margin 抵消 gap 保证图标居中），修复此前折叠后文字被
-  侧栏裁切露出的破相；菜单项 padding 参与过渡；折叠宽度补 `max-width: 100%`，
-  消除宿主容器略窄时的 1px 横向溢出导致的自绘横向滚动条；
-  侧栏折叠按钮补 `white-space: nowrap`，消除展开初期文字折行引起的 footer 高度抖动
-
-- **铁律检查扩面**：两库 `check-token-rule` 扫描范围从仅 `src/` 扩至 `src/ + test/`
-  （business-ui 另含 `examples/` 示例工程）；类名正则收紧，
-  修复 `el-col`/`el-row` 等单词类名因缺少尾随连字符而漏检的盲区。
-  全仓复查确认第三方残留已清零（`ant-design` 仅为对标文案），铁律扩面后已拦截并修正
-  evoke-ui 测试注释中的跨库名称引用
+- README 移除面向开发过程的说明（monorepo 管理声明、开发命令、仓库相对链接），
+  内容改为纯使用视角；随本 Release 首次经 CI 发布
 
 ## [0.2.0] — 2026-09-11
 

@@ -119,7 +119,7 @@ function goSearch() {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.2.0</EvTag>
+      <EvTag size="small">v0.3.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -143,7 +143,7 @@ function goSearch() {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.2.0 发布：边框流光、图片墙、弹出层与更多</span>
+      <span>v0.3.0 发布：瀑布流、Markdown 组件与全线 Ev 命名</span>
       <template #action>
         <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -199,7 +199,7 @@ function goSearch() {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.2.0</EvTag>
+        <EvTag tone="primary" size="small">v0.3.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
