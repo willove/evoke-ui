@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
  * Vite 库模式构建配置
  * 纯 JS 源码，编译 .vue → .mjs，消费端无需源码级编译
  * 组件样式由各组件 import './style.css'，Vite 自动聚合为单一 css 产物
- * EwIconGrid 的展示图标集通过动态 import 独立分 chunk，不进主包
+ * EvIconGrid 的展示图标集通过动态 import 独立分 chunk，不进主包
  */
 export default defineConfig({
   plugins: [vue()],
