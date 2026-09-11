@@ -1,7 +1,6 @@
 name: npm rollback (temporary)
 
-# 临时工作流：撤回误发的 @wil-works/evoke-ui@1.5.0 并将 latest 定位到 0.2.0
-# 执行完毕后删除本文件
+# 临时工作流：latest 重新定位到 0.2.0（unpublish 需要账号级权限，由人工在 npm 网站执行）
 
 on:
   workflow_dispatch:
@@ -15,9 +14,7 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: Unpublish 1.5.0 and retag latest to 0.2.0
-        run: |
-          npm unpublish @wil-works/evoke-ui@1.5.0 --force
-          npm dist-tag add @wil-works/evoke-ui@0.2.0 latest
+      - name: Retag latest to 0.2.0
+        run: npm dist-tag add @wil-works/evoke-ui@0.2.0 latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
