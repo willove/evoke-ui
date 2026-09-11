@@ -11,10 +11,10 @@
 
 ## 基础用法
 
-通常放在 EvDataTable 的 toolbar 插槽内：
+通常放在 EbDataTable 的 toolbar 插槽内：
 
 <DemoBlock>
-  <ev-column-settings
+  <eb-column-settings
     button-text="列设置"
     :columns="[
       { prop: 'name', label: '名称' },
@@ -50,21 +50,21 @@ const csSaved = ref('')
 把 `v-model` 结果映射回 `columns` 即完成联动：隐藏列不渲染，拖拽排序直接改变表格列顺序；实例方法 `reset()` 等价于面板内的重置按钮。
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="订单列表"
     :columns="csTableColumns"
     :data="csRows"
   >
     <template #toolbar>
-      <ev-column-settings
+      <eb-column-settings
         ref="csRef"
         v-model="csVisible"
         button-text="列设置"
         :columns="csAllColumns"
       />
-      <ev-button @click="csRef.reset()">重置列</ev-button>
+      <eb-button @click="csRef.reset()">重置列</eb-button>
     </template>
-  </ev-data-table>
+  </eb-data-table>
 </DemoBlock>
 
 试试取消勾选金额列或把创建时间拖到最前，表格即时跟随。
@@ -74,7 +74,7 @@ const csSaved = ref('')
 非受控 + `storage-key`：选择结果写入 localStorage，刷新页面后自动恢复（仅恢复仍然存在的列，新列补尾）；`change` 事件可用于同步到服务端偏好。
 
 <DemoBlock>
-  <ev-column-settings
+  <eb-column-settings
     storage-key="docs-column-settings-demo"
     :columns="[{ prop: 'name', label: '名称' }, { prop: 'owner', label: '负责人' }, { prop: 'amount', label: '金额' }]"
     @change="(v) => (csSaved = v.join(' / '))"

@@ -2,7 +2,7 @@
   <ChatContent 
     :height="height" 
     :width="width"
-    class="ev-chatbot"
+    class="eb-chatbot"
   >
     <template v-if="$slots.header" #header>
       <slot name="header" />
@@ -32,7 +32,7 @@
     </ChatList>
     
     <template #footer>
-      <div class="ev-chatbot__sender-wrapper">
+      <div class="eb-chatbot__sender-wrapper">
         <slot name="sender-prepend" />
         <ChatSender
           ref="senderRef"
@@ -54,7 +54,7 @@
         </ChatSender>
         <slot name="sender-append" />
       </div>
-      <div v-if="showTip" class="ev-chatbot__tip">
+      <div v-if="showTip" class="eb-chatbot__tip">
         <slot name="tip">
           <span>内容由 AI 生成，仅供参考</span>
         </slot>
@@ -168,18 +168,18 @@ defineExpose({
 
 <style scoped>
 
-.ev-chatbot {
+.eb-chatbot {
   display: flex;
 }
 
-.ev-chatbot__sender-wrapper {
-  padding: 0 var(--ev-space-2);
+.eb-chatbot__sender-wrapper {
+  padding: 0 var(--eb-space-2);
 }
 
-.ev-chatbot__tip {
+.eb-chatbot__tip {
   text-align: center;
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-placeholder);
-  padding-top: var(--ev-space-2);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
+  padding-top: var(--eb-space-2);
 }
 </style>

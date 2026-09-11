@@ -1,10 +1,10 @@
 <template>
-  <div ref="rootRef" class="ev-pull-refresh">
-    <div class="ev-pull-refresh__track" :style="trackStyle">
-      <div class="ev-pull-refresh__head" :style="{ height: `${headHeight}px`, top: `${-headHeight - 1}px` }">
+  <div ref="rootRef" class="eb-pull-refresh">
+    <div class="eb-pull-refresh__track" :style="trackStyle">
+      <div class="eb-pull-refresh__head" :style="{ height: `${headHeight}px`, top: `${-headHeight - 1}px` }">
         <slot name="head" :status="status" :distance="distance">
-          <div :class="['ev-pull-refresh__text', `is-${status}`]">
-            <span v-if="status === 'loading'" class="ev-pull-refresh__spinner" />
+          <div :class="['eb-pull-refresh__text', `is-${status}`]">
+            <span v-if="status === 'loading'" class="eb-pull-refresh__spinner" />
             <span>{{ statusText }}</span>
           </div>
         </slot>
@@ -16,7 +16,7 @@
 
 <script setup>
 /**
- * EvPullRefresh — 下拉刷新
+ * EbPullRefresh — 下拉刷新
  * 触屏下拉手势：顶部下拉 → 释放触发 refresh（v-model 同步 loading 态 → 置 false 收尾）。
  * 滚动容器不在顶部时不拦截手势；超出触发距离后阻尼跟手。
  * 状态机：normal → pulling（未到阈值）→ loosing（释放即刷新）→ loading → success → normal
@@ -24,7 +24,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getScrollParent, getScrollTop } from '../../utils/scroll'
 
-defineOptions({ name: 'EvPullRefresh' })
+defineOptions({ name: 'EbPullRefresh' })
 
 const props = defineProps({
   /** 刷新中状态（v-model）：置 true 进入 loading，加载完成置 false 自动展示成功态后收回 */

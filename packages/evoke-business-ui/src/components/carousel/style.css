@@ -1,21 +1,21 @@
-/* EvCarousel —走马灯 */
+/* EbCarousel —走马灯 */
 
-.ev-carousel.ev-carousel {
+.eb-carousel.eb-carousel {
   position: relative;
 }
 
-.ev-carousel.ev-carousel .ev-carousel__container {
+.eb-carousel.eb-carousel .eb-carousel__container {
   position: relative;
   height: 300px;
   overflow: hidden;
 }
 
-.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__container {
+.eb-carousel.eb-carousel.eb-carousel--vertical .eb-carousel__container {
   height: 100%;
 }
 
 /* ─── 箭头 ─── */
-.ev-carousel.ev-carousel .ev-carousel__arrow {
+.eb-carousel.eb-carousel .eb-carousel__arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -27,34 +27,34 @@
   height: 36px;
   padding: 0;
   border: none;
-  border-radius: var(--ev-radius-full);
+  border-radius: var(--eb-radius-full);
   background-color: rgba(31, 45, 61, 0.35);
   color: #fff;
   cursor: pointer;
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-carousel.ev-carousel .ev-carousel__arrow:hover {
+.eb-carousel.eb-carousel .eb-carousel__arrow:hover {
   background-color: rgba(31, 45, 61, 0.55);
 }
-.ev-carousel.ev-carousel .ev-carousel__arrow--left {
-  left: var(--ev-space-4);
+.eb-carousel.eb-carousel .eb-carousel__arrow--left {
+  left: var(--eb-space-4);
 }
-.ev-carousel.ev-carousel .ev-carousel__arrow--right {
-  right: var(--ev-space-4);
+.eb-carousel.eb-carousel .eb-carousel__arrow--right {
+  right: var(--eb-space-4);
 }
-.ev-carousel.ev-carousel .ev-carousel__arrow.is-hover-only {
+.eb-carousel.eb-carousel .eb-carousel__arrow.is-hover-only {
   opacity: 0;
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-out), background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-carousel.ev-carousel:hover .ev-carousel__arrow.is-hover-only {
+.eb-carousel.eb-carousel:hover .eb-carousel__arrow.is-hover-only {
   opacity: 1;
 }
 
 /* ─── 指示器 ─── */
-.ev-carousel.ev-carousel .ev-carousel__indicators {
+.eb-carousel.eb-carousel .eb-carousel__indicators {
   position: absolute;
   left: 50%;
-  bottom: var(--ev-space-2);
+  bottom: var(--eb-space-2);
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
@@ -65,44 +65,44 @@
   font-size: inherit;
   line-height: inherit;
 }
-.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__indicators {
+.eb-carousel.eb-carousel.eb-carousel--vertical .eb-carousel__indicators {
   left: auto;
-  right: var(--ev-space-2);
+  right: var(--eb-space-2);
   top: 50%;
   bottom: auto;
   transform: translateY(-50%);
   flex-direction: column;
 }
 
-.ev-carousel.ev-carousel .ev-carousel__indicator {
-  padding: var(--ev-space-2) var(--ev-space-1);
+.eb-carousel.eb-carousel .eb-carousel__indicator {
+  padding: var(--eb-space-2) var(--eb-space-1);
   cursor: pointer;
   color: inherit;
   font-size: inherit;
   line-height: inherit;
 }
-.ev-carousel.ev-carousel .ev-carousel__button {
+.eb-carousel.eb-carousel .eb-carousel__button {
   display: block;
   width: 30px;
   height: 2px;
   padding: 0;
   border: none;
-  background-color: var(--ev-text-color-placeholder);
+  background-color: var(--eb-text-color-placeholder);
   opacity: 0.48;
   cursor: pointer;
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-out), background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-carousel.ev-carousel.ev-carousel--vertical .ev-carousel__button {
+.eb-carousel.eb-carousel.eb-carousel--vertical .eb-carousel__button {
   width: 2px;
   height: 30px;
 }
-.ev-carousel.ev-carousel .ev-carousel__indicator.is-active .ev-carousel__button {
+.eb-carousel.eb-carousel .eb-carousel__indicator.is-active .eb-carousel__button {
   opacity: 1;
-  background-color: var(--ev-color-primary);
+  background-color: var(--eb-color-primary);
 }
 
 /* ─── 项 ─── */
-.ev-carousel.ev-carousel .ev-carousel__item {
+.eb-carousel.eb-carousel .eb-carousel__item {
   position: absolute;
   inset: 0;
   overflow: hidden;

@@ -1,6 +1,6 @@
 # LoadMore 加载更多
 
-`EwLoadMore` 是列表尾部的加载状态条：idle（可点击 / 触底自动）→ loading（外部拉数据）
+`EvLoadMore` 是列表尾部的加载状态条：idle（可点击 / 触底自动）→ loading（外部拉数据）
 → idle（还有数据）/ noMore（到底）/ error（失败点击重试）。状态由父级持有
 （`v-model:status`），组件触发时置 `loading` 并发出 `load-more`，把「何时加载」交给组件、
 「加载什么」留给业务。触底检测用 IntersectionObserver，根为最近的滚动祖先，页面滚动
@@ -10,11 +10,11 @@
 
 <DemoBlock title="点击与触底自动加载" description="点击状态条触发；autoLoad 开启时滚动到距底部 preload px 内自动触发。加载两页后转 noMore。">
 
-<div style="max-width: 375px; margin: 0 auto; height: 320px; overflow-y: auto; border: 1px solid var(--ew-border-color-light); border-radius: var(--ew-radius-md); padding: 16px 16px 0;">
-  <div v-for="i in items" :key="i" style="padding: 10px 0; border-bottom: 1px solid var(--ew-border-color-light); font-size: 14px; color: var(--ew-text-primary);">
+<div style="max-width: 375px; margin: 0 auto; height: 320px; overflow-y: auto; border: 1px solid var(--ev-border-color-light); border-radius: var(--ev-radius-md); padding: 16px 16px 0;">
+  <div v-for="i in items" :key="i" style="padding: 10px 0; border-bottom: 1px solid var(--ev-border-color-light); font-size: 14px; color: var(--ev-text-primary);">
     内容条目 #{{ i }}
   </div>
-  <EwLoadMore v-model:status="status" :preload="40" @load-more="onLoad" />
+  <EvLoadMore v-model:status="status" :preload="40" @load-more="onLoad" />
 </div>
 
 ```vue
@@ -35,7 +35,7 @@ async function onLoad() {
 <template>
   <div class="list">
     <Item v-for="i in items" :key="i" />
-    <EwLoadMore v-model:status="status" :preload="40" @load-more="onLoad" />
+    <EvLoadMore v-model:status="status" :preload="40" @load-more="onLoad" />
   </div>
 </template>
 ```
@@ -77,13 +77,13 @@ function onErrLoad() {
 
 <DemoBlock title="error → 点击重试" description="首击模拟失败转 error，再次点击重试成功转 noMore。">
 
-<div style="max-width: 375px; margin: 0 auto; border: 1px solid var(--ew-border-color-light); border-radius: var(--ew-radius-md); padding: 16px 16px 0;">
-  <div style="padding: 10px 0; font-size: 14px; color: var(--ew-text-primary);">内容条目 #1 ~ #6</div>
-  <EwLoadMore :status="errStatus" @load-more="onErrLoad" @update:status="errStatus = $event" />
+<div style="max-width: 375px; margin: 0 auto; border: 1px solid var(--ev-border-color-light); border-radius: var(--ev-radius-md); padding: 16px 16px 0;">
+  <div style="padding: 10px 0; font-size: 14px; color: var(--ev-text-primary);">内容条目 #1 ~ #6</div>
+  <EvLoadMore :status="errStatus" @load-more="onErrLoad" @update:status="errStatus = $event" />
 </div>
 
 ```vue
-<EwLoadMore v-model:status="status" @load-more="onLoad" />
+<EvLoadMore v-model:status="status" @load-more="onLoad" />
 ```
 
 </DemoBlock>

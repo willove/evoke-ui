@@ -1,55 +1,55 @@
 <template>
   <Teleport to="body">
-    <Transition name="ev-msgbox-fade" @after-leave="handleAfterLeave">
+    <Transition name="eb-msgbox-fade" @after-leave="handleAfterLeave">
       <div
         v-if="visible"
-        class="ev-overlay ev-overlay is-message-box"
+        class="eb-overlay eb-overlay is-message-box"
         :style="{ zIndex }"
         @click.self="handleOverlayClick"
       >
         <div
           ref="boxRef"
-          class="ev-message-box ev-message-box"
+          class="eb-message-box eb-message-box"
           :class="[typeClass, { 'is-center': center }]"
           role="alertdialog"
           aria-modal="true"
           :aria-label="title || 'message box'"
         >
-          <div class="ev-message-box__header">
-            <div class="ev-message-box__title">
-              <ev-icon v-if="showIcon && iconName" :name="iconName" class="ev-message-box__status" :class="`is-${type}`" />
+          <div class="eb-message-box__header">
+            <div class="eb-message-box__title">
+              <eb-icon v-if="showIcon && iconName" :name="iconName" class="eb-message-box__status" :class="`is-${type}`" />
               <span>{{ title }}</span>
             </div>
             <button
               v-if="showClose"
               type="button"
-              class="ev-message-box__headerbtn"
+              class="eb-message-box__headerbtn"
               aria-label="Close"
               @click="handleAction('close')"
             >
-              <ev-icon name="close" />
+              <eb-icon name="close" />
             </button>
           </div>
-          <div class="ev-message-box__content">
-            <div class="ev-message-box__container">
-              <div v-if="message" class="ev-message-box__message">
+          <div class="eb-message-box__content">
+            <div class="eb-message-box__container">
+              <div v-if="message" class="eb-message-box__message">
                 <p v-if="html" v-html="message"></p>
                 <p v-else>{{ message }}</p>
               </div>
             </div>
-            <div v-if="mode === 'prompt'" class="ev-message-box__input">
-              <ev-input
+            <div v-if="mode === 'prompt'" class="eb-message-box__input">
+              <eb-input
                 ref="inputRef"
                 v-model="inputValue"
                 :type="inputType"
                 :placeholder="inputPlaceholder"
                 @keydown.enter="handleEnter"
               />
-              <div v-if="inputError" class="ev-message-box__errormsg">{{ inputError }}</div>
+              <div v-if="inputError" class="eb-message-box__errormsg">{{ inputError }}</div>
             </div>
           </div>
-          <div class="ev-message-box__btns">
-            <ev-button
+          <div class="eb-message-box__btns">
+            <eb-button
               v-if="showCancelButton"
               :loading="cancelButtonLoading"
               :size="buttonSize"
@@ -57,8 +57,8 @@
               @click="handleAction('cancel')"
             >
               {{ cancelButtonText }}
-            </ev-button>
-            <ev-button
+            </eb-button>
+            <eb-button
               :type="confirmButtonClass || 'primary'"
               :loading="confirmButtonLoading"
               :size="buttonSize"
@@ -66,7 +66,7 @@
               @click="handleAction('confirm')"
             >
               {{ confirmButtonText }}
-            </ev-button>
+            </eb-button>
           </div>
         </div>
       </div>
@@ -76,17 +76,17 @@
 
 <script setup>
 /**
- * EvMsgbox 视图 — 命令式消息框渲染（由 msgbox/index.js vnode 管线挂载）
+ * EbMsgbox 视图 — 命令式消息框渲染（由 msgbox/index.js vnode 管线挂载）
  * action 语义：confirm / cancel / close（distinguishCancelAndClose 区分后两者）
  */
 import { computed, onMounted, ref, watch } from 'vue'
-import EvIcon from '../../icon/index.vue'
-import EvButton from '../../button/index.vue'
-import EvInput from '../../input/index.vue'
+import EbIcon from '../../icon/index.vue'
+import EbButton from '../../button/index.vue'
+import EbInput from '../../input/index.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import { useLockScroll } from '../../../composables/useLockScroll'
 
-defineOptions({ name: 'EvMsgboxView' })
+defineOptions({ name: 'EbMsgboxView' })
 
 const props = defineProps({
   mode: {
@@ -146,7 +146,7 @@ const iconName = computed(() => {
   return map[props.type] ?? 'info-filled'
 })
 
-const typeClass = computed(() => `ev-message-box--${props.type}`)
+const typeClass = computed(() => `eb-message-box--${props.type}`)
 
 const { activate, deactivate } = useFocusTrap(boxRef, {
   escapeDeactivates: true,

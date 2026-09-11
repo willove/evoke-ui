@@ -26,7 +26,7 @@ import memberListSource from '../../examples/ebui-example-crud-list/src/pages/Me
 | ColumnSettings | 工具栏列设置，`v-model` 为「按显示顺序的可见列 prop 数组」 |
 | ImportExportPanel | 弹窗内的导入导出面板：选文件 → `import-file`，选格式 → `export`，完成后必须手动 `done()` 复位 |
 | Dialog + Form + FormItem | 新建 / 编辑共用弹窗，`rules` 校验（手机号格式、必填） |
-| Select + Option | 下拉选择（注意：Select 没有 `options` prop，用 `ev-option` 子组件声明选项） |
+| Select + Option | 下拉选择（注意：Select 没有 `options` prop，用 `eb-option` 子组件声明选项） |
 | RadioGroup / InputNumber | 账户状态单选、余额输入 |
 | StatusTag + Tag | 状态列与等级标签（`statuses` 字典模块级复用） |
 | Message / Popconfirm | 操作反馈与删除二次确认 |

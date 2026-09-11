@@ -1,22 +1,22 @@
 <template>
-  <div class="ev-gantt-progress" :style="{ '--bar-count': stages.length }">
-    <div class="ev-gantt-progress__connector">
-      <div class="ev-gantt-progress__connector-fill" :style="{ width: progressPercent + '%' }" />
+  <div class="eb-gantt-progress" :style="{ '--bar-count': stages.length }">
+    <div class="eb-gantt-progress__connector">
+      <div class="eb-gantt-progress__connector-fill" :style="{ width: progressPercent + '%' }" />
     </div>
-    <div class="ev-gantt-progress__bars">
-      <div v-for="(stage, i) in stages" :key="i" class="ev-gantt-progress__bar-wrap">
-        <div class="ev-gantt-progress__bar-outer">
+    <div class="eb-gantt-progress__bars">
+      <div v-for="(stage, i) in stages" :key="i" class="eb-gantt-progress__bar-wrap">
+        <div class="eb-gantt-progress__bar-outer">
           <div
-            class="ev-gantt-progress__bar"
-            :class="'ev-gantt-progress__bar--' + stage.status"
+            class="eb-gantt-progress__bar"
+            :class="'eb-gantt-progress__bar--' + stage.status"
             :style="barStyle(stage, i)"
           >
-            <div v-if="stage.status === 'active'" class="ev-gantt-progress__pulse" />
+            <div v-if="stage.status === 'active'" class="eb-gantt-progress__pulse" />
           </div>
         </div>
-        <div class="ev-gantt-progress__label">
-          <span class="ev-gantt-progress__label-name">{{ stage.name }}</span>
-          <span v-if="stage.date" class="ev-gantt-progress__label-date">{{ stage.date }}</span>
+        <div class="eb-gantt-progress__label">
+          <span class="eb-gantt-progress__label-name">{{ stage.name }}</span>
+          <span v-if="stage.date" class="eb-gantt-progress__label-date">{{ stage.date }}</span>
         </div>
       </div>
     </div>
@@ -25,16 +25,16 @@
 
 <script setup>
 /**
- * EvGanttProgress — 甘特式阶段进度
+ * EbGanttProgress — 甘特式阶段进度
  * 阶段柱（completed/active/pending 三态高度差）+ 贯穿连接线 + active 脉冲
  */
 import { computed } from 'vue'
 
 const props = defineProps({
   stages: { type: Array, default: () => [] },
-  completedColor: { type: String, default: 'var(--ev-color-primary)' },
-  activeColor: { type: String, default: 'var(--ev-color-primary)' },
-  pendingColor: { type: String, default: 'var(--ev-border-color)' },
+  completedColor: { type: String, default: 'var(--eb-color-primary)' },
+  activeColor: { type: String, default: 'var(--eb-color-primary)' },
+  pendingColor: { type: String, default: 'var(--eb-border-color)' },
 })
 
 const completedCount = computed(() => props.stages.filter((s) => s.status === 'completed').length)

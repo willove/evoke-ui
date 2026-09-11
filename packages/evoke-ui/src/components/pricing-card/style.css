@@ -1,184 +1,184 @@
-/* EwPricingCard — 定价卡 */
+/* EvPricingCard — 定价卡 */
 
-.ew-pricing-card {
+.ev-pricing-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: var(--ew-space-8);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-xl);
-  background-color: var(--ew-bg-container);
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+  padding: var(--ev-space-8);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-xl);
+  background-color: var(--ev-bg-container);
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-pricing-card:hover {
+.ev-pricing-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--ew-shadow-2);
+  box-shadow: var(--ev-shadow-2);
 }
 
 /* ─── 深色主推卡（launchos featured）─── */
-.ew-pricing-card.is-featured {
+.ev-pricing-card.is-featured {
   border-color: transparent;
   background:
-    radial-gradient(120% 90% at 85% 0%, rgba(var(--ew-color-primary-rgb), 0.18), transparent 62%),
+    radial-gradient(120% 90% at 85% 0%, rgba(var(--ev-color-primary-rgb), 0.18), transparent 62%),
     linear-gradient(165deg, #232329 0%, #121215 70%);
-  color: var(--ew-text-on-dark);
-  box-shadow: var(--ew-shadow-4);
+  color: var(--ev-text-on-dark);
+  box-shadow: var(--ev-shadow-4);
 }
 
-.ew-pricing-card.is-featured:hover {
-  box-shadow: var(--ew-shadow-4);
+.ev-pricing-card.is-featured:hover {
+  box-shadow: var(--ev-shadow-4);
 }
 
 /* ─── 徽章（lime 促销胶囊）─── */
-.ew-pricing-card__badge {
+.ev-pricing-card__badge {
   position: absolute;
-  top: var(--ew-space-4);
-  right: var(--ew-space-4);
+  top: var(--ev-space-4);
+  right: var(--ev-space-4);
   padding: 4px 10px;
-  border-radius: var(--ew-radius-full);
-  background-color: var(--ew-color-accent-lime);
-  color: var(--ew-color-accent-lime-ink);
-  font-size: var(--ew-font-size-xs);
-  font-weight: var(--ew-font-weight-semibold);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-color-accent-lime);
+  color: var(--ev-color-accent-lime-ink);
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-semibold);
   letter-spacing: 0.02em;
 }
 
 /* ─── 标题与描述 ─── */
-.ew-pricing-card__title {
-  font-size: var(--ew-font-size-xl);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  color: var(--ew-text-primary);
+.ev-pricing-card__title {
+  font-size: var(--ev-font-size-xl);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  color: var(--ev-text-primary);
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__title {
+.ev-pricing-card.is-featured .ev-pricing-card__title {
   color: #ffffff;
 }
 
-.ew-pricing-card__description {
-  margin-top: var(--ew-space-2);
-  font-size: var(--ew-font-size-sm);
+.ev-pricing-card__description {
+  margin-top: var(--ev-space-2);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__description {
+.ev-pricing-card.is-featured .ev-pricing-card__description {
   color: rgba(245, 247, 252, 0.7);
 }
 
 /* ─── 价格行 ─── */
-.ew-pricing-card__price-row {
+.ev-pricing-card__price-row {
   display: flex;
   align-items: baseline;
-  gap: var(--ew-space-3);
-  margin-top: var(--ew-space-6);
+  gap: var(--ev-space-3);
+  margin-top: var(--ev-space-6);
 }
 
-.ew-pricing-card__price {
-  font-size: var(--ew-font-size-3xl);
-  font-weight: var(--ew-font-weight-bold);
-  letter-spacing: var(--ew-display-letter-spacing);
-  color: var(--ew-text-primary);
+.ev-pricing-card__price {
+  font-size: var(--ev-font-size-3xl);
+  font-weight: var(--ev-font-weight-bold);
+  letter-spacing: var(--ev-display-letter-spacing);
+  color: var(--ev-text-primary);
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__price {
+.ev-pricing-card.is-featured .ev-pricing-card__price {
   color: #ffffff;
 }
 
-.ew-pricing-card__original {
-  font-size: var(--ew-font-size-md);
-  color: var(--ew-text-secondary);
+.ev-pricing-card__original {
+  font-size: var(--ev-font-size-md);
+  color: var(--ev-text-secondary);
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__original {
+.ev-pricing-card.is-featured .ev-pricing-card__original {
   color: rgba(245, 247, 252, 0.45);
 }
 
 /* ─── 促销注记（launchos 橙色 offer 文案）─── */
-.ew-pricing-card__note {
-  margin-top: var(--ew-space-1);
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-color-accent-orange);
+.ev-pricing-card__note {
+  margin-top: var(--ev-space-1);
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-color-accent-orange);
 }
 
 /* ─── 特性列表 ─── */
-.ew-pricing-card__features {
+.ev-pricing-card__features {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-3);
-  margin: var(--ew-space-6) 0;
+  gap: var(--ev-space-3);
+  margin: var(--ev-space-6) 0;
 }
 
-.ew-pricing-card__feature {
+.ev-pricing-card__feature {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-2);
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  gap: var(--ev-space-2);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__feature {
+.ev-pricing-card.is-featured .ev-pricing-card__feature {
   color: rgba(245, 247, 252, 0.9);
 }
 
-.ew-pricing-card__check {
-  color: var(--ew-color-primary);
+.ev-pricing-card__check {
+  color: var(--ev-color-primary);
   flex-shrink: 0;
 }
 
-.ew-pricing-card.is-featured .ew-pricing-card__check {
-  color: var(--ew-color-primary-light-3);
+.ev-pricing-card.is-featured .ev-pricing-card__check {
+  color: var(--ev-color-primary-light-3);
 }
 
 /* ─── 底部动作 ─── */
-.ew-pricing-card__footer {
+.ev-pricing-card__footer {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-3);
+  gap: var(--ev-space-3);
 }
 
 /* ─── 宿主环境屏蔽 ───
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-pricing-card .ew-pricing-card__title {
+.ev-pricing-card .ev-pricing-card__title {
   margin: 0;
-  font-size: var(--ew-font-size-xl);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-xl);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
+  color: var(--ev-text-primary);
 }
 
-.ew-pricing-card .ew-pricing-card__description {
-  margin: var(--ew-space-2) 0 0;
-  font-size: var(--ew-font-size-sm);
+.ev-pricing-card .ev-pricing-card__description {
+  margin: var(--ev-space-2) 0 0;
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-pricing-card .ew-pricing-card__features {
-  margin: var(--ew-space-5) 0;
+.ev-pricing-card .ev-pricing-card__features {
+  margin: var(--ev-space-5) 0;
   padding: 0;
   list-style: none;
 }
 
-.ew-pricing-card .ew-pricing-card__feature {
+.ev-pricing-card .ev-pricing-card__feature {
   margin: 0;
   padding: 0;
 }
 
-/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ew-pricing-card.is-glass:not(.is-featured),
-  html[data-ew-glass='on'] .ew-pricing-card:not(.no-glass):not(.is-featured) {
-    background-color: var(--ew-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
-    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  .ev-pricing-card.is-glass:not(.is-featured),
+  html[data-ev-glass='on'] .ev-pricing-card:not(.no-glass):not(.is-featured) {
+    background-color: var(--ev-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }

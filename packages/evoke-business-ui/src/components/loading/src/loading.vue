@@ -1,18 +1,18 @@
 <template>
-  <Transition name="ev-loading-fade">
+  <Transition name="eb-loading-fade">
     <div
       v-if="visible"
-      class="ev-loading-mask ev-loading-mask"
+      class="eb-loading-mask eb-loading-mask"
       :class="{ 'is-fullscreen': fullscreen }"
       :style="{ zIndex, backgroundColor: background }"
       role="status"
       :aria-label="text || 'loading'"
     >
-      <div class="ev-loading-spinner">
+      <div class="eb-loading-spinner">
         <svg class="circular" viewBox="0 0 50 50" aria-hidden="true">
           <circle class="path" cx="25" cy="25" r="20" fill="none" />
         </svg>
-        <p v-if="text" class="ev-loading-text">{{ text }}</p>
+        <p v-if="text" class="eb-loading-text">{{ text }}</p>
       </div>
     </div>
   </Transition>
@@ -20,11 +20,11 @@
 
 <script setup>
 /**
- * EvLoading 视图 — 加载遮罩（service/指令共用）
+ * EbLoading 视图 — 加载遮罩（service/指令共用）
  */
 import { ref } from 'vue'
 
-defineOptions({ name: 'EvLoadingView' })
+defineOptions({ name: 'EbLoadingView' })
 
 const props = defineProps({
   fullscreen: { type: Boolean, default: false },

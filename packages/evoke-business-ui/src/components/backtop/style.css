@@ -1,9 +1,9 @@
-/* EvBacktop —返回顶部 */
+/* EbBacktop —返回顶部 */
 
-.ev-backtop.ev-backtop {
-  --ev-backtop-bg-color: var(--ev-bg-color);
-  --ev-backtop-text-color: var(--ev-color-primary);
-  --ev-backtop-hover-bg-color: var(--ev-border-color-extra-light);
+.eb-backtop.eb-backtop {
+  --eb-backtop-bg-color: var(--eb-bg-color);
+  --eb-backtop-text-color: var(--eb-color-primary);
+  --eb-backtop-hover-bg-color: var(--eb-border-color-extra-light);
   position: fixed;
   top: auto;
   left: auto;
@@ -12,26 +12,26 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: var(--ev-radius-full);
-  background-color: var(--ev-backtop-bg-color);
-  color: var(--ev-backtop-text-color);
-  font-size: var(--ev-font-size-md);
-  box-shadow: var(--ev-box-shadow-lighter);
+  border-radius: var(--eb-radius-full);
+  background-color: var(--eb-backtop-bg-color);
+  color: var(--eb-backtop-text-color);
+  font-size: var(--eb-font-size-md);
+  box-shadow: var(--eb-box-shadow-lighter);
   cursor: pointer;
-  z-index: var(--ev-z-index-overlay);
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  z-index: var(--eb-z-index-overlay);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-backtop.ev-backtop:hover {
-  background-color: var(--ev-backtop-hover-bg-color);
+.eb-backtop.eb-backtop:hover {
+  background-color: var(--eb-backtop-hover-bg-color);
 }
 
 /* 渐隐渐现过渡 */
-.ev-fade-in-linear-enter-active,
-.ev-fade-in-linear-leave-active {
-  transition: opacity var(--ev-duration-base) var(--ev-ease-linear);
+.eb-fade-in-linear-enter-active,
+.eb-fade-in-linear-leave-active {
+  transition: opacity var(--eb-duration-base) var(--eb-ease-linear);
 }
-.ev-fade-in-linear-enter-from,
-.ev-fade-in-linear-leave-to {
+.eb-fade-in-linear-enter-from,
+.eb-fade-in-linear-leave-to {
   opacity: 0;
 }

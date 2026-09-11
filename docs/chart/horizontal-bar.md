@@ -13,7 +13,7 @@
 数据模型与柱状图完全一致，`type` 换成 `horizontal-bar`，第一个 `label` 出现在最上方。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'horizontal-bar',
       title: '各渠道成交额',

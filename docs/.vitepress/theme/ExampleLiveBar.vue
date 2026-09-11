@@ -10,7 +10,7 @@
       示例中心
     </span>
     <div class="example-live__switch">
-      <ev-segmented :model-value="current" :options="options" size="small" @change="onChange" />
+      <eb-segmented :model-value="current" :options="options" size="small" @change="onChange" />
     </div>
     <span class="example-live__spacer" />
     <button
@@ -27,7 +27,7 @@
 <script setup>
 /**
  * 示例子站点微型顶栏 —— /examples/live/* 专用。
- * 左侧返回文档站，中间用 ev-segmented 在各示例间切换（SPA 导航，不整页刷新），
+ * 左侧返回文档站，中间用 eb-segmented 在各示例间切换（SPA 导航，不整页刷新），
  * 右侧暗色切换与文档站共用 localStorage 'bd-dark'（DocLayout 挂载时会读取应用）。
  */
 import { onMounted, ref } from 'vue'

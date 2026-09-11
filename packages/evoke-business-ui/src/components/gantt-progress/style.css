@@ -1,29 +1,29 @@
-/* EvGanttProgress — 甘特式阶段进度（设计令牌驱动） */
+/* EbGanttProgress — 甘特式阶段进度（设计令牌驱动） */
 
-.ev-gantt-progress {
+.eb-gantt-progress {
   position: relative;
-  padding: var(--ev-space-5) 0 0;
+  padding: var(--eb-space-5) 0 0;
 }
 
-.ev-gantt-progress__connector {
+.eb-gantt-progress__connector {
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--ev-border-color-lighter);
+  background: var(--eb-border-color-lighter);
   border-radius: 1px;
   z-index: 0;
   transform: translateY(-14px);
 }
-.ev-gantt-progress__connector-fill {
+.eb-gantt-progress__connector-fill {
   height: 100%;
-  background: var(--ev-color-primary);
+  background: var(--eb-color-primary);
   border-radius: 1px;
   transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.ev-gantt-progress__bars {
+.eb-gantt-progress__bars {
   display: flex;
   align-items: flex-end;
   gap: 6px;
@@ -32,15 +32,15 @@
   min-height: 80px;
 }
 
-.ev-gantt-progress__bar-wrap {
+.eb-gantt-progress__bar-wrap {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 
-.ev-gantt-progress__bar-outer {
+.eb-gantt-progress__bar-outer {
   height: 64px;
   width: 100%;
   display: flex;
@@ -48,80 +48,80 @@
   justify-content: center;
 }
 
-.ev-gantt-progress__bar {
+.eb-gantt-progress__bar {
   width: 100%;
   max-width: 32px;
   min-width: 16px;
-  border-radius: var(--ev-radius-sm) var(--ev-radius-sm) 2px 2px;
+  border-radius: var(--eb-radius-sm) var(--eb-radius-sm) 2px 2px;
   position: relative;
   transition:
     height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
-    background var(--ev-duration-base) var(--ev-ease-out);
-  animation: ev-bar-rise 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) backwards;
+    background var(--eb-duration-base) var(--eb-ease-out);
+  animation: eb-bar-rise 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) backwards;
 }
-.ev-gantt-progress__bar--completed {
+.eb-gantt-progress__bar--completed {
   opacity: 0.85;
 }
-.ev-gantt-progress__bar--active {
+.eb-gantt-progress__bar--active {
   opacity: 1;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ev-color-primary) 15%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--eb-color-primary) 15%, transparent);
 }
-.ev-gantt-progress__bar--pending {
+.eb-gantt-progress__bar--pending {
   opacity: 0.45;
 }
 
-.ev-gantt-progress__pulse {
+.eb-gantt-progress__pulse {
   position: absolute;
   top: -4px;
   left: 50%;
   transform: translateX(-50%);
   width: 8px;
   height: 8px;
-  border-radius: var(--ev-radius-full);
-  background: var(--ev-color-primary);
-  animation: ev-pulse-ring 2s ease infinite;
+  border-radius: var(--eb-radius-full);
+  background: var(--eb-color-primary);
+  animation: eb-pulse-ring 2s ease infinite;
 }
-.ev-gantt-progress__pulse::after {
+.eb-gantt-progress__pulse::after {
   content: '';
   position: absolute;
   inset: -4px;
-  border-radius: var(--ev-radius-full);
-  border: 2px solid var(--ev-color-primary);
-  animation: ev-pulse-expand 2s ease infinite;
+  border-radius: var(--eb-radius-full);
+  border: 2px solid var(--eb-color-primary);
+  animation: eb-pulse-expand 2s ease infinite;
 }
 
-.ev-gantt-progress__label {
+.eb-gantt-progress__label {
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.ev-gantt-progress__label-name {
-  font-size: var(--ev-font-size-xs, 12px);
-  font-weight: var(--ev-font-weight-semibold);
-  color: var(--ev-text-color-regular);
+.eb-gantt-progress__label-name {
+  font-size: var(--eb-font-size-xs, 12px);
+  font-weight: var(--eb-font-weight-semibold);
+  color: var(--eb-text-color-regular);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 80px;
 }
-.ev-gantt-progress__label-date {
+.eb-gantt-progress__label-date {
   font-size: 11px;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
   font-family: monospace;
 }
 
-.ev-gantt-progress__bar-wrap:has(.ev-gantt-progress__bar--active) .ev-gantt-progress__label-name {
-  color: var(--ev-color-primary);
-  font-weight: var(--ev-font-weight-bold);
+.eb-gantt-progress__bar-wrap:has(.eb-gantt-progress__bar--active) .eb-gantt-progress__label-name {
+  color: var(--eb-color-primary);
+  font-weight: var(--eb-font-weight-bold);
 }
 
-@keyframes ev-bar-rise {
+@keyframes eb-bar-rise {
   from {
     height: 0 !important;
   }
 }
-@keyframes ev-pulse-ring {
+@keyframes eb-pulse-ring {
   0%,
   100% {
     opacity: 1;
@@ -130,7 +130,7 @@
     opacity: 0.5;
   }
 }
-@keyframes ev-pulse-expand {
+@keyframes eb-pulse-expand {
   0% {
     transform: scale(1);
     opacity: 0.6;

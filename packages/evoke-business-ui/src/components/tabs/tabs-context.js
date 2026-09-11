@@ -1,5 +1,5 @@
 /**
- * Tabs 子组件契约（EvTabPane 向 EvTabs provide/inject）
+ * Tabs 子组件契约（EbTabPane 向 EbTabs provide/inject）
  */
 import { inject, provide } from 'vue'
 

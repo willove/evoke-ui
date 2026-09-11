@@ -11,7 +11,7 @@
  * 用法二（图标选择器打开时再加载）:
  *   await loadFullIcons()
  *
- * 加载后 ev-icon 直接使用 Remix 原生名称（如 name="checkbox-multiple-line"），
+ * 加载后 eb-icon 直接使用 Remix 原生名称（如 name="checkbox-multiple-line"），
  * 也可通过 getIconNames('full') 枚举全部名称。
  */
 import { registerFullIcons } from './components/icon/iconRegistry'

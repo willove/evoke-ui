@@ -1,27 +1,27 @@
 <template>
-  <div class="ev-stat-card">
-    <div v-if="icon || $slots.icon" class="ev-stat-card__icon" :class="'ev-stat-card__icon--' + type">
+  <div class="eb-stat-card">
+    <div v-if="icon || $slots.icon" class="eb-stat-card__icon" :class="'eb-stat-card__icon--' + type">
       <slot name="icon">
-        <ev-icon :name="icon" :size="20" />
+        <eb-icon :name="icon" :size="20" />
       </slot>
     </div>
-    <div class="ev-stat-card__info">
-      <div class="ev-stat-card__label">
+    <div class="eb-stat-card__info">
+      <div class="eb-stat-card__label">
         <slot name="label">{{ label }}</slot>
       </div>
-      <div class="ev-stat-card__value">
+      <div class="eb-stat-card__value">
         <slot name="value">
-          <span class="ev-stat-card__value-inner">{{ displayValue }}</span>
-          <span v-if="suffix" class="ev-stat-card__suffix">{{ suffix }}</span>
+          <span class="eb-stat-card__value-inner">{{ displayValue }}</span>
+          <span v-if="suffix" class="eb-stat-card__suffix">{{ suffix }}</span>
         </slot>
       </div>
       <div
         v-if="trend != null || $slots.trend"
-        class="ev-stat-card__trend"
-        :class="trend > 0 ? 'ev-stat-card__trend--up' : 'ev-stat-card__trend--down'"
+        class="eb-stat-card__trend"
+        :class="trend > 0 ? 'eb-stat-card__trend--up' : 'eb-stat-card__trend--down'"
       >
         <slot name="trend" :trend="trend">
-          <ev-icon :name="trend > 0 ? 'top' : 'bottom'" :size="12" />
+          <eb-icon :name="trend > 0 ? 'top' : 'bottom'" :size="12" />
           {{ Math.abs(trend) }}%
         </slot>
       </div>
@@ -31,11 +31,11 @@
 
 <script setup>
 /**
- * EvStatCard — 指标卡
+ * EbStatCard — 指标卡
  * countUp 数值滚动动画（easeOutExpo，rAF 在生命周期/事件内启动）；icon/label/value/trend 插槽
  */
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   label: { type: String, default: '' },

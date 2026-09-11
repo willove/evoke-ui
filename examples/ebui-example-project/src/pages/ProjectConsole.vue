@@ -1,5 +1,5 @@
 <template>
-  <ev-app-layout
+  <eb-app-layout
     title="云眠研发 · 项目协作"
     logo-text="研"
     :collapsed="collapsed"
@@ -10,33 +10,33 @@
     :active-title="activeTitle"
   >
     <template #menu>
-      <ev-menu-item index="overview" @click="switchView('overview')">
-        <ev-icon name="dashboard" />
+      <eb-menu-item index="overview" @click="switchView('overview')">
+        <eb-icon name="dashboard" />
         <span>项目总览</span>
-      </ev-menu-item>
-      <ev-menu-item index="plan" @click="switchView('plan')">
-        <ev-icon name="hourglass" />
+      </eb-menu-item>
+      <eb-menu-item index="plan" @click="switchView('plan')">
+        <eb-icon name="hourglass" />
         <span>进度计划</span>
-      </ev-menu-item>
-      <ev-menu-item index="usage" @click="switchView('usage')">
-        <ev-icon name="percentage" />
+      </eb-menu-item>
+      <eb-menu-item index="usage" @click="switchView('usage')">
+        <eb-icon name="percentage" />
         <span>团队用量</span>
-      </ev-menu-item>
+      </eb-menu-item>
     </template>
 
     <template #topbar-right>
       <div class="pj-topbar">
-        <ev-badge :value="2" :max="99">
-          <ev-icon name="bell" :size="18" />
-        </ev-badge>
-        <ev-avatar :size="28">研</ev-avatar>
+        <eb-badge :value="2" :max="99">
+          <eb-icon name="bell" :size="18" />
+        </eb-badge>
+        <eb-avatar :size="28">研</eb-avatar>
       </div>
     </template>
 
     <ProjectsOverview v-if="activeMenu === 'overview'" @open-plan="openPlan" />
     <SprintPlan v-else-if="activeMenu === 'plan'" ref="planRef" />
     <TeamUsage v-else-if="activeMenu === 'usage'" />
-  </ev-app-layout>
+  </eb-app-layout>
 </template>
 
 <script setup>

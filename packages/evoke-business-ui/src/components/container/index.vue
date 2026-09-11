@@ -1,12 +1,12 @@
 <template>
-  <component :is="tag" class="ev-container ev-container" :class="{ 'is-vertical': isVertical }">
+  <component :is="tag" class="eb-container eb-container" :class="{ 'is-vertical': isVertical }">
     <slot />
   </component>
 </template>
 
 <script setup>
 /**
- * EvContainer — 布局容器
+ * EbContainer — 布局容器
  * direction 缺省时自动检测：子级含 Header/Footer → vertical，否则 horizontal
  */
 import { computed, useSlots, Fragment, Comment, Text } from 'vue'
@@ -41,7 +41,7 @@ function hasChild(names) {
 const isVertical = computed(() => {
   if (props.direction === 'vertical') return true
   if (props.direction === 'horizontal') return false
-  return hasChild(['EvHeader', 'EvFooter'])
+  return hasChild(['EbHeader', 'EbFooter'])
 })
 </script>
 

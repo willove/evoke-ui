@@ -2,7 +2,7 @@
   <div
     v-if="!virtualTriggering"
     ref="referenceRef"
-    class="ev-popper-trigger"
+    class="eb-popper-trigger"
     style="display: inline-flex"
     v-bind="triggerAttrs"
   >
@@ -13,13 +13,13 @@
       <div
         v-if="show"
         ref="floatingRef"
-        class="ev-popper"
+        class="eb-popper"
         :class="[popperClass]"
         :style="{ zIndex }"
         role="tooltip"
       >
         <slot />
-        <span v-if="showArrow" ref="arrowRef" class="ev-popper__arrow" />
+        <span v-if="showArrow" ref="arrowRef" class="eb-popper__arrow" />
       </div>
     </Transition>
   </Teleport>
@@ -27,7 +27,7 @@
 
 <script setup>
 /**
- * EvPopper — 浮层基座（内部核心组件，Tooltip/Popover/Dropdown/Select 弹层共用）
+ * EbPopper — 浮层基座（内部核心组件，Tooltip/Popover/Dropdown/Select 弹层共用）
  * useFloating 驱动定位；trigger 语义：hover/click/focus/contextmenu；
  * virtual-triggering 模式下外部传 virtual-ref
  */
@@ -37,7 +37,7 @@ import { useZIndex } from '../../composables/useZIndex'
 import { on as onEvent } from '../../utils/events'
 import { contains, inBrowser } from '../../utils/dom'
 
-defineOptions({ name: 'EvPopper', inheritAttrs: false })
+defineOptions({ name: 'EbPopper', inheritAttrs: false })
 
 const props = defineProps({
   /** 挂载方向（floating-ui placement） */
@@ -57,7 +57,7 @@ const props = defineProps({
   hideOnBlur: { type: Boolean, default: true },
   showArrow: { type: Boolean, default: false },
   popperClass: { type: [String, Array, Object], default: '' },
-  transitionName: { type: String, default: 'ev-popper-fade' },
+  transitionName: { type: String, default: 'eb-popper-fade' },
   /** 虚拟触发：外部传入元素 ref */
   virtualTriggering: { type: Boolean, default: false },
   virtualRef: { type: Object, default: null },

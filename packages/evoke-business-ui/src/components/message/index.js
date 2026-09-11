@@ -1,11 +1,11 @@
 /**
- * EvMessage — 命令式消息 API
+ * EbMessage — 命令式消息 API
  *
  * Usage:
- *   EvMessage('普通消息')
- *   EvMessage({ message: '成功', type: 'success', duration: 5000 })
- *   EvMessage.success('成功')
- *   EvMessage.close()  // 关闭全部
+ *   EbMessage('普通消息')
+ *   EbMessage({ message: '成功', type: 'success', duration: 5000 })
+ *   EbMessage.success('成功')
+ *   EbMessage.close()  // 关闭全部
  *
  * 实现：createVNode(MessageView) → render(vnode, container)，容器惰性挂 body；
  * 实例数组垂直堆叠重排（间距 16px）；grouping 同文案同类型合并并重置计时。
@@ -65,9 +65,9 @@ function closeInstance(instance) {
   updatePositions()
 }
 
-function EvMessage(...args) {
+function EbMessage(...args) {
   if (!inBrowser()) {
-    console.warn('[EvMessage] 仅支持浏览器环境')
+    console.warn('[EbMessage] 仅支持浏览器环境')
     return { close: () => {} }
   }
   const options = normalizeOptions(args)
@@ -86,7 +86,7 @@ function EvMessage(...args) {
 
   const id = ++seed
   const container = document.createElement('div')
-  container.className = 'ev-message-container'
+  container.className = 'eb-message-container'
   // zIndex 必须挂在 container 上：transform 已创建层叠上下文，内层 z-index 无法越级
   const zIndex = nextZIndex()
   Object.assign(container.style, {
@@ -135,23 +135,23 @@ function EvMessage(...args) {
  */
 function createShortcut(type) {
   return (message, options) =>
-    EvMessage({ ...(typeof options === 'object' && options !== null ? options : {}), message, type })
+    EbMessage({ ...(typeof options === 'object' && options !== null ? options : {}), message, type })
 }
 
-EvMessage.success = createShortcut('success')
-EvMessage.warning = createShortcut('warning')
-EvMessage.info = createShortcut('info')
-EvMessage.error = createShortcut('error')
+EbMessage.success = createShortcut('success')
+EbMessage.warning = createShortcut('warning')
+EbMessage.info = createShortcut('info')
+EbMessage.error = createShortcut('error')
 
 /** 关闭全部 */
-EvMessage.close = () => {
+EbMessage.close = () => {
   ;[...instances].forEach(closeInstance)
 }
 
-EvMessage.closeAll = EvMessage.close
+EbMessage.closeAll = EbMessage.close
 
 /** 当前活动实例数（测试用） */
-EvMessage._instances = instances
+EbMessage._instances = instances
 
-export { EvMessage }
-export default EvMessage
+export { EbMessage }
+export default EbMessage

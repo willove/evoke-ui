@@ -7,14 +7,14 @@
 /* ─── 焦点可达性 ─── */
 :focus-visible {
   outline: none;
-  box-shadow: var(--ew-focus-ring);
-  border-radius: var(--ew-radius-sm);
+  box-shadow: var(--ev-focus-ring);
+  border-radius: var(--ev-radius-sm);
 }
 
 /* ─── 选区 ─── */
-.ew-selection ::selection,
+.ev-selection ::selection,
 ::selection {
-  background: rgba(var(--ew-color-primary-rgb), 0.18);
+  background: rgba(var(--ev-color-primary-rgb), 0.18);
 }
 
 /* ─── 滚动条 ─── */
@@ -24,12 +24,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--ew-fill-3);
-  border-radius: var(--ew-radius-full);
+  background: var(--ev-fill-3);
+  border-radius: var(--ev-radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ew-text-secondary);
+  background: var(--ev-text-secondary);
 }
 
 ::-webkit-scrollbar-track {
@@ -37,37 +37,37 @@
 }
 
 /* ─── v-reveal 滚动入场（轻盈浮现语言，四种入场方向 + 缩放/淡入）─── */
-.ew-reveal {
+.ev-reveal {
   opacity: 0;
   transform: translateY(14px);
-  transition: opacity var(--ew-duration-slower) var(--ew-ease-out),
-    transform var(--ew-duration-slower) var(--ew-ease-smooth);
+  transition: opacity var(--ev-duration-slower) var(--ev-ease-out),
+    transform var(--ev-duration-slower) var(--ev-ease-smooth);
   will-change: opacity, transform;
 }
 
-.ew-reveal[data-ew-reveal='left'] {
+.ev-reveal[data-ev-reveal='left'] {
   transform: translateX(-20px);
 }
 
-.ew-reveal[data-ew-reveal='right'] {
+.ev-reveal[data-ev-reveal='right'] {
   transform: translateX(20px);
 }
 
-.ew-reveal[data-ew-reveal='zoom'] {
+.ev-reveal[data-ev-reveal='zoom'] {
   transform: scale(0.94);
 }
 
-.ew-reveal[data-ew-reveal='fade'] {
+.ev-reveal[data-ev-reveal='fade'] {
   transform: none;
 }
 
-.ew-reveal.is-revealed {
+.ev-reveal.is-revealed {
   opacity: 1;
   transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ew-reveal {
+  .ev-reveal {
     transition: none;
     opacity: 1;
     transform: none;
@@ -75,15 +75,15 @@
 }
 
 /* ─── 布局容器 ─── */
-.ew-container {
+.ev-container {
   width: 100%;
-  max-width: var(--ew-container-width);
+  max-width: var(--ev-container-width);
   margin-inline: auto;
-  padding-inline: var(--ew-space-6);
+  padding-inline: var(--ev-space-6);
 }
 
 /* ─── 视觉隐藏（无障碍）─── */
-.ew-visually-hidden {
+.ev-visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;

@@ -1,13 +1,13 @@
 <template>
   <div class="sp-page">
-    <ev-page-header title="进度计划" subtitle="项目里程碑推进与任务分解">
+    <eb-page-header title="进度计划" subtitle="项目里程碑推进与任务分解">
       <template #actions>
-        <ev-segmented v-model="projectId" :options="projectOptions" size="small" @change="onProjectChange" />
+        <eb-segmented v-model="projectId" :options="projectOptions" size="small" @change="onProjectChange" />
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-section-card :title="`里程碑推进 · ${project.name}`" class="sp-block">
-      <ev-gantt-progress :stages="project.stages" />
+    <eb-section-card :title="`里程碑推进 · ${project.name}`" class="sp-block">
+      <eb-gantt-progress :stages="project.stages" />
       <div class="sp-summary">
         <div class="sp-summary__item">
           <span>阶段进度</span><strong>{{ stagePercent }}%</strong>
@@ -19,10 +19,10 @@
           <span>整体进度</span><strong>{{ project.progress }}%</strong>
         </div>
       </div>
-    </ev-section-card>
+    </eb-section-card>
 
-    <ev-section-card class="sp-block">
-      <ev-data-table
+    <eb-section-card class="sp-block">
+      <eb-data-table
         title="任务分解"
         show-index
         :operations-width="130"
@@ -31,21 +31,21 @@
         :show-pagination="false"
       >
         <template #name="{ row }">
-          <ev-cell-stack :main="row.name" :sub="'负责人 ' + row.owner" />
+          <eb-cell-stack :main="row.name" :sub="'负责人 ' + row.owner" />
         </template>
         <template #range="{ row }">{{ row.start }} ~ {{ row.end }}</template>
         <template #progress="{ row }">
-          <ev-progress
+          <eb-progress
             :percentage="row.progress"
             :stroke-width="8"
             :status="row.status === 'blocked' ? 'exception' : undefined"
           />
         </template>
         <template #status="{ row }">
-          <ev-status-tag :value="row.status" :statuses="TASK_STATUS" />
+          <eb-status-tag :value="row.status" :statuses="TASK_STATUS" />
         </template>
         <template #operations="{ row }">
-          <ev-button
+          <eb-button
             v-if="row.status !== 'done'"
             text
             type="primary"
@@ -53,17 +53,17 @@
             @click="complete(row)"
           >
             标记完成
-          </ev-button>
+          </eb-button>
           <span v-else class="sp-done">已交付</span>
         </template>
-      </ev-data-table>
-    </ev-section-card>
+      </eb-data-table>
+    </eb-section-card>
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { projects, TASK_STATUS } from '../mock.js'
 
 const projectId = ref(projects[0].id)
@@ -72,7 +72,7 @@ const project = computed(() => projects.find((p) => p.id === projectId.value) ??
 const projectOptions = projects.map((p) => ({ label: p.code, value: p.id }))
 
 function onProjectChange() {
-  EvMessage.info(`已切换到「${project.value.name}」`)
+  EbMessage.info(`已切换到「${project.value.name}」`)
 }
 
 /** 供项目总览「进度计划」按钮调用：切换选中项目 */
@@ -99,7 +99,7 @@ const columns = [
 function complete(row) {
   row.status = 'done'
   row.progress = 100
-  EvMessage.success(`任务「${row.name}」已完成`)
+  EbMessage.success(`任务「${row.name}」已完成`)
 }
 </script>
 
@@ -116,21 +116,21 @@ function complete(row) {
   gap: 32px;
   margin-top: 20px;
   padding-top: 14px;
-  border-top: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
 }
 .sp-summary__item {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  font-size: var(--ev-font-size-sm, 13px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-sm, 13px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .sp-summary__item strong {
   font-size: 16px;
-  color: var(--ev-text-color-primary, #1f2329);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .sp-done {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 </style>

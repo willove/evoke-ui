@@ -129,8 +129,8 @@ app.mount('#app')
 
 ```vue
 <template>
-  <ev-search-filter v-model="query" :fields="fields" @search="onSearch" />
-  <ev-data-table
+  <eb-search-filter v-model="query" :fields="fields" @search="onSearch" />
+  <eb-data-table
     title="订单列表"
     :columns="columns"
     :data="rows"

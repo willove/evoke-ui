@@ -1,6 +1,6 @@
 <template>
   <label
-    class="ev-radio ev-radio"
+    class="eb-radio eb-radio"
     :class="[
       sizeClass,
       {
@@ -13,12 +13,12 @@
     :aria-checked="isChecked"
     :aria-disabled="isDisabled"
   >
-    <span class="ev-radio__input" :class="{ 'is-checked': isChecked, 'is-disabled': isDisabled }">
-      <span class="ev-radio__inner" :style="checkedStyle" />
+    <span class="eb-radio__input" :class="{ 'is-checked': isChecked, 'is-disabled': isDisabled }">
+      <span class="eb-radio__inner" :style="checkedStyle" />
       <input
         ref="radioRef"
         type="radio"
-        class="ev-radio__original"
+        class="eb-radio__original"
         :value="label"
         :name="radioName"
         :checked="isChecked"
@@ -27,7 +27,7 @@
         @change="handleChange"
       />
     </span>
-    <span class="ev-radio__label">
+    <span class="eb-radio__label">
       <slot>{{ label }}</slot>
     </span>
   </label>
@@ -35,14 +35,14 @@
 
 <script setup>
 /**
- * EvRadio — 单选框
+ * EbRadio — 单选框
  * group 内 inject 共享 modelValue；label 即选项值
  */
 import { computed, ref } from 'vue'
 import { useRadioGroup } from './group-context'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvRadio' })
+defineOptions({ name: 'EbRadio' })
 
 const props = defineProps({
   modelValue: { type: [String, Number, Boolean], default: '' },
@@ -79,15 +79,15 @@ const radioName = computed(() => props.name ?? group?.name?.value)
 
 const sizeClass = computed(() => {
   const s = props.size || group?.size?.value || formSize.value
-  if (s === 'large') return 'ev-radio--large'
-  if (s === 'small') return 'ev-radio--small'
+  if (s === 'large') return 'eb-radio--large'
+  if (s === 'small') return 'eb-radio--small'
   return ''
 })
 
 // border 模式激活态边框色
 const checkedStyle = computed(() => {
   if (!isChecked.value || !props.border) return undefined
-  return { borderColor: group?.fill?.value ?? 'var(--ev-color-primary)' }
+  return { borderColor: group?.fill?.value ?? 'var(--eb-color-primary)' }
 })
 
 function handleChange() {

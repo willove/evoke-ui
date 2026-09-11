@@ -5,10 +5,10 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-button type="primary" @click="step = 0">开始引导</ev-button>
-    <ev-button id="tour-demo-target">被引导的按钮</ev-button>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-button type="primary" @click="step = 0">开始引导</eb-button>
+    <eb-button id="tour-demo-target">被引导的按钮</eb-button>
+  </eb-space>
 </DemoBlock>
 
 <script setup>
@@ -19,7 +19,7 @@ const step = ref(-1)
 ## 用法说明
 
 ```vue
-<ev-tour v-model="step" :steps="steps" @finish="onFinish" />
+<eb-tour v-model="step" :steps="steps" @finish="onFinish" />
 
 // steps: [{ target: '#id 或 Element', title, description }]
 ```

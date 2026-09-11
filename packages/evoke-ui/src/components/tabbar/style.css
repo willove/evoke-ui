@@ -1,24 +1,24 @@
-/* EwTabbar — 底部标签栏 */
-.ew-tabbar {
+/* EvTabbar — 底部标签栏 */
+.ev-tabbar {
   display: flex;
   padding: 6px 0;
-  background: var(--ew-bg-container);
+  background: var(--ev-bg-container);
 }
-.ew-tabbar.is-border {
-  border-top: 1px solid var(--ew-border-color-light);
+.ev-tabbar.is-border {
+  border-top: 1px solid var(--ev-border-color-light);
 }
-.ew-tabbar.is-fixed {
+.ev-tabbar.is-fixed {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: var(--ew-z-index-sticky);
+  z-index: var(--ev-z-index-sticky);
 }
-.ew-tabbar.is-fixed.is-safe {
+.ev-tabbar.is-fixed.is-safe {
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
 }
 
-.ew-tabbar-item {
+.ev-tabbar-item {
   position: relative;
   display: flex;
   flex: 1;
@@ -26,21 +26,21 @@
   align-items: center;
   gap: 2px;
   padding: 4px 0;
-  color: var(--ew-text-regular);
-  font-size: var(--ew-font-size-xs);
+  color: var(--ev-text-regular);
+  font-size: var(--ev-font-size-xs);
   line-height: 1.4;
   cursor: pointer;
   user-select: none;
-  transition: color var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
-.ew-tabbar-item.is-active {
-  color: var(--ew-color-primary);
+.ev-tabbar-item.is-active {
+  color: var(--ev-color-primary);
 }
-.ew-tabbar-item.is-disabled {
-  color: var(--ew-text-disabled);
+.ev-tabbar-item.is-disabled {
+  color: var(--ev-text-disabled);
   cursor: not-allowed;
 }
-.ew-tabbar-item__icon {
+.ev-tabbar-item__icon {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -48,16 +48,16 @@
   font-size: 20px;
   line-height: 1;
 }
-.ew-tabbar-item__dot {
+.ev-tabbar-item__dot {
   position: absolute;
   top: -2px;
   right: -8px;
   width: 8px;
   height: 8px;
-  border-radius: var(--ew-radius-circle);
-  background: var(--ew-color-danger);
+  border-radius: var(--ev-radius-circle);
+  background: var(--ev-color-danger);
 }
-.ew-tabbar-item__badge {
+.ev-tabbar-item__badge {
   position: absolute;
   top: -4px;
   right: -14px;
@@ -66,8 +66,8 @@
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-color-danger);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-color-danger);
   color: #ffffff;
   font-size: 10px;
   font-style: normal;
@@ -75,17 +75,17 @@
   text-align: center;
 }
 /* 纯文字页签：badge/dot 内联跟在文字后 */
-.ew-tabbar-item__badge.is-inline {
+.ev-tabbar-item__badge.is-inline {
   position: static;
   margin-left: 4px;
 }
-.ew-tabbar-item__dot.is-inline {
+.ev-tabbar-item__dot.is-inline {
   position: static;
   display: inline-block;
   margin-left: 4px;
   vertical-align: middle;
 }
-.ew-tabbar-item__text {
+.ev-tabbar-item__text {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;

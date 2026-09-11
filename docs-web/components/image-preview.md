@@ -6,7 +6,7 @@ const previewVisible = ref(false)
 const previewIndex = ref(0)
 </script>
 
-`EwImagePreview` 全屏灯箱预览：遮罩 + 居中大图，支持左右箭头与键盘 ← → 切换、
+`EvImagePreview` 全屏灯箱预览：遮罩 + 居中大图，支持左右箭头与键盘 ← → 切换、
 Esc / 点击遮罩关闭、打开期间锁定页面滚动，多图时右下角显示计数。
 通常配合 [ImageWall 图片墙](./image-wall) 使用，也可独立受控调用。
 
@@ -14,7 +14,7 @@ Esc / 点击遮罩关闭、打开期间锁定页面滚动，多图时右下角�
 
 <DemoBlock title="按钮打开预览" description="v-model 控制可见性，v-model:index 双向绑定当前下标。">
 
-<EwImagePreview
+<EvImagePreview
   v-model="previewVisible"
   v-model:index="previewIndex"
   :images="[
@@ -22,11 +22,11 @@ Esc / 点击遮罩关闭、打开期间锁定页面滚动，多图时右下角�
     { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&q=75', alt: '雾中山林' },
   ]"
 />
-<EwButton @click="previewVisible = true">打开图片预览</EwButton>
+<EvButton @click="previewVisible = true">打开图片预览</EvButton>
 
 ```vue
-<EwImagePreview v-model="visible" v-model:index="index" :images="images" />
-<EwButton @click="visible = true">打开图片预览</EwButton>
+<EvImagePreview v-model="visible" v-model:index="index" :images="images" />
+<EvButton @click="visible = true">打开图片预览</EvButton>
 ```
 
 </DemoBlock>

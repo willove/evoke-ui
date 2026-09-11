@@ -1,31 +1,31 @@
 <template>
   <Teleport to="body">
-    <Transition name="ev-cp">
-      <div v-if="modelValue" class="ev-command-palette" @click.self="close">
-        <div class="ev-command-palette__panel" role="dialog" aria-modal="true" aria-label="命令面板">
-          <div class="ev-command-palette__search">
-            <ev-icon name="search" :size="16" class="ev-command-palette__search-icon" />
+    <Transition name="eb-cp">
+      <div v-if="modelValue" class="eb-command-palette" @click.self="close">
+        <div class="eb-command-palette__panel" role="dialog" aria-modal="true" aria-label="命令面板">
+          <div class="eb-command-palette__search">
+            <eb-icon name="search" :size="16" class="eb-command-palette__search-icon" />
             <input
               ref="inputRef"
               v-model="query"
-              class="ev-command-palette__input"
+              class="eb-command-palette__input"
               type="text"
               :placeholder="placeholder"
               autocomplete="off"
               spellcheck="false"
               @keydown="onKeydown"
             >
-            <kbd class="ev-command-palette__kbd">esc</kbd>
+            <kbd class="eb-command-palette__kbd">esc</kbd>
           </div>
 
-          <div ref="listRef" class="ev-command-palette__list" role="listbox">
+          <div ref="listRef" class="eb-command-palette__list" role="listbox">
             <template v-for="group in grouped" :key="group.name">
-              <div class="ev-command-palette__group-label">{{ group.name }}</div>
+              <div class="eb-command-palette__group-label">{{ group.name }}</div>
               <button
                 v-for="item in group.items"
                 :key="item.id"
                 type="button"
-                class="ev-command-palette__item"
+                class="eb-command-palette__item"
                 :class="{ 'is-active': item.__index === activeIndex }"
                 role="option"
                 :aria-selected="item.__index === activeIndex"
@@ -33,25 +33,25 @@
                 @mouseenter="activeIndex = item.__index"
                 @click="run(item)"
               >
-                <span class="ev-command-palette__item-icon">
-                  <ev-icon v-if="item.icon" :name="item.icon" :size="15" />
-                  <ev-icon v-else name="pointer" :size="15" />
+                <span class="eb-command-palette__item-icon">
+                  <eb-icon v-if="item.icon" :name="item.icon" :size="15" />
+                  <eb-icon v-else name="pointer" :size="15" />
                 </span>
-                <span class="ev-command-palette__item-label">{{ item.label }}</span>
-                <span v-if="item.hint" class="ev-command-palette__item-hint">{{ item.hint }}</span>
-                <kbd v-if="item.hotkey" class="ev-command-palette__kbd ev-command-palette__kbd--item">{{ item.hotkey }}</kbd>
+                <span class="eb-command-palette__item-label">{{ item.label }}</span>
+                <span v-if="item.hint" class="eb-command-palette__item-hint">{{ item.hint }}</span>
+                <kbd v-if="item.hotkey" class="eb-command-palette__kbd eb-command-palette__kbd--item">{{ item.hotkey }}</kbd>
               </button>
             </template>
-            <div v-if="!flat.length" class="ev-command-palette__empty">
-              <ev-icon name="search" :size="16" />
+            <div v-if="!flat.length" class="eb-command-palette__empty">
+              <eb-icon name="search" :size="16" />
               <span>没有匹配「{{ query }}」的命令</span>
             </div>
           </div>
 
-          <div class="ev-command-palette__footer">
-            <span><kbd class="ev-command-palette__kbd">↑</kbd><kbd class="ev-command-palette__kbd">↓</kbd> 选择</span>
-            <span><kbd class="ev-command-palette__kbd">↵</kbd> 执行</span>
-            <span><kbd class="ev-command-palette__kbd">esc</kbd> 关闭</span>
+          <div class="eb-command-palette__footer">
+            <span><kbd class="eb-command-palette__kbd">↑</kbd><kbd class="eb-command-palette__kbd">↓</kbd> 选择</span>
+            <span><kbd class="eb-command-palette__kbd">↵</kbd> 执行</span>
+            <span><kbd class="eb-command-palette__kbd">esc</kbd> 关闭</span>
           </div>
         </div>
       </div>
@@ -61,13 +61,13 @@
 
 <script setup>
 /**
- * EvCommandPalette — 命令面板
+ * EbCommandPalette — 命令面板
  * ⌘K 唤起 · 过滤（label+keywords+group 包含匹配）· 分组渲染 · 键盘导航（↑↓/Enter/Esc）；
  * action 返回 false 阻止关闭；打开时锁定 body 滚动。
- * 动效以 CSS 过渡（ev-cp）实现。
+ * 动效以 CSS 过渡（eb-cp）实现。
  */
 import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },

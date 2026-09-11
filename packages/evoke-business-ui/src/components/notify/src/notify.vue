@@ -1,24 +1,24 @@
 <template>
-  <Transition name="ev-notify-fade" @after-leave="handleAfterLeave">
+  <Transition name="eb-notify-fade" @after-leave="handleAfterLeave">
     <div
       v-if="visible"
       ref="notifyRef"
-      class="ev-notification"
-      :class="[`ev-notification--${verticalPositionClass}`, `is-${type}`]"
+      class="eb-notification"
+      :class="[`eb-notification--${verticalPositionClass}`, `is-${type}`]"
       :style="positionStyle"
       role="alert"
     >
-      <ev-icon v-if="iconName" class="ev-notification__icon" :name="iconName" />
-      <div class="ev-notification__group">
-        <h2 class="ev-notification__title">{{ title }}</h2>
-        <div v-if="message || $slots.default" class="ev-notification__content">
+      <eb-icon v-if="iconName" class="eb-notification__icon" :name="iconName" />
+      <div class="eb-notification__group">
+        <h2 class="eb-notification__title">{{ title }}</h2>
+        <div v-if="message || $slots.default" class="eb-notification__content">
           <slot>
             <p v-if="html" v-html="message"></p>
             <p v-else>{{ message }}</p>
           </slot>
         </div>
-        <div v-if="showClose" class="ev-notification__closeBtn" @click="close">
-          <ev-icon name="close" :size="14" />
+        <div v-if="showClose" class="eb-notification__closeBtn" @click="close">
+          <eb-icon name="close" :size="14" />
         </div>
       </div>
     </div>
@@ -27,13 +27,13 @@
 
 <script setup>
 /**
- * EvNotify 视图 — 命令式通知渲染（由 notify/index.js vnode 管线挂载）
+ * EbNotify 视图 — 命令式通知渲染（由 notify/index.js vnode 管线挂载）
  * 四角定位（top-right 默认）独立堆叠列
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import EvIcon from '../../icon/index.vue'
+import EbIcon from '../../icon/index.vue'
 
-defineOptions({ name: 'EvNotifyView' })
+defineOptions({ name: 'EbNotifyView' })
 
 const props = defineProps({
   type: {

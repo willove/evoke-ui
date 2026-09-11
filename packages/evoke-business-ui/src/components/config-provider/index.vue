@@ -4,7 +4,7 @@
 
 <script setup>
 /**
- * EvConfigProvider — 全局配置（size / locale / namespace / platform / themeColor / density）
+ * EbConfigProvider — 全局配置（size / locale / namespace / platform / themeColor / density）
  * provide configProviderContextKey，子组件经 useConfigProvider/usePlatform 消费
  */
 import { provide, toRef, watchEffect, onUnmounted } from 'vue'
@@ -32,9 +32,9 @@ const props = defineProps({
   platform: { type: String, default: 'auto' },
   /** 运行时主色（十六进制），注入后全库 7 档梯度与图表色板自动跟随 */
   themeColor: { type: String, default: undefined },
-  /** 全局密度：compact / default / loose（作用于 html[data-ev-density]） */
+  /** 全局密度：compact / default / loose（作用于 html[data-eb-density]） */
   density: { type: String, default: undefined },
-  /** 权限码表：v-permission 指令 / EvAuth 组件 / usePermission 的判定来源 */
+  /** 权限码表：v-permission 指令 / EbAuth 组件 / usePermission 的判定来源 */
   permissions: { type: Array, default: undefined },
   /** 全局磨砂：开启后容器类组件（card/section-card/dialog/drawer…）默认玻璃质感，组件级 glass prop 可单独覆盖 */
   glass: { type: Boolean, default: false },

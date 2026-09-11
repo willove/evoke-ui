@@ -1,49 +1,49 @@
 <template>
   <div
-    class="ev-select ev-tree-select ev-select ev-tree-select"
+    class="eb-select eb-tree-select eb-select eb-tree-select"
     :class="[sizeClass, { 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable }]"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
   >
     <div
       ref="referenceRef"
-      class="ev-select__wrapper"
+      class="eb-select__wrapper"
       :class="{ 'is-hovering': hovering && !isDisabled, 'is-focused': isFocused, 'is-disabled': isDisabled }"
       @click="handleClick"
     >
       <!-- multiple 标签 -->
-      <span v-if="multiple && selectedTags.length" class="ev-select__selection">
+      <span v-if="multiple && selectedTags.length" class="eb-select__selection">
         <span
           v-for="tag in collapsedTags"
           :key="String(tag.value)"
-          class="ev-tag ev-tag--info ev-tag--light ev-select__tag"
+          class="eb-tag eb-tag--info eb-tag--light eb-select__tag"
         >
-          <span class="ev-tag__content">{{ tag.label }}</span>
-          <ev-icon
+          <span class="eb-tag__content">{{ tag.label }}</span>
+          <eb-icon
             v-if="!isDisabled"
-            class="ev-tag__close"
+            class="eb-tag__close"
             name="close"
             @click.stop="removeTag(tag.value)"
           />
         </span>
-        <span v-if="overflowCount > 0" class="ev-select__tags-collapse-item">
+        <span v-if="overflowCount > 0" class="eb-select__tags-collapse-item">
           + {{ overflowCount }}
         </span>
       </span>
       <!-- single 选中 label -->
       <span
         v-else-if="hasSelection"
-        class="ev-select__selected-item ev-select__placeholder is-transparent"
+        class="eb-select__selected-item eb-select__placeholder is-transparent"
       >
-        <span class="ev-select__selected-item-text">{{ selectedLabel }}</span>
+        <span class="eb-select__selected-item-text">{{ selectedLabel }}</span>
       </span>
-      <span v-else class="ev-select__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+      <span v-else class="eb-select__placeholder">{{ placeholder || t('select.placeholder') }}</span>
 
       <!-- filterable 输入 -->
       <input
         v-if="filterable"
         ref="inputRef"
-        class="ev-select__input"
+        class="eb-select__input"
         :value="query"
         :disabled="isDisabled"
         :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
@@ -51,15 +51,15 @@
         @focus="isFocused = true"
       />
 
-      <span class="ev-select__suffix">
-        <ev-icon
+      <span class="eb-select__suffix">
+        <eb-icon
           v-if="clearable && hasSelection && !isDisabled"
-          class="ev-select__caret ev-select__clear"
+          class="eb-select__caret eb-select__clear"
           name="circle-close"
           @click.stop="handleClear"
         />
-        <ev-icon
-          class="ev-select__caret"
+        <eb-icon
+          class="eb-select__caret"
           :class="{ 'is-reverse': dropdownVisible }"
           name="arrow-down"
         />
@@ -67,15 +67,15 @@
     </div>
 
     <Teleport to="body">
-      <Transition name="ev-select-dropdown">
+      <Transition name="eb-select-dropdown">
         <div
           v-if="dropdownVisible"
           ref="floatingRef"
-          class="ev-select__popper ev-popper ev-select__dropdown ev-select__dropdown ev-tree-select__popper ev-tree-select__popper"
+          class="eb-select__popper eb-popper eb-select__dropdown eb-select__dropdown eb-tree-select__popper eb-tree-select__popper"
           :style="dropdownStyle"
         >
-          <div class="ev-tree-select__content">
-            <ev-tree
+          <div class="eb-tree-select__content">
+            <eb-tree
               ref="treeRef"
               :data="data"
               :props="treeFieldMap"
@@ -101,7 +101,7 @@
               <template #default="{ node, data: nodeData }">
                 <slot :node="node" :data="nodeData">{{ node.label }}</slot>
               </template>
-            </ev-tree>
+            </eb-tree>
           </div>
         </div>
       </Transition>
@@ -111,7 +111,7 @@
 
 <script setup>
 /**
- * EvTreeSelect — 树形选择器（Select 触发器 + 弹层内嵌 EvTree）
+ * EbTreeSelect — 树形选择器（Select 触发器 + 弹层内嵌 EbTree）
  * 单选：无复选时点击叶子（或 check-strictly 任意节点）选中；
  *       带复选时勾选语义取首个叶子 key（级联）
  * 多选：默认复选级联，modelValue 存叶子 key（父子联动由树侧级联呈现）；
@@ -119,15 +119,15 @@
  * filterable：输入过滤树（filter-method 自定义 (query, data) => bool）
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvTree from '../tree/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbTree from '../tree/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvTreeSelect', inheritAttrs: false })
+defineOptions({ name: 'EbTreeSelect', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [String, Number, Boolean, Array], default: undefined },
@@ -299,8 +299,8 @@ const overflowCount = computed(() => {
 
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-select--large'
-  if (s === 'small') return 'ev-select--small'
+  if (s === 'large') return 'eb-select--large'
+  if (s === 'small') return 'eb-select--small'
   return ''
 })
 

@@ -1,5 +1,5 @@
 <template>
-  <ev-app-layout
+  <eb-app-layout
     title="云眠家居 · 运营中台"
     logo-text="云"
     :collapsed="collapsed"
@@ -10,117 +10,117 @@
     :active-title="activeTitle"
   >
     <template #menu>
-      <ev-menu-item index="dashboard" @click="switchView('dashboard')">
-        <ev-icon name="dashboard" />
+      <eb-menu-item index="dashboard" @click="switchView('dashboard')">
+        <eb-icon name="dashboard" />
         <span>运营工作台</span>
-      </ev-menu-item>
-      <ev-menu-item index="orders" @click="switchView('orders')">
-        <ev-icon name="bill" />
+      </eb-menu-item>
+      <eb-menu-item index="orders" @click="switchView('orders')">
+        <eb-icon name="bill" />
         <span>订单管理</span>
-      </ev-menu-item>
-      <ev-sub-menu index="goods">
+      </eb-menu-item>
+      <eb-sub-menu index="goods">
         <template #title>
-          <ev-icon name="goods" />
+          <eb-icon name="goods" />
           <span>商品管理</span>
         </template>
-        <ev-menu-item index="goods-list" @click="switchView('goods-list')">
-          <ev-icon name="orderedlist" />
+        <eb-menu-item index="goods-list" @click="switchView('goods-list')">
+          <eb-icon name="orderedlist" />
           <span>商品列表</span>
-        </ev-menu-item>
-        <ev-menu-item index="goods-category" @click="switchView('goods-category')">
-          <ev-icon name="tags" />
+        </eb-menu-item>
+        <eb-menu-item index="goods-category" @click="switchView('goods-category')">
+          <eb-icon name="tags" />
           <span>分类管理</span>
-        </ev-menu-item>
-      </ev-sub-menu>
-      <ev-menu-item index="members" @click="switchView('members')">
-        <ev-icon name="customer" />
+        </eb-menu-item>
+      </eb-sub-menu>
+      <eb-menu-item index="members" @click="switchView('members')">
+        <eb-icon name="customer" />
         <span>会员管理</span>
-      </ev-menu-item>
-      <ev-menu-item index="marketing" @click="switchView('marketing')">
-        <ev-icon name="marketing" />
+      </eb-menu-item>
+      <eb-menu-item index="marketing" @click="switchView('marketing')">
+        <eb-icon name="marketing" />
         <span>营销中心</span>
-      </ev-menu-item>
+      </eb-menu-item>
     </template>
 
     <template #topbar-right>
       <div class="dash-topbar">
-        <ev-badge :value="5" :max="99">
-          <ev-icon name="bell" :size="18" />
-        </ev-badge>
-        <ev-avatar :size="28">运</ev-avatar>
+        <eb-badge :value="5" :max="99">
+          <eb-icon name="bell" :size="18" />
+        </eb-badge>
+        <eb-avatar :size="28">运</eb-avatar>
       </div>
     </template>
 
     <!-- 工作台主视图 -->
     <div v-if="activeMenu === 'dashboard'" class="dash-page">
-      <ev-page-header title="运营工作台" subtitle="数据截至 2026-09-06 12:00">
+      <eb-page-header title="运营工作台" subtitle="数据截至 2026-09-06 12:00">
         <template #actions>
-          <ev-button size="small" @click="refresh">
-            <ev-icon name="refresh" :size="14" />
+          <eb-button size="small" @click="refresh">
+            <eb-icon name="refresh" :size="14" />
             刷新数据
-          </ev-button>
-          <ev-button type="primary" size="small">
-            <ev-icon name="plus" :size="14" />
+          </eb-button>
+          <eb-button type="primary" size="small">
+            <eb-icon name="plus" :size="14" />
             新建活动
-          </ev-button>
+          </eb-button>
         </template>
-      </ev-page-header>
+      </eb-page-header>
 
       <!-- KPI 指标卡 -->
-      <ev-row :gutter="16" class="dash-block" :key="refreshTick">
-        <ev-col v-for="k in kpis" :key="k.label" :xs="24" :sm="12" :lg="6">
-          <ev-stat-card :label="k.label" :value="k.value" :suffix="k.unit" :icon="k.icon" :type="k.type" :trend="k.trend" />
-        </ev-col>
-      </ev-row>
+      <eb-row :gutter="16" class="dash-block" :key="refreshTick">
+        <eb-col v-for="k in kpis" :key="k.label" :xs="24" :sm="12" :lg="6">
+          <eb-stat-card :label="k.label" :value="k.value" :suffix="k.unit" :icon="k.icon" :type="k.type" :trend="k.trend" />
+        </eb-col>
+      </eb-row>
 
       <!-- 图表区 -->
-      <ev-row :gutter="16" class="dash-block">
-        <ev-col :xs="24" :lg="16">
-          <ev-section-card title="近 7 日 GMV 趋势">
-            <ec-chart :options="gmvOptions" :height="280" />
-          </ev-section-card>
-        </ev-col>
-        <ev-col :xs="24" :lg="8">
-          <ev-section-card title="销售渠道占比">
-            <ec-chart :options="channelOptions" :height="280" />
-          </ev-section-card>
-        </ev-col>
-      </ev-row>
+      <eb-row :gutter="16" class="dash-block">
+        <eb-col :xs="24" :lg="16">
+          <eb-section-card title="近 7 日 GMV 趋势">
+            <eb-chart :options="gmvOptions" :height="280" />
+          </eb-section-card>
+        </eb-col>
+        <eb-col :xs="24" :lg="8">
+          <eb-section-card title="销售渠道占比">
+            <eb-chart :options="channelOptions" :height="280" />
+          </eb-section-card>
+        </eb-col>
+      </eb-row>
 
       <!-- 明细区 -->
-      <ev-row :gutter="16" class="dash-block">
-        <ev-col :xs="24" :lg="16">
-          <ev-section-card title="最新订单" :padding="false">
-            <ev-data-table
+      <eb-row :gutter="16" class="dash-block">
+        <eb-col :xs="24" :lg="16">
+          <eb-section-card title="最新订单" :padding="false">
+            <eb-data-table
               :columns="orderColumns"
               :data="recentOrders"
               :show-pagination="false"
               :show-total="false"
             >
               <template #status="{ row }">
-                <ev-status-tag :value="row.status" :statuses="ORDER_STATUS" />
+                <eb-status-tag :value="row.status" :statuses="ORDER_STATUS" />
               </template>
-            </ev-data-table>
-          </ev-section-card>
-        </ev-col>
-        <ev-col :xs="24" :lg="8">
-          <ev-section-card title="待办事项">
+            </eb-data-table>
+          </eb-section-card>
+        </eb-col>
+        <eb-col :xs="24" :lg="8">
+          <eb-section-card title="待办事项">
             <div v-for="t in todos" :key="t.id" class="dash-todo">
               <span class="dash-todo__title">
                 <i v-if="t.urgent" class="dash-todo__dot" />
                 {{ t.title }}
               </span>
-              <ev-tag size="small" effect="plain">{{ t.tag }}</ev-tag>
+              <eb-tag size="small" effect="plain">{{ t.tag }}</eb-tag>
             </div>
-          </ev-section-card>
-          <ev-section-card title="平台公告" class="dash-block--top">
+          </eb-section-card>
+          <eb-section-card title="平台公告" class="dash-block--top">
             <div v-for="n in notices" :key="n.id" class="dash-notice">
-              <ev-link type="primary">{{ n.title }}</ev-link>
+              <eb-link type="primary">{{ n.title }}</eb-link>
               <span class="dash-notice__time">{{ n.time }}</span>
             </div>
-          </ev-section-card>
-        </ev-col>
-      </ev-row>
+          </eb-section-card>
+        </eb-col>
+      </eb-row>
     </div>
 
     <!-- 业务模块视图 -->
@@ -139,7 +139,7 @@
     <template v-else-if="activeMenu === 'marketing'">
       <MarketingPage />
     </template>
-  </ev-app-layout>
+  </eb-app-layout>
 </template>
 
 <script setup>
@@ -218,11 +218,11 @@ const orderColumns = [
   margin-top: 16px;
 }
 /* 行内卡片等高拉伸（如 KPI 卡有无趋势行时以最高者为准）；列内多卡保持纵向堆叠 */
-.dash-block :deep(.ev-col) {
+.dash-block :deep(.eb-col) {
   display: flex;
   flex-direction: column;
 }
-.dash-block :deep(.ev-col > *) {
+.dash-block :deep(.eb-col > *) {
   flex: 1;
   width: 100%;
 }
@@ -236,21 +236,21 @@ const orderColumns = [
   padding: 9px 0;
 }
 .dash-todo + .dash-todo {
-  border-top: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
 }
 .dash-todo__title {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: var(--ev-font-size-base, 14px);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-size: var(--eb-font-size-base, 14px);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .dash-todo__dot {
   width: 6px;
   height: 6px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--ev-color-danger, #e34d59);
+  background: var(--eb-color-danger, #e34d59);
 }
 .dash-notice {
   display: flex;
@@ -261,7 +261,7 @@ const orderColumns = [
 }
 .dash-notice__time {
   flex-shrink: 0;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 </style>

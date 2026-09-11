@@ -1,5 +1,5 @@
 /**
- * 展示图标集（922 个，Remix 原生命名，EwIconGrid 动态加载，不进主包）
+ * 展示图标集（922 个，Remix 原生命名，EvIconGrid 动态加载，不进主包）
  * 每分类限量 24 对（line/fill）配对采样，源自 Remix Icon v4.9.1
  * （Remix Icon License v1.0，免费商用）。由 scripts/generate-remix-icons.mjs 生成，请勿手动修改
  */

@@ -1,6 +1,6 @@
 # Article 文章内容
 
-`EwArticle` 为长文阅读设计：页头（眉题 + 标题 + 摘要 + 元信息行）与正文插槽，
+`EvArticle` 为长文阅读设计：页头（眉题 + 标题 + 摘要 + 元信息行）与正文插槽，
 正文插槽自带阅读排版——标题刻度、1.85 行高、引用块、列表、行内代码与图片圆角，
 排版全部收敛在组件作用域内，不污染页面。
 
@@ -8,7 +8,7 @@
 
 <DemoBlock title="标题 + 元信息 + 正文排版" description="正文插槽内的 h2 / p / blockquote / ul 已按阅读节奏排好，直接写内容即可。">
 
-<EwArticle
+<EvArticle
   eyebrow="发布说明"
   title="Evoke UI v0.10：把官网拆成组件的艺术"
   description="从组件粒度到令牌边界，一次开源组件库 API 设计的完整复盘。"
@@ -25,10 +25,10 @@
     <li>57 个组件，全部支持明暗双主题</li>
     <li>一行令牌即可换主色</li>
   </ul>
-</EwArticle>
+</EvArticle>
 
 ```vue
-<EwArticle
+<EvArticle
   eyebrow="发布说明"
   title="Evoke UI v0.10"
   author="林一舟"
@@ -37,7 +37,7 @@
   :tags="['组件设计']"
 >
   <p>正文内容，自带阅读排版。</p>
-</EwArticle>
+</EvArticle>
 ```
 
 </DemoBlock>

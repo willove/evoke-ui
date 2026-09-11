@@ -1,18 +1,18 @@
-/* EvNavBar — 移动端页头 */
-.ev-nav-bar {
+/* EbNavBar — 移动端页头 */
+.eb-nav-bar {
   position: relative;
 }
 
-.ev-nav-bar__inner {
+.eb-nav-bar__inner {
   display: flex;
   align-items: center;
   gap: 4px;
   height: 44px;
   padding: 0 4px;
-  background: var(--ev-bg-color);
+  background: var(--eb-bg-color);
 }
 
-.ev-nav-bar__inner.is-fixed {
+.eb-nav-bar__inner.is-fixed {
   position: fixed;
   top: 0;
   right: 0;
@@ -22,16 +22,16 @@
   height: calc(44px + env(safe-area-inset-top, 0px));
 }
 
-.ev-nav-bar__placeholder {
+.eb-nav-bar__placeholder {
   height: calc(44px + env(safe-area-inset-top, 0px));
 }
 
-.ev-nav-bar.is-bordered .ev-nav-bar__inner {
-  border-bottom: 1px solid var(--ev-border-color-light);
+.eb-nav-bar.is-bordered .eb-nav-bar__inner {
+  border-bottom: 1px solid var(--eb-border-color-light);
 }
 
 /* 左右热区：不小于 44px 触控目标 */
-.ev-nav-bar__side {
+.eb-nav-bar__side {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -39,36 +39,36 @@
   min-width: 44px;
   height: 44px;
   padding: 0 10px;
-  color: var(--ev-text-color-primary);
-  font-size: var(--ev-font-size-base);
+  color: var(--eb-text-color-primary);
+  font-size: var(--eb-font-size-base);
   cursor: pointer;
   user-select: none;
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-in-out);
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-in-out);
 }
 
-.ev-nav-bar__side:active {
+.eb-nav-bar__side:active {
   opacity: 0.55;
 }
 
-.ev-nav-bar__side.is-right {
+.eb-nav-bar__side.is-right {
   justify-content: flex-end;
   margin-left: auto;
-  color: var(--ev-color-primary);
+  color: var(--eb-color-primary);
 }
 
-.ev-nav-bar__text {
+.eb-nav-bar__text {
   white-space: nowrap;
 }
 
-.ev-nav-bar__title {
+.eb-nav-bar__title {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-align: center;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--ev-text-color-primary);
-  font-size: var(--ev-font-size-lg);
-  font-weight: var(--ev-font-weight-medium);
+  color: var(--eb-text-color-primary);
+  font-size: var(--eb-font-size-lg);
+  font-weight: var(--eb-font-weight-medium);
   line-height: 44px;
 }

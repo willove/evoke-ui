@@ -1,6 +1,6 @@
 # Table 表格
 
-表格组件：列由 `ev-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选、展开行、固定列（sticky）、当前行高亮与空态，并暴露排序、筛选、选中、展开等实例方法。
+表格组件：列由 `eb-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选、展开行、固定列（sticky）、当前行高亮与空态，并暴露排序、筛选、选中、展开等实例方法。
 
 <script setup>
 import { ref } from 'vue'
@@ -29,14 +29,14 @@ function onSelectionChange(selection) { selected.value = selection }
 
 ## 基础用法
 
-`data` 传入行数组，`ev-table-column` 用 `prop` 绑定字段、`label` 定义表头；`border` 与 `stripe` 开启边框和斑马纹，`sortable` 让金额列出现排序箭头（点击循环升序、降序、取消）。斑马纹加在偶数行（自第 2 行起）；组件始终开启行 hover 高亮，普通行 hover 时整行变浅灰，斑马行因底色规则声明在后、hover 仍保持斑马底色，两层不互相覆盖。数据密集的列表页推荐 `stripe` + `border` 组合，行间辨识度最高。
+`data` 传入行数组，`eb-table-column` 用 `prop` 绑定字段、`label` 定义表头；`border` 与 `stripe` 开启边框和斑马纹，`sortable` 让金额列出现排序箭头（点击循环升序、降序、取消）。斑马纹加在偶数行（自第 2 行起）；组件始终开启行 hover 高亮，普通行 hover 时整行变浅灰，斑马行因底色规则声明在后、hover 仍保持斑马底色，两层不互相覆盖。数据密集的列表页推荐 `stripe` + `border` 组合，行间辨识度最高。
 
 <DemoBlock>
-<ev-table :data="rows" border stripe>
-  <ev-table-column prop="name" label="名称" />
-  <ev-table-column prop="owner" label="负责人" />
-  <ev-table-column prop="amount" label="金额" align="right" sortable />
-</ev-table>
+<eb-table :data="rows" border stripe>
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="owner" label="负责人" />
+  <eb-table-column prop="amount" label="金额" align="right" sortable />
+</eb-table>
 </DemoBlock>
 
 ## 树形表格
@@ -44,16 +44,16 @@ function onSelectionChange(selection) { selected.value = selection }
 数据行带 `children` 数组即自动启用树形渲染：首列显示展开箭头与层级缩进，点击箭头或调用行展开；`default-expand-all` 默认展开全部，`tree-props` 可自定义 children 字段名。
 
 <DemoBlock>
-  <ev-table
+  <eb-table
     :data="treeRows"
     row-key="id"
     default-expand-all
     border
   >
-    <ev-table-column prop="name" label="名称" />
-    <ev-table-column prop="owner" label="负责人" />
-    <ev-table-column prop="status" label="状态" />
-  </ev-table>
+    <eb-table-column prop="name" label="名称" />
+    <eb-table-column prop="owner" label="负责人" />
+    <eb-table-column prop="status" label="状态" />
+  </eb-table>
 </DemoBlock>
 
 ## 插槽列自定义单元格
@@ -61,15 +61,15 @@ function onSelectionChange(selection) { selected.value = selection }
 在列内写 `#default` 作用域插槽即可完全接管单元格（scope 含 `row`、`$index`、`column`）；`show-overflow-tooltip` 让超宽文本省略并以 title 提示全文。
 
 <DemoBlock>
-<ev-table :data="rows" border>
-  <ev-table-column prop="name" label="名称" width="180">
+<eb-table :data="rows" border>
+  <eb-table-column prop="name" label="名称" width="180">
     <template #default="{ row, $index }"><span style="font-weight: 600;">{{ $index + 1 }}. {{ row.name }}</span></template>
-  </ev-table-column>
-  <ev-table-column prop="status" label="状态" width="120" align="center">
-    <template #default="{ row }"><span :style="{ color: row.status === '已支付' ? 'var(--ev-color-success)' : 'var(--ev-color-warning)' }">{{ row.status }}</span></template>
-  </ev-table-column>
-  <ev-table-column prop="remark" label="备注" width="160" show-overflow-tooltip />
-</ev-table>
+  </eb-table-column>
+  <eb-table-column prop="status" label="状态" width="120" align="center">
+    <template #default="{ row }"><span :style="{ color: row.status === '已支付' ? 'var(--eb-color-success)' : 'var(--eb-color-warning)' }">{{ row.status }}</span></template>
+  </eb-table-column>
+  <eb-table-column prop="remark" label="备注" width="160" show-overflow-tooltip />
+</eb-table>
 </DemoBlock>
 
 ## 排序与格式化
@@ -77,11 +77,11 @@ function onSelectionChange(selection) { selected.value = selection }
 `default-sort` 指定初始排序（立即生效，非仅高亮箭头）；`sort-method` 提供自定义比较函数（返回值自动乘以排序方向），`sort-change` 返回 `{ prop, order, column }` 用于对接后端；`formatter` 把原始值格式化为展示文本。
 
 <DemoBlock>
-<ev-table :data="rows" :default-sort="{ prop: 'amount', order: 'descending' }" @sort-change="onSortChange">
-  <ev-table-column prop="name" label="名称" />
-  <ev-table-column prop="city" label="城市" sortable :sort-method="(a, b) => a.city.localeCompare(b.city, 'zh-Hans-CN')" />
-  <ev-table-column prop="amount" label="金额" align="right" sortable :formatter="(row) => '¥' + row.amount.toLocaleString()" />
-</ev-table>
+<eb-table :data="rows" :default-sort="{ prop: 'amount', order: 'descending' }" @sort-change="onSortChange">
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="city" label="城市" sortable :sort-method="(a, b) => a.city.localeCompare(b.city, 'zh-Hans-CN')" />
+  <eb-table-column prop="amount" label="金额" align="right" sortable :formatter="(row) => '¥' + row.amount.toLocaleString()" />
+</eb-table>
 <p style="margin-top: 8px;">当前排序：{{ lastSort }}</p>
 </DemoBlock>
 
@@ -90,13 +90,13 @@ function onSelectionChange(selection) { selected.value = selection }
 `type="selection"` 声明多选列，表头出现全选框（含半选态）；`selectable` 可禁用指定行（本例仅已支付行可选）。选中项通过 `selection-change` 同步，也可用实例方法 `clearSelection` 清空。
 
 <DemoBlock>
-<ev-table ref="tableRef" :data="rows" border @selection-change="onSelectionChange">
-  <ev-table-column type="selection" width="44" :selectable="(row) => row.status === '已支付'" />
-  <ev-table-column prop="name" label="名称" />
-  <ev-table-column prop="owner" label="负责人" />
-</ev-table>
+<eb-table ref="tableRef" :data="rows" border @selection-change="onSelectionChange">
+  <eb-table-column type="selection" width="44" :selectable="(row) => row.status === '已支付'" />
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="owner" label="负责人" />
+</eb-table>
 <p style="margin: 8px 0;">已选 {{ selected.length }} 项：{{ selected.map((r) => r.name).join('、') || '—' }}</p>
-<ev-button @click="tableRef.clearSelection()">清空选择</ev-button>
+<eb-button @click="tableRef.clearSelection()">清空选择</eb-button>
 </DemoBlock>
 
 ## 展开行
@@ -104,27 +104,27 @@ function onSelectionChange(selection) { selected.value = selection }
 `type="expand"` 声明展开列，默认插槽渲染在展开的附加行中（scope 为 `{ row, $index }`）；配合 `default-expand-all` 或 `expand-row-keys`（需 rowKey）可默认展开。
 
 <DemoBlock>
-<ev-table :data="rows" border row-key="id">
-  <ev-table-column type="expand">
-    <template #default="{ row }"><div style="padding: 4px 12px; color: var(--ev-text-color-regular);">备注：{{ row.remark }}（下单人：{{ row.owner }}）</div></template>
-  </ev-table-column>
-  <ev-table-column prop="name" label="名称" />
-  <ev-table-column prop="amount" label="金额" align="right" />
-</ev-table>
+<eb-table :data="rows" border row-key="id">
+  <eb-table-column type="expand">
+    <template #default="{ row }"><div style="padding: 4px 12px; color: var(--eb-text-color-regular);">备注：{{ row.remark }}（下单人：{{ row.owner }}）</div></template>
+  </eb-table-column>
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="amount" label="金额" align="right" />
+</eb-table>
 </DemoBlock>
 
 ## 空态
 
-数据为空时渲染空态区域，默认文案为内置国际化「暂无数据」，可用 `empty-text` 修改，或用 `#empty` 插槽整体替换（可搭配 ev-empty）。
+数据为空时渲染空态区域，默认文案为内置国际化「暂无数据」，可用 `empty-text` 修改，或用 `#empty` 插槽整体替换（可搭配 eb-empty）。
 
 <DemoBlock>
-<ev-table :data="[]" border>
-  <ev-table-column prop="name" label="名称" />
-  <ev-table-column prop="owner" label="负责人" />
+<eb-table :data="[]" border>
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="owner" label="负责人" />
   <template #empty>
-    <ev-empty description="没有匹配的订单" :image-size="64" />
+    <eb-empty description="没有匹配的订单" :image-size="64" />
   </template>
-</ev-table>
+</eb-table>
 </DemoBlock>
 
 ## API
@@ -162,7 +162,7 @@ function onSelectionChange(selection) { selected.value = selection }
 ]" />
 
 <ApiTable title="Table Slots" :rows="[
-  { name: 'default', desc: 'ev-table-column 列定义', type: '—', default: '—' },
+  { name: 'default', desc: 'eb-table-column 列定义', type: '—', default: '—' },
   { name: 'empty', desc: '空数据区域（替换 emptyText）', type: '—', default: '—' },
 ]" />
 

@@ -1,12 +1,12 @@
 <template>
-  <div class="ev-collapse ev-collapse" role="presentation">
+  <div class="eb-collapse eb-collapse" role="presentation">
     <slot />
   </div>
 </template>
 
 <script setup>
 /**
- * EvCollapse — 折叠面板容器
+ * EbCollapse — 折叠面板容器
  * 子项通过 provide 注册；v-model / accordion 状态集中管理
  */
 import { provide, ref, toRef, watch } from 'vue'

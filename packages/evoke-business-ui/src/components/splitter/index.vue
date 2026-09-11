@@ -1,14 +1,14 @@
 <template>
-  <div ref="containerRef" class="ev-splitter" :class="layout === 'horizontal' ? 'is-horizontal' : 'is-vertical'">
+  <div ref="containerRef" class="eb-splitter" :class="layout === 'horizontal' ? 'is-horizontal' : 'is-vertical'">
     <slot />
   </div>
 </template>
 
 <script setup>
 /**
- * EvSplitter — 分隔面板容器
+ * EbSplitter — 分隔面板容器
  * 面板注册 + 尺寸分摊 + 拖拽（min/max 夹角互不越界）+ 折叠；
- * resize 事件回传百分比数组。子面板 EvSplitterPanel 通过 inject 自渲染拖拽条。
+ * resize 事件回传百分比数组。子面板 EbSplitterPanel 通过 inject 自渲染拖拽条。
  */
 import { computed, provide, ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue'
 

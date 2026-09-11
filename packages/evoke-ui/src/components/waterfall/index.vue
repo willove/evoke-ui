@@ -1,17 +1,17 @@
 <template>
-  <div class="ew-waterfall" :style="{ gap: `${gap}px` }">
+  <div class="ev-waterfall" :style="{ gap: `${gap}px` }">
     <div
       v-for="(col, c) in buckets"
       :key="c"
-      class="ew-waterfall__col"
+      class="ev-waterfall__col"
       :style="{ gap: `${gap}px` }"
     >
-      <div v-for="cell in col" :key="cell.index" class="ew-waterfall__cell">
+      <div v-for="cell in col" :key="cell.index" class="ev-waterfall__cell">
         <slot name="item" :item="cell.item" :index="cell.index">
           <button
             type="button"
-            class="ew-waterfall__item"
-            :style="{ '--ew-waterfall-radius': `${radius}px` }"
+            class="ev-waterfall__item"
+            :style="{ '--ev-waterfall-radius': `${radius}px` }"
             :aria-label="cell.item.alt || cell.item.caption || `查看第 ${cell.index + 1} 张图片`"
             @click="open(cell.index)"
           >
@@ -21,7 +21,7 @@
               loading="lazy"
               @load="onImgLoad(cell.index, $event)"
             />
-            <span v-if="cell.item.caption" class="ew-waterfall__caption">
+            <span v-if="cell.item.caption" class="ev-waterfall__caption">
               {{ cell.item.caption }}
             </span>
           </button>
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <EwImagePreview
+    <EvImagePreview
       v-if="preview"
       v-model="previewVisible"
       v-model:index="previewIndex"
@@ -40,15 +40,15 @@
 
 <script setup>
 /**
- * EwWaterfall — 瀑布流
+ * EvWaterfall — 瀑布流
  * 多列瀑布流布局：按「最短列优先」分发条目，列高随内容比例自动均衡。
  * items 项：字符串 url 或 { src, alt, caption, ratio, width, height }；
  * 未声明比例时先按默认画幅占位，图片加载完成后按真实比例重新归位。
- * 默认渲染图片卡（可带 caption 蒙层、点击打开 EwImagePreview 灯箱，可关）；
+ * 默认渲染图片卡（可带 caption 蒙层、点击打开 EvImagePreview 灯箱，可关）；
  * 作用插槽 #item 完全接管单元格，可承载任意内容实现内容瀑布流。
  */
 import { computed, ref } from 'vue'
-import EwImagePreview from '../image-preview/index.vue'
+import EvImagePreview from '../image-preview/index.vue'
 
 const props = defineProps({
   /** 条目列表：url 字符串或 { src, alt, caption, ratio(高/宽), width, height } */

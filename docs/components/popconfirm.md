@@ -5,33 +5,33 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-popconfirm title="确定删除该记录吗？" @confirm="onConfirm" @cancel="onCancel">
-      <ev-button type="danger" plain>删除</ev-button>
-    </ev-popconfirm>
-    <ev-popconfirm title="确认停用该账号？" icon-type="danger" confirm-button-text="停用" cancel-button-text="取消">
-      <ev-button>停用账号</ev-button>
-    </ev-popconfirm>
-  </ev-space>
-  <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">结果：{{ result }}</p>
+  <eb-space size="middle">
+    <eb-popconfirm title="确定删除该记录吗？" @confirm="onConfirm" @cancel="onCancel">
+      <eb-button type="danger" plain>删除</eb-button>
+    </eb-popconfirm>
+    <eb-popconfirm title="确认停用该账号？" icon-type="danger" confirm-button-text="停用" cancel-button-text="取消">
+      <eb-button>停用账号</eb-button>
+    </eb-popconfirm>
+  </eb-space>
+  <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">结果：{{ result }}</p>
 </DemoBlock>
 
 ## 不同方位与语义图标
 
 <DemoBlock>
-  <ev-space size="middle" style="flex-wrap: wrap">
-    <ev-popconfirm v-for="p in placements" :key="p" :title="`placement: ${p}`" :placement="p">
-      <ev-button size="small">{{ p }}</ev-button>
-    </ev-popconfirm>
-  </ev-space>
+  <eb-space size="middle" style="flex-wrap: wrap">
+    <eb-popconfirm v-for="p in placements" :key="p" :title="`placement: ${p}`" :placement="p">
+      <eb-button size="small">{{ p }}</eb-button>
+    </eb-popconfirm>
+  </eb-space>
 </DemoBlock>
 
 ## 危险操作（红色确认按钮）
 
 <DemoBlock>
-  <ev-popconfirm title="该操作将清空回收站且不可恢复，确定继续吗？" icon-type="danger" confirm-button-text="清空" cancel-button-text="再想想" confirm-button-type="danger">
-    <ev-button type="danger">清空回收站</ev-button>
-  </ev-popconfirm>
+  <eb-popconfirm title="该操作将清空回收站且不可恢复，确定继续吗？" icon-type="danger" confirm-button-text="清空" cancel-button-text="再想想" confirm-button-type="danger">
+    <eb-button type="danger">清空回收站</eb-button>
+  </eb-popconfirm>
 </DemoBlock>
 
 <script setup>

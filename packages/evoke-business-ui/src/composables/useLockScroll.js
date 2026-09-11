@@ -32,9 +32,9 @@ export function useLockScroll(options = {}) {
       if (scrollbarWidth > 0) {
         body.style.paddingRight = `${scrollbarWidth}px`
         // 供消费方补偿 body 补偿不到的 fixed 元素（如文档站固定顶栏），避免开关时页面横跳
-        body.style.setProperty('--ev-scrollbar-width', `${scrollbarWidth}px`)
+        body.style.setProperty('--eb-scrollbar-width', `${scrollbarWidth}px`)
       }
-      body.classList.add('ev-scroll-locked')
+      body.classList.add('eb-scroll-locked')
     }
   }
 
@@ -47,8 +47,8 @@ export function useLockScroll(options = {}) {
       body.style.overflow = ''
       body.style.paddingRight = cachedBodyPaddingRight
       body.style.width = cachedBodyWidth
-      body.style.removeProperty('--ev-scrollbar-width')
-      body.classList.remove('ev-scroll-locked')
+      body.style.removeProperty('--eb-scrollbar-width')
+      body.classList.remove('eb-scroll-locked')
     }
   }
 

@@ -1,18 +1,18 @@
-/* EwNavBar — 移动端页头 */
-.ew-nav-bar {
+/* EvNavBar — 移动端页头 */
+.ev-nav-bar {
   position: relative;
 }
 
-.ew-nav-bar__inner {
+.ev-nav-bar__inner {
   display: flex;
   align-items: center;
   gap: 4px;
   height: 44px;
   padding: 0 4px;
-  background: var(--ew-bg-container);
+  background: var(--ev-bg-container);
 }
 
-.ew-nav-bar__inner.is-fixed {
+.ev-nav-bar__inner.is-fixed {
   position: fixed;
   top: 0;
   right: 0;
@@ -22,16 +22,16 @@
   height: calc(44px + env(safe-area-inset-top, 0px));
 }
 
-.ew-nav-bar__placeholder {
+.ev-nav-bar__placeholder {
   height: calc(44px + env(safe-area-inset-top, 0px));
 }
 
-.ew-nav-bar.is-bordered .ew-nav-bar__inner {
-  border-bottom: 1px solid var(--ew-border-color-light);
+.ev-nav-bar.is-bordered .ev-nav-bar__inner {
+  border-bottom: 1px solid var(--ev-border-color-light);
 }
 
 /* 左右热区：不小于 44px 触控目标 */
-.ew-nav-bar__side {
+.ev-nav-bar__side {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -39,36 +39,36 @@
   min-width: 44px;
   height: 44px;
   padding: 0 10px;
-  color: var(--ew-text-primary);
-  font-size: var(--ew-font-size-base);
+  color: var(--ev-text-primary);
+  font-size: var(--ev-font-size-base);
   cursor: pointer;
   user-select: none;
-  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ew-nav-bar__side:active {
+.ev-nav-bar__side:active {
   opacity: 0.55;
 }
 
-.ew-nav-bar__side.is-right {
+.ev-nav-bar__side.is-right {
   justify-content: flex-end;
   margin-left: auto;
-  color: var(--ew-color-primary);
+  color: var(--ev-color-primary);
 }
 
-.ew-nav-bar__text {
+.ev-nav-bar__text {
   white-space: nowrap;
 }
 
-.ew-nav-bar__title {
+.ev-nav-bar__title {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-align: center;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: var(--ew-text-primary);
-  font-size: var(--ew-font-size-lg);
-  font-weight: var(--ew-font-weight-medium);
+  color: var(--ev-text-primary);
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-medium);
   line-height: 44px;
 }

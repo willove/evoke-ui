@@ -6,24 +6,24 @@
 
 <DemoBlock>
   <div style="max-width: 560px">
-    <ev-comment author="王敏" datetime="2026-09-07 10:24">
+    <eb-comment author="王敏" datetime="2026-09-07 10:24">
       <template #avatar>
-        <ev-avatar size="32" style="background: var(--ev-color-primary); color: #fff;">王</ev-avatar>
+        <eb-avatar size="32" style="background: var(--eb-color-primary); color: #fff;">王</eb-avatar>
       </template>
       <p>发票金额与报销单一致，同意通过。</p>
       <template #actions>
         <span>回复</span><span>点赞</span>
       </template>
       <template #replies>
-        <ev-comment author="李雷" datetime="2026-09-07 10:40">
+        <eb-comment author="李雷" datetime="2026-09-07 10:40">
           <template #avatar>
-            <ev-avatar size="32" style="background: var(--ev-color-info); color: #fff;">李</ev-avatar>
+            <eb-avatar size="32" style="background: var(--eb-color-info); color: #fff;">李</eb-avatar>
           </template>
           <p>已确认，走下一步审批。</p>
           <template #actions><span>回复</span></template>
-        </ev-comment>
+        </eb-comment>
       </template>
-    </ev-comment>
+    </eb-comment>
   </div>
 </DemoBlock>
 

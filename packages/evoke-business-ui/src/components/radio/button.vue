@@ -1,6 +1,6 @@
 <template>
   <label
-    class="ev-radio-button ev-radio-button"
+    class="eb-radio-button eb-radio-button"
     :class="[sizeClass, { 'is-active': isChecked, 'is-disabled': isDisabled }]"
     role="radio"
     :aria-checked="isChecked"
@@ -9,7 +9,7 @@
     <input
       ref="radioRef"
       type="radio"
-      class="ev-radio-button__original-radio"
+      class="eb-radio-button__original-radio"
       :value="label"
       :name="radioName"
       :checked="isChecked"
@@ -17,7 +17,7 @@
       tabindex="-1"
       @change="handleChange"
     />
-    <span class="ev-radio-button__inner">
+    <span class="eb-radio-button__inner">
       <slot>{{ label }}</slot>
     </span>
   </label>
@@ -25,14 +25,14 @@
 
 <script setup>
 /**
- * EvRadioButton — 按钮风格单选
+ * EbRadioButton — 按钮风格单选
  * group 内 inject 共享 modelValue
  */
 import { computed, ref } from 'vue'
 import { useRadioGroup } from './group-context'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvRadioButton' })
+defineOptions({ name: 'EbRadioButton' })
 
 const props = defineProps({
   modelValue: { type: [String, Number, Boolean], default: '' },
@@ -60,8 +60,8 @@ const radioName = computed(() => props.name ?? group?.name?.value)
 
 const sizeClass = computed(() => {
   const s = props.size || group?.size?.value || formSize.value
-  if (s === 'large') return 'ev-radio-button--large'
-  if (s === 'small') return 'ev-radio-button--small'
+  if (s === 'large') return 'eb-radio-button--large'
+  if (s === 'small') return 'eb-radio-button--small'
   return ''
 })
 

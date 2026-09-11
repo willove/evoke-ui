@@ -18,65 +18,65 @@
       <div class="mb-stat"><span class="mb-stat__label">未读消息</span><span class="mb-stat__value">12</span></div>
     </div>
     <div class="mb-card">
-      <ev-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 待审批" />
-      <ev-cell-stack main="服务器扩容审批" sub="张三提交于 10:24" />
+      <eb-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 待审批" />
+      <eb-cell-stack main="服务器扩容审批" sub="张三提交于 10:24" />
     </div>
   </div>
   <div v-else-if="activeTab === 'orders'" class="mb-page">
-    <ev-segmented v-model="orderRange" block :options="['本周', '本月', '本季']" />
+    <eb-segmented v-model="orderRange" block :options="['本周', '本月', '本季']" />
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">差旅报销单 CL-0908-01</span>
-        <ev-status-tag value="pending" :statuses="orderStatuses" />
+        <eb-status-tag value="pending" :statuses="orderStatuses" />
       </div>
       <div class="mb-card__foot">
         <span class="mb-card__amount is-primary">¥1,860</span>
-        <ev-button size="small" plain>查看详情</ev-button>
+        <eb-button size="small" plain>查看详情</eb-button>
       </div>
     </div>
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">办公用品采购 PO-0905-07</span>
-        <ev-status-tag value="approved" :statuses="orderStatuses" />
+        <eb-status-tag value="approved" :statuses="orderStatuses" />
       </div>
       <div class="mb-card__foot">
         <span class="mb-card__amount is-primary">¥432</span>
-        <ev-button size="small" plain>查看详情</ev-button>
+        <eb-button size="small" plain>查看详情</eb-button>
       </div>
     </div>
   </div>
   <div v-else-if="activeTab === 'msgs'" class="mb-page">
-    <ev-button style="align-self: flex-end;" size="small" plain @click="msgs.forEach((m) => (m.read = true)); $message.success('已全部标记为已读')">全部已读</ev-button>
+    <eb-button style="align-self: flex-end;" size="small" plain @click="msgs.forEach((m) => (m.read = true)); $message.success('已全部标记为已读')">全部已读</eb-button>
     <div class="mb-card">
-      <ev-cell-stack v-for="m in msgs" :key="m.id" :main="m.title" :sub="m.time" @click="m.read = true">
+      <eb-cell-stack v-for="m in msgs" :key="m.id" :main="m.title" :sub="m.time" @click="m.read = true">
         <template #sub>
-          <span style="display: inline-flex; align-items: center; gap: 6px;">{{ m.time }}<i v-if="!m.read" style="width: 8px; height: 8px; border-radius: 50%; background: var(--ev-color-danger, #f54a45); display: inline-block;" /></span>
+          <span style="display: inline-flex; align-items: center; gap: 6px;">{{ m.time }}<i v-if="!m.read" style="width: 8px; height: 8px; border-radius: 50%; background: var(--eb-color-danger, #f54a45); display: inline-block;" /></span>
         </template>
-      </ev-cell-stack>
+      </eb-cell-stack>
     </div>
   </div>
   <div v-else class="mb-page">
     <div class="mb-card mb-card--pad" style="display: flex; align-items: center; gap: 12px;">
-      <ev-avatar :size="48">李</ev-avatar>
+      <eb-avatar :size="48">李</eb-avatar>
       <div style="display: flex; flex-direction: column; gap: 2px;">
         <span style="font-size: 16px; font-weight: 600; color: var(--bd-text);">李工</span>
         <span style="font-size: 12px; color: var(--bd-text-tertiary);">交付部 · 项目管理</span>
       </div>
     </div>
     <div class="mb-card">
-      <ev-cell-stack main="我的报销单" sub="本月 4 笔" />
-      <ev-cell-stack main="消息设置" sub="审批提醒已开启" />
-      <ev-cell-stack main="账号安全" sub="上次登录 今天 08:12" />
+      <eb-cell-stack main="我的报销单" sub="本月 4 笔" />
+      <eb-cell-stack main="消息设置" sub="审批提醒已开启" />
+      <eb-cell-stack main="账号安全" sub="上次登录 今天 08:12" />
     </div>
-    <ev-button style="margin-top: 8px;" plain type="danger" @click="$message.info('演示环境，退出仅作提示')">退出登录</ev-button>
+    <eb-button style="margin-top: 8px;" plain type="danger" @click="$message.info('演示环境，退出仅作提示')">退出登录</eb-button>
   </div>
   <template #bottom>
-    <ev-tabbar v-model="activeTab" :fixed="false">
-      <ev-tabbar-item name="home">首页</ev-tabbar-item>
-      <ev-tabbar-item name="orders">订单</ev-tabbar-item>
-      <ev-tabbar-item name="msgs" :badge="unreadCount || ''">消息</ev-tabbar-item>
-      <ev-tabbar-item name="mine">我的</ev-tabbar-item>
-    </ev-tabbar>
+    <eb-tabbar v-model="activeTab" :fixed="false">
+      <eb-tabbar-item name="home">首页</eb-tabbar-item>
+      <eb-tabbar-item name="orders">订单</eb-tabbar-item>
+      <eb-tabbar-item name="msgs" :badge="unreadCount || ''">消息</eb-tabbar-item>
+      <eb-tabbar-item name="mine">我的</eb-tabbar-item>
+    </eb-tabbar>
   </template>
 </MobileStage>
 </DemoBlock>
@@ -128,7 +128,7 @@ const detailStatuses = orderStatuses
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">差旅报销单 CL-0908-01</span>
-        <ev-status-tag value="pending" :statuses="detailStatuses" />
+        <eb-status-tag value="pending" :statuses="detailStatuses" />
       </div>
       <div class="mb-card__rows">
         <div><div class="mb-card__label">申请人</div><div class="mb-card__value">李工</div></div>
@@ -138,8 +138,8 @@ const detailStatuses = orderStatuses
       </div>
     </div>
     <div class="mb-card">
-      <ev-cell-stack main="审批轨迹 · 张三已通过" sub="09-08 11:02" />
-      <ev-cell-stack main="审批轨迹 · 财务复核中" sub="待处理" />
+      <eb-cell-stack main="审批轨迹 · 张三已通过" sub="09-08 11:02" />
+      <eb-cell-stack main="审批轨迹 · 财务复核中" sub="待处理" />
     </div>
   </div>
   <template #action>
@@ -157,15 +157,15 @@ const detailStatuses = orderStatuses
 <DemoBlock>
 <MobileStage title="新建报销单">
   <div class="mb-page">
-    <ev-form label-position="top">
-      <ev-form-item label="报销类型"><ev-segmented v-model="draft.type" block :options="['差旅', '招待', '办公']" /></ev-form-item>
-      <ev-form-item label="金额（元）"><ev-input v-model="draft.amount" placeholder="0.00" inputmode="decimal" /></ev-form-item>
-      <ev-form-item label="事由"><ev-input v-model="draft.reason" placeholder="简要说明报销事由" /></ev-form-item>
-    </ev-form>
+    <eb-form label-position="top">
+      <eb-form-item label="报销类型"><eb-segmented v-model="draft.type" block :options="['差旅', '招待', '办公']" /></eb-form-item>
+      <eb-form-item label="金额（元）"><eb-input v-model="draft.amount" placeholder="0.00" inputmode="decimal" /></eb-form-item>
+      <eb-form-item label="事由"><eb-input v-model="draft.reason" placeholder="简要说明报销事由" /></eb-form-item>
+    </eb-form>
   </div>
   <template #bottom>
     <div class="mb-submit">
-      <ev-button type="primary" @click="$message.success('已提交审批（演示）')">提交审批</ev-button>
+      <eb-button type="primary" @click="$message.success('已提交审批（演示）')">提交审批</eb-button>
     </div>
   </template>
 </MobileStage>

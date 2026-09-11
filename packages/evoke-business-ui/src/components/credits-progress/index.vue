@@ -1,29 +1,29 @@
 <template>
-  <div class="ev-credits-progress" :class="'ev-credits-progress--' + size">
-    <div v-if="refreshDate" class="ev-credits-progress__header">
-      <span class="ev-credits-progress__header-label">{{ refreshLabel || '套餐内 Credits' }}将于 <strong>{{ refreshDate }}</strong> 刷新</span>
+  <div class="eb-credits-progress" :class="'eb-credits-progress--' + size">
+    <div v-if="refreshDate" class="eb-credits-progress__header">
+      <span class="eb-credits-progress__header-label">{{ refreshLabel || '套餐内 Credits' }}将于 <strong>{{ refreshDate }}</strong> 刷新</span>
     </div>
     <div
       ref="fenceRef"
-      class="ev-credits-progress__fence"
-      :class="{ 'ev-credits-progress__fence--over': isOver }"
+      class="eb-credits-progress__fence"
+      :class="{ 'eb-credits-progress__fence--over': isOver }"
       :style="fenceStyle"
     >
       <span
         v-for="i in barCount"
         :key="i"
-        class="ev-credits-progress__bar"
-        :class="{ 'ev-credits-progress__bar--filled': i <= filledBars }"
+        class="eb-credits-progress__bar"
+        :class="{ 'eb-credits-progress__bar--filled': i <= filledBars }"
       />
     </div>
-    <div class="ev-credits-progress__footer">
-      <span class="ev-credits-progress__used">
+    <div class="eb-credits-progress__footer">
+      <span class="eb-credits-progress__used">
         <strong>{{ formatNum(used) }}</strong>
-        <span class="ev-credits-progress__total">/ {{ formatNum(total) }}</span>
-        <span class="ev-credits-progress__pct">{{ percent }}%</span>
+        <span class="eb-credits-progress__total">/ {{ formatNum(total) }}</span>
+        <span class="eb-credits-progress__pct">{{ percent }}%</span>
       </span>
-      <span class="ev-credits-progress__remain">
-        剩余 <strong :class="{ 'ev-credits-progress__remain--warn': remainPercent < 20 }">{{ formatNum(remaining) }}</strong>
+      <span class="eb-credits-progress__remain">
+        剩余 <strong :class="{ 'eb-credits-progress__remain--warn': remainPercent < 20 }">{{ formatNum(remaining) }}</strong>
       </span>
     </div>
   </div>
@@ -31,7 +31,7 @@
 
 <script setup>
 /**
- * EvCreditsProgress — 额度条形进度
+ * EbCreditsProgress — 额度条形进度
  * 栅格细条墙（按容器宽度自适应根数）+ 刷新日期头 + 用量/剩余脚注；超额转红
  */
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
@@ -85,8 +85,8 @@ function formatNum(n) {
 const fenceStyle = computed(() => {
   const style = {
     '--bar-gap': `${props.gap}px`,
-    '--bar-filled': props.filledColor || 'var(--ev-color-primary)',
-    '--bar-empty': props.emptyColor || 'var(--ev-border-color-lighter)',
+    '--bar-filled': props.filledColor || 'var(--eb-color-primary)',
+    '--bar-empty': props.emptyColor || 'var(--eb-border-color-lighter)',
   }
   if (barCount.value > 0) {
     style['grid-template-columns'] = `repeat(${barCount.value}, 1fr)`

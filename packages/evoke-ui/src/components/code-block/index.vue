@@ -1,29 +1,29 @@
 <template>
-  <div class="ew-code-block">
-    <div class="ew-code-block__titlebar">
-      <span class="ew-code-block__lights" aria-hidden="true">
-        <i class="ew-code-block__light is-red" />
-        <i class="ew-code-block__light is-yellow" />
-        <i class="ew-code-block__light is-green" />
+  <div class="ev-code-block">
+    <div class="ev-code-block__titlebar">
+      <span class="ev-code-block__lights" aria-hidden="true">
+        <i class="ev-code-block__light is-red" />
+        <i class="ev-code-block__light is-yellow" />
+        <i class="ev-code-block__light is-green" />
       </span>
-      <span v-if="title || $slots.title" class="ew-code-block__title">
+      <span v-if="title || $slots.title" class="ev-code-block__title">
         <slot name="title">{{ title }}</slot>
       </span>
       <button
         v-if="copyable"
         type="button"
-        class="ew-code-block__copy"
+        class="ev-code-block__copy"
         :class="{ 'is-copied': copied }"
         :aria-label="copied ? '已复制' : '复制'"
         @click="onCopy"
       >
-        <EwIcon :name="copied ? 'check' : 'copy'" :size="14" />
-        <span v-if="showCopyText" class="ew-code-block__copy-text">{{ copied ? 'Copied' : 'Copy' }}</span>
+        <EvIcon :name="copied ? 'check' : 'copy'" :size="14" />
+        <span v-if="showCopyText" class="ev-code-block__copy-text">{{ copied ? 'Copied' : 'Copy' }}</span>
       </button>
     </div>
-    <div class="ew-code-block__body">
-      <span v-if="prefix" class="ew-code-block__prefix">{{ prefix }}</span>
-      <code class="ew-code-block__code">
+    <div class="ev-code-block__body">
+      <span v-if="prefix" class="ev-code-block__prefix">{{ prefix }}</span>
+      <code class="ev-code-block__code">
         <slot><span v-html="rendered" /></slot>
       </code>
     </div>
@@ -32,14 +32,14 @@
 
 <script setup>
 /**
- * EwCodeBlock — 命令/代码块（macOS 窗框式终端语言）
+ * EvCodeBlock — 命令/代码块（macOS 窗框式终端语言）
  * 窗口控制点标题栏 + 提示符前缀 + 一键复制（成功打勾反馈）；
  * 代码内容经内置零依赖高亮（highlight.js 模块）渲染 token 配色，
  * 默认插槽可整体覆写渲染内容。
- * 颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随
+ * 颜色全部走 --ev-* 语义令牌，明暗双主题自动跟随
  */
 import { computed } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 import { useCopy } from '../../composables/useCopy'
 import { highlightCode } from './highlight'
 
@@ -64,8 +64,8 @@ const { copy, copied } = useCopy(2000)
 const rendered = computed(() => highlightCode(props.code, props.language))
 
 async function onCopy(e) {
-  const root = e.currentTarget.closest('.ew-code-block')
-  const text = root?.querySelector('.ew-code-block__code')?.textContent?.trim() || ''
+  const root = e.currentTarget.closest('.ev-code-block')
+  const text = root?.querySelector('.ev-code-block__code')?.textContent?.trim() || ''
   const ok = await copy(text)
   if (ok) emit('copy', text)
 }

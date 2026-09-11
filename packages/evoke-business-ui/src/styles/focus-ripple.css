@@ -1,57 +1,57 @@
 /* ============================================
    Evoke Business UI — 边框激活涟漪（focus ripple）
-   与 evoke-ui EwInput 同款实体涟漪：聚焦瞬间一块与输入体同形状的
+   实体涟漪：聚焦瞬间一块与输入体同形状的
    实体色层自框体向外扩展约 4px 后消散（0.7s 单次，
-   扩散时圆角同步放大并跟随输入圆角令牌 --ev-input-border-radius）。
+   扩散时圆角同步放大并跟随输入圆角令牌 --eb-input-border-radius）。
    层级：::before 铺在包装器背景之上、内容之下
    （直接子元素统一 position: relative 提升到色层上方），
    不用负 z-index，避免沉入文档站/业务容器的不透明背景之下不可见。
-   覆盖 ev-input__wrapper 家族（input / cascader / date-picker /
-   input-number / time-select / time-picker）、ev-textarea 与 ev-select__wrapper。
-   错误态色层跟随 danger 色（--ev-field-ring-color 可覆盖）；
-   全局关闭：html[data-ev-ripple='off']；
+   覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
+   input-number / time-select / time-picker）、eb-textarea 与 eb-select__wrapper。
+   错误态色层跟随 danger 色（--eb-field-ring-color 可覆盖）；
+   全局关闭：html[data-eb-ripple='off']；
    prefers-reduced-motion 下自动停用。
    ============================================ */
 
-.ev-input__wrapper,
-.ev-select__wrapper,
-.ev-textarea {
+.eb-input__wrapper,
+.eb-select__wrapper,
+.eb-textarea {
   position: relative;
 }
 
-.ev-input__wrapper::before,
-.ev-select__wrapper::before,
-.ev-textarea::before {
+.eb-input__wrapper::before,
+.eb-select__wrapper::before,
+.eb-textarea::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--ev-field-ring-color, var(--ev-color-primary)) 30%, transparent);
+  background: color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 30%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
 /* 内容提升到涟漪层之上（涟漪层是各包装器的首个定位子元素） */
-.ev-input__wrapper > *,
-.ev-select__wrapper > *,
-.ev-textarea > * {
+.eb-input__wrapper > *,
+.eb-select__wrapper > *,
+.eb-textarea > * {
   position: relative;
 }
 
-.ev-input__wrapper.is-error {
-  --ev-field-ring-color: var(--ev-color-danger);
+.eb-input__wrapper.is-error {
+  --eb-field-ring-color: var(--eb-color-danger);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-ev-ripple='off']) .ev-input__wrapper.is-focus::before,
-  html:not([data-ev-ripple='off']) .ev-select__wrapper.is-focused::before,
-  html:not([data-ev-ripple='off']) .ev-textarea.is-focus::before {
-    animation: ev-field-ring 0.7s var(--ev-ease-out) 1;
+  html:not([data-eb-ripple='off']) .eb-input__wrapper.is-focus::before,
+  html:not([data-eb-ripple='off']) .eb-select__wrapper.is-focused::before,
+  html:not([data-eb-ripple='off']) .eb-textarea.is-focus::before {
+    animation: eb-field-ring 0.7s var(--eb-ease-out) 1;
   }
 }
 
-@keyframes ev-field-ring {
+@keyframes eb-field-ring {
   0% { opacity: 1; inset: 0; }
-  55% { opacity: 1; inset: -4px; border-radius: calc(var(--ev-input-border-radius, var(--ev-radius-md)) + 4px); }
-  100% { opacity: 0; inset: -4px; border-radius: calc(var(--ev-input-border-radius, var(--ev-radius-md)) + 4px); }
+  55% { opacity: 1; inset: -4px; border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px); }
+  100% { opacity: 0; inset: -4px; border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px); }
 }

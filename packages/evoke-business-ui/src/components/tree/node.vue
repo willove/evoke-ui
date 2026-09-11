@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-tree-node ev-tree-node"
+    class="eb-tree-node eb-tree-node"
     :class="{
       'is-expanded': isExpanded,
       'is-current': isCurrent,
@@ -18,41 +18,41 @@
     @contextmenu="handleContextmenu"
   >
     <div
-      class="ev-tree-node__content"
+      class="eb-tree-node__content"
       :style="{ paddingLeft: `${(node.level - 1) * indent}px` }"
     >
       <span
-        class="ev-tree-node__expand-icon"
+        class="eb-tree-node__expand-icon"
         :class="{ 'is-leaf': node.isLeaf, expanded: !node.isLeaf && isExpanded }"
         @click.stop="handleIconClick"
       >
-        <ev-icon v-if="!node.isLeaf" name="caret-right" :size="12" />
+        <eb-icon v-if="!node.isLeaf" name="caret-right" :size="12" />
       </span>
-      <ev-checkbox
+      <eb-checkbox
         v-if="showCheckbox"
         :model-value="isChecked"
         :indeterminate="isIndeterminate"
         :disabled="!!node.disabled"
-        class="ev-tree-node__checkbox"
+        class="eb-tree-node__checkbox"
         @click.stop
         @change="handleCheck"
       />
-      <span v-if="isLoading" class="ev-tree-node__loading-icon is-loading">
-        <ev-icon name="loading" :size="14" class="is-loading" />
+      <span v-if="isLoading" class="eb-tree-node__loading-icon is-loading">
+        <eb-icon name="loading" :size="14" class="is-loading" />
       </span>
-      <span class="ev-tree-node__label">
+      <span class="eb-tree-node__label">
         <slot :node="node" :data="node.raw">{{ node.label }}</slot>
       </span>
     </div>
     <div
       v-if="hasVisibleChildren"
       v-show="childrenVisible"
-      class="ev-tree-node__children"
+      class="eb-tree-node__children"
       role="group"
       :aria-expanded="isExpanded"
       @click.stop
     >
-      <ev-tree-node
+      <eb-tree-node
         v-for="item in visibleChildren"
         :key="item.node.key"
         :node="item.node"
@@ -75,22 +75,22 @@
         <template #default="{ node, data }">
           <slot :node="node" :data="data">{{ node.label }}</slot>
         </template>
-      </ev-tree-node>
+      </eb-tree-node>
     </div>
   </div>
 </template>
 
 <script setup>
 /**
- * EvTreeNode — 树节点（递归渲染，）
+ * EbTreeNode — 树节点（递归渲染，）
  * 展开箭头 caret-right 旋转 / 复选级联状态由父级 Set 注入
  */
 import { computed } from 'vue'
-import EvTreeNode from './node.vue'
-import EvCheckbox from '../checkbox/index.vue'
-import EvIcon from '../icon/index.vue'
+import EbTreeNode from './node.vue'
+import EbCheckbox from '../checkbox/index.vue'
+import EbIcon from '../icon/index.vue'
 
-defineOptions({ name: 'EvTreeNode' })
+defineOptions({ name: 'EbTreeNode' })
 
 const props = defineProps({
   /** 内部节点模型 */

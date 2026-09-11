@@ -1,52 +1,52 @@
-/* EvImage —图片 */
+/* EbImage —图片 */
 
-.ev-image.ev-image {
+.eb-image.eb-image {
   position: relative;
   display: inline-block;
   overflow: hidden;
   box-sizing: border-box;
 }
 
-.ev-image.ev-image.is-round {
-  border-radius: var(--ev-radius-full);
+.eb-image.eb-image.is-round {
+  border-radius: var(--eb-radius-full);
 }
 
-.ev-image.ev-image .ev-image__inner {
+.eb-image.eb-image .eb-image__inner {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 1;
-  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+  transition: opacity var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-image.ev-image .ev-image__inner--fill {
+.eb-image.eb-image .eb-image__inner--fill {
   object-fit: fill;
 }
-.ev-image.ev-image .ev-image__inner--contain {
+.eb-image.eb-image .eb-image__inner--contain {
   object-fit: contain;
 }
-.ev-image.ev-image .ev-image__inner--cover {
+.eb-image.eb-image .eb-image__inner--cover {
   object-fit: cover;
 }
-.ev-image.ev-image .ev-image__inner--none {
+.eb-image.eb-image .eb-image__inner--none {
   object-fit: none;
 }
-.ev-image.ev-image .ev-image__inner--scale-down {
+.eb-image.eb-image .eb-image__inner--scale-down {
   object-fit: scale-down;
 }
 
-.ev-image.ev-image .ev-image__placeholder,
-.ev-image.ev-image .ev-image__error {
+.eb-image.eb-image .eb-image__placeholder,
+.eb-image.eb-image .eb-image__error {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--ev-fill-color-light);
-  color: var(--ev-text-color-placeholder);
-  font-size: var(--ev-font-size-xs);
+  background-color: var(--eb-fill-color-light);
+  color: var(--eb-text-color-placeholder);
+  font-size: var(--eb-font-size-xs);
 }
 
-.ev-image.ev-image .ev-image__placeholder + .ev-image__inner {
+.eb-image.eb-image .eb-image__placeholder + .eb-image__inner {
   position: relative;
 }

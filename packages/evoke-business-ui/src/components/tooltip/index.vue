@@ -1,5 +1,5 @@
 <template>
-  <ev-popper
+  <eb-popper
     ref="popperRef"
     :placement="placement"
     :trigger="trigger"
@@ -7,7 +7,7 @@
     :show-after="showAfter"
     :hide-after="hideAfter"
     :show-arrow="true"
-    :popper-class="['ev-tooltip__popper', `is-${effect}`, 'ev-tooltip']"
+    :popper-class="['eb-tooltip__popper', `is-${effect}`, 'eb-tooltip']"
     :virtual-triggering="virtualTriggering"
     :virtual-ref="virtualRef"
     :offset="effect === 'dark' ? 8 : 8"
@@ -16,17 +16,17 @@
       <slot />
     </template>
     <slot name="content">{{ content }}</slot>
-  </ev-popper>
+  </eb-popper>
 </template>
 
 <script setup>
 /**
- * EvTooltip — 文字提示（.ev-tooltip__popper 结构类）
+ * EbTooltip — 文字提示（.eb-tooltip__popper 结构类）
  */
 import { ref } from 'vue'
-import EvPopper from '../popper/index.vue'
+import EbPopper from '../popper/index.vue'
 
-defineOptions({ name: 'EvTooltip' })
+defineOptions({ name: 'EbTooltip' })
 
 const props = defineProps({
   content: { type: String, default: '' },

@@ -30,11 +30,11 @@ function removeTab(pane) {
 未传 v-model 时默认激活第一个 pane；`name` 缺省时以 `label` 作为标识；pane 设 `disabled` 后标签不可点击。
 
 <DemoBlock>
-  <ev-tabs>
-    <ev-tab-pane label="用户管理" name="user">用户管理内容</ev-tab-pane>
-    <ev-tab-pane label="角色管理" name="role">角色管理内容</ev-tab-pane>
-    <ev-tab-pane label="操作日志" name="log" disabled>日志内容</ev-tab-pane>
-  </ev-tabs>
+  <eb-tabs>
+    <eb-tab-pane label="用户管理" name="user">用户管理内容</eb-tab-pane>
+    <eb-tab-pane label="角色管理" name="role">角色管理内容</eb-tab-pane>
+    <eb-tab-pane label="操作日志" name="log" disabled>日志内容</eb-tab-pane>
+  </eb-tabs>
 </DemoBlock>
 
 ## v-model 绑定与程序切换
@@ -42,13 +42,13 @@ function removeTab(pane) {
 v-model 绑定当前激活 pane 的 name，点击与外部改写双向同步，外部赋值即可程序化切换标签。
 
 <DemoBlock>
-  <ev-tabs v-model="active">
-    <ev-tab-pane label="用户管理" name="user">用户管理内容</ev-tab-pane>
-    <ev-tab-pane label="角色管理" name="role">角色管理内容</ev-tab-pane>
-    <ev-tab-pane label="操作日志" name="log">日志内容</ev-tab-pane>
-  </ev-tabs>
+  <eb-tabs v-model="active">
+    <eb-tab-pane label="用户管理" name="user">用户管理内容</eb-tab-pane>
+    <eb-tab-pane label="角色管理" name="role">角色管理内容</eb-tab-pane>
+    <eb-tab-pane label="操作日志" name="log">日志内容</eb-tab-pane>
+  </eb-tabs>
   <p style="margin-top: 8px; font-size: 13px; color: #909399;">当前激活：{{ active }}</p>
-  <ev-button @click="active = 'log'">切到操作日志</ev-button>
+  <eb-button @click="active = 'log'">切到操作日志</eb-button>
 </DemoBlock>
 
 ## 卡片风格
@@ -56,14 +56,14 @@ v-model 绑定当前激活 pane 的 name，点击与外部改写双向同步，�
 type 为 'card' 时标签呈卡片拼接，'border-card' 时整体渲染为带边框底色的卡片。
 
 <DemoBlock>
-  <ev-tabs type="card">
-    <ev-tab-pane label="标签一" name="a">卡片风格内容</ev-tab-pane>
-    <ev-tab-pane label="标签二" name="b" closable>内容二</ev-tab-pane>
-  </ev-tabs>
-  <ev-tabs type="border-card" style="margin-top: 16px;">
-    <ev-tab-pane label="标签一" name="a">边框卡片内容</ev-tab-pane>
-    <ev-tab-pane label="标签二" name="b">内容二</ev-tab-pane>
-  </ev-tabs>
+  <eb-tabs type="card">
+    <eb-tab-pane label="标签一" name="a">卡片风格内容</eb-tab-pane>
+    <eb-tab-pane label="标签二" name="b" closable>内容二</eb-tab-pane>
+  </eb-tabs>
+  <eb-tabs type="border-card" style="margin-top: 16px;">
+    <eb-tab-pane label="标签一" name="a">边框卡片内容</eb-tab-pane>
+    <eb-tab-pane label="标签二" name="b">内容二</eb-tab-pane>
+  </eb-tabs>
 </DemoBlock>
 
 ## 标签位置
@@ -71,11 +71,11 @@ type 为 'card' 时标签呈卡片拼接，'border-card' 时整体渲染为带�
 `tab-position` 支持 top / right / bottom / left，指示条方向自适应。
 
 <DemoBlock>
-  <ev-tabs tab-position="left" style="height: 160px;">
-    <ev-tab-pane label="概览" name="overview">左侧标签内容</ev-tab-pane>
-    <ev-tab-pane label="配置" name="config">配置内容</ev-tab-pane>
-    <ev-tab-pane label="日志" name="log">日志内容</ev-tab-pane>
-  </ev-tabs>
+  <eb-tabs tab-position="left" style="height: 160px;">
+    <eb-tab-pane label="概览" name="overview">左侧标签内容</eb-tab-pane>
+    <eb-tab-pane label="配置" name="config">配置内容</eb-tab-pane>
+    <eb-tab-pane label="日志" name="log">日志内容</eb-tab-pane>
+  </eb-tabs>
 </DemoBlock>
 
 ## 动态增删标签
@@ -83,12 +83,12 @@ type 为 'card' 时标签呈卡片拼接，'border-card' 时整体渲染为带�
 pane 设 `closable` 显示关闭图标，点击触发 `tab-remove`（参数为 pane 对象，含 paneName）并从组件内注销，需在回调中同步移除数据源；配合按钮追加数据实现新增。根组件设 `editable` 后不渲染关闭图标，用于纯新增场景。
 
 <DemoBlock>
-  <ev-button style="margin-bottom: 8px;" @click="addTab">新增标签</ev-button>
-  <ev-tabs v-model="editableActive" @tab-remove="removeTab">
-    <ev-tab-pane v-for="t in editableTabs" :key="t.name" :label="t.label" :name="t.name" closable>
+  <eb-button style="margin-bottom: 8px;" @click="addTab">新增标签</eb-button>
+  <eb-tabs v-model="editableActive" @tab-remove="removeTab">
+    <eb-tab-pane v-for="t in editableTabs" :key="t.name" :label="t.label" :name="t.name" closable>
       {{ t.label }}内容
-    </ev-tab-pane>
-  </ev-tabs>
+    </eb-tab-pane>
+  </eb-tabs>
 </DemoBlock>
 
 ## 懒渲染
@@ -96,10 +96,10 @@ pane 设 `closable` 显示关闭图标，点击触发 `tab-remove`（参数为 p
 `lazy`（根级或单 pane 级）开启后，内容延迟到首次激活才渲染，适合图表等开销大的面板；渲染过即保持挂载，切回不重复初始化。
 
 <DemoBlock>
-  <ev-tabs lazy>
-    <ev-tab-pane label="常规" name="a">随组件一起挂载的内容</ev-tab-pane>
-    <ev-tab-pane label="懒加载" name="b">首次激活后才挂载这段内容</ev-tab-pane>
-  </ev-tabs>
+  <eb-tabs lazy>
+    <eb-tab-pane label="常规" name="a">随组件一起挂载的内容</eb-tab-pane>
+    <eb-tab-pane label="懒加载" name="b">首次激活后才挂载这段内容</eb-tab-pane>
+  </eb-tabs>
 </DemoBlock>
 
 ## API

@@ -15,7 +15,7 @@
 `color` 传单色字符串；或传 `{ from, to, color }` 分段区间数组，按当前值落点自动取色——"状态灯"式健康度（绿/黄/红分段）的常用做法。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'gauge',
       title: 'CPU 使用率',

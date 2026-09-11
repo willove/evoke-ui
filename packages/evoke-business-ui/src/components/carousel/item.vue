@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-carousel__item ev-carousel__item"
+    class="eb-carousel__item eb-carousel__item"
     :class="{ 'is-active': isActive }"
     :style="itemStyle"
   >
@@ -10,7 +10,7 @@
 
 <script setup>
 /**
- * EvCarouselItem — 走马灯项
+ * EbCarouselItem — 走马灯项
  * 挂载顺序即索引；位移由父级 activeIndex 驱动（相邻 ±1 个身位，其余隐藏）
  */
 import { inject, computed, ref, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'

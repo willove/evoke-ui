@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import EvIcon from '../src/components/icon/index.vue'
+import EbIcon from '../src/components/icon/index.vue'
 import {
   getIconByNameSync,
   getIconByName,
@@ -9,51 +9,51 @@ import {
   remixSvgPaths,
 } from '../src/components/icon/iconRegistry'
 
-describe('EvIcon 渲染契约', () => {
-  it('根节点挂 ev-icon/ev-icon 双 class（消费方 .ev-icon 覆盖兼容）', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'search' } })
-    expect(wrapper.classes()).toContain('ev-icon')
-    expect(wrapper.classes()).toContain('ev-icon')
+describe('EbIcon 渲染契约', () => {
+  it('根节点挂 eb-icon/eb-icon 双 class（消费方 .eb-icon 覆盖兼容）', () => {
+    const wrapper = mount(EbIcon, { props: { name: 'search' } })
+    expect(wrapper.classes()).toContain('eb-icon')
+    expect(wrapper.classes()).toContain('eb-icon')
   })
 
   it('aria-hidden 无障碍基线', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'search' } })
+    const wrapper = mount(EbIcon, { props: { name: 'search' } })
     expect(wrapper.attributes('aria-hidden')).toBe('true')
   })
 
   it('size 数字转 px 字号', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'search', size: 20 } })
+    const wrapper = mount(EbIcon, { props: { name: 'search', size: 20 } })
     expect(wrapper.element.style.fontSize).toBe('20px')
   })
 
   it('color 透传颜色', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'search', color: '#ff0000' } })
+    const wrapper = mount(EbIcon, { props: { name: 'search', color: '#ff0000' } })
     expect(wrapper.element.style.color).toBe('rgb(255, 0, 0)')
   })
 
   it('内置 SVG 图标渲染内联 SVG（零第三方运行时依赖，iconfont 重名优先级见下条）', () => {
     // caret-right 仅存在于内置 SVG 层（Remix 形状；iconfont 56 个重名图标走字体渲染）
-    const wrapper = mount(EvIcon, { props: { name: 'caret-right' } })
+    const wrapper = mount(EbIcon, { props: { name: 'caret-right' } })
     expect(wrapper.find('svg').exists()).toBe(true)
     expect(wrapper.find('svg path').exists()).toBe(true)
     expect(wrapper.find('svg').attributes('viewBox')).toBe('0 0 24 24')
   })
 
   it('search 渲染内置 SVG（Remix 静态图标集）', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'search' } })
+    const wrapper = mount(EbIcon, { props: { name: 'search' } })
     expect(wrapper.find('svg').exists()).toBe(true)
     expect(wrapper.find('svg path').exists()).toBe(true)
   })
 
   it('platform 为单色内置 SVG 别名（品牌彩色图标族已退役）', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'platform' } })
+    const wrapper = mount(EbIcon, { props: { name: 'platform' } })
     expect(wrapper.find('svg').exists()).toBe(true)
     // 单色图标全部 currentColor，无固定填充色
     expect(wrapper.find('svg path[fill]:not([fill="currentColor"])').exists()).toBe(false)
   })
 
   it('文件类型图标多别名指向同一资源（xlsx / xls / excel / file-excel）', () => {
-    const wrapper = mount(EvIcon, { props: { name: 'xlsx' } })
+    const wrapper = mount(EbIcon, { props: { name: 'xlsx' } })
     expect(wrapper.find('svg').exists()).toBe(true)
     expect(remixSvgPaths['xls']).toStrictEqual(remixSvgPaths['file-excel'])
     expect(remixSvgPaths['excel']).toStrictEqual(remixSvgPaths['file-excel'])
@@ -64,7 +64,7 @@ describe('EvIcon 渲染契约', () => {
   })
 })
 
-describe('iconRegistry API（evoke-ui 兼容）', () => {
+describe('iconRegistry API（基础兼容）', () => {
   it('getIconByNameSync 三层解析', async () => {
     expect(await getIconByName('search')).toBeDefined()
     expect(getIconByNameSync('platform')).toBeDefined()

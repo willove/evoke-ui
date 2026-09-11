@@ -1,13 +1,13 @@
 # FeatureGrid 特性
 
-`EwFeatureGrid` 展示产品特性，两种形态对应页面的两种位置：`bullets` 行内特性条用于首屏
+`EvFeatureGrid` 展示产品特性，两种形态对应页面的两种位置：`bullets` 行内特性条用于首屏
 （三两个词点出核心卖点），`cards` 特性卡用于功能区（图标 + 标题 + 描述的三栏结构）。
 
 ## bullets 行内特性条
 
 <DemoBlock title="首屏特性行" description="细线分隔的图标 + 词条，安静而有信息量。">
 
-<EwFeatureGrid
+<EvFeatureGrid
   variant="bullets"
   :items="[
     { icon: 'device-line', title: '像素对齐' },
@@ -17,7 +17,7 @@
 />
 
 ```vue
-<EwFeatureGrid variant="bullets" :items="[
+<EvFeatureGrid variant="bullets" :items="[
   { icon: 'device-line', title: '像素对齐' },
   { icon: 'compass-3-line', title: '矢量无损' },
 ]" />
@@ -29,7 +29,7 @@
 
 <DemoBlock title="三栏特性卡" description="hover 轻抬 + 主色描边；列数 1~4 可选，窄屏自动降列。">
 
-<EwFeatureGrid
+<EvFeatureGrid
   variant="cards"
   :columns="3"
   :items="[
@@ -40,7 +40,7 @@
 />
 
 ```vue
-<EwFeatureGrid variant="cards" :columns="3" :items="features" />
+<EvFeatureGrid variant="cards" :columns="3" :items="features" />
 ```
 
 </DemoBlock>

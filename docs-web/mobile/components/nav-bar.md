@@ -12,9 +12,9 @@ function right() {
 }
 </script>
 
-`EwNavBar` 是移动端 H5 的**页面头部**：左区返回箭头/文案、居中标题（超长省略）、
+`EvNavBar` 是移动端 H5 的**页面头部**：左区返回箭头/文案、居中标题（超长省略）、
 右区动作，与拇指触控热区（≥44px）对齐。它替代的是 App 式页头，区别于桌面站点的
-[EwNavbar](/components/navbar)；`fixed` 吸顶时自动吸收 `env(safe-area-inset-top)`
+[EvNavbar](/components/navbar)；`fixed` 吸顶时自动吸收 `env(safe-area-inset-top)`
 （刘海屏独立 PWA 生效，普通浏览器为 0），配 `placeholder` 生成等高占位。
 与 evoke-business-ui 的 `EvNavBar` 同名同 API。
 
@@ -23,7 +23,7 @@ function right() {
 <DemoBlock title="返回 + 标题 + 右侧动作" description="左右热区整条可点，点选后回调 click-left / click-right。">
 
 <MobileStage>
-  <ew-nav-bar title="商品详情" left-arrow left-text="返回" right-text="客服" @click-left="left" @click-right="right" />
+  <ev-nav-bar title="商品详情" left-arrow left-text="返回" right-text="客服" @click-left="left" @click-right="right" />
   <div class="mb-page">
     <div class="mb-card mb-card--pad">
       <div class="mb-card__title">页面内容</div>
@@ -33,7 +33,7 @@ function right() {
 </MobileStage>
 
 ```html
-<EwNavBar
+<EvNavBar
   title="商品详情"
   left-arrow
   left-text="返回"
@@ -53,14 +53,14 @@ function right() {
 <DemoBlock title="插槽自定义" description="左区关闭按钮、右区主按钮胶囊；title 插槽换成品牌字标。">
 
 <MobileStage>
-  <ew-nav-bar title="EVOKE">
+  <ev-nav-bar title="EVOKE">
     <template #left>
-      <ew-icon-button icon="close" variant="ghost" size="small" aria-label="关闭" />
+      <ev-icon-button icon="close" variant="ghost" size="small" aria-label="关闭" />
     </template>
     <template #right>
-      <ew-button type="primary" size="small" pill>下一步</ew-button>
+      <ev-button type="primary" size="small" pill>下一步</ev-button>
     </template>
-  </ew-nav-bar>
+  </ev-nav-bar>
   <div class="mb-page">
     <div class="mb-card mb-card--pad">
       <div class="mb-card__title">向导第二步</div>
@@ -70,14 +70,14 @@ function right() {
 </MobileStage>
 
 ```html
-<EwNavBar title="EVOKE">
+<EvNavBar title="EVOKE">
   <template #left>
-    <EwIconButton icon="close" variant="ghost" size="small" />
+    <EvIconButton icon="close" variant="ghost" size="small" />
   </template>
   <template #right>
-    <EwButton type="primary" size="small" pill>下一步</EwButton>
+    <EvButton type="primary" size="small" pill>下一步</EvButton>
   </template>
-</EwNavBar>
+</EvNavBar>
 ```
 
 </DemoBlock>
@@ -90,7 +90,7 @@ function right() {
 等高占位，内容不会被头部遮挡：
 
 ```html
-<EwNavBar title="订单详情" left-arrow left-text="返回" fixed placeholder @click-left="router.back()" />
+<EvNavBar title="订单详情" left-arrow left-text="返回" fixed placeholder @click-left="router.back()" />
 ```
 
 ## API

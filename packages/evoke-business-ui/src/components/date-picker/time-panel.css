@@ -1,48 +1,48 @@
-/* TimePanel — 时间滚轮面板（EvDatePicker 内嵌 / EvTimePicker 复用，） */
+/* TimePanel — 时间滚轮面板（EbDatePicker 内嵌 / EbTimePicker 复用，） */
 
-.ev-time-panel {
+.eb-time-panel {
   position: relative;
   z-index: 10;
   width: 190px;
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-md);
-  box-shadow: var(--ev-shadow-3);
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-3);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
 }
-.ev-time-panel.is-disabled {
+.eb-time-panel.is-disabled {
   opacity: 0.6;
   pointer-events: none;
 }
 
-.ev-time-panel__content {
+.eb-time-panel__content {
   position: relative;
   padding: 8px 0;
 }
-.ev-time-panel__content.has-seconds .ev-time-spinner__wrapper:nth-child(2)::before {
+.eb-time-panel__content.has-seconds .eb-time-spinner__wrapper:nth-child(2)::before {
   left: auto;
   right: 33.3%;
 }
-.ev-time-panel__content::after,
-.ev-time-panel__content::before {
+.eb-time-panel__content::after,
+.eb-time-panel__content::before {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--ev-bg-color-overlay);
+  background: var(--eb-bg-color-overlay);
   z-index: 1;
 }
-.ev-time-panel__content::before {
+.eb-time-panel__content::before {
   top: 8px;
 }
-.ev-time-panel__content::after {
+.eb-time-panel__content::after {
   bottom: 8px;
 }
 
 /* 高亮带 */
-.ev-time-spinner__wrapper::before {
+.eb-time-spinner__wrapper::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -50,72 +50,72 @@
   transform: translate(-50%, -50%);
   width: 90%;
   height: 32px;
-  border-top: 1px solid var(--ev-border-color-light);
-  border-bottom: 1px solid var(--ev-border-color-light);
+  border-top: 1px solid var(--eb-border-color-light);
+  border-bottom: 1px solid var(--eb-border-color-light);
   pointer-events: none;
 }
 
-.ev-time-spinner {
+.eb-time-spinner {
   display: flex;
   text-align: center;
 }
-.ev-time-spinner__wrapper {
+.eb-time-spinner__wrapper {
   position: relative;
   flex: 1;
   overflow: hidden;
   max-height: 190px;
   padding: 32px 0;
 }
-.ev-time-spinner__wrapper:first-child {
+.eb-time-spinner__wrapper:first-child {
   border-right: none;
 }
-.ev-time-spinner__list {
+.eb-time-spinner__list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.ev-time-spinner__item {
+.eb-time-spinner__item {
   height: 32px;
   line-height: 32px;
   font-size: 12px;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
   user-select: none;
 }
-.ev-time-spinner__item:hover {
-  color: var(--ev-color-primary);
+.eb-time-spinner__item:hover {
+  color: var(--eb-color-primary);
 }
-.ev-time-spinner__item.is-active:not(.is-disabled) {
-  color: var(--ev-color-primary);
+.eb-time-spinner__item.is-active:not(.is-disabled) {
+  color: var(--eb-color-primary);
   font-weight: 700;
 }
-.ev-time-spinner__item.is-disabled {
-  color: var(--ev-text-color-placeholder);
+.eb-time-spinner__item.is-disabled {
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
 }
 
-.ev-time-panel__footer {
+.eb-time-panel__footer {
   display: flex;
   justify-content: flex-end;
   padding: 4px 8px;
-  border-top: 1px solid var(--ev-border-color-lighter);
+  border-top: 1px solid var(--eb-border-color-lighter);
 }
-.ev-time-panel__btn {
+.eb-time-panel__btn {
   border: none;
   background: transparent;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
   line-height: 22px;
   padding: 2px 8px;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
 }
-.ev-time-panel__btn.cancel {
-  color: var(--ev-text-color-regular);
+.eb-time-panel__btn.cancel {
+  color: var(--eb-text-color-regular);
 }
-.ev-time-panel__btn.confirm {
-  color: var(--ev-color-primary);
+.eb-time-panel__btn.confirm {
+  color: var(--eb-color-primary);
   font-weight: 700;
 }
-.ev-time-panel__btn:hover {
+.eb-time-panel__btn:hover {
   opacity: 0.8;
 }

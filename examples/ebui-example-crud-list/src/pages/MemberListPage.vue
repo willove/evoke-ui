@@ -1,17 +1,17 @@
 <template>
   <div class="ml-page">
-    <ev-page-header title="会员管理" subtitle="统一维护会员档案、等级与状态">
+    <eb-page-header title="会员管理" subtitle="统一维护会员档案、等级与状态">
       <template #actions>
-        <ev-button size="small" @click="handleRefresh">
-          <ev-icon name="refresh" :size="14" />
+        <eb-button size="small" @click="handleRefresh">
+          <eb-icon name="refresh" :size="14" />
           刷新
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-section-card class="ml-card">
+    <eb-section-card class="ml-card">
       <!-- 筛选区（SearchFilter 自带外框，无需再加分隔线） -->
-      <ev-search-filter
+      <eb-search-filter
         v-model="query"
         :fields="filterFields"
         :loading="loading"
@@ -19,7 +19,7 @@
       />
 
       <!-- 列表区 -->
-      <ev-data-table
+      <eb-data-table
         ref="tableRef"
         title="会员列表"
         selectable
@@ -35,24 +35,24 @@
         @selection-change="onSelectionChange"
       >
         <template #toolbar>
-          <ev-button type="primary" size="small" @click="openCreate">
-            <ev-icon name="plus" :size="14" />
+          <eb-button type="primary" size="small" @click="openCreate">
+            <eb-icon name="plus" :size="14" />
             新建会员
-          </ev-button>
-          <ev-button size="small" :disabled="!selection.length" @click="batchRemove">
+          </eb-button>
+          <eb-button size="small" :disabled="!selection.length" @click="batchRemove">
             批量删除{{ selection.length ? `（${selection.length}）` : '' }}
-          </ev-button>
-          <ev-button size="small" @click="ioVisible = true">
-            <ev-icon name="swap" :size="14" />
+          </eb-button>
+          <eb-button size="small" @click="ioVisible = true">
+            <eb-icon name="swap" :size="14" />
             导入 / 导出
-          </ev-button>
-          <ev-column-settings v-model="visibleProps" :columns="settingColumns" button-text="列设置" />
+          </eb-button>
+          <eb-column-settings v-model="visibleProps" :columns="settingColumns" button-text="列设置" />
         </template>
 
         <template #level="{ row }">
-          <ev-tag :type="row.level === 'platinum' ? 'primary' : row.level === 'gold' ? 'warning' : 'info'" effect="plain">
+          <eb-tag :type="row.level === 'platinum' ? 'primary' : row.level === 'gold' ? 'warning' : 'info'" effect="plain">
             {{ LEVEL_LABEL[row.level] }}
-          </ev-tag>
+          </eb-tag>
         </template>
 
         <template #balance="{ row }">
@@ -60,77 +60,77 @@
         </template>
 
         <template #status="{ row }">
-          <ev-status-tag :value="row.status" :statuses="MEMBER_STATUS" />
+          <eb-status-tag :value="row.status" :statuses="MEMBER_STATUS" />
         </template>
 
         <template #operations="{ row }">
-          <ev-button text type="primary" size="small" @click="openEdit(row)">编辑</ev-button>
-          <ev-popconfirm title="删除后不可恢复，确认删除该会员？" icon-type="danger" @confirm="removeOne(row)">
-            <ev-button text type="danger" size="small">删除</ev-button>
-          </ev-popconfirm>
+          <eb-button text type="primary" size="small" @click="openEdit(row)">编辑</eb-button>
+          <eb-popconfirm title="删除后不可恢复，确认删除该会员？" icon-type="danger" @confirm="removeOne(row)">
+            <eb-button text type="danger" size="small">删除</eb-button>
+          </eb-popconfirm>
         </template>
-      </ev-data-table>
-    </ev-section-card>
+      </eb-data-table>
+    </eb-section-card>
 
     <!-- 新建 / 编辑弹窗 -->
-    <ev-dialog
+    <eb-dialog
       v-model="formVisible"
       :title="editing ? `编辑会员 · ${editing.name}` : '新建会员'"
       width="560px"
       :close-on-click-modal="false"
     >
-      <ev-form ref="formRef" :model="form" :rules="rules" label-width="88px">
-        <ev-form-item label="会员姓名" prop="name">
-          <ev-input v-model="form.name" placeholder="请输入姓名" maxlength="20" show-word-limit />
-        </ev-form-item>
-        <ev-form-item label="手机号" prop="phone">
-          <ev-input v-model="form.phone" placeholder="11 位手机号" />
-        </ev-form-item>
-        <ev-form-item label="邮箱" prop="email">
-          <ev-input v-model="form.email" placeholder="选填" />
-        </ev-form-item>
-        <ev-form-item label="会员等级" prop="level">
-          <ev-select v-model="form.level" style="width: 100%">
-            <ev-option v-for="l in MEMBER_LEVEL" :key="l.value" :label="l.label" :value="l.value" />
-          </ev-select>
-        </ev-form-item>
-        <ev-form-item label="所属部门" prop="dept">
-          <ev-select v-model="form.dept" style="width: 100%">
-            <ev-option v-for="d in DEPTS" :key="d" :label="d" :value="d" />
-          </ev-select>
-        </ev-form-item>
-        <ev-form-item label="账户状态" prop="status">
-          <ev-radio-group v-model="form.status">
-            <ev-radio v-for="s in MEMBER_STATUS" :key="s.value" :label="s.value">{{ s.label }}</ev-radio>
-          </ev-radio-group>
-        </ev-form-item>
-        <ev-form-item label="账户余额" prop="balance">
-          <ev-input-number v-model="form.balance" :min="0" :step="100" style="width: 200px" />
-        </ev-form-item>
-      </ev-form>
+      <eb-form ref="formRef" :model="form" :rules="rules" label-width="88px">
+        <eb-form-item label="会员姓名" prop="name">
+          <eb-input v-model="form.name" placeholder="请输入姓名" maxlength="20" show-word-limit />
+        </eb-form-item>
+        <eb-form-item label="手机号" prop="phone">
+          <eb-input v-model="form.phone" placeholder="11 位手机号" />
+        </eb-form-item>
+        <eb-form-item label="邮箱" prop="email">
+          <eb-input v-model="form.email" placeholder="选填" />
+        </eb-form-item>
+        <eb-form-item label="会员等级" prop="level">
+          <eb-select v-model="form.level" style="width: 100%">
+            <eb-option v-for="l in MEMBER_LEVEL" :key="l.value" :label="l.label" :value="l.value" />
+          </eb-select>
+        </eb-form-item>
+        <eb-form-item label="所属部门" prop="dept">
+          <eb-select v-model="form.dept" style="width: 100%">
+            <eb-option v-for="d in DEPTS" :key="d" :label="d" :value="d" />
+          </eb-select>
+        </eb-form-item>
+        <eb-form-item label="账户状态" prop="status">
+          <eb-radio-group v-model="form.status">
+            <eb-radio v-for="s in MEMBER_STATUS" :key="s.value" :label="s.value">{{ s.label }}</eb-radio>
+          </eb-radio-group>
+        </eb-form-item>
+        <eb-form-item label="账户余额" prop="balance">
+          <eb-input-number v-model="form.balance" :min="0" :step="100" style="width: 200px" />
+        </eb-form-item>
+      </eb-form>
       <template #footer>
-        <ev-button @click="formVisible = false">取消</ev-button>
-        <ev-button type="primary" :loading="saving" @click="save">保存</ev-button>
+        <eb-button @click="formVisible = false">取消</eb-button>
+        <eb-button type="primary" :loading="saving" @click="save">保存</eb-button>
       </template>
-    </ev-dialog>
+    </eb-dialog>
 
     <!-- 导入 / 导出弹窗 -->
-    <ev-dialog v-model="ioVisible" title="导入 / 导出会员" width="640px">
-      <ev-import-export-panel
+    <eb-dialog v-model="ioVisible" title="导入 / 导出会员" width="640px">
+      <eb-import-export-panel
         ref="ioRef"
         template-name="会员导入模板.xlsx"
         import-tip="首列为会员姓名，手机号列必填；单次最多 2000 条。"
         @import-file="onImportFile"
         @export="onExport"
-        @download-template="EvMessage.info('示例：下载「会员导入模板.xlsx』')"
+        @download-template="EbMessage.info('示例：下载「会员导入模板.xlsx』')"
       />
-    </ev-dialog>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import {
   MEMBER_STATUS,
   MEMBER_LEVEL,
@@ -197,7 +197,7 @@ function onSearch(values) {
 
 function handleRefresh() {
   load()
-  EvMessage.success('列表已刷新')
+  EbMessage.success('列表已刷新')
 }
 
 /* ---------------- 行选择与删除 ---------------- */
@@ -209,14 +209,14 @@ function onSelectionChange(rows) {
 
 async function removeOne(row) {
   removeMembers([row.id])
-  EvMessage.success(`已删除会员「${row.name}」`)
+  EbMessage.success(`已删除会员「${row.name}」`)
   await load()
 }
 
 function batchRemove() {
   const ids = selection.value.map((r) => r.id)
   const count = removeMembers(ids)
-  EvMessage.success(`已批量删除 ${count} 位会员`)
+  EbMessage.success(`已批量删除 ${count} 位会员`)
   tableRef.value?.clearSelection()
   load()
 }
@@ -278,17 +278,17 @@ async function save() {
     ok = false
   }
   if (!ok) {
-    EvMessage.warning('请先完善表单必填项')
+    EbMessage.warning('请先完善表单必填项')
     return
   }
   saving.value = true
   setTimeout(() => {
     if (editing.value) {
       updateMember(editing.value.id, { ...form })
-      EvMessage.success('会员信息已更新')
+      EbMessage.success('会员信息已更新')
     } else {
       createMember({ ...form })
-      EvMessage.success('新建会员成功')
+      EbMessage.success('新建会员成功')
     }
     saving.value = false
     formVisible.value = false
@@ -302,13 +302,13 @@ const ioRef = ref(null)
 
 function onImportFile(file) {
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
-    EvMessage.error('仅支持 xlsx / xls / csv 文件')
+    EbMessage.error('仅支持 xlsx / xls / csv 文件')
     ioRef.value?.done('import')
     return
   }
   setTimeout(() => {
     const count = importMembers(3)
-    EvMessage.success(`导入完成：新增 ${count} 位会员`)
+    EbMessage.success(`导入完成：新增 ${count} 位会员`)
     ioRef.value?.done('import')
     ioVisible.value = false
     load()
@@ -317,7 +317,7 @@ function onImportFile(file) {
 
 function onExport(format) {
   setTimeout(() => {
-    EvMessage.success(`已按 ${String(format).toUpperCase()} 格式导出 ${total.value} 条数据`)
+    EbMessage.success(`已按 ${String(format).toUpperCase()} 格式导出 ${total.value} 条数据`)
     ioRef.value?.done('export')
   }, 800)
 }
@@ -333,7 +333,7 @@ onMounted(load)
   margin-top: 12px;
 }
 /* SearchFilter 自带外框，与表格之间只留间距 */
-.ml-card :deep(.ev-search-filter) {
+.ml-card :deep(.eb-search-filter) {
   margin-bottom: 16px;
 }
 .ml-money {

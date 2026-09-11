@@ -1,117 +1,117 @@
-/* EvTree —树形控件样式 */
+/* EbTree —树形控件样式 */
 
-.ev-tree.ev-tree {
-  --ev-tree-node-content-height: 26px;
-  --ev-tree-node-hover-bg-color: var(--ev-fill-color-light);
-  --ev-tree-text-color: var(--ev-text-color-regular);
-  --ev-tree-expand-icon-color: var(--ev-text-color-placeholder);
+.eb-tree.eb-tree {
+  --eb-tree-node-content-height: 26px;
+  --eb-tree-node-hover-bg-color: var(--eb-fill-color-light);
+  --eb-tree-text-color: var(--eb-text-color-regular);
+  --eb-tree-expand-icon-color: var(--eb-text-color-placeholder);
   position: relative;
-  background: var(--ev-fill-color-blank);
-  color: var(--ev-tree-text-color);
-  font-size: var(--ev-font-size-base);
+  background: var(--eb-fill-color-blank);
+  color: var(--eb-tree-text-color);
+  font-size: var(--eb-font-size-base);
   cursor: default;
 }
 
-.ev-tree.ev-tree .ev-tree__empty-block {
+.eb-tree.eb-tree .eb-tree__empty-block {
   position: relative;
   width: 100%;
   min-height: 60px;
   height: 100%;
   text-align: center;
 }
-.ev-tree.ev-tree .ev-tree__empty-text {
+.eb-tree.eb-tree .eb-tree__empty-text {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--ev-text-color-secondary);
-  font-size: var(--ev-font-size-base);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-base);
 }
 
 /* ─── 节点 ─── */
-.ev-tree.ev-tree .ev-tree-node {
+.eb-tree.eb-tree .eb-tree-node {
   white-space: nowrap;
   outline: none;
 }
-.ev-tree.ev-tree .ev-tree-node:focus > .ev-tree-node__content {
-  background-color: var(--ev-tree-node-hover-bg-color);
+.eb-tree.eb-tree .eb-tree-node:focus > .eb-tree-node__content {
+  background-color: var(--eb-tree-node-hover-bg-color);
 }
-.ev-tree.ev-tree .ev-tree-node__content {
-  --ev-checkbox-height: var(--ev-tree-node-content-height);
+.eb-tree.eb-tree .eb-tree-node__content {
+  --eb-checkbox-height: var(--eb-tree-node-content-height);
   display: flex;
   align-items: center;
-  height: var(--ev-tree-node-content-height);
+  height: var(--eb-tree-node-content-height);
   cursor: pointer;
 }
-.ev-tree.ev-tree .ev-tree-node__content:hover {
-  background-color: var(--ev-tree-node-hover-bg-color);
+.eb-tree.eb-tree .eb-tree-node__content:hover {
+  background-color: var(--eb-tree-node-hover-bg-color);
 }
-.ev-tree.ev-tree .ev-tree-node__content > .ev-tree-node__expand-icon {
+.eb-tree.eb-tree .eb-tree-node__content > .eb-tree-node__expand-icon {
   box-sizing: content-box;
   padding: 6px;
 }
-.ev-tree.ev-tree .ev-tree-node__content > label.ev-checkbox {
+.eb-tree.eb-tree .eb-tree-node__content > label.eb-checkbox {
   margin-right: 8px;
 }
-.ev-tree.ev-tree .ev-tree-node__content .ev-tree-node__checkbox {
+.eb-tree.eb-tree .eb-tree-node__content .eb-tree-node__checkbox {
   margin-right: 8px;
 }
 
 /* 展开箭头（caret 旋转） */
-.ev-tree.ev-tree .ev-tree-node__expand-icon {
+.eb-tree.eb-tree .eb-tree-node__expand-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: var(--ev-tree-expand-icon-color);
+  color: var(--eb-tree-expand-icon-color);
   cursor: pointer;
   transform: rotate(0);
-  transition: transform var(--ev-transition-duration) ease-in-out;
+  transition: transform var(--eb-transition-duration) ease-in-out;
 }
-.ev-tree.ev-tree .ev-tree-node__expand-icon.expanded {
+.eb-tree.eb-tree .eb-tree-node__expand-icon.expanded {
   transform: rotate(90deg);
 }
-.ev-tree.ev-tree .ev-tree-node__expand-icon.is-leaf {
+.eb-tree.eb-tree .eb-tree-node__expand-icon.is-leaf {
   visibility: hidden;
   color: transparent;
   cursor: default;
 }
 
 /* 加载图标 */
-.ev-tree.ev-tree .ev-tree-node__loading-icon {
+.eb-tree.eb-tree .eb-tree-node__loading-icon {
   margin-right: 8px;
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-tree-expand-icon-color);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-tree-expand-icon-color);
 }
 
 /* 标签 */
-.ev-tree.ev-tree .ev-tree-node__label {
+.eb-tree.eb-tree .eb-tree-node__label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* 子级容器 */
-.ev-tree.ev-tree .ev-tree-node > .ev-tree-node__children {
+.eb-tree.eb-tree .eb-tree-node > .eb-tree-node__children {
   overflow: hidden;
   background-color: transparent;
 }
-.ev-tree.ev-tree .ev-tree-node.is-expanded > .ev-tree-node__children {
+.eb-tree.eb-tree .eb-tree-node.is-expanded > .eb-tree-node__children {
   display: block;
 }
 
 /* 高亮当前节点 */
-.ev-tree.ev-tree.ev-tree--highlight-current
-  .ev-tree-node.is-current
-  > .ev-tree-node__content {
-  background-color: var(--ev-color-primary-light-9);
+.eb-tree.eb-tree.eb-tree--highlight-current
+  .eb-tree-node.is-current
+  > .eb-tree-node__content {
+  background-color: var(--eb-color-primary-light-9);
 }
 
 /* 禁用态 */
-.ev-tree.ev-tree .ev-tree-node.is-disabled > .ev-tree-node__content {
+.eb-tree.eb-tree .eb-tree-node.is-disabled > .eb-tree-node__content {
   cursor: not-allowed;
 }
-.ev-tree.ev-tree .ev-tree-node.is-disabled > .ev-tree-node__content,
-.ev-tree.ev-tree .ev-tree-node.is-disabled > .ev-tree-node__content .ev-tree-node__label {
-  color: var(--ev-text-color-disabled);
+.eb-tree.eb-tree .eb-tree-node.is-disabled > .eb-tree-node__content,
+.eb-tree.eb-tree .eb-tree-node.is-disabled > .eb-tree-node__content .eb-tree-node__label {
+  color: var(--eb-text-color-disabled);
 }

@@ -1,74 +1,74 @@
-/* EwTimeline — 时间线/更新日志 */
+/* EvTimeline — 时间线/更新日志 */
 
-.ew-timeline {
+.ev-timeline {
   position: relative;
   padding-left: 24px;
 }
 
-.ew-timeline::before {
+.ev-timeline::before {
   content: '';
   position: absolute;
   left: 5px;
   top: 8px;
   bottom: 8px;
   width: 1px;
-  background-color: var(--ew-border-color);
+  background-color: var(--ev-border-color);
 }
 
-.ew-timeline__item {
+.ev-timeline__item {
   position: relative;
-  padding-bottom: var(--ew-space-8);
+  padding-bottom: var(--ev-space-8);
 }
 
-.ew-timeline__item:last-child {
+.ev-timeline__item:last-child {
   padding-bottom: 0;
 }
 
-.ew-timeline__dot {
+.ev-timeline__dot {
   position: absolute;
   left: -24px;
   top: 7px;
   width: 11px;
   height: 11px;
-  border-radius: var(--ew-radius-circle);
-  background-color: var(--ew-bg-page);
-  border: 2px solid var(--ew-border-color-dark);
+  border-radius: var(--ev-radius-circle);
+  background-color: var(--ev-bg-page);
+  border: 2px solid var(--ev-border-color-dark);
   box-sizing: border-box;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    background-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-timeline__item.is-latest .ew-timeline__dot {
-  border-color: var(--ew-color-primary);
-  background-color: var(--ew-color-primary);
-  box-shadow: 0 0 0 3px rgba(var(--ew-color-primary-rgb), 0.15);
+.ev-timeline__item.is-latest .ev-timeline__dot {
+  border-color: var(--ev-color-primary);
+  background-color: var(--ev-color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--ev-color-primary-rgb), 0.15);
 }
 
-.ew-timeline__meta {
+.ev-timeline__meta {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-2);
-  margin-bottom: var(--ew-space-2);
+  gap: var(--ev-space-2);
+  margin-bottom: var(--ev-space-2);
 }
 
-.ew-timeline__date {
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
+.ev-timeline__date {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
-.ew-timeline__title {
-  font-size: var(--ew-font-size-md);
-  font-weight: var(--ew-font-weight-medium);
+.ev-timeline__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
-.ew-timeline__description {
-  margin-top: var(--ew-space-1);
-  font-size: var(--ew-font-size-sm);
+.ev-timeline__description {
+  margin-top: var(--ev-space-1);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   max-width: 560px;
 }
 
@@ -76,18 +76,18 @@
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-timeline .ew-timeline__title {
+.ev-timeline .ev-timeline__title {
   margin: 0;
-  font-size: var(--ew-font-size-md);
-  font-weight: var(--ew-font-weight-medium);
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0;
-  line-height: var(--ew-display-line-height);
-  color: var(--ew-text-primary);
+  line-height: var(--ev-display-line-height);
+  color: var(--ev-text-primary);
 }
 
-.ew-timeline .ew-timeline__description {
-  margin: var(--ew-space-1) 0 0;
-  font-size: var(--ew-font-size-sm);
+.ev-timeline .ev-timeline__description {
+  margin: var(--ev-space-1) 0 0;
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }

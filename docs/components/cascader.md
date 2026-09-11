@@ -6,8 +6,8 @@
 
 <DemoBlock>
   <div style="max-width: 320px">
-    <ev-cascader v-model="region" :options="options" placeholder="请选择省 / 市 / 区" />
-    <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">选中值：{{ JSON.stringify(region) }}</p>
+    <eb-cascader v-model="region" :options="options" placeholder="请选择省 / 市 / 区" />
+    <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">选中值：{{ JSON.stringify(region) }}</p>
   </div>
 </DemoBlock>
 
@@ -17,7 +17,7 @@
 
 <DemoBlock>
   <div style="max-width: 320px">
-    <ev-cascader v-model="region2" :options="options" filterable placeholder="输入「杭州」试试" />
+    <eb-cascader v-model="region2" :options="options" filterable placeholder="输入「杭州」试试" />
   </div>
 </DemoBlock>
 
@@ -27,18 +27,18 @@
 
 <DemoBlock>
   <div style="max-width: 420px">
-    <ev-cascader v-model="multi" :options="options" multiple collapse-tags placeholder="可多选" />
-    <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">选中：{{ JSON.stringify(multi) }}</p>
+    <eb-cascader v-model="multi" :options="options" multiple collapse-tags placeholder="可多选" />
+    <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">选中：{{ JSON.stringify(multi) }}</p>
   </div>
 </DemoBlock>
 
 ## 禁用与清空
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-cascader :options="options" disabled placeholder="禁用状态" style="width: 240px" />
-    <ev-cascader v-model="clearableVal" :options="options" placeholder="可清空" style="width: 240px" />
-  </ev-space>
+  <eb-space size="middle">
+    <eb-cascader :options="options" disabled placeholder="禁用状态" style="width: 240px" />
+    <eb-cascader v-model="clearableVal" :options="options" placeholder="可清空" style="width: 240px" />
+  </eb-space>
 </DemoBlock>
 
 <script setup>

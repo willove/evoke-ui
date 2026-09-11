@@ -5,27 +5,27 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-result status="success" title="提交成功" sub-title="工单已流转至交付部，预计 2 个工作日内响应。">
+  <eb-result status="success" title="提交成功" sub-title="工单已流转至交付部，预计 2 个工作日内响应。">
     <template #extra>
-      <ev-space size="middle">
-        <ev-button type="primary">查看工单</ev-button>
-        <ev-button>返回列表</ev-button>
-      </ev-space>
+      <eb-space size="middle">
+        <eb-button type="primary">查看工单</eb-button>
+        <eb-button>返回列表</eb-button>
+      </eb-space>
     </template>
-  </ev-result>
+  </eb-result>
 </DemoBlock>
 
 ## 404 与警告
 
 <DemoBlock>
-  <ev-space size="large">
-    <ev-result status="404" style="padding: 12px 0;" />
-    <ev-result status="warning" title="额度不足" sub-title="当前额度余额为 0，请先提交扩容申请。" style="padding: 12px 0;">
+  <eb-space size="large">
+    <eb-result status="404" style="padding: 12px 0;" />
+    <eb-result status="warning" title="额度不足" sub-title="当前额度余额为 0，请先提交扩容申请。" style="padding: 12px 0;">
       <template #extra>
-        <ev-button type="primary" size="small">申请扩容</ev-button>
+        <eb-button type="primary" size="small">申请扩容</eb-button>
       </template>
-    </ev-result>
-  </ev-space>
+    </eb-result>
+  </eb-space>
 </DemoBlock>
 
 ## Result API

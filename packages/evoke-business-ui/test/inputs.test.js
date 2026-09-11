@@ -1,27 +1,27 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { h, ref, defineComponent } from 'vue'
-import EvRadio from '../src/components/radio/index.vue'
-import EvRadioGroup from '../src/components/radio/group.vue'
-import EvRadioButton from '../src/components/radio/button.vue'
-import EvCheckbox from '../src/components/checkbox/index.vue'
-import EvCheckboxGroup from '../src/components/checkbox/group.vue'
-import EvCheckboxButton from '../src/components/checkbox/button.vue'
-import EvSwitch from '../src/components/switch-comp/index.vue'
-import EvInputNumber from '../src/components/input-number/index.vue'
+import EbRadio from '../src/components/radio/index.vue'
+import EbRadioGroup from '../src/components/radio/group.vue'
+import EbRadioButton from '../src/components/radio/button.vue'
+import EbCheckbox from '../src/components/checkbox/index.vue'
+import EbCheckboxGroup from '../src/components/checkbox/group.vue'
+import EbCheckboxButton from '../src/components/checkbox/button.vue'
+import EbSwitch from '../src/components/switch-comp/index.vue'
+import EbInputNumber from '../src/components/input-number/index.vue'
 
-describe('EvRadio 家族', () => {
+describe('EbRadio 家族', () => {
   it('双 class + 结构 DOM（input/inner/label）', () => {
-    const wrapper = mount(EvRadio, { props: { label: 1 }, slots: { default: '选项' } })
-    expect(wrapper.classes()).toContain('ev-radio')
-    expect(wrapper.classes()).toContain('ev-radio')
-    expect(wrapper.find('input.ev-radio__original').exists()).toBe(true)
-    expect(wrapper.find('.ev-radio__inner').exists()).toBe(true)
-    expect(wrapper.find('.ev-radio__label').text()).toBe('选项')
+    const wrapper = mount(EbRadio, { props: { label: 1 }, slots: { default: '选项' } })
+    expect(wrapper.classes()).toContain('eb-radio')
+    expect(wrapper.classes()).toContain('eb-radio')
+    expect(wrapper.find('input.eb-radio__original').exists()).toBe(true)
+    expect(wrapper.find('.eb-radio__inner').exists()).toBe(true)
+    expect(wrapper.find('.eb-radio__label').text()).toBe('选项')
   })
 
   it('独立模式 v-model：checked 状态 + change', async () => {
-    const wrapper = mount(EvRadio, {
+    const wrapper = mount(EbRadio, {
       props: { modelValue: 2, label: 1 },
     })
     expect(wrapper.classes()).not.toContain('is-checked')
@@ -31,17 +31,17 @@ describe('EvRadio 家族', () => {
   })
 
   it('group 模式：inject 共享 modelValue', async () => {
-    const wrapper = mount(EvRadioGroup, {
+    const wrapper = mount(EbRadioGroup, {
       props: { modelValue: 'b' },
       slots: {
         default: () =>
           h('div', [
-            h(EvRadio, { label: 'a' }, () => 'A'),
-            h(EvRadio, { label: 'b' }, () => 'B'),
+            h(EbRadio, { label: 'a' }, () => 'A'),
+            h(EbRadio, { label: 'b' }, () => 'B'),
           ]),
       },
     })
-    const radios = wrapper.findAllComponents(EvRadio)
+    const radios = wrapper.findAllComponents(EbRadio)
     expect(radios[0].classes()).not.toContain('is-checked')
     expect(radios[1].classes()).toContain('is-checked')
     await radios[0].find('input').trigger('change')
@@ -50,51 +50,51 @@ describe('EvRadio 家族', () => {
   })
 
   it('group disabled 继承', () => {
-    const wrapper = mount(EvRadioGroup, {
+    const wrapper = mount(EbRadioGroup, {
       props: { modelValue: 'a', disabled: true },
       slots: {
-        default: () => h('div', [h(EvRadio, { label: 'a' }, () => 'A')]),
+        default: () => h('div', [h(EbRadio, { label: 'a' }, () => 'A')]),
       },
     })
-    expect(wrapper.findComponent(EvRadio).classes()).toContain('is-disabled')
+    expect(wrapper.findComponent(EbRadio).classes()).toContain('is-disabled')
   })
 
-  it('EvRadioButton：is-active 状态 + 双 class', async () => {
-    const wrapper = mount(EvRadioGroup, {
+  it('EbRadioButton：is-active 状态 + 双 class', async () => {
+    const wrapper = mount(EbRadioGroup, {
       props: { modelValue: 'x' },
       slots: {
-        default: () => h('div', [h(EvRadioButton, { label: 'x' }, () => 'X')]),
+        default: () => h('div', [h(EbRadioButton, { label: 'x' }, () => 'X')]),
       },
     })
-    const btn = wrapper.findComponent(EvRadioButton)
-    expect(btn.classes()).toContain('ev-radio-button')
-    expect(btn.classes()).toContain('ev-radio-button')
+    const btn = wrapper.findComponent(EbRadioButton)
+    expect(btn.classes()).toContain('eb-radio-button')
+    expect(btn.classes()).toContain('eb-radio-button')
     expect(btn.classes()).toContain('is-active')
   })
 
   it('border 变体', () => {
-    expect(mount(EvRadio, { props: { border: true } }).classes()).toContain('is-bordered')
+    expect(mount(EbRadio, { props: { border: true } }).classes()).toContain('is-bordered')
   })
 })
 
-describe('EvCheckbox 家族', () => {
+describe('EbCheckbox 家族', () => {
   it('双 class + 结构 DOM', () => {
-    const wrapper = mount(EvCheckbox, { props: { label: 1 }, slots: { default: '多选' } })
-    expect(wrapper.classes()).toContain('ev-checkbox')
-    expect(wrapper.classes()).toContain('ev-checkbox')
-    expect(wrapper.find('input.ev-checkbox__original').exists()).toBe(true)
-    expect(wrapper.find('.ev-checkbox__label').text()).toBe('多选')
+    const wrapper = mount(EbCheckbox, { props: { label: 1 }, slots: { default: '多选' } })
+    expect(wrapper.classes()).toContain('eb-checkbox')
+    expect(wrapper.classes()).toContain('eb-checkbox')
+    expect(wrapper.find('input.eb-checkbox__original').exists()).toBe(true)
+    expect(wrapper.find('.eb-checkbox__label').text()).toBe('多选')
   })
 
   it('独立 boolean v-model', async () => {
-    const wrapper = mount(EvCheckbox, { props: { modelValue: false } })
+    const wrapper = mount(EbCheckbox, { props: { modelValue: false } })
     expect(wrapper.classes()).not.toContain('is-checked')
     await wrapper.find('input').trigger('change')
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([true])
   })
 
   it('true-label/false-label 值语义', async () => {
-    const wrapper = mount(EvCheckbox, {
+    const wrapper = mount(EbCheckbox, {
       props: { modelValue: 'yes', trueLabel: 'yes', falseLabel: 'no' },
     })
     expect(wrapper.classes()).toContain('is-checked')
@@ -108,69 +108,69 @@ describe('EvCheckbox 家族', () => {
         const modelValue = ref(['a'])
         return () =>
           h(
-            EvCheckboxGroup,
+            EbCheckboxGroup,
             {
               modelValue: modelValue.value,
               'onUpdate:modelValue': (v) => (modelValue.value = v),
             },
-            () => h('div', [h(EvCheckbox, { label: 'a' }, () => 'A'), h(EvCheckbox, { label: 'b' }, () => 'B')])
+            () => h('div', [h(EbCheckbox, { label: 'a' }, () => 'A'), h(EbCheckbox, { label: 'b' }, () => 'B')])
           )
       },
     })
     const wrapper = mount(GroupHarness)
-    const boxes = wrapper.findAllComponents(EvCheckbox)
+    const boxes = wrapper.findAllComponents(EbCheckbox)
     expect(boxes[0].classes()).toContain('is-checked')
     expect(boxes[1].classes()).not.toContain('is-checked')
     await boxes[1].find('input').trigger('change')
     await wrapper.vm.$nextTick()
     // v-model 更新后取消勾选 a
-    const boxes2 = wrapper.findAllComponents(EvCheckbox)
+    const boxes2 = wrapper.findAllComponents(EbCheckbox)
     await boxes2[0].find('input').trigger('change')
-    const events = wrapper.findComponent(EvCheckboxGroup).emitted('update:modelValue')
+    const events = wrapper.findComponent(EbCheckboxGroup).emitted('update:modelValue')
     expect(events[0]).toEqual([['a', 'b']])
     expect(events[1]).toEqual([['b']])
   })
 
   it('indeterminate 半选态', () => {
-    const wrapper = mount(EvCheckbox, {
+    const wrapper = mount(EbCheckbox, {
       props: { modelValue: false, indeterminate: true },
     })
-    expect(wrapper.find('.ev-checkbox__input').classes()).toContain('is-indeterminate')
+    expect(wrapper.find('.eb-checkbox__input').classes()).toContain('is-indeterminate')
   })
 
-  it('EvCheckboxButton：group 数组切换 + is-checked', async () => {
-    const wrapper = mount(EvCheckboxGroup, {
+  it('EbCheckboxButton：group 数组切换 + is-checked', async () => {
+    const wrapper = mount(EbCheckboxGroup, {
       props: { modelValue: [] },
       slots: {
-        default: () => h('div', [h(EvCheckboxButton, { label: 'x' }, () => 'X')]),
+        default: () => h('div', [h(EbCheckboxButton, { label: 'x' }, () => 'X')]),
       },
     })
-    const btn = wrapper.findComponent(EvCheckboxButton)
-    expect(btn.classes()).toContain('ev-checkbox-button')
+    const btn = wrapper.findComponent(EbCheckboxButton)
+    expect(btn.classes()).toContain('eb-checkbox-button')
     await btn.find('input').trigger('change')
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([['x']])
   })
 })
 
-describe('EvSwitch', () => {
+describe('EbSwitch', () => {
   it('双 class + 结构 DOM（core/action/input）', () => {
-    const wrapper = mount(EvSwitch, { props: { modelValue: true } })
-    expect(wrapper.classes()).toContain('ev-switch')
-    expect(wrapper.classes()).toContain('ev-switch')
-    expect(wrapper.find('.ev-switch__core').exists()).toBe(true)
-    expect(wrapper.find('.ev-switch__action').exists()).toBe(true)
-    expect(wrapper.find('input.ev-switch__input').exists()).toBe(true)
+    const wrapper = mount(EbSwitch, { props: { modelValue: true } })
+    expect(wrapper.classes()).toContain('eb-switch')
+    expect(wrapper.classes()).toContain('eb-switch')
+    expect(wrapper.find('.eb-switch__core').exists()).toBe(true)
+    expect(wrapper.find('.eb-switch__action').exists()).toBe(true)
+    expect(wrapper.find('input.eb-switch__input').exists()).toBe(true)
   })
 
   it('checked 状态（active-value 语义）', () => {
-    const on = mount(EvSwitch, { props: { modelValue: true } })
+    const on = mount(EbSwitch, { props: { modelValue: true } })
     expect(on.classes()).toContain('is-checked')
-    const off = mount(EvSwitch, { props: { modelValue: false } })
+    const off = mount(EbSwitch, { props: { modelValue: false } })
     expect(off.classes()).not.toContain('is-checked')
   })
 
   it('自定义 active-value/inactive-value', async () => {
-    const wrapper = mount(EvSwitch, {
+    const wrapper = mount(EbSwitch, {
       props: { modelValue: 1, activeValue: 1, inactiveValue: 0 },
     })
     expect(wrapper.classes()).toContain('is-checked')
@@ -179,35 +179,35 @@ describe('EvSwitch', () => {
   })
 
   it('切换触发 change；disabled 阻止', async () => {
-    const wrapper = mount(EvSwitch, { props: { modelValue: false } })
+    const wrapper = mount(EbSwitch, { props: { modelValue: false } })
     await wrapper.trigger('click')
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([true])
     expect(wrapper.emitted('change')[0]).toEqual([true])
 
-    const disabled = mount(EvSwitch, { props: { modelValue: false, disabled: true } })
+    const disabled = mount(EbSwitch, { props: { modelValue: false, disabled: true } })
     await disabled.trigger('click')
     expect(disabled.emitted('update:modelValue')).toBeUndefined()
   })
 
   it('active-text/inactive-text 文本渲染', () => {
-    const wrapper = mount(EvSwitch, {
+    const wrapper = mount(EbSwitch, {
       props: { modelValue: false, activeText: '开', inactiveText: '关' },
     })
     // 非 inline-prompt：文案在开关外侧两侧（labels），core 内不渲染文字
-    const labels = wrapper.findAll('.ev-switch__label')
+    const labels = wrapper.findAll('.eb-switch__label')
     expect(labels.length).toBe(2)
     expect(labels[0].text()).toBe('关')
     expect(labels[1].text()).toBe('开')
   })
 })
 
-describe('EvInputNumber', () => {
+describe('EbInputNumber', () => {
   it('双 class + 结构 DOM（increase/decrease 按钮）', () => {
-    const wrapper = mount(EvInputNumber, { props: { modelValue: 1 } })
-    expect(wrapper.classes()).toContain('ev-input-number')
-    expect(wrapper.classes()).toContain('ev-input-number')
-    expect(wrapper.find('.ev-input-number__increase').exists()).toBe(true)
-    expect(wrapper.find('.ev-input-number__decrease').exists()).toBe(true)
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 1 } })
+    expect(wrapper.classes()).toContain('eb-input-number')
+    expect(wrapper.classes()).toContain('eb-input-number')
+    expect(wrapper.find('.eb-input-number__increase').exists()).toBe(true)
+    expect(wrapper.find('.eb-input-number__decrease').exists()).toBe(true)
   })
 
   it('步进 increase/decrease 触发 update + change（响应式 v-model）', async () => {
@@ -215,7 +215,7 @@ describe('EvInputNumber', () => {
       setup() {
         const modelValue = ref(5)
         return () =>
-          h(EvInputNumber, {
+          h(EbInputNumber, {
             modelValue: modelValue.value,
             step: 2,
             'onUpdate:modelValue': (v) => (modelValue.value = v),
@@ -223,36 +223,36 @@ describe('EvInputNumber', () => {
       },
     })
     const wrapper = mount(NumberHarness)
-    const number = wrapper.findComponent(EvInputNumber)
-    await wrapper.find('.ev-input-number__increase').trigger('click')
+    const number = wrapper.findComponent(EbInputNumber)
+    await wrapper.find('.eb-input-number__increase').trigger('click')
     expect(number.emitted('update:modelValue')[0]).toEqual([7])
     expect(number.emitted('change')[0]).toEqual([7])
     await wrapper.vm.$nextTick()
-    await wrapper.find('.ev-input-number__decrease').trigger('click')
+    await wrapper.find('.eb-input-number__decrease').trigger('click')
     const events = number.emitted('update:modelValue')
     expect(events[events.length - 1]).toEqual([5])
   })
 
   it('min/max clamp', async () => {
-    const wrapper = mount(EvInputNumber, { props: { modelValue: 9, max: 10, step: 2 } })
-    await wrapper.find('.ev-input-number__increase').trigger('click')
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 9, max: 10, step: 2 } })
+    await wrapper.find('.eb-input-number__increase').trigger('click')
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([10])
   })
 
   it('precision 格式化', () => {
-    const wrapper = mount(EvInputNumber, { props: { modelValue: 3.14159, precision: 2 } })
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 3.14159, precision: 2 } })
     expect(wrapper.find('input').element.value).toBe('3.14')
   })
 
   it('直接输入提交并 clamp', async () => {
-    const wrapper = mount(EvInputNumber, { props: { modelValue: 1, max: 10 } })
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 1, max: 10 } })
     await wrapper.find('input').setValue('99')
     await wrapper.find('input').trigger('change')
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([10])
   })
 
   it('controls=false 隐藏按钮', () => {
-    const wrapper = mount(EvInputNumber, { props: { controls: false } })
-    expect(wrapper.find('.ev-input-number__increase').exists()).toBe(false)
+    const wrapper = mount(EbInputNumber, { props: { controls: false } })
+    expect(wrapper.find('.eb-input-number__increase').exists()).toBe(false)
   })
 })

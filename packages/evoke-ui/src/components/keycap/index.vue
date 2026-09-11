@@ -1,12 +1,12 @@
 <template>
-  <span class="ew-keycap">
-    <kbd v-for="(k, i) in keys" :key="i" class="ew-keycap__key">{{ k }}</kbd>
+  <span class="ev-keycap">
+    <kbd v-for="(k, i) in keys" :key="i" class="ev-keycap__key">{{ k }}</kbd>
   </span>
 </template>
 
 <script setup>
 /**
- * EwKeycap — 键盘按键展示（remixdesign「Press c to copy」语言）
+ * EvKeycap — 键盘按键展示（remixdesign「Press c to copy」语言）
  * keys 传字符串（拆成单键）或数组（组合键）
  */
 import { computed } from 'vue'

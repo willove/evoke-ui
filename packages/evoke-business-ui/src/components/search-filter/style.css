@@ -1,61 +1,61 @@
-/* EvSearchFilter — 查询/重置筛选表单（业务封装） */
+/* EbSearchFilter — 查询/重置筛选表单（业务封装） */
 
-.ev-search-filter {
+.eb-search-filter {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--ev-space-4);
+  gap: var(--eb-space-4);
   flex-wrap: wrap;
-  padding: var(--ev-space-4);
-  background: var(--ev-bg-color);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-lg);
+  padding: var(--eb-space-4);
+  background: var(--eb-bg-color);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-lg);
   box-sizing: border-box;
 }
 
-.ev-search-filter__fields {
+.eb-search-filter__fields {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--ev-space-3) var(--ev-space-4);
+  gap: var(--eb-space-3) var(--eb-space-4);
   flex: 1;
   min-width: 0;
 }
-.ev-search-filter--cols-2 .ev-search-filter__fields {
+.eb-search-filter--cols-2 .eb-search-filter__fields {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.ev-search-filter--cols-4 .ev-search-filter__fields {
+.eb-search-filter--cols-4 .eb-search-filter__fields {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.ev-search-filter__field {
+.eb-search-filter__field {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   min-width: 0;
 }
 
-.ev-search-filter__label {
+.eb-search-filter__label {
   flex-shrink: 0;
   max-width: 40%;
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ev-search-filter__control {
+.eb-search-filter__control {
   flex: 1;
   min-width: 0;
 }
-.ev-search-filter__control .ev-select,
-.ev-search-filter__control .ev-input {
+.eb-search-filter__control .eb-select,
+.eb-search-filter__control .eb-input {
   width: 100%;
 }
 
-.ev-search-filter__actions {
+.eb-search-filter__actions {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   flex-shrink: 0;
 }

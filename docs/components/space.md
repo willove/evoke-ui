@@ -7,11 +7,11 @@
 相邻按钮之间自动插入默认间距（small = 8px）。
 
 <DemoBlock>
-<ev-space>
-  <ev-button>按钮一</ev-button>
-  <ev-button>按钮二</ev-button>
-  <ev-button>按钮三</ev-button>
-</ev-space>
+<eb-space>
+  <eb-button>按钮一</eb-button>
+  <eb-button>按钮二</eb-button>
+  <eb-button>按钮三</eb-button>
+</eb-space>
 </DemoBlock>
 
 ## 间距尺寸
@@ -19,27 +19,27 @@
 `size` 支持枚举（small = 8px / default = 12px / large = 16px）、数字（px）与 `[水平, 垂直]` 数组，可精确控制两个方向的不同间距。
 
 <DemoBlock>
-<ev-space size="small" style="margin-right:24px;">
-  <ev-button>small 8px</ev-button>
-  <ev-button>small 8px</ev-button>
-</ev-space>
-<ev-space size="default" style="margin-right:24px;">
-  <ev-button>default 12px</ev-button>
-  <ev-button>default 12px</ev-button>
-</ev-space>
-<ev-space size="large" style="margin-right:24px;">
-  <ev-button>large 16px</ev-button>
-  <ev-button>large 16px</ev-button>
-</ev-space>
-<ev-space :size="28" style="margin-right:24px;">
-  <ev-button>数字 28px</ev-button>
-  <ev-button>数字 28px</ev-button>
-</ev-space>
-<ev-space :size="[32, 8]">
-  <ev-tag>水平 32px</ev-tag>
-  <ev-tag>水平 32px</ev-tag>
-  <ev-tag>水平 32px</ev-tag>
-</ev-space>
+<eb-space size="small" style="margin-right:24px;">
+  <eb-button>small 8px</eb-button>
+  <eb-button>small 8px</eb-button>
+</eb-space>
+<eb-space size="default" style="margin-right:24px;">
+  <eb-button>default 12px</eb-button>
+  <eb-button>default 12px</eb-button>
+</eb-space>
+<eb-space size="large" style="margin-right:24px;">
+  <eb-button>large 16px</eb-button>
+  <eb-button>large 16px</eb-button>
+</eb-space>
+<eb-space :size="28" style="margin-right:24px;">
+  <eb-button>数字 28px</eb-button>
+  <eb-button>数字 28px</eb-button>
+</eb-space>
+<eb-space :size="[32, 8]">
+  <eb-tag>水平 32px</eb-tag>
+  <eb-tag>水平 32px</eb-tag>
+  <eb-tag>水平 32px</eb-tag>
+</eb-space>
 </DemoBlock>
 
 ## 垂直排列
@@ -47,11 +47,11 @@
 `direction` 为 vertical 时改为纵向排布，适合表单行、列表项之间的间隔。
 
 <DemoBlock>
-<ev-space direction="vertical" size="large">
-  <ev-button>第一行</ev-button>
-  <ev-button>第二行</ev-button>
-  <ev-button>第三行</ev-button>
-</ev-space>
+<eb-space direction="vertical" size="large">
+  <eb-button>第一行</eb-button>
+  <eb-button>第二行</eb-button>
+  <eb-button>第三行</eb-button>
+</eb-space>
 </DemoBlock>
 
 ## 自动换行
@@ -59,9 +59,9 @@
 `wrap` 开启 flex 换行，子项数量多或宽度不定时（如标签组、筛选条件）避免溢出。
 
 <DemoBlock>
-<ev-space wrap size="default" style="max-width:340px;">
-  <ev-tag v-for="word in ['全部', '进行中', '已完结', '已归档', '草稿', '回收站', '已逾期']" :key="word" type="primary">{{ word }}</ev-tag>
-</ev-space>
+<eb-space wrap size="default" style="max-width:340px;">
+  <eb-tag v-for="word in ['全部', '进行中', '已完结', '已归档', '草稿', '回收站', '已逾期']" :key="word" type="primary">{{ word }}</eb-tag>
+</eb-space>
 </DemoBlock>
 
 ## 对齐方式
@@ -69,15 +69,15 @@
 `alignment` 设置交叉轴对齐：start / end / center / baseline；行内混排图标、文本、按钮等不同高度元素时用于统一基线。
 
 <DemoBlock>
-<ev-space alignment="center" size="default" style="margin-bottom:12px;">
-  <ev-avatar size="36">W</ev-avatar>
-  <ev-text>垂直居中对齐的文本</ev-text>
-  <ev-tag type="success">在线</ev-tag>
-</ev-space>
-<ev-space alignment="baseline" size="default">
-  <ev-text size="large">大号标题</ev-text>
-  <ev-text size="small">与基线对齐的小字说明</ev-text>
-</ev-space>
+<eb-space alignment="center" size="default" style="margin-bottom:12px;">
+  <eb-avatar size="36">W</eb-avatar>
+  <eb-text>垂直居中对齐的文本</eb-text>
+  <eb-tag type="success">在线</eb-tag>
+</eb-space>
+<eb-space alignment="baseline" size="default">
+  <eb-text size="large">大号标题</eb-text>
+  <eb-text size="small">与基线对齐的小字说明</eb-text>
+</eb-space>
 </DemoBlock>
 
 ## 撑满容器
@@ -85,11 +85,11 @@
 `fill` 让每个子项 `flex: 1` 平分剩余空间（容器变为块级 flex），适合按钮组、分段操作条铺满整行。
 
 <DemoBlock>
-<ev-space fill style="width:360px;">
-  <ev-button style="width:100%;">左</ev-button>
-  <ev-button style="width:100%;">中</ev-button>
-  <ev-button style="width:100%;">右</ev-button>
-</ev-space>
+<eb-space fill style="width:360px;">
+  <eb-button style="width:100%;">左</eb-button>
+  <eb-button style="width:100%;">中</eb-button>
+  <eb-button style="width:100%;">右</eb-button>
+</eb-space>
 </DemoBlock>
 
 ## API

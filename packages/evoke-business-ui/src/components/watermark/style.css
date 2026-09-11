@@ -1,10 +1,10 @@
-/* EvWatermark —水印 */
+/* EbWatermark —水印 */
 
-.ev-watermark.ev-watermark {
+.eb-watermark.eb-watermark {
   display: block;
 }
 
-.ev-watermark.ev-watermark .ev-watermark__body {
+.eb-watermark.eb-watermark .eb-watermark__body {
   display: block;
   min-height: inherit;
 }

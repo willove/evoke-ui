@@ -4,19 +4,19 @@
 
 两种模式：传 `item-size` 走固定行高（纯数学定位）；不传则动态实测行高（渲染后回填偏移表，滚动中收敛）。
 
-> 对标 ant-design v6：通用 List 已废弃，由虚拟列表替代。本组件注册了别名 **`EvListy`**（标签 `<ev-listy>`），从旧 List 迁移见 [List（已废弃）](/components/list)。
+> 对标 ant-design v6：通用 List 已废弃，由虚拟列表替代。本组件注册了别名 **`EbListy`**（标签 `<eb-listy>`），从旧 List 迁移见 [List（已废弃）](/components/list)。
 
 ## 基础用法
 
 <DemoBlock>
-  <ev-virtual-list :items="items" item-key="id" :item-size="40" :height="240">
+  <eb-virtual-list :items="items" item-key="id" :item-size="40" :height="240">
     <template #default="{ item, index }">
-      <div style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--ev-border-color-lighter);">
-        <span style="color: var(--ev-text-color-secondary); width: 56px;">#{{ index }}</span>
+      <div style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--eb-border-color-lighter);">
+        <span style="color: var(--eb-text-color-secondary); width: 56px;">#{{ index }}</span>
         <span>{{ item.name }}</span>
       </div>
     </template>
-  </ev-virtual-list>
+  </eb-virtual-list>
 </DemoBlock>
 
 <script setup>
@@ -25,17 +25,17 @@ const items = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `数据行
 
 ## Listy 别名
 
-`<ev-listy>` 与 `<ev-virtual-list>` 完全等价（同一组件的两个注册名），方便从旧 List 或 ant-design Listy 迁移：
+`<eb-listy>` 与 `<eb-virtual-list>` 完全等价（同一组件的两个注册名），方便从旧 List 或 ant-design Listy 迁移：
 
 <DemoBlock>
-  <ev-listy :items="items" item-key="id" :item-size="40" :height="160">
+  <eb-listy :items="items" item-key="id" :item-size="40" :height="160">
     <template #default="{ item, index }">
-      <div style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--ev-border-color-lighter);">
-        <span style="color: var(--ev-text-color-secondary); width: 56px;">#{{ index }}</span>
+      <div style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--eb-border-color-lighter);">
+        <span style="color: var(--eb-text-color-secondary); width: 56px;">#{{ index }}</span>
         <span>{{ item.name }}</span>
       </div>
     </template>
-  </ev-listy>
+  </eb-listy>
 </DemoBlock>
 
 ## VirtualList API

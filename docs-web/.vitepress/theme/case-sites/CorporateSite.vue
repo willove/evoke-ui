@@ -97,148 +97,148 @@ function submitDemo() {
 
 <template>
   <div class="case-site">
-    <EwAlert icon="bell-line" closable style="border-radius:0;border-inline:none;border-top:none;">
+    <EvAlert icon="bell-line" closable style="border-radius:0;border-inline:none;border-top:none;">
       cumubase 3.0 发布：查询引擎全面提速，老用户升级后平均查询耗时下降 68%。
       <template #action>
-        <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">看看更新<EwIcon name="arrow-right" :size="14" /></a>
+        <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">看看更新<EvIcon name="arrow-right" :size="14" /></a>
       </template>
-    </EwAlert>
+    </EvAlert>
 
-    <EwNavbar :items="nav" :sticky="sticky" logo-text="积云数合">
+    <EvNavbar :items="nav" :sticky="sticky" logo-text="积云数合">
       <template #actions>
-        <EwThemeToggle />
-        <EwButton size="small" variant="soft">登录</EwButton>
-        <EwButton size="small" pill icon-right="arrow-right" href="#pricing">免费试用</EwButton>
+        <EvThemeToggle />
+        <EvButton size="small" variant="soft">登录</EvButton>
+        <EvButton size="small" pill icon-right="arrow-right" href="#pricing">免费试用</EvButton>
       </template>
-    </EwNavbar>
+    </EvNavbar>
 
-    <EwHero
+    <EvHero
       reveal
       title="让数据安静地工作"
       description="cumubase 数据云把采集、同步与分析装进同一个工作台：连接数据源只要五分钟，剩下的时间留给业务判断。"
     >
       <template #badge>
-        <EwAlert pill icon="flashlight-line">
+        <EvAlert pill icon="flashlight-line">
           <span>cumubase 3.0 正式发布</span>
           <template #action>
-            <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
+            <a href="#features" style="display:inline-flex;align-items:center;gap:2px;">查看<EvIcon name="arrow-right" :size="14" /></a>
           </template>
-        </EwAlert>
+        </EvAlert>
       </template>
       <template #actions>
-        <EwButton size="large" pill icon-right="arrow-right" href="#pricing">免费试用</EwButton>
-        <EwButton size="large" variant="outline" href="#features">了解产品</EwButton>
+        <EvButton size="large" pill icon-right="arrow-right" href="#pricing">免费试用</EvButton>
+        <EvButton size="large" variant="outline" href="#features">了解产品</EvButton>
       </template>
       <template #aside>
         <div class="cs-shot">
-          <EwCard class="cs-shot__main">
+          <EvCard class="cs-shot__main">
             <div class="cs-shot__head">
               <span class="cs-shot__title">营收总览</span>
-              <EwTag tone="success" size="small" icon="arrow-up">12.4%</EwTag>
+              <EvTag tone="success" size="small" icon="arrow-up">12.4%</EvTag>
             </div>
             <div class="cs-shot__bars">
               <span v-for="(h, i) in bars" :key="i" class="cs-shot__bar" :style="{ height: h + '%' }" />
             </div>
             <div class="cs-shot__foot">
-              <EwStatistic value="¥1,284" label="本周净收入" />
-              <EwStatistic value="12ms" label="平均查询" />
+              <EvStatistic value="¥1,284" label="本周净收入" />
+              <EvStatistic value="12ms" label="平均查询" />
             </div>
-          </EwCard>
+          </EvCard>
           <div class="cs-shot__chip">
-            <EwTag tone="primary" size="small" icon="check-line">同步完成 · 3 个数据源</EwTag>
+            <EvTag tone="primary" size="small" icon="check-line">同步完成 · 3 个数据源</EvTag>
           </div>
         </div>
       </template>
-    </EwHero>
+    </EvHero>
 
-    <EwSection align="center" gap="0" style="padding:40px 0 64px;">
-      <EwLogoCloud title="超过 2,000 个团队的日常数据工作跑在 cumubase 上" :items="clients" />
-    </EwSection>
+    <EvSection align="center" gap="0" style="padding:40px 0 64px;">
+      <EvLogoCloud title="超过 2,000 个团队的日常数据工作跑在 cumubase 上" :items="clients" />
+    </EvSection>
 
-    <EwSection id="features" eyebrow="产品能力" title="从数据源到决策，一条线打通" description="六个模块覆盖数据团队 80% 的日常工作，剩下的 20% 交给开放 API。">
-      <EwFeatureGrid variant="cards" :columns="3" :items="features" />
-    </EwSection>
+    <EvSection id="features" eyebrow="产品能力" title="从数据源到决策，一条线打通" description="六个模块覆盖数据团队 80% 的日常工作，剩下的 20% 交给开放 API。">
+      <EvFeatureGrid variant="cards" :columns="3" :items="features" />
+    </EvSection>
 
     <div class="case-band">
-      <div class="ew-container cs-stats">
-        <EwStatistic value="99.99%" label="服务可用性" align="center" animated />
-        <EwStatistic value="2,000+" label="付费团队" align="center" animated />
-        <EwStatistic value="12ms" label="平均查询延迟" align="center" animated />
-        <EwStatistic value="40+" label="地域节点" align="center" animated />
+      <div class="ev-container cs-stats">
+        <EvStatistic value="99.99%" label="服务可用性" align="center" animated />
+        <EvStatistic value="2,000+" label="付费团队" align="center" animated />
+        <EvStatistic value="12ms" label="平均查询延迟" align="center" animated />
+        <EvStatistic value="40+" label="地域节点" align="center" animated />
       </div>
     </div>
 
-    <EwSection id="pricing" eyebrow="定价" title="按团队规模选择，随时升级" description="所有付费方案都包含 14 天全功能试用，不需要绑定信用卡。" align="center">
+    <EvSection id="pricing" eyebrow="定价" title="按团队规模选择，随时升级" description="所有付费方案都包含 14 天全功能试用，不需要绑定信用卡。" align="center">
       <div class="cs-pricing">
         <template v-for="p in plans" :key="p.title">
-          <EwBorderBeam
+          <EvBorderBeam
             v-if="p.badge"
             :width="2"
             :duration="5000"
-            style="border-radius: var(--ew-radius-xl); display: grid;"
+            style="border-radius: var(--ev-radius-xl); display: grid;"
           >
-            <EwPricingCard v-bind="p" style="border-radius: calc(var(--ew-radius-xl) - 2px); height: 100%;" />
-          </EwBorderBeam>
-          <EwPricingCard v-else v-bind="p" />
+            <EvPricingCard v-bind="p" style="border-radius: calc(var(--ev-radius-xl) - 2px); height: 100%;" />
+          </EvBorderBeam>
+          <EvPricingCard v-else v-bind="p" />
         </template>
       </div>
-    </EwSection>
+    </EvSection>
 
-    <EwSection eyebrow="功能对比" title="三个版本差在哪，一张表看清楚" align="center">
-      <EwComparisonTable :columns="columns" :rows="rows" />
-    </EwSection>
+    <EvSection eyebrow="功能对比" title="三个版本差在哪，一张表看清楚" align="center">
+      <EvComparisonTable :columns="columns" :rows="rows" />
+    </EvSection>
 
-    <EwSection id="faq" eyebrow="常见问题" title="购买之前，你可能想知道" align="center">
-      <EwFaq :items="faqs" :default-open="0" />
-    </EwSection>
+    <EvSection id="faq" eyebrow="常见问题" title="购买之前，你可能想知道" align="center">
+      <EvFaq :items="faqs" :default-open="0" />
+    </EvSection>
 
-    <EwSection eyebrow="客户评价" title="他们已经在用 cumubase 开会了" align="center">
+    <EvSection eyebrow="客户评价" title="他们已经在用 cumubase 开会了" align="center">
       <div class="cs-quote">
-        <EwQuote
+        <EvQuote
           quote="把三张内部报表搬上 cumubase 只花了一个下午，第二天早会大家第一次看到同一份实时数据——争论数字的会议少了一半。"
           author="沈知远"
           role="南杉资本 · 数据负责人"
           sticker
         />
       </div>
-    </EwSection>
+    </EvSection>
 
-    <EwSection eyebrow="核心团队" title="一群把数据当产品做的人" description="小而专注的团队，一半时间在写代码，另一半在听客户怎么用。" align="center">
+    <EvSection eyebrow="核心团队" title="一群把数据当产品做的人" description="小而专注的团队，一半时间在写代码，另一半在听客户怎么用。" align="center">
       <div class="cs-team">
-        <EwExecCard
+        <EvExecCard
           v-for="m in team"
           :key="m.name"
           v-bind="m"
           :portrait-height="170"
         />
       </div>
-    </EwSection>
+    </EvSection>
 
-    <EwCta
+    <EvCta
       title="把下一份报表交给 cumubase"
       description="14 天全功能试用，免费版永久可用。"
     >
       <template #actions>
-        <EwButton size="large" pill icon="download">免费开始</EwButton>
-        <EwButton size="large" pill variant="dark" icon="chat-3-line" @click="demoVisible = true">预约演示</EwButton>
+        <EvButton size="large" pill icon="download">免费开始</EvButton>
+        <EvButton size="large" pill variant="dark" icon="chat-3-line" @click="demoVisible = true">预约演示</EvButton>
       </template>
-    </EwCta>
+    </EvCta>
 
-    <EwModal v-model="demoVisible" title="预约产品演示" width="440px" @close="demoDone = false">
+    <EvModal v-model="demoVisible" title="预约产品演示" width="440px" @close="demoDone = false">
       <p style="margin:0 0 14px;">留下工作邮箱，我们的解决方案顾问会与你约定 30 分钟的一对一演示，按你的业务场景现场连线真实数据。</p>
-      <EwField label="工作邮箱" required>
-        <EwInput v-model="demoEmail" type="email" placeholder="you@company.com" />
-      </EwField>
-      <p v-if="demoDone" style="margin:12px 0 0; font-size:13px; color:var(--ew-color-success);">
+      <EvField label="工作邮箱" required>
+        <EvInput v-model="demoEmail" type="email" placeholder="you@company.com" />
+      </EvField>
+      <p v-if="demoDone" style="margin:12px 0 0; font-size:13px; color:var(--ev-color-success);">
         ✓ 预约成功，确认邮件已发送至 {{ demoEmail }}，请注意查收。
       </p>
       <template #footer>
-        <EwButton variant="outline" size="small" @click="demoVisible = false">取消</EwButton>
-        <EwButton size="small" :disabled="!demoEmail" @click="submitDemo">{{ demoDone ? '已提交' : '提交预约' }}</EwButton>
+        <EvButton variant="outline" size="small" @click="demoVisible = false">取消</EvButton>
+        <EvButton size="small" :disabled="!demoEmail" @click="submitDemo">{{ demoDone ? '已提交' : '提交预约' }}</EvButton>
       </template>
-    </EwModal>
+    </EvModal>
 
-    <EwFooter
+    <EvFooter
       soft
       logo-text="积云数合"
       slogan="让数据安静地工作。"
@@ -258,7 +258,7 @@ function submitDemo() {
   width: 320px;
 }
 .cs-shot__main {
-  box-shadow: var(--ew-shadow-3);
+  box-shadow: var(--ev-shadow-3);
 }
 .cs-shot__head {
   display: flex;
@@ -268,8 +268,8 @@ function submitDemo() {
 }
 .cs-shot__title {
   font-size: 13px;
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-secondary);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-secondary);
 }
 .cs-shot__bars {
   display: flex;
@@ -281,7 +281,7 @@ function submitDemo() {
 .cs-shot__bar {
   flex: 1;
   border-radius: 6px 6px 2px 2px;
-  background: linear-gradient(180deg, var(--ew-color-primary-light-7), var(--ew-color-primary));
+  background: linear-gradient(180deg, var(--ev-color-primary-light-7), var(--ev-color-primary));
 }
 .cs-shot__foot {
   display: flex;
@@ -293,10 +293,10 @@ function submitDemo() {
   top: -14px;
   right: -18px;
   padding: 6px 8px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-2);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-2);
   transform: rotate(3deg);
 }
 .cs-stats {

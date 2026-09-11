@@ -1,337 +1,337 @@
-/* EvButton — 按钮样式（--ev-button-* 变量驱动） */
+/* EbButton — 按钮样式（--eb-button-* 变量驱动） */
 
-.ev-button.ev-button {
+.eb-button.eb-button {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: var(--ev-space-1);
-  height: var(--ev-component-size);
+  gap: var(--eb-space-1);
+  height: var(--eb-component-size);
   padding: 8px 15px;
-  font-size: var(--ev-font-size-base);
-  font-weight: var(--ev-font-weight-medium);
+  font-size: var(--eb-font-size-base);
+  font-weight: var(--eb-font-weight-medium);
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
   vertical-align: middle;
   -webkit-appearance: none;
-  background-color: var(--ev-button-bg-color);
-  border: 1px solid var(--ev-button-border-color);
-  border-radius: var(--ev-radius-md);
-  color: var(--ev-button-text-color);
+  background-color: var(--eb-button-bg-color);
+  border: 1px solid var(--eb-button-border-color);
+  border-radius: var(--eb-radius-md);
+  color: var(--eb-button-text-color);
   outline: none;
   transition:
-    background-color var(--ev-duration-base) var(--ev-ease-out),
-    border-color var(--ev-duration-base) var(--ev-ease-out),
-    color var(--ev-duration-base) var(--ev-ease-out),
-    box-shadow var(--ev-duration-base) var(--ev-ease-out),
-    transform var(--ev-duration-slow) var(--ev-ease-out-back);
+    background-color var(--eb-duration-base) var(--eb-ease-out),
+    border-color var(--eb-duration-base) var(--eb-ease-out),
+    color var(--eb-duration-base) var(--eb-ease-out),
+    box-shadow var(--eb-duration-base) var(--eb-ease-out),
+    transform var(--eb-duration-slow) var(--eb-ease-out-back);
   will-change: transform;
 }
 
-.ev-button.ev-button > span {
+.eb-button.eb-button > span {
   display: inline-flex;
   align-items: center;
 }
 
 /* ─── 尺寸 ─── */
-.ev-button.ev-button--large.ev-button {
-  height: var(--ev-component-size-large);
+.eb-button.eb-button--large.eb-button {
+  height: var(--eb-component-size-large);
   padding: 12px 19px;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
 }
-.ev-button.ev-button--small.ev-button {
-  height: var(--ev-component-size-small);
+.eb-button.eb-button--small.eb-button {
+  height: var(--eb-component-size-small);
   padding: 5px 11px;
-  font-size: var(--ev-font-size-xs);
+  font-size: var(--eb-font-size-xs);
 }
 
 /* ─── 圆角变体 ─── */
-.ev-button.ev-button.is-round {
-  border-radius: var(--ev-radius-full);
+.eb-button.eb-button.is-round {
+  border-radius: var(--eb-radius-full);
 }
-.ev-button.ev-button.is-circle {
-  width: var(--ev-component-size);
+.eb-button.eb-button.is-circle {
+  width: var(--eb-component-size);
   padding: 8px;
-  border-radius: var(--ev-radius-circle);
+  border-radius: var(--eb-radius-circle);
 }
-.ev-button.ev-button--small.ev-button.is-circle {
-  width: var(--ev-component-size-small);
+.eb-button.eb-button--small.eb-button.is-circle {
+  width: var(--eb-component-size-small);
   padding: 5px;
 }
-.ev-button.ev-button--large.ev-button.is-circle {
-  width: var(--ev-component-size-large);
+.eb-button.eb-button--large.eb-button.is-circle {
+  width: var(--eb-component-size-large);
   padding: 12px;
 }
 
 /* ─── default 类型 ─── */
-.ev-button.ev-button {
-  --ev-button-bg-color: var(--ev-fill-color-blank);
-  --ev-button-border-color: var(--ev-border-color);
-  --ev-button-text-color: var(--ev-text-color-regular);
-  --ev-button-hover-bg-color: var(--ev-color-primary-light-9);
-  --ev-button-hover-border-color: var(--ev-color-primary);
-  --ev-button-hover-text-color: var(--ev-color-primary);
-  --ev-button-active-bg-color: var(--ev-color-primary-light-9);
-  --ev-button-active-border-color: var(--ev-color-primary-dark-2);
-  --ev-button-active-text-color: var(--ev-color-primary-dark-2);
-  --ev-button-disabled-bg-color: var(--ev-fill-color-blank);
-  --ev-button-disabled-border-color: var(--ev-border-color-light);
-  --ev-button-disabled-text-color: var(--ev-text-color-placeholder);
+.eb-button.eb-button {
+  --eb-button-bg-color: var(--eb-fill-color-blank);
+  --eb-button-border-color: var(--eb-border-color);
+  --eb-button-text-color: var(--eb-text-color-regular);
+  --eb-button-hover-bg-color: var(--eb-color-primary-light-9);
+  --eb-button-hover-border-color: var(--eb-color-primary);
+  --eb-button-hover-text-color: var(--eb-color-primary);
+  --eb-button-active-bg-color: var(--eb-color-primary-light-9);
+  --eb-button-active-border-color: var(--eb-color-primary-dark-2);
+  --eb-button-active-text-color: var(--eb-color-primary-dark-2);
+  --eb-button-disabled-bg-color: var(--eb-fill-color-blank);
+  --eb-button-disabled-border-color: var(--eb-border-color-light);
+  --eb-button-disabled-text-color: var(--eb-text-color-placeholder);
 }
 
 /* ─── 实心类型（primary/success/warning/info/danger） ─── */
-.ev-button.ev-button--primary.ev-button {
-  --ev-button-bg-color: var(--ev-color-primary);
-  --ev-button-border-color: var(--ev-color-primary);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-primary-light-3);
-  --ev-button-hover-border-color: var(--ev-color-primary-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-primary-dark-2);
-  --ev-button-active-border-color: var(--ev-color-primary-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-primary-light-5);
-  --ev-button-disabled-border-color: var(--ev-color-primary-light-5);
-  --ev-button-disabled-text-color: #fff;
+.eb-button.eb-button--primary.eb-button {
+  --eb-button-bg-color: var(--eb-color-primary);
+  --eb-button-border-color: var(--eb-color-primary);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-primary-light-3);
+  --eb-button-hover-border-color: var(--eb-color-primary-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-primary-dark-2);
+  --eb-button-active-border-color: var(--eb-color-primary-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-primary-light-5);
+  --eb-button-disabled-border-color: var(--eb-color-primary-light-5);
+  --eb-button-disabled-text-color: #fff;
 }
-.ev-button.ev-button--success.ev-button {
-  --ev-button-bg-color: var(--ev-color-success);
-  --ev-button-border-color: var(--ev-color-success);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-success-light-3);
-  --ev-button-hover-border-color: var(--ev-color-success-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-success-dark-2);
-  --ev-button-active-border-color: var(--ev-color-success-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-success-light-5);
-  --ev-button-disabled-border-color: var(--ev-color-success-light-5);
-  --ev-button-disabled-text-color: #fff;
+.eb-button.eb-button--success.eb-button {
+  --eb-button-bg-color: var(--eb-color-success);
+  --eb-button-border-color: var(--eb-color-success);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-success-light-3);
+  --eb-button-hover-border-color: var(--eb-color-success-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-success-dark-2);
+  --eb-button-active-border-color: var(--eb-color-success-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-success-light-5);
+  --eb-button-disabled-border-color: var(--eb-color-success-light-5);
+  --eb-button-disabled-text-color: #fff;
 }
-.ev-button.ev-button--warning.ev-button {
-  --ev-button-bg-color: var(--ev-color-warning);
-  --ev-button-border-color: var(--ev-color-warning);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-warning-light-3);
-  --ev-button-hover-border-color: var(--ev-color-warning-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-warning-dark-2);
-  --ev-button-active-border-color: var(--ev-color-warning-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-warning-light-5);
-  --ev-button-disabled-border-color: var(--ev-color-warning-light-5);
-  --ev-button-disabled-text-color: #fff;
+.eb-button.eb-button--warning.eb-button {
+  --eb-button-bg-color: var(--eb-color-warning);
+  --eb-button-border-color: var(--eb-color-warning);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-warning-light-3);
+  --eb-button-hover-border-color: var(--eb-color-warning-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-warning-dark-2);
+  --eb-button-active-border-color: var(--eb-color-warning-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-warning-light-5);
+  --eb-button-disabled-border-color: var(--eb-color-warning-light-5);
+  --eb-button-disabled-text-color: #fff;
 }
-.ev-button.ev-button--danger.ev-button {
-  --ev-button-bg-color: var(--ev-color-danger);
-  --ev-button-border-color: var(--ev-color-danger);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-danger-light-3);
-  --ev-button-hover-border-color: var(--ev-color-danger-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-border-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-danger-light-5);
-  --ev-button-disabled-border-color: var(--ev-color-danger-light-5);
-  --ev-button-disabled-text-color: #fff;
+.eb-button.eb-button--danger.eb-button {
+  --eb-button-bg-color: var(--eb-color-danger);
+  --eb-button-border-color: var(--eb-color-danger);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-danger-light-3);
+  --eb-button-hover-border-color: var(--eb-color-danger-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-border-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-danger-light-5);
+  --eb-button-disabled-border-color: var(--eb-color-danger-light-5);
+  --eb-button-disabled-text-color: #fff;
 }
-.ev-button.ev-button--info.ev-button {
-  --ev-button-bg-color: var(--ev-color-info);
-  --ev-button-border-color: var(--ev-color-info);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-info-light-3);
-  --ev-button-hover-border-color: var(--ev-color-info-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-info-dark-2);
-  --ev-button-active-border-color: var(--ev-color-info-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-info-light-5);
-  --ev-button-disabled-border-color: var(--ev-color-info-light-5);
-  --ev-button-disabled-text-color: #fff;
+.eb-button.eb-button--info.eb-button {
+  --eb-button-bg-color: var(--eb-color-info);
+  --eb-button-border-color: var(--eb-color-info);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-info-light-3);
+  --eb-button-hover-border-color: var(--eb-color-info-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-info-dark-2);
+  --eb-button-active-border-color: var(--eb-color-info-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-info-light-5);
+  --eb-button-disabled-border-color: var(--eb-color-info-light-5);
+  --eb-button-disabled-text-color: #fff;
 }
 
 /* ─── plain 变体 ─── */
-.ev-button.ev-button--primary.ev-button.is-plain {
-  --ev-button-bg-color: var(--ev-color-primary-light-9);
-  --ev-button-border-color: var(--ev-color-primary-light-5);
-  --ev-button-text-color: var(--ev-color-primary);
-  --ev-button-hover-bg-color: var(--ev-color-primary);
-  --ev-button-hover-border-color: var(--ev-color-primary);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-primary-dark-2);
-  --ev-button-active-border-color: var(--ev-color-primary-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-primary-light-9);
-  --ev-button-disabled-border-color: var(--ev-color-primary-light-5);
-  --ev-button-disabled-text-color: var(--ev-color-primary-light-5);
+.eb-button.eb-button--primary.eb-button.is-plain {
+  --eb-button-bg-color: var(--eb-color-primary-light-9);
+  --eb-button-border-color: var(--eb-color-primary-light-5);
+  --eb-button-text-color: var(--eb-color-primary);
+  --eb-button-hover-bg-color: var(--eb-color-primary);
+  --eb-button-hover-border-color: var(--eb-color-primary);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-primary-dark-2);
+  --eb-button-active-border-color: var(--eb-color-primary-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-primary-light-9);
+  --eb-button-disabled-border-color: var(--eb-color-primary-light-5);
+  --eb-button-disabled-text-color: var(--eb-color-primary-light-5);
 }
-.ev-button.ev-button--success.ev-button.is-plain {
-  --ev-button-bg-color: var(--ev-color-success-light-9);
-  --ev-button-border-color: var(--ev-color-success-light-5);
-  --ev-button-text-color: var(--ev-color-success);
-  --ev-button-hover-bg-color: var(--ev-color-success);
-  --ev-button-hover-border-color: var(--ev-color-success);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-success-dark-2);
-  --ev-button-active-border-color: var(--ev-color-success-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-success-light-9);
-  --ev-button-disabled-border-color: var(--ev-color-success-light-5);
-  --ev-button-disabled-text-color: var(--ev-color-success-light-5);
+.eb-button.eb-button--success.eb-button.is-plain {
+  --eb-button-bg-color: var(--eb-color-success-light-9);
+  --eb-button-border-color: var(--eb-color-success-light-5);
+  --eb-button-text-color: var(--eb-color-success);
+  --eb-button-hover-bg-color: var(--eb-color-success);
+  --eb-button-hover-border-color: var(--eb-color-success);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-success-dark-2);
+  --eb-button-active-border-color: var(--eb-color-success-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-success-light-9);
+  --eb-button-disabled-border-color: var(--eb-color-success-light-5);
+  --eb-button-disabled-text-color: var(--eb-color-success-light-5);
 }
-.ev-button.ev-button--warning.ev-button.is-plain {
-  --ev-button-bg-color: var(--ev-color-warning-light-9);
-  --ev-button-border-color: var(--ev-color-warning-light-5);
-  --ev-button-text-color: var(--ev-color-warning);
-  --ev-button-hover-bg-color: var(--ev-color-warning);
-  --ev-button-hover-border-color: var(--ev-color-warning);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-warning-dark-2);
-  --ev-button-active-border-color: var(--ev-color-warning-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-warning-light-9);
-  --ev-button-disabled-border-color: var(--ev-color-warning-light-5);
-  --ev-button-disabled-text-color: var(--ev-color-warning-light-5);
+.eb-button.eb-button--warning.eb-button.is-plain {
+  --eb-button-bg-color: var(--eb-color-warning-light-9);
+  --eb-button-border-color: var(--eb-color-warning-light-5);
+  --eb-button-text-color: var(--eb-color-warning);
+  --eb-button-hover-bg-color: var(--eb-color-warning);
+  --eb-button-hover-border-color: var(--eb-color-warning);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-warning-dark-2);
+  --eb-button-active-border-color: var(--eb-color-warning-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-warning-light-9);
+  --eb-button-disabled-border-color: var(--eb-color-warning-light-5);
+  --eb-button-disabled-text-color: var(--eb-color-warning-light-5);
 }
-.ev-button.ev-button--danger.ev-button.is-plain {
-  --ev-button-bg-color: var(--ev-color-danger-light-9);
-  --ev-button-border-color: var(--ev-color-danger-light-5);
-  --ev-button-text-color: var(--ev-color-danger);
-  --ev-button-hover-bg-color: var(--ev-color-danger);
-  --ev-button-hover-border-color: var(--ev-color-danger);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-border-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-danger-light-9);
-  --ev-button-disabled-border-color: var(--ev-color-danger-light-5);
-  --ev-button-disabled-text-color: var(--ev-color-danger-light-5);
+.eb-button.eb-button--danger.eb-button.is-plain {
+  --eb-button-bg-color: var(--eb-color-danger-light-9);
+  --eb-button-border-color: var(--eb-color-danger-light-5);
+  --eb-button-text-color: var(--eb-color-danger);
+  --eb-button-hover-bg-color: var(--eb-color-danger);
+  --eb-button-hover-border-color: var(--eb-color-danger);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-border-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-danger-light-9);
+  --eb-button-disabled-border-color: var(--eb-color-danger-light-5);
+  --eb-button-disabled-text-color: var(--eb-color-danger-light-5);
 }
-.ev-button.ev-button--info.ev-button.is-plain {
-  --ev-button-bg-color: var(--ev-color-info-light-9);
-  --ev-button-border-color: var(--ev-color-info-light-5);
-  --ev-button-text-color: var(--ev-color-info);
-  --ev-button-hover-bg-color: var(--ev-color-info);
-  --ev-button-hover-border-color: var(--ev-color-info);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-info-dark-2);
-  --ev-button-active-border-color: var(--ev-color-info-dark-2);
-  --ev-button-active-text-color: #fff;
-  --ev-button-disabled-bg-color: var(--ev-color-info-light-9);
-  --ev-button-disabled-border-color: var(--ev-color-info-light-5);
-  --ev-button-disabled-text-color: var(--ev-color-info-light-5);
+.eb-button.eb-button--info.eb-button.is-plain {
+  --eb-button-bg-color: var(--eb-color-info-light-9);
+  --eb-button-border-color: var(--eb-color-info-light-5);
+  --eb-button-text-color: var(--eb-color-info);
+  --eb-button-hover-bg-color: var(--eb-color-info);
+  --eb-button-hover-border-color: var(--eb-color-info);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-info-dark-2);
+  --eb-button-active-border-color: var(--eb-color-info-dark-2);
+  --eb-button-active-text-color: #fff;
+  --eb-button-disabled-bg-color: var(--eb-color-info-light-9);
+  --eb-button-disabled-border-color: var(--eb-color-info-light-5);
+  --eb-button-disabled-text-color: var(--eb-color-info-light-5);
 }
 
 /* ─── text / link 变体 ─── */
-.ev-button.ev-button.is-text,
-.ev-button.ev-button.is-link {
-  --ev-button-bg-color: transparent;
-  --ev-button-border-color: transparent;
-  --ev-button-text-color: var(--ev-text-color-regular);
-  --ev-button-hover-bg-color: transparent;
-  --ev-button-hover-border-color: transparent;
-  --ev-button-hover-text-color: var(--ev-color-primary);
-  --ev-button-active-bg-color: transparent;
-  --ev-button-active-border-color: transparent;
-  --ev-button-active-text-color: var(--ev-color-primary-dark-2);
-  --ev-button-disabled-bg-color: transparent;
-  --ev-button-disabled-border-color: transparent;
-  --ev-button-disabled-text-color: var(--ev-text-color-placeholder);
+.eb-button.eb-button.is-text,
+.eb-button.eb-button.is-link {
+  --eb-button-bg-color: transparent;
+  --eb-button-border-color: transparent;
+  --eb-button-text-color: var(--eb-text-color-regular);
+  --eb-button-hover-bg-color: transparent;
+  --eb-button-hover-border-color: transparent;
+  --eb-button-hover-text-color: var(--eb-color-primary);
+  --eb-button-active-bg-color: transparent;
+  --eb-button-active-border-color: transparent;
+  --eb-button-active-text-color: var(--eb-color-primary-dark-2);
+  --eb-button-disabled-bg-color: transparent;
+  --eb-button-disabled-border-color: transparent;
+  --eb-button-disabled-text-color: var(--eb-text-color-placeholder);
 }
-.ev-button.ev-button.is-link.ev-button--primary {
-  --ev-button-text-color: var(--ev-color-primary);
-  --ev-button-hover-text-color: var(--ev-color-primary-light-3);
-  --ev-button-active-text-color: var(--ev-color-primary-dark-2);
-  --ev-button-disabled-text-color: var(--ev-color-primary-light-5);
+.eb-button.eb-button.is-link.eb-button--primary {
+  --eb-button-text-color: var(--eb-color-primary);
+  --eb-button-hover-text-color: var(--eb-color-primary-light-3);
+  --eb-button-active-text-color: var(--eb-color-primary-dark-2);
+  --eb-button-disabled-text-color: var(--eb-color-primary-light-5);
 }
-.ev-button.ev-button.is-text:hover,
-.ev-button.ev-button.is-text:focus-visible {
-  background-color: var(--ev-fill-color-light);
+.eb-button.eb-button.is-text:hover,
+.eb-button.eb-button.is-text:focus-visible {
+  background-color: var(--eb-fill-color-light);
 }
 
 /* ─── 交互态 ─── */
-.ev-button.ev-button:hover,
-.ev-button.ev-button:focus-visible {
-  background-color: var(--ev-button-hover-bg-color);
-  border-color: var(--ev-button-hover-border-color);
-  color: var(--ev-button-hover-text-color);
+.eb-button.eb-button:hover,
+.eb-button.eb-button:focus-visible {
+  background-color: var(--eb-button-hover-bg-color);
+  border-color: var(--eb-button-hover-border-color);
+  color: var(--eb-button-hover-text-color);
   outline: none;
 }
-.ev-button.ev-button:active {
-  background-color: var(--ev-button-active-bg-color);
-  border-color: var(--ev-button-active-border-color);
-  color: var(--ev-button-active-text-color);
+.eb-button.eb-button:active {
+  background-color: var(--eb-button-active-bg-color);
+  border-color: var(--eb-button-active-border-color);
+  color: var(--eb-button-active-text-color);
   transform: scale(0.96);
 }
-.ev-button.ev-button:focus-visible {
-  box-shadow: var(--ev-focus-ring);
+.eb-button.eb-button:focus-visible {
+  box-shadow: var(--eb-focus-ring);
 }
 
 /* ─── 禁用/加载 ─── */
-.ev-button.ev-button.is-disabled,
-.ev-button.ev-button.is-disabled:hover,
-.ev-button.ev-button.is-disabled:active {
-  background-color: var(--ev-button-disabled-bg-color);
-  border-color: var(--ev-button-disabled-border-color);
-  color: var(--ev-button-disabled-text-color);
+.eb-button.eb-button.is-disabled,
+.eb-button.eb-button.is-disabled:hover,
+.eb-button.eb-button.is-disabled:active {
+  background-color: var(--eb-button-disabled-bg-color);
+  border-color: var(--eb-button-disabled-border-color);
+  color: var(--eb-button-disabled-text-color);
   cursor: not-allowed;
   transform: none;
   opacity: 0.6;
 }
-.ev-button.ev-button.is-loading {
+.eb-button.eb-button.is-loading {
   position: relative;
   pointer-events: none;
 }
-.ev-button.ev-button .ev-button__loading-icon {
+.eb-button.eb-button .eb-button__loading-icon {
   display: inline-flex;
   align-items: center;
 }
 
 /* ─── 图标 ─── */
-.ev-button.ev-button .ev-button__icon {
+.eb-button.eb-button .eb-button__icon {
   display: inline-flex;
   align-items: center;
   margin-right: 2px;
 }
 /* icon-position="right"：图标挪到文本右侧（如「下一页 →」按钮组） */
-.ev-button.ev-button.is-icon-right .ev-button__icon {
+.eb-button.eb-button.is-icon-right .eb-button__icon {
   order: 1;
   margin-right: 0;
   margin-left: 2px;
 }
 
-/* ─── ghost（透明底，--ev-button-* 变量覆盖） ─── */
-.ev-button.ev-button.is-ghost {
-  --ev-button-bg-color: transparent;
-  --ev-button-border-color: var(--ev-border-color-dark);
-  --ev-button-text-color: var(--ev-text-color-primary);
-  --ev-button-hover-bg-color: var(--ev-color-primary-light-9);
-  --ev-button-hover-border-color: var(--ev-color-primary);
-  --ev-button-hover-text-color: var(--ev-color-primary);
-  --ev-button-active-bg-color: var(--ev-color-primary-light-8);
-  --ev-button-active-border-color: var(--ev-color-primary);
-  --ev-button-active-text-color: var(--ev-color-primary);
+/* ─── ghost（透明底，--eb-button-* 变量覆盖） ─── */
+.eb-button.eb-button.is-ghost {
+  --eb-button-bg-color: transparent;
+  --eb-button-border-color: var(--eb-border-color-dark);
+  --eb-button-text-color: var(--eb-text-color-primary);
+  --eb-button-hover-bg-color: var(--eb-color-primary-light-9);
+  --eb-button-hover-border-color: var(--eb-color-primary);
+  --eb-button-hover-text-color: var(--eb-color-primary);
+  --eb-button-active-bg-color: var(--eb-color-primary-light-8);
+  --eb-button-active-border-color: var(--eb-color-primary);
+  --eb-button-active-text-color: var(--eb-color-primary);
 }
-.ev-button.ev-button.is-ghost.is-disabled {
+.eb-button.eb-button.is-ghost.is-disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* ─── danger-solid（危险实心） ─── */
-.ev-button.ev-button.is-danger-solid {
-  --ev-button-bg-color: var(--ev-color-danger);
-  --ev-button-border-color: var(--ev-color-danger);
-  --ev-button-text-color: #fff;
-  --ev-button-hover-bg-color: var(--ev-color-danger-light-3);
-  --ev-button-hover-border-color: var(--ev-color-danger-light-3);
-  --ev-button-hover-text-color: #fff;
-  --ev-button-active-bg-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-border-color: var(--ev-color-danger-dark-2);
-  --ev-button-active-text-color: #fff;
+.eb-button.eb-button.is-danger-solid {
+  --eb-button-bg-color: var(--eb-color-danger);
+  --eb-button-border-color: var(--eb-color-danger);
+  --eb-button-text-color: #fff;
+  --eb-button-hover-bg-color: var(--eb-color-danger-light-3);
+  --eb-button-hover-border-color: var(--eb-color-danger-light-3);
+  --eb-button-hover-text-color: #fff;
+  --eb-button-active-bg-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-border-color: var(--eb-color-danger-dark-2);
+  --eb-button-active-text-color: #fff;
 }
 
-.ev-button.ev-button.has-fixed-width {
+.eb-button.eb-button.has-fixed-width {
   min-width: 0;
 }

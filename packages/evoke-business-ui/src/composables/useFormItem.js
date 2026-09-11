@@ -1,6 +1,6 @@
 /**
  * 表单契约 — 三层 provide/inject
- * EvForm(formContext) → EvFormItem(formItemContext) → 输入类组件 inject
+ * EbForm(formContext) → EbFormItem(formItemContext) → 输入类组件 inject
  * trigger 语义：blur / change
  */
 import { inject, computed, unref } from 'vue'

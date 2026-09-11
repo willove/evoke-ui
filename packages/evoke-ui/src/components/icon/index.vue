@@ -1,5 +1,5 @@
 <template>
-  <i class="ew-icon" :style="iconStyle" aria-hidden="true" v-bind="$attrs">
+  <i class="ev-icon" :style="iconStyle" aria-hidden="true" v-bind="$attrs">
     <component :is="resolvedIcon" v-if="resolvedIcon" />
     <slot v-else />
   </i>
@@ -7,8 +7,8 @@
 
 <script setup>
 /**
- * EwIcon — 图标组件
- * 根节点挂 ew-icon class；name 支持 kebab-case 语义名（核心集）
+ * EvIcon — 图标组件
+ * 根节点挂 ev-icon class；name 支持 kebab-case 语义名（核心集）
  * 与 Remix 原生命名（加载展示集后，如 'brush-line'）
  */
 import { computed } from 'vue'

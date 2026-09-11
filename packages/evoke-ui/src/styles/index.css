@@ -4,7 +4,7 @@
    import '@wil-works/evoke-ui/styles'
    ============================================ */
 
-/* 设计变量（Launch Blue #0D70FF，--ew-* 语义层 + --ew-* 设计层） */
+/* 设计变量（Launch Blue #0D70FF，--ev-* 语义层 + --ev-* 设计层） */
 @import './variables.css';
 
 /* 工具类（容器/焦点/滚动条/reveal 浮现） */

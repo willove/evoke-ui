@@ -1,43 +1,43 @@
 <template>
   <Teleport to="body">
-    <Transition name="ev-image-viewer-fade">
+    <Transition name="eb-image-viewer-fade">
       <div
         v-if="visible"
-        class="ev-image-viewer__wrapper ev-image-viewer"
+        class="eb-image-viewer__wrapper eb-image-viewer"
         :style="{ zIndex }"
         role="dialog"
         aria-modal="true"
         aria-label="图片查看器"
         @click.self="handleOverlayClick"
       >
-        <div class="ev-image-viewer__mask" />
-        <span class="ev-image-viewer__btn ev-image-viewer__close" @click="close">
-          <ev-icon name="close" :size="24" />
+        <div class="eb-image-viewer__mask" />
+        <span class="eb-image-viewer__btn eb-image-viewer__close" @click="close">
+          <eb-icon name="close" :size="24" />
         </span>
         <template v-if="!isSingle">
-          <span class="ev-image-viewer__btn ev-image-viewer__prev" :class="{ 'is-disabled': prevDisabled }" @click="prev">
-            <ev-icon name="arrow-left" :size="24" />
+          <span class="eb-image-viewer__btn eb-image-viewer__prev" :class="{ 'is-disabled': prevDisabled }" @click="prev">
+            <eb-icon name="arrow-left" :size="24" />
           </span>
-          <span class="ev-image-viewer__btn ev-image-viewer__next" :class="{ 'is-disabled': nextDisabled }" @click="next">
-            <ev-icon name="arrow-right" :size="24" />
+          <span class="eb-image-viewer__btn eb-image-viewer__next" :class="{ 'is-disabled': nextDisabled }" @click="next">
+            <eb-icon name="arrow-right" :size="24" />
           </span>
         </template>
-        <div class="ev-image-viewer__actions">
-          <span class="ev-image-viewer__actions__inner">
-            <ev-icon name="zoom-out" class="ev-image-viewer__action" @click="zoomOut" />
-            <ev-icon name="zoom-in" class="ev-image-viewer__action" @click="zoomIn" />
-            <ev-icon name="refresh-right" class="ev-image-viewer__action" @click="rotate" />
-            <span class="ev-image-viewer__counter">{{ index + 1 }} / {{ urlList.length }}</span>
+        <div class="eb-image-viewer__actions">
+          <span class="eb-image-viewer__actions__inner">
+            <eb-icon name="zoom-out" class="eb-image-viewer__action" @click="zoomOut" />
+            <eb-icon name="zoom-in" class="eb-image-viewer__action" @click="zoomIn" />
+            <eb-icon name="refresh-right" class="eb-image-viewer__action" @click="rotate" />
+            <span class="eb-image-viewer__counter">{{ index + 1 }} / {{ urlList.length }}</span>
           </span>
         </div>
-        <div class="ev-image-viewer__canvas">
+        <div class="eb-image-viewer__canvas">
           <img
             v-for="(url, i) in urlList"
             v-show="i === index"
             :key="url"
             :src="url"
             :style="imgStyle"
-            class="ev-image-viewer__img"
+            class="eb-image-viewer__img"
             alt=""
             @error="handleError"
           />
@@ -49,15 +49,15 @@
 
 <script setup>
 /**
- * EvImageViewer — 图片查看器
+ * EbImageViewer — 图片查看器
  * 缩放/旋转/多图切换/ESC 关闭
  */
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useZIndex } from '../../composables/useZIndex'
 import { on as onEvent } from '../../utils/events'
 
-defineOptions({ name: 'EvImageViewer' })
+defineOptions({ name: 'EbImageViewer' })
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -83,7 +83,7 @@ const nextDisabled = computed(() => index.value === props.urlList.length - 1)
 
 const imgStyle = computed(() => ({
   transform: `scale(${scale.value}) rotate(${rotateDeg.value}deg)`,
-  transition: 'transform 0.3s var(--ev-ease-out)',
+  transition: 'transform 0.3s var(--eb-ease-out)',
 }))
 
 watch(

@@ -68,8 +68,8 @@ a {
 }
 
 /* 弹窗/抽屉锁滚动时视口滚动条消失，body 的 padding 补偿管不到 fixed 顶栏，需单独补偿避免横跳 */
-body.ev-scroll-locked .bd-header {
-  padding-right: var(--ev-scrollbar-width, 0px);
+body.eb-scroll-locked .bd-header {
+  padding-right: var(--eb-scrollbar-width, 0px);
 }
 
 .bd-header__inner {
@@ -442,7 +442,7 @@ body.ev-scroll-locked .bd-header {
 
 /* 演示区内的裸 p（组件插槽内容）同样按 reset 后的继承观感渲染，
    抵消 .bd-doc p 的文档式字号/行高/颜色渗透 */
-.bd-doc .demo-block p:not([class*='ev-']) {
+.bd-doc .demo-block p:not([class*='eb-']) {
   margin: 0;
   font-size: inherit;
   line-height: inherit;
@@ -474,14 +474,14 @@ body.ev-scroll-locked .bd-header {
   border-radius: var(--bd-radius);
 }
 
-/* markdown 表格（排除组件内部表格，避免 margin/font-size 泄漏进 ev-table 等组件） */
-.bd-doc table:not([class*='ev-']):not([class*='ev-']) {
+/* markdown 表格（排除组件内部表格，避免 margin/font-size 泄漏进 eb-table 等组件） */
+.bd-doc table:not([class*='eb-']):not([class*='eb-']) {
   width: 100%;
   margin: 12px 0 24px;
   border-collapse: collapse;
   font-size: 13px;
 }
-.bd-doc table:not([class*='ev-']):not([class*='ev-']) th {
+.bd-doc table:not([class*='eb-']):not([class*='eb-']) th {
   padding: 10px 12px;
   text-align: left;
   background: var(--bd-bg-secondary);
@@ -490,7 +490,7 @@ body.ev-scroll-locked .bd-header {
   font-weight: 600;
   white-space: nowrap;
 }
-.bd-doc table:not([class*='ev-']):not([class*='ev-']) td {
+.bd-doc table:not([class*='eb-']):not([class*='eb-']) td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--bd-border-light);
   color: var(--bd-text-secondary);
@@ -600,88 +600,88 @@ html.dark [class*='language-'] code span {
   gap: 12px;
 }
 /* 演示区内联组件间距（仅直接子级，按钮组等复合容器内部不受影响） */
-.demo-block__preview > .ev-button + .ev-button,
-.demo-block__preview > .ev-tag + .ev-tag,
-.demo-block__preview > .ev-checkbox + .ev-checkbox,
-.demo-block__preview > .ev-radio + .ev-radio,
-.demo-block__preview > .ev-switch + .ev-switch,
-.demo-block__preview > .ev-rate + .ev-rate,
-.demo-block__preview > .ev-rate + .ev-rate,
-.demo-block__preview > .ev-input + .ev-input,
-.demo-block__preview > .ev-select + .ev-select,
-.demo-block__preview > .ev-input-number + .ev-input-number,
-.demo-block__preview > .ev-icon + .ev-icon,
-.demo-block__preview > .ev-button,
-.demo-block__preview > .ev-tag,
-.demo-block__preview > .ev-checkbox,
-.demo-block__preview > .ev-radio,
-.demo-block__preview > .ev-switch,
-.demo-block__preview > .ev-input,
-.demo-block__preview > .ev-select,
-.demo-block__preview > .ev-input-number {
+.demo-block__preview > .eb-button + .eb-button,
+.demo-block__preview > .eb-tag + .eb-tag,
+.demo-block__preview > .eb-checkbox + .eb-checkbox,
+.demo-block__preview > .eb-radio + .eb-radio,
+.demo-block__preview > .eb-switch + .eb-switch,
+.demo-block__preview > .eb-rate + .eb-rate,
+.demo-block__preview > .eb-rate + .eb-rate,
+.demo-block__preview > .eb-input + .eb-input,
+.demo-block__preview > .eb-select + .eb-select,
+.demo-block__preview > .eb-input-number + .eb-input-number,
+.demo-block__preview > .eb-icon + .eb-icon,
+.demo-block__preview > .eb-button,
+.demo-block__preview > .eb-tag,
+.demo-block__preview > .eb-checkbox,
+.demo-block__preview > .eb-radio,
+.demo-block__preview > .eb-switch,
+.demo-block__preview > .eb-input,
+.demo-block__preview > .eb-select,
+.demo-block__preview > .eb-input-number {
   margin-left: 0;
 }
-.demo-block__preview > .ev-button + .ev-button,
-.demo-block__preview > .ev-tag + .ev-tag,
-.demo-block__preview > .ev-checkbox + .ev-checkbox,
-.demo-block__preview > .ev-radio + .ev-radio,
-.demo-block__preview > .ev-switch + .ev-switch,
-.demo-block__preview > .ev-rate + .ev-rate,
-.demo-block__preview > .ev-input + .ev-input,
-.demo-block__preview > .ev-select + .ev-select,
-.demo-block__preview > .ev-input-number + .ev-input-number,
-.demo-block__preview > .ev-icon + .ev-icon,
-.demo-block__preview > .ev-iconfont + .ev-iconfont {
+.demo-block__preview > .eb-button + .eb-button,
+.demo-block__preview > .eb-tag + .eb-tag,
+.demo-block__preview > .eb-checkbox + .eb-checkbox,
+.demo-block__preview > .eb-radio + .eb-radio,
+.demo-block__preview > .eb-switch + .eb-switch,
+.demo-block__preview > .eb-rate + .eb-rate,
+.demo-block__preview > .eb-input + .eb-input,
+.demo-block__preview > .eb-select + .eb-select,
+.demo-block__preview > .eb-input-number + .eb-input-number,
+.demo-block__preview > .eb-icon + .eb-icon,
+.demo-block__preview > .eb-iconfont + .eb-iconfont {
   margin-left: 8px;
 }
 /* 相邻不同类组件之间也拉开间隔（通用兜底：同为 inline 级的直接子级） */
-.demo-block__preview > .ev-button + .ev-tag,
-.demo-block__preview > .ev-tag + .ev-button,
-.demo-block__preview > .ev-button + .ev-switch,
-.demo-block__preview > .ev-switch + .ev-button,
-.demo-block__preview > .ev-button + .ev-checkbox,
-.demo-block__preview > .ev-checkbox + .ev-button,
-.demo-block__preview > .ev-button + .ev-input,
-.demo-block__preview > .ev-input + .ev-button,
-.demo-block__preview > .ev-input + .ev-select,
-.demo-block__preview > .ev-select + .ev-input,
-.demo-block__preview > .ev-switch + .ev-checkbox,
-.demo-block__preview > .ev-checkbox + .ev-switch,
-.demo-block__preview > .ev-switch + .ev-radio,
-.demo-block__preview > .ev-radio + .ev-switch {
+.demo-block__preview > .eb-button + .eb-tag,
+.demo-block__preview > .eb-tag + .eb-button,
+.demo-block__preview > .eb-button + .eb-switch,
+.demo-block__preview > .eb-switch + .eb-button,
+.demo-block__preview > .eb-button + .eb-checkbox,
+.demo-block__preview > .eb-checkbox + .eb-button,
+.demo-block__preview > .eb-button + .eb-input,
+.demo-block__preview > .eb-input + .eb-button,
+.demo-block__preview > .eb-input + .eb-select,
+.demo-block__preview > .eb-select + .eb-input,
+.demo-block__preview > .eb-switch + .eb-checkbox,
+.demo-block__preview > .eb-checkbox + .eb-switch,
+.demo-block__preview > .eb-switch + .eb-radio,
+.demo-block__preview > .eb-radio + .eb-switch {
   margin-left: 12px;
 }
 /* 全宽表单控件在演示区收窄：避免 width:100% 导致尺寸示例整行堆叠零间距；
    容器切换 flex wrap + gap，换行时行间同样保持间距 */
-.demo-block__preview:has(> .ev-input),
-.demo-block__preview:has(> .ev-select) {
+.demo-block__preview:has(> .eb-input),
+.demo-block__preview:has(> .eb-select) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
 }
-.demo-block__preview > .ev-input,
-.demo-block__preview > .ev-select {
+.demo-block__preview > .eb-input,
+.demo-block__preview > .eb-select {
   width: 260px;
   max-width: 100%;
   vertical-align: top;
 }
-.demo-block__preview:has(> .ev-input) > .ev-input,
-.demo-block__preview:has(> .ev-select) > .ev-select,
-.demo-block__preview:has(> .ev-input) > .ev-select,
-.demo-block__preview:has(> .ev-select) > .ev-input {
+.demo-block__preview:has(> .eb-input) > .eb-input,
+.demo-block__preview:has(> .eb-select) > .eb-select,
+.demo-block__preview:has(> .eb-input) > .eb-select,
+.demo-block__preview:has(> .eb-select) > .eb-input {
   margin-left: 0;
   margin-top: 0;
 }
 /* 复合容器（单选组 / 复选组 / 日期选择器等）之间的并排与换行间距 */
-.demo-block__preview > .ev-radio-group + .ev-radio-group,
-.demo-block__preview > .ev-checkbox-group + .ev-checkbox-group,
-.demo-block__preview > .ev-radio-group + .ev-checkbox-group,
-.demo-block__preview > .ev-checkbox-group + .ev-radio-group {
+.demo-block__preview > .eb-radio-group + .eb-radio-group,
+.demo-block__preview > .eb-checkbox-group + .eb-checkbox-group,
+.demo-block__preview > .eb-radio-group + .eb-checkbox-group,
+.demo-block__preview > .eb-checkbox-group + .eb-radio-group {
   margin-left: 12px;
 }
-.demo-block__preview > .ev-date-editor + .ev-date-editor,
-.demo-block__preview > .ev-date-picker + .ev-date-picker {
+.demo-block__preview > .eb-date-editor + .eb-date-editor,
+.demo-block__preview > .eb-date-picker + .eb-date-picker {
   margin-left: 12px;
 }
 .demo-block__source {
@@ -1030,8 +1030,8 @@ html.dark .api-table__type {
   gap: 14px;
   height: var(--live-bar-h);
   padding: 0 16px;
-  background: var(--ev-bg-color, #fff);
-  border-bottom: 1px solid var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-bg-color, #fff);
+  border-bottom: 1px solid var(--eb-border-color-light, #e5e7eb);
 }
 
 .example-live__back {
@@ -1040,19 +1040,19 @@ html.dark .api-table__type {
   gap: 5px;
   flex-shrink: 0;
   font-size: 13px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .example-live__back:hover {
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
 }
 
 .example-live__divider {
   width: 1px;
   height: 18px;
-  background: var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-border-color-light, #e5e7eb);
 }
 
 .example-live__brand {
@@ -1062,11 +1062,11 @@ html.dark .api-table__type {
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--ev-text-color-primary, #1f2329);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 
 .example-live__brand .bd-icon {
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
 }
 
 .example-live__switch {
@@ -1086,20 +1086,20 @@ html.dark .api-table__type {
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .example-live__dark:hover {
-  background: var(--ev-fill-color-light, #f5f6f8);
-  color: var(--ev-text-color-primary, #1f2329);
+  background: var(--eb-fill-color-light, #f5f6f8);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 
 .example-live__stage {
   height: calc(100vh - var(--live-bar-h));
   overflow: auto;
-  background: var(--ev-bg-color-page, #f5f6f8);
+  background: var(--eb-bg-color-page, #f5f6f8);
 }
 
 /* Content 会在 md 外再包一层无类名 div，让其在舞台内撑满 */
@@ -1126,17 +1126,17 @@ html.dark .api-table__type {
   padding: 7px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
   text-decoration: none;
-  background: var(--ev-color-primary-light-8, rgba(23, 93, 255, 0.08));
-  border: 1px solid var(--ev-color-primary-light-5, rgba(23, 93, 255, 0.25));
+  background: var(--eb-color-primary-light-8, rgba(23, 93, 255, 0.08));
+  border: 1px solid var(--eb-color-primary-light-5, rgba(23, 93, 255, 0.25));
   border-radius: 999px;
   transition: all 0.2s;
 }
 
 .bd-live-link:hover {
   color: #fff;
-  background: var(--ev-color-primary, #175dff);
+  background: var(--eb-color-primary, #175dff);
 }
 
 /* ══════ 首页增强（hero 徽标 / 数据带 / 示例横幅 / 分区速览） ══════ */
@@ -1406,7 +1406,7 @@ html.dark .ov-card__art {
 .example-live__switch::-webkit-scrollbar {
   display: none;
 }
-.example-live__switch .ev-segmented__items {
+.example-live__switch .eb-segmented__items {
   width: max-content;
 }
 @media (max-width: 640px) {
@@ -1538,14 +1538,14 @@ html.dark .ov-card__art {
 }
 /* 舞台内弹层遮罩用 absolute 贴合屏幕层：fixed 在 transform 容器内不随文档页滚动跟随（Chrome 行为），
    absolute 则始终盖住「手机屏幕」；真机（Teleport 到 body）不受此规则影响 */
-.mob-stage .ev-overlay.ev-overlay,
-.mob-stage .ev-action-sheet__overlay.ev-action-sheet__overlay {
+.mob-stage .eb-overlay.eb-overlay,
+.mob-stage .eb-action-sheet__overlay.eb-action-sheet__overlay {
   position: absolute;
 }
 
-/* 舞台内全屏对话框：absolute 贴合已含在舞台内的 ev-overlay-dialog，
-   避免 fixed + 百分比尺寸在滚动容器内定位漂移（特异性需压过库内 .ev-overlay 前缀规则） */
-.mob-stage .ev-overlay .ev-dialog.ev-dialog.is-fullscreen {
+/* 舞台内全屏对话框：absolute 贴合已含在舞台内的 eb-overlay-dialog，
+   避免 fixed + 百分比尺寸在滚动容器内定位漂移（特异性需压过库内 .eb-overlay 前缀规则） */
+.mob-stage .eb-overlay .eb-dialog.eb-dialog.is-fullscreen {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1682,7 +1682,7 @@ html.dark .ov-card__art {
   height: 16px;
   padding: 0 4px;
   border-radius: 8px;
-  background: var(--ev-color-danger, #f54a45);
+  background: var(--eb-color-danger, #f54a45);
   color: #fff;
   font-size: 10px;
   font-style: normal;
@@ -1694,7 +1694,7 @@ html.dark .ov-card__art {
   border-top: 1px solid var(--bd-border-light);
   background: var(--bd-bg);
 }
-.mb-submit .ev-button {
+.mb-submit .eb-button {
   width: 100%;
 }
 .mb-field {
@@ -1769,7 +1769,7 @@ html.dark .ov-card__art {
   user-select: none;
 }
 .mb-sheet__item.is-danger {
-  color: var(--ev-color-danger, #f54a45);
+  color: var(--eb-color-danger, #f54a45);
 }
 .mb-sheet__cancel {
   margin-top: 8px;

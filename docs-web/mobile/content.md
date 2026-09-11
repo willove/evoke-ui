@@ -33,7 +33,7 @@ function onLoadMore() {
 </script>
 
 官网的内容型页面（文章、案例、动态）在移动端是一条**单列内容流**：顶部下拉刷新
-对齐原生 App 手感，尾部加载更多替代页码器。EwPullRefresh 与 EwLoadMore 组合即成
+对齐原生 App 手感，尾部加载更多替代页码器。EvPullRefresh 与 EvLoadMore 组合即成
 完整闭环，业务只需提供「取数据」函数。
 
 ## 刷新 + 加载闭环
@@ -41,15 +41,15 @@ function onLoadMore() {
 <DemoBlock title="下拉刷新 + 触底加载" description="触屏设备在流顶部下拉释放即刷新；点击「加载更多」或触底自动加载（autoLoad），两批后转 noMore。">
 
 <MobileStage title="设计日志">
-  <ew-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
+  <ev-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
     <div class="mb-page">
       <div v-for="p in posts" :key="p.title" class="mb-card mb-card--pad">
         <div class="mb-card__title">{{ p.title }}</div>
         <div class="mb-card__label" style="margin-top: 4px;">{{ p.meta }}</div>
       </div>
     </div>
-    <ew-load-more v-model:status="loadStatus" :preload="40" @load-more="onLoadMore" />
-  </ew-pull-refresh>
+    <ev-load-more v-model:status="loadStatus" :preload="40" @load-more="onLoadMore" />
+  </ev-pull-refresh>
 </MobileStage>
 
 ```vue
@@ -74,10 +74,10 @@ async function onLoadMore() {
 </script>
 
 <template>
-  <EwPullRefresh v-model="refreshing" @refresh="onRefresh">
+  <EvPullRefresh v-model="refreshing" @refresh="onRefresh">
     <ArticleCard v-for="p in posts" :key="p.id" v-bind="p" />
-    <EwLoadMore v-model:status="loadStatus" :preload="40" @load-more="onLoadMore" />
-  </EwPullRefresh>
+    <EvLoadMore v-model:status="loadStatus" :preload="40" @load-more="onLoadMore" />
+  </EvPullRefresh>
 </template>
 ```
 
@@ -89,18 +89,18 @@ async function onLoadMore() {
 封面可选。卡片保留静态信息（触屏无 hover），整卡可点进详情，不做「卡片上的第二个
 操作按钮」。
 
-<DemoBlock title="整宽文章卡" description="EwArticleCard 单列排布，hoverable 在触屏上自动无害化。">
+<DemoBlock title="整宽文章卡" description="EvArticleCard 单列排布，hoverable 在触屏上自动无害化。">
 
 <MobileStage title="案例集">
   <div class="mb-page">
-    <ew-article-card
+    <ev-article-card
       title="云笔记工作台"
       excerpt="以藏青墨色为基底的知识管理界面，留白切分层次。"
       date="2026-08-30"
       :tags="['工作台', 'Clean Navy']"
       :hoverable="true"
     />
-    <ew-article-card
+    <ev-article-card
       title="品牌官网改版"
       excerpt="特大紧字距标题 + 暖色渐变 Hero 的冲击层语言。"
       date="2026-08-12"

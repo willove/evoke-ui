@@ -1,27 +1,27 @@
 <template>
   <div
-    class="ew-carousel"
+    class="ev-carousel"
     :class="{ 'is-media': variant !== 'default' }"
     @mouseenter="paused = true"
     @mouseleave="paused = false"
   >
-    <div class="ew-carousel__viewport" :style="viewportStyle">
-      <div class="ew-carousel__track" :style="{ transform: `translateX(-${index * 100}%)` }">
-        <div v-for="(item, i) in items" :key="i" class="ew-carousel__slide">
+    <div class="ev-carousel__viewport" :style="viewportStyle">
+      <div class="ev-carousel__track" :style="{ transform: `translateX(-${index * 100}%)` }">
+        <div v-for="(item, i) in items" :key="i" class="ev-carousel__slide">
           <!-- 纯图片形态 -->
           <img
             v-if="variant === 'image'"
-            class="ew-carousel__img"
+            class="ev-carousel__img"
             :src="item.src"
             :alt="item.alt || ''"
             loading="lazy"
           />
           <!-- 图片 + 文字注释形态 -->
-          <div v-else-if="variant === 'banner'" class="ew-carousel__banner">
-            <img class="ew-carousel__img" :src="item.src" :alt="item.alt || ''" loading="lazy" />
-            <div v-if="item.title || item.desc" class="ew-carousel__caption">
-              <h3 v-if="item.title" class="ew-carousel__caption-title">{{ item.title }}</h3>
-              <p v-if="item.desc" class="ew-carousel__caption-desc">{{ item.desc }}</p>
+          <div v-else-if="variant === 'banner'" class="ev-carousel__banner">
+            <img class="ev-carousel__img" :src="item.src" :alt="item.alt || ''" loading="lazy" />
+            <div v-if="item.title || item.desc" class="ev-carousel__caption">
+              <h3 v-if="item.title" class="ev-carousel__caption-title">{{ item.title }}</h3>
+              <p v-if="item.desc" class="ev-carousel__caption-desc">{{ item.desc }}</p>
             </div>
           </div>
           <!-- 自定义内容形态 -->
@@ -30,19 +30,19 @@
       </div>
     </div>
 
-    <button v-if="items.length > 1" type="button" class="ew-carousel__arrow is-prev" aria-label="上一张" @click="step(-1)">
-      <EwIcon name="chevron-left" :size="18" />
+    <button v-if="items.length > 1" type="button" class="ev-carousel__arrow is-prev" aria-label="上一张" @click="step(-1)">
+      <EvIcon name="chevron-left" :size="18" />
     </button>
-    <button v-if="items.length > 1" type="button" class="ew-carousel__arrow is-next" aria-label="下一张" @click="step(1)">
-      <EwIcon name="chevron-right" :size="18" />
+    <button v-if="items.length > 1" type="button" class="ev-carousel__arrow is-next" aria-label="下一张" @click="step(1)">
+      <EvIcon name="chevron-right" :size="18" />
     </button>
 
-    <div v-if="items.length > 1 && dots" class="ew-carousel__dots">
+    <div v-if="items.length > 1 && dots" class="ev-carousel__dots">
       <button
         v-for="(_, i) in items"
         :key="i"
         type="button"
-        class="ew-carousel__dot"
+        class="ev-carousel__dot"
         :class="{ 'is-active': i === index }"
         :aria-label="`第 ${i + 1} 张`"
         @click="go(i)"
@@ -53,7 +53,7 @@
 
 <script setup>
 /**
- * EwCarousel — 轮播（评价墙、案例展示、横幅）
+ * EvCarousel — 轮播（评价墙、案例展示、横幅）
  * 三种形态（variant）：
  * - default：items 提供数据，#item 作用域插槽自定义每张内容
  * - image：纯图片轮播，items 项 { src, alt? }，aspect 控制画幅
@@ -61,7 +61,7 @@
  * autoplay 毫秒数（0 关闭），hover 暂停
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   items: { type: Array, default: () => [] },

@@ -16,10 +16,10 @@ const marqueeKey = ref(0)
 
 | 令牌 | 值 | 用途 |
 | --- | --- | --- |
-| `--ew-ease-spring` | `cubic-bezier(0.3, 1.3, 0.3, 1)` | 弹性入场（滑块、徽标弹入） |
-| `--ew-ease-smooth` | `cubic-bezier(0.34, 0.69, 0.1, 1)` | 位移滑动（轮播、开关、卡片） |
-| `--ew-ease-out` | `cubic-bezier(0.215, 0.61, 0.355, 1)` | 淡入 |
-| `--ew-duration-fast / base / slow / slower` | 0.15 / 0.2 / 0.3 / 0.5s | 时长阶 |
+| `--ev-ease-spring` | `cubic-bezier(0.3, 1.3, 0.3, 1)` | 弹性入场（滑块、徽标弹入） |
+| `--ev-ease-smooth` | `cubic-bezier(0.34, 0.69, 0.1, 1)` | 位移滑动（轮播、开关、卡片） |
+| `--ev-ease-out` | `cubic-bezier(0.215, 0.61, 0.355, 1)` | 淡入 |
+| `--ev-duration-fast / base / slow / slower` | 0.15 / 0.2 / 0.3 / 0.5s | 时长阶 |
 
 ## v-reveal 滚动入场
 
@@ -28,7 +28,7 @@ const marqueeKey = ref(0)
 <DemoBlock title="五种入场变体" description="点「重新播放」或再次滚过本区块即可复现。">
 
 <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-  <EwButton size="small" variant="outline" icon="refresh" @click="revealKey++">重新播放</EwButton>
+  <EvButton size="small" variant="outline" icon="refresh" @click="revealKey++">重新播放</EvButton>
 </div>
 <div :key="revealKey" class="reveal-demo">
   <div v-reveal="{ type: 'up', delay: 0 }" class="reveal-demo__card">up</div>
@@ -46,22 +46,22 @@ const marqueeKey = ref(0)
 
 ## 数字滚动
 
-[EwStatistic](/components/statistic) 的 `animated` 属性让数值进入视口时从 0 滚到目标值：
+[EvStatistic](/components/statistic) 的 `animated` 属性让数值进入视口时从 0 滚到目标值：
 easeOutExpo 缓动（起步迅猛、收尾徐缓），自动解析前后缀（`120K+`、`99.99%`、`¥68`）：
 
 <DemoBlock title="count-up" description="点「重新播放」再看一遍；duration 越长收尾越从容。">
 
 <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-  <EwButton size="small" variant="outline" icon="refresh" @click="countKey++">重新播放</EwButton>
+  <EvButton size="small" variant="outline" icon="refresh" @click="countKey++">重新播放</EvButton>
 </div>
 <div :key="countKey" style="display:flex; gap:48px; justify-content:center;">
-  <EwStatistic value="1,200+" label="周下载" align="center" animated />
-  <EwStatistic value="99.99%" label="可用性" align="center" animated />
-  <EwStatistic value="38" label="组件" align="center" animated />
+  <EvStatistic value="1,200+" label="周下载" align="center" animated />
+  <EvStatistic value="99.99%" label="可用性" align="center" animated />
+  <EvStatistic value="38" label="组件" align="center" animated />
 </div>
 
 ```vue
-<EwStatistic value="1,200+" label="周下载" align="center" animated :duration="1600" />
+<EvStatistic value="1,200+" label="周下载" align="center" animated :duration="1600" />
 ```
 
 </DemoBlock>
@@ -70,24 +70,24 @@ easeOutExpo 缓动（起步迅猛、收尾徐缓），自动解析前后缀（`1
 
 | 组件 | 动效 |
 | --- | --- |
-| [EwMarquee](/components/marquee) | 无限滚动横幅；文本模式 = 商场 LED 大字（实心/描边交替） |
-| [EwTabs](/components/tabs) | capsule 分段滑块弹性跟随激活项 |
-| [EwFeatureGrid](/components/feature-grid) | cards 默认交错入场（`reveal` / `stagger` 控制） |
-| [EwHero](/components/hero) | `reveal` 开启后徽章→标题→描述→动作 60ms 错峰入场 |
-| [EwNavbar](/components/navbar) | `hide-on-scroll` 下滑隐藏上滑浮现；滚动磨砂 |
-| [EwCarousel](/components/carousel) | 平滑位移轮播 + 自动播放 |
-| [EwCard](/components/card) / [EwArticleCard](/components/article-card) | 悬浮轻抬 + 封面缓放 |
-| [EwFaq](/components/faq) | grid-rows 平滑展开 |
-| [EwSwitch](/components/switch) / [EwIconGrid](/components/icon-grid) | spring 滑块 / 徽标弹入 |
+| [EvMarquee](/components/marquee) | 无限滚动横幅；文本模式 = 商场 LED 大字（实心/描边交替） |
+| [EvTabs](/components/tabs) | capsule 分段滑块弹性跟随激活项 |
+| [EvFeatureGrid](/components/feature-grid) | cards 默认交错入场（`reveal` / `stagger` 控制） |
+| [EvHero](/components/hero) | `reveal` 开启后徽章→标题→描述→动作 60ms 错峰入场 |
+| [EvNavbar](/components/navbar) | `hide-on-scroll` 下滑隐藏上滑浮现；滚动磨砂 |
+| [EvCarousel](/components/carousel) | 平滑位移轮播 + 自动播放 |
+| [EvCard](/components/card) / [EvArticleCard](/components/article-card) | 悬浮轻抬 + 封面缓放 |
+| [EvFaq](/components/faq) | grid-rows 平滑展开 |
+| [EvSwitch](/components/switch) / [EvIconGrid](/components/icon-grid) | spring 滑块 / 徽标弹入 |
 
 ## 动感文本滚动
 
-<DemoBlock title="商场 LED 风格大字横幅" description="EwMarquee 文本模式：大写大字 + 实心/描边交替 + 主色分隔符；hover 暂停。点「重新播放」重看一次入场。">
+<DemoBlock title="商场 LED 风格大字横幅" description="EvMarquee 文本模式：大写大字 + 实心/描边交替 + 主色分隔符；hover 暂停。点「重新播放」重看一次入场。">
 
 <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-  <EwButton size="small" variant="outline" icon="refresh" @click="marqueeKey++">重新播放</EwButton>
+  <EvButton size="small" variant="outline" icon="refresh" @click="marqueeKey++">重新播放</EvButton>
 </div>
-<EwMarquee
+<EvMarquee
   :key="marqueeKey"
   :items="['Evoke UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL MOTION', '明暗一体']"
   separator="star-fill"
@@ -96,7 +96,7 @@ easeOutExpo 缓动（起步迅猛、收尾徐缓），自动解析前后缀（`1
 />
 
 ```vue
-<EwMarquee
+<EvMarquee
   :items="['EVOKE UI', 'CLEAN NAVY', '轻与快', 'DELIGHTFUL MOTION']"
   separator="star-fill"
   alternate-outline
@@ -118,10 +118,10 @@ const countKey = ref(0)
 </script>
 
 <template>
-  <EwButton size="small" variant="outline" icon="refresh" @click="countKey++">
+  <EvButton size="small" variant="outline" icon="refresh" @click="countKey++">
     重新播放
-  </EwButton>
-  <EwStatistic :key="countKey" value="1,200+" animated />
+  </EvButton>
+  <EvStatistic :key="countKey" value="1,200+" animated />
 </template>
 ```
 
@@ -136,10 +136,10 @@ const countKey = ref(0)
   min-width: 90px;
   padding: 24px 12px;
   text-align: center;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-md);
-  background: var(--ew-fill-1);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  background: var(--ev-fill-1);
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 </style>

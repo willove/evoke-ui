@@ -1,14 +1,14 @@
 <template>
-  <component :is="tag" class="ev-header ev-header" :style="{ height }">
+  <component :is="tag" class="eb-header eb-header" :style="{ height }">
     <slot />
   </component>
 </template>
 
 <script setup>
 /**
- * EvHeader — 顶栏
+ * EbHeader — 顶栏
  */
-defineOptions({ name: 'EvHeader' })
+defineOptions({ name: 'EbHeader' })
 
 defineProps({
   height: { type: String, default: '60px' },

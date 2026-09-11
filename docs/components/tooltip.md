@@ -1,50 +1,50 @@
 # Tooltip 文字提示
 
-悬停 / 聚焦目标后出现的轻量文字提示，基于 EvPopper 浮层基座：12 个方位自适应、空间不足自动翻转、箭头自动锚定。
+悬停 / 聚焦目标后出现的轻量文字提示，基于 EbPopper 浮层基座：12 个方位自适应、空间不足自动翻转、箭头自动锚定。
 
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle" style="flex-wrap: wrap">
-    <ev-tooltip content="顶部提示" placement="top">
-      <ev-button>top</ev-button>
-    </ev-tooltip>
-    <ev-tooltip content="右侧提示" placement="right">
-      <ev-button>right</ev-button>
-    </ev-tooltip>
-    <ev-tooltip content="底部提示" placement="bottom">
-      <ev-button>bottom</ev-button>
-    </ev-tooltip>
-    <ev-tooltip content="左侧提示" placement="left">
-      <ev-button>left</ev-button>
-    </ev-tooltip>
-  </ev-space>
+  <eb-space size="middle" style="flex-wrap: wrap">
+    <eb-tooltip content="顶部提示" placement="top">
+      <eb-button>top</eb-button>
+    </eb-tooltip>
+    <eb-tooltip content="右侧提示" placement="right">
+      <eb-button>right</eb-button>
+    </eb-tooltip>
+    <eb-tooltip content="底部提示" placement="bottom">
+      <eb-button>bottom</eb-button>
+    </eb-tooltip>
+    <eb-tooltip content="左侧提示" placement="left">
+      <eb-button>left</eb-button>
+    </eb-tooltip>
+  </eb-space>
 </DemoBlock>
 
 ## 全部方位（12 个）
 
 <DemoBlock>
-  <ev-space size="small" style="flex-wrap: wrap">
-    <ev-tooltip v-for="p in placements" :key="p" :content="`placement: ${p}`" :placement="p">
-      <ev-button size="small">{{ p }}</ev-button>
-    </ev-tooltip>
-  </ev-space>
+  <eb-space size="small" style="flex-wrap: wrap">
+    <eb-tooltip v-for="p in placements" :key="p" :content="`placement: ${p}`" :placement="p">
+      <eb-button size="small">{{ p }}</eb-button>
+    </eb-tooltip>
+  </eb-space>
 </DemoBlock>
 
 ## 主题与禁用
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-tooltip content="深色主题（默认）">
-      <ev-button>dark</ev-button>
-    </ev-tooltip>
-    <ev-tooltip content="浅色主题" effect="light">
-      <ev-button>light</ev-button>
-    </ev-tooltip>
-    <ev-tooltip content="不会出现" disabled>
-      <ev-button>disabled</ev-button>
-    </ev-tooltip>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-tooltip content="深色主题（默认）">
+      <eb-button>dark</eb-button>
+    </eb-tooltip>
+    <eb-tooltip content="浅色主题" effect="light">
+      <eb-button>light</eb-button>
+    </eb-tooltip>
+    <eb-tooltip content="不会出现" disabled>
+      <eb-button>disabled</eb-button>
+    </eb-tooltip>
+  </eb-space>
 </DemoBlock>
 
 <script setup>

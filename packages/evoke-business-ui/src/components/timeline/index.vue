@@ -1,10 +1,10 @@
 <template>
   <div
-    class="ev-timeline"
+    class="eb-timeline"
     :class="[`is-mode-${mode}`, { 'is-reverse': reverse }, `is-variant-${variant}`]"
     role="list"
   >
-    <ev-timeline-item
+    <eb-timeline-item
       v-if="hasPending"
       :loading="true"
       :color="variant === 'filled' ? 'blue' : undefined"
@@ -15,19 +15,19 @@
       <template v-if="pendingDot" #dot><component :is="pendingDot" /></template>
       <template v-if="typeof pending === 'string'">{{ pending }}</template>
       <template v-else>加载中...</template>
-    </ev-timeline-item>
+    </eb-timeline-item>
     <slot />
   </div>
 </template>
 
 <script setup>
 /**
- * EvTimeline — 时间轴容器
+ * EbTimeline — 时间轴容器
  * mode: left/right/alternate；pending 幽灵节点；variant 节点变体。
  * 竖线为容器 ::before 一条贯穿伪元素，dot 浮于线上（不断裂）。
  */
 import { computed, provide, ref, watch, useSlots, Fragment, Comment, Text } from 'vue'
-import EvTimelineItem from './item.vue'
+import EbTimelineItem from './item.vue'
 
 // 挂载顺序登记：供 item 在未传 index 时推算 alternate 奇偶
 const uids = []

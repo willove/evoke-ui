@@ -1,52 +1,52 @@
-/* EvLoading —加载遮罩 */
+/* EbLoading —加载遮罩 */
 
-.ev-loading-mask.ev-loading-mask {
+.eb-loading-mask.eb-loading-mask {
   position: absolute;
   inset: 0;
   z-index: 2000;
-  background-color: var(--ev-mask-color, rgba(255, 255, 255, 0.9));
+  background-color: var(--eb-mask-color, rgba(255, 255, 255, 0.9));
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+  transition: opacity var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-loading-mask.ev-loading-mask.is-fullscreen {
+.eb-loading-mask.eb-loading-mask.is-fullscreen {
   position: fixed;
 }
 
-.ev-loading-mask.ev-loading-mask .ev-loading-spinner {
+.eb-loading-mask.eb-loading-mask .eb-loading-spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 
 /* 旋转圈 */
-.ev-loading-mask.ev-loading-mask .ev-loading-spinner .circular {
+.eb-loading-mask.eb-loading-mask .eb-loading-spinner .circular {
   width: 42px;
   height: 42px;
-  animation: ev-loading-rotate 2s linear infinite;
+  animation: eb-loading-rotate 2s linear infinite;
 }
-.ev-loading-mask.ev-loading-mask .ev-loading-spinner .path {
-  stroke: var(--ev-color-primary);
+.eb-loading-mask.eb-loading-mask .eb-loading-spinner .path {
+  stroke: var(--eb-color-primary);
   stroke-width: 2;
   stroke-linecap: round;
-  animation: ev-loading-dash 1.5s ease-in-out infinite;
+  animation: eb-loading-dash 1.5s ease-in-out infinite;
 }
 
-.ev-loading-mask.ev-loading-mask .ev-loading-text {
+.eb-loading-mask.eb-loading-mask .eb-loading-text {
   margin: 0;
-  color: var(--ev-color-primary);
-  font-size: var(--ev-font-size-xs);
+  color: var(--eb-color-primary);
+  font-size: var(--eb-font-size-xs);
 }
 
-@keyframes ev-loading-rotate {
+@keyframes eb-loading-rotate {
   100% {
     transform: rotate(360deg);
   }
 }
 
-@keyframes ev-loading-dash {
+@keyframes eb-loading-dash {
   0% {
     stroke-dasharray: 1, 126;
     stroke-dashoffset: 0;
@@ -62,16 +62,16 @@
 }
 
 /* v-loading 目标容器 */
-.ev-loading-parent--relative {
+.eb-loading-parent--relative {
   position: relative !important;
 }
 
 /* 过渡 */
-.ev-loading-fade-enter-active,
-.ev-loading-fade-leave-active {
-  transition: opacity var(--ev-duration-base) var(--ev-ease-out);
+.eb-loading-fade-enter-active,
+.eb-loading-fade-leave-active {
+  transition: opacity var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-loading-fade-enter-from,
-.ev-loading-fade-leave-to {
+.eb-loading-fade-enter-from,
+.eb-loading-fade-leave-to {
   opacity: 0;
 }

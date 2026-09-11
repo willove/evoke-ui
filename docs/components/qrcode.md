@@ -5,13 +5,13 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-qrcode :value="text" :size="128" />
+  <eb-space size="middle">
+    <eb-qrcode :value="text" :size="128" />
     <div>
-      <ev-input v-model="text" placeholder="修改内容实时刷新" style="width: 220px" />
-      <p style="font-size: 12px; color: var(--ev-text-color-secondary); margin-top: 8px;">换主色/暗色模式下前景背景色可用令牌覆盖</p>
+      <eb-input v-model="text" placeholder="修改内容实时刷新" style="width: 220px" />
+      <p style="font-size: 12px; color: var(--eb-text-color-secondary); margin-top: 8px;">换主色/暗色模式下前景背景色可用令牌覆盖</p>
     </div>
-  </ev-space>
+  </eb-space>
 </DemoBlock>
 
 <script setup>
@@ -22,10 +22,10 @@ const text = ref('https://evoke-ui.example.com/join?id=42')
 ## 自定义颜色与静区
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-qrcode value="Evoke Business UI" :size="112" foreground="#175DFF" />
-    <ev-qrcode value="Evoke Business UI" :size="112" :margin="2" />
-  </ev-space>
+  <eb-space size="middle">
+    <eb-qrcode value="Evoke Business UI" :size="112" foreground="#175DFF" />
+    <eb-qrcode value="Evoke Business UI" :size="112" :margin="2" />
+  </eb-space>
 </DemoBlock>
 
 ## QRCode API

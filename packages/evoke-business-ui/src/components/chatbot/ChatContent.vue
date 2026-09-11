@@ -1,10 +1,10 @@
 <template>
-  <div class="ev-chat-content" :class="{ 'is-bordered': bordered }" :style="contentStyle">
-    <div v-if="$slots.header" class="ev-chat-content__header">
+  <div class="eb-chat-content" :class="{ 'is-bordered': bordered }" :style="contentStyle">
+    <div v-if="$slots.header" class="eb-chat-content__header">
       <slot name="header" />
     </div>
     <slot />
-    <div v-if="$slots.footer" class="ev-chat-content__footer">
+    <div v-if="$slots.footer" class="eb-chat-content__footer">
       <slot name="footer" />
     </div>
   </div>
@@ -32,34 +32,34 @@ const contentStyle = computed(() => {
 
 <style scoped>
 
-.ev-chat-content {
+.eb-chat-content {
   display: flex;
   flex-direction: column;
-  background: var(--ev-bg-color);
-  border-radius: var(--ev-radius-xl);
+  background: var(--eb-bg-color);
+  border-radius: var(--eb-radius-xl);
   overflow: hidden;
 }
 
-.ev-chat-content.is-bordered {
-  border: 1px solid var(--ev-border-color);
+.eb-chat-content.is-bordered {
+  border: 1px solid var(--eb-border-color);
 }
 
-.ev-chat-content__header {
+.eb-chat-content__header {
   flex-shrink: 0;
 }
 
-.ev-chat-content.is-bordered .ev-chat-content__header {
-  border-bottom: 1px solid var(--ev-border-color-lighter);
+.eb-chat-content.is-bordered .eb-chat-content__header {
+  border-bottom: 1px solid var(--eb-border-color-lighter);
 }
 
-.ev-chat-content__footer {
+.eb-chat-content__footer {
   flex-shrink: 0;
-  padding: var(--ev-space-4);
+  padding: var(--eb-space-4);
   background: transparent;
 }
 
-.ev-chat-content.is-bordered .ev-chat-content__footer {
-  border-top: 1px solid var(--ev-border-color-lighter);
-  background: var(--ev-bg-color-page);
+.eb-chat-content.is-bordered .eb-chat-content__footer {
+  border-top: 1px solid var(--eb-border-color-lighter);
+  background: var(--eb-bg-color-page);
 }
 </style>

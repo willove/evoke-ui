@@ -1,24 +1,24 @@
-/* EvCascaderPanel — 独立级联面板（复用 cascader 面板样式 + 边框变体与空态补充） */
+/* EbCascaderPanel — 独立级联面板（复用 cascader 面板样式 + 边框变体与空态补充） */
 
-.ev-cascader-panel.ev-cascader-panel {
+.eb-cascader-panel.eb-cascader-panel {
   display: flex;
-  background: var(--ev-bg-color);
-  border-radius: var(--ev-radius-md);
+  background: var(--eb-bg-color);
+  border-radius: var(--eb-radius-md);
 }
 
-.ev-cascader-panel.ev-cascader-panel.is-bordered {
-  border: 1px solid var(--ev-border-color-light);
+.eb-cascader-panel.eb-cascader-panel.is-bordered {
+  border: 1px solid var(--eb-border-color-light);
 }
 
-.ev-cascader-panel.ev-cascader-panel .ev-cascader-menu {
-  border-right: 1px solid var(--ev-border-color-lighter);
+.eb-cascader-panel.eb-cascader-panel .eb-cascader-menu {
+  border-right: 1px solid var(--eb-border-color-lighter);
 }
-.ev-cascader-panel.ev-cascader-panel .ev-cascader-menu:last-child {
+.eb-cascader-panel.eb-cascader-panel .eb-cascader-menu:last-child {
   border-right: none;
 }
 
-.ev-cascader-panel.ev-cascader-panel .ev-cascader-panel__empty {
-  padding: var(--ev-space-4) var(--ev-space-5);
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-cascader-panel.eb-cascader-panel .eb-cascader-panel__empty {
+  padding: var(--eb-space-4) var(--eb-space-5);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }

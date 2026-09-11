@@ -15,8 +15,8 @@ const v2 = ref(3.5)
 `v-model` 绑定分值；`allow-half` 开启半星（悬停星左半取 0.5），`clearable` 时再次点击当前分值清零。
 
 <DemoBlock>
-  <ev-rate v-model="v" />
-  <ev-rate v-model="v2" allow-half clearable />
+  <eb-rate v-model="v" />
+  <eb-rate v-model="v2" allow-half clearable />
 </DemoBlock>
 
 ## 尺寸
@@ -24,9 +24,9 @@ const v2 = ref(3.5)
 `size` 影响图标大小（large 24px / default 18px / small 14px）。
 
 <DemoBlock>
-  <ev-rate :model-value="3" size="large" />
-  <ev-rate :model-value="3" />
-  <ev-rate :model-value="3" size="small" />
+  <eb-rate :model-value="3" size="large" />
+  <eb-rate :model-value="3" />
+  <eb-rate :model-value="3" size="small" />
 </DemoBlock>
 
 ## 最大分值
@@ -34,7 +34,7 @@ const v2 = ref(3.5)
 `max` 决定星星数量，分值范围 0 到 max；`texts` 文案数量应与 max 匹配。
 
 <DemoBlock>
-  <ev-rate :model-value="7" :max="10" show-score score-template="{value} 分（满分 10）" />
+  <eb-rate :model-value="7" :max="10" show-score score-template="{value} 分（满分 10）" />
 </DemoBlock>
 
 ## 分档颜色
@@ -42,9 +42,9 @@ const v2 = ref(3.5)
 `colors` 接受三档色数组 [低, 中, 高]（按 low-threshold / high-threshold 分档），或 `{ 阈值: 色 }` 对象（取分值命中的最小阈值档）；`void-color` 为未选中星颜色。
 
 <DemoBlock>
-  <ev-rate :model-value="2" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" />
-  <ev-rate :model-value="4" :colors="{ 2: '#99A9BF', 4: '#F7BA2A', 5: '#FF9900' }" />
-  <ev-rate :model-value="3" void-color="#E5E9F0" />
+  <eb-rate :model-value="2" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" />
+  <eb-rate :model-value="4" :colors="{ 2: '#99A9BF', 4: '#F7BA2A', 5: '#FF9900' }" />
+  <eb-rate :model-value="3" void-color="#E5E9F0" />
 </DemoBlock>
 
 ## 分级文案与总分
@@ -52,9 +52,9 @@ const v2 = ref(3.5)
 `show-text` 显示 `texts` 中的分级文案（按当前分值向上取整取用）；`show-score` 优先级更高，按 `score-template`（`{value}` 为分值占位）显示总分。
 
 <DemoBlock>
-  <ev-rate :model-value="3" show-text />
-  <ev-rate :model-value="4" show-text :texts="['极差', '失望', '一般', '满意', '惊喜']" />
-  <ev-rate :model-value="4.5" allow-half show-score score-template="{value} 分" />
+  <eb-rate :model-value="3" show-text />
+  <eb-rate :model-value="4" show-text :texts="['极差', '失望', '一般', '满意', '惊喜']" />
+  <eb-rate :model-value="4.5" allow-half show-score score-template="{value} 分" />
 </DemoBlock>
 
 ## 自定义图标
@@ -62,7 +62,7 @@ const v2 = ref(3.5)
 `icon` / `void-icon` 传 registry 图标名，选中与未选中可用不同图标；图标颜色随分档取色。
 
 <DemoBlock>
-  <ev-rate :model-value="3" icon="star-filled" void-icon="star" />
+  <eb-rate :model-value="3" icon="star-filled" void-icon="star" />
 </DemoBlock>
 
 ## 只读与禁用
@@ -70,8 +70,8 @@ const v2 = ref(3.5)
 `readonly` 用于展示场景（无交互但保持正常配色），`disabled` 禁用并按 `disabled-color` 置灰选中星。
 
 <DemoBlock>
-  <ev-rate :model-value="4" readonly />
-  <ev-rate :model-value="3" disabled />
+  <eb-rate :model-value="4" readonly />
+  <eb-rate :model-value="3" disabled />
 </DemoBlock>
 
 ## API

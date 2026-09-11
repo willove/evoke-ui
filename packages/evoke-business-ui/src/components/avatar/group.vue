@@ -1,16 +1,16 @@
 <template>
-  <span class="ev-avatar-group ev-avatar-group">
+  <span class="eb-avatar-group eb-avatar-group">
     <slot />
   </span>
 </template>
 
 <script setup>
 /**
- * EvAvatarGroup — 头像组（叠放头像，统一向子 Avatar 注入 size / shape）
+ * EbAvatarGroup — 头像组（叠放头像，统一向子 Avatar 注入 size / shape）
  */
 import { provide, toRef } from 'vue'
 
-defineOptions({ name: 'EvAvatarGroup' })
+defineOptions({ name: 'EbAvatarGroup' })
 
 const props = defineProps({
   size: {

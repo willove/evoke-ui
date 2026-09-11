@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { h } from 'vue'
-import EvTree from '../src/components/tree/index.vue'
+import EbTree from '../src/components/tree/index.vue'
 
 const treeData = [
   {
@@ -18,7 +18,7 @@ const treeData = [
 ]
 
 function mountTree(props = {}, slots = {}) {
-  return mount(EvTree, {
+  return mount(EbTree, {
     props: { data: treeData, nodeKey: 'id', ...props },
     slots,
   })
@@ -26,8 +26,8 @@ function mountTree(props = {}, slots = {}) {
 
 /** 按 label 定位节点（DOM DFS 顺序，父节点首个 label 即自身） */
 function findNodeByLabel(wrapper, label) {
-  return wrapper.findAll('.ev-tree-node').find((n) =>
-    n.find('.ev-tree-node__label').text() === label
+  return wrapper.findAll('.eb-tree-node').find((n) =>
+    n.find('.eb-tree-node__label').text() === label
   )
 }
 
@@ -37,44 +37,44 @@ function displayOf(domWrapper) {
 }
 
 function checkboxOf(wrapper, label) {
-  return findNodeByLabel(wrapper, label).find('input.ev-checkbox__original')
+  return findNodeByLabel(wrapper, label).find('input.eb-checkbox__original')
 }
 
-describe('EvTree 渲染契约', () => {
+describe('EbTree 渲染契约', () => {
   it('双 class + 结构 DOM（node/content/expand-icon/label/children）', () => {
     const wrapper = mountTree()
-    expect(wrapper.classes()).toContain('ev-tree')
-    expect(wrapper.classes()).toContain('ev-tree')
-    expect(wrapper.find('.ev-tree-node').exists()).toBe(true)
-    expect(wrapper.find('.ev-tree-node__content').exists()).toBe(true)
-    expect(wrapper.find('.ev-tree-node__expand-icon').exists()).toBe(true)
-    expect(wrapper.find('.ev-tree-node__label').exists()).toBe(true)
-    expect(wrapper.find('.ev-tree-node__children').exists()).toBe(true)
+    expect(wrapper.classes()).toContain('eb-tree')
+    expect(wrapper.classes()).toContain('eb-tree')
+    expect(wrapper.find('.eb-tree-node').exists()).toBe(true)
+    expect(wrapper.find('.eb-tree-node__content').exists()).toBe(true)
+    expect(wrapper.find('.eb-tree-node__expand-icon').exists()).toBe(true)
+    expect(wrapper.find('.eb-tree-node__label').exists()).toBe(true)
+    expect(wrapper.find('.eb-tree-node__children').exists()).toBe(true)
   })
 
   it('全部节点渲染（含未展开的隐藏节点）+ level/indent 缩进', () => {
     const wrapper = mountTree({ defaultExpandAll: true })
-    expect(wrapper.findAll('.ev-tree-node').length).toBe(6)
+    expect(wrapper.findAll('.eb-tree-node').length).toBe(6)
     // 三级节点缩进 = (3-1) * 16
     const deep = findNodeByLabel(wrapper, '三级 1-1-1')
-    expect(deep.find('.ev-tree-node__content').element.style.paddingLeft).toBe('32px')
+    expect(deep.find('.eb-tree-node__content').element.style.paddingLeft).toBe('32px')
     // 根节点无缩进
     const root = findNodeByLabel(wrapper, '一级 1')
-    expect(root.find('.ev-tree-node__content').element.style.paddingLeft).toBe('0px')
+    expect(root.find('.eb-tree-node__content').element.style.paddingLeft).toBe('0px')
   })
 
   it('叶子节点 expand-icon 带 is-leaf', () => {
     const wrapper = mountTree()
     const leaf = findNodeByLabel(wrapper, '三级 1-1-1')
-    expect(leaf.find('.ev-tree-node__expand-icon').classes()).toContain('is-leaf')
+    expect(leaf.find('.eb-tree-node__expand-icon').classes()).toContain('is-leaf')
   })
 
   it('空数据渲染 empty-block', () => {
     const wrapper = mountTree()
     wrapper.setProps({ data: [] })
     return new Promise((r) => setTimeout(r, 10)).then(() => {
-      expect(wrapper.find('.ev-tree__empty-block').exists()).toBe(true)
-      expect(wrapper.find('.ev-tree__empty-text').text()).toBe('暂无数据')
+      expect(wrapper.find('.eb-tree__empty-block').exists()).toBe(true)
+      expect(wrapper.find('.eb-tree__empty-text').text()).toBe('暂无数据')
     })
   })
 
@@ -89,19 +89,19 @@ describe('EvTree 渲染契约', () => {
   })
 })
 
-describe('EvTree 展开交互', () => {
+describe('EbTree 展开交互', () => {
   it('默认收起：子级 v-show 隐藏；点击展开 + node-expand 事件', async () => {
     const wrapper = mountTree()
     const root = findNodeByLabel(wrapper, '一级 1')
     expect(root.classes()).not.toContain('is-expanded')
-    expect(displayOf(root.find('.ev-tree-node__children'))).toBe('none')
+    expect(displayOf(root.find('.eb-tree-node__children'))).toBe('none')
 
-    await root.find('.ev-tree-node__content').trigger('click')
+    await root.find('.eb-tree-node__content').trigger('click')
     expect(root.classes()).toContain('is-expanded')
-    expect(displayOf(root.find('.ev-tree-node__children'))).toBe('')
+    expect(displayOf(root.find('.eb-tree-node__children'))).toBe('')
     expect(wrapper.emitted('node-expand')[0][0]).toMatchObject({ id: 1 })
 
-    await root.find('.ev-tree-node__content').trigger('click')
+    await root.find('.eb-tree-node__content').trigger('click')
     expect(root.classes()).not.toContain('is-expanded')
     expect(wrapper.emitted('node-collapse')[0][0]).toMatchObject({ id: 1 })
   })
@@ -109,9 +109,9 @@ describe('EvTree 展开交互', () => {
   it('点击箭头图标独立展开（expand-on-click-node=false 时内容点击不展开）', async () => {
     const wrapper = mountTree({ expandOnClickNode: false })
     const root = findNodeByLabel(wrapper, '一级 1')
-    await root.find('.ev-tree-node__content').trigger('click')
+    await root.find('.eb-tree-node__content').trigger('click')
     expect(root.classes()).not.toContain('is-expanded')
-    await root.find('.ev-tree-node__expand-icon').trigger('click')
+    await root.find('.eb-tree-node__expand-icon').trigger('click')
     expect(root.classes()).toContain('is-expanded')
   })
 
@@ -124,15 +124,15 @@ describe('EvTree 展开交互', () => {
     const wrapper = mountTree({ accordion: true })
     const n1 = findNodeByLabel(wrapper, '一级 1')
     const n2 = findNodeByLabel(wrapper, '一级 2')
-    await n1.find('.ev-tree-node__content').trigger('click')
+    await n1.find('.eb-tree-node__content').trigger('click')
     expect(n1.classes()).toContain('is-expanded')
-    await n2.find('.ev-tree-node__content').trigger('click')
+    await n2.find('.eb-tree-node__content').trigger('click')
     expect(n2.classes()).toContain('is-expanded')
     expect(n1.classes()).not.toContain('is-expanded')
   })
 })
 
-describe('EvTree 复选级联', () => {
+describe('EbTree 复选级联', () => {
   it('勾选父级 → 全部后代勾选；check 事件携带 checkedKeys', async () => {
     const wrapper = mountTree({ showCheckbox: true })
     await checkboxOf(wrapper, '一级 1').trigger('change')
@@ -148,12 +148,12 @@ describe('EvTree 复选级联', () => {
     await checkboxOf(wrapper, '二级 1-2').trigger('change')
     expect(wrapper.vm.getCheckedKeys().sort((a, b) => a - b)).toEqual([11, 111])
     expect(wrapper.vm.getHalfCheckedKeys()).toEqual([1])
-    expect(findNodeByLabel(wrapper, '一级 1').find('.ev-checkbox').classes()).toContain('is-indeterminate')
+    expect(findNodeByLabel(wrapper, '一级 1').find('.eb-checkbox').classes()).toContain('is-indeterminate')
   })
 
   it('check-change 事件与 checkOnClickNode', async () => {
     const wrapper = mountTree({ showCheckbox: true, checkOnClickNode: true })
-    await findNodeByLabel(wrapper, '一级 2').find('.ev-tree-node__content').trigger('click')
+    await findNodeByLabel(wrapper, '一级 2').find('.eb-tree-node__content').trigger('click')
     expect(wrapper.vm.getCheckedKeys().sort((a, b) => a - b)).toEqual([2, 21])
     expect(wrapper.emitted('check-change')[0]).toMatchObject([{ id: 2 }, true])
   })
@@ -176,31 +176,31 @@ describe('EvTree 复选级联', () => {
       { id: 1, label: '禁用项', disabled: true },
       { id: 2, label: '可用项' },
     ]
-    const wrapper = mount(EvTree, {
+    const wrapper = mount(EbTree, {
       props: { data: disabledData, nodeKey: 'id', showCheckbox: true },
     })
     const dis = findNodeByLabel(wrapper, '禁用项')
     expect(dis.classes()).toContain('is-disabled')
-    await dis.find('input.ev-checkbox__original').trigger('change')
+    await dis.find('input.eb-checkbox__original').trigger('change')
     expect(wrapper.vm.getCheckedKeys()).toEqual([])
   })
 })
 
-describe('EvTree 过滤', () => {
+describe('EbTree 过滤', () => {
   it('filter 命中节点保留祖先链，未命中隐藏；过滤态自动展开', async () => {
     const wrapper = mountTree({
       filterNodeMethod: (value, data) => data.label.includes(value),
     })
     wrapper.vm.filter('三级')
     await new Promise((r) => setTimeout(r, 10))
-    const labels = wrapper.findAll('.ev-tree-node__label').map((n) => n.text())
+    const labels = wrapper.findAll('.eb-tree-node__label').map((n) => n.text())
     expect(labels).toContain('三级 1-1-1')
     expect(labels).toContain('一级 1')
     expect(labels).toContain('二级 1-1')
     expect(labels).not.toContain('一级 2')
     expect(labels).not.toContain('二级 1-2')
     // 未展开节点在过滤态可见（子级容器 display 置空）
-    expect(displayOf(findNodeByLabel(wrapper, '一级 1').find('.ev-tree-node__children'))).toBe('')
+    expect(displayOf(findNodeByLabel(wrapper, '一级 1').find('.eb-tree-node__children'))).toBe('')
   })
 
   it('无匹配时显示空态', async () => {
@@ -209,15 +209,15 @@ describe('EvTree 过滤', () => {
     })
     wrapper.vm.filter('不存在')
     await new Promise((r) => setTimeout(r, 10))
-    expect(wrapper.find('.ev-tree__empty-block').exists()).toBe(true)
+    expect(wrapper.find('.eb-tree__empty-block').exists()).toBe(true)
   })
 })
 
-describe('EvTree 高亮当前节点', () => {
+describe('EbTree 高亮当前节点', () => {
   it('点击节点 is-current + current-change', async () => {
     const wrapper = mountTree({ highlightCurrent: true })
     const n2 = findNodeByLabel(wrapper, '一级 2')
-    await n2.find('.ev-tree-node__content').trigger('click')
+    await n2.find('.eb-tree-node__content').trigger('click')
     expect(n2.classes()).toContain('is-current')
     expect(wrapper.vm.getCurrentKey()).toBe(2)
     expect(wrapper.vm.getCurrentNode().data.id).toBe(2)
@@ -233,7 +233,7 @@ describe('EvTree 高亮当前节点', () => {
   })
 })
 
-describe('EvTree expose API', () => {
+describe('EbTree expose API', () => {
   it('getNode 返回节点（data 别名/level/isLeaf）', () => {
     const wrapper = mountTree()
     const node = wrapper.vm.getNode(11)
@@ -266,9 +266,9 @@ describe('EvTree expose API', () => {
   })
 })
 
-describe('EvTree lazy 加载', () => {
+describe('EbTree lazy 加载', () => {
   function mountLazy(load) {
-    return mount(EvTree, {
+    return mount(EbTree, {
       props: { lazy: true, load, nodeKey: 'id', data: [] },
     })
   }
@@ -285,7 +285,7 @@ describe('EvTree lazy 加载', () => {
     await new Promise((r) => setTimeout(r, 10))
     expect(loadCalls[0].level).toBe(0)
     expect(loadCalls[0].data).toBeNull()
-    const labels = wrapper.findAll('.ev-tree-node__label').map((n) => n.text())
+    const labels = wrapper.findAll('.eb-tree-node__label').map((n) => n.text())
     expect(labels).toEqual(['lazy-1', 'lazy-2'])
   })
 
@@ -299,8 +299,8 @@ describe('EvTree lazy 加载', () => {
     })
     await new Promise((r) => setTimeout(r, 10))
     const n1 = findNodeByLabel(wrapper, 'lazy-1')
-    expect(n1.find('.ev-tree-node__expand-icon').classes()).not.toContain('is-leaf')
-    await n1.find('.ev-tree-node__expand-icon').trigger('click')
+    expect(n1.find('.eb-tree-node__expand-icon').classes()).not.toContain('is-leaf')
+    await n1.find('.eb-tree-node__expand-icon').trigger('click')
     await new Promise((r) => setTimeout(r, 10))
     expect(findNodeByLabel(wrapper, 'lazy-1-1')).toBeTruthy()
     expect(n1.classes()).toContain('is-expanded')
@@ -313,8 +313,8 @@ describe('EvTree lazy 加载', () => {
     const wrapper = mountLazy(loadSpy)
     await new Promise((r) => setTimeout(r, 10))
     const n1 = findNodeByLabel(wrapper, 'lazy-1')
-    expect(n1.find('.ev-tree-node__expand-icon').classes()).toContain('is-leaf')
-    await n1.find('.ev-tree-node__content').trigger('click')
+    expect(n1.find('.eb-tree-node__expand-icon').classes()).toContain('is-leaf')
+    await n1.find('.eb-tree-node__content').trigger('click')
     await new Promise((r) => setTimeout(r, 10))
     expect(loadSpy).toHaveBeenCalledTimes(1) // 仅根级一次
   })

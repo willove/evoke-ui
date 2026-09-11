@@ -1,13 +1,13 @@
 <template>
-  <div class="ev-splitter-panel" :style="panelStyle">
-    <div class="ev-splitter-panel__content">
+  <div class="eb-splitter-panel" :style="panelStyle">
+    <div class="eb-splitter-panel__content">
       <slot />
     </div>
   </div>
 
   <div
     v-if="!isLast"
-    class="ev-splitter__bar"
+    class="eb-splitter__bar"
     :class="[
       ctx.layout.value === 'horizontal' ? 'is-horizontal' : 'is-vertical',
       nextPanelResizable ? 'is-draggable' : 'is-disabled',
@@ -15,11 +15,11 @@
     ]"
     @mousedown="onBarMouseDown"
   >
-    <div class="ev-splitter__bar-handle">
+    <div class="eb-splitter__bar-handle">
       <button
         v-if="collapsibleConfig.start && panelIndex > 0"
         type="button"
-        class="ev-splitter__bar-btn"
+        class="eb-splitter__bar-btn"
         aria-label="向前折叠"
         @click.stop="onCollapseStart"
       >
@@ -41,7 +41,7 @@
       <button
         v-if="collapsibleConfig.end"
         type="button"
-        class="ev-splitter__bar-btn"
+        class="eb-splitter__bar-btn"
         aria-label="向后折叠"
         @click.stop="onCollapseEnd"
       >
@@ -66,12 +66,12 @@
 
 <script setup>
 /**
- * EvSplitterPanel — 分隔面板子面板
+ * EbSplitterPanel — 分隔面板子面板
  * inject 父级上下文，自渲染面板内容与拖拽条；size 受控 / defaultSize 非受控 / min / max / collapsible
  */
 import { computed, inject, onMounted, onBeforeUnmount, watch, ref } from 'vue'
 
-defineOptions({ name: 'EvSplitterPanel' })
+defineOptions({ name: 'EbSplitterPanel' })
 
 const props = defineProps({
   size: { type: [Number, String], default: undefined },
@@ -85,7 +85,7 @@ const props = defineProps({
 const ctx = inject('evSplitter')
 
 if (!ctx) {
-  throw new Error('EvSplitterPanel must be used inside EvSplitter')
+  throw new Error('EbSplitterPanel must be used inside EbSplitter')
 }
 
 const uid = ref(ctx.allocateUid())

@@ -1,5 +1,5 @@
 /**
- * Dropdown 子组件契约（EvDropdownMenu/Item 向 EvDropdown provide/inject）
+ * Dropdown 子组件契约（EbDropdownMenu/Item 向 EbDropdown provide/inject）
  */
 import { inject, provide } from 'vue'
 

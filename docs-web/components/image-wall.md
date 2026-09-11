@@ -1,13 +1,13 @@
 # ImageWall 图片墙
 
-`EwImageWall` 网格图片墙：默认三列、统一 4:3 画幅，点击任意图片直接打开
+`EvImageWall` 网格图片墙：默认三列、统一 4:3 画幅，点击任意图片直接打开
 [ImagePreview 图片预览](./image-preview) 灯箱；`preview` 关闭后只派发 select 事件。
 
 ## 基础用法
 
 <DemoBlock title="三列网格 + 点击预览" description="images 支持字符串 url 或 { src, alt }；点击任意一张打开灯箱，← → 键切换。">
 
-<EwImageWall
+<EvImageWall
   :images="[
     { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70', alt: '山脊线' },
     { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=70', alt: '雾中山林' },
@@ -19,7 +19,7 @@
 />
 
 ```vue
-<EwImageWall
+<EvImageWall
   :images="[
     { src: '/images/a.jpg', alt: '山脊线' },
     { src: '/images/b.jpg', alt: '雾中山林' },

@@ -1,71 +1,71 @@
-/* EvFloatButton — 悬浮操作按钮 */
-.ev-float-button {
+/* EbFloatButton — 悬浮操作按钮 */
+.eb-float-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--ev-border-color-light);
-  background: var(--ev-bg-color-overlay);
-  color: var(--ev-text-color-regular);
+  border: 1px solid var(--eb-border-color-light);
+  background: var(--eb-bg-color-overlay);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
-  box-shadow: var(--ev-shadow-2);
+  box-shadow: var(--eb-shadow-2);
   padding: 0;
   transition:
-    transform var(--ev-duration-fast) var(--ev-ease-out),
-    box-shadow var(--ev-duration-fast) var(--ev-ease-out),
-    background-color var(--ev-duration-fast) var(--ev-ease-out);
+    transform var(--eb-duration-fast) var(--eb-ease-out),
+    box-shadow var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-float-button:hover {
-  box-shadow: var(--ev-shadow-3);
+.eb-float-button:hover {
+  box-shadow: var(--eb-shadow-3);
   transform: translateY(-2px);
-  color: var(--ev-color-primary);
+  color: var(--eb-color-primary);
 }
 
-.ev-float-button--circle {
-  border-radius: var(--ev-radius-full);
+.eb-float-button--circle {
+  border-radius: var(--eb-radius-full);
 }
 
-.ev-float-button--square {
-  border-radius: var(--ev-radius-md);
+.eb-float-button--square {
+  border-radius: var(--eb-radius-md);
 }
 
-.ev-float-button--primary {
-  background: var(--ev-color-primary);
-  border-color: var(--ev-color-primary);
+.eb-float-button--primary {
+  background: var(--eb-color-primary);
+  border-color: var(--eb-color-primary);
   color: #fff;
 }
 
-.ev-float-button--danger {
-  background: var(--ev-color-danger);
-  border-color: var(--ev-color-danger);
+.eb-float-button--danger {
+  background: var(--eb-color-danger);
+  border-color: var(--eb-color-danger);
   color: #fff;
 }
 
-.ev-float-button__inner {
+.eb-float-button__inner {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.ev-float-button__tooltip {
+.eb-float-button__tooltip {
   position: absolute;
   right: calc(100% + 8px);
   top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-primary);
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-sm);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-primary);
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-sm);
   padding: 2px 8px;
-  box-shadow: var(--ev-shadow-1);
+  box-shadow: var(--eb-shadow-1);
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-float-button:hover .ev-float-button__tooltip {
+.eb-float-button:hover .eb-float-button__tooltip {
   opacity: 1;
 }

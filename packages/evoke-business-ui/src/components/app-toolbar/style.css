@@ -1,25 +1,25 @@
-/* EvAppToolbar — 应用工具条（设计令牌驱动） */
+/* EbAppToolbar — 应用工具条（设计令牌驱动） */
 
-.ev-app-toolbar {
+.eb-app-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
   flex-wrap: wrap;
 }
-.ev-app-toolbar__left {
+.eb-app-toolbar__left {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
-.ev-app-toolbar__search {
+.eb-app-toolbar__search {
   width: 220px;
 }
-.ev-app-toolbar__search .ev-input {
+.eb-app-toolbar__search .eb-input {
   width: 100%;
 }
-.ev-app-toolbar__right {
+.eb-app-toolbar__right {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }

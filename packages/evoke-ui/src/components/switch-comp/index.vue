@@ -1,18 +1,18 @@
 <template>
   <button
-    :class="['ew-switch', `is-${size}`, { 'is-on': checked, 'is-disabled': disabled }]"
+    :class="['ev-switch', `is-${size}`, { 'is-on': checked, 'is-disabled': disabled }]"
     role="switch"
     :aria-checked="checked"
     :disabled="disabled"
     @click="toggle"
   >
-    <span class="ew-switch__knob" />
+    <span class="ev-switch__knob" />
   </button>
 </template>
 
 <script setup>
 /**
- * EwSwitch — 开关
+ * EvSwitch — 开关
  * 受控（v-model）与非受控（不传 modelValue，配 default-value 定初值）双模式
  */
 import { useUncontrolled } from '../../composables/useUncontrolled'

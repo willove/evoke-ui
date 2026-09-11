@@ -11,7 +11,7 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-import-export-panel
+  <eb-import-export-panel
     style="width: 100%;"
     import-tip="仅支持 .xlsx / .csv，单次 5000 行以内"
     export-tip="导出内容为当前筛选结果"
@@ -53,7 +53,7 @@ function onIepExport(format) {
 完整闭环示例：`import-file` 的参数是文件描述对象 `{ name, size, raw }`；先做类型/大小校验，失败立即 `done('import')` 复位，成功则模拟上传后再收尾。
 
 <DemoBlock>
-  <ev-import-export-panel
+  <eb-import-export-panel
     ref="iepRef"
     style="width: 100%;"
     import-tip="仅支持 .xlsx / .csv，单次 5000 行以内"
@@ -70,7 +70,7 @@ function onIepExport(format) {
 `formats` 声明导出格式按钮组（默认 `[xlsx, csv]`），`default-format` 高亮默认项；`accept`、`import-button-text`、分区标题都可定制，例如改成压缩包素材导入。
 
 <DemoBlock>
-  <ev-import-export-panel
+  <eb-import-export-panel
     style="width: 100%;"
     import-title="素材导入"
     import-button-text="上传素材包"
@@ -89,7 +89,7 @@ function onIepExport(format) {
 `export-extra` 插槽渲染在导出按钮组下方，适合补充导出范围说明或后台任务提示。
 
 <DemoBlock>
-  <ev-import-export-panel
+  <eb-import-export-panel
     style="width: 100%;"
     export-tip="导出内容为当前筛选结果"
     @export="() => {}"
@@ -97,7 +97,7 @@ function onIepExport(format) {
     <template #export-extra>
       <p style="margin: 8px 0 0;">超过 10 万行将自动转为后台任务，完成后站内通知。</p>
     </template>
-  </ev-import-export-panel>
+  </eb-import-export-panel>
 </DemoBlock>
 
 ## API

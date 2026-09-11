@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-checkbox-group ev-checkbox-group"
+    class="eb-checkbox-group eb-checkbox-group"
     :class="sizeClass"
     role="group"
     :aria-disabled="isDisabled"
@@ -11,7 +11,7 @@
 
 <script setup>
 /**
- * EvCheckboxGroup — 多选组
+ * EbCheckboxGroup — 多选组
  * provide checkboxGroupContextKey，子 Checkbox inject 共享 modelValue（数组）
  */
 import { computed, provide, toRef } from 'vue'
@@ -34,8 +34,8 @@ const emit = defineEmits(['update:modelValue', 'change'])
 const isDisabled = computed(() => props.disabled)
 
 const sizeClass = computed(() => {
-  if (props.size === 'large') return 'ev-checkbox-group--large'
-  if (props.size === 'small') return 'ev-checkbox-group--small'
+  if (props.size === 'large') return 'eb-checkbox-group--large'
+  if (props.size === 'small') return 'eb-checkbox-group--small'
   return ''
 })
 

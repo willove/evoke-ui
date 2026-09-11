@@ -1,97 +1,97 @@
-/* EvAppLayout — 应用壳布局（设计令牌驱动） */
+/* EbAppLayout — 应用壳布局（设计令牌驱动） */
 
-.ev-layout {
+.eb-layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: var(--ev-bg-color-page);
+  background: var(--eb-bg-color-page);
 }
 
 /* ── 侧边栏 ── */
-.ev-layout__sidebar {
-  width: var(--ev-sidebar-width, 224px);
-  background: var(--ev-sidebar-bg, var(--ev-bg-color));
-  border-right: 1px solid var(--ev-sidebar-border, var(--ev-border-color-light));
+.eb-layout__sidebar {
+  width: var(--eb-sidebar-width, 224px);
+  background: var(--eb-sidebar-bg, var(--eb-bg-color));
+  border-right: 1px solid var(--eb-sidebar-border, var(--eb-border-color-light));
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   transition:
-    width var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
-    background-color var(--ev-duration-base) var(--ev-ease-out),
-    border-color var(--ev-duration-base) var(--ev-ease-out);
+    width var(--eb-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
+    background-color var(--eb-duration-base) var(--eb-ease-out),
+    border-color var(--eb-duration-base) var(--eb-ease-out);
   overflow: hidden;
 }
-.ev-layout__sidebar--collapsed {
-  width: var(--ev-sidebar-collapsed-width, 64px);
+.eb-layout__sidebar--collapsed {
+  width: var(--eb-sidebar-collapsed-width, 64px);
 }
 
-.ev-layout__logo {
+.eb-layout__logo {
   height: 52px;
   display: flex;
   align-items: center;
-  padding: 0 var(--ev-space-5);
-  gap: var(--ev-space-3);
-  border-bottom: 1px solid var(--ev-sidebar-border, var(--ev-border-color-light));
+  padding: 0 var(--eb-space-5);
+  gap: var(--eb-space-3);
+  border-bottom: 1px solid var(--eb-sidebar-border, var(--eb-border-color-light));
   flex-shrink: 0;
 }
-.ev-layout__logo-mark {
+.eb-layout__logo-mark {
   width: 32px;
   height: 32px;
-  border-radius: var(--ev-radius-md);
-  background: var(--ev-color-primary);
+  border-radius: var(--eb-radius-md);
+  background: var(--eb-color-primary);
   color: #fff;
   font-weight: 800;
-  font-size: var(--ev-font-size-md);
+  font-size: var(--eb-font-size-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 1px 4px color-mix(in srgb, var(--ev-color-primary) 25%, transparent);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--eb-color-primary) 25%, transparent);
 }
-.ev-layout__logo-label {
-  font-size: var(--ev-font-size-md);
+.eb-layout__logo-label {
+  font-size: var(--eb-font-size-md);
   font-weight: 700;
-  color: var(--ev-text-color-primary);
+  color: var(--eb-text-color-primary);
   letter-spacing: -0.03em;
   white-space: nowrap;
 }
 
-.ev-layout__sidebar-scroll {
+.eb-layout__sidebar-scroll {
   flex: 1;
   overflow: hidden;
 }
 
 /* 菜单融入侧边栏（顶部与 LOGO 区留出间距） */
-.ev-layout__sidebar .ev-menu {
+.eb-layout__sidebar .eb-menu {
   border: none;
-  padding: var(--ev-space-3) 10px 0;
+  padding: var(--eb-space-3) 10px 0;
   background-color: transparent;
 }
-.ev-layout__sidebar .ev-menu .ev-menu-item {
+.eb-layout__sidebar .eb-menu .eb-menu-item {
   height: 40px;
   line-height: 40px;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   margin-bottom: 2px;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
 }
-.ev-layout__sidebar .ev-menu .ev-menu-item:hover {
-  background: var(--ev-sidebar-hover-bg, var(--ev-fill-color-light));
+.eb-layout__sidebar .eb-menu .eb-menu-item:hover {
+  background: var(--eb-sidebar-hover-bg, var(--eb-fill-color-light));
 }
-.ev-layout__sidebar .ev-menu .ev-menu-item.is-active {
-  background: var(--ev-sidebar-active-bg, var(--ev-color-primary-light-9));
-  color: var(--ev-sidebar-text-active, var(--ev-color-primary));
-  font-weight: var(--ev-font-weight-semibold);
+.eb-layout__sidebar .eb-menu .eb-menu-item.is-active {
+  background: var(--eb-sidebar-active-bg, var(--eb-color-primary-light-9));
+  color: var(--eb-sidebar-text-active, var(--eb-color-primary));
+  font-weight: var(--eb-font-weight-semibold);
 }
 
-.ev-layout__sidebar-footer {
-  padding: var(--ev-space-3) 10px;
-  border-top: 1px solid var(--ev-sidebar-border, var(--ev-border-color-light));
+.eb-layout__sidebar-footer {
+  padding: var(--eb-space-3) 10px;
+  border-top: 1px solid var(--eb-sidebar-border, var(--eb-border-color-light));
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
-.ev-layout__theme-btn {
+.eb-layout__theme-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,40 +99,40 @@
   height: 32px;
   border: none;
   background: none;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   flex-shrink: 0;
   transition:
-    background-color var(--ev-duration-fast) var(--ev-ease-out),
-    color var(--ev-duration-fast) var(--ev-ease-out);
+    background-color var(--eb-duration-fast) var(--eb-ease-out),
+    color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-layout__theme-btn:hover {
-  background: var(--ev-fill-color-light);
-  color: var(--ev-color-primary);
+.eb-layout__theme-btn:hover {
+  background: var(--eb-fill-color-light);
+  color: var(--eb-color-primary);
 }
-.ev-layout__collapse-btn {
+.eb-layout__collapse-btn {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding: var(--ev-space-2) var(--ev-space-3);
+  gap: var(--eb-space-2);
+  padding: var(--eb-space-2) var(--eb-space-3);
   border: none;
   background: none;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
-  color: var(--ev-text-color-secondary);
-  font-size: var(--ev-font-size-xs);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
   white-space: nowrap;
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
   width: 100%;
 }
-.ev-layout__collapse-btn:hover {
-  background: var(--ev-fill-color-light);
-  color: var(--ev-text-color-primary);
+.eb-layout__collapse-btn:hover {
+  background: var(--eb-fill-color-light);
+  color: var(--eb-text-color-primary);
 }
 
 /* ── 主区 ── */
-.ev-layout__main {
+.eb-layout__main {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -140,35 +140,35 @@
   overflow: hidden;
 }
 
-.ev-layout__topbar {
-  height: var(--ev-header-height, 52px);
-  background: var(--ev-header-bg, var(--ev-bg-color));
-  border-bottom: 1px solid var(--ev-header-border, var(--ev-border-color-light));
+.eb-layout__topbar {
+  height: var(--eb-header-height, 52px);
+  background: var(--eb-header-bg, var(--eb-bg-color));
+  border-bottom: 1px solid var(--eb-header-border, var(--eb-border-color-light));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--ev-space-6);
+  padding: 0 var(--eb-space-6);
   flex-shrink: 0;
 }
-.ev-layout__topbar-left {
+.eb-layout__topbar-left {
   display: flex;
   align-items: center;
 }
-.ev-layout__topbar-right {
+.eb-layout__topbar-right {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
 
-.ev-layout__content {
+.eb-layout__content {
   flex: 1;
   overflow-y: auto;
-  background: var(--ev-bg-color-page);
-  padding: var(--ev-space-5) var(--ev-space-6);
+  background: var(--eb-bg-color-page);
+  padding: var(--eb-space-5) var(--eb-space-6);
 }
 
 /* ── 移动端 ── */
-.ev-layout__mobile-btn {
+.eb-layout__mobile-btn {
   display: none;
   align-items: center;
   justify-content: center;
@@ -176,15 +176,15 @@
   border: none;
   cursor: pointer;
   padding: 6px;
-  margin-right: var(--ev-space-2);
-  border-radius: var(--ev-radius-sm);
-  color: var(--ev-text-color-regular);
+  margin-right: var(--eb-space-2);
+  border-radius: var(--eb-radius-sm);
+  color: var(--eb-text-color-regular);
 }
-.ev-layout__mobile-btn:hover {
-  background: var(--ev-fill-color-light);
+.eb-layout__mobile-btn:hover {
+  background: var(--eb-fill-color-light);
 }
 
-.ev-layout__overlay {
+.eb-layout__overlay {
   display: none;
   position: fixed;
   inset: 0;
@@ -193,18 +193,18 @@
 }
 
 /* ── 过渡 ── */
-.ev-layout__label-fade-enter-active,
-.ev-layout__label-fade-leave-active {
-  transition: opacity 0.15s var(--ev-ease-out);
+.eb-layout__label-fade-enter-active,
+.eb-layout__label-fade-leave-active {
+  transition: opacity 0.15s var(--eb-ease-out);
 }
-.ev-layout__label-fade-enter-from,
-.ev-layout__label-fade-leave-to {
+.eb-layout__label-fade-enter-from,
+.eb-layout__label-fade-leave-to {
   opacity: 0;
 }
 
 /* ── 响应式 ── */
 @media (max-width: 1024px) {
-  .ev-layout__sidebar {
+  .eb-layout__sidebar {
     position: fixed;
     left: 0;
     top: 0;
@@ -213,22 +213,22 @@
     transform: translateX(-100%);
     width: 260px !important;
   }
-  .ev-layout__sidebar--mobile-open {
+  .eb-layout__sidebar--mobile-open {
     transform: translateX(0);
   }
-  .ev-layout__sidebar--mobile-open ~ .ev-layout__overlay {
+  .eb-layout__sidebar--mobile-open ~ .eb-layout__overlay {
     display: block;
   }
-  .ev-layout__topbar {
-    padding: 0 var(--ev-space-4);
+  .eb-layout__topbar {
+    padding: 0 var(--eb-space-4);
   }
-  .ev-layout__mobile-btn {
+  .eb-layout__mobile-btn {
     display: flex !important;
   }
 }
 
 @media (max-width: 768px) {
-  .ev-layout__topbar {
-    padding: 0 var(--ev-space-3);
+  .eb-layout__topbar {
+    padding: 0 var(--eb-space-3);
   }
 }

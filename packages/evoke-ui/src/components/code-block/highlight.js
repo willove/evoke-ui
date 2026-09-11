@@ -1,5 +1,5 @@
 /**
- * EwCodeBlock 内置轻量语法高亮 — 零依赖
+ * EvCodeBlock 内置轻量语法高亮 — 零依赖
  * 覆盖 shell / js / json 三种常用形态，`auto` 按内容特征自动识别；
  * 所有原文一律先 HTML 转义再包裹 token span，产物可安全用于 v-html
  */

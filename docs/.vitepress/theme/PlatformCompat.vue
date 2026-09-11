@@ -41,9 +41,9 @@ const mobileLabel = computed(() => (platform.value === 'both' ? '双端兼容' :
   gap: 8px;
   margin-bottom: 16px;
   padding: 4px 12px;
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-full);
-  background: var(--ev-bg-color-page);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-full);
+  background: var(--eb-bg-color-page);
 }
 
 .plat-compat__icon {
@@ -54,15 +54,15 @@ const mobileLabel = computed(() => (platform.value === 'both' ? '双端兼容' :
 .plat-compat__text {
   font-size: 12px;
   line-height: 1;
-  color: var(--ev-text-color-secondary);
+  color: var(--eb-text-color-secondary);
 }
 
 .is-both .plat-compat__icon,
 .is-mobile .plat-compat__icon {
-  color: var(--ev-color-primary);
+  color: var(--eb-color-primary);
 }
 
 .is-desktop .plat-compat__icon {
-  color: var(--ev-text-secondary);
+  color: var(--eb-text-secondary);
 }
 </style>

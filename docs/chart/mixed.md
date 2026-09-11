@@ -13,7 +13,7 @@
 沿用 `labels` + `series`：`type: 'mixed'` 时引擎自动按语义分配柱与线的表达，多系列图例照常可点选。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'mixed',
       title: '营收与增长率',

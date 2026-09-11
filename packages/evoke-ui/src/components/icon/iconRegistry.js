@@ -1,10 +1,10 @@
 /**
- * EwIcon 图标注册表（扁平命名空间）
+ * EvIcon 图标注册表（扁平命名空间）
  *
  * 解析优先级：custom（运行时注册）→ 核心 SVG 集（Remix 静态快照，运行时零依赖）→ 展示集（已加载时）
  *
  * Usage:
- *   <ew-icon name="search" :size="16" />
+ *   <ev-icon name="search" :size="16" />
  *   registerIcons({ 'my-logo': MyLogoComponent })
  *   loadShowcaseIcons() // 按需加载 900+ 展示图标（不阻塞首屏）
  */
@@ -13,7 +13,7 @@ import { ewSvgPaths } from './svg-paths'
 
 /**
  * 注册表版本号：晚注册的图标（展示集异步加载 / registerIcons）会自增版本，
- * EwIcon 的解析计算属性依赖它——晚注册的图标出现时，已挂载的图标自动补渲染
+ * EvIcon 的解析计算属性依赖它——晚注册的图标出现时，已挂载的图标自动补渲染
  */
 export const iconRegistryVersion = ref(0)
 

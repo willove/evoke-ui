@@ -1,10 +1,10 @@
 /**
- * EvNotify — 命令式通知 API
+ * EbNotify — 命令式通知 API
  *
  * Usage:
- *   EvNotify({ title: '标题', message: '内容' })
- *   EvNotify.success('标题', '内容', { duration: 0 })
- *   EvNotify.close()  // 关闭全部
+ *   EbNotify({ title: '标题', message: '内容' })
+ *   EbNotify.success('标题', '内容', { duration: 0 })
+ *   EbNotify.close()  // 关闭全部
  *
  * 四角定位独立堆叠列（top-right 默认，offset 16 起步，间距 16）
  */
@@ -69,9 +69,9 @@ function closeInstance(instance) {
   instance.vm?.exposed?.close?.()
 }
 
-function EvNotify(...args) {
+function EbNotify(...args) {
   if (!inBrowser()) {
-    console.warn('[EvNotify] 仅支持浏览器环境')
+    console.warn('[EbNotify] 仅支持浏览器环境')
     return { close: () => {} }
   }
   const options = normalizeArgs(args)
@@ -115,25 +115,25 @@ function EvNotify(...args) {
 
 function createShortcut(type) {
   return (title, message, options) =>
-    EvNotify({ ...(typeof options === 'object' && options ? options : {}), title, message, type })
+    EbNotify({ ...(typeof options === 'object' && options ? options : {}), title, message, type })
 }
 
-EvNotify.success = createShortcut('success')
-EvNotify.warning = createShortcut('warning')
-EvNotify.info = createShortcut('info')
-EvNotify.error = createShortcut('error')
+EbNotify.success = createShortcut('success')
+EbNotify.warning = createShortcut('warning')
+EbNotify.info = createShortcut('info')
+EbNotify.error = createShortcut('error')
 
 /** 关闭全部 */
-EvNotify.close = () => {
+EbNotify.close = () => {
   for (const list of Object.values(columns)) {
     ;[...list].forEach(closeInstance)
   }
 }
 
-EvNotify.closeAll = EvNotify.close
+EbNotify.closeAll = EbNotify.close
 
 /** 各列活动实例数（测试用） */
-EvNotify._columns = columns
+EbNotify._columns = columns
 
-export { EvNotify }
-export default EvNotify
+export { EbNotify }
+export default EbNotify

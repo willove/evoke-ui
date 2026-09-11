@@ -1,15 +1,15 @@
 <template>
   <div 
     ref="listRef"
-    class="ev-chat-list"
+    class="eb-chat-list"
     @scroll="handleScroll"
   >
-    <div v-if="!messages || messages.length === 0" class="ev-chat-list__empty">
+    <div v-if="!messages || messages.length === 0" class="eb-chat-list__empty">
       <slot name="empty">
-        <EvEmpty description="暂无对话消息" />
+        <EbEmpty description="暂无对话消息" />
       </slot>
     </div>
-    <div v-else class="ev-chat-list__messages">
+    <div v-else class="eb-chat-list__messages">
       <slot name="header" />
       <ChatMessage
         v-for="msg in messages"
@@ -26,24 +26,24 @@
         @regenerate="handleRegenerate"
         @action="handleAction"
       />
-      <div ref="bottomRef" class="ev-chat-list__bottom" />
+      <div ref="bottomRef" class="eb-chat-list__bottom" />
     </div>
-    <transition name="ev-chat-list__backtop-fade">
+    <transition name="eb-chat-list__backtop-fade">
       <button 
         v-show="showBackToBottom"
-        class="ev-chat-list__backtop"
+        class="eb-chat-list__backtop"
         @click="scrollToBottom(true)"
       >
-        <ev-icon name="arrow-down" />
+        <eb-icon name="arrow-down" />
       </button>
     </transition>
   </div>
 </template>
 
 <script setup>
-import EvIcon from "../icon/index.vue"
+import EbIcon from "../icon/index.vue"
 import { ref, watch, nextTick, onMounted, computed } from "vue";
-import EvEmpty from "../empty/index.vue";
+import EbEmpty from "../empty/index.vue";
 import ChatMessage from "./ChatMessage.vue";
 import { getIconByNameSync } from "../icon/iconRegistry";
 const props = defineProps({
@@ -133,16 +133,16 @@ defineExpose({
 
 <style scoped>
 
-.ev-chat-list {
+.eb-chat-list {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 var(--ev-space-6);
+  padding: 0 var(--eb-space-6);
   position: relative;
   scroll-behavior: auto;
 }
 
-.ev-chat-list__empty {
+.eb-chat-list__empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,18 +150,18 @@ defineExpose({
   min-height: 200px;
 }
 
-.ev-chat-list__messages {
-  padding: var(--ev-space-4) 0;
+.eb-chat-list__messages {
+  padding: var(--eb-space-4) 0;
 }
 
-.ev-chat-list__bottom {
+.eb-chat-list__bottom {
   height: 1px;
   width: 100%;
 }
 
-.ev-chat-list__backtop {
+.eb-chat-list__backtop {
   position: absolute;
-  bottom: var(--ev-space-4);
+  bottom: var(--eb-space-4);
   left: 50%;
   transform: translateX(-50%);
   display: inline-flex;
@@ -170,29 +170,29 @@ defineExpose({
   width: 36px;
   height: 36px;
   border: none;
-  background: var(--ev-bg-color-overlay);
+  background: var(--eb-bg-color-overlay);
   border-radius: 50%;
-  box-shadow: var(--ev-shadow-2);
+  box-shadow: var(--eb-shadow-2);
   cursor: pointer;
-  color: var(--ev-text-color-secondary);
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  color: var(--eb-text-color-secondary);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
   padding: 0;
   z-index: 10;
 }
 
-.ev-chat-list__backtop:hover {
-  color: var(--ev-color-primary);
-  box-shadow: var(--ev-shadow-3);
+.eb-chat-list__backtop:hover {
+  color: var(--eb-color-primary);
+  box-shadow: var(--eb-shadow-3);
   transform: translateX(-50%) translateY(-2px);
 }
 
-.ev-chat-list__backtop-fade-enter-active,
-.ev-chat-list__backtop-fade-leave-active {
-  transition: all var(--ev-duration-base) var(--ev-ease-out);
+.eb-chat-list__backtop-fade-enter-active,
+.eb-chat-list__backtop-fade-leave-active {
+  transition: all var(--eb-duration-base) var(--eb-ease-out);
 }
 
-.ev-chat-list__backtop-fade-enter-from,
-.ev-chat-list__backtop-fade-leave-to {
+.eb-chat-list__backtop-fade-enter-from,
+.eb-chat-list__backtop-fade-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(10px);
 }

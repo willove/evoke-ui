@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { h } from 'vue'
 import { mount } from '@vue/test-utils'
-import EvStatistic from '../src/components/statistic/index.vue'
-import EvBorderBeam from '../src/components/border-beam/index.vue'
-import EvConfigProvider from '../src/components/config-provider/index.vue'
+import EbStatistic from '../src/components/statistic/index.vue'
+import EbBorderBeam from '../src/components/border-beam/index.vue'
+import EbConfigProvider from '../src/components/config-provider/index.vue'
 import { useConfigProvider } from '../src/composables/useConfigProvider'
 import {
   formatNumber,
@@ -18,44 +18,44 @@ import {
  * Statistic 统计数值 / format 工具 / ConfigProvider / BorderBeam
  */
 
-describe('EvStatistic', () => {
+describe('EbStatistic', () => {
   it('千分位与精度格式化', () => {
-    const w1 = mount(EvStatistic, { props: { value: 12345678 } })
-    expect(w1.find('.ev-statistic__value').text()).toBe('12,345,678')
+    const w1 = mount(EbStatistic, { props: { value: 12345678 } })
+    expect(w1.find('.eb-statistic__value').text()).toBe('12,345,678')
     w1.unmount()
 
-    const w2 = mount(EvStatistic, { props: { value: 0.98765, precision: 2, separator: '' } })
-    expect(w2.find('.ev-statistic__value').text()).toBe('0.99')
+    const w2 = mount(EbStatistic, { props: { value: 0.98765, precision: 2, separator: '' } })
+    expect(w2.find('.eb-statistic__value').text()).toBe('0.99')
     w2.unmount()
   })
 
   it('字符串数值原样展示，不套千分位', () => {
-    const wrapper = mount(EvStatistic, { props: { value: 'ID-2026-0001' } })
-    expect(wrapper.find('.ev-statistic__value').text()).toBe('ID-2026-0001')
+    const wrapper = mount(EbStatistic, { props: { value: 'ID-2026-0001' } })
+    expect(wrapper.find('.eb-statistic__value').text()).toBe('ID-2026-0001')
     wrapper.unmount()
   })
 
   it('formatter 优先于内建格式化', () => {
-    const wrapper = mount(EvStatistic, {
+    const wrapper = mount(EbStatistic, {
       props: { value: 12345, formatter: (v) => `${v} 人次` },
     })
-    expect(wrapper.find('.ev-statistic__value').text()).toBe('12345 人次')
+    expect(wrapper.find('.eb-statistic__value').text()).toBe('12345 人次')
     wrapper.unmount()
   })
 
   it('title / prefix / suffix 与插槽', () => {
-    const wrapper = mount(EvStatistic, {
+    const wrapper = mount(EbStatistic, {
       props: { value: 42, title: '今日订单', prefix: '¥', suffix: '元' },
     })
-    expect(wrapper.find('.ev-statistic__title').text()).toBe('今日订单')
-    expect(wrapper.find('.ev-statistic__prefix').text()).toBe('¥')
-    expect(wrapper.find('.ev-statistic__suffix').text()).toBe('元')
+    expect(wrapper.find('.eb-statistic__title').text()).toBe('今日订单')
+    expect(wrapper.find('.eb-statistic__prefix').text()).toBe('¥')
+    expect(wrapper.find('.eb-statistic__suffix').text()).toBe('元')
     wrapper.unmount()
   })
 
   it('loading 态渲染占位点', () => {
-    const wrapper = mount(EvStatistic, { props: { value: 1, loading: true } })
-    expect(wrapper.findAll('.ev-statistic__loading-dot').length).toBe(3)
+    const wrapper = mount(EbStatistic, { props: { value: 1, loading: true } })
+    expect(wrapper.findAll('.eb-statistic__loading-dot').length).toBe(3)
     wrapper.unmount()
   })
 })
@@ -100,7 +100,7 @@ describe('format 工具', () => {
   })
 })
 
-describe('EvConfigProvider', () => {
+describe('EbConfigProvider', () => {
   it('向子组件提供 size / platform 全局默认', () => {
     let seen = null
     const Child = {
@@ -110,7 +110,7 @@ describe('EvConfigProvider', () => {
         return () => null
       },
     }
-    const wrapper = mount(EvConfigProvider, {
+    const wrapper = mount(EbConfigProvider, {
       props: { size: 'large', platform: 'desktop' },
       slots: { default: () => h(Child) },
     })
@@ -125,17 +125,17 @@ describe('EvConfigProvider', () => {
   })
 })
 
-describe('EvBorderBeam', () => {
+describe('EbBorderBeam', () => {
   it('挂载即注入流光 CSS 变量', () => {
-    const wrapper = mount(EvBorderBeam, {
+    const wrapper = mount(EbBorderBeam, {
       props: { color: '#ff5500', size: 3, duration: 4 },
       slots: { default: () => h('div', 'content') },
     })
     const style = wrapper.element.style
-    expect(style.getPropertyValue('--ev-bb-color')).toContain('#ff5500')
-    expect(style.getPropertyValue('--ev-bb-size')).toBe('3px')
-    expect(style.getPropertyValue('--ev-bb-duration')).toBe('4s')
-    expect(wrapper.find('.ev-border-beam__inner').text()).toBe('content')
+    expect(style.getPropertyValue('--eb-bb-color')).toContain('#ff5500')
+    expect(style.getPropertyValue('--eb-bb-size')).toBe('3px')
+    expect(style.getPropertyValue('--eb-bb-duration')).toBe('4s')
+    expect(wrapper.find('.eb-border-beam__inner').text()).toBe('content')
     wrapper.unmount()
   })
 })

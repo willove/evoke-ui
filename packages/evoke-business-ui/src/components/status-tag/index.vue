@@ -1,21 +1,21 @@
 <template>
-  <ev-tag
-    class="ev-status-tag"
+  <eb-tag
+    class="eb-status-tag"
     :type="resolved.type"
     :size="size"
     :effect="effect"
     disable-transitions
-  >{{ resolved.label }}</ev-tag>
+  >{{ resolved.label }}</eb-tag>
 </template>
 
 <script setup>
 /**
- * EvStatusTag — 状态标签（业务封装）
+ * EbStatusTag — 状态标签（业务封装）
  * 语义枚举 → 预设色：statuses = [{ value, label?, type? }]；
  * 未命中回退 fallbackType + 原值文本（可经 slot 自定义）
  */
 import { computed } from 'vue'
-import EvTag from '../tag/index.vue'
+import EbTag from '../tag/index.vue'
 
 const props = defineProps({
   /** 当前状态值 */

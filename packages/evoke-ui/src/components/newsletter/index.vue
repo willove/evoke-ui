@@ -1,21 +1,21 @@
 <template>
-  <form class="ew-newsletter" :class="{ 'is-subscribed': subscribed }" @submit.prevent="onSubmit">
+  <form class="ev-newsletter" :class="{ 'is-subscribed': subscribed }" @submit.prevent="onSubmit">
     <template v-if="!subscribed">
-      <EwIcon name="mail" :size="18" class="ew-newsletter__icon" />
+      <EvIcon name="mail" :size="18" class="ev-newsletter__icon" />
       <input
         v-model.trim="email"
-        class="ew-newsletter__input"
+        class="ev-newsletter__input"
         type="email"
         required
         :placeholder="placeholder"
         :aria-label="placeholder"
       />
-      <EwButton type="submit" :pill="pill" :loading="loading" :disabled="loading">
+      <EvButton type="submit" :pill="pill" :loading="loading" :disabled="loading">
         {{ buttonText }}
-      </EwButton>
+      </EvButton>
     </template>
-    <span v-else class="ew-newsletter__done">
-      <EwIcon name="check" :size="16" class="ew-newsletter__done-icon" />
+    <span v-else class="ev-newsletter__done">
+      <EvIcon name="check" :size="16" class="ev-newsletter__done-icon" />
       <slot name="subscribed">{{ subscribedText }}</slot>
     </span>
   </form>
@@ -23,12 +23,12 @@
 
 <script setup>
 /**
- * EwNewsletter — 邮件订阅框
+ * EvNewsletter — 邮件订阅框
  * 输入 + 主按钮一体式胶囊；提交派发 subscribe(email)，随后展示成功态
  */
 import { ref } from 'vue'
-import EwButton from '../button/index.vue'
-import EwIcon from '../icon/index.vue'
+import EvButton from '../button/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   placeholder: { type: String, default: '输入你的邮箱' },

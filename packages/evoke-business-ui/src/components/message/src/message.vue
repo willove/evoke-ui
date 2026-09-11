@@ -1,18 +1,18 @@
 <template>
   <Transition
-    name="ev-message-fade"
+    name="eb-message-fade"
     @after-leave="handleAfterLeave"
   >
     <div
       v-if="visible"
       ref="messageRef"
-      class="ev-message ev-message"
-      :class="[`ev-message--${type}`, { 'is-center': center, 'is-closable': showClose }]"
+      class="eb-message eb-message"
+      :class="[`eb-message--${type}`, { 'is-center': center, 'is-closable': showClose }]"
       :style="{ zIndex }"
       role="alert"
     >
-      <ev-icon :name="iconName" class="ev-message__icon" />
-      <div class="ev-message__content">
+      <eb-icon :name="iconName" class="eb-message__icon" />
+      <div class="eb-message__content">
         <template v-if="html">
           <span v-html="message"></span>
         </template>
@@ -21,11 +21,11 @@
       <button
         v-if="showClose"
         type="button"
-        class="ev-message__closeBtn"
+        class="eb-message__closeBtn"
         aria-label="Close"
         @click="handleCloseClick"
       >
-        <ev-icon name="close" :size="14" />
+        <eb-icon name="close" :size="14" />
       </button>
     </div>
   </Transition>
@@ -33,13 +33,13 @@
 
 <script setup>
 /**
- * EvMessage 视图 — 命令式消息渲染（由 message/index.js 的 vnode 管线挂载）
+ * EbMessage 视图 — 命令式消息渲染（由 message/index.js 的 vnode 管线挂载）
  * DOM 访问全部在生命周期内（Electron 安全）
  */
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
-import EvIcon from '../../icon/index.vue'
+import EbIcon from '../../icon/index.vue'
 
-defineOptions({ name: 'EvMessageView' })
+defineOptions({ name: 'EbMessageView' })
 
 const props = defineProps({
   type: {

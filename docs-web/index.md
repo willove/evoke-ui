@@ -6,18 +6,18 @@ layout: false
 import { ref } from 'vue'
 import { useThemeConfig } from '../packages/evoke-ui/src/composables/useThemeConfig'
 import { useTheme } from '../packages/evoke-ui/src/composables/useTheme'
-import { EW_COLOR_PRESETS, EW_PALETTE_PRESETS } from '../packages/evoke-ui/src/presets'
+import { EV_COLOR_PRESETS, EV_PALETTE_PRESETS } from '../packages/evoke-ui/src/presets'
 
 const { config, setPrimary, setSemantic, reset } = useThemeConfig()
 const { isDark, toggleTheme } = useTheme()
-const swatches = Object.values(EW_COLOR_PRESETS)
+const swatches = Object.values(EV_COLOR_PRESETS)
 const query = ref('')
 const category = ref('')
 
 // 首页换色点：主色 + 经典语义色整套回归（覆盖此前可能套用的色系语义）
 function pickPrimary(color) {
   setPrimary(color)
-  setSemantic(EW_PALETTE_PRESETS.classic.semantic)
+  setSemantic(EV_PALETTE_PRESETS.classic.semantic)
 }
 
 // 首页搜索的站内索引：关键词命中即回车直达对应页
@@ -106,7 +106,7 @@ function goSearch() {
 }
 </script>
 
-<EwNavbar logo-text="Evoke UI" :items="[
+<EvNavbar logo-text="Evoke UI" :items="[
   { label: '首页', href: '/' },
   { label: '快速开始', href: '/guide/getting-started' },
   { label: '设计语言', href: '/guide/design' },
@@ -119,38 +119,38 @@ function goSearch() {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EwTag size="small">v0.2.0</EwTag>
+      <EvTag size="small">v0.2.0</EvTag>
     </a>
   </template>
   <template #actions>
-    <EwThemeToggle />
-    <EwIconButton icon="github" aria-label="GitHub" />
-    <EwButton
+    <EvThemeToggle />
+    <EvIconButton icon="github" aria-label="GitHub" />
+    <EvButton
       size="small"
       variant="soft"
       icon="download"
       href="https://www.npmjs.com/package/@wil-works/evoke-ui"
       target="_blank"
       rel="noopener"
-    >下载</EwButton>
+    >下载</EvButton>
   </template>
-</EwNavbar>
+</EvNavbar>
 
-<EwHero
+<EvHero
   reveal
   title="官网的气质，从首屏开始"
   description="一套为官网与营销页而生的 Vue3 组件库：排版疏朗、动效轻盈，明暗双主题与运行时换色开箱即用。"
 >
   <template #badge>
-    <EwAlert pill>
+    <EvAlert pill>
       <span>v0.2.0 发布：边框流光、图片墙、弹出层与更多</span>
       <template #action>
-        <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EwIcon name="arrow-right" :size="14" /></a>
+        <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EvIcon name="arrow-right" :size="14" /></a>
       </template>
-    </EwAlert>
+    </EvAlert>
   </template>
   <template #actions>
-    <EwFeatureGrid
+    <EvFeatureGrid
       variant="bullets"
       :items="[
         { icon: 'device-line', title: '杂志感的大标题' },
@@ -159,7 +159,7 @@ function goSearch() {
       ]"
     />
   </template>
-  <EwSearchBox
+  <EvSearchBox
     v-model="query"
     v-model:category="category"
     large
@@ -169,12 +169,12 @@ function goSearch() {
     @keydown.enter="goSearch"
   >
     <template #suffix>
-      <EwKeycap :keys="['⌘', 'K']" />
+      <EvKeycap :keys="['⌘', 'K']" />
     </template>
-  </EwSearchBox>
+  </EvSearchBox>
   <template #aside>
     <div class="home-collage">
-      <EwCard tone="cream" sticker class="home-collage__card is-a">
+      <EvCard tone="cream" sticker class="home-collage__card is-a">
         <div class="home-collage__label">运行时换色</div>
         <div class="home-collage__dots">
           <button
@@ -187,34 +187,34 @@ function goSearch() {
             @click="pickPrimary(c.primary)"
           />
         </div>
-      </EwCard>
-      <EwCard tone="blue" sticker class="home-collage__card is-b">
-        <EwStatistic value="49" label="个组件" animated />
+      </EvCard>
+      <EvCard tone="blue" sticker class="home-collage__card is-b">
+        <EvStatistic value="49" label="个组件" animated />
         <div class="home-collage__meta">内置 960+ 图标 · MIT 开源</div>
-      </EwCard>
-      <EwCard tone="mint" sticker class="home-collage__card is-c">
+      </EvCard>
+      <EvCard tone="mint" sticker class="home-collage__card is-c">
         <label class="home-collage__theme">
-          <EwSwitch :model-value="isDark" @update:model-value="toggleTheme()" />
+          <EvSwitch :model-value="isDark" @update:model-value="toggleTheme()" />
           <span>明暗双主题</span>
         </label>
-      </EwCard>
+      </EvCard>
       <div class="home-collage__chip">
-        <EwTag tone="primary" size="small">v0.2.0</EwTag>
-        <EwTag size="small">Vue 3</EwTag>
+        <EvTag tone="primary" size="small">v0.2.0</EvTag>
+        <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
   </template>
-</EwHero>
+</EvHero>
 
 <div class="home-band">
-  <EwMarquee
+  <EvMarquee
     :items="['EVOKE UI', '为官网而生', '轻与快', '开箱即用', '明暗双主题', '即插即用']"
     separator="star-fill"
     :duration="20000"
     text-size="40px"
   />
 
-  <EwSection eyebrow="playground" title="一键为品牌换装" description="点一个色板，整个页面——包括这套文档站——的主色会立刻跟着切换，这就是 EwConfigProvider 在做的事。" align="center">
+  <EvSection eyebrow="playground" title="一键为品牌换装" description="点一个色板，整个页面——包括这套文档站——的主色会立刻跟着切换，这就是 EvConfigProvider 在做的事。" align="center">
     <div class="home-swatch-row">
       <button
         v-for="c in swatches"
@@ -227,18 +227,18 @@ function goSearch() {
         <span class="home-swatch__dot" />
         {{ c.label }}
       </button>
-      <EwButton size="small" variant="ghost" @click="reset">恢复默认</EwButton>
+      <EvButton size="small" variant="ghost" @click="reset">恢复默认</EvButton>
     </div>
     <div class="home-preview">
-      <EwButton pill>立即开始</EwButton>
-      <EwButton variant="soft">了解定价</EwButton>
-      <EwTag tone="primary">运行时换色</EwTag>
-      <EwSwitch :model-value="true" />
+      <EvButton pill>立即开始</EvButton>
+      <EvButton variant="soft">了解定价</EvButton>
+      <EvTag tone="primary">运行时换色</EvTag>
+      <EvSwitch :model-value="true" />
     </div>
-  </EwSection>
+  </EvSection>
 
-  <EwSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，57 个组件基本都齐了。" align="center">
-    <EwFeatureGrid
+  <EvSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，57 个组件基本都齐了。" align="center">
+    <EvFeatureGrid
       variant="cards"
       :columns="3"
       :stagger="80"
@@ -252,60 +252,60 @@ function goSearch() {
       ]"
     />
     <div class="home-links">
-      <EwButton variant="outline" icon-right="arrow-right" href="/components/overview">浏览全部组件</EwButton>
+      <EvButton variant="outline" icon-right="arrow-right" href="/components/overview">浏览全部组件</EvButton>
     </div>
-  </EwSection>
+  </EvSection>
 
-  <EwSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center">
+  <EvSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center">
     <div class="home-cases">
       <a class="home-case" href="/cases/corporate">
-        <span class="home-case__icon"><EwIcon name="building-line" :size="22" /></span>
+        <span class="home-case__icon"><EvIcon name="building-line" :size="22" /></span>
         <span class="home-case__title">企业官网</span>
         <span class="home-case__desc">从首屏到页脚的完整营销页，定价、对比表与 FAQ 一次配齐。</span>
         <span class="home-case__meta">14 个组件 · 整页</span>
       </a>
       <a class="home-case" href="/cases/blog">
-        <span class="home-case__icon"><EwIcon name="article-line" :size="22" /></span>
+        <span class="home-case__icon"><EvIcon name="article-line" :size="22" /></span>
         <span class="home-case__title">个人博客</span>
         <span class="home-case__desc">分类筛选的文章流、热榜轮播与订阅框，内容站的经典结构。</span>
         <span class="home-case__meta">10 个组件 · 可交互</span>
       </a>
       <a class="home-case" href="/cases/notes">
-        <span class="home-case__icon"><EwIcon name="book-open-line" :size="22" /></span>
+        <span class="home-case__icon"><EvIcon name="book-open-line" :size="22" /></span>
         <span class="home-case__title">云笔记工作台</span>
         <span class="home-case__desc">搜索、筛选、编辑与归档，用官网组件拼出一台轻应用。</span>
         <span class="home-case__meta">12 个组件 · 可交互</span>
       </a>
     </div>
     <div class="home-links">
-      <EwButton variant="outline" icon-right="arrow-right" href="/cases/">查看全部案例</EwButton>
+      <EvButton variant="outline" icon-right="arrow-right" href="/cases/">查看全部案例</EvButton>
     </div>
-  </EwSection>
+  </EvSection>
 </div>
 
 <div class="home-sibling-band">
-  <EwSection eyebrow="sibling" title="做中后台管理系统？" description="看看同族的姊妹库 Evoke Business UI：150+ 中后台组件、8 个业务场景组件与 20+ 种 Canvas 自绘图表，与 Evoke UI 同一设计血统。" align="center">
-    <EwButton variant="outline" icon-right="arrow-right" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">访问 Evoke Business UI 文档</EwButton>
-  </EwSection>
+  <EvSection eyebrow="sibling" title="做中后台管理系统？" description="看看同族的姊妹库 Evoke Business UI：150+ 中后台组件、8 个业务场景组件与 20+ 种 Canvas 自绘图表，与 Evoke UI 同一设计血统。" align="center">
+    <EvButton variant="outline" icon-right="arrow-right" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">访问 Evoke Business UI 文档</EvButton>
+  </EvSection>
 </div>
 
 <div class="home-stats-band">
-  <div class="ew-container home-stats">
-    <EwStatistic value="49" label="组件" align="center" animated />
-    <EwStatistic value="960+" label="内置图标" align="center" animated />
-    <EwStatistic value="4" label="主题维度" align="center" animated />
-    <EwStatistic value="2" label="明暗主题" align="center" animated />
+  <div class="ev-container home-stats">
+    <EvStatistic value="49" label="组件" align="center" animated />
+    <EvStatistic value="960+" label="内置图标" align="center" animated />
+    <EvStatistic value="4" label="主题维度" align="center" animated />
+    <EvStatistic value="2" label="明暗主题" align="center" animated />
   </div>
 </div>
 
-<EwCta title="用 Evoke UI 搭你的下一个官网" description="免费开源，MIT 协议，npm install 即用。">
+<EvCta title="用 Evoke UI 搭你的下一个官网" description="免费开源，MIT 协议，npm install 即用。">
   <template #actions>
-    <EwButton size="large" pill icon="download" href="/guide/getting-started">开始使用</EwButton>
-    <EwButton size="large" pill variant="dark" icon="github" href="https://github.com">GitHub</EwButton>
+    <EvButton size="large" pill icon="download" href="/guide/getting-started">开始使用</EvButton>
+    <EvButton size="large" pill variant="dark" icon="github" href="https://github.com">GitHub</EvButton>
   </template>
-</EwCta>
+</EvCta>
 
-<EwFooter
+<EvFooter
   soft
   logo-text="Evoke UI"
   slogan="轻盈优雅的 Vue3 官网组件库。"
@@ -323,19 +323,19 @@ function goSearch() {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 .home-brand__name {
   font-size: 18px;
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
 }
 .home-collage {
   position: relative;
   width: 360px;
 }
 .home-collage__card {
-  box-shadow: var(--ew-shadow-3);
+  box-shadow: var(--ev-shadow-3);
   animation: home-collage-float 7s ease-in-out infinite;
 }
 .home-collage__card.is-a {
@@ -362,9 +362,9 @@ function goSearch() {
 .home-collage__label {
   margin-bottom: 12px;
   font-size: 12px;
-  font-weight: var(--ew-font-weight-medium);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.06em;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .home-collage__dots {
   display: flex;
@@ -375,12 +375,12 @@ function goSearch() {
   height: 22px;
   padding: 0;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  border-radius: var(--ew-radius-circle);
+  border-radius: var(--ev-radius-circle);
   background: var(--swatch);
   box-shadow: 0 1px 4px rgba(26, 41, 71, 0.2);
   cursor: pointer;
-  transition: transform var(--ew-duration-base) var(--ew-ease-spring),
-    box-shadow var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: transform var(--ev-duration-base) var(--ev-ease-spring),
+    box-shadow var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 .home-collage__dot:hover {
   transform: scale(1.15);
@@ -392,14 +392,14 @@ function goSearch() {
 .home-collage__meta {
   margin-top: 6px;
   font-size: 12px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .home-collage__theme {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: var(--ew-text-regular);
+  color: var(--ev-text-regular);
   cursor: pointer;
 }
 .home-collage__chip {
@@ -410,21 +410,21 @@ function goSearch() {
   align-items: center;
   gap: 6px;
   padding: 7px 10px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-2);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-2);
   transform: rotate(5deg);
 }
 .home-band {
   padding: 64px 0 40px;
 }
 /* 区块内容随容器令牌限宽，超宽屏不再无限拉伸 */
-.home-band .ew-section {
-  max-width: var(--ew-container-width, 1152px);
+.home-band .ev-section {
+  max-width: var(--ev-container-width, 1152px);
   margin-inline: auto;
 }
-.home-band .ew-marquee {
+.home-band .ev-marquee {
   margin-bottom: 96px;
 }
 .home-swatch-row {
@@ -440,18 +440,18 @@ function goSearch() {
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-bg-container);
   cursor: pointer;
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   transition: border-color .2s, box-shadow .2s, color .2s;
 }
-.home-swatch:hover { border-color: var(--ew-border-color); color: var(--ew-text-primary); }
+.home-swatch:hover { border-color: var(--ev-border-color); color: var(--ev-text-primary); }
 .home-swatch.is-active {
   border-color: var(--swatch);
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--swatch) 25%, transparent);
 }
 .home-swatch__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--swatch); }
@@ -462,8 +462,8 @@ function goSearch() {
   flex-wrap: wrap;
   gap: 14px;
   padding: 40px 24px;
-  border: 1px dashed var(--ew-border-color);
-  border-radius: var(--ew-radius-lg);
+  border: 1px dashed var(--ev-border-color);
+  border-radius: var(--ev-radius-lg);
   max-width: 620px;
   margin-inline: auto;
 }
@@ -475,8 +475,8 @@ function goSearch() {
 .home-sibling-band {
   padding: 8px 24px 72px;
 }
-.home-sibling-band .ew-section {
-  max-width: var(--ew-container-width, 1152px);
+.home-sibling-band .ev-section {
+  max-width: var(--ev-container-width, 1152px);
   margin-inline: auto;
 }
 .home-cases {
@@ -492,17 +492,17 @@ function goSearch() {
   align-items: flex-start;
   gap: 10px;
   padding: 24px 22px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background: var(--ew-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background: var(--ev-bg-container);
   text-align: left;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
-    transform var(--ew-duration-base) var(--ew-ease-smooth);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out),
+    transform var(--ev-duration-base) var(--ev-ease-smooth);
 }
 .home-case:hover {
-  border-color: var(--ew-color-primary-light-7);
-  box-shadow: var(--ew-shadow-2);
+  border-color: var(--ev-color-primary-light-7);
+  box-shadow: var(--ev-shadow-2);
   transform: translateY(-3px);
 }
 .home-case__icon {
@@ -511,30 +511,30 @@ function goSearch() {
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: var(--ew-radius-md);
+  border-radius: var(--ev-radius-md);
   background: var(--vp-c-brand-soft);
-  color: var(--ew-color-primary);
+  color: var(--ev-color-primary);
 }
 .home-case__title {
   font-size: 16px;
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
 }
 .home-case__desc {
   font-size: 13px;
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .home-case__meta {
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .home-stats-band {
   padding: 88px 0;
-  border-top: 1px solid var(--ew-border-color-light);
-  border-bottom: 1px solid var(--ew-border-color-light);
-  background-color: var(--ew-bg-muted);
+  border-top: 1px solid var(--ev-border-color-light);
+  border-bottom: 1px solid var(--ev-border-color-light);
+  background-color: var(--ev-bg-muted);
 }
 .home-stats {
   display: flex;

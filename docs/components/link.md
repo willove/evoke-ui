@@ -13,14 +13,14 @@ const clickLog = ref('尚未点击')
 六种语义类型，`type` 缺省为 default；error 视觉同 danger。
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-link>默认链接</ev-link>
-    <ev-link type="primary">主要链接</ev-link>
-    <ev-link type="success">成功链接</ev-link>
-    <ev-link type="warning">警告链接</ev-link>
-    <ev-link type="danger">危险链接</ev-link>
-    <ev-link type="info">信息链接</ev-link>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-link>默认链接</eb-link>
+    <eb-link type="primary">主要链接</eb-link>
+    <eb-link type="success">成功链接</eb-link>
+    <eb-link type="warning">警告链接</eb-link>
+    <eb-link type="danger">危险链接</eb-link>
+    <eb-link type="info">信息链接</eb-link>
+  </eb-space>
 </DemoBlock>
 
 ## 下划线策略
@@ -28,11 +28,11 @@ const clickLog = ref('尚未点击')
 `underline` 默认 `always` 常显下划线，`hover` 悬停时显示，`never` 关闭（传布尔值时映射为 always / never）。
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-link type="primary" href="https://example.com" target="_blank">always</ev-link>
-    <ev-link type="primary" href="https://example.com" target="_blank" underline="hover">hover</ev-link>
-    <ev-link type="primary" href="https://example.com" target="_blank" underline="never">never</ev-link>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-link type="primary" href="https://example.com" target="_blank">always</eb-link>
+    <eb-link type="primary" href="https://example.com" target="_blank" underline="hover">hover</eb-link>
+    <eb-link type="primary" href="https://example.com" target="_blank" underline="never">never</eb-link>
+  </eb-space>
 </DemoBlock>
 
 ## 图标与禁用
@@ -40,11 +40,11 @@ const clickLog = ref('尚未点击')
 `icon` 传入图标名称渲染前置图标（14px，与文字自动留间距）；`disabled` 移除 href 并阻止点击跳转。
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-link type="primary" icon="link" href="https://example.com" target="_blank">带图标链接</ev-link>
-    <ev-link type="primary" href="https://example.com" disabled>禁用链接</ev-link>
-    <ev-link type="danger" icon="delete" underline="never">删除记录</ev-link>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-link type="primary" icon="link" href="https://example.com" target="_blank">带图标链接</eb-link>
+    <eb-link type="primary" href="https://example.com" disabled>禁用链接</eb-link>
+    <eb-link type="danger" icon="delete" underline="never">删除记录</eb-link>
+  </eb-space>
 </DemoBlock>
 
 ## click 事件
@@ -52,10 +52,10 @@ const clickLog = ref('尚未点击')
 未设 `href` 时也可单独作为文字按钮使用，点击触发 `click` 事件。
 
 <DemoBlock>
-  <ev-space size="middle" style="align-items: center;">
-    <ev-link type="primary" :underline="false" @click="clickLog = 'click 事件已触发'">查看更多</ev-link>
-    <span style="font-size: 13px; color: var(--ev-text-color-secondary);">状态：{{ clickLog }}</span>
-  </ev-space>
+  <eb-space size="middle" style="align-items: center;">
+    <eb-link type="primary" :underline="false" @click="clickLog = 'click 事件已触发'">查看更多</eb-link>
+    <span style="font-size: 13px; color: var(--eb-text-color-secondary);">状态：{{ clickLog }}</span>
+  </eb-space>
 </DemoBlock>
 
 ## 组合场景
@@ -64,10 +64,10 @@ const clickLog = ref('尚未点击')
 
 <DemoBlock>
   <div style="display: flex; gap: 16px; align-items: center;">
-    <ev-link type="primary" icon="view" :underline="false">查看详情</ev-link>
-    <ev-link type="primary" icon="edit" :underline="false">编辑</ev-link>
-    <ev-link type="danger" icon="delete" :underline="false">删除</ev-link>
-    <ev-link type="info" underline="never" style="margin-left: auto;">帮助文档</ev-link>
+    <eb-link type="primary" icon="view" :underline="false">查看详情</eb-link>
+    <eb-link type="primary" icon="edit" :underline="false">编辑</eb-link>
+    <eb-link type="danger" icon="delete" :underline="false">删除</eb-link>
+    <eb-link type="info" underline="never" style="margin-left: auto;">帮助文档</eb-link>
   </div>
 </DemoBlock>
 
@@ -76,11 +76,11 @@ const clickLog = ref('尚未点击')
 `underline` 传布尔值时按旧语义映射：true 等同 always、false 等同 never；不设 `href` 时组件退化为纯文字按钮，配合 `:underline="false"` 常用于表格内的行内操作。
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-link type="primary" :underline="true">布尔 true</ev-link>
-    <ev-link type="primary" :underline="false">布尔 false</ev-link>
-    <ev-link type="primary" :underline="false">文字按钮</ev-link>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-link type="primary" :underline="true">布尔 true</eb-link>
+    <eb-link type="primary" :underline="false">布尔 false</eb-link>
+    <eb-link type="primary" :underline="false">文字按钮</eb-link>
+  </eb-space>
 </DemoBlock>
 
 ## API

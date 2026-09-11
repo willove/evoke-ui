@@ -1,61 +1,61 @@
-/* EwCta — 行动召唤区 */
+/* EvCta — 行动召唤区 */
 
-.ew-cta {
-  padding: var(--ew-space-16) 0;
+.ev-cta {
+  padding: var(--ev-space-16) 0;
 }
 
-.ew-cta.is-tinted {
-  background-image: var(--ew-gradient-hero);
+.ev-cta.is-tinted {
+  background-image: var(--ev-gradient-hero);
 }
 
-.ew-cta__inner {
+.ev-cta__inner {
   text-align: center;
 }
 
-.ew-cta__title {
+.ev-cta__title {
   font-size: clamp(26px, 3vw, 36px);
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
   text-wrap: balance;
 }
 
-.ew-cta__description {
+.ev-cta__description {
   max-width: 520px;
-  margin: var(--ew-space-4) auto 0;
-  font-size: var(--ew-font-size-md);
+  margin: var(--ev-space-4) auto 0;
+  font-size: var(--ev-font-size-md);
   line-height: 1.75;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-cta__actions {
+.ev-cta__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--ew-space-3);
-  margin-top: var(--ew-space-8);
+  gap: var(--ev-space-3);
+  margin-top: var(--ev-space-8);
 }
 
-.ew-cta__body {
-  margin-top: var(--ew-space-8);
+.ev-cta__body {
+  margin-top: var(--ev-space-8);
 }
 
 /* ─── 宿主环境屏蔽 ───
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-cta .ew-cta__title {
+.ev-cta .ev-cta__title {
   margin: 0;
   padding-top: 0;
   border-top: none;
   font-size: clamp(26px, 3vw, 36px);
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
 }
 
-.ew-cta .ew-cta__description {
-  margin: var(--ew-space-4) auto 0;
+.ev-cta .ev-cta__description {
+  margin: var(--ev-space-4) auto 0;
   text-align: center;
-  font-size: var(--ew-font-size-md);
+  font-size: var(--ev-font-size-md);
 }

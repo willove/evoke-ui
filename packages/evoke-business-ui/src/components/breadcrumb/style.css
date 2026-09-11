@@ -1,45 +1,45 @@
-/* EvBreadcrumb —面包屑 */
+/* EbBreadcrumb —面包屑 */
 
-.ev-breadcrumb.ev-breadcrumb {
+.eb-breadcrumb.eb-breadcrumb {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
-  color: var(--ev-text-color-regular);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
+  color: var(--eb-text-color-regular);
 }
 
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__item {
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__item {
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
 }
 
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__inner {
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__inner {
   display: inline-flex;
   align-items: center;
-  color: var(--ev-text-color-regular);
-  font-weight: var(--ev-font-weight-regular);
-  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+  color: var(--eb-text-color-regular);
+  font-weight: var(--eb-font-weight-regular);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__inner.is-link {
-  color: var(--ev-color-primary);
-  font-weight: var(--ev-font-weight-medium);
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__inner.is-link {
+  color: var(--eb-color-primary);
+  font-weight: var(--eb-font-weight-medium);
   text-decoration: none;
   cursor: pointer;
 }
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__inner.is-link:hover {
-  color: var(--ev-color-primary-light-3);
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__inner.is-link:hover {
+  color: var(--eb-color-primary-light-3);
 }
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__inner.is-link:active {
-  color: var(--ev-color-primary-dark-2);
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__inner.is-link:active {
+  color: var(--eb-color-primary-dark-2);
 }
 
-.ev-breadcrumb.ev-breadcrumb .ev-breadcrumb__separator {
+.eb-breadcrumb.eb-breadcrumb .eb-breadcrumb__separator {
   display: inline-flex;
   align-items: center;
-  margin: 0 var(--ev-breadcrumb-separator-gap, var(--ev-space-2));
-  color: var(--ev-text-color-placeholder);
-  font-weight: var(--ev-font-weight-regular);
+  margin: 0 var(--eb-breadcrumb-separator-gap, var(--eb-space-2));
+  color: var(--eb-text-color-placeholder);
+  font-weight: var(--eb-font-weight-regular);
 }

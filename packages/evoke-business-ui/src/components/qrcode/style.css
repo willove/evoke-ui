@@ -1,5 +1,5 @@
-/* EvQRCode — 二维码 */
-.ev-qrcode {
+/* EbQRCode — 二维码 */
+.eb-qrcode {
   display: block;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
 }

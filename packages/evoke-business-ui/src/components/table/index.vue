@@ -1,26 +1,26 @@
 <template>
   <div
     ref="rootRef"
-    class="ev-table ev-table"
+    class="eb-table eb-table"
     :class="[
       sizeClass,
       {
-        'ev-table--border': border,
-        'ev-table--striped': stripe,
-        'ev-table--enable-row-hover': true,
-        'ev-table--enable-row-transition': true,
+        'eb-table--border': border,
+        'eb-table--striped': stripe,
+        'eb-table--enable-row-hover': true,
+        'eb-table--enable-row-transition': true,
       },
     ]"
     :style="tableStyle"
   >
-    <div class="ev-table__inner-wrapper">
-      <!-- 列挂载区（EvTableColumn 自身渲染 null，仅触发注册） -->
-      <div class="ev-table__column-slot" style="display: none">
+    <div class="eb-table__inner-wrapper">
+      <!-- 列挂载区（EbTableColumn 自身渲染 null，仅触发注册） -->
+      <div class="eb-table__column-slot" style="display: none">
         <slot />
       </div>
       <!-- 表头 -->
-      <div class="ev-table__header-wrapper">
-        <table class="ev-table__header" :style="{ width: bodyWidth }">
+      <div class="eb-table__header-wrapper">
+        <table class="eb-table__header" :style="{ width: bodyWidth }">
           <colgroup>
             <col
               v-for="col in renderColumns"
@@ -33,7 +33,7 @@
               <th
                 v-for="(col, i) in renderColumns"
                 :key="col.uid"
-                class="ev-table__cell"
+                class="eb-table__cell"
                 :class="[headerCellClass(col), fixedClass(col)]"
                 :style="fixedStyle(col, i)"
                 @click="handleHeaderClick(col, $event)"
@@ -41,7 +41,7 @@
                 <div class="cell" :class="[`is-${col.headerAlign || col.align}`, col.labelClassName]">
                   <!-- selection 列：全选 -->
                   <template v-if="col.type === 'selection'">
-                    <ev-checkbox
+                    <eb-checkbox
                       :model-value="isAllSelected"
                       :indeterminate="isIndeterminate"
                       :disabled="data.length === 0"
@@ -60,7 +60,7 @@
                     <!-- 排序指示 -->
                     <span
                       v-if="col.sortable"
-                      class="ev-table__sort-wrapper"
+                      class="eb-table__sort-wrapper"
                       @click.stop="handleSortClick(col)"
                     >
                       <span class="sort-caret ascending" :class="{ active: sortState.prop === col.prop && sortState.order === 'ascending' }" />
@@ -69,11 +69,11 @@
                     <!-- 列筛选 -->
                     <span
                       v-if="col.filters && col.filters.length"
-                      class="ev-table__column-filter-trigger"
+                      class="eb-table__column-filter-trigger"
                       :class="{ 'is-open': openFilterKey === col.id }"
                       @click.stop="toggleFilter(col, $event)"
                     >
-                      <ev-icon name="filter" :size="12" />
+                      <eb-icon name="filter" :size="12" />
                     </span>
                   </template>
                 </div>
@@ -85,11 +85,11 @@
 
       <!-- 表体 -->
       <div
-        class="ev-table__body-wrapper"
+        class="eb-table__body-wrapper"
         :style="bodyWrapperStyle"
         @scroll="onBodyScroll"
       >
-        <table class="ev-table__body" :style="{ width: bodyWidth }">
+        <table class="eb-table__body" :style="{ width: bodyWidth }">
           <colgroup>
             <col
               v-for="col in renderColumns"
@@ -100,12 +100,12 @@
           <tbody>
             <template v-for="(row, rowIndex) in displayData" :key="rowKeyOf(row, rowIndex)">
               <tr
-                class="ev-table__row"
+                class="eb-table__row"
                 :class="[
-                  { 'ev-table__row--striped': stripe && rowIndex % 2 === 1 },
+                  { 'eb-table__row--striped': stripe && rowIndex % 2 === 1 },
                   { 'current-row': currentRow === row },
                   { 'hover-row': hoverRowIndex === rowIndex },
-                  { 'ev-table__row--level': false },
+                  { 'eb-table__row--level': false },
                 ]"
                 @click="handleRowClick(row, rowIndex, $event)"
                 @dblclick="emit('row-dblclick', row, rowIndex, $event)"
@@ -116,7 +116,7 @@
                 <td
                   v-for="(col, i) in renderColumns"
                   :key="col.uid"
-                  class="ev-table__cell"
+                  class="eb-table__cell"
                   :class="[cellClass(col), fixedClass(col)]"
                   :style="fixedStyle(col, i)"
                   @click="emit('cell-click', row, colProp(col), row?.[colProp(col)], $event)"
@@ -128,7 +128,7 @@
                   >
                     <!-- selection -->
                     <template v-if="col.type === 'selection'">
-                      <ev-checkbox
+                      <eb-checkbox
                         :model-value="isSelected(row)"
                         :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
                         @change="toggleRowSelection(row, $event, rowIndex)"
@@ -137,11 +137,11 @@
                     <!-- expand -->
                     <template v-else-if="col.type === 'expand'">
                       <span
-                        class="ev-table__expand-icon"
-                        :class="{ 'ev-table__expand-icon--expanded': expandedRows.has(row) }"
+                        class="eb-table__expand-icon"
+                        :class="{ 'eb-table__expand-icon--expanded': expandedRows.has(row) }"
                         @click.stop="toggleRowExpansion(row)"
                       >
-                        <ev-icon name="arrow-right" :size="12" />
+                        <eb-icon name="arrow-right" :size="12" />
                       </span>
                     </template>
                     <!-- index -->
@@ -151,17 +151,17 @@
                     <!-- 默认数据列 -->
                     <template v-else>
                       <template v-if="i === firstNormalColIndex && rowHasChildren(row)">
-                        <span class="ev-table__indent" :style="indentStyle(rowLevel(row))" />
+                        <span class="eb-table__indent" :style="indentStyle(rowLevel(row))" />
                         <span
-                          class="ev-table__expand-icon"
-                          :class="{ 'ev-table__expand-icon--expanded': rowExpanded(row) }"
+                          class="eb-table__expand-icon"
+                          :class="{ 'eb-table__expand-icon--expanded': rowExpanded(row) }"
                           @click.stop="toggleTreeExpand(row)"
                         >
-                          <ev-icon name="arrow-right" :size="12" />
+                          <eb-icon name="arrow-right" :size="12" />
                         </span>
                       </template>
                       <template v-else-if="i === firstNormalColIndex && rowLevel(row) > 0">
-                        <span class="ev-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
+                        <span class="eb-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
                       </template>
                       <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
                       <template v-else>{{ textOf(col, row, rowIndex) }}</template>
@@ -172,9 +172,9 @@
               <!-- 展开行 -->
               <tr
                 v-if="hasExpandColumn && expandedRows.has(row)"
-                class="ev-table__row ev-table__expanded-row"
+                class="eb-table__row eb-table__expanded-row"
               >
-                <td class="ev-table__cell" :colspan="renderColumns.length">
+                <td class="eb-table__cell" :colspan="renderColumns.length">
                   <div class="cell">
                     <vnodes :vnodes="renderExpand(row, rowIndex)" />
                   </div>
@@ -184,8 +184,8 @@
           </tbody>
         </table>
         <!-- 空态 -->
-        <div v-if="displayData.length === 0" class="ev-table__empty-block">
-          <span class="ev-table__empty-text">
+        <div v-if="displayData.length === 0" class="eb-table__empty-block">
+          <span class="eb-table__empty-text">
             <slot name="empty">{{ emptyText || t('table.emptyText') }}</slot>
           </span>
         </div>
@@ -197,27 +197,27 @@
       <div
         v-if="openFilterColumn"
         ref="filterPanelRef"
-        class="ev-table__filter ev-table__filter"
+        class="eb-table__filter eb-table__filter"
         :style="filterPanelStyle"
       >
-        <div class="ev-table__filter-list">
+        <div class="eb-table__filter-list">
           <div
             v-for="f in openFilterColumn.filters"
             :key="f.value"
-            class="ev-table__filter-list-item"
+            class="eb-table__filter-list-item"
             @click="toggleFilterValue(openFilterColumn, f.value)"
           >
-            <ev-checkbox
+            <eb-checkbox
               :label="f.value"
               :model-value="(filterValues[openFilterColumn.id] || []).includes(f.value)"
             >
               {{ f.text }}
-            </ev-checkbox>
+            </eb-checkbox>
           </div>
         </div>
-        <div class="ev-table__filter-bottom">
-          <ev-button size="small" @click="resetFilter(openFilterColumn)">重置</ev-button>
-          <ev-button size="small" type="primary" @click="applyFilter(openFilterColumn)">筛选</ev-button>
+        <div class="eb-table__filter-bottom">
+          <eb-button size="small" @click="resetFilter(openFilterColumn)">重置</eb-button>
+          <eb-button size="small" type="primary" @click="applyFilter(openFilterColumn)">筛选</eb-button>
         </div>
       </div>
     </Teleport>
@@ -226,14 +226,14 @@
 
 <script setup>
 /**
- * EvTable — 表格
- * 列注册模式（EvTableColumn）；colgroup 定宽；固定列 position:sticky；
+ * EbTable — 表格
+ * 列注册模式（EbTableColumn）；colgroup 定宽；固定列 position:sticky；
  * selection/sort/filter/expand + TableInstance 全套方法
  */
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRef, useSlots } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvCheckbox from '../checkbox/index.vue'
-import EvButton from '../button/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbCheckbox from '../checkbox/index.vue'
+import EbButton from '../button/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { provideTableContext } from './table-context'
 import { useLocale } from '../../composables/useLocale'
@@ -241,14 +241,14 @@ import { useFormItem } from '../../composables/useFormItem'
 
 /** 函数式渲染组件：渲染作用域插槽产出的 vnode（数组或单节点） */
 const Vnodes = defineComponent({
-  name: 'EvTableVnodes',
+  name: 'EbTableVnodes',
   props: { vnodes: { type: [Object, Array], default: null } },
   setup(props) {
     return () => props.vnodes
   },
 })
 
-defineOptions({ name: 'EvTable' })
+defineOptions({ name: 'EbTable' })
 
 const props = defineProps({
   data: { type: Array, default: () => [] },
@@ -326,8 +326,8 @@ const hasSelectionColumn = computed(() => columns.value.some((c) => c.type === '
 // ─── 尺寸/布局 ───
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-table--large'
-  if (s === 'small') return 'ev-table--small'
+  if (s === 'large') return 'eb-table--large'
+  if (s === 'small') return 'eb-table--small'
   return ''
 })
 
@@ -396,8 +396,8 @@ function cellClass(col) {
 
 // ─── 固定列（sticky 偏移计算） ───
 function fixedClass(col) {
-  if (col.fixed === true || col.fixed === 'left') return 'ev-table-fixed-column--left'
-  if (col.fixed === 'right') return 'ev-table-fixed-column--right'
+  if (col.fixed === true || col.fixed === 'left') return 'eb-table-fixed-column--left'
+  if (col.fixed === 'right') return 'eb-table-fixed-column--right'
   return ''
 }
 

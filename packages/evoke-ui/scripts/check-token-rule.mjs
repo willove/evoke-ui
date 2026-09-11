@@ -3,10 +3,10 @@
  * 铁律检查 — 本库命名空间隔离
  *
  * 规则：
- *   1. 源码（src/）禁止出现 --el-* / --ev-* 令牌命名（统一使用 --ew-*）
+ *   1. 源码（src/）禁止出现 --el-* / --ew-* / --eb-* 令牌命名（统一使用 --ev-*）
  *   2. 源码禁止第三方组件库引用与跨库引用（evoke-business-ui）（import / 字符串 / 注释均不允许）
  *   3. package.json 禁止声明上述相关依赖
- *   4. var(--ew-xxx) 不带 fallback 时，--ew-xxx 必须在库内某处有定义
+ *   4. var(--ev-xxx) 不带 fallback 时，--ev-xxx 必须在库内某处有定义
  *
  * 范围：src/ + test/
  *
@@ -44,8 +44,9 @@ const files = ROOTS.flatMap(walk)
 for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n')
   lines.forEach((line, i) => {
-    if (/--el-/.test(line)) violations.push(`${file}:${i + 1}  出现 --el-* 令牌（应使用 --ew-*）: ${line.trim().slice(0, 100)}`)
-    if (/--ev-/.test(line)) violations.push(`${file}:${i + 1}  出现 --ev-* 令牌（应使用 --ew-*）: ${line.trim().slice(0, 100)}`)
+    if (/--el-/.test(line)) violations.push(`${file}:${i + 1}  出现 --el-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
+    if (/--ew-/.test(line)) violations.push(`${file}:${i + 1}  出现旧 --ew-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
+    if (/--eb-/.test(line)) violations.push(`${file}:${i + 1}  出现兄弟库 --eb-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
     if (/\bel-[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
     if (/evoke-business-ui/i.test(line)) violations.push(`${file}:${i + 1}  出现 evoke-business-ui 引用（两库完全隔离）: ${line.trim().slice(0, 100)}`)
   })
@@ -62,15 +63,15 @@ for (const key of depKeys) {
 }
 
 // ── 规则 4：令牌引用完整性 ──
-// var(--ew-xxx) 不带 fallback 时，--ew-xxx 必须在库内某处有定义
+// var(--ev-xxx) 不带 fallback 时，--ev-xxx 必须在库内某处有定义
 // （CSS 声明 / JS style 绑定对象键 / 模板内联样式均算定义点）
 {
   const defined = new Set()
   const usedNoFallback = []
   for (const file of files) {
     const src = readFileSync(file, 'utf8')
-    for (const m of src.matchAll(/(--ew-[a-z0-9-]+)['"]?\s*:/g)) defined.add(m[1])
-    for (const m of src.matchAll(/var\((--ew-[a-z0-9-]+)\)/g)) usedNoFallback.push({ file, name: m[1] })
+    for (const m of src.matchAll(/(--ev-[a-z0-9-]+)['"]?\s*:/g)) defined.add(m[1])
+    for (const m of src.matchAll(/var\((--ev-[a-z0-9-]+)\)/g)) usedNoFallback.push({ file, name: m[1] })
   }
   for (const { file, name } of usedNoFallback) {
     if (!defined.has(name)) {
@@ -82,8 +83,8 @@ for (const key of depKeys) {
 if (violations.length) {
   console.error(`[check-token-rule] 违反隔离铁律，共 ${violations.length} 处：`)
   for (const v of violations) console.error('  ' + v)
-  console.error('\n铁律：本库独立命名空间。CSS 令牌一律使用 --ew-* 前缀，禁止第三方与跨库引用。')
+  console.error('\n铁律：本库独立命名空间。CSS 令牌一律使用 --ev-* 前缀，禁止第三方与跨库引用。')
   process.exit(1)
 }
 
-console.log('[check-token-rule] 通过：源码仅使用 --ew-* 令牌，无跨库引用/依赖')
+console.log('[check-token-rule] 通过：源码仅使用 --ev-* 令牌，无跨库引用/依赖')

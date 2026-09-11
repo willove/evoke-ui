@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!global" class="ew-config-provider" :style="scopedStyle">
+  <div v-if="!global" class="ev-config-provider" :style="scopedStyle">
     <slot />
   </div>
   <slot v-else />
@@ -7,9 +7,9 @@
 
 <script setup>
 /**
- * EwConfigProvider — 主题配置提供者
+ * EvConfigProvider — 主题配置提供者
  *
- * props 变化时把对应的 --ew-* 令牌写入 :root（global，默认）或包裹元素，
+ * props 变化时把对应的 --ev-* 令牌写入 :root（global，默认）或包裹元素，
  * 全库组件经令牌取值，主题即时生效；淡色阶（light-3…9/dark-2）由主色自动生成。
  *
  * props：primary(hex) / radius('sharp'|'soft'|'default'|'round') /
@@ -71,15 +71,15 @@ watch(
   () => props.glass,
   (on) => {
     if (typeof document === 'undefined') return
-    if (on) document.documentElement.setAttribute('data-ew-glass', 'on')
-    else document.documentElement.removeAttribute('data-ew-glass')
+    if (on) document.documentElement.setAttribute('data-ev-glass', 'on')
+    else document.documentElement.removeAttribute('data-ev-glass')
   },
   { immediate: true }
 )
 
 onUnmounted(() => {
   if (typeof document === 'undefined') return
-  document.documentElement.removeAttribute('data-ew-glass')
+  document.documentElement.removeAttribute('data-ev-glass')
 })
 </script>
 

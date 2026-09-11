@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    class="ev-col"
+    class="eb-col"
     :class="classes"
     :style="colStyle"
   >
@@ -11,7 +11,7 @@
 
 <script setup>
 /**
- * EvCol — 栅格列
+ * EbCol — 栅格列
  * span/offset/push/pull + xs~xl 响应式（数字或 {span,offset,push,pull} 对象）
  */
 import { computed, inject } from 'vue'
@@ -37,18 +37,18 @@ const classes = computed(() => {
   const addBreakpoint = (prefix, val) => {
     if (val == null) return
     if (typeof val === 'number') {
-      list.push(`ev-col-${prefix}-${val}`)
+      list.push(`eb-col-${prefix}-${val}`)
     } else if (typeof val === 'object') {
-      if (val.span != null) list.push(`ev-col-${prefix}-${val.span}`)
-      if (val.offset != null) list.push(`ev-col-${prefix}-offset-${val.offset}`)
-      if (val.push != null) list.push(`ev-col-${prefix}-push-${val.push}`)
-      if (val.pull != null) list.push(`ev-col-${prefix}-pull-${val.pull}`)
+      if (val.span != null) list.push(`eb-col-${prefix}-${val.span}`)
+      if (val.offset != null) list.push(`eb-col-${prefix}-offset-${val.offset}`)
+      if (val.push != null) list.push(`eb-col-${prefix}-push-${val.push}`)
+      if (val.pull != null) list.push(`eb-col-${prefix}-pull-${val.pull}`)
     }
   }
-  list.push(`ev-col-${props.span}`)
-  if (props.offset) list.push(`ev-col-offset-${props.offset}`)
-  if (props.push) list.push(`ev-col-push-${props.push}`)
-  if (props.pull) list.push(`ev-col-pull-${props.pull}`)
+  list.push(`eb-col-${props.span}`)
+  if (props.offset) list.push(`eb-col-offset-${props.offset}`)
+  if (props.push) list.push(`eb-col-push-${props.push}`)
+  if (props.pull) list.push(`eb-col-pull-${props.pull}`)
   for (const key of sizeKeys) addBreakpoint(key, props[key])
   return list
 })

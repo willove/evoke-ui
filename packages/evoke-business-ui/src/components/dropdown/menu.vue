@@ -1,14 +1,14 @@
 <template>
-  <ul class="ev-dropdown-menu ev-dropdown-menu">
+  <ul class="eb-dropdown-menu eb-dropdown-menu">
     <slot />
   </ul>
 </template>
 
 <script setup>
 /**
- * EvDropdownMenu — 下拉菜单容器
+ * EbDropdownMenu — 下拉菜单容器
  */
-defineOptions({ name: 'EvDropdownMenu' })
+defineOptions({ name: 'EbDropdownMenu' })
 </script>
 
 <style src="./style.css"></style>

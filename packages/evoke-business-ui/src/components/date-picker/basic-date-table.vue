@@ -1,10 +1,10 @@
 <template>
-  <table class="ev-date-table" cellspacing="0" cellpadding="0">
+  <table class="eb-date-table" cellspacing="0" cellpadding="0">
     <tbody>
       <tr>
         <th v-for="w in weekHeaders" :key="w">{{ w }}</th>
       </tr>
-      <tr v-for="(row, ri) in rows" :key="ri" class="ev-date-table__row">
+      <tr v-for="(row, ri) in rows" :key="ri" class="eb-date-table__row">
         <td
           v-for="cell in row"
           :key="cell.key"
@@ -12,8 +12,8 @@
           @click="handleClick(cell)"
           @mouseenter="handleMouseEnter(cell)"
         >
-          <div class="ev-date-table-cell">
-            <span class="ev-date-table-cell__text">{{ cell.day.date() }}</span>
+          <div class="eb-date-table-cell">
+            <span class="eb-date-table-cell__text">{{ cell.day.date() }}</span>
           </div>
         </td>
       </tr>
@@ -23,14 +23,14 @@
 
 <script setup>
 /**
- * BasicDateTable — 日期网格（.ev-date-table / .ev-date-table-cell 结构类）
+ * BasicDateTable — 日期网格（.eb-date-table / .eb-date-table-cell 结构类）
  * 单选高亮 current；区间：start-date/end-date/in-range（selecting 时 maxDate 为 hover 预览）
  */
 import { computed } from 'vue'
 import { dayjs, getDateCells, isSameDay } from './utils'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvBasicDateTable' })
+defineOptions({ name: 'EbBasicDateTable' })
 
 const props = defineProps({
   /** 视图月份（dayjs） */
@@ -52,7 +52,7 @@ const emit = defineEmits(['pick', 'hover'])
 const { locale } = useLocale()
 
 const weekHeaders = computed(() => {
-  const weeks = locale.value?.ev?.datepicker?.weeks || {}
+  const weeks = locale.value?.eb?.datepicker?.weeks || {}
   // dayjs zh-cn 周日起始：日一二三四五六
   const keys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
   return keys.map((k, i) => weeks[k] || `${i}`)

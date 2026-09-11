@@ -1,15 +1,15 @@
 <template>
-  <section :class="['ew-section', `is-${align}`, { 'is-glass': glass === true, 'no-glass': glass === false }]" :style="sectionStyle">
-    <div v-if="eyebrow || $slots.eyebrow" class="ew-section__eyebrow">
+  <section :class="['ev-section', `is-${align}`, { 'is-glass': glass === true, 'no-glass': glass === false }]" :style="sectionStyle">
+    <div v-if="eyebrow || $slots.eyebrow" class="ev-section__eyebrow">
       <slot name="eyebrow">{{ eyebrow }}</slot>
     </div>
-    <h2 v-if="title || $slots.title" class="ew-section__title">
+    <h2 v-if="title || $slots.title" class="ev-section__title">
       <slot name="title">{{ title }}</slot>
     </h2>
-    <p v-if="description || $slots.description" class="ew-section__description">
+    <p v-if="description || $slots.description" class="ev-section__description">
       <slot name="description">{{ description }}</slot>
     </p>
-    <div v-if="$slots.default" class="ew-section__body">
+    <div v-if="$slots.default" class="ev-section__body">
       <slot />
     </div>
   </section>
@@ -17,7 +17,7 @@
 
 <script setup>
 /**
- * EwSection — 内容区块（眉题 + 大标题 + 描述 + 内容）
+ * EvSection — 内容区块（眉题 + 大标题 + 描述 + 内容）
  * eyebrow 为 remixdesign「WORK」式字距拉开的大写小标
  */
 import { computed } from 'vue'

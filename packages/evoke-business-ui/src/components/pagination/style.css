@@ -1,75 +1,75 @@
-/* EvPagination —分页 */
+/* EbPagination —分页 */
 
-.ev-pagination.ev-pagination {
-  --ev-pagination-button-width: 32px;
-  --ev-pagination-button-height: 32px;
+.eb-pagination.eb-pagination {
+  --eb-pagination-button-width: 32px;
+  --eb-pagination-button-height: 32px;
   display: flex;
   align-items: center;
-  gap: var(--ev-space-3);
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
+  gap: var(--eb-space-3);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
   flex-wrap: wrap;
 }
-.ev-pagination.ev-pagination--small.ev-pagination {
-  --ev-pagination-button-width: 24px;
-  --ev-pagination-button-height: 24px;
-  font-size: var(--ev-font-size-xs);
-  gap: var(--ev-space-2);
+.eb-pagination.eb-pagination--small.eb-pagination {
+  --eb-pagination-button-width: 24px;
+  --eb-pagination-button-height: 24px;
+  font-size: var(--eb-font-size-xs);
+  gap: var(--eb-space-2);
 }
-.ev-pagination.ev-pagination--large.ev-pagination {
-  --ev-pagination-button-width: 40px;
-  --ev-pagination-button-height: 40px;
+.eb-pagination.eb-pagination--large.eb-pagination {
+  --eb-pagination-button-width: 40px;
+  --eb-pagination-button-height: 40px;
 }
-.ev-pagination.ev-pagination.is-disabled {
+.eb-pagination.eb-pagination.is-disabled {
   opacity: 0.55;
   pointer-events: none;
 }
 
 /* total / jumper / sizes 文本 */
-.ev-pagination.ev-pagination .ev-pagination__total,
-.ev-pagination.ev-pagination .ev-pagination__jump {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-regular);
+.eb-pagination.eb-pagination .eb-pagination__total,
+.eb-pagination.eb-pagination .eb-pagination__jump {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-regular);
   display: inline-flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
 }
 
 /* prev / next 按钮 */
-.ev-pagination.ev-pagination .btn-prev,
-.ev-pagination.ev-pagination .btn-next {
+.eb-pagination.eb-pagination .btn-prev,
+.eb-pagination.eb-pagination .btn-next {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--ev-pagination-button-width);
-  height: var(--ev-pagination-button-height);
-  background: var(--ev-pagination-bg-color, var(--ev-fill-color-blank));
-  color: var(--ev-text-color-regular);
+  width: var(--eb-pagination-button-width);
+  height: var(--eb-pagination-button-height);
+  background: var(--eb-pagination-bg-color, var(--eb-fill-color-blank));
+  color: var(--eb-text-color-regular);
   border: none;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out), background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-pagination.ev-pagination.is-background .btn-prev,
-.ev-pagination.ev-pagination.is-background .btn-next {
-  background-color: var(--ev-pagination-hover-bg-color, var(--ev-fill-color));
+.eb-pagination.eb-pagination.is-background .btn-prev,
+.eb-pagination.eb-pagination.is-background .btn-next {
+  background-color: var(--eb-pagination-hover-bg-color, var(--eb-fill-color));
 }
-.ev-pagination.ev-pagination .btn-prev:not(.is-disabled):hover,
-.ev-pagination.ev-pagination .btn-next:not(.is-disabled):hover {
-  color: var(--ev-color-primary);
+.eb-pagination.eb-pagination .btn-prev:not(.is-disabled):hover,
+.eb-pagination.eb-pagination .btn-next:not(.is-disabled):hover {
+  color: var(--eb-color-primary);
 }
-.ev-pagination.ev-pagination .btn-prev.is-disabled,
-.ev-pagination.ev-pagination .btn-next.is-disabled {
-  color: var(--ev-text-color-placeholder);
+.eb-pagination.eb-pagination .btn-prev.is-disabled,
+.eb-pagination.eb-pagination .btn-next.is-disabled {
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
-  background-color: var(--ev-fill-color-light);
+  background-color: var(--eb-fill-color-light);
 }
 
 /* pager */
-.ev-pagination.ev-pagination .ev-pager {
+.eb-pagination.eb-pagination .eb-pager {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -77,67 +77,67 @@
   font-size: inherit;
   line-height: inherit;
 }
-.ev-pagination.ev-pagination .ev-pager li.number,
-.ev-pagination.ev-pagination .ev-pager li.btn-quickprev,
-.ev-pagination.ev-pagination .ev-pager li.btn-quicknext {
+.eb-pagination.eb-pagination .eb-pager li.number,
+.eb-pagination.eb-pagination .eb-pager li.btn-quickprev,
+.eb-pagination.eb-pagination .eb-pager li.btn-quicknext {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--ev-pagination-button-width);
-  height: var(--ev-pagination-button-height);
+  min-width: var(--eb-pagination-button-width);
+  height: var(--eb-pagination-button-height);
   padding: 0 6px;
   background: transparent;
-  color: var(--ev-text-color-regular);
-  border-radius: var(--ev-radius-sm);
+  color: var(--eb-text-color-regular);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
   user-select: none;
   font-size: inherit;
   line-height: inherit;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out), background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out), background-color var(--eb-duration-fast) var(--eb-ease-out);
   box-sizing: border-box;
 }
-.ev-pagination.ev-pagination.is-background .ev-pager li.number,
-.ev-pagination.ev-pagination.is-background .ev-pager li.btn-quickprev,
-.ev-pagination.ev-pagination.is-background .ev-pager li.btn-quicknext {
-  background-color: var(--ev-fill-color);
+.eb-pagination.eb-pagination.is-background .eb-pager li.number,
+.eb-pagination.eb-pagination.is-background .eb-pager li.btn-quickprev,
+.eb-pagination.eb-pagination.is-background .eb-pager li.btn-quicknext {
+  background-color: var(--eb-fill-color);
 }
-.ev-pagination.ev-pagination .ev-pager li.number:hover,
-.ev-pagination.ev-pagination .ev-pager li.btn-quickprev:hover,
-.ev-pagination.ev-pagination .ev-pager li.btn-quicknext:hover {
-  color: var(--ev-color-primary);
+.eb-pagination.eb-pagination .eb-pager li.number:hover,
+.eb-pagination.eb-pagination .eb-pager li.btn-quickprev:hover,
+.eb-pagination.eb-pagination .eb-pager li.btn-quicknext:hover {
+  color: var(--eb-color-primary);
 }
-.ev-pagination.ev-pagination.is-background .ev-pager li.number:hover {
-  background-color: var(--ev-color-primary-light-9);
+.eb-pagination.eb-pagination.is-background .eb-pager li.number:hover {
+  background-color: var(--eb-color-primary-light-9);
 }
-.ev-pagination.ev-pagination .ev-pager li.number.is-active {
-  color: var(--ev-color-primary);
-  font-weight: var(--ev-font-weight-medium);
+.eb-pagination.eb-pagination .eb-pager li.number.is-active {
+  color: var(--eb-color-primary);
+  font-weight: var(--eb-font-weight-medium);
 }
-.ev-pagination.ev-pagination.is-background .ev-pager li.number.is-active {
-  background-color: var(--ev-color-primary);
+.eb-pagination.eb-pagination.is-background .eb-pager li.number.is-active {
+  background-color: var(--eb-color-primary);
   color: #fff;
 }
 
 /* jumper 输入框 */
-.ev-pagination.ev-pagination .ev-pagination__editor {
+.eb-pagination.eb-pagination .eb-pagination__editor {
   width: 48px;
-  height: calc(var(--ev-pagination-button-height) - 6px);
+  height: calc(var(--eb-pagination-button-height) - 6px);
   padding: 0 4px;
   border: none;
   outline: none;
-  border-radius: var(--ev-radius-sm);
-  background: var(--ev-fill-color-light);
-  color: var(--ev-text-color-regular);
-  font-size: var(--ev-font-size-xs);
+  border-radius: var(--eb-radius-sm);
+  background: var(--eb-fill-color-light);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-xs);
   text-align: center;
   -moz-appearance: textfield;
 }
-.ev-pagination.ev-pagination .ev-pagination__editor::-webkit-outer-spin-button,
-.ev-pagination.ev-pagination .ev-pagination__editor::-webkit-inner-spin-button {
+.eb-pagination.eb-pagination .eb-pagination__editor::-webkit-outer-spin-button,
+.eb-pagination.eb-pagination .eb-pagination__editor::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.ev-pagination.ev-pagination .ev-pagination__editor:focus {
-  background: var(--ev-fill-color-blank);
-  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+.eb-pagination.eb-pagination .eb-pagination__editor:focus {
+  background: var(--eb-fill-color-blank);
+  box-shadow: 0 0 0 1px var(--eb-color-primary) inset;
 }

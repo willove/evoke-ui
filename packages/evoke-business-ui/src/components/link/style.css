@@ -1,6 +1,6 @@
-/* EvLink —文字链接 */
+/* EbLink —文字链接 */
 
-.ev-link.ev-link {
+.eb-link.eb-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8,51 +8,51 @@
   text-decoration: none;
   outline: none;
   cursor: pointer;
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
-  color: var(--ev-text-color-regular);
-  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
+  color: var(--eb-text-color-regular);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-link.ev-link:hover {
-  color: var(--ev-color-primary-light-3);
+.eb-link.eb-link:hover {
+  color: var(--eb-color-primary-light-3);
 }
 
-.ev-link.ev-link.ev-link--default:hover {
-  color: var(--ev-color-primary);
+.eb-link.eb-link.eb-link--default:hover {
+  color: var(--eb-color-primary);
 }
-.ev-link.ev-link.ev-link--primary {
-  color: var(--ev-color-primary);
+.eb-link.eb-link.eb-link--primary {
+  color: var(--eb-color-primary);
 }
-.ev-link.ev-link.ev-link--primary:hover {
-  color: var(--ev-color-primary-light-3);
+.eb-link.eb-link.eb-link--primary:hover {
+  color: var(--eb-color-primary-light-3);
 }
-.ev-link.ev-link.ev-link--success {
-  color: var(--ev-color-success);
+.eb-link.eb-link.eb-link--success {
+  color: var(--eb-color-success);
 }
-.ev-link.ev-link.ev-link--success:hover {
-  color: var(--ev-color-success-light-3);
+.eb-link.eb-link.eb-link--success:hover {
+  color: var(--eb-color-success-light-3);
 }
-.ev-link.ev-link.ev-link--warning {
-  color: var(--ev-color-warning);
+.eb-link.eb-link.eb-link--warning {
+  color: var(--eb-color-warning);
 }
-.ev-link.ev-link.ev-link--warning:hover {
-  color: var(--ev-color-warning-light-3);
+.eb-link.eb-link.eb-link--warning:hover {
+  color: var(--eb-color-warning-light-3);
 }
-.ev-link.ev-link.ev-link--info {
-  color: var(--ev-text-color-secondary);
+.eb-link.eb-link.eb-link--info {
+  color: var(--eb-text-color-secondary);
 }
-.ev-link.ev-link.ev-link--info:hover {
-  color: var(--ev-text-color-secondary);
+.eb-link.eb-link.eb-link--info:hover {
+  color: var(--eb-text-color-secondary);
 }
-.ev-link.ev-link.ev-link--danger {
-  color: var(--ev-color-danger);
+.eb-link.eb-link.eb-link--danger {
+  color: var(--eb-color-danger);
 }
-.ev-link.ev-link.ev-link--danger:hover {
-  color: var(--ev-color-danger-light-3);
+.eb-link.eb-link.eb-link--danger:hover {
+  color: var(--eb-color-danger-light-3);
 }
 
 /* underline: always（默认） */
-.ev-link.ev-link.is-underline::after {
+.eb-link.eb-link.is-underline::after {
   content: '';
   position: absolute;
   left: 0;
@@ -62,7 +62,7 @@
   border-bottom: 1px solid currentColor;
 }
 /* underline: hover（仅显式声明 hover 策略时生效，never / false 不出现下划线） */
-.ev-link.ev-link.is-underline-hover:not(.is-disabled):hover::after {
+.eb-link.eb-link.is-underline-hover:not(.is-disabled):hover::after {
   content: '';
   position: absolute;
   left: 0;
@@ -72,12 +72,12 @@
   border-bottom: 1px solid currentColor;
 }
 
-.ev-link.ev-link.is-disabled {
+.eb-link.eb-link.is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
 
-.ev-link.ev-link .ev-link__inner {
+.eb-link.eb-link .eb-link__inner {
   display: inline-flex;
   align-items: center;
 }

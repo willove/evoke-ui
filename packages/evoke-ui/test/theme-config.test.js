@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from './helpers'
 import { generatePrimaryRamp, hexToRgb, mixHex } from '../src/utils/color'
-import { resolveThemeVars, EW_COLOR_PRESETS, EW_RADIUS_PRESETS, EW_SPACE_PRESETS, EW_CONTAINER_PRESETS } from '../src/presets'
+import { resolveThemeVars, EV_COLOR_PRESETS, EV_RADIUS_PRESETS, EV_SPACE_PRESETS, EV_CONTAINER_PRESETS } from '../src/presets'
 import { useThemeConfig } from '../src/composables/useThemeConfig'
 
 describe('颜色工具', () => {
@@ -30,24 +30,24 @@ describe('颜色工具', () => {
 
 describe('主题预设与 resolveThemeVars', () => {
   it('预设齐全', () => {
-    expect(Object.keys(EW_COLOR_PRESETS)).toContain('blue')
-    expect(EW_RADIUS_PRESETS.round.scale).toBeGreaterThan(1)
-    expect(EW_SPACE_PRESETS.compact.scale).toBeLessThan(1)
-    expect(EW_CONTAINER_PRESETS.wide.width).toBeGreaterThan(EW_CONTAINER_PRESETS.default.width)
+    expect(Object.keys(EV_COLOR_PRESETS)).toContain('blue')
+    expect(EV_RADIUS_PRESETS.round.scale).toBeGreaterThan(1)
+    expect(EV_SPACE_PRESETS.compact.scale).toBeLessThan(1)
+    expect(EV_CONTAINER_PRESETS.wide.width).toBeGreaterThan(EV_CONTAINER_PRESETS.default.width)
   })
 
   it('primary 解析出淡色阶令牌', () => {
     const vars = resolveThemeVars({ primary: '#7C5CFC' })
-    expect(vars['--ew-color-primary']).toBe('#7C5CFC')
-    expect(vars['--ew-color-primary-light-9']).toMatch(/^#/)
-    expect(vars['--ew-color-primary-rgb']).toBe('124, 92, 252')
+    expect(vars['--ev-color-primary']).toBe('#7C5CFC')
+    expect(vars['--ev-color-primary-light-9']).toMatch(/^#/)
+    expect(vars['--ev-color-primary-rgb']).toBe('124, 92, 252')
   })
 
   it('radius/space/container 解析出对应档位', () => {
     const vars = resolveThemeVars({ radius: 'round', space: 'loose', container: 'wide' })
-    expect(vars['--ew-radius-xl']).toBe('26px')
-    expect(vars['--ew-space-6']).toBe('29px')
-    expect(vars['--ew-container-width']).toBe('1360px')
+    expect(vars['--ev-radius-xl']).toBe('26px')
+    expect(vars['--ev-space-6']).toBe('29px')
+    expect(vars['--ev-container-width']).toBe('1360px')
   })
 })
 
@@ -61,16 +61,16 @@ describe('useThemeConfig', () => {
     const { setPrimary, reset } = useThemeConfig()
     setPrimary('#F04E60')
     const style = document.documentElement.style
-    expect(style.getPropertyValue('--ew-color-primary')).toBe('#F04E60')
-    expect(style.getPropertyValue('--ew-color-primary-rgb')).toBe('240, 78, 96')
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('#F04E60')
+    expect(style.getPropertyValue('--ev-color-primary-rgb')).toBe('240, 78, 96')
     reset()
-    expect(style.getPropertyValue('--ew-color-primary')).toBe('')
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('')
   })
 
   it('setRadius 非 default 档写入圆角令牌', () => {
     const { setRadius } = useThemeConfig()
     setRadius('sharp')
-    expect(document.documentElement.style.getPropertyValue('--ew-radius-md')).toBeTruthy()
+    expect(document.documentElement.style.getPropertyValue('--ev-radius-md')).toBeTruthy()
     useThemeConfig().reset()
   })
 
@@ -78,17 +78,17 @@ describe('useThemeConfig', () => {
     const { applyPreset } = useThemeConfig()
     applyPreset('personal')
     const style = document.documentElement.style
-    expect(style.getPropertyValue('--ew-color-primary')).toBe('#1A2947')
-    expect(style.getPropertyValue('--ew-radius-xl')).toBeTruthy()
-    expect(style.getPropertyValue('--ew-space-6')).toBeTruthy()
-    expect(style.getPropertyValue('--ew-container-width')).toBe('920px')
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('#1A2947')
+    expect(style.getPropertyValue('--ev-radius-xl')).toBeTruthy()
+    expect(style.getPropertyValue('--ev-space-6')).toBeTruthy()
+    expect(style.getPropertyValue('--ev-container-width')).toBe('920px')
     useThemeConfig().reset()
-    expect(style.getPropertyValue('--ew-container-width')).toBe('')
+    expect(style.getPropertyValue('--ev-container-width')).toBe('')
   })
 
   it('applyPreset 未知 key 安全忽略', () => {
     const { applyPreset } = useThemeConfig()
     applyPreset('no-such-preset')
-    expect(document.documentElement.style.getPropertyValue('--ew-color-primary')).toBe('')
+    expect(document.documentElement.style.getPropertyValue('--ev-color-primary')).toBe('')
   })
 })

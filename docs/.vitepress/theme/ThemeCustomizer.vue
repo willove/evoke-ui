@@ -1,6 +1,6 @@
 <template>
   <div class="cz-wrap">
-    <ev-config-provider
+    <eb-config-provider
       :theme-color="primary"
       :semantic="semantic"
       :density="density"
@@ -10,7 +10,7 @@
         <div class="cz-row">
           <span class="cz-label">主色</span>
           <button
-            v-for="p in EV_THEME_PRESETS"
+            v-for="p in EB_THEME_PRESETS"
             :key="p.value"
             type="button"
             class="cz-swatch"
@@ -47,36 +47,36 @@
             :class="{ 'is-active': density === d }"
             @click="density = d"
           >{{ d }}</button>
-          <ev-switch v-model="glassOn" active-text="磨砂" class="cz-glass"></ev-switch>
+          <eb-switch v-model="glassOn" active-text="磨砂" class="cz-glass"></eb-switch>
         </div>
 
         <div class="cz-preview">
           <div class="cz-preview__row">
-            <ev-button type="primary">主要操作</ev-button>
-            <ev-button>次要操作</ev-button>
-            <ev-button type="success">成功</ev-button>
-            <ev-button type="warning">警告</ev-button>
-            <ev-button type="danger">危险</ev-button>
+            <eb-button type="primary">主要操作</eb-button>
+            <eb-button>次要操作</eb-button>
+            <eb-button type="success">成功</eb-button>
+            <eb-button type="warning">警告</eb-button>
+            <eb-button type="danger">危险</eb-button>
           </div>
           <div class="cz-preview__row">
-            <ev-tag type="primary">primary</ev-tag>
-            <ev-tag type="success">success</ev-tag>
-            <ev-tag type="warning">warning</ev-tag>
-            <ev-tag type="danger">danger</ev-tag>
-            <ev-tag type="info">info</ev-tag>
+            <eb-tag type="primary">primary</eb-tag>
+            <eb-tag type="success">success</eb-tag>
+            <eb-tag type="warning">warning</eb-tag>
+            <eb-tag type="danger">danger</eb-tag>
+            <eb-tag type="info">info</eb-tag>
           </div>
           <div class="cz-preview__row">
-            <ev-alert type="success" title="同步完成">3 个数据源已接入。</ev-alert>
-            <ev-alert type="warning" title="额度提醒">本月同步量已用 82%。</ev-alert>
+            <eb-alert type="success" title="同步完成">3 个数据源已接入。</eb-alert>
+            <eb-alert type="warning" title="额度提醒">本月同步量已用 82%。</eb-alert>
           </div>
           <div class="cz-preview__row">
-            <ev-input placeholder="输入框：聚焦看主色光环" class="cz-input"></ev-input>
-            <ev-switch v-model="on"></ev-switch>
-            <ev-progress :percentage="62" class="cz-progress"></ev-progress>
+            <eb-input placeholder="输入框：聚焦看主色光环" class="cz-input"></eb-input>
+            <eb-switch v-model="on"></eb-switch>
+            <eb-progress :percentage="62" class="cz-progress"></eb-progress>
           </div>
         </div>
       </div>
-    </ev-config-provider>
+    </eb-config-provider>
 
     <h2 class="cz-h2">等效配置代码</h2>
     <p class="cz-p">
@@ -95,7 +95,7 @@
  * 独立 SFC：复杂交互演示不走 markdown 内联，规避 md HTML 块解析限制。
  */
 import { ref, computed } from 'vue'
-import { EV_THEME_PRESETS } from '@wil-works/evoke-business-ui'
+import { EB_THEME_PRESETS } from '@wil-works/evoke-business-ui'
 
 const primary = ref('#175dff')
 const semantic = ref({
@@ -124,13 +124,13 @@ function cycleSemantic(key) {
 const codeSnippet = computed(() => {
   const semanticJson = JSON.stringify(semantic.value)
   const lines = [
-    '<ev-config-provider',
+    '<eb-config-provider',
     `  theme-color="${primary.value}"`,
     `  :semantic='${semanticJson}'`,
     `  density="${density.value}"`,
   ]
   if (glassOn.value) lines.push('  glass')
-  lines.push('>', '  <router-view />', '</ev-config-provider>')
+  lines.push('>', '  <router-view />', '</eb-config-provider>')
   return lines.join('\n')
 })
 </script>
@@ -146,7 +146,7 @@ const codeSnippet = computed(() => {
   flex-direction: column;
   gap: 18px;
   padding: 20px;
-  border: 1px solid var(--bd-border-light, var(--ev-border-color-light));
+  border: 1px solid var(--bd-border-light, var(--eb-border-color-light));
   border-radius: 12px;
 }
 .cz-row {
@@ -158,7 +158,7 @@ const codeSnippet = computed(() => {
 .cz-label {
   min-width: 48px;
   font-size: 13px;
-  color: var(--bd-text-secondary, var(--ev-text-color-secondary));
+  color: var(--bd-text-secondary, var(--eb-text-color-secondary));
 }
 .cz-swatch {
   width: 30px;
@@ -174,7 +174,7 @@ const codeSnippet = computed(() => {
 .cz-hex {
   width: 96px;
   padding: 5px 10px;
-  border: 1px solid var(--bd-border-light, var(--ev-border-color-light));
+  border: 1px solid var(--bd-border-light, var(--eb-border-color-light));
   border-radius: 6px;
   background: transparent;
   font-family: var(--bd-mono, monospace);
@@ -196,11 +196,11 @@ const codeSnippet = computed(() => {
 }
 .cz-semantic-key {
   font-size: 12px;
-  color: var(--bd-text-tertiary, var(--ev-text-color-secondary));
+  color: var(--bd-text-tertiary, var(--eb-text-color-secondary));
 }
 .cz-seg {
   padding: 5px 14px;
-  border: 1px solid var(--bd-border-light, var(--ev-border-color-light));
+  border: 1px solid var(--bd-border-light, var(--eb-border-color-light));
   border-radius: 999px;
   background: transparent;
   cursor: pointer;
@@ -208,8 +208,8 @@ const codeSnippet = computed(() => {
   color: inherit;
 }
 .cz-seg.is-active {
-  background: var(--ev-color-primary);
-  border-color: var(--ev-color-primary);
+  background: var(--eb-color-primary);
+  border-color: var(--eb-color-primary);
   color: #fff;
 }
 .cz-glass {
@@ -220,7 +220,7 @@ const codeSnippet = computed(() => {
   flex-direction: column;
   gap: 14px;
   padding: 18px;
-  border: 1px dashed var(--bd-border-light, var(--ev-border-color-light));
+  border: 1px dashed var(--bd-border-light, var(--eb-border-color-light));
   border-radius: 10px;
 }
 .cz-preview__row {
@@ -229,7 +229,7 @@ const codeSnippet = computed(() => {
   flex-wrap: wrap;
   gap: 12px;
 }
-.cz-preview__row .ev-alert {
+.cz-preview__row .eb-alert {
   min-width: 260px;
 }
 .cz-input {
@@ -242,32 +242,32 @@ const codeSnippet = computed(() => {
   margin: 8px 0 0;
   font-size: 20px;
   font-weight: 600;
-  color: var(--bd-text, var(--ev-text-color-primary));
+  color: var(--bd-text, var(--eb-text-color-primary));
 }
 .cz-p {
   margin: 0;
   font-size: 14px;
   line-height: 1.8;
-  color: var(--bd-text-secondary, var(--ev-text-color-secondary));
+  color: var(--bd-text-secondary, var(--eb-text-color-secondary));
 }
 .cz-p code,
 .cz-wrap code {
   padding: 2px 6px;
   border-radius: 4px;
-  background: var(--bd-bg-secondary, var(--ev-fill-color-light));
+  background: var(--bd-bg-secondary, var(--eb-fill-color-light));
   font-size: 12px;
-  color: var(--ev-color-primary);
+  color: var(--eb-color-primary);
 }
 .cz-code {
   margin: 0;
   padding: 16px 18px;
   overflow-x: auto;
   border-radius: 10px;
-  background: var(--bd-bg-secondary, var(--ev-fill-color-light));
-  border: 1px solid var(--bd-border-light, var(--ev-border-color-light));
+  background: var(--bd-bg-secondary, var(--eb-fill-color-light));
+  border: 1px solid var(--bd-border-light, var(--eb-border-color-light));
   font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;
-  color: var(--bd-text, var(--ev-text-color-primary));
+  color: var(--bd-text, var(--eb-text-color-primary));
 }
 </style>

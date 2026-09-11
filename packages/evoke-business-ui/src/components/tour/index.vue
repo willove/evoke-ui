@@ -2,27 +2,27 @@
   <Teleport to="body">
     <template v-if="active && currentTargetRect">
       <!-- 聚光高亮：挖洞靠超大 box-shadow 外扩遮罩 -->
-      <div class="ev-tour__mask" :style="maskStyle" @click.self="onMaskClick" />
-      <div class="ev-tour__card" :style="cardStyle" role="dialog" aria-modal="true">
-        <div class="ev-tour__header">
-          <span class="ev-tour__title">
+      <div class="eb-tour__mask" :style="maskStyle" @click.self="onMaskClick" />
+      <div class="eb-tour__card" :style="cardStyle" role="dialog" aria-modal="true">
+        <div class="eb-tour__header">
+          <span class="eb-tour__title">
             <slot name="title" :step="currentStep" :index="current">{{ currentStep.title }}</slot>
           </span>
-          <button class="ev-tour__close" type="button" aria-label="关闭引导" @click="skip">
-            <ev-icon name="close" :size="14" />
+          <button class="eb-tour__close" type="button" aria-label="关闭引导" @click="skip">
+            <eb-icon name="close" :size="14" />
           </button>
         </div>
-        <div class="ev-tour__body">
+        <div class="eb-tour__body">
           <slot :step="currentStep" :index="current">{{ currentStep.description }}</slot>
         </div>
-        <div class="ev-tour__footer">
-          <span class="ev-tour__indicator">{{ current + 1 }} / {{ steps.length }}</span>
-          <div class="ev-tour__actions">
-            <ev-button v-if="current > 0" size="small" @click="prev">上一步</ev-button>
-            <ev-button v-if="current < steps.length - 1" size="small" type="primary" @click="next">
+        <div class="eb-tour__footer">
+          <span class="eb-tour__indicator">{{ current + 1 }} / {{ steps.length }}</span>
+          <div class="eb-tour__actions">
+            <eb-button v-if="current > 0" size="small" @click="prev">上一步</eb-button>
+            <eb-button v-if="current < steps.length - 1" size="small" type="primary" @click="next">
               下一步
-            </ev-button>
-            <ev-button v-else size="small" type="primary" @click="finish">完成</ev-button>
+            </eb-button>
+            <eb-button v-else size="small" type="primary" @click="finish">完成</eb-button>
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
 
 <script setup>
 /**
- * EvTour — 新手引导
+ * EbTour — 新手引导
  *
  * v-model 当前步骤索引（-1 表示未开启 / 已关闭）；
  * steps: [{ target: selector|Element, title, description, placement? }]
@@ -40,10 +40,10 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { inBrowser } from '../../utils/dom'
-import EvIcon from '../icon/index.vue'
-import EvButton from '../button/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbButton from '../button/index.vue'
 
-defineOptions({ name: 'EvTour' })
+defineOptions({ name: 'EbTour' })
 
 const props = defineProps({
   /** 步骤定义 */

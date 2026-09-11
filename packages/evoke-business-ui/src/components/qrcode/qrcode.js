@@ -384,7 +384,7 @@ export function encodeQR(text, options = {}) {
   }
   if (!version) {
     throw new Error(
-      `[EvQrcode] 内容过长：byte/M 级别下最多 ${QRCODE_MAX_BYTES} 字节（含中文按 UTF-8 计），当前 ${bytes.length} 字节`,
+      `[EbQrcode] 内容过长：byte/M 级别下最多 ${QRCODE_MAX_BYTES} 字节（含中文按 UTF-8 计），当前 ${bytes.length} 字节`,
     )
   }
   const dataCodewords = buildDataCodewords(bytes, version)

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-rate ev-rate"
+    class="eb-rate eb-rate"
     :class="[sizeClass, { 'is-disabled': disabled, 'is-readonly': readonly }]"
     role="slider"
     :aria-valuenow="modelValue"
@@ -15,25 +15,25 @@
     <span
       v-for="i in max"
       :key="i"
-      class="ev-rate__item"
+      class="eb-rate__item"
       @mousemove="handleMousemove(i, $event)"
       @click="handleClick(i)"
     >
-      <i class="ev-rate__icon" :style="{ color: voidColor }">
-        <ev-icon :name="voidIcon" :size="iconSize" />
+      <i class="eb-rate__icon" :style="{ color: voidColor }">
+        <eb-icon :name="voidIcon" :size="iconSize" />
       </i>
       <i
         v-if="isFilled(i)"
-        class="ev-rate__icon ev-rate__icon--active"
-        :class="{ 'ev-rate__icon--half': isHalf(i) }"
+        class="eb-rate__icon eb-rate__icon--active"
+        :class="{ 'eb-rate__icon--half': isHalf(i) }"
         :style="{ color: currentColor }"
       >
-        <ev-icon :name="icon" :size="iconSize" />
+        <eb-icon :name="icon" :size="iconSize" />
       </i>
     </span>
     <span
       v-if="showText || showScore"
-      class="ev-rate__text"
+      class="eb-rate__text"
       :style="{ color: textColor }"
     >{{ displayText }}</span>
   </div>
@@ -41,11 +41,11 @@
 
 <script setup>
 /**
- * EvRate — 评分
+ * EbRate — 评分
  * 半星叠加渲染；颜色按 low/high 阈值三档取色（数组或 {阈值: 色} 对象）
  */
 import { ref, computed } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   modelValue: { type: Number, default: 0 },
@@ -83,7 +83,7 @@ const displayValue = computed(() => {
 })
 
 const iconSize = computed(() => (props.size === 'large' ? 24 : props.size === 'small' ? 14 : 18))
-const sizeClass = computed(() => (props.size === 'default' ? '' : `ev-rate--${props.size}`))
+const sizeClass = computed(() => (props.size === 'default' ? '' : `eb-rate--${props.size}`))
 
 function isFilled(i) {
   return displayValue.value >= i || (props.allowHalf && displayValue.value >= i - 0.5)

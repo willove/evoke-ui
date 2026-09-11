@@ -1,10 +1,10 @@
 <template>
   <div
-    class="ev-tree ev-tree"
-    :class="{ 'ev-tree--highlight-current': highlightCurrent }"
+    class="eb-tree eb-tree"
+    :class="{ 'eb-tree--highlight-current': highlightCurrent }"
     role="tree"
   >
-    <ev-tree-node
+    <eb-tree-node
       v-for="item in visibleRoots"
       :key="item.node.key"
       :node="item.node"
@@ -27,28 +27,28 @@
       <template #default="{ node, data }">
         <slot :node="node" :data="data">{{ node.label }}</slot>
       </template>
-    </ev-tree-node>
-    <div v-if="visibleRoots.length === 0" class="ev-tree__empty-block">
-      <span class="ev-tree__empty-text">{{ emptyText || t('tree.emptyText') }}</span>
+    </eb-tree-node>
+    <div v-if="visibleRoots.length === 0" class="eb-tree__empty-block">
+      <span class="eb-tree__empty-text">{{ emptyText || t('tree.emptyText') }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
 /**
- * EvTree — 树形控件（.ev-tree / .ev-tree-node 双层类名）
+ * EbTree — 树形控件（.eb-tree / .eb-tree-node 双层类名）
  * 复选级联（check-strictly 关闭联动）/ filter-node-method / lazy load
  * expose：getNode/setCheckedKeys/getCheckedKeys/getCheckedNodes/getHalfCheckedKeys/
  *         getHalfCheckedNodes/setChecked/filter/setCurrentKey/getCurrentKey/getCurrentNode
  */
 import { computed, onMounted, ref, watch } from 'vue'
-import EvTreeNode from './node.vue'
+import EbTreeNode from './node.vue'
 import {
   buildNodes, cascadeCheck, descendantsOf, filterNodes,
 } from './tree-model'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvTree' })
+defineOptions({ name: 'EbTree' })
 
 const props = defineProps({
   data: { type: Array, default: () => [] },

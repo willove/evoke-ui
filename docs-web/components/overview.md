@@ -3,9 +3,9 @@
 Evoke UI 共内置 **57 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
 反馈与主题、移动端专属。每个组件卡片右上角带**平台兼容标识**：
 
-<span class="ov-legend"><ew-icon name="desktop" :size="13" /><ew-icon name="smartphone" :size="13" /> 双端兼容</span>
-<span class="ov-legend"><ew-icon name="desktop" :size="13" /> 仅桌面保证样式</span>
-<span class="ov-legend"><ew-icon name="smartphone" :size="13" /> 移动端专属（文档在移动端板块）</span>
+<span class="ov-legend"><ev-icon name="desktop" :size="13" /><ev-icon name="smartphone" :size="13" /> 双端兼容</span>
+<span class="ov-legend"><ev-icon name="desktop" :size="13" /> 仅桌面保证样式</span>
+<span class="ov-legend"><ev-icon name="smartphone" :size="13" /> 移动端专属（文档在移动端板块）</span>
 
 移动端适配范式与桌面 → 移动的重排手法见[移动端适配](/mobile/)板块。
 
@@ -108,8 +108,8 @@ const groups = [
       <span class="ov-item__row">
         <span class="ov-item__name">{{ it.name }}<em>{{ it.cn }}</em></span>
         <span class="ov-item__plat" :class="`is-${it.platform}`">
-          <ew-icon v-if="it.platform !== 'mobile'" name="desktop" :size="13" />
-          <ew-icon v-if="it.platform !== 'desktop'" name="smartphone" :size="13" />
+          <ev-icon v-if="it.platform !== 'mobile'" name="desktop" :size="13" />
+          <ev-icon v-if="it.platform !== 'desktop'" name="smartphone" :size="13" />
           <i>{{ it.platform === 'both' ? '双端' : it.platform === 'mobile' ? '移动' : '桌面' }}</i>
         </span>
       </span>
@@ -130,11 +130,11 @@ const groups = [
   gap: 4px;
   margin-right: 16px;
   padding: 3px 10px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-bg-soft);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-bg-soft);
   font-size: 12px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .ov-group {
   margin-top: 32px;
@@ -144,8 +144,8 @@ const groups = [
   padding-top: 0;
   border-top: none;
   font-size: 20px;
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
 }
 .ov-grid {
   display: grid;
@@ -157,20 +157,20 @@ const groups = [
   flex-direction: column;
   gap: 4px;
   padding: 12px 14px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-md);
-  background: var(--ew-bg-container);
-  color: var(--ew-text-primary);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  background: var(--ev-bg-container);
+  color: var(--ev-text-primary);
   text-decoration: none;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    transform var(--ew-duration-base) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    transform var(--ev-duration-base) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
 }
 .ov-grid .ov-item:hover {
-  border-color: var(--ew-color-primary-light-7);
+  border-color: var(--ev-color-primary-light-7);
   text-decoration: none;
   transform: translateY(-2px);
-  box-shadow: var(--ew-shadow-2);
+  box-shadow: var(--ev-shadow-2);
 }
 .ov-item__row {
   display: flex;
@@ -181,13 +181,13 @@ const groups = [
 .ov-grid .ov-item__name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 .ov-grid .ov-item__name em {
   margin-left: 8px;
   font-style: normal;
   font-weight: 400;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .ov-item__plat {
   display: inline-flex;
@@ -203,18 +203,18 @@ const groups = [
   font-style: normal;
   font-size: 11px;
   line-height: 1;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .ov-item__plat.is-both,
 .ov-item__plat.is-mobile {
-  color: var(--ew-color-primary);
+  color: var(--ev-color-primary);
 }
 .ov-item__plat.is-desktop {
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .ov-grid .ov-item__desc {
   font-size: 12.5px;
   line-height: 1.6;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 </style>

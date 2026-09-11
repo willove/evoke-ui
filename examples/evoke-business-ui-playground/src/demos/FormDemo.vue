@@ -1,73 +1,73 @@
 <template>
   <section class="demo">
-    <h2>EvForm / EvFormItem（async-validator 集成）</h2>
+    <h2>EbForm / EbFormItem（async-validator 集成）</h2>
 
-    <ev-form
+    <eb-form
       ref="formRef"
       :model="form"
       :rules="rules"
       label-width="90px"
       style="max-width: 520px"
     >
-      <ev-form-item label="用户名" prop="name">
-        <ev-input v-model="form.name" placeholder="blur 触发必填校验" />
-      </ev-form-item>
-      <ev-form-item label="邮箱" prop="email">
-        <ev-input v-model="form.email" placeholder="change 触发格式校验" />
-      </ev-form-item>
-      <ev-form-item label="类型" prop="type">
-        <ev-radio-group v-model="form.type">
-          <ev-radio label="a">类型 A</ev-radio>
-          <ev-radio label="b">类型 B</ev-radio>
-        </ev-radio-group>
-      </ev-form-item>
-      <ev-form-item label="权限" prop="perms">
-        <ev-checkbox-group v-model="form.perms">
-          <ev-checkbox label="read">读</ev-checkbox>
-          <ev-checkbox label="write">写</ev-checkbox>
-        </ev-checkbox-group>
-      </ev-form-item>
-      <ev-form-item label="启用" prop="enabled">
-        <ev-switch v-model="form.enabled" active-text="开" inactive-text="关" />
-      </ev-form-item>
-      <ev-form-item>
-        <ev-button type="primary" @click="onValidate">校验</ev-button>
-        <ev-button @click="onReset">重置</ev-button>
-        <ev-button text type="primary" @click="onClear">清除校验</ev-button>
-      </ev-form-item>
-    </ev-form>
+      <eb-form-item label="用户名" prop="name">
+        <eb-input v-model="form.name" placeholder="blur 触发必填校验" />
+      </eb-form-item>
+      <eb-form-item label="邮箱" prop="email">
+        <eb-input v-model="form.email" placeholder="change 触发格式校验" />
+      </eb-form-item>
+      <eb-form-item label="类型" prop="type">
+        <eb-radio-group v-model="form.type">
+          <eb-radio label="a">类型 A</eb-radio>
+          <eb-radio label="b">类型 B</eb-radio>
+        </eb-radio-group>
+      </eb-form-item>
+      <eb-form-item label="权限" prop="perms">
+        <eb-checkbox-group v-model="form.perms">
+          <eb-checkbox label="read">读</eb-checkbox>
+          <eb-checkbox label="write">写</eb-checkbox>
+        </eb-checkbox-group>
+      </eb-form-item>
+      <eb-form-item label="启用" prop="enabled">
+        <eb-switch v-model="form.enabled" active-text="开" inactive-text="关" />
+      </eb-form-item>
+      <eb-form-item>
+        <eb-button type="primary" @click="onValidate">校验</eb-button>
+        <eb-button @click="onReset">重置</eb-button>
+        <eb-button text type="primary" @click="onClear">清除校验</eb-button>
+      </eb-form-item>
+    </eb-form>
 
     <h3>Radio / Checkbox / Switch</h3>
     <div class="demo-row">
       <span class="demo-label">Button 组</span>
-      <ev-radio-group v-model="form.type">
-        <ev-radio-button label="a">A</ev-radio-button>
-        <ev-radio-button label="b">B</ev-radio-button>
-        <ev-radio-button label="c">C</ev-radio-button>
-      </ev-radio-group>
+      <eb-radio-group v-model="form.type">
+        <eb-radio-button label="a">A</eb-radio-button>
+        <eb-radio-button label="b">B</eb-radio-button>
+        <eb-radio-button label="c">C</eb-radio-button>
+      </eb-radio-group>
     </div>
     <div class="demo-row">
       <span class="demo-label">Checkbox</span>
-      <ev-checkbox v-model="checked1" border>带边框</ev-checkbox>
-      <ev-checkbox-group v-model="form.perms" size="small">
-        <ev-checkbox-button label="read">读</ev-checkbox-button>
-        <ev-checkbox-button label="write">写</ev-checkbox-button>
-      </ev-checkbox-group>
-      <ev-checkbox :model-value="false" indeterminate>半选</ev-checkbox>
+      <eb-checkbox v-model="checked1" border>带边框</eb-checkbox>
+      <eb-checkbox-group v-model="form.perms" size="small">
+        <eb-checkbox-button label="read">读</eb-checkbox-button>
+        <eb-checkbox-button label="write">写</eb-checkbox-button>
+      </eb-checkbox-group>
+      <eb-checkbox :model-value="false" indeterminate>半选</eb-checkbox>
     </div>
     <div class="demo-row">
       <span class="demo-label">Switch</span>
-      <ev-switch v-model="checked1" />
-      <ev-switch v-model="form.enabled" size="large" />
-      <ev-switch v-model="checked1" size="small" />
-      <ev-switch v-model="num" :active-value="1" :inactive-value="0" active-text="1" inactive-text="0" inline-prompt />
+      <eb-switch v-model="checked1" />
+      <eb-switch v-model="form.enabled" size="large" />
+      <eb-switch v-model="checked1" size="small" />
+      <eb-switch v-model="num" :active-value="1" :inactive-value="0" active-text="1" inactive-text="0" inline-prompt />
     </div>
   </section>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 
 const formRef = ref(null)
 
@@ -93,9 +93,9 @@ const num = ref(1)
 async function onValidate() {
   try {
     await formRef.value.validate()
-    EvMessage.success('校验通过')
+    EbMessage.success('校验通过')
   } catch (fields) {
-    EvMessage.error('校验失败：' + Object.values(fields).join('；'))
+    EbMessage.error('校验失败：' + Object.values(fields).join('；'))
   }
 }
 

@@ -8,21 +8,21 @@ import { setPrimaryColor, generatePrimaryRamp, mixHex } from '@wil-works/evoke-b
 
 ## setPrimaryColor — 运行时主色
 
-传入十六进制主色，立即重写 `--ev-color-primary` 及 7 档色阶（`--ev-color-primary-light-N` / `dark-2`），图表色板（Chart 系列）同步跟随。**无需刷新页面**：
+传入十六进制主色，立即重写 `--eb-color-primary` 及 7 档色阶（`--eb-color-primary-light-N` / `dark-2`），图表色板（Chart 系列）同步跟随。**无需刷新页面**：
 
 <DemoBlock>
   <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
-    <ev-button
+    <eb-button
       v-for="c in ['#175DFF', '#0FA968', '#D4380D', '#7B2FF2']"
       :key="c"
       :type="current === c ? 'primary' : 'default'"
       @click="apply(c)"
-    >{{ c }}</ev-button>
-    <ev-input v-model="custom" style="width: 140px;" placeholder="#RRGGBB"></ev-input>
-    <ev-button @click="apply(custom)">应用</ev-button>
-    <ev-button text @click="apply('#175DFF')">恢复默认</ev-button>
-    <ev-button type="primary">主色按钮（随切换变化）</ev-button>
-    <ev-switch v-model="switchOn"></ev-switch>
+    >{{ c }}</eb-button>
+    <eb-input v-model="custom" style="width: 140px;" placeholder="#RRGGBB"></eb-input>
+    <eb-button @click="apply(custom)">应用</eb-button>
+    <eb-button text @click="apply('#175DFF')">恢复默认</eb-button>
+    <eb-button type="primary">主色按钮（随切换变化）</eb-button>
+    <eb-switch v-model="switchOn"></eb-switch>
   </div>
 </DemoBlock>
 
@@ -43,7 +43,7 @@ import { setPrimaryColor, generatePrimaryRamp, mixHex } from '@wil-works/evoke-b
         :style="{ width: '88px', height: '40px', background: c, borderRadius: '6px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', fontSize: '10px', color: '#fff', paddingBottom: '2px' }"
       >{{ rampLabels[i] }}</div>
     </div>
-    <div style="font-size: 12px; color: var(--ev-text-color-secondary);">generatePrimaryRamp('{{ current }}') 的输出（dark-2 → light-9），与页面当前主色一致</div>
+    <div style="font-size: 12px; color: var(--eb-text-color-secondary);">generatePrimaryRamp('{{ current }}') 的输出（dark-2 → light-9），与页面当前主色一致</div>
   </div>
 </DemoBlock>
 
@@ -62,11 +62,11 @@ import { setPrimaryColor, generatePrimaryRamp, mixHex } from '@wil-works/evoke-b
 
 ## 密度与头像色
 
-`setDensity` 作用于 `html[data-ev-density]`，切换**整页所有按钮/输入框的高度**：default 32px → compact 28px → loose 36px（循环），按钮上实时显示当前档位与控件高度：
+`setDensity` 作用于 `html[data-eb-density]`，切换**整页所有按钮/输入框的高度**：default 32px → compact 28px → loose 36px（循环），按钮上实时显示当前档位与控件高度：
 
 <DemoBlock>
   <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
-    <ev-button type="primary" @click="toggleDensity">切换全局密度：{{ density }}（控件 {{ sizePx }}px）</ev-button>
+    <eb-button type="primary" @click="toggleDensity">切换全局密度：{{ density }}（控件 {{ sizePx }}px）</eb-button>
     <div style="display: flex; gap: 8px;">
       <div
         v-for="name in ['张伟', '王芳', '李娜', '系统']"
@@ -74,7 +74,7 @@ import { setPrimaryColor, generatePrimaryRamp, mixHex } from '@wil-works/evoke-b
         :style="{ width: '32px', height: '32px', borderRadius: '50%', background: avatarColor(name), color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px' }"
       >{{ name[0] }}</div>
     </div>
-    <span style="font-size: 12px; color: var(--ev-text-color-secondary);">avatarColor(字符串) 稳定映射头像底色</span>
+    <span style="font-size: 12px; color: var(--eb-text-color-secondary);">avatarColor(字符串) 稳定映射头像底色</span>
   </div>
 </DemoBlock>
 
@@ -118,13 +118,13 @@ function apply(color) {
 
 const rampLabels = ['dark-2', 'base', 'light-3', 'light-5', 'light-7', 'light-8', 'light-9']
 const rampOrder = [
-  '--ev-color-primary-dark-2',
-  '--ev-color-primary',
-  '--ev-color-primary-light-3',
-  '--ev-color-primary-light-5',
-  '--ev-color-primary-light-7',
-  '--ev-color-primary-light-8',
-  '--ev-color-primary-light-9',
+  '--eb-color-primary-dark-2',
+  '--eb-color-primary',
+  '--eb-color-primary-light-3',
+  '--eb-color-primary-light-5',
+  '--eb-color-primary-light-7',
+  '--eb-color-primary-light-8',
+  '--eb-color-primary-light-9',
 ]
 // 跟随当前主色实时重算（current 由上方 setPrimaryColor 演示驱动）
 const ramp = computed(() => {
@@ -143,10 +143,10 @@ const c4 = String(normalizeHex('oops'))
 | 函数 | 类型 | 说明 |
 | --- | --- | --- |
 | setPrimaryColor | `(hex: string, target?: HTMLElement) => void` | 重写主色与色阶 CSS 变量；默认作用于 documentElement |
-| generatePrimaryRamp | `(hex: string) => Record<string, string> \| null` | 返回 `{ '--ev-color-primary': …, '-light-3': …, '-rgb': 'r, g, b' }` 令牌表 |
+| generatePrimaryRamp | `(hex: string) => Record<string, string> \| null` | 返回 `{ '--eb-color-primary': …, '-light-3': …, '-rgb': 'r, g, b' }` 令牌表 |
 | normalizeHex | `(hex: unknown) => string \| null` | 容错归一化为 `#RRGGBB`；非法返回 null |
 | hexToRgb | `(hex: string) => { r, g, b } \| null` | — |
 | rgbToHex | `(r, g, b) => string` | — |
 | mixHex | `(a, b, t: number) => string \| null` | t=0 返回 a，t=1 返回 b |
-| setDensity / getDensity | `(mode) => void` / `() => string` | `html[data-ev-density]` |
+| setDensity / getDensity | `(mode) => void` / `() => string` | `html[data-eb-density]` |
 | avatarColor | `(str: string) => string` | 字符串哈希 → 稳定色值 |

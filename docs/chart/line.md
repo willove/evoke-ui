@@ -13,7 +13,7 @@
 `labels` 是 x 轴类目（通常是时间），`series` 每项一条线；多系列自动出现图例，点击图例可显隐对应系列，悬浮出现 tooltip。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'line',
       title: '渠道转化',

@@ -5,17 +5,17 @@
 ## 基础用法
 
 <DemoBlock>
-  <div style="max-width: 340px; border: 1px solid var(--ev-border-color-lighter); border-radius: 8px; padding: 8px;">
-    <ev-tree :data="data" default-expand-all node-key="id" @node-click="onNodeClick" />
+  <div style="max-width: 340px; border: 1px solid var(--eb-border-color-lighter); border-radius: 8px; padding: 8px;">
+    <eb-tree :data="data" default-expand-all node-key="id" @node-click="onNodeClick" />
   </div>
-  <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">点击节点：{{ clicked || '—' }}</p>
+  <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">点击节点：{{ clicked || '—' }}</p>
 </DemoBlock>
 
 ## 勾选模式
 
 <DemoBlock>
-  <div style="max-width: 340px; border: 1px solid var(--ev-border-color-lighter); border-radius: 8px; padding: 8px;">
-    <ev-tree :data="data" show-checkbox node-key="id" default-expand-all :default-checked-keys="['1-1']" />
+  <div style="max-width: 340px; border: 1px solid var(--eb-border-color-lighter); border-radius: 8px; padding: 8px;">
+    <eb-tree :data="data" show-checkbox node-key="id" default-expand-all :default-checked-keys="['1-1']" />
   </div>
 </DemoBlock>
 

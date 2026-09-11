@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-input-number ev-input-number"
+    class="eb-input-number eb-input-number"
     :class="[
       sizeClass,
       {
@@ -13,18 +13,18 @@
     <!-- 默认模式：[-][输入框][+] 三个 flex 兄弟节点，输入框描边即左右分隔线 -->
     <span
       v-if="controls && controlsPosition !== 'right'"
-      class="ev-input-number__decrease"
+      class="eb-input-number__decrease"
       :class="{ 'is-disabled': minDisabled }"
       role="button"
       :aria-disabled="minDisabled"
       @click="handleDecrease"
     >
-      <ev-icon :name="decreaseIcon" />
+      <eb-icon :name="decreaseIcon" />
     </span>
-    <div class="ev-input__wrapper">
+    <div class="eb-input__wrapper">
       <input
         ref="inputRef"
-        class="ev-input__inner"
+        class="eb-input__inner"
         type="number"
         :value="displayValue"
         :placeholder="placeholder"
@@ -42,33 +42,33 @@
     </div>
     <span
       v-if="controls && controlsPosition !== 'right'"
-      class="ev-input-number__increase"
+      class="eb-input-number__increase"
       :class="{ 'is-disabled': maxDisabled }"
       role="button"
       :aria-disabled="maxDisabled"
       @click="handleIncrease"
     >
-      <ev-icon :name="increaseIcon" />
+      <eb-icon :name="increaseIcon" />
     </span>
     <!-- controls-position="right"：按钮绝对定位覆盖在输入框右侧上下两格 -->
     <template v-if="controls && controlsPosition === 'right'">
       <span
-        class="ev-input-number__increase"
+        class="eb-input-number__increase"
         :class="{ 'is-disabled': maxDisabled }"
         role="button"
         :aria-disabled="maxDisabled"
         @click="handleIncrease"
       >
-        <ev-icon :name="increaseIcon" />
+        <eb-icon :name="increaseIcon" />
       </span>
       <span
-        class="ev-input-number__decrease"
+        class="eb-input-number__decrease"
         :class="{ 'is-disabled': minDisabled }"
         role="button"
         :aria-disabled="minDisabled"
         @click="handleDecrease"
       >
-        <ev-icon :name="decreaseIcon" />
+        <eb-icon :name="decreaseIcon" />
       </span>
     </template>
   </div>
@@ -76,14 +76,14 @@
 
 <script setup>
 /**
- * EvInputNumber — 计数器
+ * EbInputNumber — 计数器
  * min/max clamp、precision 格式化、step 步进、step-strictly、value-on-clear
  */
 import { computed, ref } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvInputNumber' })
+defineOptions({ name: 'EbInputNumber' })
 
 const props = defineProps({
   modelValue: { type: Number, default: undefined },
@@ -117,8 +117,8 @@ const isDisabled = computed(() => formDisabled.value || props.disabled)
 
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-input-number--large'
-  if (s === 'small') return 'ev-input-number--small'
+  if (s === 'large') return 'eb-input-number--large'
+  if (s === 'small') return 'eb-input-number--small'
   return ''
 })
 

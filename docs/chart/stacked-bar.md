@@ -13,7 +13,7 @@
 数据模型同柱状图（`labels` + `series`），把 `type` 换成 `stacked-bar`，各系列自动纵向堆叠。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'stacked-bar',
       title: '渠道转化构成',

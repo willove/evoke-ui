@@ -1,27 +1,27 @@
 <template>
-  <span :class="['ew-tag', `ew-tag--${size}`, `is-${tone}`, `is-${variant}`]">
-    <EwIcon v-if="icon" :name="icon" :size="iconSize" class="ew-tag__icon" />
+  <span :class="['ev-tag', `ev-tag--${size}`, `is-${tone}`, `is-${variant}`]">
+    <EvIcon v-if="icon" :name="icon" :size="iconSize" class="ev-tag__icon" />
     <slot />
     <button
       v-if="closable"
       type="button"
-      class="ew-tag__close"
+      class="ev-tag__close"
       aria-label="close"
       @click.stop="emit('close')"
     >
-      <EwIcon name="close" :size="iconSize - 2" />
+      <EvIcon name="close" :size="iconSize - 2" />
     </button>
   </span>
 </template>
 
 <script setup>
 /**
- * EwTag — 胶囊标签（remixdesign「Open Source」/ remixicon「v4.9.1」/ launchos「SAVE 50%」语言）
+ * EvTag — 胶囊标签（remixdesign「Open Source」/ remixicon「v4.9.1」/ launchos「SAVE 50%」语言）
  * tone：neutral/primary/success/warning/danger/lime（限量促销黄绿）/orange
  * variant：soft 淡底 / solid 实底 / outline 描边
  */
 import { computed } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   tone: {

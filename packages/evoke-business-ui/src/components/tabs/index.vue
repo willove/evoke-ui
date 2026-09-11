@@ -1,21 +1,21 @@
 <template>
   <div
-    class="ev-tabs ev-tabs"
-    :class="[`ev-tabs--${tabPosition}`, `ev-tabs--${type}`, { 'is-top': tabPosition === 'top' }]"
+    class="eb-tabs eb-tabs"
+    :class="[`eb-tabs--${tabPosition}`, `eb-tabs--${type}`, { 'is-top': tabPosition === 'top' }]"
   >
-    <div class="ev-tabs__header" :class="[`is-${tabPosition}`]">
-      <div class="ev-tabs__nav-wrap" :class="[`is-${tabPosition}`, { 'is-scrollable': isScrollable }]">
-        <div ref="navScrollRef" class="ev-tabs__nav-scroll" @wheel="handleWheel">
-          <div ref="navRef" class="ev-tabs__nav" :class="[`is-${tabPosition}`]">
+    <div class="eb-tabs__header" :class="[`is-${tabPosition}`]">
+      <div class="eb-tabs__nav-wrap" :class="[`is-${tabPosition}`, { 'is-scrollable': isScrollable }]">
+        <div ref="navScrollRef" class="eb-tabs__nav-scroll" @wheel="handleWheel">
+          <div ref="navRef" class="eb-tabs__nav" :class="[`is-${tabPosition}`]">
             <div
-              class="ev-tabs__active-bar"
+              class="eb-tabs__active-bar"
               :class="[`is-${tabPosition}`]"
               :style="activeBarStyle"
             />
             <div
               v-for="pane in panes"
               :key="pane.paneName"
-              class="ev-tabs__item"
+              class="eb-tabs__item"
               :class="[
                 `is-${tabPosition}`,
                 {
@@ -30,13 +30,13 @@
               @click="handleTabClick(pane)"
               @keydown.enter="handleTabClick(pane)"
             >
-              <span class="ev-tabs__item-text">
+              <span class="eb-tabs__item-text">
                 <component :is="pane.slots.label?.()" v-if="pane.slots.label" />
                 <template v-else>{{ pane.label }}</template>
               </span>
-              <ev-icon
+              <eb-icon
                 v-if="pane.closable && editable === false"
-                class="ev-tabs__close-icon"
+                class="eb-tabs__close-icon"
                 name="close"
                 @click.stop="handleTabRemove(pane)"
               />
@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <div class="ev-tabs__content">
+    <div class="eb-tabs__content">
       <slot />
     </div>
   </div>
@@ -53,15 +53,15 @@
 
 <script setup>
 /**
- * EvTabs — 标签页
+ * EbTabs — 标签页
  * type：''（默认线条）/ card / border-card；tabPosition：top/right/bottom/left
  * 子 TabPane 注册模式；v-model 当前激活
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { provideTabsContext } from './tabs-context'
 
-defineOptions({ name: 'EvTabs' })
+defineOptions({ name: 'EbTabs' })
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -137,7 +137,7 @@ async function updateActiveBar() {
   const nav = navRef.value
   if (!nav) return
   const idx = panes.value.findIndex((p) => p.paneName === currentName.value)
-  const items = nav.querySelectorAll('.ev-tabs__item')
+  const items = nav.querySelectorAll('.eb-tabs__item')
   const active = items[idx]
   if (!active) {
     activeBarStyle.value = { display: 'none' }
@@ -179,7 +179,7 @@ function scrollActiveIntoView() {
   const wrapEl = navScrollRef.value
   if (!wrapEl || !isScrollable.value) return
   const idx = panes.value.findIndex((p) => p.paneName === currentName.value)
-  const item = wrapEl.querySelectorAll('.ev-tabs__item')[idx]
+  const item = wrapEl.querySelectorAll('.eb-tabs__item')[idx]
   if (!item) return
   if (item.offsetLeft < wrapEl.scrollLeft) {
     wrapEl.scrollTo({ left: item.offsetLeft, behavior: 'smooth' })

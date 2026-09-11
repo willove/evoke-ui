@@ -1,178 +1,178 @@
-/* EvMenu —菜单 */
+/* EbMenu —菜单 */
 
-.ev-menu.ev-menu {
+.eb-menu.eb-menu {
   display: block;
   margin: 0;
   padding: 0;
   list-style: none;
-  background-color: var(--ev-menu-bg-color, var(--ev-bg-color));
-  color: var(--ev-menu-text-color, var(--ev-text-color-primary));
+  background-color: var(--eb-menu-bg-color, var(--eb-bg-color));
+  color: var(--eb-menu-text-color, var(--eb-text-color-primary));
   font-size: inherit;
   line-height: inherit;
 }
 
 /* 宿主环境屏蔽：文档站 .bd-doc ul/li 的字号/行高/颜色侵入菜单结构层 */
-.ev-menu.ev-menu li.ev-menu-item-group,
-.ev-menu.ev-menu li.ev-sub-menu,
-.ev-menu.ev-menu ul.ev-menu-item-group__list {
+.eb-menu.eb-menu li.eb-menu-item-group,
+.eb-menu.eb-menu li.eb-sub-menu,
+.eb-menu.eb-menu ul.eb-menu-item-group__list {
   color: inherit;
   font-size: inherit;
   line-height: inherit;
 }
 
 /* ── 菜单项 ── */
-.ev-menu.ev-menu .ev-menu-item,
-.ev-menu.ev-menu .ev-sub-menu__title {
+.eb-menu.eb-menu .eb-menu-item,
+.eb-menu.eb-menu .eb-sub-menu__title {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   box-sizing: border-box;
-  height: var(--ev-menu-item-height, 40px);
-  padding: 0 var(--ev-space-4);
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-menu-item-height, 40px);
+  height: var(--eb-menu-item-height, 40px);
+  padding: 0 var(--eb-space-4);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-menu-item-height, 40px);
   list-style: none;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out),
-    background-color var(--ev-duration-fast) var(--ev-ease-out),
-    border-color var(--ev-duration-fast) var(--ev-ease-out),
-    padding var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out),
+    border-color var(--eb-duration-fast) var(--eb-ease-out),
+    padding var(--eb-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ev-menu.ev-menu .ev-menu-item:hover,
-.ev-menu.ev-menu .ev-sub-menu__title:hover {
-  background-color: var(--ev-menu-hover-bg-color, var(--ev-fill-color-light));
+.eb-menu.eb-menu .eb-menu-item:hover,
+.eb-menu.eb-menu .eb-sub-menu__title:hover {
+  background-color: var(--eb-menu-hover-bg-color, var(--eb-fill-color-light));
 }
 
-.ev-menu.ev-menu .ev-menu-item.is-active {
-  color: var(--ev-menu-active-color, var(--ev-color-primary));
-  font-weight: var(--ev-font-weight-medium);
+.eb-menu.eb-menu .eb-menu-item.is-active {
+  color: var(--eb-menu-active-color, var(--eb-color-primary));
+  font-weight: var(--eb-font-weight-medium);
 }
 
-.ev-menu.ev-menu .ev-menu-item.is-disabled,
-.ev-menu.ev-menu .ev-sub-menu.is-disabled > .ev-sub-menu__title {
-  color: var(--ev-text-color-placeholder);
+.eb-menu.eb-menu .eb-menu-item.is-disabled,
+.eb-menu.eb-menu .eb-sub-menu.is-disabled > .eb-sub-menu__title {
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
   background: transparent;
 }
 
 /* ── 子菜单标题/箭头 ── */
-.ev-menu.ev-menu .ev-sub-menu__title {
+.eb-menu.eb-menu .eb-sub-menu__title {
   justify-content: flex-start;
 }
-.ev-menu.ev-menu .ev-sub-menu__title > * {
+.eb-menu.eb-menu .eb-sub-menu__title > * {
   flex-shrink: 0;
 }
-.ev-menu.ev-menu .ev-sub-menu__icon-arrow {
+.eb-menu.eb-menu .eb-sub-menu__icon-arrow {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  color: var(--ev-text-color-secondary);
-  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+  color: var(--eb-text-color-secondary);
+  transition: transform var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-menu.ev-menu .ev-sub-menu.is-opened > .ev-sub-menu__title .ev-sub-menu__icon-arrow {
+.eb-menu.eb-menu .eb-sub-menu.is-opened > .eb-sub-menu__title .eb-sub-menu__icon-arrow {
   transform: rotate(180deg);
 }
 
 /* inline 子菜单 */
-.ev-menu.ev-menu .ev-menu--inline {
+.eb-menu.eb-menu .eb-menu--inline {
   overflow: hidden;
-  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+  transition: height var(--eb-duration-base) var(--eb-ease-in-out);
   will-change: height;
-  background-color: var(--ev-menu-bg-color, var(--ev-bg-color));
+  background-color: var(--eb-menu-bg-color, var(--eb-bg-color));
 }
-.ev-menu.ev-menu .ev-menu--inline .ev-menu-item {
-  padding-left: calc(var(--ev-space-4) + var(--ev-space-4));
+.eb-menu.eb-menu .eb-menu--inline .eb-menu-item {
+  padding-left: calc(var(--eb-space-4) + var(--eb-space-4));
   min-width: 0;
 }
 
 /* ── 水平模式 ── */
-.ev-menu.ev-menu.ev-menu--horizontal {
+.eb-menu.eb-menu.eb-menu--horizontal {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  border-bottom: 1px solid var(--ev-border-color-light);
+  border-bottom: 1px solid var(--eb-border-color-light);
 }
-.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item,
-.ev-menu.ev-menu.ev-menu--horizontal > .ev-sub-menu > .ev-sub-menu__title {
-  height: var(--ev-menu-horizontal-height, 48px);
-  line-height: var(--ev-menu-horizontal-height, 48px);
-  padding: 0 var(--ev-space-4);
+.eb-menu.eb-menu.eb-menu--horizontal > .eb-menu-item,
+.eb-menu.eb-menu.eb-menu--horizontal > .eb-sub-menu > .eb-sub-menu__title {
+  height: var(--eb-menu-horizontal-height, 48px);
+  line-height: var(--eb-menu-horizontal-height, 48px);
+  padding: 0 var(--eb-space-4);
   border-bottom: 2px solid transparent;
 }
-.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item.is-active {
-  border-bottom-color: var(--ev-menu-active-color, var(--ev-color-primary));
+.eb-menu.eb-menu.eb-menu--horizontal > .eb-menu-item.is-active {
+  border-bottom-color: var(--eb-menu-active-color, var(--eb-color-primary));
 }
-.ev-menu.ev-menu.ev-menu--horizontal > .ev-menu-item:hover,
-.ev-menu.ev-menu.ev-menu--horizontal > .ev-sub-menu > .ev-sub-menu__title:hover {
+.eb-menu.eb-menu.eb-menu--horizontal > .eb-menu-item:hover,
+.eb-menu.eb-menu.eb-menu--horizontal > .eb-sub-menu > .eb-sub-menu__title:hover {
   background-color: transparent;
 }
 
 /* ── 折叠 ── */
-.ev-menu.ev-menu.ev-menu--collapse {
+.eb-menu.eb-menu.eb-menu--collapse {
   width: 64px;
   /* 宿主容器因边框等原因略窄于 64px 时不产生横向溢出（避免自绘横向滚动条） */
   max-width: 100%;
 }
-.ev-menu.ev-menu.ev-menu--collapse > .ev-menu-item,
-.ev-menu.ev-menu.ev-menu--collapse > .ev-sub-menu > .ev-sub-menu__title {
+.eb-menu.eb-menu.eb-menu--collapse > .eb-menu-item,
+.eb-menu.eb-menu.eb-menu--collapse > .eb-sub-menu > .eb-sub-menu__title {
   justify-content: center;
   padding: 0;
 }
 /* 折叠/展开时文字随容器宽度淡出收拢、淡入展开，只留图标（弹层菜单由 submenu 自行浮出） */
-.ev-menu.ev-menu .ev-menu-item > span,
-.ev-menu.ev-menu .ev-sub-menu__title > span {
+.eb-menu.eb-menu .eb-menu-item > span,
+.eb-menu.eb-menu .eb-sub-menu__title > span {
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   transition:
-    opacity var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
-    max-width var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
-    margin-left var(--ev-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
+    opacity var(--eb-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
+    max-width var(--eb-duration-slower) cubic-bezier(0.4, 0, 0.2, 1),
+    margin-left var(--eb-duration-slower) cubic-bezier(0.4, 0, 0.2, 1);
 }
-.ev-menu.ev-menu.ev-menu--collapse > .ev-menu-item > span,
-.ev-menu.ev-menu.ev-menu--collapse > .ev-sub-menu > .ev-sub-menu__title > span {
+.eb-menu.eb-menu.eb-menu--collapse > .eb-menu-item > span,
+.eb-menu.eb-menu.eb-menu--collapse > .eb-sub-menu > .eb-sub-menu__title > span {
   opacity: 0;
   max-width: 0;
   /* 抵消菜单项 gap，保证折叠态图标完全居中 */
-  margin-left: calc(var(--ev-space-2) * -1);
+  margin-left: calc(var(--eb-space-2) * -1);
 }
-.ev-menu.ev-menu.ev-menu--collapse .ev-sub-menu__icon-arrow {
+.eb-menu.eb-menu.eb-menu--collapse .eb-sub-menu__icon-arrow {
   display: none;
 }
 
 /* ── 分组 ── */
-.ev-menu.ev-menu .ev-menu-item-group__title {
-  padding: var(--ev-space-3) var(--ev-space-4) var(--ev-space-1);
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-menu.eb-menu .eb-menu-item-group__title {
+  padding: var(--eb-space-3) var(--eb-space-4) var(--eb-space-1);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
   line-height: 1.5;
 }
-.ev-menu.ev-menu .ev-menu-item-group__list {
+.eb-menu.eb-menu .eb-menu-item-group__list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 /* ── popper 弹层面板 ── */
-.ev-menu.ev-menu.ev-menu__popper {
-  padding: var(--ev-space-1) 0;
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-md);
-  box-shadow: var(--ev-box-shadow-light);
+.eb-menu.eb-menu.eb-menu__popper {
+  padding: var(--eb-space-1) 0;
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-box-shadow-light);
 }
-.ev-menu.ev-menu.ev-menu__popper .ev-menu-item,
-.ev-menu.ev-menu.ev-menu__popper .ev-sub-menu__title {
+.eb-menu.eb-menu.eb-menu__popper .eb-menu-item,
+.eb-menu.eb-menu.eb-menu__popper .eb-sub-menu__title {
   height: 34px;
   line-height: 34px;
 }
 
 /* inline 展开过渡 */
-.ev-sub-menu-collapse-enter-active,
-.ev-sub-menu-collapse-leave-active {
-  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+.eb-sub-menu-collapse-enter-active,
+.eb-sub-menu-collapse-leave-active {
+  transition: height var(--eb-duration-base) var(--eb-ease-in-out);
 }

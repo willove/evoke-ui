@@ -1,6 +1,6 @@
-/* EvCellStack — 双行单元格（业务封装） */
+/* EbCellStack — 双行单元格（业务封装） */
 
-.ev-cell-stack {
+.eb-cell-stack {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -8,17 +8,17 @@
   line-height: 1.4;
 }
 
-.ev-cell-stack__main {
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+.eb-cell-stack__main {
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ev-cell-stack__sub {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-cell-stack__sub {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

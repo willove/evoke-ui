@@ -1,107 +1,107 @@
-/* EwFeatureGrid — 特性展示 */
+/* EvFeatureGrid — 特性展示 */
 
 /* ══════ bullets 行内特性条（remixicon hero 语言）══════ */
-.ew-feature-grid.is-bullets {
+.ev-feature-grid.is-bullets {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--ew-space-8);
+  gap: var(--ev-space-8);
 }
 
-.ew-feature.is-bullets {
+.ev-feature.is-bullets {
   display: inline-flex;
   align-items: center;
-  gap: var(--ew-space-3);
-  color: var(--ew-text-primary);
+  gap: var(--ev-space-3);
+  color: var(--ev-text-primary);
 }
 
-.ew-feature.is-bullets .ew-feature__icon {
+.ev-feature.is-bullets .ev-feature__icon {
   display: inline-flex;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
-.ew-feature.is-bullets .ew-feature__title {
+.ev-feature.is-bullets .ev-feature__title {
   margin: 0;
-  font-size: var(--ew-font-size-base);
-  font-weight: var(--ew-font-weight-regular);
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-regular);
   letter-spacing: 0;
-  color: var(--ew-text-regular);
+  color: var(--ev-text-regular);
 }
 
 /* 分隔竖线（除第一个） */
-.ew-feature.is-bullets + .ew-feature.is-bullets {
-  padding-left: var(--ew-space-8);
-  border-left: 1px solid var(--ew-border-color);
+.ev-feature.is-bullets + .ev-feature.is-bullets {
+  padding-left: var(--ev-space-8);
+  border-left: 1px solid var(--ev-border-color);
 }
 
-.ew-feature.is-bullets .ew-feature__description {
+.ev-feature.is-bullets .ev-feature__description {
   display: none;
 }
 
 /* ══════ cards 特性卡片 ══════ */
-.ew-feature-grid.is-cards {
+.ev-feature-grid.is-cards {
   display: grid;
-  gap: var(--ew-space-5);
+  gap: var(--ev-space-5);
 }
 
-.ew-feature-grid.is-columns-1.is-cards { grid-template-columns: 1fr; }
-.ew-feature-grid.is-columns-2.is-cards { grid-template-columns: repeat(2, 1fr); }
-.ew-feature-grid.is-columns-3.is-cards { grid-template-columns: repeat(3, 1fr); }
-.ew-feature-grid.is-columns-4.is-cards { grid-template-columns: repeat(4, 1fr); }
+.ev-feature-grid.is-columns-1.is-cards { grid-template-columns: 1fr; }
+.ev-feature-grid.is-columns-2.is-cards { grid-template-columns: repeat(2, 1fr); }
+.ev-feature-grid.is-columns-3.is-cards { grid-template-columns: repeat(3, 1fr); }
+.ev-feature-grid.is-columns-4.is-cards { grid-template-columns: repeat(4, 1fr); }
 
-.ew-feature.is-cards {
-  --feature-tone: var(--ew-bg-container);
-  padding: var(--ew-space-8) var(--ew-space-6);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
+.ev-feature.is-cards {
+  --feature-tone: var(--ev-bg-container);
+  padding: var(--ev-space-8) var(--ev-space-6);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
   background-color: var(--feature-tone);
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
-    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out),
+    border-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-feature.is-cards:hover {
+.ev-feature.is-cards:hover {
   transform: translateY(-2px);
-  border-color: var(--ew-color-primary-light-7);
-  box-shadow: var(--ew-shadow-2);
+  border-color: var(--ev-color-primary-light-7);
+  box-shadow: var(--ev-shadow-2);
 }
 
-.ew-feature.is-cards .ew-feature__icon {
+.ev-feature.is-cards .ev-feature__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  margin-bottom: var(--ew-space-5);
-  border-radius: var(--ew-radius-md);
-  background-color: var(--ew-color-primary-light-9);
-  color: var(--ew-color-primary);
+  margin-bottom: var(--ev-space-5);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-color-primary-light-9);
+  color: var(--ev-color-primary);
 }
 
-.ew-feature.is-cards .ew-feature__title {
-  margin: 0 0 var(--ew-space-2);
-  font-size: var(--ew-font-size-md);
-  font-weight: var(--ew-font-weight-medium);
+.ev-feature.is-cards .ev-feature__title {
+  margin: 0 0 var(--ev-space-2);
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
-.ew-feature.is-cards .ew-feature__description {
+.ev-feature.is-cards .ev-feature__description {
   margin: 0;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 @media (max-width: 900px) {
-  .ew-feature-grid.is-columns-3.is-cards,
-  .ew-feature-grid.is-columns-4.is-cards {
+  .ev-feature-grid.is-columns-3.is-cards,
+  .ev-feature-grid.is-columns-4.is-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .ew-feature-grid.is-cards {
+  .ev-feature-grid.is-cards {
     grid-template-columns: 1fr;
   }
 }
@@ -110,11 +110,11 @@
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-feature .ew-feature__title {
+.ev-feature .ev-feature__title {
   margin: 0;
-  font-size: var(--ew-font-size-base);
+  font-size: var(--ev-font-size-base);
 }
 
-.ew-feature .ew-feature__description {
+.ev-feature .ev-feature__description {
   margin: 0;
 }

@@ -2,12 +2,12 @@
   <div class="playground">
     <header class="playground-header">
       <h1>Evoke Business UI Playground</h1>
-      <ev-button size="small" @click="toggleDark">
+      <eb-button size="small" @click="toggleDark">
         {{ isDark ? '🌙 暗色' : '☀️ 明色' }}
-      </ev-button>
+      </eb-button>
     </header>
     <nav class="playground-nav">
-      <ev-button
+      <eb-button
         v-for="item in navItems"
         :key="item.id"
         :type="active === item.id ? 'primary' : 'default'"
@@ -15,7 +15,7 @@
         @click="active = item.id"
       >
         {{ item.label }}
-      </ev-button>
+      </eb-button>
     </nav>
     <main class="playground-main">
       <component :is="activeComponent" />
@@ -63,25 +63,25 @@ const activeComponent = computed(
 <style scoped>
 .playground {
   min-height: 100vh;
-  padding: var(--ev-space-6);
+  padding: var(--eb-space-6);
 }
 .playground-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--ev-space-4);
+  margin-bottom: var(--eb-space-4);
 }
 .playground-header h1 {
-  font-size: var(--ev-font-size-lg);
-  font-weight: var(--ev-font-weight-semibold);
+  font-size: var(--eb-font-size-lg);
+  font-weight: var(--eb-font-weight-semibold);
 }
 .playground-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ev-space-2);
-  margin-bottom: var(--ev-space-6);
-  padding-bottom: var(--ev-space-4);
-  border-bottom: 1px solid var(--ev-border-color-light);
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-6);
+  padding-bottom: var(--eb-space-4);
+  border-bottom: 1px solid var(--eb-border-color-light);
 }
 .playground-main {
   max-width: 960px;

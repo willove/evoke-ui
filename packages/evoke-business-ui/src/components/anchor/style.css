@@ -1,60 +1,60 @@
-/* EvAnchor — 锚点导航 */
-.ev-anchor {
+/* EbAnchor — 锚点导航 */
+.eb-anchor {
   position: relative;
 }
 
-.ev-anchor__list {
+.eb-anchor__list {
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
 /* 滑动轴线 */
-.ev-anchor.is-marker .ev-anchor__list::before {
+.eb-anchor.is-marker .eb-anchor__list::before {
   content: '';
   position: absolute;
   left: 0;
   top: 4px;
   bottom: 4px;
   width: 2px;
-  background-color: var(--ev-border-color-lighter);
-  border-radius: var(--ev-radius-full);
+  background-color: var(--eb-border-color-lighter);
+  border-radius: var(--eb-radius-full);
 }
 
-.ev-anchor.is-marker .ev-anchor__list::after {
+.eb-anchor.is-marker .eb-anchor__list::after {
   content: '';
   position: absolute;
   left: 0;
-  top: var(--ev-anchor-marker-top, 4px);
-  height: var(--ev-anchor-marker-height, 22px);
+  top: var(--eb-anchor-marker-top, 4px);
+  height: var(--eb-anchor-marker-height, 22px);
   width: 2px;
-  background-color: var(--ev-color-primary);
-  border-radius: var(--ev-radius-full);
+  background-color: var(--eb-color-primary);
+  border-radius: var(--eb-radius-full);
   transition:
-    top var(--ev-duration-base) var(--ev-ease-out),
-    height var(--ev-duration-base) var(--ev-ease-out);
+    top var(--eb-duration-base) var(--eb-ease-out),
+    height var(--eb-duration-base) var(--eb-ease-out);
 }
 
-.ev-anchor-link {
+.eb-anchor-link {
   position: relative;
   display: block;
-  padding: var(--ev-space-2) var(--ev-space-3);
+  padding: var(--eb-space-2) var(--eb-space-3);
   margin-left: 2px;
-  color: var(--ev-text-color-regular);
-  font-size: var(--ev-font-size-sm);
-  line-height: var(--ev-line-height-base);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-sm);
+  line-height: var(--eb-line-height-base);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-anchor-link:hover {
-  color: var(--ev-color-primary);
+.eb-anchor-link:hover {
+  color: var(--eb-color-primary);
 }
 
-.ev-anchor-link.is-active {
-  color: var(--ev-color-primary);
-  font-weight: var(--ev-font-weight-medium);
+.eb-anchor-link.is-active {
+  color: var(--eb-color-primary);
+  font-weight: var(--eb-font-weight-medium);
 }

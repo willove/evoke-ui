@@ -1,35 +1,35 @@
-/* EvAutoComplete — 输入联想 */
-.ev-autocomplete__popper {
+/* EbAutoComplete — 输入联想 */
+.eb-autocomplete__popper {
   padding: 0;
 }
 
-.ev-autocomplete__menu {
+.eb-autocomplete__menu {
   list-style: none;
   margin: 0;
-  padding: var(--ev-space-1) 0;
+  padding: var(--eb-space-1) 0;
   max-height: 264px;
   overflow-y: auto;
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-md);
-  box-shadow: var(--ev-shadow-2);
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-2);
 }
 
-.ev-autocomplete__option {
-  padding: 0 var(--ev-space-4);
-  height: var(--ev-control-h-md);
+.eb-autocomplete__option {
+  padding: 0 var(--eb-space-4);
+  height: var(--eb-control-h-md);
   display: flex;
   align-items: center;
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.ev-autocomplete__option.is-highlight,
-.ev-autocomplete__option:hover {
-  background-color: var(--ev-fill-color);
-  color: var(--ev-text-color-primary);
+.eb-autocomplete__option.is-highlight,
+.eb-autocomplete__option:hover {
+  background-color: var(--eb-fill-color);
+  color: var(--eb-text-color-primary);
 }

@@ -1,65 +1,65 @@
 <template>
   <div class="od-page">
     <!-- 页头：返回 + 状态 + 操作区 -->
-    <ev-page-header title="订单详情" :subtitle="order.orderNo">
+    <eb-page-header title="订单详情" :subtitle="order.orderNo">
       <template #actions>
-        <ev-status-tag :value="order.status" :statuses="ORDER_STATUS" size="default" />
-        <ev-button size="small" @click="EvMessage.info('示例：返回订单列表')">
-          <ev-icon name="back" :size="14" />
+        <eb-status-tag :value="order.status" :statuses="ORDER_STATUS" size="default" />
+        <eb-button size="small" @click="EbMessage.info('示例：返回订单列表')">
+          <eb-icon name="back" :size="14" />
           返回列表
-        </ev-button>
-        <ev-button size="small" @click="openRemark">
-          <ev-icon name="edit" :size="14" />
+        </eb-button>
+        <eb-button size="small" @click="openRemark">
+          <eb-icon name="edit" :size="14" />
           修改备注
-        </ev-button>
-        <ev-button size="small" @click="urgeShip">提醒发货</ev-button>
-        <ev-popconfirm
+        </eb-button>
+        <eb-button size="small" @click="urgeShip">提醒发货</eb-button>
+        <eb-popconfirm
           title="取消后订单将终止流转，确认取消该订单？"
           icon-type="danger"
           @confirm="cancelOrder"
         >
-          <ev-button size="small" type="danger" plain :disabled="!canCancel">取消订单</ev-button>
-        </ev-popconfirm>
+          <eb-button size="small" type="danger" plain :disabled="!canCancel">取消订单</eb-button>
+        </eb-popconfirm>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
     <!-- 订单进度 -->
-    <ev-section-card class="od-block">
-      <ev-steps :active="progressActive" align-center finish-status="success">
-        <ev-step title="提交订单" :description="order.createdAt" :status="order.status === 'cancelled' ? 'error' : undefined" />
-        <ev-step title="付款成功" :description="order.paidAt" />
-        <ev-step title="商品出库" description="仓配拣货中" />
-        <ev-step title="完成" description="确认收货后结算" />
-      </ev-steps>
-    </ev-section-card>
+    <eb-section-card class="od-block">
+      <eb-steps :active="progressActive" align-center finish-status="success">
+        <eb-step title="提交订单" :description="order.createdAt" :status="order.status === 'cancelled' ? 'error' : undefined" />
+        <eb-step title="付款成功" :description="order.paidAt" />
+        <eb-step title="商品出库" description="仓配拣货中" />
+        <eb-step title="完成" description="确认收货后结算" />
+      </eb-steps>
+    </eb-section-card>
 
-    <ev-row :gutter="16">
+    <eb-row :gutter="16">
       <!-- 主信息区 -->
-      <ev-col :xs="24" :lg="17">
-        <ev-section-card title="基础信息" class="od-block">
-          <ev-detail-descriptions :column="3" border :data="order" :items="baseItems">
+      <eb-col :xs="24" :lg="17">
+        <eb-section-card title="基础信息" class="od-block">
+          <eb-detail-descriptions :column="3" border :data="order" :items="baseItems">
             <template #status="{ value }">
-              <ev-status-tag :value="value" :statuses="ORDER_STATUS" />
+              <eb-status-tag :value="value" :statuses="ORDER_STATUS" />
             </template>
             <template #payStatus="{ value }">
-              <ev-status-tag :value="value" :statuses="PAY_STATUS" />
+              <eb-status-tag :value="value" :statuses="PAY_STATUS" />
             </template>
-          </ev-detail-descriptions>
-        </ev-section-card>
+          </eb-detail-descriptions>
+        </eb-section-card>
 
-        <ev-section-card title="商品与履约" :padding="false" class="od-block">
-          <ev-tabs v-model="activeTab" class="od-tabs">
-            <ev-tab-pane label="商品明细" name="goods">
-              <ev-data-table
+        <eb-section-card title="商品与履约" :padding="false" class="od-block">
+          <eb-tabs v-model="activeTab" class="od-tabs">
+            <eb-tab-pane label="商品明细" name="goods">
+              <eb-data-table
                 :columns="goodsColumns"
                 :data="goods"
                 :show-pagination="false"
                 :show-total="false"
               >
                 <template #name="{ row }">
-                  <ev-cell-stack :main="row.name" :sub="row.spec" />
+                  <eb-cell-stack :main="row.name" :sub="row.spec" />
                 </template>
-              </ev-data-table>
+              </eb-data-table>
               <div class="od-goods-summary">
                 商品金额 ¥{{ order.goodsAmount.toLocaleString() }}
                 + 运费 ¥{{ order.freight }}
@@ -67,55 +67,55 @@
                 =
                 <span class="od-goods-summary__pay">实付 ¥{{ order.payAmount.toLocaleString() }}</span>
               </div>
-            </ev-tab-pane>
+            </eb-tab-pane>
 
-            <ev-tab-pane label="发货记录" name="shipments">
-              <ev-data-table
+            <eb-tab-pane label="发货记录" name="shipments">
+              <eb-data-table
                 :columns="shipColumns"
                 :data="shipments"
                 :show-pagination="false"
                 :show-total="false"
               >
                 <template #trackingNo="{ row }">
-                  <ev-link type="primary">{{ row.trackingNo }}</ev-link>
+                  <eb-link type="primary">{{ row.trackingNo }}</eb-link>
                 </template>
                 <template #status="{ row }">
-                  <ev-tag type="info" effect="plain">{{ row.status }}</ev-tag>
+                  <eb-tag type="info" effect="plain">{{ row.status }}</eb-tag>
                 </template>
-              </ev-data-table>
+              </eb-data-table>
               <div v-if="!shipments.length" class="od-empty">
-                <ev-empty description="暂无发货记录" />
+                <eb-empty description="暂无发货记录" />
               </div>
-            </ev-tab-pane>
+            </eb-tab-pane>
 
-            <ev-tab-pane label="审计日志" name="audit" lazy>
+            <eb-tab-pane label="审计日志" name="audit" lazy>
               <div class="od-audit">
-                <ev-audit-timeline :items="auditLogs" />
+                <eb-audit-timeline :items="auditLogs" />
               </div>
-            </ev-tab-pane>
-          </ev-tabs>
-        </ev-section-card>
-      </ev-col>
+            </eb-tab-pane>
+          </eb-tabs>
+        </eb-section-card>
+      </eb-col>
 
       <!-- 侧栏 -->
-      <ev-col :xs="24" :lg="7">
-        <ev-section-card title="买家信息" class="od-block">
+      <eb-col :xs="24" :lg="7">
+        <eb-section-card title="买家信息" class="od-block">
           <div class="od-buyer">
-            <ev-avatar :size="40">{{ order.buyer.nickname.slice(0, 1) }}</ev-avatar>
+            <eb-avatar :size="40">{{ order.buyer.nickname.slice(0, 1) }}</eb-avatar>
             <div class="od-buyer__meta">
               <div class="od-buyer__name">{{ order.buyer.nickname }}</div>
               <div class="od-buyer__phone">{{ order.buyer.phone }}</div>
             </div>
           </div>
-          <ev-detail-descriptions class="od-buyer__extra" :column="1" :border="false" :data="order" :items="buyerItems" />
-          <ev-link type="primary">查看会员档案</ev-link>
-        </ev-section-card>
+          <eb-detail-descriptions class="od-buyer__extra" :column="1" :border="false" :data="order" :items="buyerItems" />
+          <eb-link type="primary">查看会员档案</eb-link>
+        </eb-section-card>
 
-        <ev-section-card title="收货信息" class="od-block">
-          <ev-detail-descriptions :column="1" :border="false" :data="order.receiver" :items="receiverItems" />
-        </ev-section-card>
+        <eb-section-card title="收货信息" class="od-block">
+          <eb-detail-descriptions :column="1" :border="false" :data="order.receiver" :items="receiverItems" />
+        </eb-section-card>
 
-        <ev-section-card title="结算摘要" class="od-block">
+        <eb-section-card title="结算摘要" class="od-block">
           <div class="od-summary-row">
             <span>商品金额</span><span>¥{{ order.goodsAmount.toLocaleString() }}</span>
           </div>
@@ -125,49 +125,49 @@
           <div class="od-summary-row">
             <span>优惠</span><span class="od-summary-row__discount">{{ order.discount }}</span>
           </div>
-          <ev-divider />
+          <eb-divider />
           <div class="od-summary-row od-summary-row--pay">
             <span>实付金额</span><span>¥{{ order.payAmount.toLocaleString() }}</span>
           </div>
           <div class="od-summary-row od-summary-row__hint">
             <span>支付方式</span><span>{{ order.payMethod }}</span>
           </div>
-        </ev-section-card>
-      </ev-col>
-    </ev-row>
+        </eb-section-card>
+      </eb-col>
+    </eb-row>
 
     <!-- 修改备注弹窗 -->
-    <ev-dialog v-model="remarkVisible" title="修改订单备注" width="480px">
-      <ev-form :model="remarkForm" label-width="72px">
-        <ev-form-item label="备注">
-          <ev-textarea v-model="remarkForm.remark" :rows="4" maxlength="200" show-word-limit placeholder="备注对买家不可见，仅内部协作使用" />
-        </ev-form-item>
-      </ev-form>
+    <eb-dialog v-model="remarkVisible" title="修改订单备注" width="480px">
+      <eb-form :model="remarkForm" label-width="72px">
+        <eb-form-item label="备注">
+          <eb-textarea v-model="remarkForm.remark" :rows="4" maxlength="200" show-word-limit placeholder="备注对买家不可见，仅内部协作使用" />
+        </eb-form-item>
+      </eb-form>
       <template #footer>
-        <ev-button @click="remarkVisible = false">取消</ev-button>
-        <ev-button type="primary" @click="saveRemark">保存</ev-button>
+        <eb-button @click="remarkVisible = false">取消</eb-button>
+        <eb-button type="primary" @click="saveRemark">保存</eb-button>
       </template>
-    </ev-dialog>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { order, goods, shipments, auditLogs, ORDER_STATUS, PAY_STATUS } from './mock.js'
 
 /* ---------------- 页头操作 ---------------- */
 const canCancel = computed(() => ['unpaid', 'processing'].includes(order.status))
 
 function urgeShip() {
-  EvMessage.success('已向仓配系统发送催发通知')
+  EbMessage.success('已向仓配系统发送催发通知')
 }
 
 function cancelOrder() {
   order.status = 'cancelled'
   order.payStatus = 'refunding'
   addAudit('运营小助', '取消了订单', '买家申请取消，原路退款')
-  EvMessage.warning('订单已取消，退款将原路退回')
+  EbMessage.warning('订单已取消，退款将原路退回')
 }
 
 /* ---------------- 进度条 ---------------- */
@@ -228,14 +228,14 @@ function openRemark() {
 
 function saveRemark() {
   if (!remarkForm.remark.trim()) {
-    EvMessage.warning('备注内容不能为空')
+    EbMessage.warning('备注内容不能为空')
     return
   }
   const before = order.remark || '（空）'
   order.remark = remarkForm.remark.trim()
   addAudit('运营小助', '修改了订单备注', '内部协作备注', [{ field: '备注', before, after: order.remark }])
   remarkVisible.value = false
-  EvMessage.success('备注已更新')
+  EbMessage.success('备注已更新')
 }
 
 /* ---------------- 审计日志（稳定 id，保证展开态不错位） ---------------- */
@@ -271,13 +271,13 @@ function addAudit(operator, action, detail, diff) {
 .od-goods-summary {
   padding: 12px 16px;
   text-align: right;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .od-goods-summary__pay {
   margin-left: 4px;
   font-size: 16px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-color-danger, #e34d59);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-color-danger, #e34d59);
 }
 .od-empty {
   padding: 8px 0 16px;
@@ -292,12 +292,12 @@ function addAudit(operator, action, detail, diff) {
   margin-bottom: 12px;
 }
 .od-buyer__name {
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .od-buyer__phone {
-  font-size: var(--ev-font-size-sm, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-sm, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .od-buyer__extra {
   margin-bottom: 8px;
@@ -306,21 +306,21 @@ function addAudit(operator, action, detail, diff) {
   display: flex;
   justify-content: space-between;
   padding: 5px 0;
-  color: var(--ev-text-color-regular, #4e545c);
+  color: var(--eb-text-color-regular, #4e545c);
 }
 .od-summary-row__discount {
-  color: var(--ev-color-success, #00b578);
+  color: var(--eb-color-success, #00b578);
 }
 .od-summary-row--pay {
   font-size: 16px;
-  font-weight: var(--ev-font-weight-semibold, 600);
+  font-weight: var(--eb-font-weight-semibold, 600);
 }
 .od-summary-row--pay span:last-child {
-  color: var(--ev-color-danger, #e34d59);
+  color: var(--eb-color-danger, #e34d59);
 }
 .od-summary-row__hint {
   margin-top: 4px;
-  font-size: var(--ev-font-size-sm, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-sm, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 </style>

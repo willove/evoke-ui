@@ -14,7 +14,7 @@
 饼系专属数据字段 `pieData`（`{ name, value }` 数组），角度与百分比自动计算。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'pie',
       title: '渠道分布',

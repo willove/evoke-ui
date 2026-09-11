@@ -23,9 +23,9 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 
 <DemoBlock>
   <div class="demo-row">
-    <ev-date-picker v-model="v" placeholder="请选择日期" style="width: 220px;" />
-    <ev-date-picker v-model="vDatetime" type="datetime" style="width: 240px;" />
-    <ev-date-picker v-model="vMonth" type="month" placeholder="选择月份" style="width: 220px;" />
+    <eb-date-picker v-model="v" placeholder="请选择日期" style="width: 220px;" />
+    <eb-date-picker v-model="vDatetime" type="datetime" style="width: 240px;" />
+    <eb-date-picker v-model="vMonth" type="month" placeholder="选择月份" style="width: 220px;" />
   </div>
 </DemoBlock>
 
@@ -35,10 +35,10 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 
 <DemoBlock>
   <div class="demo-row">
-    <ev-date-picker :model-value="'2026'" type="year" placeholder="选择年份" style="width: 160px;" />
-    <ev-date-picker :model-value="'2026-09'" type="month" placeholder="选择月份" style="width: 160px;" />
-    <ev-date-picker :model-value="'2026-09-01'" type="date" style="width: 180px;" />
-    <ev-date-picker :model-value="'2026-09-01 12:30:45'" type="datetime" style="width: 210px;" />
+    <eb-date-picker :model-value="'2026'" type="year" placeholder="选择年份" style="width: 160px;" />
+    <eb-date-picker :model-value="'2026-09'" type="month" placeholder="选择月份" style="width: 160px;" />
+    <eb-date-picker :model-value="'2026-09-01'" type="date" style="width: 180px;" />
+    <eb-date-picker :model-value="'2026-09-01 12:30:45'" type="datetime" style="width: 210px;" />
   </div>
 </DemoBlock>
 
@@ -47,15 +47,15 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 区间类型为双输入框 + 双面板，`range-separator` 自定义分隔符，`unlink-panels` 让左右面板独立切换年月，`start-placeholder` / `end-placeholder` 分别设置两个输入框的占位。
 
 <DemoBlock>
-  <ev-date-picker
+  <eb-date-picker
     v-model="dstr"
     type="daterange"
     start-placeholder="开始日期"
     end-placeholder="结束日期"
     style="width: 320px;"
   />
-  <ev-date-picker v-model="dstrTime" type="datetimerange" style="width: 400px;" />
-  <ev-date-picker
+  <eb-date-picker v-model="dstrTime" type="datetimerange" style="width: 400px;" />
+  <eb-date-picker
     v-model="dr"
     type="monthrange"
     unlink-panels
@@ -71,7 +71,7 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 `shortcuts` 为 `{ text, value }` 数组（value 可为 Date 或返回 Date 的函数），显示在面板左侧；`disabled-date` 返回 true 的日期置灰不可选。
 
 <DemoBlock>
-  <ev-date-picker
+  <eb-date-picker
     v-model="vShort"
     value-format="YYYY-MM-DD"
     :shortcuts="[{ text: '今天', value: new Date() }, { text: '一周后', value: () => new Date(Date.now() + 7 * 86400000) }]"
@@ -85,13 +85,13 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 `value-format` 指定对外值格式（v-model 得到字符串，缺省输出 Date 对象）；`format` 只改输入框展示格式；`default-time` 让 datetime 选中日期后时间部分取默认值，区间类型传数组分别作用于起止。
 
 <DemoBlock>
-  <ev-date-picker v-model="dstr" value-format="YYYY-MM-DD" placeholder="值为字符串" style="width: 200px;" />
+  <eb-date-picker v-model="dstr" value-format="YYYY-MM-DD" placeholder="值为字符串" style="width: 200px;" />
   <span style="margin-left: 12px;">当前值：{{ dstr || 'null' }}</span>
 </DemoBlock>
 
 <DemoBlock>
-  <ev-date-picker type="datetime" default-time="09:30:00" style="width: 210px;" />
-  <ev-date-picker type="datetimerange" :default-time="['09:00:00', '18:00:00']" style="width: 400px;" />
+  <eb-date-picker type="datetime" default-time="09:30:00" style="width: 210px;" />
+  <eb-date-picker type="datetimerange" :default-time="['09:00:00', '18:00:00']" style="width: 400px;" />
 </DemoBlock>
 
 ## 手动输入与空值定位
@@ -99,8 +99,8 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 `editable` 允许在输入框按展示格式直接键入日期（无效输入自动回滚）；`default-value` 指定空值时面板默认定位到的日期，常用于"默认定位到业务月份"。
 
 <DemoBlock>
-  <ev-date-picker :editable="false" placeholder="不可手动输入" style="width: 200px;" />
-  <ev-date-picker default-value="2026-09-01" placeholder="默认定位 9 月" style="width: 200px;" />
+  <eb-date-picker :editable="false" placeholder="不可手动输入" style="width: 200px;" />
+  <eb-date-picker default-value="2026-09-01" placeholder="默认定位 9 月" style="width: 200px;" />
 </DemoBlock>
 
 ## 尺寸与禁用
@@ -108,10 +108,10 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 `size` 控制输入框高度（large / default / small），`disabled` 禁用后点击与输入均无响应；两者均可由所属 Form 的 size / disabled 注入。
 
 <DemoBlock>
-  <ev-date-picker size="large" placeholder="large" style="width: 180px;" />
-  <ev-date-picker placeholder="default" style="width: 180px;" />
-  <ev-date-picker size="small" placeholder="small" style="width: 180px;" />
-  <ev-date-picker disabled placeholder="禁用状态" style="width: 180px;" />
+  <eb-date-picker size="large" placeholder="large" style="width: 180px;" />
+  <eb-date-picker placeholder="default" style="width: 180px;" />
+  <eb-date-picker size="small" placeholder="small" style="width: 180px;" />
+  <eb-date-picker disabled placeholder="禁用状态" style="width: 180px;" />
 </DemoBlock>
 
 ## API
@@ -159,8 +159,8 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
 容器环境为 mobile 时（ConfigProvider `platform` / 全局 `setPlatform()` / 自动探测），日期面板改为**底部弹出**呈现（全宽日历 + 安全区适配），确认选择即关闭；桌面环境保持浮层形态。下方演示强制移动形态：
 
 <DemoBlock>
-  <ev-config-provider platform="mobile">
-    <ev-date-picker v-model="mDate" type="date" placeholder="选择日期（移动形态）" style="width: 240px" />
-  </ev-config-provider>
+  <eb-config-provider platform="mobile">
+    <eb-date-picker v-model="mDate" type="date" placeholder="选择日期（移动形态）" style="width: 240px" />
+  </eb-config-provider>
 </DemoBlock>
 

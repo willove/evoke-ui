@@ -1,6 +1,6 @@
 <template>
-  <ev-timeline class="ev-audit-timeline" mode="left">
-    <ev-timeline-item
+  <eb-timeline class="eb-audit-timeline" mode="left">
+    <eb-timeline-item
       v-for="(item, i) in items"
       :key="item.id ?? i"
       :timestamp="formatTime(item.createdAt)"
@@ -8,53 +8,53 @@
       :color="avatarColor(operatorName(item))"
       variant="filled"
     >
-      <div class="ev-audit-timeline__item">
-        <div class="ev-audit-timeline__item-head">
-          <span class="ev-audit-timeline__operator" :style="{ color: avatarColor(operatorName(item)) }">
+      <div class="eb-audit-timeline__item">
+        <div class="eb-audit-timeline__item-head">
+          <span class="eb-audit-timeline__operator" :style="{ color: avatarColor(operatorName(item)) }">
             {{ operatorName(item) }}
           </span>
-          <span class="ev-audit-timeline__action">{{ item.action }}</span>
+          <span class="eb-audit-timeline__action">{{ item.action }}</span>
           <button
             v-if="expandable && item.diff?.length"
             type="button"
-            class="ev-audit-timeline__toggle"
+            class="eb-audit-timeline__toggle"
             :aria-expanded="isExpanded(item, i)"
             @click="toggleExpand(item, i)"
           >
             {{ isExpanded(item, i) ? '收起变更' : `展开变更 (${item.diff.length})` }}
-            <ev-icon name="arrow-down" :size="12" :class="{ 'is-flipped': isExpanded(item, i) }" />
+            <eb-icon name="arrow-down" :size="12" :class="{ 'is-flipped': isExpanded(item, i) }" />
           </button>
         </div>
-        <div v-if="item.detail" class="ev-audit-timeline__detail">{{ item.detail }}</div>
+        <div v-if="item.detail" class="eb-audit-timeline__detail">{{ item.detail }}</div>
 
         <!-- diff 明细（展开时） -->
-        <div v-if="expandable && item.diff?.length && isExpanded(item, i)" class="ev-audit-timeline__diff">
-          <div v-for="d in item.diff" :key="d.field" class="ev-audit-timeline__diff-row">
-            <span class="ev-audit-timeline__diff-field">{{ d.field }}</span>
+        <div v-if="expandable && item.diff?.length && isExpanded(item, i)" class="eb-audit-timeline__diff">
+          <div v-for="d in item.diff" :key="d.field" class="eb-audit-timeline__diff-row">
+            <span class="eb-audit-timeline__diff-field">{{ d.field }}</span>
             <span
               v-if="d.before !== undefined && d.before !== ''"
-              class="ev-audit-timeline__diff-before"
+              class="eb-audit-timeline__diff-before"
             >{{ formatDiffValue(d.before) }}</span>
-            <span v-else class="ev-audit-timeline__diff-before is-empty">（空）</span>
-            <ev-icon name="arrow-right" :size="12" />
-            <span class="ev-audit-timeline__diff-after">{{ formatDiffValue(d.after) }}</span>
+            <span v-else class="eb-audit-timeline__diff-before is-empty">（空）</span>
+            <eb-icon name="arrow-right" :size="12" />
+            <span class="eb-audit-timeline__diff-after">{{ formatDiffValue(d.after) }}</span>
           </div>
         </div>
       </div>
-    </ev-timeline-item>
-  </ev-timeline>
+    </eb-timeline-item>
+  </eb-timeline>
 </template>
 
 <script setup>
 /**
- * EvAuditTimeline — 审计时间线（业务封装）
+ * EbAuditTimeline — 审计时间线（业务封装）
  * items = [{ id?, operator | user, action, createdAt, detail?, diff?: [{ field, before, after }] }]；
  * 节点色按操作者名稳定取色（avatarColor）；diff 可展开（expandedItems 受控 / 内部非受控）
  */
 import { ref, computed } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvTimeline from '../timeline/index.vue'
-import EvTimelineItem from '../timeline/item.vue'
+import EbIcon from '../icon/index.vue'
+import EbTimeline from '../timeline/index.vue'
+import EbTimelineItem from '../timeline/item.vue'
 import { avatarColor } from '../../utils/avatarColor'
 
 const props = defineProps({

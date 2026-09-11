@@ -1,9 +1,9 @@
-/* EwImagePreview — 图片预览灯箱 */
+/* EvImagePreview — 图片预览灯箱 */
 
-.ew-image-preview {
+.ev-image-preview {
   position: fixed;
   inset: 0;
-  z-index: var(--ew-z-index-overlay, 2000);
+  z-index: var(--ev-z-index-overlay, 2000);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +12,7 @@
   -webkit-backdrop-filter: blur(6px);
 }
 
-.ew-image-preview__stage {
+.ev-image-preview__stage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,25 +21,25 @@
   max-width: min(1080px, calc(100vw - 144px));
 }
 
-.ew-image-preview__img {
+.ev-image-preview__img {
   max-width: 100%;
   max-height: calc(100vh - 140px);
-  border-radius: var(--ew-radius-md);
-  box-shadow: var(--ew-shadow-4);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-4);
   object-fit: contain;
 }
 
-.ew-image-preview__caption {
+.ev-image-preview__caption {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   width: 100%;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   color: rgba(255, 255, 255, 0.85);
 }
 
-.ew-image-preview__close,
-.ew-image-preview__arrow {
+.ev-image-preview__close,
+.ev-image-preview__arrow {
   position: absolute;
   display: inline-flex;
   align-items: center;
@@ -47,47 +47,47 @@
   width: 40px;
   height: 40px;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: var(--ew-radius-full);
+  border-radius: var(--ev-radius-full);
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
-  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: background-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-image-preview__close:hover,
-.ew-image-preview__arrow:hover {
+.ev-image-preview__close:hover,
+.ev-image-preview__arrow:hover {
   background: rgba(255, 255, 255, 0.18);
 }
 
-.ew-image-preview__close {
+.ev-image-preview__close {
   top: 20px;
   right: 24px;
 }
 
-.ew-image-preview__arrow.is-prev {
+.ev-image-preview__arrow.is-prev {
   left: 24px;
 }
 
-.ew-image-preview__arrow.is-next {
+.ev-image-preview__arrow.is-next {
   right: 24px;
 }
 
 /* ─── 进出场 ─── */
-.ew-image-preview-enter-active,
-.ew-image-preview-leave-active {
-  transition: opacity var(--ew-duration-base) var(--ew-ease-in-out);
+.ev-image-preview-enter-active,
+.ev-image-preview-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-image-preview-enter-active .ew-image-preview__img,
-.ew-image-preview-leave-active .ew-image-preview__img {
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth);
+.ev-image-preview-enter-active .ev-image-preview__img,
+.ev-image-preview-leave-active .ev-image-preview__img {
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth);
 }
 
-.ew-image-preview-enter-from,
-.ew-image-preview-leave-to {
+.ev-image-preview-enter-from,
+.ev-image-preview-leave-to {
   opacity: 0;
 }
 
-.ew-image-preview-enter-from .ew-image-preview__img {
+.ev-image-preview-enter-from .ev-image-preview__img {
   transform: scale(0.94);
 }

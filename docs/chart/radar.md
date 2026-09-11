@@ -13,7 +13,7 @@
 `radarIndicators` 声明维度（`name` 维度名、`max` 上限、`min` 可选下限），`radarSeries` 声明系列（`data` 与 indicators 顺序对应，`area: false` 可关闭填充面）。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'radar',
       title: '团队能力评估',

@@ -2,7 +2,7 @@
   <component
     :is="tag"
     :class="[
-      'ew-card',
+      'ev-card',
       `is-${tone}`,
       {
         'is-sticker': sticker,
@@ -21,7 +21,7 @@
 
 <script setup>
 /**
- * EwCard — 卡片（官网区块容器）
+ * EvCard — 卡片（官网区块容器）
  * tone：plain 白底 / soft 淡灰 / cream 奶油 / blue 淡蓝 / mint 薄荷 / pink 樱粉 / lime 黄绿
  * sticker：厚白描边贴纸风（remixdesign 作品卡语言）
  * featured：深色精选卡（launchos 定价主推卡语言）

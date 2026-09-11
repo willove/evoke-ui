@@ -19,12 +19,12 @@ function segmentColor(p) {
 `percentage` 接受 0-100 的数字；`status` 指定状态后进度条与文字切换为语义色（success 绿 / warning 橙 / exception 红）。
 
 <DemoBlock>
-  <ev-progress :percentage="20" />
-  <ev-progress :percentage="60" style="margin-top: 12px;" />
-  <ev-progress :percentage="80" status="success" style="margin-top: 12px;" />
-  <ev-progress :percentage="45" status="warning" style="margin-top: 12px;" />
-  <ev-progress :percentage="35" status="exception" style="margin-top: 12px;" />
-  <ev-progress :percentage="50" :text-inside="true" :stroke-width="18" style="margin-top: 12px;" />
+  <eb-progress :percentage="20" />
+  <eb-progress :percentage="60" style="margin-top: 12px;" />
+  <eb-progress :percentage="80" status="success" style="margin-top: 12px;" />
+  <eb-progress :percentage="45" status="warning" style="margin-top: 12px;" />
+  <eb-progress :percentage="35" status="exception" style="margin-top: 12px;" />
+  <eb-progress :percentage="50" :text-inside="true" :stroke-width="18" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 内显文字与加粗轨道
@@ -32,8 +32,8 @@ function segmentColor(p) {
 `text-inside` 把百分比文字放进进度条内部，需要配合较大的 `stroke-width`（line 形态下 stroke-width 是轨道高度）才有足够空间。
 
 <DemoBlock>
-  <ev-progress :percentage="66" :stroke-width="20" :text-inside="true" />
-  <ev-progress :percentage="90" :stroke-width="20" :text-inside="true" status="success" style="margin-top: 12px;" />
+  <eb-progress :percentage="66" :stroke-width="20" :text-inside="true" />
+  <eb-progress :percentage="90" :stroke-width="20" :text-inside="true" status="success" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 环形进度与仪表盘
@@ -41,9 +41,9 @@ function segmentColor(p) {
 `type="circle"` 渲染环形进度（`width` 控制直径，`stroke-width` 控制线条粗细），`type="dashboard"` 渲染 270 度仪表盘形态；`color` 传字符串固定颜色。
 
 <DemoBlock>
-  <ev-progress type="circle" :percentage="25" :width="90" />
-  <ev-progress type="circle" :percentage="70" :width="90" status="success" style="margin-left: 24px;" />
-  <ev-progress type="dashboard" :percentage="55" :width="90" :color="'#7c3aed'" style="margin-left: 24px;" />
+  <eb-progress type="circle" :percentage="25" :width="90" />
+  <eb-progress type="circle" :percentage="70" :width="90" status="success" style="margin-left: 24px;" />
+  <eb-progress type="dashboard" :percentage="55" :width="90" :color="'#7c3aed'" style="margin-left: 24px;" />
 </DemoBlock>
 
 ## 动态进度
@@ -51,9 +51,9 @@ function segmentColor(p) {
 进度值变化时按 `duration`（默认 0.3 秒）平滑过渡，适合上传、轮询等场景。
 
 <DemoBlock>
-  <ev-progress :percentage="dynamicVal" :stroke-width="18" :text-inside="true" />
-  <ev-button style="margin-top: 12px;" @click="dynamicVal = Math.min(100, dynamicVal + 10)">前进 10</ev-button>
-  <ev-button style="margin-top: 12px; margin-left: 8px;" @click="dynamicVal = 0">重置</ev-button>
+  <eb-progress :percentage="dynamicVal" :stroke-width="18" :text-inside="true" />
+  <eb-button style="margin-top: 12px;" @click="dynamicVal = Math.min(100, dynamicVal + 10)">前进 10</eb-button>
+  <eb-button style="margin-top: 12px; margin-left: 8px;" @click="dynamicVal = 0">重置</eb-button>
 </DemoBlock>
 
 ## 自定义颜色
@@ -61,8 +61,8 @@ function segmentColor(p) {
 `color` 传函数时入参为当前百分比，返回颜色值，可实现分段变色；传字符串则全程固定颜色。
 
 <DemoBlock>
-  <ev-progress :percentage="dynamicVal" :color="segmentColor" />
-  <ev-progress :percentage="dynamicVal" :color="'#16a34a'" style="margin-top: 12px;" />
+  <eb-progress :percentage="dynamicVal" :color="segmentColor" />
+  <eb-progress :percentage="dynamicVal" :color="'#16a34a'" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 自定义文字
@@ -70,11 +70,11 @@ function segmentColor(p) {
 `#text` 插槽替换右侧百分比文字，作用域插槽入参为 `{ percentage }`。
 
 <DemoBlock>
-  <ev-progress :percentage="60">
+  <eb-progress :percentage="60">
     <template #text="{ percentage }">
       <span style="font-size: 13px;">已上传 {{ Math.round(percentage / 10) }}/6 个文件</span>
     </template>
-  </ev-progress>
+  </eb-progress>
 </DemoBlock>
 
 ## 使用提示

@@ -1,13 +1,13 @@
 <template>
   <div
     v-if="type === 'textarea'"
-    class="ev-textarea ev-textarea"
+    class="eb-textarea eb-textarea"
     :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'is-focus': isFocused }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
       ref="textareaRef"
-      class="ev-textarea__inner"
+      class="eb-textarea__inner"
       v-bind="inputAttrs"
       :value="innerValue"
       :placeholder="placeholder"
@@ -24,10 +24,10 @@
     />
     <span
       v-if="wordLimitVisible"
-      class="ev-input__count"
+      class="eb-input__count"
       :class="{ 'is-exceed': isExceed }"
     >{{ textLength }} / {{ maxlength }}</span>
-    <div v-if="error || help" class="ev-input-hint" :class="{ 'is-error': !!error }">
+    <div v-if="error || help" class="eb-input-hint" :class="{ 'is-error': !!error }">
       <span v-if="error" class="hint-error">{{ error }}</span>
       <span v-else class="hint-help">{{ help }}</span>
     </div>
@@ -35,7 +35,7 @@
 
   <div
     v-else
-    class="ev-input ev-input"
+    class="eb-input eb-input"
     :class="[
       sizeClass,
       attrs.class,
@@ -50,17 +50,17 @@
     :style="attrs.style"
   >
     <div
-      class="ev-input__wrapper"
+      class="eb-input__wrapper"
       :class="{ 'is-focus': isFocused, 'is-disabled': isDisabled, 'is-error': hasError }"
     >
-      <span v-if="prefixVisible" class="ev-input__prefix">
-        <ev-icon v-if="prefixIconName" :name="prefixIconName" />
+      <span v-if="prefixVisible" class="eb-input__prefix">
+        <eb-icon v-if="prefixIconName" :name="prefixIconName" />
         <component :is="prefixIcon" v-else-if="prefixIcon" />
         <slot name="prefix" />
       </span>
       <input
         ref="inputRef"
-        class="ev-input__inner"
+        class="eb-input__inner"
         v-bind="inputAttrs"
         :type="computedType"
         :value="innerValue"
@@ -76,30 +76,30 @@
         @change="handleChange"
         @keydown="handleKeydown"
       />
-      <span v-if="suffixVisible" class="ev-input__suffix">
-        <span v-if="wordLimitVisible" class="ev-input__count" :class="{ 'is-exceed': isExceed }">
+      <span v-if="suffixVisible" class="eb-input__suffix">
+        <span v-if="wordLimitVisible" class="eb-input__count" :class="{ 'is-exceed': isExceed }">
           {{ textLength }} / {{ maxlength }}
         </span>
         <slot name="suffix" />
-        <ev-icon
+        <eb-icon
           v-if="showClear"
-          class="ev-input__clear"
+          class="eb-input__clear"
           name="circle-close"
           @click.stop="handleClear"
           @mousedown.prevent
         />
-        <ev-icon
+        <eb-icon
           v-if="showPasswordIcon"
-          class="ev-input__password"
+          class="eb-input__password"
           :name="passwordVisible ? 'hide' : 'view'"
           @click.stop="togglePassword"
           @mousedown.prevent
         />
-        <ev-icon v-if="suffixIconName" :name="suffixIconName" />
+        <eb-icon v-if="suffixIconName" :name="suffixIconName" />
         <component :is="suffixIcon" v-else-if="suffixIcon" />
       </span>
     </div>
-    <div v-if="error || help" class="ev-input-hint" :class="{ 'is-error': !!error }">
+    <div v-if="error || help" class="eb-input-hint" :class="{ 'is-error': !!error }">
       <span v-if="error" class="hint-error">{{ error }}</span>
       <span v-else class="hint-help">{{ help }}</span>
     </div>
@@ -108,15 +108,15 @@
 
 <script setup>
 /**
- * EvInput — 输入框
+ * EbInput — 输入框
  * 扩展能力：error / help 提示、shake 抖动提醒、clearable 默认开启
  * 表单集成：inject formItemContext，blur/change 时触发校验（validate-event 控制）
  */
 import { ref, computed, useAttrs, useSlots, watch, nextTick } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ inheritAttrs: false, name: 'EvInput' })
+defineOptions({ inheritAttrs: false, name: 'EbInput' })
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -177,8 +177,8 @@ const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
 
 const sizeClass = computed(() => {
   const s = formSize.value
-  if (s === 'large') return 'ev-input--large'
-  if (s === 'small') return 'ev-input--small'
+  if (s === 'large') return 'eb-input--large'
+  if (s === 'small') return 'eb-input--small'
   return ''
 })
 

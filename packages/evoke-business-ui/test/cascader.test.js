@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
-import EvCascader from '../src/components/cascader/index.vue'
+import EbCascader from '../src/components/cascader/index.vue'
 
 const options = [
   {
@@ -24,12 +24,12 @@ const options = [
 
 const Harness = defineComponent({
   name: 'CascaderHarness',
-  components: { EvCascader },
+  components: { EbCascader },
   inheritAttrs: false,
   props: { modelValue: { type: null, default: null } },
   setup(props, { attrs }) {
     const value = ref(props.modelValue)
-    return () => h(EvCascader, {
+    return () => h(EbCascader, {
       ...attrs,
       modelValue: value.value,
       'onUpdate:modelValue': (v) => {
@@ -41,7 +41,7 @@ const Harness = defineComponent({
 
 function mountCascader(props = {}) {
   const wrapper = mount(Harness, { props: { options, ...props }, attachTo: document.body })
-  return { wrapper, cascader: () => wrapper.findComponent(EvCascader) }
+  return { wrapper, cascader: () => wrapper.findComponent(EbCascader) }
 }
 
 function flush(ms = 30) {
@@ -49,14 +49,14 @@ function flush(ms = 30) {
 }
 
 async function openDropdown(wrapper) {
-  await wrapper.find('.ev-input__wrapper').trigger('click')
+  await wrapper.find('.eb-input__wrapper').trigger('click')
   await flush()
 }
 
 function nodeEl(label, menuIndex) {
-  const menus = document.querySelectorAll('.ev-cascader-menu')
-  return [...menus[menuIndex].querySelectorAll('.ev-cascader-node')].find((el) =>
-    el.querySelector('.ev-cascader-node__label')?.textContent === label
+  const menus = document.querySelectorAll('.eb-cascader-menu')
+  return [...menus[menuIndex].querySelectorAll('.eb-cascader-node')].find((el) =>
+    el.querySelector('.eb-cascader-node__label')?.textContent === label
   )
 }
 
@@ -64,43 +64,43 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-describe('EvCascader 渲染契约', () => {
+describe('EbCascader 渲染契约', () => {
   it('双 class + 编辑器结构 + placeholder', () => {
     const { wrapper } = mountCascader()
-    expect(wrapper.classes()).toContain('ev-cascader')
-    expect(wrapper.classes()).toContain('ev-cascader')
-    expect(wrapper.find('.ev-input__wrapper').exists()).toBe(true)
-    expect(wrapper.find('.ev-cascader__placeholder').text()).toBe('请选择')
+    expect(wrapper.classes()).toContain('eb-cascader')
+    expect(wrapper.classes()).toContain('eb-cascader')
+    expect(wrapper.find('.eb-input__wrapper').exists()).toBe(true)
+    expect(wrapper.find('.eb-cascader__placeholder').text()).toBe('请选择')
   })
 
   it('打开面板：一级菜单节点 + 下拉类名', async () => {
     const { wrapper } = mountCascader()
     await openDropdown(wrapper)
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeTruthy()
-    expect(document.querySelector('.ev-cascader-panel')).toBeTruthy()
-    expect(document.querySelectorAll('.ev-cascader-menu').length).toBe(1)
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
+    expect(document.querySelector('.eb-cascader-panel')).toBeTruthy()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(1)
     expect(nodeEl('浙江', 0)).toBeTruthy()
     expect(nodeEl('江苏', 0)).toBeTruthy()
   })
 })
 
-describe('EvCascader 单选流程', () => {
+describe('EbCascader 单选流程', () => {
   it('逐级展开 → 选叶子：emit 路径数组 + 全路径 label + 关闭', async () => {
     const { wrapper, cascader } = mountCascader()
     await openDropdown(wrapper)
     nodeEl('浙江', 0).click()
     await flush()
-    expect(document.querySelectorAll('.ev-cascader-menu').length).toBe(2)
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(2)
     expect(cascader().emitted('expand-change')[0][0]).toEqual([])
     nodeEl('杭州', 1).click()
     await flush()
-    expect(document.querySelectorAll('.ev-cascader-menu').length).toBe(3)
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(3)
     expect(cascader().emitted('expand-change')[1][0]).toEqual(['zhejiang'])
     nodeEl('西湖', 2).click()
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou', 'xihu'])
-    expect(wrapper.find('.ev-cascader__label').text()).toBe('浙江 / 杭州 / 西湖')
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeNull()
+    expect(wrapper.find('.eb-cascader__label').text()).toBe('浙江 / 杭州 / 西湖')
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
   })
 
   it('emitPath=false → 只发叶值；showAllLevels=false → 只显示末级', async () => {
@@ -115,7 +115,7 @@ describe('EvCascader 单选流程', () => {
     nodeEl('西湖', 2).click()
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toBe('xihu')
-    expect(wrapper.find('.ev-cascader__label').text()).toBe('西湖')
+    expect(wrapper.find('.eb-cascader__label').text()).toBe('西湖')
   })
 
   it('checkStrictly：非叶子直接可选', async () => {
@@ -124,16 +124,16 @@ describe('EvCascader 单选流程', () => {
     nodeEl('浙江', 0).click()
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang'])
-    expect(wrapper.find('.ev-cascader__label').text()).toBe('浙江')
+    expect(wrapper.find('.eb-cascader__label').text()).toBe('浙江')
     // 面板保持打开（严格模式不关闭）
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeTruthy()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
   })
 
   it('初始路径值回显 + 打开回放激活路径', async () => {
     const { wrapper } = mountCascader({ modelValue: ['zhejiang', 'hangzhou', 'xihu'] })
-    expect(wrapper.find('.ev-cascader__label').text()).toBe('浙江 / 杭州 / 西湖')
+    expect(wrapper.find('.eb-cascader__label').text()).toBe('浙江 / 杭州 / 西湖')
     await openDropdown(wrapper)
-    expect(document.querySelectorAll('.ev-cascader-menu').length).toBe(3)
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(3)
     expect(nodeEl('杭州', 1).classList.contains('in-active-path')).toBe(true)
   })
 
@@ -147,31 +147,31 @@ describe('EvCascader 单选流程', () => {
     nodeEl('禁用', 0).click()
     await flush()
     expect(cascader().emitted('update:modelValue')).toBeUndefined()
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeTruthy()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
   })
 
   it('clearable 清空', async () => {
     const { wrapper, cascader } = mountCascader({ modelValue: ['zhejiang', 'ningbo'] })
-    await wrapper.find('.ev-cascader__clear').trigger('click')
+    await wrapper.find('.eb-cascader__clear').trigger('click')
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toBeNull()
     expect(cascader().emitted('clear')).toBeTruthy()
   })
 })
 
-describe('EvCascader 多选', () => {
+describe('EbCascader 多选', () => {
   it('勾选父级 → 级联全部叶路径；tag 展示', async () => {
     const { wrapper, cascader } = mountCascader({ multiple: true })
     await openDropdown(wrapper)
     const zjNode = nodeEl('浙江', 0)
-    zjNode.querySelector('input.ev-checkbox__original').dispatchEvent(new Event('change'))
+    zjNode.querySelector('input.eb-checkbox__original').dispatchEvent(new Event('change'))
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual([
       ['zhejiang', 'hangzhou', 'xihu'],
       ['zhejiang', 'hangzhou', 'binjiang'],
       ['zhejiang', 'ningbo'],
     ])
-    const tags = wrapper.findAll('.ev-cascader__tag')
+    const tags = wrapper.findAll('.eb-cascader__tag')
     expect(tags.length).toBe(3)
   })
 
@@ -183,7 +183,7 @@ describe('EvCascader 多选', () => {
     })
     await openDropdown(wrapper)
     const jsNode = nodeEl('江苏', 0)
-    jsNode.querySelector('input.ev-checkbox__original').dispatchEvent(new Event('change'))
+    jsNode.querySelector('input.eb-checkbox__original').dispatchEvent(new Event('change'))
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual([])
   })
@@ -194,7 +194,7 @@ describe('EvCascader 多选', () => {
     })
     await openDropdown(wrapper)
     const zjNode = nodeEl('浙江', 0)
-    zjNode.querySelector('input.ev-checkbox__original').dispatchEvent(new Event('change'))
+    zjNode.querySelector('input.eb-checkbox__original').dispatchEvent(new Event('change'))
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual([['zhejiang']])
   })
@@ -204,9 +204,9 @@ describe('EvCascader 多选', () => {
       multiple: true,
       modelValue: [['zhejiang', 'ningbo'], ['jiangsu', 'nanjing']],
     })
-    const tags = wrapper.findAll('.ev-cascader__tag')
+    const tags = wrapper.findAll('.eb-cascader__tag')
     expect(tags.length).toBe(2)
-    await tags[0].find('.ev-tag__close').trigger('click')
+    await tags[0].find('.eb-tag__close').trigger('click')
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual([['jiangsu', 'nanjing']])
     expect(cascader().emitted('remove-tag')).toBeTruthy()
@@ -218,51 +218,51 @@ describe('EvCascader 多选', () => {
       collapseTags: true,
       modelValue: [['zhejiang', 'ningbo'], ['jiangsu', 'nanjing']],
     })
-    expect(wrapper.findAll('.ev-cascader__tag').length).toBe(1)
-    expect(wrapper.find('.ev-select__tags-collapse-item').text()).toBe('+ 1')
+    expect(wrapper.findAll('.eb-cascader__tag').length).toBe(1)
+    expect(wrapper.find('.eb-select__tags-collapse-item').text()).toBe('+ 1')
   })
 })
 
-describe('EvCascader 过滤', () => {
+describe('EbCascader 过滤', () => {
   it('输入关键字 → 建议面板；点击建议选中', async () => {
     const { wrapper, cascader } = mountCascader({ filterable: true })
     await openDropdown(wrapper)
-    await wrapper.find('.ev-cascader__input').setValue('西湖')
+    await wrapper.find('.eb-cascader__input').setValue('西湖')
     await flush()
-    const items = [...document.querySelectorAll('.ev-cascader__suggestion-item')]
+    const items = [...document.querySelectorAll('.eb-cascader__suggestion-item')]
     expect(items.length).toBe(1)
     expect(items[0].textContent).toBe('浙江 / 杭州 / 西湖')
     items[0].click()
     await flush()
     expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou', 'xihu'])
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeNull()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
   })
 
   it('无匹配建议显示空态', async () => {
     const { wrapper } = mountCascader({ filterable: true })
     await openDropdown(wrapper)
-    await wrapper.find('.ev-cascader__input').setValue('不存在')
+    await wrapper.find('.eb-cascader__input').setValue('不存在')
     await flush()
-    const empty = document.querySelector('.ev-cascader__suggestion-item.is-empty')
+    const empty = document.querySelector('.eb-cascader__suggestion-item.is-empty')
     expect(empty?.textContent).toBe('无匹配数据')
   })
 
   it('输入关键字时占位文案隐藏，清空关键字后恢复', async () => {
     const { wrapper } = mountCascader({ filterable: true, placeholder: '输入「杭州」试试' })
-    const input = wrapper.find('.ev-cascader__input')
-    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(true)
+    const input = wrapper.find('.eb-cascader__input')
+    expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(true)
     await input.setValue('杭州')
     await flush()
-    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(false)
+    expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(false)
     await input.setValue('')
     await flush()
-    expect(wrapper.find('.ev-cascader__placeholder').exists()).toBe(true)
+    expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(true)
   })
 
   it('disabled 不可打开', async () => {
     const { wrapper } = mountCascader({ disabled: true })
-    await wrapper.find('.ev-input__wrapper').trigger('click')
+    await wrapper.find('.eb-input__wrapper').trigger('click')
     await flush()
-    expect(document.querySelector('.ev-cascader__dropdown')).toBeNull()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
   })
 })

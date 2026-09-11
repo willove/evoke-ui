@@ -1,6 +1,8 @@
 # 图表总览与快速上手
 
-EcChart 是 Evoke 生态的 Canvas 自绘图表引擎，来自独立包 `@wil-works/evoke-charts`（本站收录其文档，与组件库样式已打通主题适配）：零图表库依赖，ECharts 风格的 `options` 配置式声明，内置图例点选、tooltip、dataZoom 缩放、框选、联动与暗色模式；高清屏自动按 devicePixelRatio 渲染，数据变化时自动做数值补间动画，空数据、加载中与渲染错误均有内置占位。
+EvChart 是 Evoke 生态的 Canvas 自绘图表引擎，来自独立包 `@wil-works/evoke-charts`（本站收录其文档，与组件库样式已打通主题适配）：零图表库依赖，ECharts 风格的 `options` 配置式声明，内置图例点选、tooltip、dataZoom 缩放、框选、联动与暗色模式；高清屏自动按 devicePixelRatio 渲染，数据变化时自动做数值补间动画，空数据、加载中与渲染错误均有内置占位。
+
+> 在 evoke-business-ui 中使用时无需单独安装：组件库依赖本包并以 `<eb-chart>` 组件名提供，样式随 `@wil-works/evoke-charts/styles` 引入，主题/暗色自动跟随组件库。
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -41,7 +43,7 @@ function switchType() {
 一张图 = **选类型 → 给数据 → 调配置** 三步，全部收敛在一个 `options` 对象里：
 
 ```vue
-<ec-chart
+<ev-chart
   :options="{
     type: 'bar',              // 1. 选类型
     title: '季度营收',
@@ -79,7 +81,7 @@ function switchType() {
 一个最简单的折线图，`labels` 是 x 轴类目，`series` 每项是一条线：
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'line',
       title: '渠道转化',
@@ -104,7 +106,7 @@ function switchType() {
   <ev-button @click="switchData">切换一组数据</ev-button>
   <ev-button type="primary" @click="switchType">line / bar 切换</ev-button>
 </div>
-<ec-chart :options="dynOptions" :height="260" />
+<ev-chart :options="dynOptions" :height="260" />
 </DemoBlock>
 
 ## 下一步

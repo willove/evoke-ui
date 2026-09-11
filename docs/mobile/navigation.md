@@ -14,9 +14,9 @@ Breadcrumb 在移动端没有生存空间——窄屏放不下层级链，用户
 <MobileStage title="订单详情">
   <div class="mb-page">
     <div class="mb-card">
-      <ev-cell-stack main="来自消息 · 审批提醒" sub="09-08 10:24 · 张三推送给您" />
-      <ev-divider style="margin: 0;" />
-      <ev-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 审批中" />
+      <eb-cell-stack main="来自消息 · 审批提醒" sub="09-08 10:24 · 张三推送给您" />
+      <eb-divider style="margin: 0;" />
+      <eb-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 审批中" />
     </div>
     <div class="mb-divider-text" style="padding: 0;">左上角返回箭头回到消息列表，层级由页栈管理</div>
   </div>
@@ -30,15 +30,15 @@ Tabs 在窄容器（375px 视口、手机侧栏）下自动进入**横向滚动*
 <DemoBlock>
 <MobileStage title="项目动态">
   <div class="mb-page mb-page--flush">
-    <ev-tabs v-model="tab">
-      <ev-tab-pane v-for="t in tabPanes" :key="t.name" :label="t.label" :name="t.name">
+    <eb-tabs v-model="tab">
+      <eb-tab-pane v-for="t in tabPanes" :key="t.name" :label="t.label" :name="t.name">
         <div class="mb-page" style="padding-top: 12px;">
           <div class="mb-card">
-            <ev-cell-stack v-for="item in t.items" :key="item.main" :main="item.main" :sub="item.sub" />
+            <eb-cell-stack v-for="item in t.items" :key="item.main" :main="item.main" :sub="item.sub" />
           </div>
         </div>
-      </ev-tab-pane>
-    </ev-tabs>
+      </eb-tab-pane>
+    </eb-tabs>
   </div>
 </MobileStage>
 </DemoBlock>
@@ -56,7 +56,7 @@ Pagination 的页码跳转在触屏上没有意义（用户不会「想去第 4 
       <div v-for="o in loaded" :key="o.id" class="mb-card mb-card--pad">
         <div class="mb-card__head">
           <span class="mb-card__title">{{ o.id }}</span>
-          <ev-status-tag :value="o.status" :statuses="statuses" />
+          <eb-status-tag :value="o.status" :statuses="statuses" />
         </div>
         <div class="mb-card__rows">
           <div><div class="mb-card__label">申请人</div><div class="mb-card__value">{{ o.owner }}</div></div>
@@ -64,7 +64,7 @@ Pagination 的页码跳转在触屏上没有意义（用户不会「想去第 4 
         </div>
       </div>
     </div>
-    <ev-load-more v-model:status="loadStatus" :auto-load="false" @load-more="loadMore" />
+    <eb-load-more v-model:status="loadStatus" :auto-load="false" @load-more="loadMore" />
   </div>
 </MobileStage>
 </DemoBlock>

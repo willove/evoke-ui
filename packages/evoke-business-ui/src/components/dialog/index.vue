@@ -1,23 +1,23 @@
 <template>
   <Teleport v-if="appendToBody" to="body" :disabled="!ready">
     <Transition
-      name="ev-dialog-fade"
+      name="eb-dialog-fade"
       @after-enter="emit('opened')"
       @after-leave="emit('closed')"
     >
       <div
         v-if="visible"
-        class="ev-overlay ev-overlay"
+        class="eb-overlay eb-overlay"
         :style="{ zIndex }"
         @click.self="handleOverlayClick"
       >
         <div
           ref="dialogRef"
-          class="ev-overlay-dialog"
+          class="eb-overlay-dialog"
           @click.self="handleOverlayClick"
         >
           <div
-            class="ev-dialog ev-dialog"
+            class="eb-dialog eb-dialog"
             :class="[
               sizeClass,
               {
@@ -33,24 +33,24 @@
             aria-modal="true"
             :aria-label="title || 'dialog'"
           >
-            <header class="ev-dialog__header">
+            <header class="eb-dialog__header">
               <slot name="header">
-                <span class="ev-dialog__title">{{ title }}</span>
+                <span class="eb-dialog__title">{{ title }}</span>
               </slot>
               <button
                 v-if="showClose"
                 type="button"
-                class="ev-dialog__headerbtn"
+                class="eb-dialog__headerbtn"
                 aria-label="Close"
                 @click="handleClose"
               >
-                <ev-icon name="close" />
+                <eb-icon name="close" />
               </button>
             </header>
-            <div class="ev-dialog__body">
+            <div class="eb-dialog__body">
               <slot v-if="!destroyOnClose || rendered" />
             </div>
-            <footer v-if="$slots.footer" class="ev-dialog__footer">
+            <footer v-if="$slots.footer" class="eb-dialog__footer">
               <slot name="footer" />
             </footer>
           </div>
@@ -62,43 +62,43 @@
   <!-- 内联模式（appendToBody=false） -->
   <Transition
     v-else
-    name="ev-dialog-fade"
+    name="eb-dialog-fade"
     @after-enter="emit('opened')"
     @after-leave="emit('closed')"
   >
     <div
       v-if="visible"
-      class="ev-overlay ev-overlay"
+      class="eb-overlay eb-overlay"
       :style="{ zIndex }"
       @click.self="handleOverlayClick"
     >
-      <div ref="dialogRef" class="ev-overlay-dialog" @click.self="handleOverlayClick">
+      <div ref="dialogRef" class="eb-overlay-dialog" @click.self="handleOverlayClick">
         <div
-          class="ev-dialog ev-dialog"
+          class="eb-dialog eb-dialog"
           :class="[{ 'is-fullscreen': fullscreen, 'is-align-center': alignCenter }]"
           :style="dialogStyle"
           role="dialog"
           aria-modal="true"
           :aria-label="title || 'dialog'"
         >
-          <header class="ev-dialog__header">
+          <header class="eb-dialog__header">
             <slot name="header">
-              <span class="ev-dialog__title">{{ title }}</span>
+              <span class="eb-dialog__title">{{ title }}</span>
             </slot>
             <button
               v-if="showClose"
               type="button"
-              class="ev-dialog__headerbtn"
+              class="eb-dialog__headerbtn"
               aria-label="Close"
               @click="handleClose"
             >
-              <ev-icon name="close" />
+              <eb-icon name="close" />
             </button>
           </header>
-          <div class="ev-dialog__body">
+          <div class="eb-dialog__body">
             <slot v-if="!destroyOnClose || rendered" />
           </div>
-          <footer v-if="$slots.footer" class="ev-dialog__footer">
+          <footer v-if="$slots.footer" class="eb-dialog__footer">
             <slot name="footer" />
           </footer>
         </div>
@@ -109,19 +109,19 @@
 
 <script setup>
 /**
- * EvDialog — 对话框
+ * EbDialog — 对话框
  * Teleport + 焦点圈禁（useFocusTrap）+ ESC/遮罩点击语义 + lock-scroll 计数式
  */
 import { computed, ref, watch, nextTick, onMounted } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap'
 import { useLockScroll } from '../../composables/useLockScroll'
 import { useZIndex } from '../../composables/useZIndex'
 
-defineOptions({ name: 'EvDialog' })
+defineOptions({ name: 'EbDialog' })
 
 const props = defineProps({
-  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EbConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '' },

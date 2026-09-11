@@ -1,63 +1,63 @@
-/* EvComment — 评论 */
-.ev-comment {
+/* EbComment — 评论 */
+.eb-comment {
   display: flex;
-  gap: var(--ev-space-3);
-  padding: var(--ev-space-3) 0;
+  gap: var(--eb-space-3);
+  padding: var(--eb-space-3) 0;
 }
 
-.ev-comment__avatar {
+.eb-comment__avatar {
   flex-shrink: 0;
 }
 
-.ev-comment__main {
+.eb-comment__main {
   flex: 1;
   min-width: 0;
 }
 
-.ev-comment__meta {
+.eb-comment__meta {
   display: flex;
   align-items: baseline;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   flex-wrap: wrap;
 }
 
-.ev-comment__author {
-  font-size: var(--ev-font-size-sm);
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+.eb-comment__author {
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
 }
 
-.ev-comment__datetime {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-comment__datetime {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
-.ev-comment__content {
-  margin-top: var(--ev-space-1);
-  font-size: var(--ev-font-size-sm);
-  line-height: var(--ev-line-height-loose);
-  color: var(--ev-text-color-regular);
+.eb-comment__content {
+  margin-top: var(--eb-space-1);
+  font-size: var(--eb-font-size-sm);
+  line-height: var(--eb-line-height-loose);
+  color: var(--eb-text-color-regular);
   word-break: break-word;
 }
 
 /* 宿主环境屏蔽：文档站 .bd-doc p 的字号/行高/颜色/外距侵入正文插槽 */
-.ev-comment.ev-comment .ev-comment__content p {
+.eb-comment.eb-comment .eb-comment__content p {
   margin: 0;
   font-size: inherit;
   line-height: inherit;
   color: inherit;
 }
 
-.ev-comment__actions {
-  margin-top: var(--ev-space-2);
+.eb-comment__actions {
+  margin-top: var(--eb-space-2);
   display: flex;
-  gap: var(--ev-space-3);
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+  gap: var(--eb-space-3);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
-.ev-comment__replies {
-  margin-top: var(--ev-space-2);
-  padding-left: var(--ev-space-4);
-  border-left: 2px solid var(--ev-border-color-lighter);
+.eb-comment__replies {
+  margin-top: var(--eb-space-2);
+  padding-left: var(--eb-space-4);
+  border-left: 2px solid var(--eb-border-color-lighter);
 }

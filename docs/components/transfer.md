@@ -5,7 +5,7 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-transfer
+  <eb-transfer
     v-model="targetKeys"
     :data="transferData"
     :titles="['候选成员', '项目成员']"
@@ -13,7 +13,7 @@
     filter-placeholder="搜索成员"
     @change="onChange"
   />
-  <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">已选：{{ targetKeys.join('、') || '—' }}</p>
+  <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">已选：{{ targetKeys.join('、') || '—' }}</p>
 </DemoBlock>
 
 <script setup>

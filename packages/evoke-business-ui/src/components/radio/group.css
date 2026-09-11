@@ -1,13 +1,13 @@
-/* EvRadioGroup */
+/* EbRadioGroup */
 
-.ev-radio-group.ev-radio-group {
+.eb-radio-group.eb-radio-group {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ev-space-4) var(--ev-space-6);
+  gap: var(--eb-space-4) var(--eb-space-6);
 }
 
 /* 连体按钮组（radio-button）：group 的 flex gap 会切开 -1px 重叠的连体按钮，需归零 */
-.ev-radio-group.ev-radio-group:has(.ev-radio-button) {
+.eb-radio-group.eb-radio-group:has(.eb-radio-button) {
   gap: 0;
 }

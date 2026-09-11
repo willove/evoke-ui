@@ -4,6 +4,24 @@
 
 ## [Unreleased]
 
+### 生态命名空间对齐 — ev-* 归基础生态（evoke-ui / evoke-charts），eb-* 归 business-ui（破坏性）
+
+- **`@wil-works/evoke-business-ui` 组件名整体切换 `Ev*` → `Eb*`**（如 `EvButton` → `EbButton`，
+  模板标签 `<ev-button>` → `<eb-button>`），类名 `ev-*` → `eb-*`，令牌 `--ev-*` → `--eb-*`，
+  主题事件 `ev-theme-change` → `eb-theme-change`，持久化键 `ev-theme-config` → `eb-theme-config`，
+  密度/磨砂属性 `data-ev-*` → `data-eb-*`，locale 键路径 `zhCN.ev.*` → `zhCN.eb.*`，
+  `EV_THEME_PRESETS` → `EB_THEME_PRESETS`。compat-check 改为校验 Eb 注册表纯度 + EbChart 别名
+- **`@wil-works/evoke-ui` 组件名整体切换 `Ew*` → `Ev*`**（如 `EwButton` → `EvButton`），
+  类名/令牌 `ew-*` / `--ew-*` → `ev-*` / `--ev-*`，磨砂属性 `data-ew-glass` → `data-ev-glass`，
+  暗色持久化键 `ew-theme` → `ev-theme`；从此与 evoke-charts 共享 `--ev-*` 令牌面，
+  图表在其站点内自动跟随主题（对已按 `Ew*` 接入的消费方为破坏性变更）
+- **图表接入方式变化**：evoke-business-ui 以 npm 依赖引入 `@wil-works/evoke-charts`，
+  对外以 `EbChart`（`<eb-chart>`）提供；样式仍从 `@wil-works/evoke-charts/styles` 引入；
+  business-ui 图表适配层改为 `--ev-*` ← `--eb-*` 映射，换肤时同步派发 `ev-theme-change`
+- **business 文档站**全站演示改为 `eb-*`；`/chart/` 分区以 `ev-chart` 演示 charts 独立包并
+  注明 business 集成方式；docs-web 全站与 evoke-ui 测试/脚本同步完成前缀切换
+- 升级方式：`Ev*`/`Ew*` 组件名按对应库改为 `Eb*`/`Ev*`，令牌与类名前缀同步替换
+
 ### @wil-works/evoke-charts — 新增：图表能力独立包（v0.1.0）
 
 - **新包 `@wil-works/evoke-charts`**：Canvas 自绘图表引擎自 evoke-business-ui 整体迁出，

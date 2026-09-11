@@ -1,10 +1,10 @@
 <template>
   <div
-    class="ev-space ev-space"
-    :class="[`ev-space--${direction}`, { 'is-wrap': wrap, 'is-fill': fill }]"
+    class="eb-space eb-space"
+    :class="[`eb-space--${direction}`, { 'is-wrap': wrap, 'is-fill': fill }]"
     :style="containerStyle"
   >
-    <div v-for="(child, i) in children" :key="child.key ?? i" class="ev-space__item" :style="itemStyle">
+    <div v-for="(child, i) in children" :key="child.key ?? i" class="eb-space__item" :style="itemStyle">
       <vnode-renderer :vnode="child" />
     </div>
   </div>
@@ -12,7 +12,7 @@
 
 <script setup>
 /**
- * EvSpace — 间距
+ * EbSpace — 间距
  * size 数字/枚举/[x,y]；fill 撑满；spacer 未支持
  */
 import { computed, useSlots, defineComponent, Fragment, Comment, Text } from 'vue'
@@ -74,8 +74,8 @@ function resolveGap() {
 const containerStyle = computed(() => {
   const [gx, gy] = resolveGap()
   const style = {
-    '--ev-space-gap-x': `${gx}px`,
-    '--ev-space-gap-y': `${gy}px`,
+    '--eb-space-gap-x': `${gx}px`,
+    '--eb-space-gap-y': `${gy}px`,
   }
   if (props.alignment) style.alignItems = props.alignment
   return style

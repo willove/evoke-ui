@@ -1,6 +1,6 @@
 <template>
-  <div ref="rootRef" class="ev-affix" :style="wrapperStyle">
-    <div v-if="fixed" class="ev-affix__affix" :style="affixStyle">
+  <div ref="rootRef" class="eb-affix" :style="wrapperStyle">
+    <div v-if="fixed" class="eb-affix__affix" :style="affixStyle">
       <slot />
     </div>
     <slot v-else />
@@ -9,7 +9,7 @@
 
 <script setup>
 /**
- * EvAffix — 固钉
+ * EbAffix — 固钉
  * fixed 时根元素按实测尺寸占位，布局不跳动；有 target 时滚出目标区自动脱离
  */
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'

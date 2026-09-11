@@ -1,6 +1,6 @@
 # Quote 评价
 
-`EwQuote` 展示用户评价与引用文案，适合放在介绍页的收尾位置赢得信任。自带引号装饰与署名结构；
+`EvQuote` 展示用户评价与引用文案，适合放在介绍页的收尾位置赢得信任。自带引号装饰与署名结构；
 `sticker` 开启贴纸描边，适合轻快的品牌语境。
 
 ## 基础用法
@@ -8,14 +8,14 @@
 <DemoBlock title="署名 + 来源链接" description="source/source-href 组成右侧来源链接，自动带外链图标。">
 
 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
-  <EwQuote
+  <EvQuote
     quote="把整个团队的文档搬进来之后，找东西的时间少了一半，写作体验也是最接近纸面的一款。"
     author="林一舟"
     role="产品设计师"
     source="少数派"
     source-href="#"
   />
-  <EwQuote
+  <EvQuote
     sticker
     quote="离线同步稳得出奇，高铁上写完的稿子回到网络自动出现在电脑上。"
     author="Wen"
@@ -24,20 +24,20 @@
 </div>
 
 ```vue
-<EwQuote
+<EvQuote
   quote="…"
   author="林一舟"
   role="产品设计师"
   source="少数派"
   source-href="https://…"
 />
-<EwQuote quote="…" author="Wen" sticker />
+<EvQuote quote="…" author="Wen" sticker />
 ```
 
 </DemoBlock>
 
 ::: tip 组合建议
-三张以上评价并排时，中间一张用 `sticker` 变化节奏；配合 [EwAvatar](./avatar) 可在署名区加头像（经 author 插槽）。
+三张以上评价并排时，中间一张用 `sticker` 变化节奏；配合 [EvAvatar](./avatar) 可在署名区加头像（经 author 插槽）。
 :::
 
 ## API

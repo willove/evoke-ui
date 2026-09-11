@@ -1,8 +1,8 @@
 /**
- * EvLoading — 命令式加载服务 + v-loading 指令
+ * EbLoading — 命令式加载服务 + v-loading 指令
  *
  * Usage:
- *   const handle = EvLoading.service({ fullscreen: true, text: '加载中' })
+ *   const handle = EbLoading.service({ fullscreen: true, text: '加载中' })
  *   handle.close()
  *
  *   app.use 安装时自动注册 v-loading 指令
@@ -58,7 +58,7 @@ function createLoading(options = {}) {
   return handle
 }
 
-const EvLoading = {
+const EbLoading = {
   service: createLoading,
   /** 兼容 invoke-ui 全屏快捷调用 */
   fullscreen(options) {
@@ -82,7 +82,7 @@ function createLoadingDirective() {
         text: text || binding.value?.text || '',
         fullscreen: false,
       })
-      el.classList.add('ev-loading-parent--relative')
+      el.classList.add('eb-loading-parent--relative')
       instanceMap.set(el, handle)
       handle.vm.exposed.setVisible(!!binding.value)
     },
@@ -95,11 +95,11 @@ function createLoadingDirective() {
     unmounted(el) {
       const handle = instanceMap.get(el)
       handle?.close()
-      el.classList.remove('ev-loading-parent--relative')
+      el.classList.remove('eb-loading-parent--relative')
       instanceMap.delete(el)
     },
   }
 }
 
-export { EvLoading, createLoadingDirective }
-export default EvLoading
+export { EbLoading, createLoadingDirective }
+export default EbLoading

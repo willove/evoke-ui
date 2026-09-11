@@ -1,31 +1,31 @@
 <template>
-  <transition name="ev-alert-fade">
+  <transition name="eb-alert-fade">
     <div
       v-if="visible"
-      class="ev-alert ev-alert"
-      :class="[`ev-alert--${effect}`, `ev-alert--${typeClass}`, { 'is-center': center }]"
+      class="eb-alert eb-alert"
+      :class="[`eb-alert--${effect}`, `eb-alert--${typeClass}`, { 'is-center': center }]"
       role="alert"
     >
-      <div v-if="showIcon || $slots.icon" class="ev-alert__icon">
+      <div v-if="showIcon || $slots.icon" class="eb-alert__icon">
         <slot name="icon">
-          <ev-icon :name="iconName" :size="16" />
+          <eb-icon :name="iconName" :size="16" />
         </slot>
       </div>
-      <div class="ev-alert__content">
-        <span v-if="title && !$slots.title" class="ev-alert__title">{{ title }}</span>
-        <span v-else-if="$slots.title" class="ev-alert__title"><slot name="title" /></span>
-        <p v-if="$slots.default || description" class="ev-alert__description">
+      <div class="eb-alert__content">
+        <span v-if="title && !$slots.title" class="eb-alert__title">{{ title }}</span>
+        <span v-else-if="$slots.title" class="eb-alert__title"><slot name="title" /></span>
+        <p v-if="$slots.default || description" class="eb-alert__description">
           <slot>{{ description }}</slot>
         </p>
       </div>
       <button
         v-if="closable"
         type="button"
-        class="ev-alert__close-btn"
+        class="eb-alert__close-btn"
         aria-label="Close"
         @click="handleClose"
       >
-        <slot name="close"><ev-icon name="close" :size="14" /></slot>
+        <slot name="close"><eb-icon name="close" :size="14" /></slot>
       </button>
     </div>
   </transition>
@@ -33,10 +33,10 @@
 
 <script setup>
 /**
- * EvAlert — 警告提示
+ * EbAlert — 警告提示
  */
 import { ref, computed } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   title: { type: String, default: '' },

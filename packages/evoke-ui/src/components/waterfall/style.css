@@ -1,51 +1,51 @@
-/* EwWaterfall — 瀑布流 */
+/* EvWaterfall — 瀑布流 */
 
-.ew-waterfall {
+.ev-waterfall {
   display: flex;
   align-items: flex-start;
 }
 
-.ew-waterfall__col {
+.ev-waterfall__col {
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   min-width: 0;
 }
 
-.ew-waterfall__cell {
+.ev-waterfall__cell {
   min-width: 0;
 }
 
-.ew-waterfall__item {
+.ev-waterfall__item {
   position: relative;
   display: block;
   width: 100%;
   padding: 0;
   border: none;
-  border-radius: var(--ew-waterfall-radius, 12px);
-  background: var(--ew-fill-1);
+  border-radius: var(--ev-waterfall-radius, 12px);
+  background: var(--ev-fill-1);
   overflow: hidden;
   cursor: zoom-in;
 }
 
-.ew-waterfall__item img {
+.ev-waterfall__item img {
   display: block;
   width: 100%;
   height: auto;
-  transition: transform var(--ew-duration-slow) var(--ew-ease-smooth);
+  transition: transform var(--ev-duration-slow) var(--ev-ease-smooth);
 }
 
-.ew-waterfall__item:hover img,
-.ew-waterfall__item:focus-visible img {
+.ev-waterfall__item:hover img,
+.ev-waterfall__item:focus-visible img {
   transform: scale(1.04);
 }
 
-.ew-waterfall__item:focus-visible {
-  outline: 2px solid var(--ew-color-primary);
+.ev-waterfall__item:focus-visible {
+  outline: 2px solid var(--ev-color-primary);
   outline-offset: 2px;
 }
 
-.ew-waterfall__caption {
+.ev-waterfall__caption {
   position: absolute;
   right: 0;
   bottom: 0;

@@ -8,7 +8,7 @@
  */
 import { ref, computed } from 'vue'
 
-const STORAGE_KEY = 'ew-theme'
+const STORAGE_KEY = 'ev-theme'
 
 const isDark = ref(false)
 let initialized = false

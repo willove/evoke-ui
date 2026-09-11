@@ -74,9 +74,9 @@ const activities = [
 
 <template>
   <div class="case-site">
-    <EwNavbar :sticky="sticky" logo-text="cumubase 笔记">
+    <EvNavbar :sticky="sticky" logo-text="cumubase 笔记">
       <template #actions>
-        <EwInput
+        <EvInput
           v-model="query"
           size="small"
           icon="search"
@@ -84,19 +84,19 @@ const activities = [
           placeholder="搜索标题、正文或标签…"
           style="width:220px;"
         />
-        <EwThemeToggle />
-        <EwAvatar name="阿岚" size="small" />
+        <EvThemeToggle />
+        <EvAvatar name="阿岚" size="small" />
       </template>
-    </EwNavbar>
+    </EvNavbar>
 
     <div class="cn-workbench">
       <div class="cn-list">
         <div class="cn-list__head">
-          <EwTabs v-model="tab" :items="tabs" />
+          <EvTabs v-model="tab" :items="tabs" />
           <span class="cn-count">{{ filtered.length }} 条笔记</span>
         </div>
         <div class="cn-cards">
-          <EwCard
+          <EvCard
             v-for="n in filtered"
             :key="n.id"
             hoverable
@@ -107,7 +107,7 @@ const activities = [
           >
             <div class="cn-card__head">
               <span class="cn-card__title">{{ n.title }}</span>
-              <EwIconButton
+              <EvIconButton
                 size="small"
                 :icon="n.starred ? 'star-fill' : 'star'"
                 :aria-label="n.starred ? '取消收藏' : '收藏'"
@@ -116,52 +116,52 @@ const activities = [
             </div>
             <p class="cn-card__excerpt">{{ n.content }}</p>
             <div class="cn-card__foot">
-              <EwTag v-for="t in n.tags" :key="t" size="small">{{ t }}</EwTag>
-              <EwTag v-if="n.status === 'archived'" size="small" tone="neutral" variant="outline">已归档</EwTag>
+              <EvTag v-for="t in n.tags" :key="t" size="small">{{ t }}</EvTag>
+              <EvTag v-if="n.status === 'archived'" size="small" tone="neutral" variant="outline">已归档</EvTag>
               <span class="cn-card__time">{{ n.updated }}</span>
             </div>
-          </EwCard>
+          </EvCard>
           <div v-if="!filtered.length" class="cn-empty">
             <p>没有匹配的笔记。</p>
-            <EwButton size="small" variant="soft" @click="query = ''; tab = 'all'">清空筛选</EwButton>
+            <EvButton size="small" variant="soft" @click="query = ''; tab = 'all'">清空筛选</EvButton>
           </div>
         </div>
       </div>
 
       <div class="cn-editor">
-        <EwCard v-if="selected" class="cn-editor__card">
+        <EvCard v-if="selected" class="cn-editor__card">
           <p class="cn-editor__label">编辑笔记</p>
-          <EwField label="标题">
-            <EwInput v-model="selected.title" placeholder="给笔记起个名字" />
-          </EwField>
-          <EwField label="内容">
-            <EwTextarea v-model="selected.content" :rows="7" :maxlength="300" placeholder="写点什么…" />
-          </EwField>
-          <EwField label="标签">
+          <EvField label="标题">
+            <EvInput v-model="selected.title" placeholder="给笔记起个名字" />
+          </EvField>
+          <EvField label="内容">
+            <EvTextarea v-model="selected.content" :rows="7" :maxlength="300" placeholder="写点什么…" />
+          </EvField>
+          <EvField label="标签">
             <div class="cn-tags">
-              <EwTag v-for="t in selected.tags" :key="t" size="small" closable>{{ t }}</EwTag>
-              <EwTag size="small" variant="outline" icon="plus">添加标签</EwTag>
+              <EvTag v-for="t in selected.tags" :key="t" size="small" closable>{{ t }}</EvTag>
+              <EvTag size="small" variant="outline" icon="plus">添加标签</EvTag>
             </div>
-          </EwField>
+          </EvField>
           <div class="cn-editor__actions">
-            <EwButton size="small" icon="check">保存</EwButton>
-            <EwButton
+            <EvButton size="small" icon="check">保存</EvButton>
+            <EvButton
               size="small"
               variant="outline"
               :icon="selected.status === 'archived' ? 'refresh' : 'archive-line'"
               @click="toggleArchive(selected)"
-            >{{ selected.status === 'archived' ? '恢复' : '归档' }}</EwButton>
+            >{{ selected.status === 'archived' ? '恢复' : '归档' }}</EvButton>
             <span class="cn-editor__meta">更新于 {{ selected.updated }}</span>
           </div>
-        </EwCard>
-        <EwCard tone="soft" class="cn-activity">
+        </EvCard>
+        <EvCard tone="soft" class="cn-activity">
           <p class="cn-editor__label">最近动态</p>
-          <EwTimeline :items="activities" />
-        </EwCard>
+          <EvTimeline :items="activities" />
+        </EvCard>
       </div>
     </div>
 
-    <EwFooter
+    <EvFooter
       soft
       logo-text="cumubase 笔记"
       slogan="轻盈优雅的云端笔记。"
@@ -199,7 +199,7 @@ const activities = [
 }
 .cn-count {
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cn-cards {
   display: grid;
@@ -207,11 +207,11 @@ const activities = [
 }
 .cn-card {
   cursor: pointer;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
 }
 .cn-card.is-active {
-  border-color: var(--ew-color-primary);
+  border-color: var(--ev-color-primary);
   box-shadow: 0 0 0 2px var(--vp-c-brand-soft);
 }
 .cn-card__head {
@@ -222,14 +222,14 @@ const activities = [
 }
 .cn-card__title {
   font-size: 15px;
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
 }
 .cn-card__excerpt {
   margin: 8px 0 12px;
   font-size: 13px;
   line-height: 1.6;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -244,12 +244,12 @@ const activities = [
 .cn-card__time {
   margin-left: auto;
   font-size: 12px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cn-empty {
   padding: 40px 0;
   text-align: center;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   font-size: 14px;
 }
 .cn-empty p {
@@ -262,11 +262,11 @@ const activities = [
 .cn-editor__label {
   margin: 0 0 14px;
   font-size: 13px;
-  font-weight: var(--ew-font-weight-medium);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.06em;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
-.cn-editor__card .ew-field {
+.cn-editor__card .ev-field {
   margin-bottom: 14px;
 }
 .cn-tags {
@@ -284,6 +284,6 @@ const activities = [
 .cn-editor__meta {
   margin-left: auto;
   font-size: 12px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 </style>

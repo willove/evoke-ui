@@ -1,8 +1,8 @@
 /**
- * EwMarkdown 内置轻量 Markdown 解析器 — 零依赖
+ * EvMarkdown 内置轻量 Markdown 解析器 — 零依赖
  *
  * 块级：标题(#{1,6}) / 段落 / 无序·有序列表（缩进嵌套）/ 引用（递归）/
- *       分隔线 / 围栏代码块（复用 EwCodeBlock 高亮分词器）/ GFM 表格（含对齐）
+ *       分隔线 / 围栏代码块（复用 EvCodeBlock 高亮分词器）/ GFM 表格（含对齐）
  * 行内：加粗 / 斜体 / 删除线 / 行内代码 / 链接 / 图片
  *
  * 安全模型：原文全量 HTML 转义后再包裹自有标签，链接与图片地址仅放行
@@ -25,17 +25,17 @@ function renderInline(text) {
   let s = escapeHtml(text)
   const codes = []
   s = s.replace(/`([^`]+)`/g, (_m, c) => {
-    codes.push(`<code class="ew-md__code-inline">${c}</code>`)
+    codes.push(`<code class="ev-md__code-inline">${c}</code>`)
     return `\u0000${codes.length - 1}\u0000`
   })
   s = s.replace(
     /!\[([^\]]*)\]\(([^)\s]+)\)/g,
-    (_m, alt, src) => `<img class="ew-md__img" src="${safeUrl(src)}" alt="${alt}" />`,
+    (_m, alt, src) => `<img class="ev-md__img" src="${safeUrl(src)}" alt="${alt}" />`,
   )
   s = s.replace(
     /\[([^\]]+)\]\(([^)\s]+)\)/g,
     (_m, label, href) =>
-      `<a class="ew-md__link" href="${safeUrl(href)}" target="_blank" rel="noopener">${label}</a>`,
+      `<a class="ev-md__link" href="${safeUrl(href)}" target="_blank" rel="noopener">${label}</a>`,
   )
   s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>')
@@ -125,17 +125,17 @@ function renderList(lines, start) {
     const top = stack[stack.length - 1]
     if (stack.length === 0) {
       stack.push({ type, indent })
-      html += `<${type} class="ew-md__list">`
+      html += `<${type} class="ev-md__list">`
     } else if (top.type !== type) {
       // 同层级切换列表类型：完全收栈再开新列表
       while (stack.length > 0) {
         html += `</li></${stack.pop().type}>`
       }
       stack.push({ type, indent })
-      html += `<${type} class="ew-md__list">`
+      html += `<${type} class="ev-md__list">`
     } else if (top.indent < indent) {
       stack.push({ type, indent })
-      html += `<${type} class="ew-md__list">`
+      html += `<${type} class="ev-md__list">`
     } else {
       html += '</li>'
     }
@@ -174,7 +174,7 @@ function renderTable(lines, i) {
     .map((r) => `<tr>${r.map((c, idx) => cellHtml(c, idx, aligns, 'td')).join('')}</tr>`)
     .join('')
   return {
-    html: `<div class="ew-md__table-wrap"><table class="ew-md__table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`,
+    html: `<div class="ev-md__table-wrap"><table class="ev-md__table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`,
     next: cursor,
   }
 }
@@ -192,7 +192,7 @@ function renderFence(lines, i, markerChar, lang) {
   const body = buf.join('\n')
   const inner = mapped === 'auto' ? highlightCode(body) : highlightCode(body, mapped)
   return {
-    html: `<pre class="ew-md__pre"><code>${inner}</code></pre>`,
+    html: `<pre class="ev-md__pre"><code>${inner}</code></pre>`,
     next: cursor,
   }
 }
@@ -224,14 +224,14 @@ export function parseMarkdown(src) {
     const h = line.match(/^(#{1,6})\s+(.+?)\s*#*$/)
     if (h) {
       const level = h[1].length
-      out.push(`<h${level} class="ew-md__h">${renderInline(h[2])}</h${level}>`)
+      out.push(`<h${level} class="ev-md__h">${renderInline(h[2])}</h${level}>`)
       i += 1
       continue
     }
 
     // 分隔线
     if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
-      out.push('<hr class="ew-md__hr" />')
+      out.push('<hr class="ev-md__hr" />')
       i += 1
       continue
     }
@@ -243,7 +243,7 @@ export function parseMarkdown(src) {
         buf.push(lines[i].replace(/^\s*>\s?/, ''))
         i += 1
       }
-      out.push(`<blockquote class="ew-md__quote">${parseMarkdown(buf.join('\n'))}</blockquote>`)
+      out.push(`<blockquote class="ev-md__quote">${parseMarkdown(buf.join('\n'))}</blockquote>`)
       continue
     }
 
@@ -270,7 +270,7 @@ export function parseMarkdown(src) {
       buf.push(lines[i])
       i += 1
     }
-    out.push(`<p class="ew-md__p">${renderInline(buf.join('\n')).replace(/\n/g, '<br />')}</p>`)
+    out.push(`<p class="ev-md__p">${renderInline(buf.join('\n')).replace(/\n/g, '<br />')}</p>`)
   }
 
   return out.join('\n')

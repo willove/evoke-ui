@@ -22,21 +22,21 @@ const mentionValue = ref('')
 ## 静态候选
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-auto-complete
+  <eb-space size="middle">
+    <eb-auto-complete
       v-model="value1"
       :suggestions="staticSuggestions"
       placeholder="输入 e / b / c 试试"
       style="width: 260px"
     />
     <span>当前值：{{ value1 || '—' }}</span>
-  </ev-space>
+  </eb-space>
 </DemoBlock>
 
 ## 异步联想
 
 <DemoBlock>
-  <ev-auto-complete
+  <eb-auto-complete
     v-model="value2"
     :fetch-suggestions="remoteSearch"
     placeholder="模拟远程搜索：输入任意字符"
@@ -57,7 +57,7 @@ const mentionValue = ref('')
 | debounce | Number | `200` | 输入防抖（ms） |
 | minlength | Number | `0` | 触发联想最小字符数 |
 | value-on-select | Boolean | `true` | 选中后回填输入框 |
-| input-props | Object | `{}` | 透传内部 EvInput（placeholder / size / disabled…） |
+| input-props | Object | `{}` | 透传内部 EbInput（placeholder / size / disabled…） |
 
 ### 事件
 
@@ -79,8 +79,8 @@ const mentionValue = ref('')
 
 <DemoBlock>
   <div style="max-width: 420px">
-    <ev-mention v-model="mentionValue" :options="['张三', '李四', '王五', '赵六']" placeholder="输入 @ 唤起成员" />
-    <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">内容：{{ mentionValue || '—' }}</p>
+    <eb-mention v-model="mentionValue" :options="['张三', '李四', '王五', '赵六']" placeholder="输入 @ 唤起成员" />
+    <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">内容：{{ mentionValue || '—' }}</p>
   </div>
 </DemoBlock>
 

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="ev-divider ev-divider"
-    :class="[`ev-divider--${direction}`, lineClass]"
+    class="eb-divider eb-divider"
+    :class="[`eb-divider--${direction}`, lineClass]"
     role="separator"
   >
     <div
       v-if="direction === 'horizontal' && hasContent"
-      class="ev-divider__text"
+      class="eb-divider__text"
       :class="[`is-${contentPosition}`]"
     >
       <slot />
@@ -16,7 +16,7 @@
 
 <script setup>
 /**
- * EvDivider — 分割线
+ * EbDivider — 分割线
  */
 import { computed, useSlots } from 'vue'
 
@@ -41,7 +41,7 @@ const props = defineProps({
 const slots = useSlots()
 const hasContent = computed(() => !!slots.default)
 
-const lineClass = computed(() => `ev-divider--${props.borderStyle}`)
+const lineClass = computed(() => `eb-divider--${props.borderStyle}`)
 </script>
 
 <style src="./style.css"></style>

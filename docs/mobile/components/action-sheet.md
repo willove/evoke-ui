@@ -14,12 +14,12 @@ hover 的 Dropdown / Popconfirm（见[移动端 · 反馈与浮层](/mobile/feed
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">报销单 CL-0908-01</span>
-        <ev-status-tag value="pending" :statuses="[{ value: 'pending', label: '审批中', type: 'warning' }]" />
+        <eb-status-tag value="pending" :statuses="[{ value: 'pending', label: '审批中', type: 'warning' }]" />
       </div>
     </div>
-    <ev-button style="align-self: stretch;" @click="sheetOpen = true">更多操作</ev-button>
+    <eb-button style="align-self: stretch;" @click="sheetOpen = true">更多操作</eb-button>
   </div>
-  <ev-action-sheet
+  <eb-action-sheet
     v-model="sheetOpen"
     title="单据操作"
     :actions="actions"
@@ -30,15 +30,15 @@ hover 的 Dropdown / Popconfirm（见[移动端 · 反馈与浮层](/mobile/feed
 </DemoBlock>
 
 ```html
-<ev-button @click="sheetOpen = true">更多操作</ev-button>
+<eb-button @click="sheetOpen = true">更多操作</eb-button>
 
-<ev-action-sheet
+<eb-action-sheet
   v-model="sheetOpen"
   title="单据操作"
   :actions="[
     { name: '转发审批' },
     { name: '编辑单据', subname: '进入全屏编辑' },
-    { name: '撤回单据', color: 'var(--ev-color-danger)' },
+    { name: '撤回单据', color: 'var(--eb-color-danger)' },
   ]"
   @select="onSelect"
 />
@@ -66,16 +66,16 @@ function onSelect(action, index) {
 <DemoBlock>
 <MobileStage>
   <div class="mb-page">
-    <ev-button style="align-self: stretch;" @click="shareOpen = true">分享到…</ev-button>
+    <eb-button style="align-self: stretch;" @click="shareOpen = true">分享到…</eb-button>
   </div>
-  <ev-action-sheet v-model="shareOpen" :cancel-text="''" :append-to-body="false" :lock-scroll="false">
+  <eb-action-sheet v-model="shareOpen" :cancel-text="''" :append-to-body="false" :lock-scroll="false">
     <template #title>
-      <span style="font-weight: 600; color: var(--ev-text-color-primary);">分享到</span>
+      <span style="font-weight: 600; color: var(--eb-text-color-primary);">分享到</span>
     </template>
     <div style="display: flex; flex-direction: column;">
-      <button v-for="t in ['微信好友', '企业微信', '复制链接']" :key="t" type="button" style="padding: 14px; border: none; background: var(--ev-bg-color); color: var(--ev-text-color-primary); font-size: 15px; cursor: pointer;" @click="shareOpen = false">{{ t }}</button>
+      <button v-for="t in ['微信好友', '企业微信', '复制链接']" :key="t" type="button" style="padding: 14px; border: none; background: var(--eb-bg-color); color: var(--eb-text-color-primary); font-size: 15px; cursor: pointer;" @click="shareOpen = false">{{ t }}</button>
     </div>
-  </ev-action-sheet>
+  </eb-action-sheet>
 </MobileStage>
 </DemoBlock>
 
@@ -115,7 +115,7 @@ const actions = [
   { name: '转发审批' },
   { name: '编辑单据', subname: '进入全屏编辑' },
   { name: '导出 PDF' },
-  { name: '撤回单据', color: 'var(--ev-color-danger)' },
+  { name: '撤回单据', color: 'var(--eb-color-danger)' },
   { name: '不可用项', disabled: true },
 ]
 function onSelect() {}

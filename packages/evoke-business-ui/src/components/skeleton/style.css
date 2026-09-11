@@ -1,149 +1,149 @@
-/* EvSkeleton — 骨架屏 */
+/* EbSkeleton — 骨架屏 */
 
-.ev-skeleton.ev-skeleton {
+.eb-skeleton.eb-skeleton {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__section {
+.eb-skeleton.eb-skeleton .eb-skeleton__section {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
 
-.ev-skeleton__item.ev-skeleton-item,
-.ev-skeleton.ev-skeleton .ev-skeleton__item {
+.eb-skeleton__item.eb-skeleton-item,
+.eb-skeleton.eb-skeleton .eb-skeleton__item {
   display: flex;
   align-items: center;
-  background: var(--ev-fill-color);
-  border-radius: var(--ev-radius-sm);
+  background: var(--eb-fill-color);
+  border-radius: var(--eb-radius-sm);
   width: 100%;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__p,
-.ev-skeleton.ev-skeleton .ev-skeleton__text,
-.ev-skeleton.ev-skeleton .ev-skeleton__caption {
+.eb-skeleton.eb-skeleton .eb-skeleton__p,
+.eb-skeleton.eb-skeleton .eb-skeleton__text,
+.eb-skeleton.eb-skeleton .eb-skeleton__caption {
   height: 16px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__h1 {
+.eb-skeleton.eb-skeleton .eb-skeleton__h1 {
   height: 28px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__h3 {
+.eb-skeleton.eb-skeleton .eb-skeleton__h3 {
   height: 22px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__h5 {
+.eb-skeleton.eb-skeleton .eb-skeleton__h5 {
   height: 18px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__circle,
-.ev-skeleton.ev-skeleton .ev-skeleton__avatar {
+.eb-skeleton.eb-skeleton .eb-skeleton__circle,
+.eb-skeleton.eb-skeleton .eb-skeleton__avatar {
   width: 40px;
   height: 40px;
-  border-radius: var(--ev-radius-circle);
+  border-radius: var(--eb-radius-circle);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__button {
+.eb-skeleton.eb-skeleton .eb-skeleton__button {
   width: 64px;
   height: 32px;
-  border-radius: var(--ev-radius-md);
+  border-radius: var(--eb-radius-md);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__rect {
+.eb-skeleton.eb-skeleton .eb-skeleton__rect {
   height: 80px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__image {
+.eb-skeleton.eb-skeleton .eb-skeleton__image {
   width: 100%;
   height: 120px;
   justify-content: center;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__row--last {
+.eb-skeleton.eb-skeleton .eb-skeleton__row--last {
   width: 60%;
 }
 
 /* ── 常用版式预设 ── */
-.ev-skeleton.ev-skeleton .ev-skeleton__item.is-block {
+.eb-skeleton.eb-skeleton .eb-skeleton__item.is-block {
   display: flex;
 }
 /* avatar-text：头像 + 两行 */
-.ev-skeleton.ev-skeleton .ev-skeleton__avatar-line {
+.eb-skeleton.eb-skeleton .eb-skeleton__avatar-line {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__avatar-lines {
+.eb-skeleton.eb-skeleton .eb-skeleton__avatar-lines {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 /* card：封面 + 标题 + 摘要 */
-.ev-skeleton.ev-skeleton .ev-skeleton__card-image {
+.eb-skeleton.eb-skeleton .eb-skeleton__card-image {
   height: 140px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__card-body {
+.eb-skeleton.eb-skeleton .eb-skeleton__card-body {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-3);
+  gap: var(--eb-space-3);
 }
 /* table：表头行 + 数据行 */
-.ev-skeleton.ev-skeleton .ev-skeleton__table {
+.eb-skeleton.eb-skeleton .eb-skeleton__table {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__table-row {
+.eb-skeleton.eb-skeleton .eb-skeleton__table-row {
   display: grid;
-  grid-template-columns: repeat(var(--ev-skeleton-table-cols, 4), 1fr);
-  gap: var(--ev-space-3);
+  grid-template-columns: repeat(var(--eb-skeleton-table-cols, 4), 1fr);
+  gap: var(--eb-space-3);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__table-cell {
+.eb-skeleton.eb-skeleton .eb-skeleton__table-cell {
   height: 14px;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__table-row.is-head .ev-skeleton__table-cell {
+.eb-skeleton.eb-skeleton .eb-skeleton__table-row.is-head .eb-skeleton__table-cell {
   height: 12px;
   width: 70%;
 }
 /* profile：大头像 + 署名 */
-.ev-skeleton.ev-skeleton .ev-skeleton__profile {
+.eb-skeleton.eb-skeleton .eb-skeleton__profile {
   display: flex;
-  gap: var(--ev-space-4);
+  gap: var(--eb-space-4);
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__profile-avatar {
+.eb-skeleton.eb-skeleton .eb-skeleton__profile-avatar {
   width: 56px;
   height: 56px;
   flex-shrink: 0;
 }
-.ev-skeleton.ev-skeleton .ev-skeleton__profile-lines {
+.eb-skeleton.eb-skeleton .eb-skeleton__profile-lines {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 
 /* image 变体内嵌图标 */
-.ev-skeleton.ev-skeleton .ev-skeleton__image > .ev-skeleton__image,
-.ev-skeleton__item.ev-skeleton-item .ev-skeleton__image {
+.eb-skeleton.eb-skeleton .eb-skeleton__image > .eb-skeleton__image,
+.eb-skeleton__item.eb-skeleton-item .eb-skeleton__image {
   width: 22%;
   height: 22%;
 }
 
 /* shimmer 动画 */
-.ev-skeleton.ev-skeleton.is-animated .ev-skeleton__item,
-.ev-skeleton__item.ev-skeleton-item.is-animated {
+.eb-skeleton.eb-skeleton.is-animated .eb-skeleton__item,
+.eb-skeleton__item.eb-skeleton-item.is-animated {
   position: relative;
   overflow: hidden;
 }
-.ev-skeleton.ev-skeleton.is-animated .ev-skeleton__item::after,
-.ev-skeleton__item.ev-skeleton-item.is-animated::after {
+.eb-skeleton.eb-skeleton.is-animated .eb-skeleton__item::after,
+.eb-skeleton__item.eb-skeleton-item.is-animated::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     90deg,
     transparent,
-    var(--ev-fill-color-lighter),
+    var(--eb-fill-color-lighter),
     transparent
   );
-  animation: ev-skeleton-shimmer 1.4s ease-in-out infinite;
+  animation: eb-skeleton-shimmer 1.4s ease-in-out infinite;
 }
 
-@keyframes ev-skeleton-shimmer {
+@keyframes eb-skeleton-shimmer {
   0% {
     transform: translateX(-100%);
   }

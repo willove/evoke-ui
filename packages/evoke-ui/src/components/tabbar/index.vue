@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- fixed 模式下的占位，避免标签栏脱离文档流后遮挡内容尾部 -->
-    <div v-if="fixed && placeholder" class="ew-tabbar__placeholder" :style="{ height: `${barHeight}px` }" />
-    <div :class="['ew-tabbar', { 'is-fixed': fixed, 'is-border': border, 'is-safe': safeAreaInsetBottom }]">
+    <div v-if="fixed && placeholder" class="ev-tabbar__placeholder" :style="{ height: `${barHeight}px` }" />
+    <div :class="['ev-tabbar', { 'is-fixed': fixed, 'is-border': border, 'is-safe': safeAreaInsetBottom }]">
       <slot />
     </div>
   </div>
@@ -10,13 +10,13 @@
 
 <script setup>
 /**
- * EwTabbar — 底部标签栏（配 EwTabbarItem 使用）
+ * EvTabbar — 底部标签栏（配 EvTabbarItem 使用）
  * 移动端一级导航：固定吸底的页签入口，页内内容切换由业务持有（v-model）。
  * fixed 模式脱离文档流吸底并适配安全区，默认渲染等高占位防止遮挡内容。
  */
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 
-defineOptions({ name: 'EwTabbar' })
+defineOptions({ name: 'EvTabbar' })
 
 const props = defineProps({
   /** 当前激活项的 name（未设置 name 时为索引） */

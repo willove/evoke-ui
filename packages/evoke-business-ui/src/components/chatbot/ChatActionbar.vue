@@ -1,36 +1,36 @@
 <template>
-  <div class="ev-chat-actionbar">
+  <div class="eb-chat-actionbar">
     <button 
       v-if="showCopy"
-      class="ev-chat-actionbar__btn"
+      class="eb-chat-actionbar__btn"
       :title="copied ? '已复制' : '复制'"
       @click="handleCopy"
     >
-      <ev-icon :name="copied ? 'check' : 'copy-document'" />
+      <eb-icon :name="copied ? 'check' : 'copy-document'" />
     </button>
     <button 
       v-if="showRegenerate && message?.role === 'assistant'"
-      class="ev-chat-actionbar__btn"
+      class="eb-chat-actionbar__btn"
       title="重新生成"
       @click="handleRegenerate"
     >
-      <ev-icon name="refresh-right" />
+      <eb-icon name="refresh-right" />
     </button>
     <button 
       v-for="action in actions" 
       :key="action.key"
-      class="ev-chat-actionbar__btn"
+      class="eb-chat-actionbar__btn"
       :title="action.label"
       @click="handleCustomAction(action)"
     >
-      <ev-icon v-if="action.icon" :name="String(action.icon)" />
+      <eb-icon v-if="action.icon" :name="String(action.icon)" />
       <span v-else>{{ action.label }}</span>
     </button>
   </div>
 </template>
 
 <script setup>
-import EvIcon from "../icon/index.vue"
+import EbIcon from "../icon/index.vue"
 import { ref } from "vue";
 import { copyToClipboard } from "./utils";
 import { getIconByNameSync } from "../icon/iconRegistry";
@@ -75,24 +75,24 @@ function handleCustomAction(action) {
 
 <style scoped>
 
-.ev-chat-actionbar {
+.eb-chat-actionbar {
   display: flex;
-  gap: var(--ev-space-1);
-  margin-top: var(--ev-space-2);
+  gap: var(--eb-space-1);
+  margin-top: var(--eb-space-2);
   opacity: 0;
   transform: translateY(-2px);
   pointer-events: none;
   will-change: opacity, transform;
-  transition: opacity 0.15s var(--ev-ease-out), transform 0.15s var(--ev-ease-out);
+  transition: opacity 0.15s var(--eb-ease-out), transform 0.15s var(--eb-ease-out);
 }
 
-.ev-chat-actionbar.is-visible {
+.eb-chat-actionbar.is-visible {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.ev-chat-actionbar__btn {
+.eb-chat-actionbar__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -100,17 +100,17 @@ function handleCustomAction(action) {
   height: 28px;
   border: none;
   background: transparent;
-  border-radius: var(--ev-radius-md);
+  border-radius: var(--eb-radius-md);
   cursor: pointer;
-  color: var(--ev-text-color-secondary);
-  transition: background-color 0.15s var(--ev-ease-out), color 0.15s var(--ev-ease-out);
+  color: var(--eb-text-color-secondary);
+  transition: background-color 0.15s var(--eb-ease-out), color 0.15s var(--eb-ease-out);
   padding: 0;
   font-size: 14px;
   will-change: background-color;
 }
 
-.ev-chat-actionbar__btn:hover {
-  background: var(--ev-fill-color);
-  color: var(--ev-text-color-primary);
+.eb-chat-actionbar__btn:hover {
+  background: var(--eb-fill-color);
+  color: var(--eb-text-color-primary);
 }
 </style>

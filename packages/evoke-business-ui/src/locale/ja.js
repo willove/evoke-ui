@@ -3,7 +3,7 @@
  */
 export const ja = {
   name: 'ja',
-  ev: {
+  eb: {
     colorpicker: {
       confirm: 'OK',
       clear: 'クリア',

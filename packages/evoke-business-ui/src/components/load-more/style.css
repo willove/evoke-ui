@@ -1,16 +1,16 @@
-/* EvLoadMore — 上拉加载 / 加载更多 */
-.ev-load-more {
+/* EbLoadMore — 上拉加载 / 加载更多 */
+.eb-load-more {
   display: flex;
   justify-content: center;
   padding: 12px 0;
-  color: var(--ev-text-color-secondary);
-  font-size: var(--ev-font-size-sm, 13px);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-sm, 13px);
 }
-.ev-load-more__sentinel {
+.eb-load-more__sentinel {
   height: 1px;
   margin-bottom: -1px;
 }
-.ev-load-more__body {
+.eb-load-more__body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -22,27 +22,27 @@
   cursor: pointer;
   user-select: none;
 }
-.ev-load-more__body:disabled {
+.eb-load-more__body:disabled {
   cursor: default;
 }
-.ev-load-more.is-noMore .ev-load-more__body {
-  color: var(--ev-text-color-placeholder, #a8abb2);
+.eb-load-more.is-noMore .eb-load-more__body {
+  color: var(--eb-text-color-placeholder, #a8abb2);
 }
-.ev-load-more.is-error .ev-load-more__body {
-  color: var(--ev-color-danger);
+.eb-load-more.is-error .eb-load-more__body {
+  color: var(--eb-color-danger);
 }
-.ev-load-more__text {
+.eb-load-more__text {
   line-height: 20px;
 }
-.ev-load-more__spinner {
+.eb-load-more__spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--ev-border-color, #dcdfe6);
-  border-top-color: var(--ev-color-primary);
+  border: 2px solid var(--eb-border-color, #dcdfe6);
+  border-top-color: var(--eb-color-primary);
   border-radius: 50%;
-  animation: ev-load-more-spin 0.8s linear infinite;
+  animation: eb-load-more-spin 0.8s linear infinite;
 }
-@keyframes ev-load-more-spin {
+@keyframes eb-load-more-spin {
   to {
     transform: rotate(360deg);
   }

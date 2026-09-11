@@ -36,14 +36,14 @@ function guardClose(done) {
 默认从右侧滑入（rtl），`size` 控制面板宽度（默认 30%，数字按 px）。关闭按钮、遮罩、ESC 或 footer 按钮均可关闭。
 
 <DemoBlock>
-  <ev-button type="primary" @click="visible = true">打开抽屉</ev-button>
-  <ev-drawer v-model="visible" title="详情抽屉" size="40%">
+  <eb-button type="primary" @click="visible = true">打开抽屉</eb-button>
+  <eb-drawer v-model="visible" title="详情抽屉" size="40%">
     <p>这里是抽屉内容，点击关闭按钮、遮罩或下方按钮均可关闭。</p>
     <template #footer>
-      <ev-button @click="visible = false">取消</ev-button>
-      <ev-button type="primary" style="margin-left: 12px;" @click="visible = false">确定</ev-button>
+      <eb-button @click="visible = false">取消</eb-button>
+      <eb-button type="primary" style="margin-left: 12px;" @click="visible = false">确定</eb-button>
     </template>
-  </ev-drawer>
+  </eb-drawer>
 </DemoBlock>
 
 ## 四个方向
@@ -56,13 +56,13 @@ function guardClose(done) {
 - `btt`：从底部上滑，面板停靠屏幕底部，`size` 表示高度。
 
 <DemoBlock>
-  <ev-button @click="openDir('rtl')">右侧 rtl</ev-button>
-  <ev-button style="margin-left: 8px;" @click="openDir('ltr')">左侧 ltr</ev-button>
-  <ev-button style="margin-left: 8px;" @click="openDir('ttb')">顶部 ttb</ev-button>
-  <ev-button style="margin-left: 8px;" @click="openDir('btt')">底部 btt</ev-button>
-  <ev-drawer v-model="dirVisible" :direction="dir" :title="'方向：' + dir" size="360px">
+  <eb-button @click="openDir('rtl')">右侧 rtl</eb-button>
+  <eb-button style="margin-left: 8px;" @click="openDir('ltr')">左侧 ltr</eb-button>
+  <eb-button style="margin-left: 8px;" @click="openDir('ttb')">顶部 ttb</eb-button>
+  <eb-button style="margin-left: 8px;" @click="openDir('btt')">底部 btt</eb-button>
+  <eb-drawer v-model="dirVisible" :direction="dir" :title="'方向：' + dir" size="360px">
     <p>当前从 {{ dir }} 方向滑入，size 在水平方向为宽度、垂直方向为高度。</p>
-  </ev-drawer>
+  </eb-drawer>
 </DemoBlock>
 
 ## 尺寸
@@ -70,14 +70,14 @@ function guardClose(done) {
 `size` 接受百分比字符串（相对视口）或数字（按 px），水平方向为宽度、垂直方向为高度。
 
 <DemoBlock>
-  <ev-button @click="pctVisible = true">size 50%</ev-button>
-  <ev-button style="margin-left: 12px;" @click="pxVisible = true">size 420px</ev-button>
-  <ev-drawer v-model="pctVisible" title="百分比尺寸" direction="ltr" size="50%">
+  <eb-button @click="pctVisible = true">size 50%</eb-button>
+  <eb-button style="margin-left: 12px;" @click="pxVisible = true">size 420px</eb-button>
+  <eb-drawer v-model="pctVisible" title="百分比尺寸" direction="ltr" size="50%">
     <p>size 为 50%，随视口宽度变化。</p>
-  </ev-drawer>
-  <ev-drawer v-model="pxVisible" title="固定像素尺寸" size="420">
+  </eb-drawer>
+  <eb-drawer v-model="pxVisible" title="固定像素尺寸" size="420">
     <p>size 传数字 420 时按 420px 渲染。</p>
-  </ev-drawer>
+  </eb-drawer>
 </DemoBlock>
 
 ## 拦截关闭（before-close）
@@ -85,10 +85,10 @@ function guardClose(done) {
 `before-close` 接收 done 回调，不调用 done 则阻止本次关闭，可用于未保存提示或异步校验。
 
 <DemoBlock>
-  <ev-button type="warning" @click="guardVisible = true">关闭前校验</ev-button>
-  <ev-drawer v-model="guardVisible" title="异步校验" size="380px" :before-close="guardClose">
+  <eb-button type="warning" @click="guardVisible = true">关闭前校验</eb-button>
+  <eb-drawer v-model="guardVisible" title="异步校验" size="380px" :before-close="guardClose">
     <p>{{ saving ? '校验中，暂不可关闭……' : '点击关闭按钮或按 ESC，800ms 后放行关闭。' }}</p>
-  </ev-drawer>
+  </eb-drawer>
 </DemoBlock>
 
 ## 关闭后销毁内容
@@ -96,11 +96,11 @@ function guardClose(done) {
 `destroy-on-close` 关闭时卸载默认插槽内容，再次打开重新渲染（表单输入等内部状态会被重置）。
 
 <DemoBlock>
-  <ev-button @click="destroyVisible = true">打开抽屉</ev-button>
-  <ev-drawer v-model="destroyVisible" title="销毁内容" size="380px" destroy-on-close>
+  <eb-button @click="destroyVisible = true">打开抽屉</eb-button>
+  <eb-drawer v-model="destroyVisible" title="销毁内容" size="380px" destroy-on-close>
     <p>在输入框中输入内容后关闭抽屉，再次打开会看到内容被清空。</p>
-    <input placeholder="输入一些内容" style="margin-top: 12px; padding: 6px 10px; border: 1px solid var(--ev-border-color); border-radius: 4px;" />
-  </ev-drawer>
+    <input placeholder="输入一些内容" style="margin-top: 12px; padding: 6px 10px; border: 1px solid var(--eb-border-color); border-radius: 4px;" />
+  </eb-drawer>
 </DemoBlock>
 
 ## API
@@ -118,7 +118,7 @@ function guardClose(done) {
   { name: 'close-on-click-modal', desc: '点击遮罩关闭', type: 'boolean', default: 'true' },
   { name: 'close-on-press-escape', desc: 'ESC 关闭', type: 'boolean', default: 'true' },
   { name: 'lock-scroll', desc: '打开时锁定页面滚动', type: 'boolean', default: 'true' },
-  { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EvConfigProvider 的 glass）', type: 'boolean', default: '—' },
+  { name: 'glass', desc: '面板磨砂玻璃质感；缺省跟随全局（EbConfigProvider 的 glass）', type: 'boolean', default: '—' },
   { name: 'before-close', desc: '关闭前拦截，调用 done() 完成关闭', type: '(done) => void', default: '—' },
 ]" />
 

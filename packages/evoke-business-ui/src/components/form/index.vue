@@ -1,7 +1,7 @@
 <template>
   <form
-    class="ev-form ev-form"
-    :class="[`ev-form--label-${labelPosition}`, { 'ev-form--inline': inline }]"
+    class="eb-form eb-form"
+    :class="[`eb-form--label-${labelPosition}`, { 'eb-form--inline': inline }]"
     @submit.prevent
   >
     <slot />
@@ -10,13 +10,13 @@
 
 <script setup>
 /**
- * EvForm — 表单（async-validator 校验集成）
+ * EbForm — 表单（async-validator 校验集成）
  * FormInstance 兼容：validate / validateField / resetFields / clearValidate / scrollToField
  */
 import { computed, provide, ref, toRef, watch } from 'vue'
 import { formContextKey } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvForm' })
+defineOptions({ name: 'EbForm' })
 
 const props = defineProps({
   /** 表单数据对象 */
@@ -40,7 +40,7 @@ const props = defineProps({
   validateOnRuleChange: { type: Boolean, default: true },
 })
 
-// 注册的字段（EvFormItem onMounted 注册）
+// 注册的字段（EbFormItem onMounted 注册）
 const fields = ref([])
 
 function addField(field) {
@@ -61,7 +61,7 @@ function removeField(field) {
  */
 function validate(callback) {
   if (!(props.model && typeof props.model === 'object')) {
-    console.warn('[EvForm] model 必须是对象')
+    console.warn('[EbForm] model 必须是对象')
     return Promise.resolve(false)
   }
   const promise = new Promise((resolve, reject) => {

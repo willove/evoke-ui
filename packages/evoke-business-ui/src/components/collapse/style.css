@@ -1,71 +1,71 @@
-/* EvCollapse —折叠面板 */
+/* EbCollapse —折叠面板 */
 
-.ev-collapse.ev-collapse {
-  --ev-collapse-header-height: 48px;
-  border-top: 1px solid var(--ev-border-color-lighter);
-  border-bottom: 1px solid var(--ev-border-color-lighter);
+.eb-collapse.eb-collapse {
+  --eb-collapse-header-height: 48px;
+  border-top: 1px solid var(--eb-border-color-lighter);
+  border-bottom: 1px solid var(--eb-border-color-lighter);
 }
 
-.ev-collapse.ev-collapse .ev-collapse-item {
-  border-bottom: 1px solid var(--ev-border-color-lighter);
+.eb-collapse.eb-collapse .eb-collapse-item {
+  border-bottom: 1px solid var(--eb-border-color-lighter);
 }
-.ev-collapse.ev-collapse .ev-collapse-item:last-child {
+.eb-collapse.eb-collapse .eb-collapse-item:last-child {
   border-bottom: none;
 }
 
-.ev-collapse.ev-collapse .ev-collapse-item__header {
+.eb-collapse.eb-collapse .eb-collapse-item__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: var(--ev-collapse-header-height);
+  height: var(--eb-collapse-header-height);
   padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: var(--ev-font-size-base);
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+  font-size: var(--eb-font-size-base);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
   text-align: left;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-collapse.ev-collapse .ev-collapse-item__header:hover {
-  color: var(--ev-color-primary);
+.eb-collapse.eb-collapse .eb-collapse-item__header:hover {
+  color: var(--eb-color-primary);
 }
-.ev-collapse.ev-collapse .ev-collapse-item__header.is-active {
-  color: var(--ev-color-primary);
-  border-bottom-color: var(--ev-border-color-lighter);
+.eb-collapse.eb-collapse .eb-collapse-item__header.is-active {
+  color: var(--eb-color-primary);
+  border-bottom-color: var(--eb-border-color-lighter);
 }
-.ev-collapse.ev-collapse .ev-collapse-item__header.is-disabled,
-.ev-collapse.ev-collapse .ev-collapse-item.is-disabled .ev-collapse-item__header {
-  color: var(--ev-text-color-placeholder);
+.eb-collapse.eb-collapse .eb-collapse-item__header.is-disabled,
+.eb-collapse.eb-collapse .eb-collapse-item.is-disabled .eb-collapse-item__header {
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
 }
-.ev-collapse.ev-collapse .ev-collapse-item__header.is-disabled:hover {
-  color: var(--ev-text-color-placeholder);
+.eb-collapse.eb-collapse .eb-collapse-item__header.is-disabled:hover {
+  color: var(--eb-text-color-placeholder);
 }
 
-.ev-collapse.ev-collapse .ev-collapse-item__arrow {
+.eb-collapse.eb-collapse .eb-collapse-item__arrow {
   display: inline-flex;
   align-items: center;
-  color: var(--ev-text-color-secondary);
-  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+  color: var(--eb-text-color-secondary);
+  transition: transform var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-collapse.ev-collapse .ev-collapse-item__header.is-active .ev-collapse-item__arrow {
+.eb-collapse.eb-collapse .eb-collapse-item__header.is-active .eb-collapse-item__arrow {
   transform: rotate(90deg);
 }
 
-.ev-collapse.ev-collapse .ev-collapse-item__wrap {
+.eb-collapse.eb-collapse .eb-collapse-item__wrap {
   overflow: hidden;
-  background-color: var(--ev-fill-color-blank);
+  background-color: var(--eb-fill-color-blank);
   box-sizing: border-box;
-  transition: height var(--ev-duration-base) var(--ev-ease-in-out);
+  transition: height var(--eb-duration-base) var(--eb-ease-in-out);
   will-change: height;
 }
 
-.ev-collapse.ev-collapse .ev-collapse-item__content {
-  padding: var(--ev-space-3) var(--ev-space-4);
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
-  line-height: var(--ev-line-height-loose);
+.eb-collapse.eb-collapse .eb-collapse-item__content {
+  padding: var(--eb-space-3) var(--eb-space-4);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
+  line-height: var(--eb-line-height-loose);
 }

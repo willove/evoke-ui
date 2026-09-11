@@ -18,12 +18,12 @@ DataTable 在移动端不缩列、不出横向滚动条，而是把「一行」�
 <DemoBlock>
 <MobileStage title="报销单">
   <div class="mb-page">
-    <ev-segmented v-model="status" block :options="['全部', '审批中', '已通过']" />
+    <eb-segmented v-model="status" block :options="['全部', '审批中', '已通过']" />
     <div class="mb-list-gap">
       <div v-for="o in filteredOrders" :key="o.id" class="mb-card mb-card--pad" @click="$message.info('进入详情页：' + o.id)">
         <div class="mb-card__head">
           <span class="mb-card__title">{{ o.id }}</span>
-          <ev-status-tag :value="o.status" :statuses="statuses" />
+          <eb-status-tag :value="o.status" :statuses="statuses" />
         </div>
         <div class="mb-card__rows">
           <div><div class="mb-card__label">申请人</div><div class="mb-card__value">{{ o.owner }}</div></div>
@@ -33,7 +33,7 @@ DataTable 在移动端不缩列、不出横向滚动条，而是把「一行」�
         </div>
         <div class="mb-card__foot">
           <span class="mb-card__amount is-primary">¥{{ o.amount.toLocaleString() }}</span>
-          <ev-button size="small" plain @click.stop="$message.info('进入详情页：' + o.id)">查看详情</ev-button>
+          <eb-button size="small" plain @click.stop="$message.info('进入详情页：' + o.id)">查看详情</eb-button>
         </div>
       </div>
     </div>
@@ -52,18 +52,18 @@ DetailDescriptions / Descriptions 的「label-value 对」在移动端改为**�
 <MobileStage title="客户详情">
   <div class="mb-page">
     <div class="mb-card">
-      <ev-cell-stack main="基本信息" sub="更新于 09-01" />
-      <ev-divider style="margin: 0;" />
-      <ev-cell-stack main="客户名称" sub="上海云启科技有限公司" />
-      <ev-cell-stack main="行业" sub="软件与信息服务" />
-      <ev-cell-stack main="规模" sub="200-500 人" />
+      <eb-cell-stack main="基本信息" sub="更新于 09-01" />
+      <eb-divider style="margin: 0;" />
+      <eb-cell-stack main="客户名称" sub="上海云启科技有限公司" />
+      <eb-cell-stack main="行业" sub="软件与信息服务" />
+      <eb-cell-stack main="规模" sub="200-500 人" />
     </div>
     <div class="mb-card">
-      <ev-cell-stack main="商务信息" sub="归属：华东大区" />
-      <ev-divider style="margin: 0;" />
-      <ev-cell-stack main="客户等级" sub="A 级 · 年框客户" />
-      <ev-cell-stack main="负责人" sub="李工 · 销售一部" />
-      <ev-cell-stack main="下次跟进" sub="09-12（续约谈判）" />
+      <eb-cell-stack main="商务信息" sub="归属：华东大区" />
+      <eb-divider style="margin: 0;" />
+      <eb-cell-stack main="客户等级" sub="A 级 · 年框客户" />
+      <eb-cell-stack main="负责人" sub="李工 · 销售一部" />
+      <eb-cell-stack main="下次跟进" sub="09-12（续约谈判）" />
     </div>
   </div>
 </MobileStage>

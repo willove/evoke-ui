@@ -1,17 +1,17 @@
 <template>
   <div
     ref="containerRef"
-    class="ev-virtual-list ev-virtual-list"
+    class="eb-virtual-list eb-virtual-list"
     :style="{ height: containerHeight }"
     @scroll.passive="onScroll"
   >
-    <div class="ev-virtual-list__spacer" :style="{ height: totalSize + 'px' }">
+    <div class="eb-virtual-list__spacer" :style="{ height: totalSize + 'px' }">
       <div
         v-for="item in visibleItems"
         :key="getKey(item)"
-        class="ev-virtual-list__item"
+        class="eb-virtual-list__item"
         :style="{ transform: `translateY(${item.__offset}px)` }"
-        :data-ev-vl-index="item.__index"
+        :data-eb-vl-index="item.__index"
       >
         <slot :item="item.__raw" :index="item.__index" />
       </div>
@@ -21,18 +21,18 @@
 
 <script setup>
 /**
- * EvVirtualList — 虚拟滚动基元（万级数据只渲染可视窗口）
+ * EbVirtualList — 虚拟滚动基元（万级数据只渲染可视窗口）
  *
  * 两种模式：
  * - 固定行高：传 itemSize（数字），纯数学定位
  * - 动态行高：不传 itemSize，渲染后实测高度回填偏移表（估算值 40px 起步，滚动中收敛）
  *
- * 配套：Listy（ev-listy 别名注册）、Select 虚拟化均基于本组件
+ * 配套：Listy（eb-listy 别名注册）、Select 虚拟化均基于本组件
  */
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { inBrowser } from '../../utils/dom'
 
-defineOptions({ name: 'EvVirtualList' })
+defineOptions({ name: 'EbVirtualList' })
 
 const props = defineProps({
   /** 数据源 */
@@ -162,11 +162,11 @@ async function measureRendered() {
   await nextTick()
   const el = containerRef.value
   if (!el) return
-  const nodes = el.querySelectorAll('[data-ev-vl-index]')
+  const nodes = el.querySelectorAll('[data-eb-vl-index]')
   let changed = false
   const next = sizes.value.slice()
   for (const node of nodes) {
-    const i = Number(node.getAttribute('data-ev-vl-index'))
+    const i = Number(node.getAttribute('data-eb-vl-index'))
     const h = node.getBoundingClientRect().height
     if (h > 0 && next[i] !== h) {
       next[i] = h

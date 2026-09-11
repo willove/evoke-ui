@@ -1,24 +1,24 @@
 <template>
-  <div class="ev-result" role="status">
-    <div v-if="hasIcon" class="ev-result__icon" :class="`ev-result__icon--${status}`">
+  <div class="eb-result" role="status">
+    <div v-if="hasIcon" class="eb-result__icon" :class="`eb-result__icon--${status}`">
       <slot name="icon">
-        <ev-icon :name="iconName" :size="iconSize" />
+        <eb-icon :name="iconName" :size="iconSize" />
       </slot>
     </div>
 
-    <div v-if="hasTitle" class="ev-result__title">
+    <div v-if="hasTitle" class="eb-result__title">
       <slot name="title">{{ titleText }}</slot>
     </div>
 
-    <div v-if="hasSubTitle" class="ev-result__subtitle">
+    <div v-if="hasSubTitle" class="eb-result__subtitle">
       <slot name="subTitle">{{ subTitleText }}</slot>
     </div>
 
-    <div v-if="$slots.extra" class="ev-result__extra">
+    <div v-if="$slots.extra" class="eb-result__extra">
       <slot name="extra" />
     </div>
 
-    <div v-if="$slots.default" class="ev-result__body">
+    <div v-if="$slots.default" class="eb-result__body">
       <slot />
     </div>
   </div>
@@ -26,11 +26,11 @@
 
 <script setup>
 /**
- * EvResult — 结果页
+ * EbResult — 结果页
  * status: success/error/info/warning/404/403/500 → 默认图标/标题/副标题；插槽 icon/title/subTitle/extra/default
  */
 import { computed, useSlots } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   status: {

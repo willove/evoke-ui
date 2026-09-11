@@ -1,26 +1,26 @@
 <template>
-  <footer :class="['ew-footer', { 'is-soft': soft, 'is-glass': glass === true, 'no-glass': glass === false }]">
-    <div class="ew-container">
-      <div v-if="columns.length || $slots.default" class="ew-footer__main">
-        <div class="ew-footer__brand">
+  <footer :class="['ev-footer', { 'is-soft': soft, 'is-glass': glass === true, 'no-glass': glass === false }]">
+    <div class="ev-container">
+      <div v-if="columns.length || $slots.default" class="ev-footer__main">
+        <div class="ev-footer__brand">
           <slot name="brand">
-            <div v-if="logoText" class="ew-footer__logo">{{ logoText }}</div>
-            <p v-if="slogan" class="ew-footer__slogan">{{ slogan }}</p>
-            <div v-if="$slots.social" class="ew-footer__social">
+            <div v-if="logoText" class="ev-footer__logo">{{ logoText }}</div>
+            <p v-if="slogan" class="ev-footer__slogan">{{ slogan }}</p>
+            <div v-if="$slots.social" class="ev-footer__social">
               <slot name="social" />
             </div>
           </slot>
         </div>
         <slot>
-          <nav v-for="col in columns" :key="col.title" class="ew-footer__col" :aria-label="col.title">
-            <h4 class="ew-footer__col-title">{{ col.title }}</h4>
+          <nav v-for="col in columns" :key="col.title" class="ev-footer__col" :aria-label="col.title">
+            <h4 class="ev-footer__col-title">{{ col.title }}</h4>
             <component
               :is="link.href ? 'a' : 'span'"
               v-for="link in col.links"
               :key="link.label"
               :href="link.href"
               :target="link.target"
-              class="ew-footer__link"
+              class="ev-footer__link"
             >
               {{ link.label }}
             </component>
@@ -28,9 +28,9 @@
         </slot>
       </div>
 
-      <div class="ew-footer__bottom">
-        <span class="ew-footer__copyright">{{ copyright }}</span>
-        <div v-if="$slots.legal" class="ew-footer__legal">
+      <div class="ev-footer__bottom">
+        <span class="ev-footer__copyright">{{ copyright }}</span>
+        <div v-if="$slots.legal" class="ev-footer__legal">
           <slot name="legal" />
         </div>
       </div>
@@ -40,7 +40,7 @@
 
 <script setup>
 /**
- * EwFooter — 站点页脚
+ * EvFooter — 站点页脚
  * columns [{ title, links: [{ label, href, target }] }] 多栏链接 + 品牌区 + 底部版权条
  */
 defineProps({

@@ -5,14 +5,14 @@
 使用建议：
 
 - DataTable 列配置 `stack: (row) => row.xxx`：纯文本副行，零模板代码；
-- 列插槽内手写 `<ev-cell-stack>`：副行需要拼接多字段、格式化或塞入图标等富内容时用；
+- 列插槽内手写 `<eb-cell-stack>`：副行需要拼接多字段、格式化或塞入图标等富内容时用；
 - `sub` 为空且未提供 `sub` 插槽时只渲染主行单行，不会留出空行。
 
 ## 基础用法
 
 <DemoBlock>
   <div style="width: 260px;">
-    <ev-cell-stack main="订单 A-1001" sub="张三 · 2026-01-01" />
+    <eb-cell-stack main="订单 A-1001" sub="张三 · 2026-01-01" />
   </div>
 </DemoBlock>
 
@@ -25,17 +25,17 @@ const csRows = [
 
 ## 在表格中使用
 
-典型位置是 EvTable / EvDataTable 的单元格插槽内，主行放标题、副行放归属或时间等次级信息。
+典型位置是 EbTable / EbDataTable 的单元格插槽内，主行放标题、副行放归属或时间等次级信息。
 
 <DemoBlock>
-  <ev-table :data="csRows">
-    <ev-table-column prop="name" label="订单">
+  <eb-table :data="csRows">
+    <eb-table-column prop="name" label="订单">
       <template #default="{ row }">
-        <ev-cell-stack :main="row.name" :sub="row.dept" />
+        <eb-cell-stack :main="row.name" :sub="row.dept" />
       </template>
-    </ev-table-column>
-    <ev-table-column prop="amount" label="金额" align="right" />
-  </ev-table>
+    </eb-table-column>
+    <eb-table-column prop="amount" label="金额" align="right" />
+  </eb-table>
 </DemoBlock>
 
 ## 插槽自定义
@@ -44,11 +44,11 @@ const csRows = [
 
 <DemoBlock>
   <div style="width: 280px;">
-    <ev-cell-stack main="订单 A-1003">
+    <eb-cell-stack main="订单 A-1003">
       <template #sub>
-        <ev-text type="info" size="small">张三 · 交付部 · 2026-03-15</ev-text>
+        <eb-text type="info" size="small">张三 · 交付部 · 2026-03-15</eb-text>
       </template>
-    </ev-cell-stack>
+    </eb-cell-stack>
   </div>
 </DemoBlock>
 
@@ -58,7 +58,7 @@ const csRows = [
 
 <DemoBlock>
   <div style="width: 260px;">
-    <ev-cell-stack main="只有主行" sub="" />
+    <eb-cell-stack main="只有主行" sub="" />
   </div>
 </DemoBlock>
 
@@ -68,7 +68,7 @@ const csRows = [
 
 <DemoBlock>
   <div style="width: 260px;">
-    <ev-cell-stack :main="12800" sub="含税 14464" />
+    <eb-cell-stack :main="12800" sub="含税 14464" />
   </div>
 </DemoBlock>
 

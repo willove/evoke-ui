@@ -1,12 +1,12 @@
 <template>
-  <ev-skeleton-item variant="button" :class="{ 'is-animated': animated }" />
+  <eb-skeleton-item variant="button" :class="{ 'is-animated': animated }" />
 </template>
 
 <script setup>
 /**
- * EvSkeletonButton — 按钮骨架占位
+ * EbSkeletonButton — 按钮骨架占位
  */
-import EvSkeletonItem from './item.vue'
+import EbSkeletonItem from './item.vue'
 
 defineProps({
   animated: { type: Boolean, default: false },

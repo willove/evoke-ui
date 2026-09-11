@@ -1,12 +1,12 @@
 <template>
-  <div class="ev-upload ev-upload">
+  <div class="eb-upload eb-upload">
     <!-- 触发区（隐藏 input 覆盖其上：绝对定位 + opacity 0） -->
     <div
       ref="triggerRef"
-      class="ev-upload__trigger"
+      class="eb-upload__trigger"
       :class="{
-        'ev-upload--text': !drag && listType !== 'picture-card',
-        'ev-upload--picture-card': !drag && listType === 'picture-card',
+        'eb-upload--text': !drag && listType !== 'picture-card',
+        'eb-upload--picture-card': !drag && listType === 'picture-card',
         'is-disabled': disabled,
       }"
       tabindex="0"
@@ -19,23 +19,23 @@
       @drop.prevent="handleDrop"
     >
       <template v-if="drag">
-        <div class="ev-upload-dragger" :class="{ 'is-dragover': dragActive }">
+        <div class="eb-upload-dragger" :class="{ 'is-dragover': dragActive }">
           <slot name="trigger">
-            <ev-icon name="upload-filled" :size="40" />
-            <div class="ev-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <eb-icon name="upload-filled" :size="40" />
+            <div class="eb-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           </slot>
         </div>
       </template>
       <template v-else>
         <slot name="trigger">
-          <ev-icon v-if="listType === 'picture-card'" name="plus" :size="16" color="var(--ev-text-color-secondary)" />
+          <eb-icon v-if="listType === 'picture-card'" name="plus" :size="16" color="var(--eb-text-color-secondary)" />
           <template v-else>选择文件</template>
         </slot>
       </template>
       <input
         ref="inputRef"
         type="file"
-        class="ev-upload__input"
+        class="eb-upload__input"
         :name="name"
         :multiple="multiple"
         :accept="accept"
@@ -45,31 +45,31 @@
     </div>
 
     <!-- 文件列表 -->
-    <ul v-if="showFileList && fileList.length" class="ev-upload-list" :class="`ev-upload-list--${listType}`">
+    <ul v-if="showFileList && fileList.length" class="eb-upload-list" :class="`eb-upload-list--${listType}`">
       <li
         v-for="file in fileList"
         :key="file.uid"
-        class="ev-upload-list__item"
-        :class="[`is-${file.status}`, listType === 'picture-card' ? 'ev-upload-list__item--card' : '']"
+        class="eb-upload-list__item"
+        :class="[`is-${file.status}`, listType === 'picture-card' ? 'eb-upload-list__item--card' : '']"
       >
-        <div class="ev-upload-list__item-info">
-          <ev-icon :name="file.status === 'success' ? 'document-checked' : 'document'" :size="14" />
+        <div class="eb-upload-list__item-info">
+          <eb-icon :name="file.status === 'success' ? 'document-checked' : 'document'" :size="14" />
           <a
-            class="ev-upload-list__item-name"
+            class="eb-upload-list__item-name"
             href="javascript:;"
             @click="emit('preview', file)"
           >{{ file.name }}</a>
           <button
             type="button"
-            class="ev-upload-list__item-close"
+            class="eb-upload-list__item-close"
             aria-label="移除文件"
             @click="handleRemove(file)"
           >
-            <ev-icon name="close" :size="12" />
+            <eb-icon name="close" :size="12" />
           </button>
         </div>
-        <div v-if="file.status === 'uploading'" class="ev-upload-list__item-progress">
-          <div class="ev-upload-list__item-progress-inner" :style="{ width: `${file.percentage ?? 0}%` }" />
+        <div v-if="file.status === 'uploading'" class="eb-upload-list__item-progress">
+          <div class="eb-upload-list__item-progress-inner" :style="{ width: `${file.percentage ?? 0}%` }" />
         </div>
       </li>
     </ul>
@@ -78,12 +78,12 @@
 
 <script setup>
 /**
- * EvUpload — 文件上传
+ * EbUpload — 文件上传
  * 隐藏 input 绝对定位 opacity:0 覆盖触发区；XHR 直传 action（FormData: name 字段）；
  * limit 超限发 exceed；autoUpload=false 时用 expose.submit 手动提交
  */
 import { ref, computed, toRef } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFormItem } from '../../composables/useFormItem'
 
 const props = defineProps({

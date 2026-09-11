@@ -6,7 +6,7 @@
  *   <span v-copy="orderNo">{{ orderNo }}</span>  复制指定值
  *   v-copy="{ value, feedback: false }"          关闭消息提示
  */
-import { EvMessage } from '../components/message'
+import { EbMessage } from '../components/message'
 import { useClipboard } from '../composables/useClipboard'
 
 function attach(el, binding) {
@@ -20,8 +20,8 @@ function attach(el, binding) {
   el.__evCopyHandler = async () => {
     const ok = await copy(getValue())
     if (opts?.feedback ?? true) {
-      if (ok) EvMessage.success('已复制')
-      else EvMessage.error('复制失败')
+      if (ok) EbMessage.success('已复制')
+      else EbMessage.error('复制失败')
     }
   }
   el.addEventListener('click', el.__evCopyHandler)

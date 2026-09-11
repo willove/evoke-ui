@@ -4,7 +4,7 @@
    import '@wil-works/evoke-business-ui/styles'
    ============================================ */
 
-/* 设计变量（天亮蓝 #175DFF，--ev-* 语义层 + --ev-* 设计层） */
+/* 设计变量（天亮蓝 #175DFF，--eb-* 语义层 + --eb-* 设计层） */
 @import './variables.css';
 
 /* 暗色模式重映射（html.dark） */

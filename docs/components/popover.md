@@ -5,32 +5,32 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-popover title="操作确认" content="将把选中记录移入回收站，可在 30 天内恢复。" width="280">
-      <ev-button>点击展示</ev-button>
-    </ev-popover>
-    <ev-popover content="悬停触发的气泡" trigger="hover" placement="top">
-      <ev-button>悬停展示</ev-button>
-    </ev-popover>
-    <ev-popover content="聚焦时出现" trigger="focus" placement="right">
-      <ev-button>聚焦展示</ev-button>
-    </ev-popover>
-  </ev-space>
+  <eb-space size="middle">
+    <eb-popover title="操作确认" content="将把选中记录移入回收站，可在 30 天内恢复。" width="280">
+      <eb-button>点击展示</eb-button>
+    </eb-popover>
+    <eb-popover content="悬停触发的气泡" trigger="hover" placement="top">
+      <eb-button>悬停展示</eb-button>
+    </eb-popover>
+    <eb-popover content="聚焦时出现" trigger="focus" placement="right">
+      <eb-button>聚焦展示</eb-button>
+    </eb-popover>
+  </eb-space>
 </DemoBlock>
 
 ## 自定义内容
 
 <DemoBlock>
-  <ev-popover width="260" placement="bottom">
+  <eb-popover width="260" placement="bottom">
     <template #reference>
-      <ev-button type="primary">自定义内容</ev-button>
+      <eb-button type="primary">自定义内容</eb-button>
     </template>
     <div style="display: flex; flex-direction: column; gap: 8px;">
-      <ev-text strong>快捷操作</ev-text>
-      <ev-button size="small" style="justify-content: flex-start;">导出 Excel</ev-button>
-      <ev-button size="small" style="justify-content: flex-start;">导出 PDF</ev-button>
+      <eb-text strong>快捷操作</eb-text>
+      <eb-button size="small" style="justify-content: flex-start;">导出 Excel</eb-button>
+      <eb-button size="small" style="justify-content: flex-start;">导出 PDF</eb-button>
     </div>
-  </ev-popover>
+  </eb-popover>
 </DemoBlock>
 
 ## 方位（placement）
@@ -38,11 +38,11 @@
 12 个方位自动适应空间，空间不足时自动翻转：
 
 <DemoBlock>
-  <ev-space size="middle" style="flex-wrap: wrap">
-    <ev-popover v-for="p in placements" :key="p" :content="`placement: ${p}`" :placement="p" trigger="hover">
-      <ev-button size="small">{{ p }}</ev-button>
-    </ev-popover>
-  </ev-space>
+  <eb-space size="middle" style="flex-wrap: wrap">
+    <eb-popover v-for="p in placements" :key="p" :content="`placement: ${p}`" :placement="p" trigger="hover">
+      <eb-button size="small">{{ p }}</eb-button>
+    </eb-popover>
+  </eb-space>
 </DemoBlock>
 
 <script setup>

@@ -1,14 +1,14 @@
 <template>
-  <component :is="tag" class="ev-footer ev-footer" :style="{ height }">
+  <component :is="tag" class="eb-footer eb-footer" :style="{ height }">
     <slot />
   </component>
 </template>
 
 <script setup>
 /**
- * EvFooter — 底栏
+ * EbFooter — 底栏
  */
-defineOptions({ name: 'EvFooter' })
+defineOptions({ name: 'EbFooter' })
 
 defineProps({
   height: { type: String, default: '60px' },

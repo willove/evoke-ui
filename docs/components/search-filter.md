@@ -11,7 +11,7 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-search-filter
+  <eb-search-filter
     v-model="sfQuery"
     :fields="[
       { prop: 'keyword', label: '关键词', placeholder: '订单号 / 客户名' },
@@ -39,7 +39,7 @@ function onSfSearch(values) {
 `columns` 控制每行字段数（2 / 3 / 4），`loading` 时查询按钮进入加载态并阻止重复提交。
 
 <DemoBlock>
-  <ev-search-filter
+  <eb-search-filter
     :fields="[{ prop: 'a', label: '字段一' }, { prop: 'b', label: '字段二' }]"
     :columns="2"
     loading
@@ -51,7 +51,7 @@ function onSfSearch(values) {
 `type: 'select'` 渲染下拉（`options` 就地内联声明，适合静态枚举；选项来自接口时先请求再更新 fields 即可）。`defaultValue` 是重置时的恢复值；select 默认可清空，`clearable: false` 关闭清空按钮；`disabled` 字段不可编辑但同样参与重置。
 
 <DemoBlock>
-  <ev-search-filter
+  <eb-search-filter
     v-model="sfReset"
     :fields="[
       { prop: 'level', label: '等级', type: 'select', defaultValue: 'p0', options: [{ label: 'P0', value: 'p0' }, { label: 'P1', value: 'p1' }] },
@@ -69,14 +69,14 @@ function onSfSearch(values) {
 `actions` 插槽渲染在查询/重置按钮之后，适合放高级筛选入口、保存常用条件等自定义操作。
 
 <DemoBlock>
-  <ev-search-filter
+  <eb-search-filter
     v-model="sfExtra"
     :fields="[{ prop: 'keyword', label: '关键词' }]"
   >
     <template #actions>
-      <ev-button text type="primary">高级筛选</ev-button>
+      <eb-button text type="primary">高级筛选</eb-button>
     </template>
-  </ev-search-filter>
+  </eb-search-filter>
 </DemoBlock>
 
 ## 交互：查询取值
@@ -84,7 +84,7 @@ function onSfSearch(values) {
 `search` 事件携带当前值对象的快照（拷贝，后续修改不影响已触发的那次）；也可通过实例方法 `getValues()` 主动取值。
 
 <DemoBlock>
-  <ev-search-filter
+  <eb-search-filter
     v-model="sfLive"
     :fields="[
       { prop: 'keyword', label: '关键词' },

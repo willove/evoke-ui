@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import EwCodeBlock from '../src/components/code-block/index.vue'
+import EvCodeBlock from '../src/components/code-block/index.vue'
 import { highlightCode, detectLanguage } from '../src/components/code-block/highlight'
 
 describe('highlightCode / 内置轻量高亮', () => {
@@ -48,21 +48,21 @@ describe('highlightCode / 内置轻量高亮', () => {
   })
 })
 
-describe('EwCodeBlock / 高亮渲染与复制', () => {
+describe('EvCodeBlock / 高亮渲染与复制', () => {
   it('code 属性渲染 token span（v-html）', () => {
-    const wrapper = mount(EwCodeBlock, { props: { code: 'npm run build' } })
-    const code = wrapper.find('.ew-code-block__code')
+    const wrapper = mount(EvCodeBlock, { props: { code: 'npm run build' } })
+    const code = wrapper.find('.ev-code-block__code')
     expect(code.find('span.tok-cmd').exists()).toBe(true)
     expect(code.text()).toBe('npm run build')
   })
 
   it('language 属性透传高亮器', () => {
-    const wrapper = mount(EwCodeBlock, { props: { code: '{"a": 1}', language: 'json' } })
+    const wrapper = mount(EvCodeBlock, { props: { code: '{"a": 1}', language: 'json' } })
     expect(wrapper.find('.tok-key').exists()).toBe(true)
   })
 
   it('默认插槽整体覆写渲染内容', () => {
-    const wrapper = mount(EwCodeBlock, {
+    const wrapper = mount(EvCodeBlock, {
       props: { code: 'npm run build' },
       slots: { default: '<b class="raw">custom</b>' },
     })
@@ -71,9 +71,9 @@ describe('EwCodeBlock / 高亮渲染与复制', () => {
   })
 
   it('窗框结构：窗口控制点 + 标题栏 + 复制钮', () => {
-    const wrapper = mount(EwCodeBlock, { props: { code: 'ls', title: 'Terminal', showCopyText: true } })
-    expect(wrapper.findAll('.ew-code-block__light')).toHaveLength(3)
-    expect(wrapper.find('.ew-code-block__title').text()).toBe('Terminal')
-    expect(wrapper.find('.ew-code-block__copy-text').exists()).toBe(true)
+    const wrapper = mount(EvCodeBlock, { props: { code: 'ls', title: 'Terminal', showCopyText: true } })
+    expect(wrapper.findAll('.ev-code-block__light')).toHaveLength(3)
+    expect(wrapper.find('.ev-code-block__title').text()).toBe('Terminal')
+    expect(wrapper.find('.ev-code-block__copy-text').exists()).toBe(true)
   })
 })

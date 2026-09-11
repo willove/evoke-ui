@@ -1,20 +1,20 @@
 <template>
   <div
-    :class="['ew-exec-card', { 'is-glass': glass === true, 'no-glass': glass === false }]"
-    :style="{ '--ew-exec-portrait-h': `${portraitHeight}px` }"
+    :class="['ev-exec-card', { 'is-glass': glass === true, 'no-glass': glass === false }]"
+    :style="{ '--ev-exec-portrait-h': `${portraitHeight}px` }"
   >
-    <div class="ew-exec-card__stage">
+    <div class="ev-exec-card__stage">
       <img
         v-if="image"
         :src="image"
         :alt="name"
-        class="ew-exec-card__portrait"
+        class="ev-exec-card__portrait"
         loading="lazy"
       />
       <!-- 缺省人物剪影（透明底，可直接替换为半身透明 PNG） -->
       <svg
         v-else
-        class="ew-exec-card__portrait"
+        class="ev-exec-card__portrait"
         viewBox="0 0 240 200"
         role="img"
         :aria-label="name"
@@ -27,17 +27,17 @@
         />
       </svg>
     </div>
-    <div class="ew-exec-card__body">
-      <h3 class="ew-exec-card__name">
+    <div class="ev-exec-card__body">
+      <h3 class="ev-exec-card__name">
         <slot name="name">{{ name }}</slot>
       </h3>
-      <p v-if="role || $slots.role" class="ew-exec-card__role">
+      <p v-if="role || $slots.role" class="ev-exec-card__role">
         <slot name="role">{{ role }}</slot>
       </p>
-      <p v-if="description || $slots.default" class="ew-exec-card__description">
+      <p v-if="description || $slots.default" class="ev-exec-card__description">
         <slot>{{ description }}</slot>
       </p>
-      <div v-if="$slots.actions" class="ew-exec-card__actions">
+      <div v-if="$slots.actions" class="ev-exec-card__actions">
         <slot name="actions" />
       </div>
     </div>
@@ -46,7 +46,7 @@
 
 <script setup>
 /**
- * EwExecCard — 高管/团队介绍卡
+ * EvExecCard — 高管/团队介绍卡
  * 为「透明背景半身人物图」设计：人物图锚定在渐变舞台底边，像从卡片里走出来；
  * 未传 image 时渲染内置人物剪影占位。展示型 title 用强字距展示体。
  * props：name / role / description / image / portraitHeight（舞台高度，px）

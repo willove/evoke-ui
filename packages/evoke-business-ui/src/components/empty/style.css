@@ -1,33 +1,33 @@
-/* EvEmpty —空状态 */
+/* EbEmpty —空状态 */
 
-.ev-empty.ev-empty {
+.eb-empty.eb-empty {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   text-align: center;
   box-sizing: border-box;
-  padding: var(--ev-space-8) 0;
+  padding: var(--eb-space-8) 0;
 }
 
-.ev-empty.ev-empty .ev-empty__image {
+.eb-empty.eb-empty .eb-empty__image {
   width: 80px;
 }
-.ev-empty.ev-empty .ev-empty__image img,
-.ev-empty.ev-empty .ev-empty__image svg {
+.eb-empty.eb-empty .eb-empty__image img,
+.eb-empty.eb-empty .eb-empty__image svg {
   width: 100%;
   height: auto;
   user-select: none;
   vertical-align: top;
 }
 
-.ev-empty.ev-empty .ev-empty__description {
-  margin-top: var(--ev-space-4);
-  color: var(--ev-text-color-secondary);
-  font-size: var(--ev-font-size-xs);
+.eb-empty.eb-empty .eb-empty__description {
+  margin-top: var(--eb-space-4);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
   line-height: 1.5;
 }
 
-.ev-empty.ev-empty .ev-empty__bottom {
-  margin-top: var(--ev-space-5);
+.eb-empty.eb-empty .eb-empty__bottom {
+  margin-top: var(--eb-space-5);
 }

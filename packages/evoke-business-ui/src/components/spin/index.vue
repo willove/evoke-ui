@@ -1,22 +1,22 @@
 <template>
   <Teleport v-if="fullscreen" to="body">
-    <Transition name="ev-spin-fade">
-      <div v-if="visible" class="ev-spin ev-spin--fullscreen">
-        <div class="ev-spin__overlay" />
-        <div class="ev-spin__content">
+    <Transition name="eb-spin-fade">
+      <div v-if="visible" class="eb-spin eb-spin--fullscreen">
+        <div class="eb-spin__overlay" />
+        <div class="eb-spin__content">
           <div :class="spinnerClasses" :style="spinnerStyle">
             <slot name="indicator">
-              <div class="ev-spin__dot-container">
-                <span v-for="i in 4" :key="i" class="ev-spin__dot" />
+              <div class="eb-spin__dot-container">
+                <span v-for="i in 4" :key="i" class="eb-spin__dot" />
               </div>
             </slot>
           </div>
-          <div v-if="description || slots.description" class="ev-spin__description">
+          <div v-if="description || slots.description" class="eb-spin__description">
             <slot name="description">{{ description }}</slot>
           </div>
-          <div v-if="percent !== undefined && percent !== null" class="ev-spin__progress">
-            <div class="ev-spin__progress-bar">
-              <div class="ev-spin__progress-inner" :style="{ width: progressWidth }" />
+          <div v-if="percent !== undefined && percent !== null" class="eb-spin__progress">
+            <div class="eb-spin__progress-bar">
+              <div class="eb-spin__progress-inner" :style="{ width: progressWidth }" />
             </div>
           </div>
         </div>
@@ -24,24 +24,24 @@
     </Transition>
   </Teleport>
 
-  <div v-else-if="hasSlotContent" class="ev-spin-wrapper ev-spin-wrapper--nested">
-    <Transition name="ev-spin-fade">
-      <div v-if="spinning && visible" class="ev-spin ev-spin--nested">
-        <div class="ev-spin__overlay" />
-        <div class="ev-spin__content">
+  <div v-else-if="hasSlotContent" class="eb-spin-wrapper eb-spin-wrapper--nested">
+    <Transition name="eb-spin-fade">
+      <div v-if="spinning && visible" class="eb-spin eb-spin--nested">
+        <div class="eb-spin__overlay" />
+        <div class="eb-spin__content">
           <div :class="spinnerClasses" :style="spinnerStyle">
             <slot name="indicator">
-              <div class="ev-spin__dot-container">
-                <span v-for="i in 4" :key="i" class="ev-spin__dot" />
+              <div class="eb-spin__dot-container">
+                <span v-for="i in 4" :key="i" class="eb-spin__dot" />
               </div>
             </slot>
           </div>
-          <div v-if="description || slots.description" class="ev-spin__description">
+          <div v-if="description || slots.description" class="eb-spin__description">
             <slot name="description">{{ description }}</slot>
           </div>
-          <div v-if="percent !== undefined && percent !== null" class="ev-spin__progress">
-            <div class="ev-spin__progress-bar">
-              <div class="ev-spin__progress-inner" :style="{ width: progressWidth }" />
+          <div v-if="percent !== undefined && percent !== null" class="eb-spin__progress">
+            <div class="eb-spin__progress-bar">
+              <div class="eb-spin__progress-inner" :style="{ width: progressWidth }" />
             </div>
           </div>
         </div>
@@ -49,25 +49,25 @@
     </Transition>
 
     <!-- 内容区域 -->
-    <div :class="['ev-spin__container', { 'ev-spin__container--blur': spinning && visible }]">
+    <div :class="['eb-spin__container', { 'eb-spin__container--blur': spinning && visible }]">
       <slot />
     </div>
   </div>
 
-  <div v-else class="ev-spin ev-spin--standalone">
+  <div v-else class="eb-spin eb-spin--standalone">
     <div :class="spinnerClasses" :style="spinnerStyle">
       <slot name="indicator">
-        <div class="ev-spin__dot-container">
-          <span v-for="i in 4" :key="i" class="ev-spin__dot" />
+        <div class="eb-spin__dot-container">
+          <span v-for="i in 4" :key="i" class="eb-spin__dot" />
         </div>
       </slot>
     </div>
-    <div v-if="description || slots.description" class="ev-spin__description">
+    <div v-if="description || slots.description" class="eb-spin__description">
       <slot name="description">{{ description }}</slot>
     </div>
-    <div v-if="percent !== undefined && percent !== null" class="ev-spin__progress">
-      <div class="ev-spin__progress-bar">
-        <div class="ev-spin__progress-inner" :style="{ width: progressWidth }" />
+    <div v-if="percent !== undefined && percent !== null" class="eb-spin__progress">
+      <div class="eb-spin__progress-bar">
+        <div class="eb-spin__progress-inner" :style="{ width: progressWidth }" />
       </div>
     </div>
   </div>
@@ -75,12 +75,12 @@
 
 <script setup>
 /**
- * EvSpin — 加载指示器
+ * EbSpin — 加载指示器
  * 三种模式：fullscreen / 包裹模式 / 独立使用
  */
 import { computed, ref, watch, onMounted, onBeforeUnmount, useSlots } from 'vue'
 
-defineOptions({ name: 'EvSpin' })
+defineOptions({ name: 'EbSpin' })
 
 const props = defineProps({
   /** 是否为加载中状态 */
@@ -138,8 +138,8 @@ onBeforeUnmount(() => {
 })
 
 const spinnerClasses = computed(() => [
-  'ev-spin__spinner',
-  `ev-spin__spinner--${props.size}`,
+  'eb-spin__spinner',
+  `eb-spin__spinner--${props.size}`,
 ])
 
 const spinnerStyle = computed(() => {

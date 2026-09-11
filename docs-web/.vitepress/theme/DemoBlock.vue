@@ -28,9 +28,9 @@ defineProps({
 <style scoped>
 .demo-block {
   margin: 16px 0 24px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-md);
-  /* 不裁切：EwSelect 等下拉菜单需要溢出展示 */
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  /* 不裁切：EvSelect 等下拉菜单需要溢出展示 */
 }
 
 .demo-block__head {
@@ -53,13 +53,13 @@ defineProps({
   /* 与首页 playground 预览框同一虚线语言：标题区与演示区轻分隔 */
   margin-top: 12px;
   padding: 24px 16px;
-  border-top: 1px dashed var(--ew-border-color);
+  border-top: 1px dashed var(--ev-border-color);
 }
 
 .demo-block__preview.is-dark {
   background: #17181d;
   border-top-color: transparent;
-  border-radius: 0 0 calc(var(--ew-radius-md) - 1px) calc(var(--ew-radius-md) - 1px);
+  border-radius: 0 0 calc(var(--ev-radius-md) - 1px) calc(var(--ev-radius-md) - 1px);
 }
 
 .demo-block__preview.is-center {

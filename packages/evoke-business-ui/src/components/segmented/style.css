@@ -1,99 +1,99 @@
-/* EvSegmented — 分段控制器（设计令牌驱动） */
+/* EbSegmented — 分段控制器（设计令牌驱动） */
 
-.ev-segmented {
-  --seg-radius: var(--ev-radius-sm);
+.eb-segmented {
+  --seg-radius: var(--eb-radius-sm);
   --seg-h: 28px;
   --seg-px: 12px;
   --seg-gap: 6px;
-  --seg-font-size: var(--ev-font-size-base);
+  --seg-font-size: var(--eb-font-size-base);
   --seg-icon-size: 16px;
 
   position: relative;
   display: inline-flex;
   align-items: center;
   padding: 2px;
-  background: var(--ev-fill-color-light);
+  background: var(--eb-fill-color-light);
   border-radius: var(--seg-radius);
   line-height: 1;
   box-sizing: border-box;
   user-select: none;
 }
 
-.ev-segmented--large {
+.eb-segmented--large {
   --seg-h: 34px;
   --seg-px: 14px;
   --seg-gap: 8px;
-  --seg-font-size: var(--ev-font-size-md);
+  --seg-font-size: var(--eb-font-size-md);
 }
-.ev-segmented--small {
+.eb-segmented--small {
   --seg-h: 24px;
   --seg-px: 10px;
   --seg-gap: 4px;
-  --seg-font-size: var(--ev-font-size-xs);
+  --seg-font-size: var(--eb-font-size-xs);
 }
 
-.ev-segmented--shape-round {
-  --seg-radius: var(--ev-radius-full);
+.eb-segmented--shape-round {
+  --seg-radius: var(--eb-radius-full);
 }
 
-.ev-segmented.is-block {
+.eb-segmented.is-block {
   display: flex;
   width: 100%;
 }
 
-.ev-segmented.is-vertical {
+.eb-segmented.is-vertical {
   flex-direction: column;
   align-items: stretch;
 }
 
-.ev-segmented.is-disabled {
+.eb-segmented.is-disabled {
   opacity: 0.55;
 }
-.ev-segmented.is-disabled .ev-segmented__item {
+.eb-segmented.is-disabled .eb-segmented__item {
   cursor: not-allowed;
 }
 
 /* ─── 滑动高亮块 ─── */
-.ev-segmented__thumb {
+.eb-segmented__thumb {
   position: absolute;
   top: 2px;
   left: 0;
   bottom: 2px;
-  background: var(--ev-bg-color);
+  background: var(--eb-bg-color);
   border-radius: var(--seg-radius);
-  box-shadow: var(--ev-box-shadow-lighter);
+  box-shadow: var(--eb-box-shadow-lighter);
   pointer-events: none;
   z-index: 1;
 }
 
-.ev-segmented.is-vertical .ev-segmented__thumb {
+.eb-segmented.is-vertical .eb-segmented__thumb {
   top: 0;
   bottom: auto;
   left: 2px;
   right: 2px;
 }
 
-.ev-segmented__thumb.is-animating {
+.eb-segmented__thumb.is-animating {
   transition:
-    left var(--ev-duration-base) var(--ev-ease-in-out),
-    top var(--ev-duration-base) var(--ev-ease-in-out),
-    width var(--ev-duration-base) var(--ev-ease-in-out),
-    height var(--ev-duration-base) var(--ev-ease-in-out);
+    left var(--eb-duration-base) var(--eb-ease-in-out),
+    top var(--eb-duration-base) var(--eb-ease-in-out),
+    width var(--eb-duration-base) var(--eb-ease-in-out),
+    height var(--eb-duration-base) var(--eb-ease-in-out);
 }
 
 /* ─── 选项 ─── */
-.ev-segmented__items {
+.eb-segmented__items {
   display: flex;
   align-items: stretch;
   gap: 0;
   flex: 1;
   min-width: 0;
 }
-.ev-segmented.is-vertical .ev-segmented__items {
+.eb-segmented.is-vertical .eb-segmented__items {
   flex-direction: column;
 }
 
-.ev-segmented__item {
+.eb-segmented__item {
   position: relative;
   z-index: 2;
   flex: 0 0 auto;
@@ -108,34 +108,34 @@
   border-radius: var(--seg-radius);
   font-family: inherit;
   font-size: var(--seg-font-size);
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
   white-space: nowrap;
   box-sizing: border-box;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out),
-    background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-segmented__item:hover {
-  background: var(--ev-fill-color);
+.eb-segmented__item:hover {
+  background: var(--eb-fill-color);
 }
-.ev-segmented__item.is-selected {
-  color: var(--ev-text-color-primary);
-  font-weight: var(--ev-font-weight-medium);
+.eb-segmented__item.is-selected {
+  color: var(--eb-text-color-primary);
+  font-weight: var(--eb-font-weight-medium);
 }
-.ev-segmented__item.is-disabled {
-  color: var(--ev-text-color-placeholder);
+.eb-segmented__item.is-disabled {
+  color: var(--eb-text-color-placeholder);
   background: transparent;
   cursor: not-allowed;
 }
 
 /* block：选项等分撑满 */
-.ev-segmented.is-block .ev-segmented__item {
+.eb-segmented.is-block .eb-segmented__item {
   flex: 1 1 0;
   min-width: 0;
 }
 
 /* 图标上下排列 */
-.ev-segmented.is-label-vertical .ev-segmented__item {
+.eb-segmented.is-label-vertical .eb-segmented__item {
   flex-direction: column;
   gap: 2px;
   height: auto;
@@ -143,6 +143,6 @@
   padding: 6px var(--seg-px);
 }
 
-.ev-segmented__label {
+.eb-segmented__label {
   line-height: 1;
 }

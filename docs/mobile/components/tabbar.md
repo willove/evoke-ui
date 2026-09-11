@@ -1,6 +1,6 @@
 # Tabbar 底部标签栏
 
-移动端一级导航：`EvTabbar` + `EvTabbarItem` 固定吸底（fixed）+ 全面屏安全区适配 +
+移动端一级导航：`EbTabbar` + `EbTabbarItem` 固定吸底（fixed）+ 全面屏安全区适配 +
 等高占位（placeholder，防止脱离文档流后遮挡内容尾部）。页内内容切换由业务持有
 `v-model`；页签未设 `name` 时以注册顺序索引为标识。`fixed: false` 可作为普通块级
 标签栏内联使用（如卡片底部、演示壳内）。多级菜单压平为底部页签的完整规则见
@@ -17,24 +17,24 @@
     </div>
   </div>
   <template #bottom>
-    <ev-tabbar v-model="tab" :fixed="false">
-      <ev-tabbar-item name="home" icon="home">首页</ev-tabbar-item>
-      <ev-tabbar-item name="orders" icon="file-list" badge="6">订单</ev-tabbar-item>
-      <ev-tabbar-item name="msgs" icon="chat" dot>消息</ev-tabbar-item>
-      <ev-tabbar-item name="mine" icon="user">我的</ev-tabbar-item>
-    </ev-tabbar>
+    <eb-tabbar v-model="tab" :fixed="false">
+      <eb-tabbar-item name="home" icon="home">首页</eb-tabbar-item>
+      <eb-tabbar-item name="orders" icon="file-list" badge="6">订单</eb-tabbar-item>
+      <eb-tabbar-item name="msgs" icon="chat" dot>消息</eb-tabbar-item>
+      <eb-tabbar-item name="mine" icon="user">我的</eb-tabbar-item>
+    </eb-tabbar>
   </template>
 </MobileStage>
 </DemoBlock>
 
 ```html
 <!-- 真机：fixed 吸底 + 安全区适配 + 自动占位，内容切换由 v-model 驱动 -->
-<ev-tabbar v-model="tab">
-  <ev-tabbar-item name="home" icon="home">首页</ev-tabbar-item>
-  <ev-tabbar-item name="orders" icon="file-list" badge="6">订单</ev-tabbar-item>
-  <ev-tabbar-item name="msgs" icon="chat" dot>消息</ev-tabbar-item>
-  <ev-tabbar-item name="mine" icon="user">我的</ev-tabbar-item>
-</ev-tabbar>
+<eb-tabbar v-model="tab">
+  <eb-tabbar-item name="home" icon="home">首页</eb-tabbar-item>
+  <eb-tabbar-item name="orders" icon="file-list" badge="6">订单</eb-tabbar-item>
+  <eb-tabbar-item name="msgs" icon="chat" dot>消息</eb-tabbar-item>
+  <eb-tabbar-item name="mine" icon="user">我的</eb-tabbar-item>
+</eb-tabbar>
 ```
 
 ```js
@@ -51,7 +51,7 @@ const tab = ref('home')
 
 ## 图标与选中态
 
-页签图标用 `icon` 属性（ev-icon 名）；需要区分选中态时用 `#icon` 插槽（参数
+页签图标用 `icon` 属性（eb-icon 名）；需要区分选中态时用 `#icon` 插槽（参数
 `active`）。未注册的图标名需先注册（见 [Icon](/components/icon)）。
 
 <DemoBlock>
@@ -62,16 +62,16 @@ const tab = ref('home')
     </div>
   </div>
   <template #bottom>
-    <ev-tabbar v-model="tab2" :fixed="false">
-      <ev-tabbar-item name="feed">
+    <eb-tabbar v-model="tab2" :fixed="false">
+      <eb-tabbar-item name="feed">
         <template #icon="{ active }">
-          <ev-icon name="star" :size="20" :style="{ color: active ? 'var(--ev-color-primary)' : 'var(--ev-text-color-secondary)' }" />
+          <eb-icon name="star" :size="20" :style="{ color: active ? 'var(--eb-color-primary)' : 'var(--eb-text-color-secondary)' }" />
         </template>
         订阅
-      </ev-tabbar-item>
-      <ev-tabbar-item name="msg" icon="chat" dot>消息</ev-tabbar-item>
-      <ev-tabbar-item name="me" icon="user" badge="New">我的</ev-tabbar-item>
-    </ev-tabbar>
+      </eb-tabbar-item>
+      <eb-tabbar-item name="msg" icon="chat" dot>消息</eb-tabbar-item>
+      <eb-tabbar-item name="me" icon="user" badge="New">我的</eb-tabbar-item>
+    </eb-tabbar>
   </template>
 </MobileStage>
 </DemoBlock>
@@ -88,7 +88,7 @@ const tab = ref('home')
 
 <ApiTable title="TabbarItem Props" :rows="[
   { name: 'name', desc: '标识，缺省用注册顺序索引', type: 'string | number', default: `''` },
-  { name: 'icon', desc: '图标名（ev-icon），自定义选中态用 #icon 插槽', type: 'string', default: `''` },
+  { name: 'icon', desc: '图标名（eb-icon），自定义选中态用 #icon 插槽', type: 'string', default: `''` },
   { name: 'dot', desc: '红点提醒（优先于 badge）', type: 'boolean', default: 'false' },
   { name: 'badge', desc: '角标内容', type: 'string | number', default: `''` },
   { name: 'disabled', desc: '禁用切换', type: 'boolean', default: 'false' },

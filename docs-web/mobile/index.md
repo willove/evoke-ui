@@ -68,30 +68,30 @@ Evoke UI 面向官网与纯前端站点，移动端与桌面共用同一套组�
 
 | 组件 | 场景 | 文档 |
 | --- | --- | --- |
-| EwNavBar 页头 | H5 页面头部：返回 + 标题 + 动作 | [组件文档](/mobile/components/nav-bar) |
-| EwPullRefresh 下拉刷新 | 内容流顶部，对齐原生 App 手感 | [组件文档](/mobile/components/pull-refresh) |
-| EwLoadMore 加载更多 | 列表尾部，点击或触底自动加载 | [组件文档](/mobile/components/load-more) |
-| EwActionSheet 动作面板 | 对象级操作菜单，替代 hover 菜单 | [组件文档](/mobile/components/action-sheet) |
-| EwTabbar 底部标签栏 | H5 站点一级导航吸底 | [组件文档](/mobile/components/tabbar) |
+| EvNavBar 页头 | H5 页面头部：返回 + 标题 + 动作 | [组件文档](/mobile/components/nav-bar) |
+| EvPullRefresh 下拉刷新 | 内容流顶部，对齐原生 App 手感 | [组件文档](/mobile/components/pull-refresh) |
+| EvLoadMore 加载更多 | 列表尾部，点击或触底自动加载 | [组件文档](/mobile/components/load-more) |
+| EvActionSheet 动作面板 | 对象级操作菜单，替代 hover 菜单 | [组件文档](/mobile/components/action-sheet) |
+| EvTabbar 底部标签栏 | H5 站点一级导航吸底 | [组件文档](/mobile/components/tabbar) |
 
 <DemoBlock title="移动范式速览" description="下拉刷新 + 卡片流 + 加载更多 + 底部标签栏，全部为真实可交互组件（375px 视口演示壳）。">
 
 <MobileStage title="品牌内容站">
-  <ew-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
+  <ev-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
     <div class="mb-page">
       <div v-for="a in articles" :key="a.title" class="mb-card mb-card--pad">
         <div class="mb-card__title">{{ a.title }}</div>
         <div class="mb-card__label" style="margin-top: 4px;">{{ a.meta }}</div>
       </div>
     </div>
-    <ew-load-more :status="loadStatus" @load-more="onLoadMore" @update:status="loadStatus = $event" />
-  </ew-pull-refresh>
+    <ev-load-more :status="loadStatus" @load-more="onLoadMore" @update:status="loadStatus = $event" />
+  </ev-pull-refresh>
   <template #bottom>
-    <ew-tabbar v-model="tab" :fixed="false" style="border-top: 1px solid var(--ew-border-color-light);">
-      <ew-tabbar-item name="home">首页</ew-tabbar-item>
-      <ew-tabbar-item name="articles" badge="5">文章</ew-tabbar-item>
-      <ew-tabbar-item name="mine">我的</ew-tabbar-item>
-    </ew-tabbar>
+    <ev-tabbar v-model="tab" :fixed="false" style="border-top: 1px solid var(--ev-border-color-light);">
+      <ev-tabbar-item name="home">首页</ev-tabbar-item>
+      <ev-tabbar-item name="articles" badge="5">文章</ev-tabbar-item>
+      <ev-tabbar-item name="mine">我的</ev-tabbar-item>
+    </ev-tabbar>
   </template>
 </MobileStage>
 
@@ -115,15 +115,15 @@ async function onLoadMore() {
 </script>
 
 <template>
-  <EwPullRefresh v-model="refreshing" @refresh="onRefresh">
+  <EvPullRefresh v-model="refreshing" @refresh="onRefresh">
     <ArticleList :items="articles" />
-    <EwLoadMore v-model:status="loadStatus" @load-more="onLoadMore" />
-  </EwPullRefresh>
-  <EwTabbar v-model="tab">
-    <EwTabbarItem name="home">首页</EwTabbarItem>
-    <EwTabbarItem name="articles" badge="5">文章</EwTabbarItem>
-    <EwTabbarItem name="mine">我的</EwTabbarItem>
-  </EwTabbar>
+    <EvLoadMore v-model:status="loadStatus" @load-more="onLoadMore" />
+  </EvPullRefresh>
+  <EvTabbar v-model="tab">
+    <EvTabbarItem name="home">首页</EvTabbarItem>
+    <EvTabbarItem name="articles" badge="5">文章</EvTabbarItem>
+    <EvTabbarItem name="mine">我的</EvTabbarItem>
+  </EvTabbar>
 </template>
 ```
 

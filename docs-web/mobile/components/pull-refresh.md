@@ -1,6 +1,6 @@
 # PullRefresh 下拉刷新
 
-`EwPullRefresh` 提供对齐原生 App 的下拉刷新手势：内容区顶部下拉 → 释放触发 `refresh`，
+`EvPullRefresh` 提供对齐原生 App 的下拉刷新手势：内容区顶部下拉 → 释放触发 `refresh`，
 `v-model` 同步加载中状态，加载完成后置 `false` 自动展示成功态并收回。滚动容器不在顶部时
 不拦截手势（页面可正常上滚）；超过触发距离后 1/3 阻尼跟手，形成「越拉越紧」的手感。
 
@@ -9,14 +9,14 @@
 <DemoBlock title="内容流下拉刷新" description="在 375px 演示壳内的滚动区顶部下拉（触摸设备）或观察状态流转；释放越过阈值后进入加载中，1.2 秒后完成。">
 
 <MobileStage title="品牌内容站">
-  <ew-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
+  <ev-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
     <div class="mb-page">
       <div v-for="a in articles" :key="a.title" class="mb-card mb-card--pad">
         <div class="mb-card__title">{{ a.title }}</div>
         <div class="mb-card__label" style="margin-top: 4px;">{{ a.meta }}</div>
       </div>
     </div>
-  </ew-pull-refresh>
+  </ev-pull-refresh>
 </MobileStage>
 
 ```vue
@@ -32,9 +32,9 @@ async function onRefresh() {
 </script>
 
 <template>
-  <EwPullRefresh v-model="refreshing" @refresh="onRefresh">
+  <EvPullRefresh v-model="refreshing" @refresh="onRefresh">
     <ArticleList :items="articles" />
-  </EwPullRefresh>
+  </EvPullRefresh>
 </template>
 ```
 
@@ -72,7 +72,7 @@ function onRefresh2() {
 <DemoBlock title="短阈值 + 自定义文案" description="head-height 40、文案定制，便于在触屏上快速体验。">
 
 <MobileStage>
-  <ew-pull-refresh
+  <ev-pull-refresh
     v-model="r2"
     :head-height="40"
     pulling-text="继续拉"
@@ -88,11 +88,11 @@ function onRefresh2() {
         <div class="mb-card__label" style="margin-top: 4px;">触屏设备下拉此区域释放即可触发</div>
       </div>
     </div>
-  </ew-pull-refresh>
+  </ev-pull-refresh>
 </MobileStage>
 
 ```vue
-<EwPullRefresh
+<EvPullRefresh
   v-model="refreshing"
   :head-height="40"
   pulling-text="继续拉"
@@ -102,7 +102,7 @@ function onRefresh2() {
   @refresh="onRefresh"
 >
   <ArticleList :items="articles" />
-</EwPullRefresh>
+</EvPullRefresh>
 ```
 
 </DemoBlock>

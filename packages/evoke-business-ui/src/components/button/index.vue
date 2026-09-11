@@ -2,7 +2,7 @@
   <button
     ref="btnRef"
     :class="[
-      'ev-button',
+      'eb-button',
       buttonSizeClass,
       typeClass,
       {
@@ -25,16 +25,16 @@
     :aria-disabled="disabled || loading"
     @click="handleClick"
   >
-    <span v-if="loading" class="ev-button__loading-icon">
-      <ev-icon :size="iconFontSize" name="loading" class="is-rotating" />
+    <span v-if="loading" class="eb-button__loading-icon">
+      <eb-icon :size="iconFontSize" name="loading" class="is-rotating" />
     </span>
-    <ev-icon
+    <eb-icon
       v-if="iconName && !loading"
       :name="iconName"
       :size="iconFontSize"
-      class="ev-button__icon"
+      class="eb-button__icon"
     />
-    <component :is="icon" v-else-if="icon && !loading" class="ev-button__icon" />
+    <component :is="icon" v-else-if="icon && !loading" class="eb-button__icon" />
     <template v-for="(_, name) in $slots" :key="name">
       <slot-bridge
         v-if="name === 'default'"
@@ -49,20 +49,20 @@
 <script>
 /**
  * default 插槽转发桥（模块作用域）
- * loading 时移除插槽内前导的 ev-icon，由自带转圈图标取而代之，
+ * loading 时移除插槽内前导的 eb-icon，由自带转圈图标取而代之，
  * 避免「转圈 + 原图标」并列；文本之后的尾部图标不受影响。
  * 必须定义在模块作用域：放进 <script setup> 会每次实例化生成新的组件
  * 定义，导致按钮内容反复重挂载。
  */
 import { Comment, Text, defineComponent } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const isIconVNode = (vnode) => {
-  if (vnode.type === EvIcon) return true
+  if (vnode.type === EbIcon) return true
   const type = vnode.type
   if (typeof type === 'string' || type === null) return false
   const name = type?.name
-  return name === 'EvIcon'
+  return name === 'EbIcon'
 }
 
 const isSkippableVNode = (vnode) =>
@@ -70,7 +70,7 @@ const isSkippableVNode = (vnode) =>
   (vnode.type === Text && !String(vnode.children ?? '').trim())
 
 const SlotBridge = defineComponent({
-  name: 'EvButtonSlotBridge',
+  name: 'EbButtonSlotBridge',
   props: {
     slotFn: { type: Function, required: true },
     stripIcon: { type: Boolean, default: false },
@@ -96,12 +96,12 @@ export default { components: { SlotBridge } }
 
 <script setup>
 /**
- * EvButton — 按钮
+ * EbButton — 按钮
  * Props：type/size/disabled/loading/plain/round/circle/text/link/icon/nativeType/autofocus/ghost/dangerSolid
- * ghost / danger-solid 通过 --ev-button-* 变量驱动
+ * ghost / danger-solid 通过 --eb-button-* 变量驱动
  */
 import { ref, computed, useSlots, inject } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { configProviderContextKey } from '../../composables/useConfigProvider'
 
 const props = defineProps({
@@ -155,11 +155,11 @@ const resolvedSize = computed(() => {
 })
 
 const buttonSizeClass = computed(() =>
-  resolvedSize.value === 'large' ? 'ev-button--large' : resolvedSize.value === 'small' ? 'ev-button--small' : ''
+  resolvedSize.value === 'large' ? 'eb-button--large' : resolvedSize.value === 'small' ? 'eb-button--small' : ''
 )
 
 const typeClass = computed(() =>
-  props.type && props.type !== 'default' ? `ev-button--${props.type}` : ''
+  props.type && props.type !== 'default' ? `eb-button--${props.type}` : ''
 )
 
 const iconName = computed(() =>

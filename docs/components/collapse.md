@@ -18,11 +18,11 @@ function onChange(val) {
 </script>
 
 <DemoBlock>
-<ev-collapse v-model="open">
-  <ev-collapse-item title="反馈 Feedback" name="feedback">通过界面样式与交互效果，让用户清晰感知自己的操作结果。</ev-collapse-item>
-  <ev-collapse-item title="效率 Efficiency" name="efficiency">设计简洁直观的操作流程，帮助用户快速完成任务。</ev-collapse-item>
-  <ev-collapse-item title="可控 Controllability" name="control" disabled>该面板已禁用，无法展开。</ev-collapse-item>
-</ev-collapse>
+<eb-collapse v-model="open">
+  <eb-collapse-item title="反馈 Feedback" name="feedback">通过界面样式与交互效果，让用户清晰感知自己的操作结果。</eb-collapse-item>
+  <eb-collapse-item title="效率 Efficiency" name="efficiency">设计简洁直观的操作流程，帮助用户快速完成任务。</eb-collapse-item>
+  <eb-collapse-item title="可控 Controllability" name="control" disabled>该面板已禁用，无法展开。</eb-collapse-item>
+</eb-collapse>
 </DemoBlock>
 
 ## 手风琴
@@ -30,11 +30,11 @@ function onChange(val) {
 设置 `accordion` 后同一时刻最多展开一项，再次点击已展开项将其收起；此时 v-model 的值为单个 name 或空串。
 
 <DemoBlock>
-<ev-collapse accordion>
-  <ev-collapse-item title="第一步 填写信息" name="s1">填写基础资料并上传证件照片。</ev-collapse-item>
-  <ev-collapse-item title="第二步 实名认证" name="s2">等待系统核验身份信息。</ev-collapse-item>
-  <ev-collapse-item title="第三步 提交审核" name="s3">认证通过后提交入驻审核。</ev-collapse-item>
-</ev-collapse>
+<eb-collapse accordion>
+  <eb-collapse-item title="第一步 填写信息" name="s1">填写基础资料并上传证件照片。</eb-collapse-item>
+  <eb-collapse-item title="第二步 实名认证" name="s2">等待系统核验身份信息。</eb-collapse-item>
+  <eb-collapse-item title="第三步 提交审核" name="s3">认证通过后提交入驻审核。</eb-collapse-item>
+</eb-collapse>
 </DemoBlock>
 
 ## change 事件
@@ -42,10 +42,10 @@ function onChange(val) {
 每次展开项变化都会触发 `change`，参数与 `update:modelValue` 一致，可用于上报埋点或联动其他区域。
 
 <DemoBlock>
-<ev-collapse v-model="names" @change="onChange">
-  <ev-collapse-item title="全局引导" name="guide">首次进入系统时的功能引导说明。</ev-collapse-item>
-  <ev-collapse-item title="快捷键" name="shortcut">Ctrl + K 打开命令面板。</ev-collapse-item>
-</ev-collapse>
+<eb-collapse v-model="names" @change="onChange">
+  <eb-collapse-item title="全局引导" name="guide">首次进入系统时的功能引导说明。</eb-collapse-item>
+  <eb-collapse-item title="快捷键" name="shortcut">Ctrl + K 打开命令面板。</eb-collapse-item>
+</eb-collapse>
 <p style="margin-top: 8px;">最近一次 change：{{ lastChange }}</p>
 </DemoBlock>
 
@@ -54,10 +54,10 @@ function onChange(val) {
 不需要联动状态时，直接以 `:model-value` 传入初始展开项做静态展示（组件内部会自行维护后续的展开状态）。
 
 <DemoBlock>
-<ev-collapse :model-value="['q1']">
-  <ev-collapse-item title="如何退款？" name="q1">订单完成后 7 天内可发起退款申请。</ev-collapse-item>
-  <ev-collapse-item title="多久到账？" name="q2">退款将在 1-3 个工作日内原路退回。</ev-collapse-item>
-</ev-collapse>
+<eb-collapse :model-value="['q1']">
+  <eb-collapse-item title="如何退款？" name="q1">订单完成后 7 天内可发起退款申请。</eb-collapse-item>
+  <eb-collapse-item title="多久到账？" name="q2">退款将在 1-3 个工作日内原路退回。</eb-collapse-item>
+</eb-collapse>
 </DemoBlock>
 
 ## 自定义标题
@@ -65,16 +65,16 @@ function onChange(val) {
 `#title` 插槽替换标题区（箭头左侧），可组合富文本；默认插槽为面板内容。
 
 <DemoBlock>
-<ev-collapse>
-  <ev-collapse-item name="t1">
+<eb-collapse>
+  <eb-collapse-item name="t1">
     <template #title>
       <span style="font-weight: 600;">自营包邮</span>
-      <span style="margin-left: 8px; color: var(--ev-text-color-secondary); font-size: 12px;">满 99 元生效</span>
+      <span style="margin-left: 8px; color: var(--eb-text-color-secondary); font-size: 12px;">满 99 元生效</span>
     </template>
     商家承担运费，偏远地区除外。
-  </ev-collapse-item>
-  <ev-collapse-item title="七天无理由退货" name="t2" disabled>该面板已禁用。</ev-collapse-item>
-</ev-collapse>
+  </eb-collapse-item>
+  <eb-collapse-item title="七天无理由退货" name="t2" disabled>该面板已禁用。</eb-collapse-item>
+</eb-collapse>
 </DemoBlock>
 
 ## API
@@ -90,7 +90,7 @@ function onChange(val) {
 ]" />
 
 <ApiTable title="Collapse Slots" :rows="[
-  { name: 'default', desc: 'ev-collapse-item 列表', type: '—', default: '—' },
+  { name: 'default', desc: 'eb-collapse-item 列表', type: '—', default: '—' },
 ]" />
 
 <ApiTable title="CollapseItem Props" :rows="[

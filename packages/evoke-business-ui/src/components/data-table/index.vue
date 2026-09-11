@@ -1,21 +1,21 @@
 <template>
-  <div class="ev-data-table">
+  <div class="eb-data-table">
     <!-- 工具栏：标题 + 计数角标 + 右侧操作 -->
-    <div v-if="title || $slots.actions || total > 0" class="ev-data-table__toolbar">
-      <div class="ev-data-table__toolbar-left">
-        <span v-if="title" class="ev-data-table__title">{{ title }}</span>
-        <span v-if="showTotal && total > 0" class="ev-data-table__total-badge">
+    <div v-if="title || $slots.actions || total > 0" class="eb-data-table__toolbar">
+      <div class="eb-data-table__toolbar-left">
+        <span v-if="title" class="eb-data-table__title">{{ title }}</span>
+        <span v-if="showTotal && total > 0" class="eb-data-table__total-badge">
           共 <strong>{{ total }}</strong> 条
         </span>
       </div>
-      <div class="ev-data-table__toolbar-right">
+      <div class="eb-data-table__toolbar-right">
         <slot name="toolbar" />
       </div>
     </div>
 
     <!-- 表格 -->
-    <div class="ev-data-table__table-wrapper" :class="{ 'is-loading': loading }">
-      <ev-table
+    <div class="eb-data-table__table-wrapper" :class="{ 'is-loading': loading }">
+      <eb-table
         ref="tableRef"
         v-bind="tableAttrs"
         :data="data"
@@ -24,9 +24,9 @@
         @row-click="emit('row-click', $event)"
         @cell-click="emit('cell-click', $event)"
       >
-        <ev-table-column v-if="selectable" type="selection" :width="44" />
-        <ev-table-column v-if="showIndex" type="index" label="#" :width="indexWidth" />
-        <ev-table-column
+        <eb-table-column v-if="selectable" type="selection" :width="44" />
+        <eb-table-column v-if="showIndex" type="index" label="#" :width="indexWidth" />
+        <eb-table-column
           v-for="col in columns"
           :key="col.prop"
           :prop="col.prop"
@@ -40,27 +40,27 @@
         >
           <template #default="scope">
             <slot :name="col.slot || col.prop" v-bind="scope">
-              <ev-cell-stack v-if="col.stack" :main="scope.row[col.prop]" :sub="col.stack(scope.row)" />
+              <eb-cell-stack v-if="col.stack" :main="scope.row[col.prop]" :sub="col.stack(scope.row)" />
               <template v-else>{{ scope.row[col.prop] }}</template>
             </slot>
           </template>
-        </ev-table-column>
+        </eb-table-column>
         <!-- 操作列 -->
-        <ev-table-column v-if="$slots.operations" :label="operationsLabel" :width="operationsWidth" :fixed="operationsFixed">
+        <eb-table-column v-if="$slots.operations" :label="operationsLabel" :width="operationsWidth" :fixed="operationsFixed">
           <template #default="scope">
             <slot name="operations" v-bind="scope" />
           </template>
-        </ev-table-column>
+        </eb-table-column>
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
-      </ev-table>
-      <div v-if="loading" class="ev-data-table__loading-mask" aria-label="加载中">
-        <ev-spin size="default" />
+      </eb-table>
+      <div v-if="loading" class="eb-data-table__loading-mask" aria-label="加载中">
+        <eb-spin size="default" />
       </div>
     </div>
 
     <!-- 分页 -->
-    <div v-if="showPagination" class="ev-data-table__pagination">
-      <ev-pagination
+    <div v-if="showPagination" class="eb-data-table__pagination">
+      <eb-pagination
         :model-value="{ page: page, size: pageSize }"
         :total="total"
         :page-size="pageSize"
@@ -74,20 +74,20 @@
 
 <script setup>
 /**
- * EvDataTable — CRUD 表格封装（业务封装）
- * toolbar（标题 + 计数角标 + actions 插槽）+ EvTable（columns 配置式）+ 内置分页；
+ * EbDataTable — CRUD 表格封装（业务封装）
+ * toolbar（标题 + 计数角标 + actions 插槽）+ EbTable（columns 配置式）+ 内置分页；
  * columns = [{ prop, label, width?, minWidth?, fixed?, sortable?, align?, slot?, stack?(row)=>副行 }]；
  * 分页受控：page/pageSize props + update:page/update:pageSize/page-change 事件；
- * expose 透传 EvTable 实例方法（clearSelection/toggleRowSelection 等）
+ * expose 透传 EbTable 实例方法（clearSelection/toggleRowSelection 等）
  */
 import { ref } from 'vue'
-import EvButton from '../button/index.vue'
-import EvCellStack from '../cell-stack/index.vue'
-import EvIcon from '../icon/index.vue'
-import EvPagination from '../pagination/index.vue'
-import EvSpin from '../spin/index.vue'
-import EvTable from '../table/index.vue'
-import EvTableColumn from '../table/column.vue'
+import EbButton from '../button/index.vue'
+import EbCellStack from '../cell-stack/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbPagination from '../pagination/index.vue'
+import EbSpin from '../spin/index.vue'
+import EbTable from '../table/index.vue'
+import EbTableColumn from '../table/column.vue'
 
 const props = defineProps({
   data: { type: Array, default: () => [] },
@@ -110,7 +110,7 @@ const props = defineProps({
   pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
   paginationLayout: { type: String, default: 'total, sizes, prev, pager, next' },
   showPagination: { type: Boolean, default: true },
-  // 透传 EvTable 的其余 attrs（border/stripe/height 等）
+  // 透传 EbTable 的其余 attrs（border/stripe/height 等）
   tableAttrs: { type: Object, default: () => ({}) },
 })
 

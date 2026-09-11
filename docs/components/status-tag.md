@@ -1,6 +1,6 @@
 # StatusTag 状态标签
 
-语义枚举到预设色的状态标签：`statuses` 声明值到文本/颜色的映射，未命中自动回退兜底色，基于 EvTag 渲染。
+语义枚举到预设色的状态标签：`statuses` 声明值到文本/颜色的映射，未命中自动回退兜底色，基于 EbTag 渲染。
 
 映射规则：
 
@@ -11,12 +11,12 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle" style="margin-bottom: 12px;">
-    <ev-status-tag value="active" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
-    <ev-status-tag value="disabled" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
-    <ev-status-tag value="pending" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
-    <ev-status-tag value="unknown" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
-  </ev-space>
+  <eb-space size="middle" style="margin-bottom: 12px;">
+    <eb-status-tag value="active" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
+    <eb-status-tag value="disabled" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
+    <eb-status-tag value="pending" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
+    <eb-status-tag value="unknown" :statuses="[{ value: 'active', label: '启用', type: 'success' }, { value: 'disabled', label: '禁用', type: 'danger' }, { value: 'pending', label: '待审核', type: 'warning' }]" />
+  </eb-space>
 </DemoBlock>
 
 <script setup>
@@ -33,15 +33,15 @@ const stStatuses = [
 数字值同样支持（内部转字符串比较与展示）；`frozen` 命中但未配 `label`，回退显示原始值且颜色用默认 `info`；`mystery` 未命中，走 `fallback-type` 兜底色并显示原值。
 
 <DemoBlock>
-  <ev-space size="middle" style="margin-right: 24px;">
-    <ev-status-tag :value="404" :statuses="stStatuses" />
-    <ev-status-tag value="frozen" :statuses="stStatuses" />
-    <ev-status-tag value="active" :statuses="stStatuses" />
-  </ev-space>
-  <ev-space size="middle">
-    <ev-status-tag value="mystery" :statuses="stStatuses" />
-    <ev-status-tag value="mystery" :statuses="stStatuses" fallback-type="danger" />
-  </ev-space>
+  <eb-space size="middle" style="margin-right: 24px;">
+    <eb-status-tag :value="404" :statuses="stStatuses" />
+    <eb-status-tag value="frozen" :statuses="stStatuses" />
+    <eb-status-tag value="active" :statuses="stStatuses" />
+  </eb-space>
+  <eb-space size="middle">
+    <eb-status-tag value="mystery" :statuses="stStatuses" />
+    <eb-status-tag value="mystery" :statuses="stStatuses" fallback-type="danger" />
+  </eb-space>
 </DemoBlock>
 
 ## 尺寸与显示效果
@@ -49,16 +49,16 @@ const stStatuses = [
 `size` 控制尺寸，`effect` 控制填充风格（light 浅底 / plain 描边 / dark 实底）。
 
 <DemoBlock>
-  <ev-space size="middle" style="margin-right: 24px;">
-    <ev-status-tag value="active" :statuses="stStatuses" size="small" />
-    <ev-status-tag value="active" :statuses="stStatuses" size="default" />
-    <ev-status-tag value="active" :statuses="stStatuses" size="large" />
-  </ev-space>
-  <ev-space size="middle">
-    <ev-status-tag value="active" :statuses="stStatuses" effect="light" />
-    <ev-status-tag value="active" :statuses="stStatuses" effect="plain" />
-    <ev-status-tag value="active" :statuses="stStatuses" effect="dark" />
-  </ev-space>
+  <eb-space size="middle" style="margin-right: 24px;">
+    <eb-status-tag value="active" :statuses="stStatuses" size="small" />
+    <eb-status-tag value="active" :statuses="stStatuses" size="default" />
+    <eb-status-tag value="active" :statuses="stStatuses" size="large" />
+  </eb-space>
+  <eb-space size="middle">
+    <eb-status-tag value="active" :statuses="stStatuses" effect="light" />
+    <eb-status-tag value="active" :statuses="stStatuses" effect="plain" />
+    <eb-status-tag value="active" :statuses="stStatuses" effect="dark" />
+  </eb-space>
 </DemoBlock>
 
 ## 在表格中使用
@@ -66,18 +66,18 @@ const stStatuses = [
 经 DataTable 的列插槽复用同一份映射表，未命中行自动灰底兜底，无需逐行写 if/else。
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="账户列表"
     :columns="[{ prop: 'name', label: '账户' }, { prop: 'status', label: '状态', slot: 'status' }]"
     :data="[{ name: 'acct-01', status: 'active' }, { name: 'acct-02', status: 'disabled' }, { name: 'acct-03', status: 'unknown' }]"
   >
     <template #status="{ row }">
-      <ev-status-tag :value="row.status" :statuses="stStatuses" />
+      <eb-status-tag :value="row.status" :statuses="stStatuses" />
     </template>
-  </ev-data-table>
+  </eb-data-table>
 </DemoBlock>
 
-与 EvDataTable 结合时，经列插槽使用即可：`<template #status="{ row }"><ev-status-tag :value="row.status" :statuses="statuses" /></template>`。
+与 EbDataTable 结合时，经列插槽使用即可：`<template #status="{ row }"><eb-status-tag :value="row.status" :statuses="statuses" /></template>`。
 
 映射匹配注意事项：
 

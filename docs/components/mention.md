@@ -7,12 +7,12 @@
 输入 `@` 唤起面板，继续输入过滤，回车或点击选中：
 
 <DemoBlock>
-  <ev-mention
+  <eb-mention
     v-model="comment"
     :options="members"
     placeholder="输入 @ 提及成员，例如：@张三 看一下这个工单"
-  ></ev-mention>
-  <div style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">modelValue：{{ comment || '（空）' }}</div>
+  ></eb-mention>
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">modelValue：{{ comment || '（空）' }}</div>
 </DemoBlock>
 
 ## 自定义触发前缀
@@ -21,20 +21,20 @@
 
 <DemoBlock>
   <div style="display: flex; flex-direction: column; gap: 12px;">
-    <ev-mention
+    <eb-mention
       v-model="topic"
       :options="topics"
       prefix="#"
       placeholder="输入 # 关联话题"
-    ></ev-mention>
-    <ev-mention
+    ></eb-mention>
+    <eb-mention
       v-model="command"
       :options="commands"
       prefix="/"
       split=""
       :rows="2"
       placeholder="输入 / 唤起指令（split 为空串，插入后不加空格）"
-    ></ev-mention>
+    ></eb-mention>
   </div>
 </DemoBlock>
 
@@ -43,14 +43,14 @@
 候选支持 `{ value, label }` 对象（label 缺省用 value）；`search` 在过滤时触发，`select` 在选中时触发：
 
 <DemoBlock>
-  <ev-mention
+  <eb-mention
     v-model="assignee"
     :options="userOptions"
     @select="onSelect"
     @search="onSearch"
     placeholder="输入 @ 选择负责人"
-  ></ev-mention>
-  <div style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">
+  ></eb-mention>
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
     最近选中：{{ lastSelected || '（无）' }}；最近过滤词：{{ lastQuery || '（无）' }}
   </div>
 </DemoBlock>

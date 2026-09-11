@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import EvTransfer from '../src/components/transfer/index.vue'
-import EvCarousel from '../src/components/carousel/index.vue'
-import EvCarouselItem from '../src/components/carousel/item.vue'
-import EvCascaderPanel from '../src/components/cascader-panel/index.vue'
+import EbTransfer from '../src/components/transfer/index.vue'
+import EbCarousel from '../src/components/carousel/index.vue'
+import EbCarouselItem from '../src/components/carousel/item.vue'
+import EbCascaderPanel from '../src/components/cascader-panel/index.vue'
 
-describe('EvTransfer', () => {
+describe('EbTransfer', () => {
   const DATA = [
     { key: 1, label: '北京' },
     { key: 2, label: '上海' },
@@ -14,36 +14,36 @@ describe('EvTransfer', () => {
     { key: 4, label: '深圳' },
   ]
 
-  const mountTransfer = (props = {}) => mount(EvTransfer, { props: { data: DATA, ...props }, attachTo: document.body })
+  const mountTransfer = (props = {}) => mount(EbTransfer, { props: { data: DATA, ...props }, attachTo: document.body })
 
   it('双 class + 双面板 + 中间按钮', () => {
     const wrapper = mountTransfer({ modelValue: [1] })
-    expect(wrapper.classes()).toContain('ev-transfer')
-    expect(wrapper.classes()).toContain('ev-transfer')
-    expect(wrapper.findAll('.ev-transfer-panel')).toHaveLength(2)
-    expect(wrapper.findAll('.ev-transfer__btn')).toHaveLength(2)
+    expect(wrapper.classes()).toContain('eb-transfer')
+    expect(wrapper.classes()).toContain('eb-transfer')
+    expect(wrapper.findAll('.eb-transfer-panel')).toHaveLength(2)
+    expect(wrapper.findAll('.eb-transfer__btn')).toHaveLength(2)
     // 左 2/3/4，右 1
-    expect(wrapper.findAll('.ev-transfer-panel')[0].findAll('.ev-transfer-panel__item')).toHaveLength(3)
-    expect(wrapper.findAll('.ev-transfer-panel')[1].findAll('.ev-transfer-panel__item')).toHaveLength(1)
+    expect(wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item')).toHaveLength(3)
+    expect(wrapper.findAll('.eb-transfer-panel')[1].findAll('.eb-transfer-panel__item')).toHaveLength(1)
     wrapper.unmount()
   })
 
   it('标题与计数', () => {
     const wrapper = mountTransfer({ modelValue: [1], titles: ['待选', '已选'] })
-    const headers = wrapper.findAll('.ev-transfer-panel__header-title')
+    const headers = wrapper.findAll('.eb-transfer-panel__header-title')
     expect(headers[0].text()).toBe('待选')
     expect(headers[1].text()).toBe('已选')
-    expect(wrapper.find('.ev-transfer-panel__header-num').text()).toBe('3')
+    expect(wrapper.find('.eb-transfer-panel__header-num').text()).toBe('3')
     wrapper.unmount()
   })
 
   it('勾选后向右移动：update:modelValue + change(direction, movedKeys)', async () => {
     const wrapper = mountTransfer()
-    const leftItems = wrapper.findAll('.ev-transfer-panel')[0].findAll('.ev-transfer-panel__item input')
+    const leftItems = wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item input')
     // 左面板全量顺序：北京1/上海2/广州3(禁)/深圳4
     await leftItems[1].setValue(true) // 上海
     await leftItems[3].setValue(true) // 深圳
-    await wrapper.findAll('.ev-transfer__btn')[0].trigger('click')
+    await wrapper.findAll('.eb-transfer__btn')[0].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([2, 4])
     expect(wrapper.emitted('change')[0]).toEqual([[2, 4], 'right', [2, 4]])
     wrapper.unmount()
@@ -51,8 +51,8 @@ describe('EvTransfer', () => {
 
   it('disabled 项不可勾选不参与移动', async () => {
     const wrapper = mountTransfer({ modelValue: [] })
-    const leftPanel = wrapper.findAll('.ev-transfer-panel')[0]
-    const disabledItem = leftPanel.findAll('.ev-transfer-panel__item').find((w) => w.text() === '广州')
+    const leftPanel = wrapper.findAll('.eb-transfer-panel')[0]
+    const disabledItem = leftPanel.findAll('.eb-transfer-panel__item').find((w) => w.text() === '广州')
     expect(disabledItem.classes()).toContain('is-disabled')
     const checkbox = disabledItem.find('input')
     expect(checkbox.attributes('disabled')).toBeDefined()
@@ -61,9 +61,9 @@ describe('EvTransfer', () => {
 
   it('向左移动移除已选项', async () => {
     const wrapper = mountTransfer({ modelValue: [1, 2] })
-    const rightPanel = wrapper.findAll('.ev-transfer-panel')[1]
-    await rightPanel.findAll('.ev-transfer-panel__item input')[0].setValue(true) // 1
-    await wrapper.findAll('.ev-transfer__btn')[1].trigger('click')
+    const rightPanel = wrapper.findAll('.eb-transfer-panel')[1]
+    await rightPanel.findAll('.eb-transfer-panel__item input')[0].setValue(true) // 1
+    await wrapper.findAll('.eb-transfer__btn')[1].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([2])
     expect(wrapper.emitted('change')[0]).toEqual([[2], 'left', [1]])
     wrapper.unmount()
@@ -71,17 +71,17 @@ describe('EvTransfer', () => {
 
   it('无勾选时按钮禁用', () => {
     const wrapper = mountTransfer()
-    expect(wrapper.findAll('.ev-transfer__btn')[0].classes()).toContain('is-disabled')
+    expect(wrapper.findAll('.eb-transfer__btn')[0].classes()).toContain('is-disabled')
     wrapper.unmount()
   })
 
   it('filterable 过滤左右两侧', async () => {
     const wrapper = mountTransfer({ filterable: true, filterPlaceholder: '搜城市' })
-    expect(wrapper.findAll('.ev-transfer-panel__filter')).toHaveLength(2)
-    const leftInput = wrapper.findAll('.ev-transfer-panel')[0].find('.ev-input__inner')
+    expect(wrapper.findAll('.eb-transfer-panel__filter')).toHaveLength(2)
+    const leftInput = wrapper.findAll('.eb-transfer-panel')[0].find('.eb-input__inner')
     await leftInput.setValue('北')
     await nextTick()
-    const items = wrapper.findAll('.ev-transfer-panel')[0].findAll('.ev-transfer-panel__item')
+    const items = wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item')
     expect(items).toHaveLength(1)
     expect(items[0].text()).toContain('北京')
     wrapper.unmount()
@@ -89,17 +89,17 @@ describe('EvTransfer', () => {
 
   it('全选勾选（disabled 除外）', async () => {
     const wrapper = mountTransfer()
-    const header = wrapper.findAll('.ev-transfer-panel')[0].find('.ev-transfer-panel__header input')
+    const header = wrapper.findAll('.eb-transfer-panel')[0].find('.eb-transfer-panel__header input')
     await header.setValue(true)
-    expect(wrapper.findAll('.ev-transfer__btn')[0].classes()).not.toContain('is-disabled')
+    expect(wrapper.findAll('.eb-transfer__btn')[0].classes()).not.toContain('is-disabled')
     // 可移动的是 1/2/4（广州 disabled 被排除）
-    await wrapper.findAll('.ev-transfer__btn')[0].trigger('click')
+    await wrapper.findAll('.eb-transfer__btn')[0].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([1, 2, 4])
     wrapper.unmount()
   })
 })
 
-describe('EvCarousel / EvCarouselItem', () => {
+describe('EbCarousel / EbCarouselItem', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -110,13 +110,13 @@ describe('EvCarousel / EvCarouselItem', () => {
   const mountCarousel = (props = {}) =>
     mount(
       {
-        components: { EvCarousel, EvCarouselItem },
+        components: { EbCarousel, EbCarouselItem },
         template: `
-          <ev-carousel v-bind="props">
-            <ev-carousel-item name="a"><p>第1张</p></ev-carousel-item>
-            <ev-carousel-item name="b"><p>第2张</p></ev-carousel-item>
-            <ev-carousel-item name="c"><p>第3张</p></ev-carousel-item>
-          </ev-carousel>
+          <eb-carousel v-bind="props">
+            <eb-carousel-item name="a"><p>第1张</p></eb-carousel-item>
+            <eb-carousel-item name="b"><p>第2张</p></eb-carousel-item>
+            <eb-carousel-item name="c"><p>第3张</p></eb-carousel-item>
+          </eb-carousel>
         `,
         setup() {
           return { props }
@@ -128,8 +128,8 @@ describe('EvCarousel / EvCarouselItem', () => {
   it('双 class + 项注册 + 首项激活', async () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
-    expect(wrapper.find('.ev-carousel').classes()).toContain('ev-carousel')
-    const items = wrapper.findAll('.ev-carousel__item')
+    expect(wrapper.find('.eb-carousel').classes()).toContain('eb-carousel')
+    const items = wrapper.findAll('.eb-carousel__item')
     expect(items).toHaveLength(3)
     expect(items[0].classes()).toContain('is-active')
     expect(items[0].text()).toContain('第1张')
@@ -138,18 +138,18 @@ describe('EvCarousel / EvCarouselItem', () => {
 
   it('height 透传到容器', () => {
     const wrapper = mountCarousel({ height: '200px', autoplay: false })
-    expect(wrapper.find('.ev-carousel__container').attributes('style')).toContain('height: 200px')
+    expect(wrapper.find('.eb-carousel__container').attributes('style')).toContain('height: 200px')
     wrapper.unmount()
   })
 
   it('指示器渲染 + 点击切换 + change 事件', async () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
-    const indicators = wrapper.findAll('.ev-carousel__indicator')
+    const indicators = wrapper.findAll('.eb-carousel__indicator')
     expect(indicators).toHaveLength(3)
     await indicators[2].find('button').trigger('click')
-    expect(wrapper.findComponent(EvCarousel).emitted('change')).toEqual([[2, 0]])
-    const items = wrapper.findAll('.ev-carousel__item')
+    expect(wrapper.findComponent(EbCarousel).emitted('change')).toEqual([[2, 0]])
+    const items = wrapper.findAll('.eb-carousel__item')
     expect(items[2].classes()).toContain('is-active')
     expect(items[0].classes()).not.toContain('is-active')
     wrapper.unmount()
@@ -158,31 +158,31 @@ describe('EvCarousel / EvCarouselItem', () => {
   it('箭头 next/prev + loop 环绕', async () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
-    await wrapper.find('.ev-carousel__arrow--right').trigger('click')
-    expect(wrapper.findAll('.ev-carousel__item')[1].classes()).toContain('is-active')
+    await wrapper.find('.eb-carousel__arrow--right').trigger('click')
+    expect(wrapper.findAll('.eb-carousel__item')[1].classes()).toContain('is-active')
     // 3 → next 回绕到 0
-    await wrapper.find('.ev-carousel__arrow--right').trigger('click')
-    await wrapper.find('.ev-carousel__arrow--right').trigger('click')
-    expect(wrapper.findAll('.ev-carousel__item')[0].classes()).toContain('is-active')
+    await wrapper.find('.eb-carousel__arrow--right').trigger('click')
+    await wrapper.find('.eb-carousel__arrow--right').trigger('click')
+    expect(wrapper.findAll('.eb-carousel__item')[0].classes()).toContain('is-active')
     // prev 从 0 回绕到 2
-    await wrapper.find('.ev-carousel__arrow--left').trigger('click')
-    expect(wrapper.findAll('.ev-carousel__item')[2].classes()).toContain('is-active')
+    await wrapper.find('.eb-carousel__arrow--left').trigger('click')
+    expect(wrapper.findAll('.eb-carousel__item')[2].classes()).toContain('is-active')
     wrapper.unmount()
   })
 
   it('setActiveItem 按索引与 name 定位 + expose prev/next', async () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
-    const carousel = wrapper.findComponent(EvCarousel)
+    const carousel = wrapper.findComponent(EbCarousel)
     carousel.vm.setActiveItem(1)
     await nextTick()
-    expect(wrapper.findAll('.ev-carousel__item')[1].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[1].classes()).toContain('is-active')
     carousel.vm.setActiveItem('c')
     await nextTick()
-    expect(wrapper.findAll('.ev-carousel__item')[2].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[2].classes()).toContain('is-active')
     carousel.vm.prev()
     await nextTick()
-    expect(wrapper.findAll('.ev-carousel__item')[1].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[1].classes()).toContain('is-active')
     wrapper.unmount()
   })
 
@@ -190,11 +190,11 @@ describe('EvCarousel / EvCarouselItem', () => {
     const wrapper = mountCarousel({ interval: 1000 })
     await nextTick()
     await vi.advanceTimersByTimeAsync(1100)
-    expect(wrapper.findAll('.ev-carousel__item')[1].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[1].classes()).toContain('is-active')
     // hover 暂停
-    await wrapper.find('.ev-carousel').trigger('mouseenter')
+    await wrapper.find('.eb-carousel').trigger('mouseenter')
     await vi.advanceTimersByTimeAsync(3000)
-    expect(wrapper.findAll('.ev-carousel__item')[1].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[1].classes()).toContain('is-active')
     wrapper.unmount()
   })
 
@@ -202,30 +202,30 @@ describe('EvCarousel / EvCarouselItem', () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
     await vi.advanceTimersByTimeAsync(10000)
-    expect(wrapper.findAll('.ev-carousel__item')[0].classes()).toContain('is-active')
+    expect(wrapper.findAll('.eb-carousel__item')[0].classes()).toContain('is-active')
     wrapper.unmount()
   })
 
   it('单项不渲染箭头与指示器', async () => {
     const wrapper = mount(
       {
-        components: { EvCarousel, EvCarouselItem },
+        components: { EbCarousel, EbCarouselItem },
         template: `
-          <ev-carousel :autoplay="false"><ev-carousel-item><p>唯一</p></ev-carousel-item></ev-carousel>
+          <eb-carousel :autoplay="false"><eb-carousel-item><p>唯一</p></eb-carousel-item></eb-carousel>
         `,
       },
       { attachTo: document.body },
     )
     await nextTick()
-    expect(wrapper.find('.ev-carousel__arrow').exists()).toBe(false)
-    expect(wrapper.find('.ev-carousel__indicators').exists()).toBe(false)
+    expect(wrapper.find('.eb-carousel__arrow').exists()).toBe(false)
+    expect(wrapper.find('.eb-carousel__indicators').exists()).toBe(false)
     wrapper.unmount()
   })
 
   it('非相邻项透明隐藏 + 位移方向', async () => {
     const wrapper = mountCarousel({ autoplay: false })
     await nextTick()
-    const items = wrapper.findAll('.ev-carousel__item')
+    const items = wrapper.findAll('.eb-carousel__item')
     // 第 3 项相对 active(0) diff=2 → 隐藏
     expect(items[2].attributes('style')).toContain('opacity: 0')
     expect(items[1].attributes('style')).toContain('translateX(100%)')
@@ -233,7 +233,7 @@ describe('EvCarousel / EvCarouselItem', () => {
   })
 })
 
-describe('EvCascaderPanel', () => {
+describe('EbCascaderPanel', () => {
   const OPTIONS = [
     {
       value: 'zhejiang',
@@ -247,27 +247,27 @@ describe('EvCascaderPanel', () => {
   ]
 
   it('双 class + 首级菜单渲染 + border', () => {
-    const wrapper = mount(EvCascaderPanel, { props: { options: OPTIONS } })
-    expect(wrapper.classes()).toContain('ev-cascader-panel')
-    expect(wrapper.classes()).toContain('ev-cascader-panel')
+    const wrapper = mount(EbCascaderPanel, { props: { options: OPTIONS } })
+    expect(wrapper.classes()).toContain('eb-cascader-panel')
+    expect(wrapper.classes()).toContain('eb-cascader-panel')
     expect(wrapper.classes()).toContain('is-bordered')
-    expect(wrapper.findAll('.ev-cascader-menu')).toHaveLength(1)
-    const nodes = wrapper.findAll('.ev-cascader-node')
+    expect(wrapper.findAll('.eb-cascader-menu')).toHaveLength(1)
+    const nodes = wrapper.findAll('.eb-cascader-node')
     expect(nodes).toHaveLength(2)
     expect(nodes[1].classes()).toContain('is-disabled')
     wrapper.unmount()
   })
 
   it('border=false 无边框类', () => {
-    expect(mount(EvCascaderPanel, { props: { options: OPTIONS, border: false } }).classes()).not.toContain('is-bordered')
+    expect(mount(EbCascaderPanel, { props: { options: OPTIONS, border: false } }).classes()).not.toContain('is-bordered')
   })
 
   it('单选：点击叶子 emit 值 + close', async () => {
-    const wrapper = mount(EvCascaderPanel, { props: { options: OPTIONS } })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click') // 展开浙江
+    const wrapper = mount(EbCascaderPanel, { props: { options: OPTIONS } })
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click') // 展开浙江
     await nextTick()
-    expect(wrapper.findAll('.ev-cascader-menu')).toHaveLength(2)
-    const leaf = wrapper.findAll('.ev-cascader-menu')[1].findAll('.ev-cascader-node')[0]
+    expect(wrapper.findAll('.eb-cascader-menu')).toHaveLength(2)
+    const leaf = wrapper.findAll('.eb-cascader-menu')[1].findAll('.eb-cascader-node')[0]
     await leaf.trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou'])
     expect(wrapper.emitted('change')).toBeTruthy()
@@ -276,30 +276,30 @@ describe('EvCascaderPanel', () => {
   })
 
   it('emitPath=false：值取叶 value', async () => {
-    const wrapper = mount(EvCascaderPanel, { props: { options: OPTIONS, props: { emitPath: false } } })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click')
+    const wrapper = mount(EbCascaderPanel, { props: { options: OPTIONS, props: { emitPath: false } } })
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click')
     await nextTick()
-    await wrapper.findAll('.ev-cascader-menu')[1].findAll('.ev-cascader-node')[1].trigger('click')
+    await wrapper.findAll('.eb-cascader-menu')[1].findAll('.eb-cascader-node')[1].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toBe('ningbo')
     wrapper.unmount()
   })
 
   it('checkStrictly 单选：任意层级可选且面板不关', async () => {
-    const wrapper = mount(EvCascaderPanel, { props: { options: OPTIONS, props: { checkStrictly: true } } })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click')
+    const wrapper = mount(EbCascaderPanel, { props: { options: OPTIONS, props: { checkStrictly: true } } })
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual(['zhejiang'])
     expect(wrapper.emitted('close')).toBeUndefined()
     wrapper.unmount()
   })
 
   it('multiple：勾选叶路径 + getCheckedNodes', async () => {
-    const wrapper = mount(EvCascaderPanel, {
+    const wrapper = mount(EbCascaderPanel, {
       props: { options: OPTIONS, props: { multiple: true }, modelValue: [] },
     })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click')
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click')
     await nextTick()
     // 勾选"杭州"（原生 change 不冒泡，需在内部 input 上触发）
-    const leaf = wrapper.findAll('.ev-cascader-menu')[1].findAll('.ev-cascader-node')[0]
+    const leaf = wrapper.findAll('.eb-cascader-menu')[1].findAll('.eb-cascader-node')[0]
     await leaf.find('input').setValue(true)
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([['zhejiang', 'hangzhou']])
     // getCheckedNodes 基于受控值
@@ -312,12 +312,12 @@ describe('EvCascaderPanel', () => {
   })
 
   it('multiple + 父节点勾选级联全部叶', async () => {
-    const wrapper = mount(EvCascaderPanel, {
+    const wrapper = mount(EbCascaderPanel, {
       props: { options: OPTIONS, props: { multiple: true }, modelValue: [] },
     })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click')
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click')
     await nextTick()
-    await wrapper.findAll('.ev-cascader-node')[0].find('input').setValue(true)
+    await wrapper.findAll('.eb-cascader-node')[0].find('input').setValue(true)
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([
       ['zhejiang', 'hangzhou'],
       ['zhejiang', 'ningbo'],
@@ -326,10 +326,10 @@ describe('EvCascaderPanel', () => {
   })
 
   it('expand-change 事件 + clearChecked', async () => {
-    const wrapper = mount(EvCascaderPanel, {
+    const wrapper = mount(EbCascaderPanel, {
       props: { options: OPTIONS, props: { multiple: true }, modelValue: [] },
     })
-    await wrapper.findAll('.ev-cascader-node')[0].trigger('click')
+    await wrapper.findAll('.eb-cascader-node')[0].trigger('click')
     expect(wrapper.emitted('expand-change')).toBeTruthy()
     wrapper.vm.clearChecked()
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
@@ -337,13 +337,13 @@ describe('EvCascaderPanel', () => {
   })
 
   it('自定义字段名（props.valueKey 等）', async () => {
-    const wrapper = mount(EvCascaderPanel, {
+    const wrapper = mount(EbCascaderPanel, {
       props: {
         options: [{ id: 'a1', name: '节点A', subs: [{ id: 'a2', name: '节点B' }] }],
         props: { value: 'id', label: 'name', children: 'subs' },
       },
     })
-    expect(wrapper.find('.ev-cascader-node__label').text()).toBe('节点A')
+    expect(wrapper.find('.eb-cascader-node__label').text()).toBe('节点A')
     wrapper.unmount()
   })
 })

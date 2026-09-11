@@ -1,23 +1,23 @@
 <template>
   <div
-    class="ev-step ev-step"
+    class="eb-step eb-step"
     :class="[`is-${direction}`, { 'is-center': alignCenter, 'is-simple': simple }, `is-${currentStatus}`]"
     :style="stepStyle"
   >
-    <div class="ev-step__head" :class="`is-${currentStatus}`">
-      <div v-if="!simple" class="ev-step__line"><i class="ev-step__line-inner" /></div>
-      <div class="ev-step__icon" :class="[`is-${currentStatus}`, { 'is-text': !icon }]">
+    <div class="eb-step__head" :class="`is-${currentStatus}`">
+      <div v-if="!simple" class="eb-step__line"><i class="eb-step__line-inner" /></div>
+      <div class="eb-step__icon" :class="[`is-${currentStatus}`, { 'is-text': !icon }]">
         <slot name="icon">
-          <ev-icon v-if="icon" :name="icon" :size="simple ? 16 : 22" />
-          <span v-else class="ev-step__icon-inner">{{ index + 1 }}</span>
+          <eb-icon v-if="icon" :name="icon" :size="simple ? 16 : 22" />
+          <span v-else class="eb-step__icon-inner">{{ index + 1 }}</span>
         </slot>
       </div>
     </div>
-    <div class="ev-step__main">
-      <div class="ev-step__title" :class="`is-${currentStatus}`">
+    <div class="eb-step__main">
+      <div class="eb-step__title" :class="`is-${currentStatus}`">
         <slot name="title">{{ title }}</slot>
       </div>
-      <div v-if="description || $slots.description" class="ev-step__description" :class="`is-${currentStatus}`">
+      <div v-if="description || $slots.description" class="eb-step__description" :class="`is-${currentStatus}`">
         <slot name="description">{{ description }}</slot>
       </div>
     </div>
@@ -26,11 +26,11 @@
 
 <script setup>
 /**
- * EvStep — 步骤条项
+ * EbStep — 步骤条项
  * 状态：idx < active → finish-status；=== active → process-status；> → wait；status prop 显式覆盖
  */
 import { inject, computed, ref, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   title: { type: String, default: '' },

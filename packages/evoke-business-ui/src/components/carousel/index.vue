@@ -1,47 +1,47 @@
 <template>
   <div
-    class="ev-carousel ev-carousel"
-    :class="[`ev-carousel--${direction}`, { 'is-card': type === 'card' }]"
+    class="eb-carousel eb-carousel"
+    :class="[`eb-carousel--${direction}`, { 'is-card': type === 'card' }]"
     @mouseenter="pauseOnHover && pause()"
     @mouseleave="pauseOnHover && restart()"
   >
-    <div class="ev-carousel__container" :style="containerStyle">
+    <div class="eb-carousel__container" :style="containerStyle">
       <slot />
 
       <!-- 切换箭头 -->
       <button
         v-if="arrow !== 'never' && itemCount > 1"
         type="button"
-        class="ev-carousel__arrow ev-carousel__arrow--left"
+        class="eb-carousel__arrow eb-carousel__arrow--left"
         :class="{ 'is-hover-only': arrow === 'hover' }"
         aria-label="上一张"
         @click="prev"
       >
-        <ev-icon name="arrow-left" :size="16" />
+        <eb-icon name="arrow-left" :size="16" />
       </button>
       <button
         v-if="arrow !== 'never' && itemCount > 1"
         type="button"
-        class="ev-carousel__arrow ev-carousel__arrow--right"
+        class="eb-carousel__arrow eb-carousel__arrow--right"
         :class="{ 'is-hover-only': arrow === 'hover' }"
         aria-label="下一张"
         @click="next"
       >
-        <ev-icon name="arrow-right" :size="16" />
+        <eb-icon name="arrow-right" :size="16" />
       </button>
     </div>
 
     <!-- 指示器 -->
-    <ul v-if="itemCount > 1" class="ev-carousel__indicators" :class="[`is-${direction}`]">
+    <ul v-if="itemCount > 1" class="eb-carousel__indicators" :class="[`is-${direction}`]">
       <li
         v-for="i in itemCount"
         :key="i"
-        class="ev-carousel__indicator"
+        class="eb-carousel__indicator"
         :class="{ 'is-active': i - 1 === activeIndex }"
       >
         <button
           type="button"
-          class="ev-carousel__button"
+          class="eb-carousel__button"
           :aria-label="`切换到第 ${i} 张`"
           @click="setActiveItem(i - 1)"
         />
@@ -52,12 +52,12 @@
 
 <script setup>
 /**
- * EvCarousel — 走马灯
- * 子项 EvCarouselItem 注册取序；autoplay/loop/arrow/指示器；expose setActiveItem/prev/next
+ * EbCarousel — 走马灯
+ * 子项 EbCarouselItem 注册取序；autoplay/loop/arrow/指示器；expose setActiveItem/prev/next
  * type="card" 暂未实现，prop 预留
  */
 import { ref, reactive, computed, provide, watch, onMounted, onBeforeUnmount } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   initialIndex: { type: Number, default: 0 },

@@ -1,12 +1,12 @@
 <template>
-  <component :is="tag" class="ev-aside ev-aside" :style="{ width }">
+  <component :is="tag" class="eb-aside eb-aside" :style="{ width }">
     <slot />
   </component>
 </template>
 
 <script setup>
 /**
- * EvAside — 侧边栏
+ * EbAside — 侧边栏
  */
 defineProps({
   width: { type: String, default: '300px' },

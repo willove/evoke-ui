@@ -1,45 +1,45 @@
 <template>
-  <div :class="['ew-pricing-card', { 'is-featured': featured, 'is-glass': glass === true, 'no-glass': glass === false }]">
-    <span v-if="badge" class="ew-pricing-card__badge">
+  <div :class="['ev-pricing-card', { 'is-featured': featured, 'is-glass': glass === true, 'no-glass': glass === false }]">
+    <span v-if="badge" class="ev-pricing-card__badge">
       <slot name="badge">{{ badge }}</slot>
     </span>
 
-    <h3 class="ew-pricing-card__title">
+    <h3 class="ev-pricing-card__title">
       <slot name="title">{{ title }}</slot>
     </h3>
-    <p v-if="description || $slots.description" class="ew-pricing-card__description">
+    <p v-if="description || $slots.description" class="ev-pricing-card__description">
       <slot name="description">{{ description }}</slot>
     </p>
 
-    <div v-if="price" class="ew-pricing-card__price-row">
-      <span class="ew-pricing-card__price">
+    <div v-if="price" class="ev-pricing-card__price-row">
+      <span class="ev-pricing-card__price">
         <slot name="price">{{ price }}</slot>
       </span>
-      <del v-if="originalPrice" class="ew-pricing-card__original">{{ originalPrice }}</del>
+      <del v-if="originalPrice" class="ev-pricing-card__original">{{ originalPrice }}</del>
     </div>
-    <div v-if="offerNote || $slots.note" class="ew-pricing-card__note">
+    <div v-if="offerNote || $slots.note" class="ev-pricing-card__note">
       <slot name="note">{{ offerNote }}</slot>
     </div>
 
-    <ul v-if="features.length || $slots.features" class="ew-pricing-card__features">
+    <ul v-if="features.length || $slots.features" class="ev-pricing-card__features">
       <slot name="features">
-        <li v-for="item in features" :key="item" class="ew-pricing-card__feature">
-          <EwIcon name="check" :size="16" class="ew-pricing-card__check" />
+        <li v-for="item in features" :key="item" class="ev-pricing-card__feature">
+          <EvIcon name="check" :size="16" class="ev-pricing-card__check" />
           <span>{{ item }}</span>
         </li>
       </slot>
     </ul>
 
-    <div class="ew-pricing-card__footer">
+    <div class="ev-pricing-card__footer">
       <slot name="action">
-        <EwButton
+        <EvButton
           :variant="featured ? 'primary' : 'dark'"
           block
           :pill="pill"
           @click="emit('action')"
         >
           {{ actionText }}
-        </EwButton>
+        </EvButton>
       </slot>
       <slot name="footer" />
     </div>
@@ -48,11 +48,11 @@
 
 <script setup>
 /**
- * EwPricingCard — 定价卡（launchos 定价区语言）
+ * EvPricingCard — 定价卡（launchos 定价区语言）
  * featured 深色主推卡 + lime 徽章 + 划线原价 + 橙色促销注记 + 勾选特性列表
  */
-import EwButton from '../button/index.vue'
-import EwIcon from '../icon/index.vue'
+import EvButton from '../button/index.vue'
+import EvIcon from '../icon/index.vue'
 
 defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */

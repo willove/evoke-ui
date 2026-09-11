@@ -1,20 +1,20 @@
 <template>
   <div
-    class="ev-date-editor ev-time-select ev-time-select"
+    class="eb-date-editor eb-time-select eb-time-select"
     :class="[sizeClass, { 'is-disabled': isDisabled }]"
   >
     <div
       ref="referenceRef"
-      class="ev-input__wrapper"
+      class="eb-input__wrapper"
       :class="{ 'is-focus': dropdownVisible, 'is-disabled': isDisabled }"
       @click="handleWrapperClick"
     >
-      <span class="ev-input__prefix">
-        <ev-icon :name="prefixIcon" class="ev-input__icon" />
+      <span class="eb-input__prefix">
+        <eb-icon :name="prefixIcon" class="eb-input__icon" />
       </span>
       <input
         ref="inputRef"
-        class="ev-input__inner"
+        class="eb-input__inner"
         :value="displayValue"
         :name="name"
         :placeholder="placeholder || t('datepicker.selectTime')"
@@ -23,9 +23,9 @@
         @change="handleInput"
         @focus="emit('focus')"
       />
-      <span v-if="clearable && hasValue && !isDisabled" class="ev-input__suffix" @click.stop>
-        <ev-icon
-          class="ev-input__icon ev-range__close-icon"
+      <span v-if="clearable && hasValue && !isDisabled" class="eb-input__suffix" @click.stop>
+        <eb-icon
+          class="eb-input__icon eb-range__close-icon"
           name="circle-close"
           @click.stop="handleClear"
         />
@@ -33,24 +33,24 @@
     </div>
 
     <Teleport to="body">
-      <Transition name="ev-picker-dropdown">
+      <Transition name="eb-picker-dropdown">
         <div
           v-if="dropdownVisible"
           ref="floatingRef"
-          class="ev-time-select-dropdown ev-popper ev-time-select-dropdown"
+          class="eb-time-select-dropdown eb-popper eb-time-select-dropdown"
           :style="popperStyle"
         >
-          <div class="ev-time-select__wrap">
+          <div class="eb-time-select__wrap">
             <p
               v-for="item in options"
               :key="item.value"
-              class="ev-time-select__item"
+              class="eb-time-select__item"
               :class="{ 'is-disabled': item.disabled, 'is-active': item.value === modelValue }"
               @click="handlePick(item)"
             >
               {{ item.value }}
             </p>
-            <p v-if="options.length === 0" class="ev-time-select__item is-disabled">
+            <p v-if="options.length === 0" class="eb-time-select__item is-disabled">
               {{ t('select.noData') }}
             </p>
           </div>
@@ -62,11 +62,11 @@
 
 <script setup>
 /**
- * EvTimeSelect — 时间下拉选择（固定步长选项列表，.ev-time-select-dropdown 结构类）
+ * EbTimeSelect — 时间下拉选择（固定步长选项列表，.eb-time-select-dropdown 结构类）
  * start/end/step（HH:mm），minTime/maxTime 控制可选范围
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { dayjs } from '../date-picker/utils'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
@@ -74,7 +74,7 @@ import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvTimeSelect', inheritAttrs: false })
+defineOptions({ name: 'EbTimeSelect', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [String, Date], default: null },
@@ -103,8 +103,8 @@ const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
 const isDisabled = computed(() => formDisabled.value || props.disabled)
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-input--large'
-  if (s === 'small') return 'ev-input--small'
+  if (s === 'large') return 'eb-input--large'
+  if (s === 'small') return 'eb-input--small'
   return ''
 })
 

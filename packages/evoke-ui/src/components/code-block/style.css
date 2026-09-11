@@ -1,44 +1,44 @@
-/* EwCodeBlock — macOS 窗框式命令/代码块
-   颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随 */
+/* EvCodeBlock — macOS 窗框式命令/代码块
+   颜色全部走 --ev-* 语义令牌，明暗双主题自动跟随 */
 @import './tok.css';
 
-.ew-code-block {
+.ev-code-block {
   overflow: hidden;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-bg-container);
-  color: var(--ew-text-primary);
-  box-shadow: var(--ew-shadow-1);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-bg-container);
+  color: var(--ev-text-primary);
+  box-shadow: var(--ev-shadow-1);
 }
 
 /* ─── 窗框标题栏：窗口控制点 + 标题 + 复制 ─── */
-.ew-code-block__titlebar {
+.ev-code-block__titlebar {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-3);
-  padding: var(--ew-space-3) var(--ew-space-4);
-  border-bottom: 1px solid var(--ew-border-color-light);
-  background-color: var(--ew-bg-muted);
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-3) var(--ev-space-4);
+  border-bottom: 1px solid var(--ev-border-color-light);
+  background-color: var(--ev-bg-muted);
 }
 
-.ew-code-block__lights {
+.ev-code-block__lights {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
 }
 
-.ew-code-block__light {
+.ev-code-block__light {
   position: relative;
   width: 12px;
   height: 12px;
-  border-radius: var(--ew-radius-circle);
-  transition: transform var(--ew-duration-fast) var(--ew-ease-in-out),
-    filter var(--ew-duration-fast) var(--ew-ease-in-out);
+  border-radius: var(--ev-radius-circle);
+  transition: transform var(--ev-duration-fast) var(--ev-ease-in-out),
+    filter var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
 /* 悬停控制点组：显现 关闭/最小化/最大化 符号（macOS 惯例） */
-.ew-code-block__light::after {
+.ev-code-block__light::after {
   position: absolute;
   inset: 0;
   display: flex;
@@ -50,72 +50,72 @@
   font-family: inherit;
   color: rgba(0, 0, 0, 0.5);
   opacity: 0;
-  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ew-code-block__light.is-red::after { content: '×'; }
-.ew-code-block__light.is-yellow::after { content: '−'; }
-.ew-code-block__light.is-green::after { content: '+'; }
+.ev-code-block__light.is-red::after { content: '×'; }
+.ev-code-block__light.is-yellow::after { content: '−'; }
+.ev-code-block__light.is-green::after { content: '+'; }
 
-.ew-code-block__lights:hover .ew-code-block__light::after {
+.ev-code-block__lights:hover .ev-code-block__light::after {
   opacity: 1;
 }
 
 /* 单点悬浮放大提亮、按下收缩 */
-.ew-code-block__light:hover {
+.ev-code-block__light:hover {
   transform: scale(1.15);
   filter: brightness(1.08);
 }
 
-.ew-code-block__light:active {
+.ev-code-block__light:active {
   transform: scale(0.85);
   filter: brightness(0.9);
 }
 
-.ew-code-block__light.is-red { background-color: #ff5f57; }
-.ew-code-block__light.is-yellow { background-color: #febc2e; }
-.ew-code-block__light.is-green { background-color: #28c840; }
+.ev-code-block__light.is-red { background-color: #ff5f57; }
+.ev-code-block__light.is-yellow { background-color: #febc2e; }
+.ev-code-block__light.is-green { background-color: #28c840; }
 
-.ew-code-block__title {
+.ev-code-block__title {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
 }
 
-.ew-code-block__body {
+.ev-code-block__body {
   display: flex;
   align-items: flex-start;
-  gap: var(--ew-space-3);
-  padding: var(--ew-space-4) var(--ew-space-5);
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-4) var(--ev-space-5);
   overflow-x: auto;
 }
 
-.ew-code-block__prefix {
+.ev-code-block__prefix {
   flex-shrink: 0;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-color-success);
+  color: var(--ev-color-success);
   user-select: none;
 }
 
-.ew-code-block__code {
+.ev-code-block__code {
   flex: 1;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
   white-space: pre;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
-/* ─── 语法高亮 token 配色：见 tok.css（与 EwMarkdown 共享）─── */
+/* ─── 语法高亮 token 配色：见 tok.css（与 EvMarkdown 共享）─── */
 
 /* ─── 复制钮（标题栏右侧）─── */
-.ew-code-block__copy {
+.ev-code-block__copy {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -123,35 +123,35 @@
   margin-left: auto;
   padding: 4px 8px;
   border: none;
-  border-radius: var(--ew-radius-sm);
+  border-radius: var(--ev-radius-sm);
   background: transparent;
-  color: var(--ew-text-secondary);
-  font-size: var(--ew-font-size-xs);
+  color: var(--ev-text-secondary);
+  font-size: var(--ev-font-size-xs);
   cursor: pointer;
-  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out),
-    color var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-in-out),
+    color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ew-code-block__copy:hover {
-  background: var(--ew-fill-2);
-  color: var(--ew-text-primary);
+.ev-code-block__copy:hover {
+  background: var(--ev-fill-2);
+  color: var(--ev-text-primary);
 }
 
-.ew-code-block__copy.is-copied {
-  color: var(--ew-color-success);
+.ev-code-block__copy.is-copied {
+  color: var(--ev-color-success);
 }
 
-.ew-code-block__copy-text {
+.ev-code-block__copy-text {
   white-space: nowrap;
 }
 
 /* ─── 宿主环境屏蔽 ───
    markdown/文档站宿主的行内 code 规则（底色/内边距）会以更高优先级
    渗透进组件的 code 元素，用双类选择器重申自有排版 */
-.ew-code-block .ew-code-block__code {
+.ev-code-block .ev-code-block__code {
   padding: 0;
   background: transparent;
   border-radius: 0;
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
 }

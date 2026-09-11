@@ -1,40 +1,40 @@
 <template>
   <section class="demo">
-    <h2>EvTable / EvTree / EvTreeSelect</h2>
+    <h2>EbTable / EbTree / EbTreeSelect</h2>
 
-    <h3>EvTable</h3>
+    <h3>EbTable</h3>
     <div class="demo-row" style="margin-bottom: 12px">
-      <ev-button size="small" @click="toggleSort">切换排序</ev-button>
-      <ev-button size="small" @click="clearSelection">清空选择</ev-button>
+      <eb-button size="small" @click="toggleSort">切换排序</eb-button>
+      <eb-button size="small" @click="clearSelection">清空选择</eb-button>
       <span class="hint">已选 {{ selectedRows.length }} 行</span>
     </div>
-    <ev-table ref="tableRef" :data="rows" border stripe @selection-change="onSelectionChange">
-      <ev-table-column type="selection" width="46" />
-      <ev-table-column prop="name" label="名称" min-width="140">
+    <eb-table ref="tableRef" :data="rows" border stripe @selection-change="onSelectionChange">
+      <eb-table-column type="selection" width="46" />
+      <eb-table-column prop="name" label="名称" min-width="140">
         <template #default="{ row }">
           <span style="font-weight: 600">{{ row.name }}</span>
         </template>
-      </ev-table-column>
-      <ev-table-column prop="type" label="类型" width="100" align="center">
+      </eb-table-column>
+      <eb-table-column prop="type" label="类型" width="100" align="center">
         <template #default="{ row }">
-          <ev-tag size="small" :type="row.type === '水果' ? 'success' : 'warning'">{{ row.type }}</ev-tag>
+          <eb-tag size="small" :type="row.type === '水果' ? 'success' : 'warning'">{{ row.type }}</eb-tag>
         </template>
-      </ev-table-column>
-      <ev-table-column prop="price" label="价格" width="120" sortable align="right" />
-      <ev-table-column prop="stock" label="库存" width="120" align="right" />
-      <ev-table-column label="操作" width="140" align="center">
+      </eb-table-column>
+      <eb-table-column prop="price" label="价格" width="120" sortable align="right" />
+      <eb-table-column prop="stock" label="库存" width="120" align="right" />
+      <eb-table-column label="操作" width="140" align="center">
         <template #default="{ row }">
-          <ev-button size="small" text type="primary" @click="log(row)">编辑</ev-button>
-          <ev-button size="small" text type="danger" @click="log(row)">删除</ev-button>
+          <eb-button size="small" text type="primary" @click="log(row)">编辑</eb-button>
+          <eb-button size="small" text type="danger" @click="log(row)">删除</eb-button>
         </template>
-      </ev-table-column>
-    </ev-table>
+      </eb-table-column>
+    </eb-table>
 
-    <h3>EvTree</h3>
+    <h3>EbTree</h3>
     <div class="demo-row">
-      <div style="width: 300px; border: 1px solid var(--ev-border-color-lighter); border-radius: 4px; padding: 8px">
-        <ev-input v-model="treeQuery" placeholder="输入过滤" size="small" style="margin-bottom: 8px" />
-        <ev-tree
+      <div style="width: 300px; border: 1px solid var(--eb-border-color-lighter); border-radius: 4px; padding: 8px">
+        <eb-input v-model="treeQuery" placeholder="输入过滤" size="small" style="margin-bottom: 8px" />
+        <eb-tree
           ref="treeRef"
           :data="treeData"
           node-key="id"
@@ -44,22 +44,22 @@
           @check-change="onTreeCheck"
         />
       </div>
-      <div style="width: 300px; border: 1px solid var(--ev-border-color-lighter); border-radius: 4px; padding: 8px">
+      <div style="width: 300px; border: 1px solid var(--eb-border-color-lighter); border-radius: 4px; padding: 8px">
         <p class="hint">手风琴 + lazy</p>
-        <ev-tree :data="lazyRoot" node-key="id" accordion lazy :load="loadNode" />
+        <eb-tree :data="lazyRoot" node-key="id" accordion lazy :load="loadNode" />
       </div>
     </div>
 
-    <h3>EvTreeSelect</h3>
+    <h3>EbTreeSelect</h3>
     <div class="demo-row">
-      <ev-tree-select
+      <eb-tree-select
         v-model="treeSingle"
         :data="treeData"
         node-key="id"
         placeholder="单选（点击叶子）"
         style="width: 260px"
       />
-      <ev-tree-select
+      <eb-tree-select
         v-model="treeMulti"
         :data="treeData"
         node-key="id"
@@ -69,7 +69,7 @@
         placeholder="多选 + 复选 + 严格"
         style="width: 320px"
       />
-      <ev-tree-select
+      <eb-tree-select
         v-model="treeSingle"
         :data="treeData"
         node-key="id"

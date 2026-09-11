@@ -16,9 +16,9 @@ const range = ref([20, 60])
 `v-model` 绑定数值；`range` 开启区间双手柄模式（此时绑定值为 [start, end] 数组）；`disabled` 禁用拖拽与键盘。
 
 <DemoBlock>
-  <ev-slider v-model="s" style="width: 320px;" />
-  <ev-slider v-model="range" range style="width: 320px; margin-top: 16px;" />
-  <ev-slider :model-value="30" disabled style="width: 320px; margin-top: 16px;" />
+  <eb-slider v-model="s" style="width: 320px;" />
+  <eb-slider v-model="range" range style="width: 320px; margin-top: 16px;" />
+  <eb-slider :model-value="30" disabled style="width: 320px; margin-top: 16px;" />
 </DemoBlock>
 
 ## 取值联动
@@ -26,7 +26,7 @@ const range = ref([20, 60])
 绑定值可实时展示在任意自定义内容中；下方文本随拖动同步。
 
 <DemoBlock>
-  <ev-slider v-model="s" style="width: 320px;" />
+  <eb-slider v-model="s" style="width: 320px;" />
   <div style="margin-top: 8px;">当前值：{{ s }}，区间值：{{ range[0] }} - {{ range[1] }}</div>
 </DemoBlock>
 
@@ -35,7 +35,7 @@ const range = ref([20, 60])
 `min` / `max` 限定范围，`step` 为步长（可为小数），取值会自动吸附到步进挡位。
 
 <DemoBlock>
-  <ev-slider v-model="s2" :min="0" :max="10" :step="0.5" show-stops style="width: 320px;" />
+  <eb-slider v-model="s2" :min="0" :max="10" :step="0.5" show-stops style="width: 320px;" />
   <div style="margin-top: 8px;">当前值：{{ s2 }}</div>
 </DemoBlock>
 
@@ -44,7 +44,7 @@ const range = ref([20, 60])
 `show-stops` 按步长显示挡点，`marks` 在轨道上标注刻度文本（key 为数值，值可为文本或 `{ label, style }`），`format-tooltip` 自定义悬停气泡文案。
 
 <DemoBlock>
-  <ev-slider
+  <eb-slider
     :model-value="40"
     :step="10"
     :max="90"
@@ -60,7 +60,7 @@ const range = ref([20, 60])
 `show-tooltip` 关闭后拖动与悬停均不出现气泡，适合与 marks 或外部数值展示搭配。
 
 <DemoBlock>
-  <ev-slider :model-value="60" :show-tooltip="false" style="width: 320px;" />
+  <eb-slider :model-value="60" :show-tooltip="false" style="width: 320px;" />
 </DemoBlock>
 
 ## 垂直模式与数值输入
@@ -68,9 +68,9 @@ const range = ref([20, 60])
 `vertical` 切换为垂直滑块（需同时指定 `height`）；`show-input` 在水平单值模式下联动一个数字输入框，`show-input-controls` 可去掉增减按钮，`input-size` 控制输入框尺寸。
 
 <DemoBlock>
-  <ev-slider vertical height="180px" :model-value="40" style="margin-left: 20px;" />
-  <ev-slider :model-value="30" show-input style="width: 420px;" />
-  <ev-slider :model-value="50" show-input :show-input-controls="false" style="width: 420px; margin-top: 16px;" />
+  <eb-slider vertical height="180px" :model-value="40" style="margin-left: 20px;" />
+  <eb-slider :model-value="30" show-input style="width: 420px;" />
+  <eb-slider :model-value="50" show-input :show-input-controls="false" style="width: 420px; margin-top: 16px;" />
 </DemoBlock>
 
 ## API

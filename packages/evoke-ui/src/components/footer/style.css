@@ -1,97 +1,97 @@
-/* EwFooter — 站点页脚 */
+/* EvFooter — 站点页脚 */
 
-.ew-footer {
+.ev-footer {
   padding: 80px 0 40px;
-  border-top: 1px solid var(--ew-border-color-light);
-  color: var(--ew-text-regular);
+  border-top: 1px solid var(--ev-border-color-light);
+  color: var(--ev-text-regular);
 }
 
-.ew-footer.is-soft {
-  background-color: var(--ew-bg-muted);
+.ev-footer.is-soft {
+  background-color: var(--ev-bg-muted);
 }
 
 /* ─── 主体：品牌区 + 链接栏 ─── */
-.ew-footer__main {
+.ev-footer__main {
   display: grid;
   grid-template-columns: minmax(220px, 1.4fr) repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--ew-space-12) var(--ew-space-8);
-  padding-bottom: var(--ew-space-12);
+  gap: var(--ev-space-12) var(--ev-space-8);
+  padding-bottom: var(--ev-space-12);
 }
 
-.ew-footer__logo {
-  font-size: var(--ew-font-size-lg);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  color: var(--ew-text-primary);
+.ev-footer__logo {
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  color: var(--ev-text-primary);
 }
 
-.ew-footer__slogan {
-  margin-top: var(--ew-space-3);
+.ev-footer__slogan {
+  margin-top: var(--ev-space-3);
   max-width: 300px;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-footer__social {
+.ev-footer__social {
   display: flex;
-  gap: var(--ew-space-2);
-  margin-top: var(--ew-space-5);
+  gap: var(--ev-space-2);
+  margin-top: var(--ev-space-5);
 }
 
-.ew-footer__col {
+.ev-footer__col {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-3);
+  gap: var(--ev-space-3);
 }
 
-.ew-footer__col-title {
-  margin-bottom: var(--ew-space-2);
-  font-size: var(--ew-font-size-xs);
-  font-weight: var(--ew-font-weight-medium);
+.ev-footer__col-title {
+  margin-bottom: var(--ev-space-2);
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-footer__link {
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-secondary);
-  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+.ev-footer__link {
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-secondary);
+  transition: color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-footer__link:hover {
-  color: var(--ew-text-primary);
+.ev-footer__link:hover {
+  color: var(--ev-text-primary);
 }
 
 /* ─── 底部版权条 ─── */
-.ew-footer__bottom {
+.ev-footer__bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ew-space-4);
-  padding-top: var(--ew-space-6);
-  border-top: 1px solid var(--ew-border-color-light);
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-secondary);
+  gap: var(--ev-space-4);
+  padding-top: var(--ev-space-6);
+  border-top: 1px solid var(--ev-border-color-light);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-secondary);
 }
 
-.ew-footer__legal {
+.ev-footer__legal {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-4);
+  gap: var(--ev-space-4);
 }
 
 @media (max-width: 640px) {
-  .ew-footer__main {
+  .ev-footer__main {
     grid-template-columns: 1fr 1fr;
   }
 
-  .ew-footer__brand {
+  .ev-footer__brand {
     grid-column: 1 / -1;
   }
 
-  .ew-footer__bottom {
+  .ev-footer__bottom {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -101,40 +101,40 @@
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-footer .ew-footer__slogan {
-  margin: var(--ew-space-3) 0 0;
-  font-size: var(--ew-font-size-sm);
+.ev-footer .ev-footer__slogan {
+  margin: var(--ev-space-3) 0 0;
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-footer .ew-footer__col-title {
-  margin: 0 0 var(--ew-space-2);
-  font-size: var(--ew-font-size-xs);
-  font-weight: var(--ew-font-weight-medium);
+.ev-footer .ev-footer__col-title {
+  margin: 0 0 var(--ev-space-2);
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.14em;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 /* 链接渲染为 <a>：压过宿主链接样式的颜色/下划线/字重 */
-.ew-footer a.ew-footer__link {
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-regular);
-  color: var(--ew-text-secondary);
+.ev-footer a.ev-footer__link {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-regular);
+  color: var(--ev-text-secondary);
   text-decoration: none;
 }
 
-.ew-footer a.ew-footer__link:hover {
-  color: var(--ew-text-primary);
+.ev-footer a.ev-footer__link:hover {
+  color: var(--ev-text-primary);
 }
 
-/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ew-footer.is-glass,
-  html[data-ew-glass='on'] .ew-footer:not(.no-glass) {
-    background-color: var(--ew-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
-    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  .ev-footer.is-glass,
+  html[data-ev-glass='on'] .ev-footer:not(.no-glass) {
+    background-color: var(--ev-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }

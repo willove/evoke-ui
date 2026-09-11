@@ -1,29 +1,29 @@
 <template>
   <section class="demo">
-    <h2>EvDatePicker / EvTimePicker / EvTimeSelect / EvCascader</h2>
+    <h2>EbDatePicker / EbTimePicker / EbTimeSelect / EbCascader</h2>
 
-    <h3>EvDatePicker</h3>
+    <h3>EbDatePicker</h3>
     <div class="demo-row">
       <span class="demo-label">日期</span>
-      <ev-date-picker v-model="date" placeholder="选择日期" style="width: 220px" />
-      <ev-date-picker v-model="dateStr" value-format="YYYY-MM-DD" placeholder="value-format" style="width: 200px" />
+      <eb-date-picker v-model="date" placeholder="选择日期" style="width: 220px" />
+      <eb-date-picker v-model="dateStr" value-format="YYYY-MM-DD" placeholder="value-format" style="width: 200px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">日期时间</span>
-      <ev-date-picker v-model="datetime" type="datetime" default-time="09:30:00" style="width: 240px" />
+      <eb-date-picker v-model="datetime" type="datetime" default-time="09:30:00" style="width: 240px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">区间</span>
-      <ev-date-picker v-model="range" type="daterange" style="width: 320px" :shortcuts="rangeShortcuts" />
+      <eb-date-picker v-model="range" type="daterange" style="width: 320px" :shortcuts="rangeShortcuts" />
     </div>
     <div class="demo-row">
       <span class="demo-label">月/年</span>
-      <ev-date-picker v-model="month" type="month" style="width: 180px" />
-      <ev-date-picker v-model="year" type="year" style="width: 160px" />
+      <eb-date-picker v-model="month" type="month" style="width: 180px" />
+      <eb-date-picker v-model="year" type="year" style="width: 160px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">禁用</span>
-      <ev-date-picker
+      <eb-date-picker
         v-model="date"
         :disabled-date="(d) => d.getDay() === 0 || d.getDay() === 6"
         placeholder="禁用周末"
@@ -32,34 +32,34 @@
     </div>
     <p class="hint">date={{ date ? String(date) : null }} / range={{ range }}</p>
 
-    <h3>EvTimePicker / EvTimeSelect</h3>
+    <h3>EbTimePicker / EbTimeSelect</h3>
     <div class="demo-row">
       <span class="demo-label">时间</span>
-      <ev-time-picker v-model="time" style="width: 200px" />
-      <ev-time-picker v-model="timeStr" value-format="HH:mm" format="HH:mm" style="width: 180px" />
+      <eb-time-picker v-model="time" style="width: 200px" />
+      <eb-time-picker v-model="timeStr" value-format="HH:mm" format="HH:mm" style="width: 180px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">区间</span>
-      <ev-time-picker v-model="timeRange" is-range style="width: 280px" />
+      <eb-time-picker v-model="timeRange" is-range style="width: 280px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">下拉</span>
-      <ev-time-select v-model="timeSel" start="08:00" end="20:00" step="01:00" style="width: 200px" />
+      <eb-time-select v-model="timeSel" start="08:00" end="20:00" step="01:00" style="width: 200px" />
     </div>
 
-    <h3>EvCascader</h3>
+    <h3>EbCascader</h3>
     <div class="demo-row">
       <span class="demo-label">基础</span>
-      <ev-cascader v-model="region" :options="regionOptions" placeholder="选择区域" style="width: 280px" />
-      <ev-cascader v-model="regionLeaf" :options="regionOptions" :props="{ emitPath: false }" placeholder="emitPath=false" style="width: 220px" />
+      <eb-cascader v-model="region" :options="regionOptions" placeholder="选择区域" style="width: 280px" />
+      <eb-cascader v-model="regionLeaf" :options="regionOptions" :props="{ emitPath: false }" placeholder="emitPath=false" style="width: 220px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">多选</span>
-      <ev-cascader v-model="regionMulti" :options="regionOptions" multiple collapse-tags style="width: 320px" />
+      <eb-cascader v-model="regionMulti" :options="regionOptions" multiple collapse-tags style="width: 320px" />
     </div>
     <div class="demo-row">
       <span class="demo-label">过滤</span>
-      <ev-cascader v-model="region" :options="regionOptions" filterable placeholder="输入过滤" style="width: 280px" />
+      <eb-cascader v-model="region" :options="regionOptions" filterable placeholder="输入过滤" style="width: 280px" />
     </div>
     <p class="hint">region={{ region }} / multi={{ regionMulti }}</p>
   </section>

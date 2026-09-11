@@ -1,14 +1,14 @@
 # Carousel 轮播
 
-`EwCarousel` 提供轻量的轮播能力：平滑位移、左右箭头、胶囊圆点，`autoplay` 开启自动轮播且
+`EvCarousel` 提供轻量的轮播能力：平滑位移、左右箭头、胶囊圆点，`autoplay` 开启自动轮播且
 hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定义、`image` 纯图片轮播、
 `banner` 图片 + 文字注释（渐变遮罩贴底）。
 
 ## 基础用法
 
-<DemoBlock title="评价轮播" description="与 EwQuote 组合是最常见的用法；试试点箭头与圆点。">
+<DemoBlock title="评价轮播" description="与 EvQuote 组合是最常见的用法；试试点箭头与圆点。">
 
-<EwCarousel
+<EvCarousel
   :items="[
     { quote: '同步速度和离线体验是我们团队迁移的全部理由。', author: '林一舟', role: '产品负责人' },
     { quote: '搜索快到离谱，找三年前的会议记录也就一两秒。', author: 'Ada', role: '项目经理' },
@@ -17,16 +17,16 @@ hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定�
   style="max-width:560px; margin-inline:auto;"
 >
   <template #item="{ item }">
-    <EwQuote v-bind="item" sticker />
+    <EvQuote v-bind="item" sticker />
   </template>
-</EwCarousel>
+</EvCarousel>
 
 ```vue
-<EwCarousel :items="quotes" :autoplay="5000">
+<EvCarousel :items="quotes" :autoplay="5000">
   <template #item="{ item }">
-    <EwQuote v-bind="item" sticker />
+    <EvQuote v-bind="item" sticker />
   </template>
-</EwCarousel>
+</EvCarousel>
 ```
 
 </DemoBlock>
@@ -35,7 +35,7 @@ hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定�
 
 <DemoBlock title="variant=&quot;image&quot;" description="items 传 { src, alt }，aspect 控制画幅，object-fit: cover 自动裁切。">
 
-<EwCarousel
+<EvCarousel
   variant="image"
   aspect="16 / 7"
   :autoplay="4000"
@@ -47,7 +47,7 @@ hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定�
 />
 
 ```vue
-<EwCarousel variant="image" aspect="16 / 7" :autoplay="4000" :items="photos" />
+<EvCarousel variant="image" aspect="16 / 7" :autoplay="4000" :items="photos" />
 ```
 
 </DemoBlock>
@@ -56,7 +56,7 @@ hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定�
 
 <DemoBlock title="variant=&quot;banner&quot;" description="注释带渐变遮罩贴底，标题用展示体——适合案例展示与活动横幅。">
 
-<EwCarousel
+<EvCarousel
   variant="banner"
   aspect="16 / 7"
   :items="[
@@ -66,7 +66,7 @@ hover 暂停。三种形态：`default` 由 `#item` 作用域插槽完全自定�
 />
 
 ```vue
-<EwCarousel
+<EvCarousel
   variant="banner"
   aspect="16 / 7"
   :items="[{ src: '/images/a.jpg', title: '为团队而建的工作台', desc: '把日常协作收进同一个界面' }]"

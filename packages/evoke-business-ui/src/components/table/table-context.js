@@ -1,5 +1,5 @@
 /**
- * Table 子组件契约（EvTableColumn 向 EvTable provide/inject）
+ * Table 子组件契约（EbTableColumn 向 EbTable provide/inject）
  */
 import { inject, provide } from 'vue'
 

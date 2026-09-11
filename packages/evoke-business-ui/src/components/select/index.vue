@@ -1,7 +1,7 @@
 <template>
   <div
     v-bind="$attrs"
-    class="ev-select"
+    class="eb-select"
     :class="[{ 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable, 'is-focus': isFocused }, sizeClass]"
     @click="handleClick"
     @mouseenter="hovering = true"
@@ -9,44 +9,44 @@
   >
     <div
       ref="referenceRef"
-      class="ev-select__wrapper"
+      class="eb-select__wrapper"
       :class="{ 'is-hovering': hovering && !isDisabled, 'is-focused': isFocused, 'is-disabled': isDisabled }"
     >
-      <span v-if="multiple && selectedTags.length" class="ev-select__selection">
+      <span v-if="multiple && selectedTags.length" class="eb-select__selection">
         <span
           v-for="tag in collapsedTags"
           :key="String(tag.value)"
-          class="ev-tag ev-tag--info ev-tag--light ev-select__tag"
+          class="eb-tag eb-tag--info eb-tag--light eb-select__tag"
         >
-          <span class="ev-tag__content">{{ tag.label }}</span>
-          <ev-icon
+          <span class="eb-tag__content">{{ tag.label }}</span>
+          <eb-icon
             v-if="!isDisabled && !tagDisabled"
-            class="ev-tag__close"
+            class="eb-tag__close"
             name="close"
             @click.stop="removeTag(tag.value)"
           />
         </span>
-        <span v-if="overflowCount > 0" class="ev-select__tags-collapse-item">
+        <span v-if="overflowCount > 0" class="eb-select__tags-collapse-item">
           + {{ overflowCount }}
         </span>
       </span>
       <span
         v-else-if="hasSelection"
         v-show="!(filterable && isFocused)"
-        class="ev-select__selected-item ev-select__placeholder"
+        class="eb-select__selected-item eb-select__placeholder"
       >
-        <span class="ev-select__selected-item-text">{{ selectedLabel }}</span>
+        <span class="eb-select__selected-item-text">{{ selectedLabel }}</span>
       </span>
       <span
         v-else
-        class="ev-select__placeholder"
+        class="eb-select__placeholder"
         :class="{ 'is-transparent': filterable && isFocused }"
       >{{ placeholder || t('select.placeholder') }}</span>
 
       <input
         v-if="filterable"
         ref="inputRef"
-        class="ev-select__input"
+        class="eb-select__input"
         :value="query"
         :disabled="isDisabled"
         placeholder=""
@@ -56,15 +56,15 @@
         @blur="handleBlur"
       />
 
-      <span class="ev-select__suffix">
-        <ev-icon
+      <span class="eb-select__suffix">
+        <eb-icon
           v-if="clearable && hasSelection && !isDisabled && !multiple"
-          class="ev-select__caret ev-select__clear"
+          class="eb-select__caret eb-select__clear"
           name="circle-close"
           @click.stop="handleClear"
         />
-        <ev-icon
-          class="ev-select__caret"
+        <eb-icon
+          class="eb-select__caret"
           :class="{ 'is-reverse': dropdownVisible }"
           name="arrow-down"
         />
@@ -72,26 +72,26 @@
     </div>
 
     <Teleport to="body">
-      <Transition name="ev-select-dropdown">
+      <Transition name="eb-select-dropdown">
         <div
           v-if="popperMounted"
           v-show="dropdownVisible && !isMobilePlatform"
           ref="floatingRef"
-          class="ev-select__popper ev-popper ev-select__dropdown ev-select__dropdown"
+          class="eb-select__popper eb-popper eb-select__dropdown eb-select__dropdown"
           :style="dropdownStyle"
         >
-          <div class="ev-select-dropdown">
-            <div v-if="loading" class="ev-select-dropdown__loading">{{ t('select.loading') }}</div>
+          <div class="eb-select-dropdown">
+            <div v-if="loading" class="eb-select-dropdown__loading">{{ t('select.loading') }}</div>
             <template v-else>
-              <div v-if="filterable && !remote && query && filteredOptions.length === 0" class="ev-select-dropdown__empty">
+              <div v-if="filterable && !remote && query && filteredOptions.length === 0" class="eb-select-dropdown__empty">
                 {{ t('select.noMatch') }}
               </div>
-              <div v-else-if="allOptions.length === 0" class="ev-select-dropdown__empty">
+              <div v-else-if="allOptions.length === 0" class="eb-select-dropdown__empty">
                 {{ t('select.noData') }}
               </div>
               <div
                 ref="dropdownListRef"
-                class="ev-select-dropdown__list"
+                class="eb-select-dropdown__list"
                 style="overflow: auto; max-height: 274px"
                 @keydown="handleKeydown"
               >
@@ -104,25 +104,25 @@
     </Teleport>
     <!-- 未展开过前，选项寄存在隐藏容器内保持注册：
          关闭状态下选中项也能显示 option label 而非原始 value -->
-    <div v-if="!popperMounted" class="ev-select__options-holder" aria-hidden="true">
+    <div v-if="!popperMounted" class="eb-select__options-holder" aria-hidden="true">
       <slot />
     </div>
 
     <!-- 移动端（platform=mobile）：底部弹出选择面板 -->
     <Teleport to="body">
-      <Transition name="ev-select-sheet">
+      <Transition name="eb-select-sheet">
         <div
           v-if="dropdownVisible && isMobilePlatform"
-          class="ev-select__sheet-mask"
+          class="eb-select__sheet-mask"
           :style="{ zIndex: zIndex }"
           @click="closeDropdown"
         >
-          <div class="ev-select__sheet" @click.stop>
-            <div class="ev-select__sheet-head">
-              <span class="ev-select__sheet-title">{{ props.placeholder || t('select.placeholder') }}</span>
-              <ev-icon name="close" @click="closeDropdown" />
+          <div class="eb-select__sheet" @click.stop>
+            <div class="eb-select__sheet-head">
+              <span class="eb-select__sheet-title">{{ props.placeholder || t('select.placeholder') }}</span>
+              <eb-icon name="close" @click="closeDropdown" />
             </div>
-            <div class="ev-select__sheet-list">
+            <div class="eb-select__sheet-list">
               <slot />
             </div>
           </div>
@@ -134,12 +134,12 @@
 
 <script setup>
 /**
- * EvSelect — 选择器
- * 子组件注册模式（EvOption onMounted 注册）；键盘导航（↑↓ Enter Esc）；
+ * EbSelect — 选择器
+ * 子组件注册模式（EbOption onMounted 注册）；键盘导航（↑↓ Enter Esc）；
  * filterable/remote/multiple/collapse-tags/allow-create/clearable
  */
 import { computed, nextTick, onBeforeUnmount, provide, ref, toRef, watch, useAttrs } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
@@ -149,7 +149,7 @@ import { usePlatform } from '../../composables/usePlatform'
 import { provideSelectContext } from './select-context'
 import { on as onEvent } from '../../utils/events'
 
-defineOptions({ name: 'EvSelect', inheritAttrs: false })
+defineOptions({ name: 'EbSelect', inheritAttrs: false })
 
 // 容器环境：mobile 下渲染底部弹出选择面板（而非浮动下拉）
 const { isMobile: isMobilePlatform } = usePlatform()
@@ -283,8 +283,8 @@ const overflowCount = computed(() => {
 
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-select--large'
-  if (s === 'small') return 'ev-select--small'
+  if (s === 'large') return 'eb-select--large'
+  if (s === 'small') return 'eb-select--small'
   return ''
 })
 
@@ -488,7 +488,7 @@ function scrollToHovering() {
   nextTick(() => {
     const listEl = dropdownListRef.value
     if (!listEl) return
-    const active = listEl.querySelector('.ev-select-dropdown__item.is-hovering')
+    const active = listEl.querySelector('.eb-select-dropdown__item.is-hovering')
     active?.scrollIntoView?.({ block: 'nearest' })
   })
 }

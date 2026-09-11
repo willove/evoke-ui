@@ -1,92 +1,92 @@
-/* EwArticleCard — 文章卡 */
+/* EvArticleCard — 文章卡 */
 
-.ew-article-card {
+.ev-article-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-bg-container);
   color: inherit;
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
-    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out),
+    border-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-article-card.is-hoverable:hover {
+.ev-article-card.is-hoverable:hover {
   transform: translateY(-3px);
-  border-color: var(--ew-border-color);
-  box-shadow: var(--ew-shadow-2);
+  border-color: var(--ev-border-color);
+  box-shadow: var(--ev-shadow-2);
 }
 
 /* ─── 封面 ─── */
-.ew-article-card__cover {
+.ev-article-card__cover {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background-color: var(--ew-fill-1);
+  background-color: var(--ev-fill-1);
 }
 
-.ew-article-card__cover img {
+.ev-article-card__cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--ew-duration-slow) var(--ew-ease-smooth);
+  transition: transform var(--ev-duration-slow) var(--ev-ease-smooth);
 }
 
-.ew-article-card.is-hoverable:hover .ew-article-card__cover img {
+.ev-article-card.is-hoverable:hover .ev-article-card__cover img {
   transform: scale(1.04);
 }
 
-.ew-article-card__cover-icon {
+.ev-article-card__cover-icon {
   position: absolute;
   inset: 0;
   margin: auto;
   width: fit-content;
   height: fit-content;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 /* ─── 内容 ─── */
-.ew-article-card__body {
+.ev-article-card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-2);
-  padding: var(--ew-space-5);
+  gap: var(--ev-space-2);
+  padding: var(--ev-space-5);
 }
 
-.ew-article-card__meta {
+.ev-article-card__meta {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-2);
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
+  gap: var(--ev-space-2);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
 }
 
-.ew-article-card__tag {
+.ev-article-card__tag {
   padding: 2px 8px;
-  border-radius: var(--ew-radius-full);
-  background-color: var(--ew-color-primary-light-9);
-  color: var(--ew-color-primary);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-color-primary-light-9);
+  color: var(--ev-color-primary);
 }
 
-.ew-article-card__title {
-  font-size: var(--ew-font-size-md);
-  font-weight: var(--ew-font-weight-medium);
+.ev-article-card__title {
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0;
   line-height: 1.4;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.ew-article-card__excerpt {
+.ev-article-card__excerpt {
   margin: 0;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -97,36 +97,36 @@
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-article-card .ew-article-card__title {
+.ev-article-card .ev-article-card__title {
   margin: 0;
-  font-size: var(--ew-font-size-md);
-  font-weight: var(--ew-font-weight-medium);
+  font-size: var(--ev-font-size-md);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0;
   line-height: 1.4;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
-.ew-article-card .ew-article-card__excerpt {
+.ev-article-card .ev-article-card__excerpt {
   margin: 0;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 /* 根元素渲染为 <a>（href 传入）时，压过宿主链接样式的字重/颜色/下划线 */
-a.ew-article-card {
-  font-weight: var(--ew-font-weight-regular);
+a.ev-article-card {
+  font-weight: var(--ev-font-weight-regular);
   color: inherit;
   text-decoration: none;
 }
 
-/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ew-article-card.is-glass,
-  html[data-ew-glass='on'] .ew-article-card:not(.no-glass) {
-    background-color: var(--ew-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
-    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  .ev-article-card.is-glass,
+  html[data-ev-glass='on'] .ev-article-card:not(.no-glass) {
+    background-color: var(--ev-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }

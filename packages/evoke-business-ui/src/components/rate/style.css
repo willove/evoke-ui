@@ -1,63 +1,63 @@
-/* EvRate —评分 */
+/* EbRate —评分 */
 
-.ev-rate.ev-rate {
+.eb-rate.eb-rate {
   display: inline-flex;
   align-items: center;
   gap: 0;
   outline: none;
 }
 
-.ev-rate.ev-rate:focus-visible {
-  outline: var(--ev-focus-ring);
-  outline-offset: var(--ev-focus-ring-offset);
-  border-radius: var(--ev-radius-sm);
+.eb-rate.eb-rate:focus-visible {
+  outline: var(--eb-focus-ring);
+  outline-offset: var(--eb-focus-ring-offset);
+  border-radius: var(--eb-radius-sm);
 }
 
-.ev-rate.ev-rate .ev-rate__item {
+.eb-rate.eb-rate .eb-rate__item {
   position: relative;
   display: inline-block;
   cursor: pointer;
   line-height: 1;
 }
 
-.ev-rate.ev-rate .ev-rate__icon {
+.eb-rate.eb-rate .eb-rate__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
   font-style: normal;
-  transition: color var(--ev-duration-fast) var(--ev-ease-out), transform var(--ev-duration-fast) var(--ev-ease-out);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out), transform var(--eb-duration-fast) var(--eb-ease-out);
 }
 
 /* 激活星叠加在空星上层，半星时裁掉右半 */
-.ev-rate.ev-rate .ev-rate__icon--active {
+.eb-rate.eb-rate .eb-rate__icon--active {
   position: absolute;
   left: 0;
   top: 0;
   overflow: hidden;
 }
-.ev-rate.ev-rate .ev-rate__icon--half {
+.eb-rate.eb-rate .eb-rate__icon--half {
   width: 50%;
   /* 裁剪容器只保留左半：图标必须从左边缘排布且不收缩，
      否则 flex 居中会把星星推向中点，露出错位的“中缝” */
   justify-content: flex-start;
 }
-.ev-rate.ev-rate .ev-rate__icon--half .ev-icon {
+.eb-rate.eb-rate .eb-rate__icon--half .eb-icon {
   flex-shrink: 0;
 }
 
-.ev-rate.ev-rate:not(.is-disabled):not(.is-readonly) .ev-rate__item:hover .ev-rate__icon--active {
+.eb-rate.eb-rate:not(.is-disabled):not(.is-readonly) .eb-rate__item:hover .eb-rate__icon--active {
   transform: scale(1.06);
 }
 
-.ev-rate.ev-rate.is-disabled .ev-rate__item,
-.ev-rate.ev-rate.is-readonly .ev-rate__item {
+.eb-rate.eb-rate.is-disabled .eb-rate__item,
+.eb-rate.eb-rate.is-readonly .eb-rate__item {
   cursor: auto;
 }
 
-.ev-rate.ev-rate .ev-rate__text {
-  margin-left: var(--ev-space-2);
-  font-size: var(--ev-font-size-xs);
+.eb-rate.eb-rate .eb-rate__text {
+  margin-left: var(--eb-space-2);
+  font-size: var(--eb-font-size-xs);
   line-height: 1;
   white-space: nowrap;
 }

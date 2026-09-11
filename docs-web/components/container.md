@@ -1,7 +1,7 @@
 # Container 容器
 
-`EwContainer` 是官网栅格的基座：居中限宽 + 两侧留白。组件化的意义在于宽度档可以语义化选择，
-并受 `--ew-container-width` 令牌约束 —— 通过 [EwConfigProvider](./config-provider) 可以整站调整容器宽度。
+`EvContainer` 是官网栅格的基座：居中限宽 + 两侧留白。组件化的意义在于宽度档可以语义化选择，
+并受 `--ev-container-width` 令牌约束 —— 通过 [EvConfigProvider](./config-provider) 可以整站调整容器宽度。
 
 ## 基础用法
 
@@ -37,9 +37,9 @@
 <p class="ct-scale__note">wide 与 full 在超宽屏上才有区别：wide 上限 1360px，full 始终铺满视口；通过主题定制器改小容器宽令牌时，narrow / default 会同步收缩。</p>
 
 ```vue
-<EwContainer width="narrow">
+<EvContainer width="narrow">
   <FaqSection />
-</EwContainer>
+</EvContainer>
 ```
 
 </DemoBlock>
@@ -59,7 +59,7 @@
   flex-shrink: 0;
   width: 64px;
   font-size: 12px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   text-align: right;
 }
 .ct-scale__track {
@@ -67,30 +67,30 @@
   display: flex;
   justify-content: center;
   padding: 3px;
-  border: 1px dashed var(--ew-border-color);
+  border: 1px dashed var(--ev-border-color);
   border-radius: 8px;
 }
 .ct-scale__bar {
   padding: 8px 0;
   border-radius: 6px;
-  background: var(--ew-fill-2, #eef1f8);
-  color: var(--ew-text-secondary);
+  background: var(--ev-fill-2, #eef1f8);
+  color: var(--ev-text-secondary);
   font-size: 12px;
   text-align: center;
 }
 .ct-scale__bar.is-full {
-  background: var(--ew-fill-1, #f5f7fc);
+  background: var(--ev-fill-1, #f5f7fc);
 }
 .ct-scale__note {
   margin: 4px 0 0;
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 </style>
 
 ::: tip 组件内置容器
-[EwHero](./hero)、[EwFooter](./footer)、[EwNavbar](./navbar)、[EwCta](./cta) 内部已内置容器，
-无需再包一层；`EwContainer` 用于自定义区块的外层对齐。
+[EvHero](./hero)、[EvFooter](./footer)、[EvNavbar](./navbar)、[EvCta](./cta) 内部已内置容器，
+无需再包一层；`EvContainer` 用于自定义区块的外层对齐。
 :::
 
 ## API

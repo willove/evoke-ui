@@ -1,6 +1,6 @@
 <template>
   <label
-    class="ev-checkbox-button ev-checkbox-button"
+    class="eb-checkbox-button eb-checkbox-button"
     :class="[sizeClass, { 'is-checked': isChecked, 'is-disabled': isDisabled }]"
     role="checkbox"
     :aria-checked="isChecked"
@@ -9,7 +9,7 @@
     <input
       ref="checkboxRef"
       type="checkbox"
-      class="ev-checkbox-button__original-checkbox"
+      class="eb-checkbox-button__original-checkbox"
       :value="label"
       :name="name"
       :checked="isChecked"
@@ -17,7 +17,7 @@
       tabindex="-1"
       @change="handleChange"
     />
-    <span class="ev-checkbox-button__inner">
+    <span class="eb-checkbox-button__inner">
       <slot>{{ label }}</slot>
     </span>
   </label>
@@ -25,14 +25,14 @@
 
 <script setup>
 /**
- * EvCheckboxButton — 按钮风格多选
+ * EbCheckboxButton — 按钮风格多选
  * group 内 inject 共享 modelValue（数组）
  */
 import { computed, ref } from 'vue'
 import { useCheckboxGroup } from '../radio/group-context'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvCheckboxButton' })
+defineOptions({ name: 'EbCheckboxButton' })
 
 const props = defineProps({
   modelValue: { type: [Boolean, Array], default: undefined },
@@ -67,8 +67,8 @@ const isChecked = computed(() => {
 
 const sizeClass = computed(() => {
   const s = props.size || group?.size?.value || formSize.value
-  if (s === 'large') return 'ev-checkbox-button--large'
-  if (s === 'small') return 'ev-checkbox-button--small'
+  if (s === 'large') return 'eb-checkbox-button--large'
+  if (s === 'small') return 'eb-checkbox-button--small'
   return ''
 })
 

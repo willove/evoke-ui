@@ -1,21 +1,21 @@
 <template>
   <div
     ref="containerRef"
-    class="ev-image ev-image"
+    class="eb-image eb-image"
     :class="{ 'is-round': round }"
     :style="containerStyle"
   >
     <slot v-if="hasLoadError" name="error">
-      <div class="ev-image__error">加载失败</div>
+      <div class="eb-image__error">加载失败</div>
     </slot>
     <template v-else>
-      <div v-if="effectiveSrc && loading" class="ev-image__placeholder">
+      <div v-if="effectiveSrc && loading" class="eb-image__placeholder">
         <slot name="placeholder" />
       </div>
       <img
         v-if="effectiveSrc"
-        class="ev-image__inner"
-        :class="[`ev-image__inner--${fit}`, { 'is-error': false }]"
+        class="eb-image__inner"
+        :class="[`eb-image__inner--${fit}`, { 'is-error': false }]"
         :src="effectiveSrc"
         :alt="alt"
         :loading="lazy ? 'lazy' : undefined"
@@ -26,7 +26,7 @@
         @click="handleClick"
       >
     </template>
-    <ev-image-viewer
+    <eb-image-viewer
       v-if="previewSrcList?.length"
       v-model="showViewer"
       :url-list="previewSrcList"
@@ -40,11 +40,11 @@
 
 <script setup>
 /**
- * EvImage — 图片
- * lazy 用 IntersectionObserver（生命周期内创建，Electron 安全）；preview-src-list 复用 EvImageViewer
+ * EbImage — 图片
+ * lazy 用 IntersectionObserver（生命周期内创建，Electron 安全）；preview-src-list 复用 EbImageViewer
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import EvImageViewer from '../image-viewer/index.vue'
+import EbImageViewer from '../image-viewer/index.vue'
 
 const props = defineProps({
   src: { type: String, default: '' },

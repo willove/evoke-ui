@@ -1,26 +1,26 @@
 <template>
-  <div class="ev-comment ev-comment">
-    <div v-if="avatar || $slots.avatar" class="ev-comment__avatar">
+  <div class="eb-comment eb-comment">
+    <div v-if="avatar || $slots.avatar" class="eb-comment__avatar">
       <slot name="avatar">
-        <ev-avatar :src="avatar" :size="32" />
+        <eb-avatar :src="avatar" :size="32" />
       </slot>
     </div>
-    <div class="ev-comment__main">
-      <div class="ev-comment__meta">
-        <span v-if="author || $slots.author" class="ev-comment__author">
+    <div class="eb-comment__main">
+      <div class="eb-comment__meta">
+        <span v-if="author || $slots.author" class="eb-comment__author">
           <slot name="author">{{ author }}</slot>
         </span>
-        <span v-if="datetime || $slots.datetime" class="ev-comment__datetime">
+        <span v-if="datetime || $slots.datetime" class="eb-comment__datetime">
           <slot name="datetime">{{ datetime }}</slot>
         </span>
       </div>
-      <div class="ev-comment__content">
+      <div class="eb-comment__content">
         <slot />
       </div>
-      <div v-if="$slots.actions" class="ev-comment__actions">
+      <div v-if="$slots.actions" class="eb-comment__actions">
         <slot name="actions" />
       </div>
-      <div v-if="$slots.replies" class="ev-comment__replies">
+      <div v-if="$slots.replies" class="eb-comment__replies">
         <slot name="replies" />
       </div>
     </div>
@@ -29,12 +29,12 @@
 
 <script setup>
 /**
- * EvComment — 评论（审批意见 / 工单回复）
- * 嵌套回复：replies 插槽内继续放 EvComment 即可形成缩进层级
+ * EbComment — 评论（审批意见 / 工单回复）
+ * 嵌套回复：replies 插槽内继续放 EbComment 即可形成缩进层级
  */
-import EvAvatar from '../avatar/index.vue'
+import EbAvatar from '../avatar/index.vue'
 
-defineOptions({ name: 'EvComment' })
+defineOptions({ name: 'EbComment' })
 
 defineProps({
   /** 作者名 */

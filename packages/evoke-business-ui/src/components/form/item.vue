@@ -1,8 +1,8 @@
 <template>
   <div
-    class="ev-form-item ev-form-item"
+    class="eb-form-item eb-form-item"
     :class="[
-      formItemSize ? `ev-form-item--${formItemSize}` : '',
+      formItemSize ? `eb-form-item--${formItemSize}` : '',
       {
         'is-error': validateState === 'error',
         'is-success': validateState === 'success',
@@ -18,18 +18,18 @@
       v-if="label || $slots.label"
       :id="labelId"
       :for="prop || undefined"
-      class="ev-form-item__label"
+      class="eb-form-item__label"
       :style="labelStyle"
     >
       <slot name="label">{{ label }}</slot>
     </label>
-    <div class="ev-form-item__content" :style="contentStyle">
+    <div class="eb-form-item__content" :style="contentStyle">
       <slot />
-      <Transition name="ev-form-item-fade">
+      <Transition name="eb-form-item-fade">
         <div
           v-if="shouldShowError"
-          class="ev-form-item__error"
-          :class="{ 'ev-form-item__error--inline': isInlineMessage }"
+          class="eb-form-item__error"
+          :class="{ 'eb-form-item__error--inline': isInlineMessage }"
         >
           {{ validateMessage }}
         </div>
@@ -40,14 +40,14 @@
 
 <script setup>
 /**
- * EvFormItem — 表单项（async-validator 校验，trigger 支持 blur / change）
- * EvInput 等输入组件经 useFormItem inject 本组件触发 blur/change 校验
+ * EbFormItem — 表单项（async-validator 校验，trigger 支持 blur / change）
+ * EbInput 等输入组件经 useFormItem inject 本组件触发 blur/change 校验
  */
 import { computed, inject, onBeforeUnmount, onMounted, provide, ref, useSlots, watch } from 'vue'
 import asyncValidator from 'async-validator'
 import { formContextKey, formItemContextKey } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvFormItem' })
+defineOptions({ name: 'EbFormItem' })
 
 const props = defineProps({
   /** 字段路径（model 的 key） */
@@ -77,7 +77,7 @@ const validateMessage = ref('')
 let initialValue = undefined
 let uid = 0
 
-const labelId = `ev-form-item-${Math.random().toString(36).slice(2, 9)}`
+const labelId = `eb-form-item-${Math.random().toString(36).slice(2, 9)}`
 
 // ─── label 宽度/位置 ───
 const normalizedLabelPosition = computed(() => {

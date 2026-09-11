@@ -1,5 +1,5 @@
-/* EwIcon — 图标容器 */
-.ew-icon {
+/* EvIcon — 图标容器 */
+.ev-icon {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@
   flex-shrink: 0;
 }
 
-.ew-icon > svg {
+.ev-icon > svg {
   width: 1em;
   height: 1em;
   display: inline-block;
@@ -24,11 +24,11 @@
 }
 
 /* 旋转动画（loading 类图标消费） */
-.ew-icon.is-rotating > svg {
-  animation: ew-rotate 1s linear infinite;
+.ev-icon.is-rotating > svg {
+  animation: ev-rotate 1s linear infinite;
 }
 
-@keyframes ew-rotate {
+@keyframes ev-rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }

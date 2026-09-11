@@ -13,7 +13,7 @@
 专属数据字段 `treemapData`：每项 `{ name, value?, children? }`，`children` 存在时自动递归拆分。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'treemap',
       title: '成本结构拆解',

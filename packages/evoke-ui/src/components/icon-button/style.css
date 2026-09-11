@@ -1,6 +1,6 @@
-/* EwIconButton — 图标按钮 */
+/* EvIconButton — 图标按钮 */
 
-.ew-icon-button {
+.ev-icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8,85 +8,85 @@
   height: 38px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--ew-radius-md);
+  border-radius: var(--ev-radius-md);
   background-color: transparent;
-  color: var(--ew-text-regular);
+  color: var(--ev-text-regular);
   cursor: pointer;
   user-select: none;
-  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
-    color var(--ew-duration-base) var(--ew-ease-in-out),
-    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: background-color var(--ev-duration-base) var(--ev-ease-in-out),
+    color var(--ev-duration-base) var(--ev-ease-in-out),
+    border-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-icon-button:hover {
-  color: var(--ew-text-primary);
+.ev-icon-button:hover {
+  color: var(--ev-text-primary);
 }
 
 /* ─── 尺寸 ─── */
-.ew-icon-button--small {
+.ev-icon-button--small {
   width: 30px;
   height: 30px;
 }
 
-.ew-icon-button--large {
+.ev-icon-button--large {
   width: 46px;
   height: 46px;
 }
 
 /* ─── 正圆 ─── */
-.ew-icon-button.is-round {
-  border-radius: var(--ew-radius-full);
+.ev-icon-button.is-round {
+  border-radius: var(--ev-radius-full);
 }
 
 /* ─── 变体 ─── */
-.ew-icon-button.is-soft {
-  background-color: var(--ew-fill-1);
+.ev-icon-button.is-soft {
+  background-color: var(--ev-fill-1);
 }
 
-.ew-icon-button.is-soft:hover {
-  background-color: var(--ew-fill-2);
+.ev-icon-button.is-soft:hover {
+  background-color: var(--ev-fill-2);
 }
 
-.ew-icon-button.is-outline {
-  border-color: var(--ew-border-color);
+.ev-icon-button.is-outline {
+  border-color: var(--ev-border-color);
 }
 
-.ew-icon-button.is-outline:hover {
-  border-color: var(--ew-border-color-dark);
+.ev-icon-button.is-outline:hover {
+  border-color: var(--ev-border-color-dark);
 }
 
-.ew-icon-button.is-primary {
-  background-color: var(--ew-color-primary);
+.ev-icon-button.is-primary {
+  background-color: var(--ev-color-primary);
   color: #ffffff;
 }
 
-.ew-icon-button.is-primary:hover {
-  background-color: var(--ew-color-primary-light-3);
+.ev-icon-button.is-primary:hover {
+  background-color: var(--ev-color-primary-light-3);
   color: #ffffff;
 }
 
-.ew-icon-button.is-dark {
-  background-color: var(--ew-color-ink);
+.ev-icon-button.is-dark {
+  background-color: var(--ev-color-ink);
   color: #ffffff;
 }
 
-html.dark .ew-icon-button.is-dark {
-  background-color: var(--ew-text-primary);
-  color: var(--ew-color-ink);
+html.dark .ev-icon-button.is-dark {
+  background-color: var(--ev-text-primary);
+  color: var(--ev-color-ink);
 }
 
-.ew-icon-button.is-dark:hover {
+.ev-icon-button.is-dark:hover {
   color: #ffffff;
   background-color: #2a3a5c;
 }
 
-html.dark .ew-icon-button.is-dark:hover {
-  color: var(--ew-color-ink);
+html.dark .ev-icon-button.is-dark:hover {
+  color: var(--ev-color-ink);
   background-color: #ffffff;
 }
 
 /* ─── 状态 ─── */
-.ew-icon-button.is-disabled {
+.ev-icon-button.is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }

@@ -1,53 +1,53 @@
-/* EwSection — 内容区块 */
+/* EvSection — 内容区块 */
 
-.ew-section {
+.ev-section {
   margin-bottom: 96px;
 }
 
-.ew-section.is-center {
+.ev-section.is-center {
   text-align: center;
 }
 
 /* 眉题：小而安静的大写字距小标（remixdesign「WORK」语言） */
-.ew-section__eyebrow {
-  margin-bottom: var(--ew-space-3);
-  font-size: var(--ew-font-size-xs);
-  font-weight: var(--ew-font-weight-medium);
+.ev-section__eyebrow {
+  margin-bottom: var(--ev-space-3);
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 /* 区块标题：细字重展示体，与 hero 同一声音 */
-.ew-section__title {
-  margin-bottom: var(--ew-space-3);
+.ev-section__title {
+  margin-bottom: var(--ev-space-3);
   font-size: clamp(26px, 3vw, 34px);
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
 }
 
-.ew-section__description {
+.ev-section__description {
   max-width: 560px;
-  font-size: var(--ew-font-size-md);
+  font-size: var(--ev-font-size-md);
   line-height: 1.75;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-.ew-section.is-center .ew-section__description {
+.ev-section.is-center .ev-section__description {
   margin-inline: auto;
 }
 
-.ew-section__body {
-  margin-top: var(--ew-space-10);
+.ev-section__body {
+  margin-top: var(--ev-space-10);
 }
 
-.ew-section__eyebrow + .ew-section__title {
+.ev-section__eyebrow + .ev-section__title {
   margin-top: 0;
 }
 
 /* 无主体内容时收尾不留白 */
-.ew-section:not(:has(.ew-section__body)) .ew-section__description {
+.ev-section:not(:has(.ev-section__body)) .ev-section__description {
   margin-bottom: 0;
 }
 
@@ -55,30 +55,30 @@
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-section .ew-section__title {
-  margin: 0 0 var(--ew-space-3);
+.ev-section .ev-section__title {
+  margin: 0 0 var(--ev-space-3);
   padding-top: 0;
   border-top: none;
   font-size: clamp(26px, 3vw, 34px);
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
 }
 
-.ew-section .ew-section__description {
+.ev-section .ev-section__description {
   margin: 0;
-  font-size: var(--ew-font-size-md);
+  font-size: var(--ev-font-size-md);
   line-height: 1.75;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
-/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ew-section.is-glass,
-  html[data-ew-glass='on'] .ew-section:not(.no-glass) {
-    background-color: var(--ew-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
-    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  .ev-section.is-glass,
+  html[data-ev-glass='on'] .ev-section:not(.no-glass) {
+    background-color: var(--ev-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }

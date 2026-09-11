@@ -1,109 +1,109 @@
-/* EvEmptyState — 统一空态（设计令牌驱动） */
+/* EbEmptyState — 统一空态（设计令牌驱动） */
 
-.ev-empty-state {
+.eb-empty-state {
   display: flex;
   box-sizing: border-box;
-  color: var(--ev-text-color-primary);
+  color: var(--eb-text-color-primary);
 }
 
 /* ─── 纵向（default 页面级）─── */
-.ev-empty-state--default {
+.eb-empty-state--default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ev-space-3);
-  padding: 40px var(--ev-space-6);
+  gap: var(--eb-space-3);
+  padding: 40px var(--eb-space-6);
   text-align: center;
 }
-.ev-empty-state--default .ev-empty-state__icon {
+.eb-empty-state--default .eb-empty-state__icon {
   width: 56px;
   height: 56px;
-  border-radius: var(--ev-radius-xl);
+  border-radius: var(--eb-radius-xl);
 }
-.ev-empty-state--default .ev-empty-state__title {
-  font-size: var(--ev-font-size-md);
-  font-weight: var(--ev-font-weight-semibold);
-  line-height: var(--ev-line-height-tight);
+.eb-empty-state--default .eb-empty-state__title {
+  font-size: var(--eb-font-size-md);
+  font-weight: var(--eb-font-weight-semibold);
+  line-height: var(--eb-line-height-tight);
 }
-.ev-empty-state--default .ev-empty-state__description {
+.eb-empty-state--default .eb-empty-state__description {
   max-width: 360px;
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
 }
 
 /* ─── 横向（compact 面板内嵌）─── */
-.ev-empty-state--compact {
+.eb-empty-state--compact {
   flex-direction: row;
   align-items: flex-start;
-  gap: var(--ev-space-3);
-  padding: var(--ev-space-4);
+  gap: var(--eb-space-3);
+  padding: var(--eb-space-4);
   text-align: left;
 }
-.ev-empty-state--compact .ev-empty-state__icon {
+.eb-empty-state--compact .eb-empty-state__icon {
   width: 32px;
   height: 32px;
-  border-radius: var(--ev-radius-md);
+  border-radius: var(--eb-radius-md);
   flex-shrink: 0;
 }
-.ev-empty-state--compact .ev-empty-state__title {
-  font-size: var(--ev-font-size-sm);
-  font-weight: var(--ev-font-weight-medium);
-  line-height: var(--ev-line-height-tight);
+.eb-empty-state--compact .eb-empty-state__title {
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  line-height: var(--eb-line-height-tight);
 }
-.ev-empty-state--compact .ev-empty-state__description {
+.eb-empty-state--compact .eb-empty-state__description {
   max-width: 320px;
-  font-size: var(--ev-font-size-xs);
-  line-height: var(--ev-line-height-base);
+  font-size: var(--eb-font-size-xs);
+  line-height: var(--eb-line-height-base);
 }
-.ev-empty-state--compact .ev-empty-state__actions {
-  margin-top: var(--ev-space-1);
+.eb-empty-state--compact .eb-empty-state__actions {
+  margin-top: var(--eb-space-1);
 }
 
 /* ─── 图标容器与语义底色 ─── */
-.ev-empty-state__icon {
+.eb-empty-state__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ev-fill-color-light);
-  color: var(--ev-text-color-secondary);
+  background: var(--eb-fill-color-light);
+  color: var(--eb-text-color-secondary);
 }
-.ev-empty-state--tone-primary .ev-empty-state__icon {
-  background: var(--ev-color-primary-light-9);
-  color: var(--ev-color-primary);
+.eb-empty-state--tone-primary .eb-empty-state__icon {
+  background: var(--eb-color-primary-light-9);
+  color: var(--eb-color-primary);
 }
-.ev-empty-state--tone-success .ev-empty-state__icon {
-  background: var(--ev-color-success-light-9);
-  color: var(--ev-color-success);
+.eb-empty-state--tone-success .eb-empty-state__icon {
+  background: var(--eb-color-success-light-9);
+  color: var(--eb-color-success);
 }
-.ev-empty-state--tone-warning .ev-empty-state__icon {
-  background: var(--ev-color-warning-light-9);
-  color: var(--ev-color-warning);
+.eb-empty-state--tone-warning .eb-empty-state__icon {
+  background: var(--eb-color-warning-light-9);
+  color: var(--eb-color-warning);
 }
-.ev-empty-state--tone-danger .ev-empty-state__icon {
-  background: var(--ev-color-danger-light-9);
-  color: var(--ev-color-danger);
+.eb-empty-state--tone-danger .eb-empty-state__icon {
+  background: var(--eb-color-danger-light-9);
+  color: var(--eb-color-danger);
 }
 
 /* ─── 文本与按钮 ─── */
-.ev-empty-state__body {
+.eb-empty-state__body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   min-width: 0;
 }
-.ev-empty-state--compact .ev-empty-state__body {
+.eb-empty-state--compact .eb-empty-state__body {
   align-items: flex-start;
 }
-.ev-empty-state__title {
-  color: var(--ev-text-color-primary);
+.eb-empty-state__title {
+  color: var(--eb-text-color-primary);
 }
-.ev-empty-state__description {
-  color: var(--ev-text-color-secondary);
+.eb-empty-state__description {
+  color: var(--eb-text-color-secondary);
 }
-.ev-empty-state__actions {
+.eb-empty-state__actions {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
-  margin-top: var(--ev-space-2);
+  gap: var(--eb-space-2);
+  margin-top: var(--eb-space-2);
 }

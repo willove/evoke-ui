@@ -1,7 +1,7 @@
 <template>
   <li
     v-if="visible"
-    class="ev-select-dropdown__item ev-select-option"
+    class="eb-select-dropdown__item eb-select-option"
     :class="{
       'is-selected': isSelected,
       'is-disabled': isDisabled,
@@ -17,12 +17,12 @@
 
 <script setup>
 /**
- * EvOption — 选项（onMounted 向 Select 注册，）
+ * EbOption — 选项（onMounted 向 Select 注册，）
  */
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useSelectContext } from './select-context'
 
-defineOptions({ name: 'EvOption' })
+defineOptions({ name: 'EbOption' })
 
 const props = defineProps({
   value: { type: [String, Number, Boolean], required: true },

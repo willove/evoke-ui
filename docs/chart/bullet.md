@@ -13,7 +13,7 @@
 专属数据字段 `bulletData`（`{ name, value, target? }`），`target` 缺省时不画目标线。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'bullet',
       title: '季度 KPI 达成',

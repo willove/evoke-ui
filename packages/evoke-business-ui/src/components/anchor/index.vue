@@ -1,6 +1,6 @@
 <template>
-  <div class="ev-anchor ev-anchor" :class="{ 'is-marker': showMarker }">
-    <div class="ev-anchor__list" ref="listRef" :style="markerStyle">
+  <div class="eb-anchor eb-anchor" :class="{ 'is-marker': showMarker }">
+    <div class="eb-anchor__list" ref="listRef" :style="markerStyle">
       <slot />
     </div>
   </div>
@@ -8,7 +8,7 @@
 
 <script setup>
 /**
- * EvAnchor — 锚点导航（配合 EvAnchorLink）
+ * EbAnchor — 锚点导航（配合 EbAnchorLink）
  * scrollspy：监听滚动容器（默认 window），高亮当前区块；
  * 点击链接平滑滚动至目标（预留 offsetTop），showMarker 展示滑动轴线
  */
@@ -16,7 +16,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref } from 'vu
 import { inBrowser } from '../../utils/dom'
 import { ANCHOR_KEY } from './context'
 
-defineOptions({ name: 'EvAnchor' })
+defineOptions({ name: 'EbAnchor' })
 
 const props = defineProps({
   /** 滚动容器选择器，缺省监听 window */
@@ -105,8 +105,8 @@ const markerStyle = computed(() => {
   const el = list?.querySelector(`a[href="${currentHref.value}"]`)
   if (!el) return undefined
   return {
-    '--ev-anchor-marker-top': `${el.offsetTop + 4}px`,
-    '--ev-anchor-marker-height': `${el.clientHeight - 8}px`,
+    '--eb-anchor-marker-top': `${el.offsetTop + 4}px`,
+    '--eb-anchor-marker-height': `${el.clientHeight - 8}px`,
   }
 })
 

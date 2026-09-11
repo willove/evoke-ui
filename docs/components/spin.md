@@ -6,9 +6,9 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; align-items: center;">
-    <ev-spin></ev-spin>
-    <ev-spin description="数据加载中..."></ev-spin>
-    <ev-spin :percent="68" description="正在上传附件"></ev-spin>
+    <eb-spin></eb-spin>
+    <eb-spin description="数据加载中..."></eb-spin>
+    <eb-spin :percent="68" description="正在上传附件"></eb-spin>
   </div>
 </DemoBlock>
 
@@ -16,9 +16,9 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; align-items: center;">
-    <ev-spin size="small"></ev-spin>
-    <ev-spin></ev-spin>
-    <ev-spin size="large"></ev-spin>
+    <eb-spin size="small"></eb-spin>
+    <eb-spin></eb-spin>
+    <eb-spin size="large"></eb-spin>
   </div>
 </DemoBlock>
 
@@ -28,14 +28,14 @@
 
 <DemoBlock>
   <div>
-    <ev-button style="margin-bottom: 12px;" @click="tableSpinning = !tableSpinning">切换刷新状态</ev-button>
-    <ev-spin :spinning="tableSpinning" description="正在刷新...">
-      <div style="border: 1px solid var(--ev-border-color-light); border-radius: 8px;">
-        <div v-for="row in rows" :key="row" style="padding: 10px 16px; border-bottom: 1px solid var(--ev-border-color-lighter); font-size: 13px;">
+    <eb-button style="margin-bottom: 12px;" @click="tableSpinning = !tableSpinning">切换刷新状态</eb-button>
+    <eb-spin :spinning="tableSpinning" description="正在刷新...">
+      <div style="border: 1px solid var(--eb-border-color-light); border-radius: 8px;">
+        <div v-for="row in rows" :key="row" style="padding: 10px 16px; border-bottom: 1px solid var(--eb-border-color-lighter); font-size: 13px;">
           订单记录 #{{ 10000 + row }}
         </div>
       </div>
-    </ev-spin>
+    </eb-spin>
   </div>
 </DemoBlock>
 
@@ -44,8 +44,8 @@
 `fullscreen` 模式挂载到 body，适合提交表单、跳转前的整页阻塞；点击开始后 3 秒自动关闭：
 
 <DemoBlock>
-  <ev-spin v-if="fullSpinning" fullscreen description="正在提交，请稍候..."></ev-spin>
-  <ev-button type="primary" :disabled="fullSpinning" @click="startFull">全屏加载 3 秒</ev-button>
+  <eb-spin v-if="fullSpinning" fullscreen description="正在提交，请稍候..."></eb-spin>
+  <eb-button type="primary" :disabled="fullSpinning" @click="startFull">全屏加载 3 秒</eb-button>
 </DemoBlock>
 
 ## 延迟显示
@@ -53,8 +53,8 @@
 `delay`（毫秒）内加载完成则不出现指示器，避免快速接口反复闪烁：
 
 <DemoBlock>
-  <ev-spin :spinning="slowSpinning" :delay="500" description="延迟 500ms 显示"></ev-spin>
-  <ev-button style="margin-left: 24px;" @click="slowSpinning = !slowSpinning">切换 spinning</ev-button>
+  <eb-spin :spinning="slowSpinning" :delay="500" description="延迟 500ms 显示"></eb-spin>
+  <eb-button style="margin-left: 24px;" @click="slowSpinning = !slowSpinning">切换 spinning</eb-button>
 </DemoBlock>
 
 <script setup>

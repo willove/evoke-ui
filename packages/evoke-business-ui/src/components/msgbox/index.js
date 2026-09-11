@@ -1,11 +1,11 @@
 /**
- * EvMsgbox — 命令式消息框 API
+ * EbMsgbox — 命令式消息框 API
  *
  * Usage:
- *   EvMsgbox('消息', '标题', { type: 'warning' })
- *   EvMsgbox.alert('内容', '标题', options)
- *   EvMsgbox.confirm('确认删除？', '提示').then(({ action }) => ...)
- *   EvMsgbox.prompt('请输入名称', '提示', { inputPattern: /\S+/ })
+ *   EbMsgbox('消息', '标题', { type: 'warning' })
+ *   EbMsgbox.alert('内容', '标题', options)
+ *   EbMsgbox.confirm('确认删除？', '提示').then(({ action }) => ...)
+ *   EbMsgbox.prompt('请输入名称', '提示', { inputPattern: /\S+/ })
  *
  * Promise resolve { action: 'confirm'|'cancel'|'close', value }
  * lockScroll 默认 false
@@ -51,7 +51,7 @@ function normalizeArgs(message, titleOrOptions, optionsOrAppContext, appContext)
  */
 function showMsgbox(options = {}, appContext) {
   if (!inBrowser()) {
-    return Promise.reject(new Error('[EvMsgbox] 仅支持浏览器环境'))
+    return Promise.reject(new Error('[EbMsgbox] 仅支持浏览器环境'))
   }
   const container = document.createElement('div')
 
@@ -79,8 +79,8 @@ function showMsgbox(options = {}, appContext) {
   })
 }
 
-function EvMsgbox(message, titleOrOptions, optionsOrAppContext, appContext) {
-  // 对象式调用：EvMsgbox(options[, appContext])
+function EbMsgbox(message, titleOrOptions, optionsOrAppContext, appContext) {
+  // 对象式调用：EbMsgbox(options[, appContext])
   if (message && typeof message === 'object') {
     return showMsgbox(
       { ...DEFAULT_OPTIONS, ...message, showCancelButton: true, mode: 'confirm' },
@@ -102,7 +102,7 @@ function EvMsgbox(message, titleOrOptions, optionsOrAppContext, appContext) {
 /**
  * alert：仅确认按钮，永远 resolve
  */
-EvMsgbox.alert = function (message, titleOrOptions, optionsOrAppContext, appContext) {
+EbMsgbox.alert = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
     titleOrOptions,
@@ -118,7 +118,7 @@ EvMsgbox.alert = function (message, titleOrOptions, optionsOrAppContext, appCont
 /**
  * confirm：确认/取消，confirm resolve，其余 reject
  */
-EvMsgbox.confirm = function (message, titleOrOptions, optionsOrAppContext, appContext) {
+EbMsgbox.confirm = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
     titleOrOptions,
@@ -134,7 +134,7 @@ EvMsgbox.confirm = function (message, titleOrOptions, optionsOrAppContext, appCo
 /**
  * prompt：带输入框，confirm resolve { action, value }
  */
-EvMsgbox.prompt = function (message, titleOrOptions, optionsOrAppContext, appContext) {
+EbMsgbox.prompt = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
     titleOrOptions,
@@ -155,11 +155,11 @@ EvMsgbox.prompt = function (message, titleOrOptions, optionsOrAppContext, appCon
 }
 
 /** 关闭当前消息框（单例语义：渲染中实例 ESC 关闭由内部处理，此处兼容 API 存在） */
-EvMsgbox.close = () => {
+EbMsgbox.close = () => {
   document
-    .querySelectorAll('.ev-message-box.ev-message-box')
+    .querySelectorAll('.eb-message-box.eb-message-box')
     .forEach((el) => el.__ev_msgbox_close?.())
 }
 
-export { EvMsgbox }
-export default EvMsgbox
+export { EbMsgbox }
+export default EbMsgbox

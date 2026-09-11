@@ -17,24 +17,24 @@ const errV = ref('')
 </script>
 
 
-通过键盘输入文本的基础表单控件：支持前后置图标与插槽、密码框、字数统计、textarea 多行与高度自适应，内置 error / help 校验提示（error 变化时抖动提醒）。在 ev-form 中使用时，input / blur 时机自动触发所在表单项校验。
+通过键盘输入文本的基础表单控件：支持前后置图标与插槽、密码框、字数统计、textarea 多行与高度自适应，内置 error / help 校验提示（error 变化时抖动提醒）。在 eb-form 中使用时，input / blur 时机自动触发所在表单项校验。
 
 ## 基础用法
 
 <DemoBlock>
-<ev-input v-model="v" placeholder="请输入内容" clearable />
+<eb-input v-model="v" placeholder="请输入内容" clearable />
 </DemoBlock>
 
 clearable 默认开启：输入非空时右侧出现清空按钮（禁用 / 只读态不显示），点击后清空绑定值、触发 clear 事件并自动回焦输入框。
 
 ## 尺寸
 
-size 支持 large / small（缺省为默认高度），用于与页面控件密度对齐；位于 ev-form 内时会继承表单尺寸上下文。
+size 支持 large / small（缺省为默认高度），用于与页面控件密度对齐；位于 eb-form 内时会继承表单尺寸上下文。
 
 <DemoBlock>
-<ev-input v-model="sizeL" size="large" placeholder="large" />
-<ev-input v-model="sizeM" placeholder="default" />
-<ev-input v-model="sizeS" size="small" placeholder="small" />
+<eb-input v-model="sizeL" size="large" placeholder="large" />
+<eb-input v-model="sizeM" placeholder="default" />
+<eb-input v-model="sizeS" size="small" placeholder="small" />
 </DemoBlock>
 
 ## 禁用与只读
@@ -42,8 +42,8 @@ size 支持 large / small（缺省为默认高度），用于与页面控件密�
 disabled 整体禁用并置灰；readonly 保留外观与焦点但内容不可修改，适合展示系统回填、不允许改动的值。
 
 <DemoBlock>
-<ev-input model-value="禁用状态" disabled />
-<ev-input model-value="只读状态" readonly />
+<eb-input model-value="禁用状态" disabled />
+<eb-input model-value="只读状态" readonly />
 </DemoBlock>
 
 ## 密码框
@@ -51,7 +51,7 @@ disabled 整体禁用并置灰；readonly 保留外观与焦点但内容不可�
 show-password 时输入内容以密文显示，右侧出现明文 / 密文切换图标（有内容时才展示），用于密码、密钥等敏感信息输入。
 
 <DemoBlock>
-<ev-input v-model="pw" type="password" show-password placeholder="请输入密码" />
+<eb-input v-model="pw" type="password" show-password placeholder="请输入密码" />
 </DemoBlock>
 
 ## 前置 / 后置内容
@@ -59,11 +59,11 @@ show-password 时输入内容以密文显示，右侧出现明文 / 密文切换
 prefix-icon / suffix-icon 传入图标名即可渲染前后置图标（也支持图标组件）；需要放置文本、单位等任意内容时使用 #prefix / #suffix 插槽。
 
 <DemoBlock>
-<ev-input v-model="userV" prefix-icon="user" placeholder="用户名" />
-<ev-input v-model="searchV" suffix-icon="search" placeholder="搜索关键词" />
-<ev-input v-model="suffixV" style="margin-top: 12px;">
+<eb-input v-model="userV" prefix-icon="user" placeholder="用户名" />
+<eb-input v-model="searchV" suffix-icon="search" placeholder="搜索关键词" />
+<eb-input v-model="suffixV" style="margin-top: 12px;">
   <template #suffix>万元</template>
-</ev-input>
+</eb-input>
 </DemoBlock>
 
 ## 输入长度与字数统计
@@ -71,8 +71,8 @@ prefix-icon / suffix-icon 传入图标名即可渲染前后置图标（也支持
 maxlength 限制最大输入长度（原生截断）；显式开启 show-word-limit 后在右侧展示当前长度 / 上限计数，超限（粘贴等场景）呈红色告警，多行文本域同样支持。
 
 <DemoBlock>
-<ev-input v-model="wordV" :maxlength="10" show-word-limit placeholder="最多 10 个字符" />
-<ev-input v-model="wordV" type="textarea" :rows="3" :maxlength="30" show-word-limit placeholder="多行输入同样支持计数" style="margin-top: 12px;" />
+<eb-input v-model="wordV" :maxlength="10" show-word-limit placeholder="最多 10 个字符" />
+<eb-input v-model="wordV" type="textarea" :rows="3" :maxlength="30" show-word-limit placeholder="多行输入同样支持计数" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 文本域与高度自适应
@@ -80,17 +80,17 @@ maxlength 限制最大输入长度（原生截断）；显式开启 show-word-li
 type="textarea" 渲染多行输入，rows 指定初始行数（默认 2）；autosize 开启后高度随内容自适应，传 { minRows, maxRows } 约束自适应区间，适合内容长度不可预期的评论、描述类输入。
 
 <DemoBlock>
-<ev-input v-model="areaV" type="textarea" :rows="3" placeholder="固定 3 行" />
-<ev-input v-model="areaV" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="高度自适应（2 - 4 行）" style="margin-top: 12px;" />
+<eb-input v-model="areaV" type="textarea" :rows="3" placeholder="固定 3 行" />
+<eb-input v-model="areaV" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="高度自适应（2 - 4 行）" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 校验提示
 
-help 在输入框下方展示灰色辅助说明；error 优先级更高并呈红色，error 文案变化时输入框抖动提醒，重新输入后自动清除错误态。两者也常由 ev-form 校验结果驱动。
+help 在输入框下方展示灰色辅助说明；error 优先级更高并呈红色，error 文案变化时输入框抖动提醒，重新输入后自动清除错误态。两者也常由 eb-form 校验结果驱动。
 
 <DemoBlock>
-<ev-input v-model="errV" help="长度 4 - 16 位，支持字母与数字" placeholder="辅助说明" />
-<ev-input v-model="errV" error="该用户名已被占用" placeholder="错误提示" style="margin-top: 12px;" />
+<eb-input v-model="errV" help="长度 4 - 16 位，支持字母与数字" placeholder="辅助说明" />
+<eb-input v-model="errV" error="该用户名已被占用" placeholder="错误提示" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## API

@@ -1,16 +1,16 @@
 # Video 视频
 
-`EwVideo` 在固定画幅内优雅地承载视频：默认渲染原生 `video` 控件（支持封面图），也可用默认插槽
+`EvVideo` 在固定画幅内优雅地承载视频：默认渲染原生 `video` 控件（支持封面图），也可用默认插槽
 嵌入视频平台的 iframe 分享代码。画幅四档可选，避免上传视频导致的页面跳动。
 
 ## 基础用法
 
 <DemoBlock title="占位与画幅" description="未传 src 时渲染占位态，适合先排版后接视频。">
 
-<EwVideo caption="30 秒了解 cumubase 的新编辑器" style="max-width:560px;" />
+<EvVideo caption="30 秒了解 cumubase 的新编辑器" style="max-width:560px;" />
 
 ```vue
-<EwVideo src="/demo.mp4" poster="/cover.jpg" caption="30 秒了解新编辑器" />
+<EvVideo src="/demo.mp4" poster="/cover.jpg" caption="30 秒了解新编辑器" />
 ```
 
 </DemoBlock>
@@ -20,19 +20,19 @@
 <DemoBlock title="16:9 / 4:3 / 1:1 / 9:16" description="竖屏 9:16 适合手机实拍展示。">
 
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:560px;">
-  <EwVideo aspect="16:9" />
-  <EwVideo aspect="1:1" />
+  <EvVideo aspect="16:9" />
+  <EvVideo aspect="1:1" />
 </div>
 
 ```vue
-<EwVideo aspect="16:9" />
-<EwVideo aspect="9:16" />
+<EvVideo aspect="16:9" />
+<EvVideo aspect="9:16" />
 ```
 
 </DemoBlock>
 
 ::: tip 嵌入平台视频
-使用默认插槽放置 iframe，画幅容器依然生效：`<EwVideo><iframe src="…" /></EwVideo>`
+使用默认插槽放置 iframe，画幅容器依然生效：`<EvVideo><iframe src="…" /></EvVideo>`
 :::
 
 ## API

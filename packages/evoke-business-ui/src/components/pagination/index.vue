@@ -1,29 +1,29 @@
 <template>
   <div
-    class="ev-pagination ev-pagination"
-    :class="[`ev-pagination--${computedSize}`, { 'is-background': background, 'is-disabled': disabled }]"
+    class="eb-pagination eb-pagination"
+    :class="[`eb-pagination--${computedSize}`, { 'is-background': background, 'is-disabled': disabled }]"
     role="pagination"
     :aria-label="`分页，共 ${total} 条`"
   >
     <template v-for="(part, i) in layoutParts" :key="i">
-      <span v-if="part === 'total'" class="ev-pagination__total">
+      <span v-if="part === 'total'" class="eb-pagination__total">
         {{ t('pagination.total', total) }}
       </span>
-      <span v-else-if="part === 'sizes'" class="ev-pagination__sizes">
-        <ev-select
+      <span v-else-if="part === 'sizes'" class="eb-pagination__sizes">
+        <eb-select
           :model-value="computedPageSize"
           :size="selectSize"
           :disabled="disabled"
           style="width: 110px"
           @update:model-value="handleSizeChange"
         >
-          <ev-option
+          <eb-option
             v-for="s in pageSizes"
             :key="s"
             :value="s"
             :label="`${s}${t('pagination.pagesize')}`"
           />
-        </ev-select>
+        </eb-select>
       </span>
       <button
         v-else-if="part === 'prev'"
@@ -34,9 +34,9 @@
         aria-label="上一页"
         @click="go(currentPage - 1)"
       >
-        <ev-icon name="arrow-left" />
+        <eb-icon name="arrow-left" />
       </button>
-      <ul v-else-if="part === 'pager'" class="ev-pager">
+      <ul v-else-if="part === 'pager'" class="eb-pager">
         <li
           v-for="page in pagerList"
           :key="`${page.type}-${page.value}`"
@@ -50,8 +50,8 @@
           @click="handlePagerClick(page)"
         >
           <template v-if="page.type === 'page'">{{ page.value }}</template>
-          <ev-icon v-else-if="page.type === 'prev-more'" name="more-filled" />
-          <ev-icon v-else name="more-filled" />
+          <eb-icon v-else-if="page.type === 'prev-more'" name="more-filled" />
+          <eb-icon v-else name="more-filled" />
         </li>
       </ul>
       <button
@@ -63,12 +63,12 @@
         aria-label="下一页"
         @click="go(currentPage + 1)"
       >
-        <ev-icon name="arrow-right" />
+        <eb-icon name="arrow-right" />
       </button>
-      <span v-else-if="part === 'jumper'" class="ev-pagination__jump">
+      <span v-else-if="part === 'jumper'" class="eb-pagination__jump">
         {{ t('pagination.goto') }}
         <input
-          class="ev-pagination__editor"
+          class="eb-pagination__editor"
           type="number"
           :value="jumpValue"
           :disabled="disabled"
@@ -83,18 +83,18 @@
 
 <script setup>
 /**
- * EvPagination — 分页
+ * EbPagination — 分页
  * layout 字符串解析：total, sizes, prev, pager, next, jumper
  * 兼容 v-model 对象 { page, size } / 数字 / v-model:current-page / v-model:page-size
  */
 import { computed, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvSelect from '../select/index.vue'
-import EvOption from '../select/option.vue'
+import EbIcon from '../icon/index.vue'
+import EbSelect from '../select/index.vue'
+import EbOption from '../select/option.vue'
 import { useLocale } from '../../composables/useLocale'
 import { useFormItem } from '../../composables/useFormItem'
 
-defineOptions({ name: 'EvPagination' })
+defineOptions({ name: 'EbPagination' })
 
 const props = defineProps({
   /** v-model 兼容：{ page, size } 对象或页码数字 */

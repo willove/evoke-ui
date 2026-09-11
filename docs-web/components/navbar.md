@@ -1,13 +1,13 @@
 # Navbar 导航
 
-`EwNavbar` 是站点导航：吸顶 + 滚动后背景磨砂与细边（可关），链接默认安静（hover 只变色不铺底），
+`EvNavbar` 是站点导航：吸顶 + 滚动后背景磨砂与细边（可关），链接默认安静（hover 只变色不铺底），
 品牌名用强字距展示体。移动端自动折叠为汉堡菜单。
 
 ## 基础用法
 
 <DemoBlock title="logo + 导航项 + 动作区" description="以下为真实组件：sticky 已关闭便于预览，实际使用保持默认开启。">
 
-<EwNavbar
+<EvNavbar
   :sticky="false"
   logo-text="cumubase"
   :items="[
@@ -16,23 +16,23 @@
     { label: '博客', href: '#' },
     { label: '文档', href: '#' },
   ]"
-  style="border:1px solid var(--ew-border-color-light); border-radius:14px;"
+  style="border:1px solid var(--ev-border-color-light); border-radius:14px;"
 >
   <template #actions>
-    <EwThemeToggle />
-    <EwIconButton icon="github" aria-label="GitHub" />
-    <EwIconButton icon="download" variant="soft" />
+    <EvThemeToggle />
+    <EvIconButton icon="github" aria-label="GitHub" />
+    <EvIconButton icon="download" variant="soft" />
   </template>
-</EwNavbar>
+</EvNavbar>
 
 ```vue
-<EwNavbar logo-text="cumubase" :items="navItems">
+<EvNavbar logo-text="cumubase" :items="navItems">
   <template #actions>
-    <EwThemeToggle />
-    <EwIconButton icon="github" aria-label="GitHub" />
-    <EwIconButton icon="download" variant="soft" />
+    <EvThemeToggle />
+    <EvIconButton icon="github" aria-label="GitHub" />
+    <EvIconButton icon="download" variant="soft" />
   </template>
-</EwNavbar>
+</EvNavbar>
 ```
 
 </DemoBlock>
@@ -41,16 +41,16 @@
 
 <DemoBlock title="active" description="active 传 label 或 href；也可以在每个 item 上单独标记 active。">
 
-<EwNavbar
+<EvNavbar
   :sticky="false"
   logo-text="cumubase"
   active="定价"
   :items="[{ label: '产品', href: '#' }, { label: '定价', href: '#' }]"
-  style="border:1px solid var(--ew-border-color-light); border-radius:14px;"
+  style="border:1px solid var(--ev-border-color-light); border-radius:14px;"
 />
 
 ```vue
-<EwNavbar logo-text="cumubase" active="定价" :items="navItems" />
+<EvNavbar logo-text="cumubase" active="定价" :items="navItems" />
 ```
 
 </DemoBlock>

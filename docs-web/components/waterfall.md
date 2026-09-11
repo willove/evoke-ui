@@ -12,7 +12,7 @@ const wfNotes = [
 ]
 </script>
 
-`EwWaterfall` 多列瀑布流：条目按「最短列优先」分发，列高随内容比例自动均衡。
+`EvWaterfall` 多列瀑布流：条目按「最短列优先」分发，列高随内容比例自动均衡。
 与 [ImageWall 图片墙](./image-wall) 的分工——ImageWall 是统一画幅的均匀网格，
 Waterfall 让每张图保持自己的高宽比，错落排布。
 默认渲染图片卡，点击打开 [ImagePreview 图片预览](./image-preview) 灯箱（可关）；
@@ -22,7 +22,7 @@ Waterfall 让每张图保持自己的高宽比，错落排布。
 
 <DemoBlock title="错落排布，点击预览" description="未声明比例的图片先按占位画幅排布，加载完成后按真实比例重新归位；点击任意一张打开灯箱。">
 
-<EwWaterfall
+<EvWaterfall
   :items="[
     { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70', alt: '山脊线' },
     { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=70', alt: '雾中山林' },
@@ -45,7 +45,7 @@ const photos = [
 </script>
 
 <template>
-  <EwWaterfall :items="photos" :columns="3" />
+  <EvWaterfall :items="photos" :columns="3" />
 </template>
 ```
 
@@ -56,17 +56,17 @@ const photos = [
 <DemoBlock title="切换列数" description="columns 改变后按同一套最短列策略重新分发；gap 同时控制列距与行距。">
 
 <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-  <EwButton
+  <EvButton
     v-for="n in [2, 3, 4]"
     :key="n"
     :variant="wfColumns === n ? 'soft' : 'ghost'"
     @click="wfColumns = n"
   >
     {{ n }} 列
-  </EwButton>
+  </EvButton>
 </div>
 
-<EwWaterfall
+<EvWaterfall
   :columns="wfColumns"
   :items="[
     { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=70', alt: '山脊线' },
@@ -79,7 +79,7 @@ const photos = [
 />
 
 ```vue
-<EwWaterfall :items="photos" :columns="4" :gap="10" :radius="8" />
+<EvWaterfall :items="photos" :columns="4" :gap="10" :radius="8" />
 ```
 
 </DemoBlock>
@@ -88,7 +88,7 @@ const photos = [
 
 <DemoBlock title="caption 蒙层 + ratio 声明" description="caption 在图片底部生成渐变蒙层；条目声明 ratio（高/宽）或 width/height 后跳过占位，首屏即按真实比例排布。">
 
-<EwWaterfall
+<EvWaterfall
   :items="[
     { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=750&fit=crop&q=70', alt: '山脊线', caption: '山脊线', ratio: 1.25 },
     { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=396&fit=crop&q=70', alt: '雾中山林', caption: '雾中山林', ratio: 0.66 },
@@ -100,7 +100,7 @@ const photos = [
 />
 
 ```vue
-<EwWaterfall
+<EvWaterfall
   :items="[
     { src: '/images/ridge.jpg', caption: '山脊线', ratio: 1.25 },
     { src: '/images/field.jpg', caption: '原野', ratio: 0.56 },
@@ -114,7 +114,7 @@ const photos = [
 
 <DemoBlock title="#item 插槽接管单元格" description="插槽参数为 { item, index }；承载笔记卡片这类高度不一的内容流，点击行为由内容自己决定。">
 
-<EwWaterfall :items="wfNotes" :columns="3" :gap="12" :preview="false">
+<EvWaterfall :items="wfNotes" :columns="3" :gap="12" :preview="false">
   <template #item="{ item }">
     <div class="wf-note">
       <p class="wf-note__title">{{ item.title }}</p>
@@ -122,17 +122,17 @@ const photos = [
       <span class="wf-note__time">{{ item.time }}</span>
     </div>
   </template>
-</EwWaterfall>
+</EvWaterfall>
 
 ```vue
-<EwWaterfall :items="notes" :columns="3" :preview="false">
+<EvWaterfall :items="notes" :columns="3" :preview="false">
   <template #item="{ item }">
     <article class="note">
       <h3>{{ item.title }}</h3>
       <p>{{ item.text }}</p>
     </article>
   </template>
-</EwWaterfall>
+</EvWaterfall>
 ```
 
 </DemoBlock>
@@ -143,25 +143,25 @@ const photos = [
   flex-direction: column;
   gap: 6px;
   padding: 14px 16px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-md);
-  background: var(--ew-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
+  background: var(--ev-bg-container);
 }
 .wf-note__title {
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 .wf-note__body {
   margin: 0;
   font-size: 12.5px;
   line-height: 1.7;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .wf-note__time {
   font-size: 11px;
-  color: var(--ew-text-tertiary, var(--ew-text-secondary));
+  color: var(--ev-text-tertiary, var(--ev-text-secondary));
 }
 </style>
 

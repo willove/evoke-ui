@@ -5,16 +5,16 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-alert type="info" :closable="false" style="margin-bottom: 12px;">
+  <eb-alert type="info" :closable="false" style="margin-bottom: 12px;">
     向下滚动页面，观察工具条钉在距顶部 12px 处；滚回原位后自动还原。
-  </ev-alert>
-  <ev-affix :offset="12">
-    <div style="background: var(--ev-bg-color-overlay); border: 1px solid var(--ev-border-color-light); border-radius: 8px; padding: 10px 16px; display: flex; gap: 8px; align-items: center;">
-      <ev-button size="small" type="primary">新建订单</ev-button>
-      <ev-button size="small">批量导出</ev-button>
-      <span style="font-size: 12px; color: var(--ev-text-color-secondary);">已选择 3 项</span>
+  </eb-alert>
+  <eb-affix :offset="12">
+    <div style="background: var(--eb-bg-color-overlay); border: 1px solid var(--eb-border-color-light); border-radius: 8px; padding: 10px 16px; display: flex; gap: 8px; align-items: center;">
+      <eb-button size="small" type="primary">新建订单</eb-button>
+      <eb-button size="small">批量导出</eb-button>
+      <span style="font-size: 12px; color: var(--eb-text-color-secondary);">已选择 3 项</span>
     </div>
-  </ev-affix>
+  </eb-affix>
 </DemoBlock>
 
 ## 指定滚动容器
@@ -22,9 +22,9 @@
 默认监听 window；钉在内部滚动容器时传 `target`：
 
 ```vue
-<ev-affix :offset="0" target="#detail-scroll-container">
+<eb-affix :offset="0" target="#detail-scroll-container">
   <section-card>区块操作条</section-card>
-</ev-affix>
+</eb-affix>
 ```
 
 ## Affix API

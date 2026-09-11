@@ -5,28 +5,28 @@
 ## 单按钮
 
 <DemoBlock>
-  <ev-space size="middle">
-    <ev-float-button icon="question-line" tooltip="联系客服" @click="() => {}" />
-    <ev-float-button icon="plus" type="primary" shape="square" />
-    <ev-float-button icon="notification" :badge-value="8" />
-    <ev-float-button icon="top" tooltip="回到顶部" @click="onBacktop" />
-  </ev-space>
+  <eb-space size="middle">
+    <eb-float-button icon="question-line" tooltip="联系客服" @click="() => {}" />
+    <eb-float-button icon="plus" type="primary" shape="square" />
+    <eb-float-button icon="notification" :badge-value="8" />
+    <eb-float-button icon="top" tooltip="回到顶部" @click="onBacktop" />
+  </eb-space>
 </DemoBlock>
 
 ## 按钮组（容器内演示，点击主按钮展开）
 
 <DemoBlock>
-  <div style="position: relative; height: 260px; border: 1px dashed var(--ev-border-color); border-radius: 8px; overflow: hidden;">
-    <ev-float-button-group
+  <div style="position: relative; height: 260px; border: 1px dashed var(--eb-border-color); border-radius: 8px; overflow: hidden;">
+    <eb-float-button-group
       :position="{ right: 24, bottom: 24 }"
       position-type="absolute"
       trigger="plus"
     >
-      <ev-float-button icon="question-line" tooltip="联系客服" />
-      <ev-float-button icon="edit" tooltip="意见反馈" />
-      <ev-float-button icon="download" tooltip="导出数据" />
-    </ev-float-button-group>
-    <span style="position: absolute; left: 16px; top: 12px; font-size: 12px; color: var(--ev-text-color-secondary);">
+      <eb-float-button icon="question-line" tooltip="联系客服" />
+      <eb-float-button icon="edit" tooltip="意见反馈" />
+      <eb-float-button icon="download" tooltip="导出数据" />
+    </eb-float-button-group>
+    <span style="position: absolute; left: 16px; top: 12px; font-size: 12px; color: var(--eb-text-color-secondary);">
       点击右下角主按钮展开子项，点击空白处或按 Esc 收起
     </span>
   </div>
@@ -35,10 +35,10 @@
 实际页面中布置到视口右下角（`position-type` 默认 fixed）：
 
 ```vue
-<ev-float-button-group :position="{ right: 40, bottom: 40 }" trigger="plus">
-  <ev-float-button icon="question-line" tooltip="联系客服" />
-  <ev-float-button icon="edit" tooltip="意见反馈" />
-</ev-float-button-group>
+<eb-float-button-group :position="{ right: 40, bottom: 40 }" trigger="plus">
+  <eb-float-button icon="question-line" tooltip="联系客服" />
+  <eb-float-button icon="edit" tooltip="意见反馈" />
+</eb-float-button-group>
 ```
 
 <script setup>

@@ -82,7 +82,7 @@ renderer.link = function({ href, title, tokens }) {
   if (protocol) {
     const refId = href.slice(colonIdx + 1);
     const theme = config.protocolThemes[protocol] || "primary";
-    return `<span class="ev-ref-chip ev-ref-chip--${theme}" data-protocol="${protocol}" data-ref-id="${refId}" data-ref-href="${href}"${titleAttr}>${text}</span>`;
+    return `<span class="eb-ref-chip eb-ref-chip--${theme}" data-protocol="${protocol}" data-ref-id="${refId}" data-ref-href="${href}"${titleAttr}>${text}</span>`;
   }
   return `<a href="${href}"${titleAttr}>${text}</a>`;
 };

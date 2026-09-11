@@ -1,25 +1,25 @@
-/* EvSpace —间距 */
+/* EbSpace —间距 */
 
-.ev-space.ev-space {
+.eb-space.eb-space {
   display: inline-flex;
-  gap: var(--ev-space-gap-y, 8px) var(--ev-space-gap-x, 8px);
+  gap: var(--eb-space-gap-y, 8px) var(--eb-space-gap-x, 8px);
 }
-.ev-space.ev-space.ev-space--vertical {
+.eb-space.eb-space.eb-space--vertical {
   flex-direction: column;
 }
-.ev-space.ev-space.is-wrap {
+.eb-space.eb-space.is-wrap {
   flex-wrap: wrap;
 }
-.ev-space.ev-space.is-fill {
+.eb-space.eb-space.is-fill {
   display: flex;
 }
 
-.ev-space.ev-space .ev-space__item {
+.eb-space.eb-space .eb-space__item {
   display: flex;
   align-items: center;
   min-width: 0;
 }
-.ev-space.ev-space.ev-space--vertical .ev-space__item {
+.eb-space.eb-space.eb-space--vertical .eb-space__item {
   align-items: stretch;
   flex-direction: column;
 }

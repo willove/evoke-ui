@@ -1,47 +1,47 @@
-/* EvBadge —徽标 */
+/* EbBadge —徽标 */
 
-.ev-badge.ev-badge {
+.eb-badge.eb-badge {
   position: relative;
   display: inline-block;
   vertical-align: middle;
 }
 
-.ev-badge.ev-badge .ev-badge__content {
-  --ev-badge-bg-color: var(--ev-color-danger);
+.eb-badge.eb-badge .eb-badge__content {
+  --eb-badge-bg-color: var(--eb-color-danger);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 18px;
   padding: 0 6px;
-  font-size: var(--ev-font-size-xs);
+  font-size: var(--eb-font-size-xs);
   line-height: 1;
-  color: var(--ev-color-white);
-  background-color: var(--ev-badge-bg-color);
-  border-radius: var(--ev-radius-full);
+  color: var(--eb-color-white);
+  background-color: var(--eb-badge-bg-color);
+  border-radius: var(--eb-radius-full);
   white-space: nowrap;
 }
-.ev-badge.ev-badge .ev-badge__content--primary { --ev-badge-bg-color: var(--ev-color-primary); }
-.ev-badge.ev-badge .ev-badge__content--success { --ev-badge-bg-color: var(--ev-color-success); }
-.ev-badge.ev-badge .ev-badge__content--warning { --ev-badge-bg-color: var(--ev-color-warning); }
-.ev-badge.ev-badge .ev-badge__content--info { --ev-badge-bg-color: var(--ev-color-info); }
+.eb-badge.eb-badge .eb-badge__content--primary { --eb-badge-bg-color: var(--eb-color-primary); }
+.eb-badge.eb-badge .eb-badge__content--success { --eb-badge-bg-color: var(--eb-color-success); }
+.eb-badge.eb-badge .eb-badge__content--warning { --eb-badge-bg-color: var(--eb-color-warning); }
+.eb-badge.eb-badge .eb-badge__content--info { --eb-badge-bg-color: var(--eb-color-info); }
 
 /* fixed：右上角 */
-.ev-badge.ev-badge .ev-badge__content.is-fixed {
+.eb-badge.eb-badge .eb-badge__content.is-fixed {
   position: absolute;
   top: 0;
-  right: calc(1 * var(--ev-badge-size, 18px) / 2 + 1px);
+  right: calc(1 * var(--eb-badge-size, 18px) / 2 + 1px);
   transform: translateY(-50%) translateX(100%);
-  z-index: calc(var(--ev-index-normal, 1) + 1);
+  z-index: calc(var(--eb-index-normal, 1) + 1);
 }
 
 /* dot */
-.ev-badge.ev-badge .ev-badge__content.is-dot {
+.eb-badge.eb-badge .eb-badge__content.is-dot {
   width: 8px;
   height: 8px;
   padding: 0;
-  border-radius: var(--ev-radius-circle);
+  border-radius: var(--eb-radius-circle);
 }
-.ev-badge.ev-badge .ev-badge__content.is-dot.is-fixed {
+.eb-badge.eb-badge .eb-badge__content.is-dot.is-fixed {
   top: 4px;
   right: 4px;
   transform: none;

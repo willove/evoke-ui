@@ -1,71 +1,71 @@
-/* EwCard — 卡片 */
+/* EvCard — 卡片 */
 
-.ew-card {
+.ev-card {
   position: relative;
-  padding: var(--ew-space-6);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-xl);
-  background-color: var(--ew-bg-container);
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
-    border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    background-color var(--ew-duration-base) var(--ew-ease-in-out);
+  padding: var(--ev-space-6);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-xl);
+  background-color: var(--ev-bg-container);
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out),
+    border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    background-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-card.is-flat {
+.ev-card.is-flat {
   border-color: transparent;
   box-shadow: none;
 }
 
 /* ─── 粉彩底（remixdesign 作品卡）─── */
-.ew-card.is-soft { background-color: var(--ew-fill-1); }
-.ew-card.is-cream { background-color: var(--ew-pastel-cream); }
-.ew-card.is-blue { background-color: var(--ew-pastel-blue); }
-.ew-card.is-mint { background-color: var(--ew-pastel-mint); }
-.ew-card.is-pink { background-color: var(--ew-pastel-pink); }
-.ew-card.is-lime { background-color: var(--ew-pastel-lime); }
+.ev-card.is-soft { background-color: var(--ev-fill-1); }
+.ev-card.is-cream { background-color: var(--ev-pastel-cream); }
+.ev-card.is-blue { background-color: var(--ev-pastel-blue); }
+.ev-card.is-mint { background-color: var(--ev-pastel-mint); }
+.ev-card.is-pink { background-color: var(--ev-pastel-pink); }
+.ev-card.is-lime { background-color: var(--ev-pastel-lime); }
 
 /* ─── 贴纸风：厚白描边 + 轻投影 ─── */
-.ew-card.is-sticker {
-  border: 3px solid var(--ew-border-sticker);
-  box-shadow: var(--ew-shadow-2);
+.ev-card.is-sticker {
+  border: 3px solid var(--ev-border-sticker);
+  box-shadow: var(--ev-shadow-2);
 }
 
 /* ─── 深色精选（launchos 主推定价卡）─── */
-.ew-card.is-featured {
+.ev-card.is-featured {
   border-color: transparent;
   background:
-    radial-gradient(120% 90% at 85% 0%, rgba(var(--ew-color-primary-rgb), 0.14), transparent 60%),
+    radial-gradient(120% 90% at 85% 0%, rgba(var(--ev-color-primary-rgb), 0.14), transparent 60%),
     linear-gradient(165deg, #232329 0%, #121215 70%);
-  color: var(--ew-text-on-dark);
-  box-shadow: var(--ew-shadow-4);
+  color: var(--ev-text-on-dark);
+  box-shadow: var(--ev-shadow-4);
 }
 
-.ew-card.is-featured :deep(h1),
-.ew-card.is-featured :deep(h2),
-.ew-card.is-featured :deep(h3),
-.ew-card.is-featured :deep(h4) {
+.ev-card.is-featured :deep(h1),
+.ev-card.is-featured :deep(h2),
+.ev-card.is-featured :deep(h3),
+.ev-card.is-featured :deep(h4) {
   color: #ffffff;
 }
 
-.ew-card.is-featured :deep(p) {
+.ev-card.is-featured :deep(p) {
   color: rgba(245, 247, 252, 0.68);
 }
 
 /* ─── 悬浮：轻抬 + 光影上移 ─── */
-.ew-card.is-hoverable:hover {
+.ev-card.is-hoverable:hover {
   transform: translateY(-3px);
-  box-shadow: var(--ew-shadow-3);
-  border-color: var(--ew-border-color);
+  box-shadow: var(--ev-shadow-3);
+  border-color: var(--ev-border-color);
 }
 
-/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ew-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ew-card.is-glass,
-  html[data-ew-glass='on'] .ew-card:not(.no-glass) {
-    background-color: var(--ew-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
-    backdrop-filter: blur(var(--ew-glass-blur)) saturate(var(--ew-glass-saturate));
+  .ev-card.is-glass,
+  html[data-ev-glass='on'] .ev-card:not(.no-glass) {
+    background-color: var(--ev-glass-bg);
+    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }

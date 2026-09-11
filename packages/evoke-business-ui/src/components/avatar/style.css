@@ -1,52 +1,52 @@
-/* EvAvatar —头像 */
+/* EbAvatar —头像 */
 
-.ev-avatar.ev-avatar {
-  --ev-avatar-size: 40px;
+.eb-avatar.eb-avatar {
+  --eb-avatar-size: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  width: var(--ev-avatar-size);
-  height: var(--ev-avatar-size);
-  line-height: var(--ev-avatar-size);
-  font-size: calc(var(--ev-avatar-size) / 2.4);
-  color: var(--ev-color-white);
-  background: var(--ev-fill-color-dark);
+  width: var(--eb-avatar-size);
+  height: var(--eb-avatar-size);
+  line-height: var(--eb-avatar-size);
+  font-size: calc(var(--eb-avatar-size) / 2.4);
+  color: var(--eb-color-white);
+  background: var(--eb-fill-color-dark);
   overflow: hidden;
   flex-shrink: 0;
   text-align: center;
   user-select: none;
 }
-.ev-avatar.ev-avatar--small.ev-avatar {
-  --ev-avatar-size: 24px;
+.eb-avatar.eb-avatar--small.eb-avatar {
+  --eb-avatar-size: 24px;
 }
-.ev-avatar.ev-avatar--large.ev-avatar {
-  --ev-avatar-size: 56px;
+.eb-avatar.eb-avatar--large.eb-avatar {
+  --eb-avatar-size: 56px;
 }
-.ev-avatar.ev-avatar--circle.ev-avatar {
-  border-radius: var(--ev-radius-circle);
+.eb-avatar.eb-avatar--circle.eb-avatar {
+  border-radius: var(--eb-radius-circle);
 }
-.ev-avatar.ev-avatar--square.ev-avatar {
-  border-radius: var(--ev-radius-md);
+.eb-avatar.eb-avatar--square.eb-avatar {
+  border-radius: var(--eb-radius-md);
 }
 
-.ev-avatar.ev-avatar img {
+.eb-avatar.eb-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.ev-avatar.ev-avatar.is-error img {
+.eb-avatar.eb-avatar.is-error img {
   display: none;
 }
 
 /* ─── AvatarGroup 叠放 ─── */
-.ev-avatar-group.ev-avatar-group {
+.eb-avatar-group.eb-avatar-group {
   display: inline-flex;
   align-items: center;
 }
-.ev-avatar-group.ev-avatar-group .ev-avatar.ev-avatar + .ev-avatar.ev-avatar {
+.eb-avatar-group.eb-avatar-group .eb-avatar.eb-avatar + .eb-avatar.eb-avatar {
   margin-left: -10px;
-  box-shadow: 0 0 0 2px var(--ev-bg-color);
+  box-shadow: 0 0 0 2px var(--eb-bg-color);
   position: relative;
 }

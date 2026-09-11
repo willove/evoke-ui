@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-steps ev-steps"
+    class="eb-steps eb-steps"
     :class="[`is-${direction}`, { 'is-center': alignCenter, 'is-simple': simple }]"
   >
     <slot />
@@ -9,7 +9,7 @@
 
 <script setup>
 /**
- * EvSteps — 步骤条容器
+ * EbSteps — 步骤条容器
  * 状态计算在子项内完成；space/方向等经 provide 下发，子项按注册顺序编号
  */
 import { provide, toRef, computed, reactive } from 'vue'

@@ -1,66 +1,66 @@
-/* EvDropdown —下拉 */
+/* EbDropdown —下拉 */
 
-.ev-dropdown.ev-dropdown {
+.eb-dropdown.eb-dropdown {
   display: inline-flex;
   position: relative;
-  color: var(--ev-text-color-regular);
-  font-size: var(--ev-font-size-base);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-base);
   vertical-align: middle;
 }
-.ev-dropdown.ev-dropdown.is-disabled {
+.eb-dropdown.eb-dropdown.is-disabled {
   cursor: not-allowed;
-  color: var(--ev-text-color-disabled);
+  color: var(--eb-text-color-disabled);
 }
 
-.ev-dropdown.ev-dropdown .ev-dropdown__trigger-inner {
+.eb-dropdown.eb-dropdown .eb-dropdown__trigger-inner {
   display: inline-flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   cursor: pointer;
   outline: none;
 }
 
-.ev-dropdown.ev-dropdown .ev-dropdown__caret {
+.eb-dropdown.eb-dropdown .eb-dropdown__caret {
   /* 跟随触发器文字色：主色/深色按钮内呈白色，普通文本触发器呈文字色 */
   color: inherit;
-  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+  transition: transform var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-dropdown.ev-dropdown .ev-dropdown__caret.is-reverse {
+.eb-dropdown.eb-dropdown .eb-dropdown__caret.is-reverse {
   transform: rotate(180deg);
 }
 
 /* split-button 箭头按钮 */
-.ev-dropdown.ev-dropdown .ev-dropdown__caret-button {
+.eb-dropdown.eb-dropdown .eb-dropdown__caret-button {
   padding: 8px 8px;
 }
-.ev-dropdown.ev-dropdown--small.ev-dropdown .ev-dropdown__caret-button {
+.eb-dropdown.eb-dropdown--small.eb-dropdown .eb-dropdown__caret-button {
   padding: 5px 5px;
 }
-.ev-dropdown.ev-dropdown--large.ev-dropdown .ev-dropdown__caret-button {
+.eb-dropdown.eb-dropdown--large.eb-dropdown .eb-dropdown__caret-button {
   padding: 12px 10px;
 }
 
 /* 浮层 */
-.ev-dropdown__popper.ev-dropdown__popper {
+.eb-dropdown__popper.eb-dropdown__popper {
   position: fixed;
   z-index: 2100;
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-md);
-  box-shadow: var(--ev-shadow-3);
-  padding: var(--ev-space-1);
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-3);
+  padding: var(--eb-space-1);
   min-width: 140px;
 }
 
 /* 过渡 */
-.ev-dropdown-fade-enter-active,
-.ev-dropdown-fade-leave-active {
+.eb-dropdown-fade-enter-active,
+.eb-dropdown-fade-leave-active {
   transition:
-    opacity var(--ev-duration-fast) var(--ev-ease-out),
-    transform var(--ev-duration-fast) var(--ev-ease-out);
+    opacity var(--eb-duration-fast) var(--eb-ease-out),
+    transform var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-dropdown-fade-enter-from,
-.ev-dropdown-fade-leave-to {
+.eb-dropdown-fade-enter-from,
+.eb-dropdown-fade-leave-to {
   opacity: 0;
   transform: translateY(-4px);
 }

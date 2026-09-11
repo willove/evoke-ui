@@ -1,46 +1,46 @@
 <template>
   <div
-    class="ev-picker-panel ev-date-range-picker"
+    class="eb-picker-panel eb-date-range-picker"
     :class="{ 'has-sidebar': !!shortcuts?.length, 'has-time': showTime }"
   >
     <!-- 快捷选项 -->
-    <div v-if="shortcuts?.length" class="ev-picker-panel__sidebar">
+    <div v-if="shortcuts?.length" class="eb-picker-panel__sidebar">
       <button
         v-for="(sc, i) in shortcuts"
         :key="i"
         type="button"
-        class="ev-picker-panel__shortcut"
+        class="eb-picker-panel__shortcut"
         @click="emit('shortcut', sc)"
       >
         {{ sc.text }}
       </button>
     </div>
 
-    <div class="ev-picker-panel__body-wrapper">
-      <div class="ev-picker-panel__body">
+    <div class="eb-picker-panel__body-wrapper">
+      <div class="eb-picker-panel__body">
         <!-- datetimerange：双时间头 -->
-        <div v-if="showTime" class="ev-date-range-picker__time-header">
-          <div class="ev-date-range-picker__editors-wrap is-left">
-            <div class="ev-date-range-picker__time-picker-wrap">
-              <input class="ev-date-picker__editor" :value="startText" readonly />
+        <div v-if="showTime" class="eb-date-range-picker__time-header">
+          <div class="eb-date-range-picker__editors-wrap is-left">
+            <div class="eb-date-range-picker__time-picker-wrap">
+              <input class="eb-date-picker__editor" :value="startText" readonly />
             </div>
-            <div class="ev-date-range-picker__time-picker-wrap">
+            <div class="eb-date-range-picker__time-picker-wrap">
               <button
                 type="button"
-                class="ev-date-picker__editor ev-date-picker__time-btn"
+                class="eb-date-picker__editor eb-date-picker__time-btn"
                 @click="activeTimePanel = activeTimePanel === 'left' ? null : 'left'"
               >{{ startTimeText }}</button>
             </div>
           </div>
-          <ev-icon name="arrow-right" class="ev-date-range-picker__time-header-icon" />
-          <div class="ev-date-range-picker__editors-wrap is-right">
-            <div class="ev-date-range-picker__time-picker-wrap">
-              <input class="ev-date-picker__editor" :value="endText" readonly />
+          <eb-icon name="arrow-right" class="eb-date-range-picker__time-header-icon" />
+          <div class="eb-date-range-picker__editors-wrap is-right">
+            <div class="eb-date-range-picker__time-picker-wrap">
+              <input class="eb-date-picker__editor" :value="endText" readonly />
             </div>
-            <div class="ev-date-range-picker__time-picker-wrap">
+            <div class="eb-date-range-picker__time-picker-wrap">
               <button
                 type="button"
-                class="ev-date-picker__editor ev-date-picker__time-btn"
+                class="eb-date-picker__editor eb-date-picker__time-btn"
                 @click="activeTimePanel = activeTimePanel === 'right' ? null : 'right'"
               >{{ endTimeText }}</button>
             </div>
@@ -48,24 +48,24 @@
         </div>
 
         <!-- 左面板 -->
-        <div class="ev-picker-panel__content ev-date-range-picker__content is-left">
-          <div class="ev-date-range-picker__header">
+        <div class="eb-picker-panel__content eb-date-range-picker__content is-left">
+          <div class="eb-date-range-picker__header">
             <button
               type="button"
-              class="ev-picker-panel__icon-btn ev-date-picker__prev-btn d-arrow-left"
+              class="eb-picker-panel__icon-btn eb-date-picker__prev-btn d-arrow-left"
               :aria-label="t('datepicker.prevYear')"
               @click="prevYear('left')"
             >
-              <ev-icon name="d-arrow-left" />
+              <eb-icon name="d-arrow-left" />
             </button>
             <button
               v-if="type !== 'monthrange'"
               type="button"
-              class="ev-picker-panel__icon-btn ev-date-picker__prev-btn arrow-left"
+              class="eb-picker-panel__icon-btn eb-date-picker__prev-btn arrow-left"
               :aria-label="t('datepicker.prevMonth')"
               @click="prevMonth('left')"
             >
-              <ev-icon name="arrow-left" />
+              <eb-icon name="arrow-left" />
             </button>
             <div>{{ leftLabel }}</div>
           </div>
@@ -93,25 +93,25 @@
         </div>
 
         <!-- 右面板 -->
-        <div class="ev-picker-panel__content ev-date-range-picker__content is-right">
-          <div class="ev-date-range-picker__header">
+        <div class="eb-picker-panel__content eb-date-range-picker__content is-right">
+          <div class="eb-date-range-picker__header">
             <div>{{ rightLabel }}</div>
             <button
               v-if="type !== 'monthrange'"
               type="button"
-              class="ev-picker-panel__icon-btn ev-date-picker__next-btn arrow-right"
+              class="eb-picker-panel__icon-btn eb-date-picker__next-btn arrow-right"
               :aria-label="t('datepicker.nextMonth')"
               @click="nextMonth('right')"
             >
-              <ev-icon name="arrow-right" />
+              <eb-icon name="arrow-right" />
             </button>
             <button
               type="button"
-              class="ev-picker-panel__icon-btn ev-date-picker__next-btn d-arrow-right"
+              class="eb-picker-panel__icon-btn eb-date-picker__next-btn d-arrow-right"
               :aria-label="t('datepicker.nextYear')"
               @click="nextYear('right')"
             >
-              <ev-icon name="d-arrow-right" />
+              <eb-icon name="d-arrow-right" />
             </button>
           </div>
           <basic-date-table
@@ -140,7 +140,7 @@
         <!-- 时间滚轮（datetimerange） -->
         <div
           v-if="activeTimePanel"
-          class="ev-date-picker__time-dropdown"
+          class="eb-date-picker__time-dropdown"
           :class="activeTimePanel === 'right' ? 'is-right' : 'is-left'"
         >
           <time-panel
@@ -154,10 +154,10 @@
     </div>
 
     <!-- datetimerange footer -->
-    <div v-if="showTime" class="ev-picker-panel__footer">
+    <div v-if="showTime" class="eb-picker-panel__footer">
       <button
         type="button"
-        class="ev-picker-panel__btn"
+        class="eb-picker-panel__btn"
         @click="emit('confirm')"
       >{{ t('datepicker.confirm') }}</button>
     </div>
@@ -171,14 +171,14 @@
  * selecting 时 hover 预览区间；unlink-panels 双面板独立翻页
  */
 import { computed, ref, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import BasicDateTable from './basic-date-table.vue'
 import BasicMonthTable from './basic-month-table.vue'
 import TimePanel from './time-panel.vue'
 import { dayjs, applyDefaultTime } from './utils'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvPanelDateRange' })
+defineOptions({ name: 'EbPanelDateRange' })
 
 const props = defineProps({
   type: { type: String, default: 'daterange' },

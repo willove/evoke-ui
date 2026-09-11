@@ -24,7 +24,7 @@ function onPagingChange(e) {
 v-model 绑定 `{ page, size }` 对象（也接受纯页码数字），翻页与修改每页条数都会同步回对象。
 
 <DemoBlock>
-  <ev-pagination v-model="pageModel" :total="120" />
+  <eb-pagination v-model="pageModel" :total="120" />
   <p style="margin-top: 8px; font-size: 13px; color: #909399;">page: {{ pageModel.page }} / size: {{ pageModel.size }}</p>
 </DemoBlock>
 
@@ -33,7 +33,7 @@ v-model 绑定 `{ page, size }` 对象（也接受纯页码数字），翻页与
 `sizes` 部分渲染条数下拉，`page-sizes` 自定义候选值，`page-size` 指定初始每页条数；`total` 驱动总条数文案与页数计算。
 
 <DemoBlock>
-  <ev-pagination v-model:current-page="sizePage" v-model:page-size="sizeValue" :page-sizes="[10, 30, 60]" layout="total, sizes, prev, pager, next" :total="480" />
+  <eb-pagination v-model:current-page="sizePage" v-model:page-size="sizeValue" :page-sizes="[10, 30, 60]" layout="total, sizes, prev, pager, next" :total="480" />
 </DemoBlock>
 
 ## 页码跳转
@@ -41,7 +41,7 @@ v-model 绑定 `{ page, size }` 对象（也接受纯页码数字），翻页与
 layout 加入 `jumper` 渲染「去第 X 页」输入框，回车或失焦跳转；页码超出范围自动收敛到有效页。
 
 <DemoBlock>
-  <ev-pagination v-model:current-page="jumpPage" layout="prev, pager, next, jumper" :total="60" :page-size="10" />
+  <eb-pagination v-model:current-page="jumpPage" layout="prev, pager, next, jumper" :total="60" :page-size="10" />
 </DemoBlock>
 
 ## 受控页码与事件
@@ -49,7 +49,7 @@ layout 加入 `jumper` 渲染「去第 X 页」输入框，回车或失焦跳转
 `v-model:current-page` / `v-model:page-size` 分别受控页码与每页条数；`change` 事件统一回传 `{ current, pageSize }`，另有 `current-change` / `size-change` / `prev-click` / `next-click` 细分事件。
 
 <DemoBlock>
-  <ev-pagination v-model:current-page="ctrlPage" v-model:page-size="ctrlSize" :total="316" @change="onPagingChange" />
+  <eb-pagination v-model:current-page="ctrlPage" v-model:page-size="ctrlSize" :total="316" @change="onPagingChange" />
   <p style="margin-top: 8px; font-size: 13px; color: #909399;">最近 change：{{ changeLog || '操作分页试试' }}</p>
 </DemoBlock>
 
@@ -58,8 +58,8 @@ layout 加入 `jumper` 渲染「去第 X 页」输入框，回车或失焦跳转
 `size` 支持 large / default / small（`small` 属性等价 size='small'）；`background` 为 false 时页码按钮去掉底色；`disabled` 整体禁用。
 
 <DemoBlock>
-  <ev-pagination size="small" :background="false" :model-value="{ page: 1, size: 10 }" :total="45" />
-  <ev-pagination disabled :model-value="{ page: 1, size: 10 }" :total="45" style="margin-top: 12px;" />
+  <eb-pagination size="small" :background="false" :model-value="{ page: 1, size: 10 }" :total="45" />
+  <eb-pagination disabled :model-value="{ page: 1, size: 10 }" :total="45" style="margin-top: 12px;" />
 </DemoBlock>
 
 ## 单页隐藏
@@ -67,7 +67,7 @@ layout 加入 `jumper` 渲染「去第 X 页」输入框，回车或失焦跳转
 `hide-on-single-page` 开启后，总页数不超过 1 时整个组件不渲染（下方 total 仅够一页，组件已隐藏）。
 
 <DemoBlock>
-  <ev-pagination :total="8" :page-size="20" hide-on-single-page />
+  <eb-pagination :total="8" :page-size="20" hide-on-single-page />
 </DemoBlock>
 
 ## API

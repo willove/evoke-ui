@@ -1,9 +1,9 @@
 <template>
   <span
-    class="ev-tag ev-tag"
+    class="eb-tag eb-tag"
     :class="[
-      `ev-tag--${type}`,
-      `ev-tag--${effect}`,
+      `eb-tag--${type}`,
+      `eb-tag--${effect}`,
       sizeClass,
       {
         'is-round': round,
@@ -15,12 +15,12 @@
     :style="tagStyle"
     @click="emit('click', $event)"
   >
-    <span class="ev-tag__content">
+    <span class="eb-tag__content">
       <slot />
     </span>
-    <ev-icon
+    <eb-icon
       v-if="closable"
-      class="ev-tag__close"
+      class="eb-tag__close"
       name="close"
       @click.stop="handleClose"
     />
@@ -29,11 +29,11 @@
 
 <script setup>
 /**
- * EvTag — 标签
+ * EbTag — 标签
  * 默认值：size='small'、effect='plain'、disable-transitions=true
  */
 import { computed } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   type: {
@@ -61,9 +61,9 @@ const props = defineProps({
 const emit = defineEmits(['close', 'click'])
 
 const sizeClass = computed(() => {
-  if (props.size === 'large') return 'ev-tag--large'
+  if (props.size === 'large') return 'eb-tag--large'
   if (props.size === 'default') return ''
-  return 'ev-tag--small'
+  return 'eb-tag--small'
 })
 
 const tagStyle = computed(() =>

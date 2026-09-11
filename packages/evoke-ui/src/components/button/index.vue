@@ -3,8 +3,8 @@
     :is="href ? 'a' : 'button'"
     ref="btnRef"
     :class="[
-      'ew-button',
-      `ew-button--${sizeClass}`,
+      'ev-button',
+      `ev-button--${sizeClass}`,
       `is-${variant}`,
       {
         'is-pill': pill,
@@ -22,30 +22,30 @@
     :aria-disabled="disabled || loading"
     @click="handleClick"
   >
-    <span v-if="loading" class="ew-button__loading">
-      <EwIcon name="loading" :size="iconSize" class="is-rotating" />
+    <span v-if="loading" class="ev-button__loading">
+      <EvIcon name="loading" :size="iconSize" class="is-rotating" />
     </span>
-    <EwIcon v-else-if="icon" :name="icon" :size="iconSize" class="ew-button__icon" />
-    <span v-if="$slots.default" class="ew-button__content"><slot /></span>
-    <EwIcon
+    <EvIcon v-else-if="icon" :name="icon" :size="iconSize" class="ev-button__icon" />
+    <span v-if="$slots.default" class="ev-button__content"><slot /></span>
+    <EvIcon
       v-if="iconRight && !loading"
       :name="iconRight"
       :size="iconSize"
-      class="ew-button__icon ew-button__icon--right"
+      class="ev-button__icon ev-button__icon--right"
     />
   </component>
 </template>
 
 <script setup>
 /**
- * EwButton — 按钮（官网 CTA 语言）
+ * EvButton — 按钮（官网 CTA 语言）
  * variant：primary 蓝色实心 / dark 墨色实心（launchos 黑胶囊 CTA）/
  *          soft 柔和底（remixicon 头部下载钮）/ outline / ghost
  * 默认 radius-lg 圆润矩形，pill 转全圆胶囊
  * href 传入时渲染为 <a>（站内/外链跳转），target="_blank" 自动补 noopener
  */
 import { ref, computed, useSlots } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   /** 视觉变体 */

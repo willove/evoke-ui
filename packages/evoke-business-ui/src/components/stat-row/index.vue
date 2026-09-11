@@ -1,6 +1,6 @@
 <template>
-  <div class="ev-stat-row" :class="'ev-stat-row--cols-' + cols">
-    <ev-stat-card
+  <div class="eb-stat-row" :class="'eb-stat-row--cols-' + cols">
+    <eb-stat-card
       v-for="(item, i) in items"
       :key="i"
       :label="item.label"
@@ -14,10 +14,10 @@
 
 <script setup>
 /**
- * EvStatRow — 指标卡行
- * items 配置式批量渲染 EvStatCard，cols 控制栅格列数（2/3/4）
+ * EbStatRow — 指标卡行
+ * items 配置式批量渲染 EbStatCard，cols 控制栅格列数（2/3/4）
  */
-import EvStatCard from '../stat-card/index.vue'
+import EbStatCard from '../stat-card/index.vue'
 
 defineProps({
   items: { type: Array, default: () => [] },

@@ -1,9 +1,9 @@
-/* EwModal — 弹出层 */
+/* EvModal — 弹出层 */
 
-.ew-modal {
+.ev-modal {
   position: fixed;
   inset: 0;
-  z-index: var(--ew-z-index-overlay, 2000);
+  z-index: var(--ev-z-index-overlay, 2000);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -14,34 +14,34 @@
   overflow-y: auto;
 }
 
-.ew-modal__panel {
+.ev-modal__panel {
   position: relative;
   width: 560px;
   max-width: 100%;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-4);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-4);
   outline: none;
 }
 
-.ew-modal__header {
+.ev-modal__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ew-space-4);
-  padding: var(--ew-space-5) var(--ew-space-6) 0;
+  gap: var(--ev-space-4);
+  padding: var(--ev-space-5) var(--ev-space-6) 0;
 }
 
-.ew-modal__title {
+.ev-modal__title {
   margin: 0;
-  font-size: var(--ew-font-size-xl);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-xl);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  color: var(--ev-text-primary);
 }
 
-.ew-modal__close {
+.ev-modal__close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -49,56 +49,56 @@
   height: 28px;
   margin-left: auto;
   border: none;
-  border-radius: var(--ew-radius-full);
+  border-radius: var(--ev-radius-full);
   background: transparent;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   cursor: pointer;
-  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
-    color var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: background-color var(--ev-duration-base) var(--ev-ease-in-out),
+    color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-modal__close:hover {
-  background-color: var(--ew-fill-1);
-  color: var(--ew-text-primary);
+.ev-modal__close:hover {
+  background-color: var(--ev-fill-1);
+  color: var(--ev-text-primary);
 }
 
-.ew-modal__body {
-  padding: var(--ew-space-4) var(--ew-space-6) var(--ew-space-6);
-  font-size: var(--ew-font-size-md);
+.ev-modal__body {
+  padding: var(--ev-space-4) var(--ev-space-6) var(--ev-space-6);
+  font-size: var(--ev-font-size-md);
   line-height: 1.7;
-  color: var(--ew-text-regular);
+  color: var(--ev-text-regular);
 }
 
-.ew-modal__footer {
+.ev-modal__footer {
   display: flex;
   justify-content: flex-end;
-  gap: var(--ew-space-3);
-  padding: 0 var(--ew-space-6) var(--ew-space-6);
+  gap: var(--ev-space-3);
+  padding: 0 var(--ev-space-6) var(--ev-space-6);
 }
 
 /* ─── 进出场：遮罩淡入 + 面板上浮 ─── */
-.ew-modal-enter-active,
-.ew-modal-leave-active {
-  transition: opacity var(--ew-duration-base) var(--ew-ease-in-out);
+.ev-modal-enter-active,
+.ev-modal-leave-active {
+  transition: opacity var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-modal-enter-active .ew-modal__panel,
-.ew-modal-leave-active .ew-modal__panel {
-  transition: transform var(--ew-duration-base) var(--ew-ease-smooth),
-    opacity var(--ew-duration-base) var(--ew-ease-in-out);
+.ev-modal-enter-active .ev-modal__panel,
+.ev-modal-leave-active .ev-modal__panel {
+  transition: transform var(--ev-duration-base) var(--ev-ease-smooth),
+    opacity var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-modal-enter-from,
-.ew-modal-leave-to {
+.ev-modal-enter-from,
+.ev-modal-leave-to {
   opacity: 0;
 }
 
-.ew-modal-enter-from .ew-modal__panel {
+.ev-modal-enter-from .ev-modal__panel {
   transform: translateY(14px) scale(0.98);
   opacity: 0;
 }
 
-.ew-modal-leave-to .ew-modal__panel {
+.ev-modal-leave-to .ev-modal__panel {
   transform: translateY(8px);
   opacity: 0;
 }

@@ -1,25 +1,25 @@
 <template>
   <div
-    class="ev-descriptions ev-descriptions"
-    :class="[`ev-descriptions--${size}`, { 'is-bordered': border }]"
+    class="eb-descriptions eb-descriptions"
+    :class="[`eb-descriptions--${size}`, { 'is-bordered': border }]"
   >
-    <div v-if="title || $slots.title || extra || $slots.extra" class="ev-descriptions__header">
-      <div class="ev-descriptions__title">
+    <div v-if="title || $slots.title || extra || $slots.extra" class="eb-descriptions__header">
+      <div class="eb-descriptions__title">
         <slot name="title">{{ title }}</slot>
       </div>
-      <div class="ev-descriptions__extra">
+      <div class="eb-descriptions__extra">
         <slot name="extra">{{ extra }}</slot>
       </div>
     </div>
-    <div class="ev-descriptions__body">
-      <table class="ev-descriptions__table" :class="{ 'is-bordered': border }">
+    <div class="eb-descriptions__body">
+      <table class="eb-descriptions__table" :class="{ 'is-bordered': border }">
         <template v-if="direction === 'vertical'">
-          <tbody class="ev-descriptions__body-label">
-            <tr class="ev-descriptions__row">
+          <tbody class="eb-descriptions__body-label">
+            <tr class="eb-descriptions__row">
               <th
                 v-for="cell in cells"
                 :key="cell.key"
-                class="ev-descriptions__cell ev-descriptions__label"
+                class="eb-descriptions__cell eb-descriptions__label"
                 :class="cell.labelClass"
                 :colspan="cell.labelColspan"
                 :style="cell.labelStyle"
@@ -29,12 +29,12 @@
               </th>
             </tr>
           </tbody>
-          <tbody class="ev-descriptions__body-content">
-            <tr class="ev-descriptions__row">
+          <tbody class="eb-descriptions__body-content">
+            <tr class="eb-descriptions__row">
               <td
                 v-for="cell in cells"
                 :key="cell.key"
-                class="ev-descriptions__cell ev-descriptions__content"
+                class="eb-descriptions__cell eb-descriptions__content"
                 :class="cell.class"
                 :colspan="cell.contentColspan"
                 :style="cell.style"
@@ -46,10 +46,10 @@
           </tbody>
         </template>
         <tbody v-else>
-          <tr v-for="(row, ri) in rows" :key="ri" class="ev-descriptions__row">
+          <tr v-for="(row, ri) in rows" :key="ri" class="eb-descriptions__row">
             <template v-for="cell in row" :key="cell.key">
               <th
-                class="ev-descriptions__cell ev-descriptions__label"
+                class="eb-descriptions__cell eb-descriptions__label"
                 :class="[cell.labelClass, { 'is-bordered-label': border }]"
                 :colspan="cell.labelColspan"
                 :style="cell.labelStyle"
@@ -58,7 +58,7 @@
                 <component :is="CellSlotRenderer" :vnode="cell.item" kind="label" />
               </th>
               <td
-                class="ev-descriptions__cell ev-descriptions__content"
+                class="eb-descriptions__cell eb-descriptions__content"
                 :class="cell.class"
                 :colspan="cell.contentColspan"
                 :style="cell.style"
@@ -76,12 +76,12 @@
 
 <script setup>
 /**
- * EvDescriptions — 描述列表
+ * EbDescriptions — 描述列表
  * 列网格：每个 item 占 2*span 列（label 1 列 + content 2*span-1 列），
  * 横向按 column 分行、末行不满由最后格补齐；纵向 label/content 两个 tbody
  */
 import { computed, defineComponent, useSlots, Fragment } from 'vue'
-import EvDescriptionsItem from './item.vue'
+import EbDescriptionsItem from './item.vue'
 
 const props = defineProps({
   border: { type: Boolean, default: false },
@@ -126,7 +126,7 @@ function collectItems() {
       if (!n || typeof n !== 'object') continue
       if (Array.isArray(n)) { walk(n); continue }
       if (n.type === Fragment && Array.isArray(n.children)) { walk(n.children); continue }
-      if (n.type === EvDescriptionsItem) flat.push(n)
+      if (n.type === EbDescriptionsItem) flat.push(n)
     }
   }
   walk(slots.default?.())

@@ -1,36 +1,36 @@
 <template>
   <div
-    class="ev-picker-panel ev-date-picker"
+    class="eb-picker-panel eb-date-picker"
     :class="{ 'has-sidebar': !!shortcuts?.length, 'has-time': showTime }"
   >
     <!-- 快捷选项 -->
-    <div v-if="shortcuts?.length" class="ev-picker-panel__sidebar">
+    <div v-if="shortcuts?.length" class="eb-picker-panel__sidebar">
       <button
         v-for="(sc, i) in shortcuts"
         :key="i"
         type="button"
-        class="ev-picker-panel__shortcut"
+        class="eb-picker-panel__shortcut"
         @click="emit('shortcut', sc)"
       >
         {{ sc.text }}
       </button>
     </div>
 
-    <div class="ev-picker-panel__body-wrapper">
-      <div class="ev-picker-panel__body">
+    <div class="eb-picker-panel__body-wrapper">
+      <div class="eb-picker-panel__body">
         <!-- datetime：时间头 -->
-        <div v-if="showTime" class="ev-date-picker__time-header">
-          <span class="ev-date-picker__editor-wrap">
+        <div v-if="showTime" class="eb-date-picker__time-header">
+          <span class="eb-date-picker__editor-wrap">
             <input
-              class="ev-date-picker__editor"
+              class="eb-date-picker__editor"
               :value="dateText"
               readonly
             />
           </span>
-          <span class="ev-date-picker__editor-wrap">
+          <span class="eb-date-picker__editor-wrap">
             <button
               type="button"
-              class="ev-date-picker__editor ev-date-picker__time-btn"
+              class="eb-date-picker__editor eb-date-picker__time-btn"
               @click="timePanelVisible = !timePanelVisible"
             >
               {{ timeText }}
@@ -39,56 +39,56 @@
         </div>
 
         <!-- 头部导航 -->
-        <div class="ev-date-picker__header ev-date-picker__header--bordered">
+        <div class="eb-date-picker__header eb-date-picker__header--bordered">
           <button
             type="button"
-            class="ev-picker-panel__icon-btn ev-date-picker__prev-btn d-arrow-left"
+            class="eb-picker-panel__icon-btn eb-date-picker__prev-btn d-arrow-left"
             :aria-label="t('datepicker.prevYear')"
             @click="prevYear"
           >
-            <ev-icon name="d-arrow-left" />
+            <eb-icon name="d-arrow-left" />
           </button>
           <button
             v-if="currentView === 'date'"
             type="button"
-            class="ev-picker-panel__icon-btn ev-date-picker__prev-btn arrow-left"
+            class="eb-picker-panel__icon-btn eb-date-picker__prev-btn arrow-left"
             :aria-label="t('datepicker.prevMonth')"
             @click="prevMonth"
           >
-            <ev-icon name="arrow-left" />
+            <eb-icon name="arrow-left" />
           </button>
           <span
-            class="ev-date-picker__header-label"
+            class="eb-date-picker__header-label"
             :class="{ active: currentView === 'year' }"
             @click="showYearView"
           >{{ yearLabel }}</span>
           <span
             v-if="currentView !== 'year'"
-            class="ev-date-picker__header-label"
+            class="eb-date-picker__header-label"
             :class="{ active: currentView === 'month' }"
             @click="showMonthView"
           >{{ monthLabel }}</span>
           <button
             v-if="currentView === 'date'"
             type="button"
-            class="ev-picker-panel__icon-btn ev-date-picker__next-btn arrow-right"
+            class="eb-picker-panel__icon-btn eb-date-picker__next-btn arrow-right"
             :aria-label="t('datepicker.nextMonth')"
             @click="nextMonth"
           >
-            <ev-icon name="arrow-right" />
+            <eb-icon name="arrow-right" />
           </button>
           <button
             type="button"
-            class="ev-picker-panel__icon-btn ev-date-picker__next-btn d-arrow-right"
+            class="eb-picker-panel__icon-btn eb-date-picker__next-btn d-arrow-right"
             :aria-label="t('datepicker.nextYear')"
             @click="nextYear"
           >
-            <ev-icon name="d-arrow-right" />
+            <eb-icon name="d-arrow-right" />
           </button>
         </div>
 
         <!-- 内容区 -->
-        <div class="ev-picker-panel__content">
+        <div class="eb-picker-panel__content">
           <basic-date-table
             v-if="currentView === 'date'"
             :view-month="viewDate"
@@ -113,7 +113,7 @@
         </div>
 
         <!-- 时间滚轮 -->
-        <div v-if="timePanelVisible" class="ev-date-picker__time-dropdown">
+        <div v-if="timePanelVisible" class="eb-date-picker__time-dropdown">
           <time-panel
             :model-value="timeValue"
             @pick="handleTimePick"
@@ -125,15 +125,15 @@
     </div>
 
     <!-- datetime footer -->
-    <div v-if="showTime" class="ev-picker-panel__footer">
+    <div v-if="showTime" class="eb-picker-panel__footer">
       <button
         type="button"
-        class="ev-picker-panel__btn ev-picker-panel__link-btn"
+        class="eb-picker-panel__btn eb-picker-panel__link-btn"
         @click="handleNow"
       >{{ t('datepicker.now') }}</button>
       <button
         type="button"
-        class="ev-picker-panel__btn"
+        class="eb-picker-panel__btn"
         @click="emit('confirm')"
       >{{ t('datepicker.confirm') }}</button>
     </div>
@@ -147,7 +147,7 @@
  * emit pick(dayjs)（含时间）；confirm → index 关闭
  */
 import { computed, ref, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import BasicDateTable from './basic-date-table.vue'
 import BasicMonthTable from './basic-month-table.vue'
 import BasicYearTable from './basic-year-table.vue'
@@ -155,7 +155,7 @@ import TimePanel from './time-panel.vue'
 import { dayjs, applyDefaultTime } from './utils'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvPanelDate' })
+defineOptions({ name: 'EbPanelDate' })
 
 const props = defineProps({
   type: { type: String, default: 'date' },
@@ -198,7 +198,7 @@ const yearLabel = computed(() => {
 })
 
 const monthLabel = computed(() => {
-  const months = locale.value?.ev?.datepicker?.months || {}
+  const months = locale.value?.eb?.datepicker?.months || {}
   const keys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
   return months[keys[viewDate.value.month()]] || `${viewDate.value.month() + 1} 月`
 })

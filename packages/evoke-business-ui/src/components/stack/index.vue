@@ -1,16 +1,16 @@
 <template>
   <div
-    class="ev-stack"
-    :class="[`ev-stack--${variant}`, `ev-stack--dir-${direction}`]"
+    class="eb-stack"
+    :class="[`eb-stack--${variant}`, `eb-stack--dir-${direction}`]"
     :style="containerStyle"
     @pointerenter="onStackEnter"
     @pointerleave="onStackLeave"
   >
-    <div class="ev-stack__inner">
+    <div class="eb-stack__inner">
       <div
         v-for="(item, index) in items"
         :key="item._key"
-        class="ev-stack__item"
+        class="eb-stack__item"
         :class="{
           'is-top': index === 0,
           'is-peeled': hoverPeel && peelIndex === index,
@@ -27,11 +27,11 @@
         <slot name="item" :item="item.data" :index="index">
           <template v-if="variant === 'circular'">
             <div
-              class="ev-stack__circle"
+              class="eb-stack__circle"
               :style="{
                 width: `${size}px`,
                 height: `${size}px`,
-                '--ev-stack-card-scale': getCardScale(index),
+                '--eb-stack-card-scale': getCardScale(index),
               }"
             >
               <img
@@ -39,11 +39,11 @@
                 :src="item.data.src"
                 :alt="getItemProp(item.data, 'alt', '')"
               />
-              <span v-else class="ev-stack__text">{{ item.data }}</span>
+              <span v-else class="eb-stack__text">{{ item.data }}</span>
             </div>
           </template>
           <template v-else>
-            <div class="ev-stack__card" :style="{ '--ev-stack-card-scale': getCardScale(index) }">
+            <div class="eb-stack__card" :style="{ '--eb-stack-card-scale': getCardScale(index) }">
               <slot name="card" :item="item.data" :index="index">
                 <span>{{ item.data }}</span>
               </slot>
@@ -57,7 +57,7 @@
 
 <script setup>
 /**
- * EvStack — 堆叠卡片
+ * EbStack — 堆叠卡片
  * 八方向堆叠 + hover 揭开（peel）+ 顶卡 cycle/remove 飞出动效；
  * emits: cycle/remove/promote；expose: items/cycle/remove/promoteToTop
  */
@@ -172,18 +172,18 @@ const containerStyle = computed(() => {
   return {
     width: `${containerSize.value.w}px`,
     height: `${containerSize.value.h}px`,
-    '--ev-stack-duration': moveDur,
-    '--ev-stack-duration-leave': leaveDur,
-    '--ev-stack-duration-enter': enterDur,
-    '--ev-stack-fly-x': `${a.flyOutX}px`,
-    '--ev-stack-fly-y': `${a.flyOutY}px`,
-    '--ev-stack-enter-x': `${a.enterX}px`,
-    '--ev-stack-enter-y': `${a.enterY}px`,
-    '--ev-stack-hover-x': `${a.hoverX}px`,
-    '--ev-stack-hover-y': `${a.hoverY}px`,
-    '--ev-stack-rotate': `${a.rotate}deg`,
-    '--ev-stack-peel-x': `${a.mainSignX * 24}px`,
-    '--ev-stack-peel-y': `${a.mainSignY * 24}px`,
+    '--eb-stack-duration': moveDur,
+    '--eb-stack-duration-leave': leaveDur,
+    '--eb-stack-duration-enter': enterDur,
+    '--eb-stack-fly-x': `${a.flyOutX}px`,
+    '--eb-stack-fly-y': `${a.flyOutY}px`,
+    '--eb-stack-enter-x': `${a.enterX}px`,
+    '--eb-stack-enter-y': `${a.enterY}px`,
+    '--eb-stack-hover-x': `${a.hoverX}px`,
+    '--eb-stack-hover-y': `${a.hoverY}px`,
+    '--eb-stack-rotate': `${a.rotate}deg`,
+    '--eb-stack-peel-x': `${a.mainSignX * 24}px`,
+    '--eb-stack-peel-y': `${a.mainSignY * 24}px`,
   }
 })
 
@@ -212,7 +212,7 @@ function getItemStyle(index) {
   const itemTop = baseTop - index * offset * a.mainSignY
   const itemLeft = baseLeft - index * offset * a.mainSignX
 
-  const shadow = index === 0 ? 'var(--ev-shadow-2)' : 'var(--ev-shadow-1)'
+  const shadow = index === 0 ? 'var(--eb-shadow-2)' : 'var(--eb-shadow-1)'
 
   return {
     position: 'absolute',
@@ -222,7 +222,7 @@ function getItemStyle(index) {
     height: `${boxH}px`,
     zIndex,
     cursor: index === 0 ? 'pointer' : 'default',
-    '--ev-stack-item-shadow': shadow,
+    '--eb-stack-item-shadow': shadow,
   }
 }
 

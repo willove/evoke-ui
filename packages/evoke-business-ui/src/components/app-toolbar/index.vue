@@ -1,8 +1,8 @@
 <template>
-  <div class="ev-app-toolbar">
-    <div class="ev-app-toolbar__left">
-      <div v-if="searchable" class="ev-app-toolbar__search">
-        <ev-input
+  <div class="eb-app-toolbar">
+    <div class="eb-app-toolbar__left">
+      <div v-if="searchable" class="eb-app-toolbar__search">
+        <eb-input
           :model-value="modelValue"
           :placeholder="searchPlaceholder"
           prefix-icon="search"
@@ -12,7 +12,7 @@
       </div>
       <slot name="filters" />
     </div>
-    <div class="ev-app-toolbar__right">
+    <div class="eb-app-toolbar__right">
       <slot name="actions" />
     </div>
   </div>
@@ -20,12 +20,12 @@
 
 <script setup>
 /**
- * EvAppToolbar — 应用工具条
+ * EbAppToolbar — 应用工具条
  * 左侧搜索（v-model 同步）+ filters 插槽；右侧 actions 插槽
  */
-import EvInput from '../input/index.vue'
+import EbInput from '../input/index.vue'
 
-// EvInput 关闭了 attrs 透传，搜索框宽度由包裹层控制
+// EbInput 关闭了 attrs 透传，搜索框宽度由包裹层控制
 
 defineProps({
   searchable: { type: Boolean, default: true },

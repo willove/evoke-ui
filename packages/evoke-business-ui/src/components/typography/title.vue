@@ -1,32 +1,32 @@
 <template>
-  <component :is="tag" ref="rootRef" class="ev-title" :class="[`ev-title--level-${level}`, { 'is-copyable': copyable }]">
+  <component :is="tag" ref="rootRef" class="eb-title" :class="[`eb-title--level-${level}`, { 'is-copyable': copyable }]">
     <slot />
     <span
       v-if="copyable"
-      class="ev-typography__copy"
+      class="eb-typography__copy"
       role="button"
       tabindex="0"
       aria-label="复制"
       @click.stop="doCopy"
       @keydown.enter.prevent="doCopy"
     >
-      <ev-icon name="file-copy" :size="14" />
+      <eb-icon name="file-copy" :size="14" />
     </span>
   </component>
 </template>
 
 <script setup>
 /**
- * EvTitle — 标题（Typography 家族）
+ * EbTitle — 标题（Typography 家族）
  * level 1-5 对应排版刻度（32/24/20/16/14px），默认渲染语义标签 h1-h5；
  * 换行场景可用 tag="div" 保持视觉不变。copyable 追加复制按钮（useClipboard + 消息反馈）。
  */
 import { computed, ref } from 'vue'
 import { useClipboard } from '../../composables/useClipboard'
-import { EvMessage } from '../message'
-import EvIcon from '../icon/index.vue'
+import { EbMessage } from '../message'
+import EbIcon from '../icon/index.vue'
 
-defineOptions({ name: 'EvTitle' })
+defineOptions({ name: 'EbTitle' })
 
 const props = defineProps({
   /** 标题层级 1-5 */
@@ -50,7 +50,7 @@ const tag = computed(() => props.tag || DEFAULT_TAG[props.level] || 'h1')
 async function doCopy() {
   const text = props.copyText || getCurrentText()
   const ok = await copy(text)
-  if (ok) EvMessage.success('已复制')
+  if (ok) EbMessage.success('已复制')
   emit('copy', ok, text)
 }
 
@@ -58,7 +58,7 @@ function getCurrentText() {
   const root = rootRef?.$el ?? rootRef
   if (!root) return ''
   const clone = root.cloneNode(true)
-  clone.querySelectorAll('.ev-typography__copy').forEach((n) => n.remove())
+  clone.querySelectorAll('.eb-typography__copy').forEach((n) => n.remove())
   return clone.textContent?.trim() ?? ''
 }
 

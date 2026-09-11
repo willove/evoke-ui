@@ -21,12 +21,12 @@ function submitWithLoading() {
 `type` 决定语义色，缺省为 default。
 
 <DemoBlock>
-<ev-button>默认按钮</ev-button>
-<ev-button type="primary">主要按钮</ev-button>
-<ev-button type="success">成功按钮</ev-button>
-<ev-button type="warning">警告按钮</ev-button>
-<ev-button type="danger">危险按钮</ev-button>
-<ev-button type="info">信息按钮</ev-button>
+<eb-button>默认按钮</eb-button>
+<eb-button type="primary">主要按钮</eb-button>
+<eb-button type="success">成功按钮</eb-button>
+<eb-button type="warning">警告按钮</eb-button>
+<eb-button type="danger">危险按钮</eb-button>
+<eb-button type="info">信息按钮</eb-button>
 </DemoBlock>
 
 ## 朴素 / 圆角 / 圆形
@@ -34,11 +34,11 @@ function submitWithLoading() {
 `plain` 朴素底色，`round` 全圆角，`circle` 圆形（常与纯图标搭配）。
 
 <DemoBlock>
-<ev-button type="primary" plain>朴素按钮</ev-button>
-<ev-button type="primary" round>圆角按钮</ev-button>
-<ev-button type="primary" icon="search">搜索</ev-button>
-<ev-button type="primary" icon="search" circle />
-<ev-button type="danger" plain icon="delete">删除</ev-button>
+<eb-button type="primary" plain>朴素按钮</eb-button>
+<eb-button type="primary" round>圆角按钮</eb-button>
+<eb-button type="primary" icon="search">搜索</eb-button>
+<eb-button type="primary" icon="search" circle />
+<eb-button type="danger" plain icon="delete">删除</eb-button>
 </DemoBlock>
 
 ## 图标
@@ -46,10 +46,10 @@ function submitWithLoading() {
 `icon` 传 registry 图标名（或图标组件），图标颜色随按钮文字色自动变化：实心类型内为白色，plain / default 内为主题色或常规色。
 
 <DemoBlock>
-<ev-button type="primary" icon="edit">编辑</ev-button>
-<ev-button type="primary" plain icon="share">分享</ev-button>
-<ev-button type="success" icon="check">保存</ev-button>
-<ev-button icon="search" circle />
+<eb-button type="primary" icon="edit">编辑</eb-button>
+<eb-button type="primary" plain icon="share">分享</eb-button>
+<eb-button type="success" icon="check">保存</eb-button>
+<eb-button icon="search" circle />
 </DemoBlock>
 
 ## 禁用与加载
@@ -57,9 +57,9 @@ function submitWithLoading() {
 `disabled` 禁用点击，`loading` 展示旋转图标并同样阻断点击；loading 时插槽内的前导图标会被自动移除，避免双图标并列。
 
 <DemoBlock>
-<ev-button type="primary" disabled>禁用</ev-button>
-<ev-button type="primary" loading>加载中</ev-button>
-<ev-button type="primary" loading icon="edit">加载中</ev-button>
+<eb-button type="primary" disabled>禁用</eb-button>
+<eb-button type="primary" loading>加载中</eb-button>
+<eb-button type="primary" loading icon="edit">加载中</eb-button>
 </DemoBlock>
 
 ## 点击触发加载
@@ -67,7 +67,7 @@ function submitWithLoading() {
 loading 通常由异步请求驱动：点击后置 true，请求结束置 false，期间按钮不可重复点击。
 
 <DemoBlock>
-<ev-button type="primary" :loading="fakeLoading" @click="submitWithLoading">提交</ev-button>
+<eb-button type="primary" :loading="fakeLoading" @click="submitWithLoading">提交</eb-button>
 </DemoBlock>
 
 ## 尺寸
@@ -75,9 +75,9 @@ loading 通常由异步请求驱动：点击后置 true，请求结束置 false�
 `size` 控制高度与内边距，图标字号随之缩放（large 16px / default 14px / small 12px）。
 
 <DemoBlock>
-<ev-button type="primary" size="large">大型按钮</ev-button>
-<ev-button type="primary">默认尺寸</ev-button>
-<ev-button type="primary" size="small">小型按钮</ev-button>
+<eb-button type="primary" size="large">大型按钮</eb-button>
+<eb-button type="primary">默认尺寸</eb-button>
+<eb-button type="primary" size="small">小型按钮</eb-button>
 </DemoBlock>
 
 ## 文字与链接按钮
@@ -85,10 +85,10 @@ loading 通常由异步请求驱动：点击后置 true，请求结束置 false�
 `text` 无底色文字按钮（适合表格操作列），`link` 链接样式按钮；两者均可叠加 type 语义色与 icon。
 
 <DemoBlock>
-<ev-button type="primary" text>文字按钮</ev-button>
-<ev-button type="primary" link>链接按钮</ev-button>
-<ev-button text icon="plus">新增</ev-button>
-<ev-button link type="danger">删除</ev-button>
+<eb-button type="primary" text>文字按钮</eb-button>
+<eb-button type="primary" link>链接按钮</eb-button>
+<eb-button text icon="plus">新增</eb-button>
+<eb-button link type="danger">删除</eb-button>
 </DemoBlock>
 
 ## 幽灵与危险实心
@@ -96,25 +96,25 @@ loading 通常由异步请求驱动：点击后置 true，请求结束置 false�
 `ghost` 幽灵按钮透明底（适合深色背景），`danger-solid` 让 danger 按钮红色更实，用于强危险操作。
 
 <DemoBlock>
-<ev-button type="primary" ghost>幽灵按钮</ev-button>
-<ev-button type="danger" ghost icon="delete">幽灵删除</ev-button>
-<ev-button type="danger">危险按钮</ev-button>
-<ev-button type="danger" danger-solid>危险实心</ev-button>
+<eb-button type="primary" ghost>幽灵按钮</eb-button>
+<eb-button type="danger" ghost icon="delete">幽灵删除</eb-button>
+<eb-button type="danger">危险按钮</eb-button>
+<eb-button type="danger" danger-solid>危险实心</eb-button>
 </DemoBlock>
 
 ## 按钮组
 
-`ev-button-group` 包裹的按钮连为一个整体（相邻边框合并、圆角只保留首尾）。成对出现的操作（如上一页 / 下一页）建议图标朝外：默认 `icon-position="left"`，第二枚按钮传 `icon-position="right"` 让图标落到文本右侧。
+`eb-button-group` 包裹的按钮连为一个整体（相邻边框合并、圆角只保留首尾）。成对出现的操作（如上一页 / 下一页）建议图标朝外：默认 `icon-position="left"`，第二枚按钮传 `icon-position="right"` 让图标落到文本右侧。
 
 <DemoBlock>
-<ev-button-group style="margin-right: 16px;">
-  <ev-button type="primary" icon="arrow-left">上一页</ev-button>
-  <ev-button type="primary" icon="arrow-right" icon-position="right">下一页</ev-button>
-</ev-button-group>
-<ev-button-group>
-  <ev-button icon="d-arrow-left">回退</ev-button>
-  <ev-button icon="d-arrow-right" icon-position="right">前进</ev-button>
-</ev-button-group>
+<eb-button-group style="margin-right: 16px;">
+  <eb-button type="primary" icon="arrow-left">上一页</eb-button>
+  <eb-button type="primary" icon="arrow-right" icon-position="right">下一页</eb-button>
+</eb-button-group>
+<eb-button-group>
+  <eb-button icon="d-arrow-left">回退</eb-button>
+  <eb-button icon="d-arrow-right" icon-position="right">前进</eb-button>
+</eb-button-group>
 </DemoBlock>
 
 ## API
@@ -149,5 +149,5 @@ loading 通常由异步请求驱动：点击后置 true，请求结束置 false�
 ]" />
 
 <ApiTable title="ButtonGroup API" :rows="[
-  { name: 'default（slot）', desc: '包裹 ev-button 子按钮，相邻按钮边框合并、仅首尾保留圆角', type: '—', default: '—' },
+  { name: 'default（slot）', desc: '包裹 eb-button 子按钮，相邻按钮边框合并、仅首尾保留圆角', type: '—', default: '—' },
 ]" />

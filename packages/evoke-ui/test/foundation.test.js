@@ -11,14 +11,14 @@ describe('evoke-ui foundation', () => {
   it('导出全量组件注册表', () => {
     const names = Object.keys(WebUI.components)
     for (const name of [
-      'EwIcon', 'EwButton', 'EwIconButton', 'EwTag', 'EwBadge', 'EwCard',
-      'EwSection', 'EwNavbar', 'EwFooter', 'EwHero', 'EwSearchBox', 'EwIconGrid',
-      'EwFeatureGrid', 'EwPricingCard', 'EwFaq', 'EwAlert', 'EwCodeBlock',
-      'EwKeycap', 'EwStatistic', 'EwThemeToggle', 'EwQuote',
-      'EwConfigProvider', 'EwTabs', 'EwSwitch', 'EwContainer', 'EwAvatar', 'EwAvatarGroup',
-      'EwTimeline', 'EwComparisonTable', 'EwCta', 'EwNewsletter', 'EwLogoCloud',
-      'EwVideo', 'EwAudio', 'EwContactForm', 'EwCarousel', 'EwArticleCard', 'EwProfileCard',
-      'EwMarquee', 'EwInput', 'EwTextarea', 'EwSelect', 'EwField',
+      'EvIcon', 'EvButton', 'EvIconButton', 'EvTag', 'EvBadge', 'EvCard',
+      'EvSection', 'EvNavbar', 'EvFooter', 'EvHero', 'EvSearchBox', 'EvIconGrid',
+      'EvFeatureGrid', 'EvPricingCard', 'EvFaq', 'EvAlert', 'EvCodeBlock',
+      'EvKeycap', 'EvStatistic', 'EvThemeToggle', 'EvQuote',
+      'EvConfigProvider', 'EvTabs', 'EvSwitch', 'EvContainer', 'EvAvatar', 'EvAvatarGroup',
+      'EvTimeline', 'EvComparisonTable', 'EvCta', 'EvNewsletter', 'EvLogoCloud',
+      'EvVideo', 'EvAudio', 'EvContactForm', 'EvCarousel', 'EvArticleCard', 'EvProfileCard',
+      'EvMarquee', 'EvInput', 'EvTextarea', 'EvSelect', 'EvField',
     ]) {
       expect(names, `${name} 应在注册表`).toContain(name)
     }
@@ -47,11 +47,11 @@ describe('evoke-ui foundation', () => {
 
   it('设计令牌：主色与暗色重映射存在于 variables.css', () => {
     const css = readFileSync(resolve(__dirname, '../src/styles/variables.css'), 'utf8')
-    expect(css).toContain('--ew-color-primary:         #0D70FF')
-    expect(css).toContain('--ew-color-ink:        #1a2947')
-    expect(css).toContain('--ew-ease-spring:   cubic-bezier(0.3, 1.3, 0.3, 1)')
+    expect(css).toContain('--ev-color-primary:         #0D70FF')
+    expect(css).toContain('--ev-color-ink:        #1a2947')
+    expect(css).toContain('--ev-ease-spring:   cubic-bezier(0.3, 1.3, 0.3, 1)')
     expect(css).toContain('html.dark')
-    expect(css).toContain('--ew-bg-page:      #17171a')
+    expect(css).toContain('--ev-bg-page:      #17171a')
   })
 
   it('入口引入统一样式', () => {

@@ -1,6 +1,6 @@
 # Button 按钮
 
-`EwButton` 是官网 CTA 的基本单元。五种变体对应不同的强调层级：`primary` 主色实心用于页面关键动作，
+`EvButton` 是官网 CTA 的基本单元。五种变体对应不同的强调层级：`primary` 主色实心用于页面关键动作，
 `dark` 墨色实心适合次要转化位，`soft` 柔和灰底用于工具条与次级操作，`outline` 与 `ghost` 承载更轻的动作。
 
 按钮默认安静，hover 时才给出颜色与光影反馈；`pill` 开启全圆胶囊形态，适合首屏与定价卡的转化按钮。
@@ -10,19 +10,19 @@
 <DemoBlock title="五种变体">
 
 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-  <EwButton>免费开始</EwButton>
-  <EwButton variant="dark" pill>立即下载</EwButton>
-  <EwButton variant="soft">查看文档</EwButton>
-  <EwButton variant="outline">了解更多</EwButton>
-  <EwButton variant="ghost">跳过</EwButton>
+  <EvButton>免费开始</EvButton>
+  <EvButton variant="dark" pill>立即下载</EvButton>
+  <EvButton variant="soft">查看文档</EvButton>
+  <EvButton variant="outline">了解更多</EvButton>
+  <EvButton variant="ghost">跳过</EvButton>
 </div>
 
 ```vue
-<EwButton>免费开始</EwButton>
-<EwButton variant="dark" pill>立即下载</EwButton>
-<EwButton variant="soft">查看文档</EwButton>
-<EwButton variant="outline">了解更多</EwButton>
-<EwButton variant="ghost">跳过</EwButton>
+<EvButton>免费开始</EvButton>
+<EvButton variant="dark" pill>立即下载</EvButton>
+<EvButton variant="soft">查看文档</EvButton>
+<EvButton variant="outline">了解更多</EvButton>
+<EvButton variant="ghost">跳过</EvButton>
 ```
 
 </DemoBlock>
@@ -32,14 +32,14 @@
 <DemoBlock title="small / default / large">
 
 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-  <EwButton size="small">小型操作</EwButton>
-  <EwButton>常规操作</EwButton>
-  <EwButton size="large" pill>免费开始</EwButton>
+  <EvButton size="small">小型操作</EvButton>
+  <EvButton>常规操作</EvButton>
+  <EvButton size="large" pill>免费开始</EvButton>
 </div>
 
 ```vue
-<EwButton size="small">小型操作</EwButton>
-<EwButton size="large" pill>免费开始</EwButton>
+<EvButton size="small">小型操作</EvButton>
+<EvButton size="large" pill>免费开始</EvButton>
 ```
 
 </DemoBlock>
@@ -52,27 +52,27 @@
 <DemoBlock title="图标位 / 加载 / 禁用 / 块级">
 
 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-  <EwButton icon="download" pill>下载客户端</EwButton>
-  <EwButton variant="soft" icon-right="arrow-right">继续</EwButton>
-  <EwButton loading>同步中</EwButton>
-  <EwButton disabled>暂不可用</EwButton>
+  <EvButton icon="download" pill>下载客户端</EvButton>
+  <EvButton variant="soft" icon-right="arrow-right">继续</EvButton>
+  <EvButton loading>同步中</EvButton>
+  <EvButton disabled>暂不可用</EvButton>
 </div>
 
 <div style="margin-top:12px;">
-  <EwButton block variant="dark" pill icon="github">使用 GitHub 登录</EwButton>
+  <EvButton block variant="dark" pill icon="github">使用 GitHub 登录</EvButton>
 </div>
 
 ```vue
-<EwButton icon="download" pill>下载客户端</EwButton>
-<EwButton variant="soft" icon-right="arrow-right">继续</EwButton>
-<EwButton block variant="dark" pill icon="github">使用 GitHub 登录</EwButton>
+<EvButton icon="download" pill>下载客户端</EvButton>
+<EvButton variant="soft" icon-right="arrow-right">继续</EvButton>
+<EvButton block variant="dark" pill icon="github">使用 GitHub 登录</EvButton>
 ```
 
 </DemoBlock>
 
-::: tip 与 EwIconButton 的分工
-需要承载内容的动作用 `EwButton`；纯图标动作（导航栏的主题切换、社交链接等）用
-[EwIconButton](./icon-button)，它有更紧凑的方形比例与无障碍标签约定。
+::: tip 与 EvIconButton 的分工
+需要承载内容的动作用 `EvButton`；纯图标动作（导航栏的主题切换、社交链接等）用
+[EvIconButton](./icon-button)，它有更紧凑的方形比例与无障碍标签约定。
 :::
 
 ## API

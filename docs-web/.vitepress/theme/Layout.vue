@@ -1,7 +1,7 @@
 <script setup>
 /**
  * Layout — 在默认主题布局上注入插槽，抹平首页与文档内页的观感差异：
- * 导航栏品牌区（名称 + v0.1.0）与动作区（主题切换 / GitHub / 下载）复刻首页 EwNavbar
+ * 导航栏品牌区（名称 + v0.1.0）与动作区（主题切换 / GitHub / 下载）复刻首页 EvNavbar
  */
 import DefaultTheme from 'vitepress/theme'
 import PlatformCompat from './PlatformCompat.vue'
@@ -15,25 +15,25 @@ const { Layout } = DefaultTheme
       <PlatformCompat />
     </template>
     <template #nav-bar-title-after>
-      <EwTag size="small" style="margin-left: 10px;">v0.2.0</EwTag>
+      <EvTag size="small" style="margin-left: 10px;">v0.2.0</EvTag>
     </template>
     <template #nav-bar-content-after>
       <span class="home-nav-actions">
-        <EwThemeToggle />
-        <EwIconButton icon="github" aria-label="GitHub" />
-        <EwButton
+        <EvThemeToggle />
+        <EvIconButton icon="github" aria-label="GitHub" />
+        <EvButton
           size="small"
           variant="soft"
           icon="download"
           href="/guide/getting-started"
-        >下载</EwButton>
+        >下载</EvButton>
       </span>
     </template>
     <template #nav-screen-content-after>
       <span class="home-nav-screen-actions">
-        <EwThemeToggle />
-        <EwIconButton icon="github" aria-label="GitHub" />
-        <EwButton size="small" variant="soft" icon="download" href="/guide/getting-started">下载</EwButton>
+        <EvThemeToggle />
+        <EvIconButton icon="github" aria-label="GitHub" />
+        <EvButton size="small" variant="soft" icon="download" href="/guide/getting-started">下载</EvButton>
       </span>
     </template>
   </Layout>

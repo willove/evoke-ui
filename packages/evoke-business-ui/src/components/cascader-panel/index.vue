@@ -1,12 +1,12 @@
 <template>
-  <div class="ev-cascader-panel ev-cascader-panel" :class="{ 'is-bordered': border }">
-    <div v-for="(menu, mi) in menus" :key="mi" class="ev-cascader-menu">
-      <div class="ev-cascader-menu__wrap">
-        <ul class="ev-cascader-menu__list">
+  <div class="eb-cascader-panel eb-cascader-panel" :class="{ 'is-bordered': border }">
+    <div v-for="(menu, mi) in menus" :key="mi" class="eb-cascader-menu">
+      <div class="eb-cascader-menu__wrap">
+        <ul class="eb-cascader-menu__list">
           <li
             v-for="node in menu"
             :key="String(node.value)"
-            class="ev-cascader-node"
+            class="eb-cascader-node"
             :class="{
               'is-active': activePath.includes(node.value),
               'in-active-path': activePath.includes(node.value),
@@ -16,42 +16,42 @@
             @click="handleNodeClick(node)"
             @mouseenter="handleNodeHover(node)"
           >
-            <ev-checkbox
+            <eb-checkbox
               v-if="multiple"
-              class="ev-cascader-node__checkbox"
+              class="eb-cascader-node__checkbox"
               :model-value="isNodeChecked(node)"
               :indeterminate="isNodeIndeterminate(node)"
               :disabled="node.disabled"
               @click.stop
               @change="handleNodeCheck(node)"
             />
-            <span class="ev-cascader-node__label">{{ node.label }}</span>
-            <span v-if="!node.isLeaf" class="ev-cascader-node__postfix">
-              <ev-icon name="arrow-right" :size="12" />
+            <span class="eb-cascader-node__label">{{ node.label }}</span>
+            <span v-if="!node.isLeaf" class="eb-cascader-node__postfix">
+              <eb-icon name="arrow-right" :size="12" />
             </span>
           </li>
         </ul>
       </div>
     </div>
-    <div v-if="menus.every((m) => m.length === 0)" class="ev-cascader-panel__empty">暂无数据</div>
+    <div v-if="menus.every((m) => m.length === 0)" class="eb-cascader-panel__empty">暂无数据</div>
   </div>
 </template>
 
 <script setup>
 /**
- * EvCascaderPanel — 级联面板
- * EvCascader 内嵌面板的独立版：无触发器，直接渲染多级菜单。
+ * EbCascaderPanel — 级联面板
+ * EbCascader 内嵌面板的独立版：无触发器，直接渲染多级菜单。
  * single/multiple + checkStrictly + emitPath；expose getCheckedNodes/clearChecked
  */
 import { computed, ref } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvCheckbox from '../checkbox/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbCheckbox from '../checkbox/index.vue'
 import {
   normalizeOptions, pathToNodes, nodeToPath,
   leafPathsOf, arrayEqual,
 } from '../cascader/utils'
 
-defineOptions({ name: 'EvCascaderPanel' })
+defineOptions({ name: 'EbCascaderPanel' })
 
 const props = defineProps({
   modelValue: { type: [Array, String, Number], default: undefined },

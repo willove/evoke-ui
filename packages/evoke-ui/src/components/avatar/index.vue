@@ -1,18 +1,18 @@
 <template>
-  <span :class="['ew-avatar', `is-${shape}`, `is-${sizeClass}`]" :style="sizeStyle">
-    <img v-if="src" :src="src" :alt="alt || name" class="ew-avatar__img" @error="imgFailed = true" />
-    <EwIcon v-else-if="icon" :name="icon" :size="iconSize" />
-    <span v-else class="ew-avatar__fallback">{{ initials }}</span>
+  <span :class="['ev-avatar', `is-${shape}`, `is-${sizeClass}`]" :style="sizeStyle">
+    <img v-if="src" :src="src" :alt="alt || name" class="ev-avatar__img" @error="imgFailed = true" />
+    <EvIcon v-else-if="icon" :name="icon" :size="iconSize" />
+    <span v-else class="ev-avatar__fallback">{{ initials }}</span>
   </span>
 </template>
 
 <script setup>
 /**
- * EwAvatar — 头像（用户/团队/评价位）
+ * EvAvatar — 头像（用户/团队/评价位）
  * src 图片缺失或加载失败时回退到 name 首字符
  */
 import { computed, ref, watch } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   src: { type: String, default: '' },

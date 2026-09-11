@@ -1,24 +1,24 @@
-/* EvButtonGroup — 按钮组（子按钮边框合并） */
-.ev-button-group.ev-button-group {
+/* EbButtonGroup — 按钮组（子按钮边框合并） */
+.eb-button-group.eb-button-group {
   display: inline-flex;
   vertical-align: middle;
 }
-.ev-button-group.ev-button-group > .ev-button {
+.eb-button-group.eb-button-group > .eb-button {
   margin: 0;
 }
-.ev-button-group.ev-button-group > .ev-button + .ev-button {
+.eb-button-group.eb-button-group > .eb-button + .eb-button {
   margin-left: 0;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.ev-button-group.ev-button-group > .ev-button:not(:first-child) {
+.eb-button-group.eb-button-group > .eb-button:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.ev-button-group.ev-button-group > .ev-button:not(:last-child) {
+.eb-button-group.eb-button-group > .eb-button:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-.ev-button-group.ev-button-group > .ev-button:not(:first-child):not(:last-child):not(.is-circle) {
+.eb-button-group.eb-button-group > .eb-button:not(:first-child):not(:last-child):not(.is-circle) {
   border-radius: 0;
 }

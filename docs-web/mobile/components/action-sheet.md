@@ -1,6 +1,6 @@
 # ActionSheet 动作面板
 
-`EwActionSheet` 是移动端「更多操作」的标准形态：底部滑入的纵向动作列表 + 取消栏，
+`EvActionSheet` 是移动端「更多操作」的标准形态：底部滑入的纵向动作列表 + 取消栏，
 替代 hover 类菜单在触屏上的缺位。动作项支持副标题、警示色与禁用；破坏性动作用
 `color` 标红并排在最末。遮罩点击 / ESC / 取消栏均可关闭，`before-close` 统一拦截。
 
@@ -15,13 +15,13 @@
       <div class="mb-card__label" style="margin-top: 4px;">发布于 09-01 · 设计栏目</div>
     </div>
     <button
-      style="align-self: stretch; padding: 10px; border: 1px solid var(--ew-border-color); border-radius: var(--ew-radius-md); background: var(--ew-bg-container); color: var(--ew-text-primary); font-size: 14px; cursor: pointer;"
+      style="align-self: stretch; padding: 10px; border: 1px solid var(--ev-border-color); border-radius: var(--ev-radius-md); background: var(--ev-bg-container); color: var(--ev-text-primary); font-size: 14px; cursor: pointer;"
       @click="sheetOpen = true"
     >
       更多操作
     </button>
   </div>
-  <ew-action-sheet
+  <ev-action-sheet
     v-model="sheetOpen"
     title="文章操作"
     :actions="actions"
@@ -39,7 +39,7 @@ const visible = ref(false)
 const actions = [
   { name: '分享文章' },
   { name: '编辑', subname: '进入全屏编辑器' },
-  { name: '删除', color: 'var(--ew-color-danger)' },
+  { name: '删除', color: 'var(--ev-color-danger)' },
 ]
 
 function onSelect(action, index) {
@@ -48,8 +48,8 @@ function onSelect(action, index) {
 </script>
 
 <template>
-  <EwButton @click="visible = true">更多操作</EwButton>
-  <EwActionSheet
+  <EvButton @click="visible = true">更多操作</EvButton>
+  <EvActionSheet
     v-model="visible"
     title="文章操作"
     :actions="actions"
@@ -68,7 +68,7 @@ const shareOpen = ref(false)
 const actions = [
   { name: '分享文章' },
   { name: '编辑文章', subname: '进入全屏编辑器' },
-  { name: '删除文章', color: 'var(--ew-color-danger)' },
+  { name: '删除文章', color: 'var(--ev-color-danger)' },
   { name: '暂不可用', disabled: true },
 ]
 function onSelect(action) {
@@ -86,29 +86,29 @@ function onCancel() {}
 <MobileStage>
   <div class="mb-page">
     <button
-      style="align-self: stretch; padding: 10px; border: 1px solid var(--ew-border-color); border-radius: var(--ew-radius-md); background: var(--ew-bg-container); color: var(--ew-text-primary); font-size: 14px; cursor: pointer;"
+      style="align-self: stretch; padding: 10px; border: 1px solid var(--ev-border-color); border-radius: var(--ev-radius-md); background: var(--ev-bg-container); color: var(--ev-text-primary); font-size: 14px; cursor: pointer;"
       @click="shareOpen = true"
     >
       分享到…
     </button>
   </div>
-  <ew-action-sheet v-model="shareOpen" :cancel-text="''" :append-to-body="false" :lock-scroll="false">
+  <ev-action-sheet v-model="shareOpen" :cancel-text="''" :append-to-body="false" :lock-scroll="false">
     <template #title>
-      <span style="font-weight: 600; color: var(--ew-text-primary);">分享到</span>
+      <span style="font-weight: 600; color: var(--ev-text-primary);">分享到</span>
     </template>
     <div style="display: flex; flex-direction: column;">
-      <button v-for="t in ['微信好友', '朋友圈', '复制链接']" :key="t" type="button" style="padding: 14px; border: none; background: var(--ew-bg-container); color: var(--ew-text-primary); font-size: 15px; cursor: pointer;" @click="shareOpen = false">{{ t }}</button>
+      <button v-for="t in ['微信好友', '朋友圈', '复制链接']" :key="t" type="button" style="padding: 14px; border: none; background: var(--ev-bg-container); color: var(--ev-text-primary); font-size: 15px; cursor: pointer;" @click="shareOpen = false">{{ t }}</button>
     </div>
-  </ew-action-sheet>
+  </ev-action-sheet>
 </MobileStage>
 
 ```vue
-<EwActionSheet v-model="visible" cancel-text="">
+<EvActionSheet v-model="visible" cancel-text="">
   <template #title>
     <span>分享到</span>
   </template>
   <ShareTargetList @pick="visible = false" />
-</EwActionSheet>
+</EvActionSheet>
 ```
 
 </DemoBlock>

@@ -5,21 +5,21 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-space size="middle" direction="column">
-    <ev-segmented v-model="view" :options="['列表', '卡片', '看板']" />
-    <ev-text size="small" type="info">当前视图：{{ view }}</ev-text>
-  </ev-space>
+  <eb-space size="middle" direction="column">
+    <eb-segmented v-model="view" :options="['列表', '卡片', '看板']" />
+    <eb-text size="small" type="info">当前视图：{{ view }}</eb-text>
+  </eb-space>
 </DemoBlock>
 
 ## 尺寸与圆角
 
 <DemoBlock>
-  <ev-space size="middle" direction="column">
-    <ev-segmented v-model="s1" :options="['今日', '本周', '本月']" size="small" />
-    <ev-segmented v-model="s2" :options="['今日', '本周', '本月']" size="middle" />
-    <ev-segmented v-model="s3" :options="['今日', '本周', '本月']" size="large" />
-    <ev-segmented v-model="s4" :options="['开启', '关闭']" shape="round" />
-  </ev-space>
+  <eb-space size="middle" direction="column">
+    <eb-segmented v-model="s1" :options="['今日', '本周', '本月']" size="small" />
+    <eb-segmented v-model="s2" :options="['今日', '本周', '本月']" size="middle" />
+    <eb-segmented v-model="s3" :options="['今日', '本周', '本月']" size="large" />
+    <eb-segmented v-model="s4" :options="['开启', '关闭']" shape="round" />
+  </eb-space>
 </DemoBlock>
 
 ## 对象选项与禁用项
@@ -27,14 +27,14 @@
 options 支持 `{ label, value, disabled, icon }` 对象形态：
 
 <DemoBlock>
-  <ev-segmented v-model="mode" :options="segmentOptions" />
-  <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">当前模式：{{ mode }}（「历史」为禁用项）</p>
+  <eb-segmented v-model="mode" :options="segmentOptions" />
+  <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">当前模式：{{ mode }}（「历史」为禁用项）</p>
 </DemoBlock>
 
 ## 块级铺满
 
 <DemoBlock>
-  <ev-segmented v-model="range" :options="['今日', '本周', '本月', '本年']" block />
+  <eb-segmented v-model="range" :options="['今日', '本周', '本月', '本年']" block />
 </DemoBlock>
 
 <script setup>

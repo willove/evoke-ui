@@ -2,12 +2,12 @@
 
 > 移动端：宽表格在触屏转译为卡片列表，参见 [移动端 · 数据展示](/mobile/data-display)。
 
-CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、`columns` 配置式列、内置分页与加载遮罩，基于 EvTable 并透传其实例方法。
+CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、`columns` 配置式列、内置分页与加载遮罩，基于 EbTable 并透传其实例方法。
 
 ## 基础用法
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="订单列表"
     :columns="[
       { prop: 'name', label: '订单名称' },
@@ -21,9 +21,9 @@ CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、
     :total="120"
   >
     <template #toolbar>
-      <ev-button type="primary" size="small">新建订单</ev-button>
+      <eb-button type="primary" size="small">新建订单</eb-button>
     </template>
-  </ev-data-table>
+  </eb-data-table>
 </DemoBlock>
 
 ## 多选与操作列
@@ -31,7 +31,7 @@ CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、
 `selectable` 打开多选列并 emit `selection-change`；`show-index` 打开序号列（宽度由 `index-width` 控制）。`operations` 插槽渲染操作列，作用域为 `{ row, $index, column }`，列头文案与宽度用 `operations-label / operations-width` 调整。
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="批量操作"
     selectable
     show-index
@@ -40,10 +40,10 @@ CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、
     @selection-change="(rows) => (dtSelection = rows)"
   >
     <template #operations="{ row }">
-      <ev-button text type="primary" size="small">编辑</ev-button>
-      <ev-button text type="danger" size="small">删除</ev-button>
+      <eb-button text type="primary" size="small">编辑</eb-button>
+      <eb-button text type="danger" size="small">删除</eb-button>
     </template>
-  </ev-data-table>
+  </eb-data-table>
   <p style="margin-top: 8px;">已选 {{ dtSelection.length }} 行</p>
 </DemoBlock>
 
@@ -52,7 +52,7 @@ CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、
 列配置 `slot: 'status'` 后由同名插槽渲染单元格（省略时默认按 `prop` 名查找插槽，作用域 `{ row, $index, column }`）；`loading` 时表格覆盖旋转遮罩，适合包裹请求过程。
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="状态列"
     :loading="dtLoading"
     :columns="[
@@ -63,24 +63,24 @@ CRUD 场景的表格封装：工具栏（标题 + 计数角标 + 操作区）、
     :data="dtRows"
   >
     <template #toolbar>
-      <ev-button @click="dtLoading = !dtLoading">{{ dtLoading ? '关闭加载态' : '模拟加载' }}</ev-button>
+      <eb-button @click="dtLoading = !dtLoading">{{ dtLoading ? '关闭加载态' : '模拟加载' }}</eb-button>
     </template>
     <template #status="{ row }">
-      <ev-status-tag :value="row.status" :statuses="dtStatuses" />
+      <eb-status-tag :value="row.status" :statuses="dtStatuses" />
     </template>
-  </ev-data-table>
+  </eb-data-table>
 </DemoBlock>
 
 ## 双行单元格
 
-列配置 `stack: (row) => 副行文本` 即可在单元格内渲染主行加粗 + 副行浅灰省略（等价于内置 EvCellStack）。
+列配置 `stack: (row) => 副行文本` 即可在单元格内渲染主行加粗 + 副行浅灰省略（等价于内置 EbCellStack）。
 
 ## 服务端分页
 
 `page / pageSize` 受控 + `total` 驱动分页条；翻页时组件先 emit `update:page / update:pageSize`，再 emit `page-change`，在回调里按新页码重新拉取数据即可。
 
 <DemoBlock>
-  <ev-data-table
+  <eb-data-table
     title="分页"
     :columns="[{ prop: 'name', label: '订单名称' }]"
     :data="dtPageRows.slice((dtPage - 1) * dtPageSize, dtPage * dtPageSize)"
@@ -128,7 +128,7 @@ const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (
   { name: 'pageSizes', desc: '每页条数选项', type: 'number[]', default: '[10, 20, 50, 100]' },
   { name: 'paginationLayout', desc: '分页条布局项', type: 'string', default: 'total, sizes, prev, pager, next' },
   { name: 'showPagination', desc: '是否显示分页条', type: 'boolean', default: 'true' },
-  { name: 'tableAttrs', desc: '透传 EvTable 其余 props（border/stripe/height 等）', type: 'object', default: '{}' },
+  { name: 'tableAttrs', desc: '透传 EbTable 其余 props（border/stripe/height 等）', type: 'object', default: '{}' },
 ]" />
 
 <ApiTable title="Column" :rows="[
@@ -165,5 +165,5 @@ const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (
   { name: 'toggleAllSelection', desc: '切换全选', type: '() => void', default: '—' },
   { name: 'sort', desc: '程序化排序', type: '(prop, order) => void', default: '—' },
   { name: 'clearSort', desc: '清空排序状态', type: '() => void', default: '—' },
-  { name: 'tableRef', desc: 'EvTable 实例引用（可调用其全部方法）', type: 'Ref', default: '—' },
+  { name: 'tableRef', desc: 'EbTable 实例引用（可调用其全部方法）', type: 'Ref', default: '—' },
 ]" />

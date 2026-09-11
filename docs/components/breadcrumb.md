@@ -9,11 +9,11 @@
 按挂载顺序自动识别最后一项为当前页（不带分隔符、无链接样式），其余项设 `to` 后呈现可点击的链接态。
 
 <DemoBlock>
-  <ev-breadcrumb>
-    <ev-breadcrumb-item to="/">首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item to="/project">项目管理</ev-breadcrumb-item>
-    <ev-breadcrumb-item>项目详情</ev-breadcrumb-item>
-  </ev-breadcrumb>
+  <eb-breadcrumb>
+    <eb-breadcrumb-item to="/">首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item to="/project">项目管理</eb-breadcrumb-item>
+    <eb-breadcrumb-item>项目详情</eb-breadcrumb-item>
+  </eb-breadcrumb>
 </DemoBlock>
 
 ## 配置式用法
@@ -21,7 +21,7 @@
 传入 `items` 数组即可渲染，适合由路由表或后台菜单驱动的场景；item 的 `icon` 渲染为前置图标（字符串图标名），`to` / `replace` 语义与插槽式一致。
 
 <DemoBlock>
-  <ev-breadcrumb :items="[
+  <eb-breadcrumb :items="[
     { label: '首页', icon: 'home-filled', to: '/' },
     { label: '内容管理', icon: 'folder', to: '/content' },
     { label: '文章详情' },
@@ -33,11 +33,11 @@
 `to` 可传路由 location 对象（如 `{ path: '/project' }`）；`replace` 为 true 时使用 router.replace 跳转，不留历史记录。应用未注入 router 时仅 http(s) 字符串外链会跳转（window.location），对象地址不产生动作，生产环境请配合 vue-router 使用。
 
 <DemoBlock>
-  <ev-breadcrumb>
-    <ev-breadcrumb-item :to="{ path: '/' }">首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item :to="{ path: '/project' }" replace>项目管理</ev-breadcrumb-item>
-    <ev-breadcrumb-item>项目详情</ev-breadcrumb-item>
-  </ev-breadcrumb>
+  <eb-breadcrumb>
+    <eb-breadcrumb-item :to="{ path: '/' }">首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item :to="{ path: '/project' }" replace>项目管理</eb-breadcrumb-item>
+    <eb-breadcrumb-item>项目详情</eb-breadcrumb-item>
+  </eb-breadcrumb>
 </DemoBlock>
 
 ## 外链跳转
@@ -45,11 +45,11 @@
 `to` 为 http(s) 地址时点击直接整页跳转（window.location），不依赖 router 注入，适合跨越到外部系统的入口（点击会离开当前文档站）。
 
 <DemoBlock>
-  <ev-breadcrumb>
-    <ev-breadcrumb-item to="/">首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item to="https://www.example.com">组件库官网</ev-breadcrumb-item>
-    <ev-breadcrumb-item>当前页</ev-breadcrumb-item>
-  </ev-breadcrumb>
+  <eb-breadcrumb>
+    <eb-breadcrumb-item to="/">首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item to="https://www.example.com">组件库官网</eb-breadcrumb-item>
+    <eb-breadcrumb-item>当前页</eb-breadcrumb-item>
+  </eb-breadcrumb>
 </DemoBlock>
 
 ## 插槽自定义内容
@@ -57,13 +57,13 @@
 默认插槽完全自定义项内容，可混排图标、文本等元素；不影响最后一项判定与分隔符渲染。
 
 <DemoBlock>
-  <ev-breadcrumb separator-icon="arrow-right">
-    <ev-breadcrumb-item to="/">
-      <ev-icon name="home-filled" :size="14" style="vertical-align: -2px; margin-right: 4px;" />首页
-    </ev-breadcrumb-item>
-    <ev-breadcrumb-item to="/content">文档中心</ev-breadcrumb-item>
-    <ev-breadcrumb-item>组件总览</ev-breadcrumb-item>
-  </ev-breadcrumb>
+  <eb-breadcrumb separator-icon="arrow-right">
+    <eb-breadcrumb-item to="/">
+      <eb-icon name="home-filled" :size="14" style="vertical-align: -2px; margin-right: 4px;" />首页
+    </eb-breadcrumb-item>
+    <eb-breadcrumb-item to="/content">文档中心</eb-breadcrumb-item>
+    <eb-breadcrumb-item>组件总览</eb-breadcrumb-item>
+  </eb-breadcrumb>
 </DemoBlock>
 
 ## 自定义分隔符
@@ -71,21 +71,21 @@
 `separator` 自定义分隔文本；`separator-icon` 设置图标后替代文本，两者均由 item 从父级注入。`separator-spacing` 调整分隔符与两侧项的间距（数字按 px，字符串支持 px / pt / em 等单位）。
 
 <DemoBlock>
-  <ev-breadcrumb separator="|" style="margin-bottom: 12px;">
-    <ev-breadcrumb-item>首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item>商品</ev-breadcrumb-item>
-    <ev-breadcrumb-item>详情</ev-breadcrumb-item>
-  </ev-breadcrumb>
-  <ev-breadcrumb separator-icon="arrow-right" :separator-spacing="4" style="margin-bottom: 12px;">
-    <ev-breadcrumb-item>首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item>订单</ev-breadcrumb-item>
-    <ev-breadcrumb-item>订单详情</ev-breadcrumb-item>
-  </ev-breadcrumb>
-  <ev-breadcrumb separator="/" separator-spacing="16px">
-    <ev-breadcrumb-item>首页</ev-breadcrumb-item>
-    <ev-breadcrumb-item>活动管理</ev-breadcrumb-item>
-    <ev-breadcrumb-item>活动详情</ev-breadcrumb-item>
-  </ev-breadcrumb>
+  <eb-breadcrumb separator="|" style="margin-bottom: 12px;">
+    <eb-breadcrumb-item>首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item>商品</eb-breadcrumb-item>
+    <eb-breadcrumb-item>详情</eb-breadcrumb-item>
+  </eb-breadcrumb>
+  <eb-breadcrumb separator-icon="arrow-right" :separator-spacing="4" style="margin-bottom: 12px;">
+    <eb-breadcrumb-item>首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item>订单</eb-breadcrumb-item>
+    <eb-breadcrumb-item>订单详情</eb-breadcrumb-item>
+  </eb-breadcrumb>
+  <eb-breadcrumb separator="/" separator-spacing="16px">
+    <eb-breadcrumb-item>首页</eb-breadcrumb-item>
+    <eb-breadcrumb-item>活动管理</eb-breadcrumb-item>
+    <eb-breadcrumb-item>活动详情</eb-breadcrumb-item>
+  </eb-breadcrumb>
 </DemoBlock>
 
 ## API
@@ -107,5 +107,5 @@
 ]" />
 
 <ApiTable title="Breadcrumb Slots" :rows="[
-  { name: 'default', desc: '手写 ev-breadcrumb-item 列表（传入 items 时配置项与插槽项按声明顺序共同渲染）', type: '—', default: '—' },
+  { name: 'default', desc: '手写 eb-breadcrumb-item 列表（传入 items 时配置项与插槽项按声明顺序共同渲染）', type: '—', default: '—' },
 ]" />

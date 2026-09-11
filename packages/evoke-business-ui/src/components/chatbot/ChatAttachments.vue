@@ -1,29 +1,29 @@
 <template>
-  <div v-if="attachments && attachments.length" class="ev-chat-attachments">
+  <div v-if="attachments && attachments.length" class="eb-chat-attachments">
     <div 
       v-for="file in attachments" 
       :key="file.id" 
-      class="ev-chat-attachments__item"
+      class="eb-chat-attachments__item"
     >
-      <div class="ev-chat-attachments__preview" v-if="file.preview || isImage(file.type)">
+      <div class="eb-chat-attachments__preview" v-if="file.preview || isImage(file.type)">
         <img :src="file.preview || file.url" :alt="file.name" />
       </div>
-      <div v-else class="ev-chat-attachments__icon">
-        <ev-icon name="document" />
+      <div v-else class="eb-chat-attachments__icon">
+        <eb-icon name="document" />
       </div>
-      <div class="ev-chat-attachments__info">
-        <span class="ev-chat-attachments__name">{{ file.name }}</span>
-        <span v-if="file.size" class="ev-chat-attachments__size">{{ formatFileSize(file.size) }}</span>
+      <div class="eb-chat-attachments__info">
+        <span class="eb-chat-attachments__name">{{ file.name }}</span>
+        <span v-if="file.size" class="eb-chat-attachments__size">{{ formatFileSize(file.size) }}</span>
       </div>
-      <button v-if="removable" class="ev-chat-attachments__remove" @click="handleRemove(file)">
-        <ev-icon name="close" />
+      <button v-if="removable" class="eb-chat-attachments__remove" @click="handleRemove(file)">
+        <eb-icon name="close" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import EvIcon from "../icon/index.vue"
+import EbIcon from "../icon/index.vue"
 import { formatFileSize } from "./utils";
 import { getIconByNameSync } from "../icon/iconRegistry";
 const props = defineProps({
@@ -44,72 +44,72 @@ function handleRemove(file) {
 
 <style scoped>
 
-.ev-chat-attachments {
+.eb-chat-attachments {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ev-space-2);
-  margin-bottom: var(--ev-space-2);
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-2);
 }
 
-.ev-chat-attachments__item {
+.eb-chat-attachments__item {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding: var(--ev-space-2);
-  background: var(--ev-fill-color-light);
-  border-radius: var(--ev-radius-md);
-  border: 1px solid var(--ev-border-color-light);
+  gap: var(--eb-space-2);
+  padding: var(--eb-space-2);
+  background: var(--eb-fill-color-light);
+  border-radius: var(--eb-radius-md);
+  border: 1px solid var(--eb-border-color-light);
   max-width: 280px;
 }
 
-.ev-chat-attachments__preview {
+.eb-chat-attachments__preview {
   width: 40px;
   height: 40px;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.ev-chat-attachments__preview img {
+.eb-chat-attachments__preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.ev-chat-attachments__icon {
+.eb-chat-attachments__icon {
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ev-fill-color);
-  border-radius: var(--ev-radius-sm);
-  color: var(--ev-color-info);
+  background: var(--eb-fill-color);
+  border-radius: var(--eb-radius-sm);
+  color: var(--eb-color-info);
   font-size: 20px;
   flex-shrink: 0;
 }
 
-.ev-chat-attachments__info {
+.eb-chat-attachments__info {
   display: flex;
   flex-direction: column;
   min-width: 0;
   flex: 1;
 }
 
-.ev-chat-attachments__name {
-  font-size: var(--ev-font-size-sm);
-  color: var(--ev-text-color-primary);
+.eb-chat-attachments__name {
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.ev-chat-attachments__size {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-placeholder);
+.eb-chat-attachments__size {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
 }
 
-.ev-chat-attachments__remove {
+.eb-chat-attachments__remove {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,14 +119,14 @@ function handleRemove(file) {
   background: transparent;
   border-radius: 50%;
   cursor: pointer;
-  color: var(--ev-text-color-placeholder);
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  color: var(--eb-text-color-placeholder);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
   flex-shrink: 0;
   padding: 0;
 }
 
-.ev-chat-attachments__remove:hover {
-  background: var(--ev-fill-color-dark);
-  color: var(--ev-text-color-secondary);
+.eb-chat-attachments__remove:hover {
+  background: var(--eb-fill-color-dark);
+  color: var(--eb-text-color-secondary);
 }
 </style>

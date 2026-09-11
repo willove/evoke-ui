@@ -1,17 +1,17 @@
 <template>
-  <div class="ev-color-dropdown ev-color-dropdown" :class="{ 'is-disabled': disabled }">
-    <div class="ev-color-dropdown__main-wrapper">
+  <div class="eb-color-dropdown eb-color-dropdown" :class="{ 'is-disabled': disabled }">
+    <div class="eb-color-dropdown__main-wrapper">
       <!-- 饱和度/明度面板 -->
       <div
         ref="svRef"
-        class="ev-color-svpanel"
+        class="eb-color-svpanel"
         :style="{ background: hueColor }"
         @mousedown="startSvDrag"
       >
-        <div class="ev-color-svpanel__white" />
-        <div class="ev-color-svpanel__black" />
+        <div class="eb-color-svpanel__white" />
+        <div class="eb-color-svpanel__black" />
         <div
-          class="ev-color-svpanel__cursor"
+          class="eb-color-svpanel__cursor"
           :style="{ left: `${sv.s * 100}%`, top: `${(1 - sv.v) * 100}%` }"
         />
       </div>
@@ -19,33 +19,33 @@
       <!-- 色相条 -->
       <div
         ref="hueRef"
-        class="ev-color-hue-slider"
+        class="eb-color-hue-slider"
         @mousedown="startBarDrag(hueRef, (rect, e) => ({ h: ((e.clientX - rect.left) / rect.width) * 360, s: sv.s > 0 ? sv.s : 1, v: sv.v }), true)"
       >
-        <div class="ev-color-hue-slider__bar" />
-        <div class="ev-color-hue-slider__thumb" :style="{ left: `${(sv.h / 360) * 100}%` }" />
+        <div class="eb-color-hue-slider__bar" />
+        <div class="eb-color-hue-slider__thumb" :style="{ left: `${(sv.h / 360) * 100}%` }" />
       </div>
 
       <!-- 透明度条 -->
       <div
         v-if="showAlpha"
         ref="alphaRef"
-        class="ev-color-alpha-slider"
+        class="eb-color-alpha-slider"
         @mousedown="startBarDrag(alphaRef, (rect, e) => ({ ...sv, a: clampAlpha(e.clientX - rect.left, rect.width) }), false)"
       >
-        <div class="ev-color-alpha-slider__bar" :style="{ background: alphaGradient }" />
-        <div class="ev-color-alpha-slider__thumb" :style="{ left: `${alpha * 100}%` }" />
+        <div class="eb-color-alpha-slider__bar" :style="{ background: alphaGradient }" />
+        <div class="eb-color-alpha-slider__thumb" :style="{ left: `${alpha * 100}%` }" />
       </div>
     </div>
 
     <!-- 预设色 -->
-    <div v-if="predefine?.length" class="ev-color-predefine">
-      <div class="ev-color-predefine__colors">
+    <div v-if="predefine?.length" class="eb-color-predefine">
+      <div class="eb-color-predefine__colors">
         <button
           v-for="(color, i) in predefine"
           :key="i"
           type="button"
-          class="ev-color-predefine__color-selector"
+          class="eb-color-predefine__color-selector"
           :style="{ background: color }"
           :aria-label="`预设色 ${color}`"
           @click="selectPredefine(color)"
@@ -54,24 +54,24 @@
     </div>
 
     <!-- 底部：当前值输入 + 确定 -->
-    <div class="ev-color-dropdown__btns">
-      <span class="ev-color-dropdown__value">
+    <div class="eb-color-dropdown__btns">
+      <span class="eb-color-dropdown__value">
         <input
           :value="displayValue"
-          class="ev-color-dropdown__value-input"
+          class="eb-color-dropdown__value-input"
           spellcheck="false"
           @change="handleInput"
           @keydown.enter="handleInput"
         >
       </span>
-      <button type="button" class="ev-color-dropdown__link-btn" @click="confirm">确定</button>
+      <button type="button" class="eb-color-dropdown__link-btn" @click="confirm">确定</button>
     </div>
   </div>
 </template>
 
 <script setup>
 /**
- * EvColorPickerPanel — 取色面板
+ * EbColorPickerPanel — 取色面板
  * HSV 内部表示；SV 面板/色相条/透明度条均为拖拽控制；确认提交或拖拽结束实时提交
  */
 import { ref, reactive, computed, watch, onBeforeUnmount } from 'vue'

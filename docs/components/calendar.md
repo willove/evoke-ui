@@ -6,8 +6,8 @@
 
 <DemoBlock>
   <div style="max-width: 640px">
-    <ev-calendar v-model="date" :events="events" @select="onSelect" />
-    <p style="margin-top: 8px; font-size: 12px; color: var(--ev-text-color-secondary);">
+    <eb-calendar v-model="date" :events="events" @select="onSelect" />
+    <p style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
       当前选中：{{ date ? date.toLocaleDateString('zh-CN') : '—' }}
     </p>
   </div>

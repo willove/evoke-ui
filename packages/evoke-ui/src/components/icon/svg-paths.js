@@ -1,5 +1,5 @@
 /**
- * EwIcon 核心图标集（72 个，静态快照数据）
+ * EvIcon 核心图标集（72 个，静态快照数据）
  * 图标形状源自 Remix Icon v4.9.1（https://remixicon.com/，Remix Icon License v1.0，免费商用）
  * 由 scripts/generate-remix-icons.mjs 生成，键名为 kebab-case 语义命名，请勿手动修改；
  * 需增删图标时在脚本 MAPPING 中登记后重新执行生成

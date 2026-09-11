@@ -1,21 +1,21 @@
 <template>
-  <figure :class="['ew-quote', { 'is-sticker': sticker }]">
-    <blockquote class="ew-quote__text">
+  <figure :class="['ev-quote', { 'is-sticker': sticker }]">
+    <blockquote class="ev-quote__text">
       <slot>{{ quote }}</slot>
     </blockquote>
-    <figcaption class="ew-quote__author">
+    <figcaption class="ev-quote__author">
       <slot name="author">
-        <span class="ew-quote__name">{{ author }}</span>
-        <span v-if="role" class="ew-quote__role">{{ role }}</span>
+        <span class="ev-quote__name">{{ author }}</span>
+        <span v-if="role" class="ev-quote__role">{{ role }}</span>
         <a
           v-if="source && sourceHref"
           :href="sourceHref"
           target="_blank"
           rel="noopener"
-          class="ew-quote__source"
+          class="ev-quote__source"
         >
           {{ source }}
-          <EwIcon name="external-link" :size="12" />
+          <EvIcon name="external-link" :size="12" />
         </a>
       </slot>
     </figcaption>
@@ -24,9 +24,9 @@
 
 <script setup>
 /**
- * EwQuote — 引用/评价卡（launchos 用户评价语言）
+ * EvQuote — 引用/评价卡（launchos 用户评价语言）
  */
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 defineProps({
   quote: { type: String, default: '' },

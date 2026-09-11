@@ -1,9 +1,9 @@
 <template>
-  <div class="ew-icon-grid">
+  <div class="ev-icon-grid">
     <!-- 间距类挂在包装层：SearchBox inheritAttrs:false 会把 class 透传到内部 input -->
-    <div v-if="searchable" class="ew-icon-grid__search">
+    <div v-if="searchable" class="ev-icon-grid__search">
       <slot name="search">
-        <EwSearchBox
+        <EvSearchBox
           v-model="keyword"
           v-model:category="activeCategory"
           :categories="categoryOptions"
@@ -12,27 +12,27 @@
           <template v-if="$slots['search-suffix']" #suffix>
             <slot name="search-suffix" />
           </template>
-        </EwSearchBox>
+        </EvSearchBox>
       </slot>
     </div>
 
-    <div v-if="loading" class="ew-icon-grid__state">
-      <EwIcon name="loading" :size="20" class="is-rotating" />
+    <div v-if="loading" class="ev-icon-grid__state">
+      <EvIcon name="loading" :size="20" class="is-rotating" />
       <span>Loading icons…</span>
     </div>
 
     <template v-else-if="sections.length">
-      <section v-for="sec in sections" :key="sec.key" class="ew-icon-grid__section">
-        <h3 class="ew-icon-grid__title">
+      <section v-for="sec in sections" :key="sec.key" class="ev-icon-grid__section">
+        <h3 class="ev-icon-grid__title">
           {{ sec.label }}
-          <span class="ew-icon-grid__count">{{ sec.icons.length }}</span>
+          <span class="ev-icon-grid__count">{{ sec.icons.length }}</span>
         </h3>
-        <div class="ew-icon-grid__grid">
+        <div class="ev-icon-grid__grid">
           <button
             v-for="icon in sec.icons"
             :key="icon.name"
             type="button"
-            class="ew-icon-grid__cell"
+            class="ev-icon-grid__cell"
             :class="{ 'is-copied': copiedName === icon.name }"
             :title="`Copy '${icon.name}'`"
             :aria-label="`复制图标名 ${icon.name}`"
@@ -47,16 +47,16 @@
                 :fill="p.fill"
               />
             </svg>
-            <span class="ew-icon-grid__name">{{ icon.name }}</span>
-            <span class="ew-icon-grid__plus" aria-hidden="true">
-              <EwIcon :name="copiedName === icon.name ? 'check' : 'plus'" :size="12" />
+            <span class="ev-icon-grid__name">{{ icon.name }}</span>
+            <span class="ev-icon-grid__plus" aria-hidden="true">
+              <EvIcon :name="copiedName === icon.name ? 'check' : 'plus'" :size="12" />
             </span>
           </button>
         </div>
       </section>
     </template>
 
-    <div v-else class="ew-icon-grid__state">
+    <div v-else class="ev-icon-grid__state">
       <span>No icons found<template v-if="keyword"> for “{{ keyword }}”</template></span>
     </div>
   </div>
@@ -64,7 +64,7 @@
 
 <script setup>
 /**
- * EwIconGrid — 可搜索图标网格（remixicon.com 站点的核心界面语言）
+ * EvIconGrid — 可搜索图标网格（remixicon.com 站点的核心界面语言）
  *
  * 内置展示集 900+ 图标（动态 chunk，按需加载）：分类分节 + 计数胶囊 +
  * 关键词/分类过滤 + 点击复制图标名（remixicon 交互语言）
@@ -73,8 +73,8 @@
  * paths 为 { viewBox, paths: [{ d, fillRule?, fill? }] }
  */
 import { ref, computed, onMounted, watch } from 'vue'
-import EwIcon from '../icon/index.vue'
-import EwSearchBox from '../search-box/index.vue'
+import EvIcon from '../icon/index.vue'
+import EvSearchBox from '../search-box/index.vue'
 import { useCopy } from '../../composables/useCopy'
 
 const props = defineProps({
@@ -106,8 +106,8 @@ onMounted(async () => {
     const m = await import('../icon/showcase.js')
     builtIn.value = Object.entries(m.ewShowcasePaths).map(([name, paths]) => ({
       name,
-      category: m.EW_SHOWCASE_META[name]?.category || 'Others',
-      categoryZh: m.EW_SHOWCASE_META[name]?.categoryZh,
+      category: m.EV_SHOWCASE_META[name]?.category || 'Others',
+      categoryZh: m.EV_SHOWCASE_META[name]?.categoryZh,
       paths: paths.paths,
       viewBox: paths.viewBox,
     }))

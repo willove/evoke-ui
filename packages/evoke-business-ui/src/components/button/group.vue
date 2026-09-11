@@ -1,12 +1,12 @@
 <template>
-  <div class="ev-button-group ev-button-group">
+  <div class="eb-button-group eb-button-group">
     <slot />
   </div>
 </template>
 
 <script setup>
 /**
- * EvButtonGroup — 按钮组
+ * EbButtonGroup — 按钮组
  */
 </script>
 

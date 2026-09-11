@@ -1,46 +1,46 @@
-/* EwFaq — 常见问题手风琴 */
+/* EvFaq — 常见问题手风琴 */
 
-.ew-faq {
+.ev-faq {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-3);
+  gap: var(--ev-space-3);
 }
 
-.ew-faq__item {
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-bg-container);
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+.ev-faq__item {
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-bg-container);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-faq__item.is-open {
-  border-color: var(--ew-border-color);
-  box-shadow: var(--ew-shadow-1);
+.ev-faq__item.is-open {
+  border-color: var(--ev-border-color);
+  box-shadow: var(--ev-shadow-1);
 }
 
-.ew-faq__question {
+.ev-faq__question {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ew-space-4);
+  gap: var(--ev-space-4);
   width: 100%;
-  padding: 20px var(--ew-space-6);
+  padding: 20px var(--ev-space-6);
   border: none;
   background: transparent;
   text-align: left;
-  font-size: var(--ew-font-size-base);
-  font-weight: var(--ew-font-weight-regular);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-base);
+  font-weight: var(--ev-font-weight-regular);
+  color: var(--ev-text-primary);
   cursor: pointer;
 }
 
-.ew-faq__question-text {
+.ev-faq__question-text {
   flex: 1;
 }
 
 /* launchos 式 +/− 指示器 */
-.ew-faq__indicator {
+.ev-faq__indicator {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -48,35 +48,35 @@
   height: 24px;
   flex-shrink: 0;
   font-size: 20px;
-  font-weight: var(--ew-font-weight-regular);
+  font-weight: var(--ev-font-weight-regular);
   line-height: 1;
-  color: var(--ew-text-secondary);
-  transition: color var(--ew-duration-base) var(--ew-ease-in-out);
+  color: var(--ev-text-secondary);
+  transition: color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-faq__item.is-open .ew-faq__indicator {
-  color: var(--ew-color-primary);
+.ev-faq__item.is-open .ev-faq__indicator {
+  color: var(--ev-color-primary);
 }
 
 /* ─── 平滑展开（grid-rows 动画）─── */
-.ew-faq__answer-wrap {
+.ev-faq__answer-wrap {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--ew-duration-slow) var(--ew-ease-smooth);
+  transition: grid-template-rows var(--ev-duration-slow) var(--ev-ease-smooth);
 }
 
-.ew-faq__item.is-open .ew-faq__answer-wrap {
+.ev-faq__item.is-open .ev-faq__answer-wrap {
   grid-template-rows: 1fr;
 }
 
-.ew-faq__answer {
+.ev-faq__answer {
   overflow: hidden;
-  padding: 0 var(--ew-space-6);
-  font-size: var(--ew-font-size-sm);
-  line-height: var(--ew-line-height-loose);
-  color: var(--ew-text-regular);
+  padding: 0 var(--ev-space-6);
+  font-size: var(--ev-font-size-sm);
+  line-height: var(--ev-line-height-loose);
+  color: var(--ev-text-regular);
 }
 
-.ew-faq__item.is-open .ew-faq__answer {
-  padding-bottom: var(--ew-space-5);
+.ev-faq__item.is-open .ev-faq__answer {
+  padding-bottom: var(--ev-space-5);
 }

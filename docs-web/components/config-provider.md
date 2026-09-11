@@ -1,28 +1,28 @@
 # ConfigProvider 主题配置
 
-`EwConfigProvider` 把整站的**颜色 / 圆角 / 间距 / 容器宽 / 磨砂**收敛为五个 props。配置变化时
-对应的 `--ew-*` 令牌被写入 `:root`（或包裹元素），全库组件经令牌取值，即时生效；
+`EvConfigProvider` 把整站的**颜色 / 圆角 / 间距 / 容器宽 / 磨砂**收敛为五个 props。配置变化时
+对应的 `--ev-*` 令牌被写入 `:root`（或包裹元素），全库组件经令牌取值，即时生效；
 主色淡色阶（light-3…9 / dark-2 / rgb 游标）由主色自动生成，明暗双主题自动兼容。
 
 ## 全局换肤
 
 <DemoBlock title="紫色 × 圆润 × 宽松" description="下方演示区通过 global: false 局部生效，体验整站配置请用 [主题定制器](/guide/customizer)。">
 
-<EwConfigProvider primary="#7C5CFC" radius="round" space="loose" :global="false">
+<EvConfigProvider primary="#7C5CFC" radius="round" space="loose" :global="false">
   <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-    <EwButton pill>主按钮</EwButton>
-    <EwButton variant="soft">Soft</EwButton>
-    <EwTag tone="primary">标签</EwTag>
+    <EvButton pill>主按钮</EvButton>
+    <EvButton variant="soft">Soft</EvButton>
+    <EvTag tone="primary">标签</EvTag>
   </div>
-  <EwCard tone="cream" sticker style="margin-top:16px; max-width:360px;">
+  <EvCard tone="cream" sticker style="margin-top:16px; max-width:360px;">
     <p style="font-size:13px;">卡片圆角、内边距与主色跟随上方配置。</p>
-  </EwCard>
-</EwConfigProvider>
+  </EvCard>
+</EvConfigProvider>
 
 ```vue
-<EwConfigProvider primary="#7C5CFC" radius="round" space="loose" container="wide">
+<EvConfigProvider primary="#7C5CFC" radius="round" space="loose" container="wide">
   <SiteHome />
-</EwConfigProvider>
+</EvConfigProvider>
 ```
 
 </DemoBlock>
@@ -35,23 +35,23 @@
 
 <DemoBlock title="全局磨砂 + 叠层" description="开关写入 html 属性全站生效，离开页面自动还原；渐变底上的玻璃卡透出彼此的边缘。">
 
-<EwConfigProvider glass :global="false">
+<EvConfigProvider glass :global="false">
   <div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px; display:grid; gap:14px;">
-    <EwCard>
+    <EvCard>
       <p style="font-weight:600;">玻璃卡 A</p>
       <p style="font-size:13px;">跟随全局 glass，半透明底 + 背景模糊。</p>
-    </EwCard>
-    <EwCard style="margin-left:36px;">
+    </EvCard>
+    <EvCard style="margin-left:36px;">
       <p style="font-weight:600;">玻璃卡 B（错位叠放）</p>
       <p style="font-size:13px;">单张卡传 :glass="false" 可退回实底。</p>
-    </EwCard>
+    </EvCard>
   </div>
-</EwConfigProvider>
+</EvConfigProvider>
 
 ```vue
-<EwConfigProvider glass>
+<EvConfigProvider glass>
   <SiteHome />
-</EwConfigProvider>
+</EvConfigProvider>
 ```
 
 </DemoBlock>
@@ -71,7 +71,7 @@ reset()               // 恢复默认
 ```
 
 ::: info 预设
-`EW_COLOR_PRESETS` / `EW_RADIUS_PRESETS` / `EW_SPACE_PRESETS` / `EW_CONTAINER_PRESETS`
+`EV_COLOR_PRESETS` / `EV_RADIUS_PRESETS` / `EV_SPACE_PRESETS` / `EV_CONTAINER_PRESETS`
 从包根导出，可直接生成定制器选项。完整交互见 [主题定制器](/guide/customizer)。
 :::
 
@@ -86,7 +86,7 @@ reset()               // 恢复默认
 | space | 间距档 | `'compact' \| 'default' \| 'loose'` | `'default'` |
 | container | 容器宽档 | `'narrow' \| 'default' \| 'wide' \| 'full'` | `'default'` |
 | global | 写入 `:root` 全局生效；false 时作用于包裹元素 | boolean | `true` |
-| glass | 全局磨砂，作用于 `html[data-ew-glass]`；容器组件级 glass prop 可单独覆盖 | boolean | `false` |
+| glass | 全局磨砂，作用于 `html[data-ev-glass]`；容器组件级 glass prop 可单独覆盖 | boolean | `false` |
 
 ### 插槽
 

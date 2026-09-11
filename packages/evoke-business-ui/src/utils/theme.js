@@ -9,10 +9,10 @@
  * - 暗色自适应：运行时注入过主色/语义色后，监听 html.dark 切换并按新模式
  *   自动重注入（单例 MutationObserver，resetTheme 时断开）。
  * - 全部 DOM 访问在函数内守卫（SSR / Electron 安全）。
- * - 换色会派发全局 'ev-theme-change' 事件（detail 携带 { dark }），
- *   图表组件监听该事件重绘，色板随即跟随新主色。
+ * - 换色会派发全局 'eb-theme-change' 与 'ev-theme-change'（图表库读取面）事件，
+ *   detail 均携带 { dark }；图表组件监听后者重绘，色板随即跟随新主色。
  * - 持久化：saveThemeConfig / loadThemeConfig / clearThemeConfig，
- *   存取 localStorage 'ev-theme-config'（{ primary, semantic }）。
+ *   存取 localStorage 'eb-theme-config'（{ primary, semantic }）。
  * - 颜色基元实现在 utils/color.ts（TS 试点模块）。
  */
 import { normalizeHex, hexToRgb, rgbToHex, mixHex } from './color'
@@ -28,10 +28,10 @@ const RAMP_LIGHT_STEPS = [
 ]
 const RAMP_DARK_STEPS = [['dark-2', 0.2]]
 
-const THEME_CHANGE_EVENT = 'ev-theme-change'
-// 外接图表库监听的令牌变更事件（--ec-* 命名空间），换色时一并派发
-const CHART_THEME_CHANGE_EVENT = 'ec-theme-change'
-export const THEME_STORAGE_KEY = 'ev-theme-config'
+const THEME_CHANGE_EVENT = 'eb-theme-change'
+// 外接图表库（evoke-charts）监听的令牌变更事件，换色时一并派发
+const CHART_THEME_CHANGE_EVENT = 'ev-theme-change'
+export const THEME_STORAGE_KEY = 'eb-theme-config'
 
 function isDarkMode() {
   return typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
@@ -48,14 +48,14 @@ function normalizeOptions(options) {
  * 生成任意颜色的完整梯度（8 令牌）
  * @param {string} hex 基色
  * @param {{ dark?: boolean, prefix?: string }} [options]
- *   dark 缺省自动探测 html.dark；prefix 默认主色令牌前缀，语义色传 '--ev-color-success' 等
+ *   dark 缺省自动探测 html.dark；prefix 默认主色令牌前缀，语义色传 '--eb-color-success' 等
  * @returns {Record<string, string>|null}
  */
 export function generateColorRamp(hex, options = {}) {
   const base = normalizeHex(hex)
   if (!base) return null
   const dark = typeof options.dark === 'boolean' ? options.dark : isDarkMode()
-  const prefix = options.prefix ?? '--ev-color-primary'
+  const prefix = options.prefix ?? '--eb-color-primary'
   const { r, g, b } = hexToRgb(base)
   const ramp = {
     [`${prefix}`]: base,
@@ -120,7 +120,7 @@ function ensureDarkObserver() {
     if (appliedSemantic) {
       for (const key of SEMANTIC_KEYS) {
         const hex = appliedSemantic[key]
-        if (hex) injectRamp(generateColorRamp(hex, { dark, prefix: `--ev-color-${key}` }), document.documentElement)
+        if (hex) injectRamp(generateColorRamp(hex, { dark, prefix: `--eb-color-${key}` }), document.documentElement)
       }
     }
     dispatchThemeChange(dark)
@@ -165,7 +165,7 @@ export function setSemanticColors(colors, options) {
   const dark = typeof opts.dark === 'boolean' ? opts.dark : isDarkMode()
   const injected = {}
   for (const key of SEMANTIC_KEYS) {
-    const ramp = generateColorRamp(colors[key], { dark, prefix: `--ev-color-${key}` })
+    const ramp = generateColorRamp(colors[key], { dark, prefix: `--eb-color-${key}` })
     if (!ramp) continue
     injectRamp(ramp, opts.target)
     injected[key] = normalizeHex(colors[key])
@@ -186,7 +186,7 @@ export function resetTheme(options = {}) {
   appliedSemantic = null
   stopDarkObserver()
   if (typeof document === 'undefined') return
-  const prefixes = ['--ev-color-primary', ...SEMANTIC_KEYS.map((k) => `--ev-color-${k}`)]
+  const prefixes = ['--eb-color-primary', ...SEMANTIC_KEYS.map((k) => `--eb-color-${k}`)]
   for (const prefix of prefixes) {
     for (const suffix of RAMP_TOKEN_NAMES) {
       document.documentElement.style.removeProperty(`${prefix}${suffix}`)
@@ -236,7 +236,7 @@ export function clearThemeConfig() {
 }
 
 /** 常用主题色预设（{ name, value }），可直接生成换色选项 */
-export const EV_THEME_PRESETS = [
+export const EB_THEME_PRESETS = [
   { name: '湛蓝', value: '#175dff' },
   { name: '翡翠绿', value: '#0fa968' },
   { name: '琥珀橙', value: '#f08c00' },
@@ -248,26 +248,26 @@ export const EV_THEME_PRESETS = [
 const DENSITY_MODES = new Set(['compact', 'default', 'loose'])
 
 /**
- * 全局密度切换：html[data-ev-density]
+ * 全局密度切换：html[data-eb-density]
  * @param {'compact'|'default'|'loose'} mode
  */
-/** 全局磨砂开关：html[data-ev-glass]，容器类组件的 is-glass 态据此生效 */
+/** 全局磨砂开关：html[data-eb-glass]，容器类组件的 is-glass 态据此生效 */
 export function setGlass(on) {
   if (typeof document === 'undefined') return false
-  if (on) document.documentElement.setAttribute('data-ev-glass', 'on')
-  else document.documentElement.removeAttribute('data-ev-glass')
+  if (on) document.documentElement.setAttribute('data-eb-glass', 'on')
+  else document.documentElement.removeAttribute('data-eb-glass')
   return true
 }
 
 export function setDensity(mode) {
   if (!DENSITY_MODES.has(mode)) return false
   if (typeof document === 'undefined') return false
-  if (mode === 'default') document.documentElement.removeAttribute('data-ev-density')
-  else document.documentElement.setAttribute('data-ev-density', mode)
+  if (mode === 'default') document.documentElement.removeAttribute('data-eb-density')
+  else document.documentElement.setAttribute('data-eb-density', mode)
   return true
 }
 
 export function getDensity() {
   if (typeof document === 'undefined') return 'default'
-  return document.documentElement.getAttribute('data-ev-density') || 'default'
+  return document.documentElement.getAttribute('data-eb-density') || 'default'
 }

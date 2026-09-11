@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    class="ev-row ev-row"
+    class="eb-row eb-row"
     :class="[`is-justify-${justify}`, `is-align-${align}`]"
     :style="rowStyle"
   >
@@ -11,8 +11,8 @@
 
 <script setup>
 /**
- * EvRow — 栅格行
- * gutter 通过 provide 下发给 EvCol；负 margin 补偿列内边距
+ * EbRow — 栅格行
+ * gutter 通过 provide 下发给 EbCol；负 margin 补偿列内边距
  */
 import { computed, provide, toRef } from 'vue'
 

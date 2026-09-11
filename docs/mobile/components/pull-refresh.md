@@ -9,21 +9,21 @@ normal → pulling → loosing → loading → success → normal，全程由 `c
 
 <DemoBlock>
 <MobileStage title="工作台">
-  <ev-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
+  <eb-pull-refresh v-model="refreshing" @refresh="onRefresh" style="min-height: 100%;">
     <div class="mb-page">
       <div v-for="n in items" :key="n" class="mb-card mb-card--pad">
         <div class="mb-card__title">内容条目 #{{ n }}</div>
         <div class="mb-card__label" style="margin-top: 4px;">触屏设备在滚动区顶部下拉释放即可触发</div>
       </div>
     </div>
-  </ev-pull-refresh>
+  </eb-pull-refresh>
 </MobileStage>
 </DemoBlock>
 
 ```html
-<ev-pull-refresh v-model="refreshing" @refresh="onRefresh">
+<eb-pull-refresh v-model="refreshing" @refresh="onRefresh">
   <NewsList :items="items" />
-</ev-pull-refresh>
+</eb-pull-refresh>
 ```
 
 ```js
@@ -47,9 +47,9 @@ async function onRefresh() {
 
 <DemoBlock>
 <MobileStage>
-  <ev-pull-refresh v-model="refreshing2" :head-height="60" @refresh="onRefresh2" style="min-height: 100%;">
+  <eb-pull-refresh v-model="refreshing2" :head-height="60" @refresh="onRefresh2" style="min-height: 100%;">
     <template #head="{ status }">
-      <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 13px; color: var(--ev-text-color-secondary);">
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 13px; color: var(--eb-text-color-secondary);">
         {{ status === 'loosing' ? '松开手，为你更新' : status === 'loading' ? '正在更新…' : status === 'success' ? '已是最新' : '下拉更新内容' }}
       </div>
     </template>
@@ -58,7 +58,7 @@ async function onRefresh() {
         <div class="mb-card__title">自定义头部演示</div>
       </div>
     </div>
-  </ev-pull-refresh>
+  </eb-pull-refresh>
 </MobileStage>
 </DemoBlock>
 

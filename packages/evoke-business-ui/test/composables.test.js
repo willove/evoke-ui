@@ -10,7 +10,7 @@ import {
 } from '../src/index'
 
 /**
- * B 端生态：权限（usePermission / v-permission / EvAuth）、useTable、useClipboard
+ * B 端生态：权限（usePermission / v-permission / EbAuth）、useTable、useClipboard
  */
 
 describe('usePermission', () => {

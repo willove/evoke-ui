@@ -1,5 +1,5 @@
 <template>
-  <table class="ev-year-table" cellspacing="0" cellpadding="0">
+  <table class="eb-year-table" cellspacing="0" cellpadding="0">
     <tbody>
       <tr v-for="(row, ri) in rows" :key="ri">
         <td
@@ -20,12 +20,12 @@
 <script setup>
 /**
  * BasicYearTable — 年份网格（十年视图：前十年灰格 + 10 年 + 后十年灰格，3 行 × 4 列）
- * .ev-year-table 结构类（td 文本使用 .cell）
+ * .eb-year-table 结构类（td 文本使用 .cell）
  */
 import { computed } from 'vue'
 import { dayjs, isSameYear } from './utils'
 
-defineOptions({ name: 'EvBasicYearTable' })
+defineOptions({ name: 'EbBasicYearTable' })
 
 const props = defineProps({
   /** 视图年份（dayjs，取 year） */

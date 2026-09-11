@@ -1,26 +1,26 @@
 <template>
   <div
-    class="ev-date-editor ev-input ev-date-editor"
+    class="eb-date-editor eb-input eb-date-editor"
     :class="[
       sizeClass,
       { 'is-disabled': isDisabled, 'is-focus': pickerVisible },
-      `ev-date-editor--${type}`,
+      `eb-date-editor--${type}`,
     ]"
   >
     <!-- 单值编辑器 -->
     <div
       v-if="!isRange"
       ref="referenceRef"
-      class="ev-input__wrapper"
+      class="eb-input__wrapper"
       :class="{ 'is-focus': pickerVisible, 'is-disabled': isDisabled }"
       @click="handleWrapperClick"
     >
-      <span class="ev-input__prefix">
-        <ev-icon :name="prefixIcon" class="ev-input__icon" />
+      <span class="eb-input__prefix">
+        <eb-icon :name="prefixIcon" class="eb-input__icon" />
       </span>
       <input
         ref="inputRef"
-        class="ev-input__inner"
+        class="eb-input__inner"
         :value="displayValue"
         :name="name"
         :placeholder="placeholder || singlePlaceholder"
@@ -29,9 +29,9 @@
         @change="handleSingleInput"
         @focus="handleFocus"
       />
-      <span v-if="clearable && hasValue && !isDisabled" class="ev-input__suffix" @click.stop>
-        <ev-icon
-          class="ev-input__icon ev-range__close-icon"
+      <span v-if="clearable && hasValue && !isDisabled" class="eb-input__suffix" @click.stop>
+        <eb-icon
+          class="eb-input__icon eb-range__close-icon"
           name="circle-close"
           @click.stop="handleClear"
         />
@@ -42,21 +42,21 @@
     <div
       v-else
       ref="referenceRef"
-      class="ev-input__wrapper ev-range-editor"
+      class="eb-input__wrapper eb-range-editor"
       :class="[
         sizeClass,
         {
           'is-active': pickerVisible,
           'is-disabled': isDisabled,
-          'ev-range-editor--large': sizeResolved === 'large',
-          'ev-range-editor--small': sizeResolved === 'small',
+          'eb-range-editor--large': sizeResolved === 'large',
+          'eb-range-editor--small': sizeResolved === 'small',
         },
       ]"
       @click="handleWrapperClick"
     >
-      <ev-icon :name="prefixIcon" class="ev-range__icon" />
+      <eb-icon :name="prefixIcon" class="eb-range__icon" />
       <input
-        class="ev-range-input"
+        class="eb-range-input"
         :value="startDisplay"
         :name="name"
         :placeholder="startPlaceholder || t('datepicker.startDate')"
@@ -66,9 +66,9 @@
         @change="handleRangeInput('start', $event)"
         @focus="handleFocus"
       />
-      <span class="ev-range-separator">{{ rangeSeparator }}</span>
+      <span class="eb-range-separator">{{ rangeSeparator }}</span>
       <input
-        class="ev-range-input"
+        class="eb-range-input"
         :value="endDisplay"
         :name="name"
         :placeholder="endPlaceholder || t('datepicker.endDate')"
@@ -78,9 +78,9 @@
         @change="handleRangeInput('end', $event)"
         @focus="handleFocus"
       />
-      <ev-icon
+      <eb-icon
         v-if="clearable && hasValue && !isDisabled"
-        class="ev-range__close-icon"
+        class="eb-range__close-icon"
         name="circle-close"
         @click.stop="handleClear"
       />
@@ -88,11 +88,11 @@
 
     <!-- 弹层面板 -->
     <Teleport to="body">
-      <Transition name="ev-picker-dropdown">
+      <Transition name="eb-picker-dropdown">
         <div
           v-if="pickerVisible && !isMobilePlatform"
           ref="floatingRef"
-          class="ev-picker__popper ev-popper ev-picker__popper"
+          class="eb-picker__popper eb-popper eb-picker__popper"
           :style="popperStyle"
         >
           <panel-date
@@ -129,19 +129,19 @@
 
     <!-- 移动端（platform=mobile）：底部弹出日历面板 -->
     <Teleport to="body">
-      <Transition name="ev-picker-sheet">
+      <Transition name="eb-picker-sheet">
         <div
           v-if="pickerVisible && isMobilePlatform"
-          class="ev-picker__sheet-mask"
+          class="eb-picker__sheet-mask"
           :style="{ zIndex: zIndex }"
           @click="closePanel"
         >
-          <div class="ev-picker__sheet" @click.stop>
-            <div class="ev-picker__sheet-head">
-              <span class="ev-picker__sheet-title">{{ isRange ? '选择日期范围' : '选择日期' }}</span>
-              <ev-icon name="close" @click="closePanel" />
+          <div class="eb-picker__sheet" @click.stop>
+            <div class="eb-picker__sheet-head">
+              <span class="eb-picker__sheet-title">{{ isRange ? '选择日期范围' : '选择日期' }}</span>
+              <eb-icon name="close" @click="closePanel" />
             </div>
-            <div class="ev-picker__sheet-panel">
+            <div class="eb-picker__sheet-panel">
               <panel-date
                 v-if="!isRange"
                 ref="panelRef"
@@ -180,12 +180,12 @@
 
 <script setup>
 /**
- * EvDatePicker — 日期选择器（dayjs 驱动，）
+ * EbDatePicker — 日期选择器（dayjs 驱动，）
  * type：date / datetime / daterange / datetimerange / month / monthrange / year
  * value-format 控制对外值格式（缺省 Date 对象）；shortcuts / disabled-date / default-time
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import PanelDate from './panel-date.vue'
 import PanelDateRange from './panel-date-range.vue'
 import {
@@ -199,7 +199,7 @@ import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvDatePicker', inheritAttrs: false })
+defineOptions({ name: 'EbDatePicker', inheritAttrs: false })
 
 // 容器环境：mobile 下面板以底部弹层呈现（而非浮动定位）
 const { isMobile: isMobilePlatform } = usePlatform()
@@ -253,8 +253,8 @@ const isDisabled = computed(() => formDisabled.value || props.disabled)
 const sizeResolved = computed(() => props.size || formSize.value || 'default')
 const sizeClass = computed(() => {
   const s = sizeResolved.value
-  if (s === 'large') return isRange.value ? '' : 'ev-input--large'
-  if (s === 'small') return isRange.value ? '' : 'ev-input--small'
+  if (s === 'large') return isRange.value ? '' : 'eb-input--large'
+  if (s === 'small') return isRange.value ? '' : 'eb-input--small'
   return ''
 })
 

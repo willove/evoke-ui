@@ -13,7 +13,7 @@
 专属数据字段 `boxData`（`{ label, min, q1, median, q3, max }`），一箱一个群体。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'boxplot',
       title: '各接口耗时分布',

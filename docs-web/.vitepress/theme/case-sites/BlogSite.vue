@@ -49,26 +49,26 @@ const updates = [
 
 <template>
   <div class="case-site">
-    <EwNavbar :items="nav" :sticky="sticky" logo-text="山月札记">
+    <EvNavbar :items="nav" :sticky="sticky" logo-text="山月札记">
       <template #actions>
-        <EwThemeToggle />
-        <EwIconButton icon="search" aria-label="搜索" />
-        <EwButton size="small" variant="soft" icon="mail" href="#about">订阅</EwButton>
+        <EvThemeToggle />
+        <EvIconButton icon="search" aria-label="搜索" />
+        <EvButton size="small" variant="soft" icon="mail" href="#about">订阅</EvButton>
       </template>
-    </EwNavbar>
+    </EvNavbar>
 
-    <EwSection align="center" gap="0" style="padding:64px 0 8px;">
+    <EvSection align="center" gap="0" style="padding:64px 0 8px;">
       <p class="cb-motto">写下来，才算想清楚。</p>
       <p class="cb-sub">关于前端、设计与慢生活的个人札记，每周更新一至两篇。</p>
       <div class="cb-filter">
-        <EwTabs v-model="active" :items="categories.map((c) => ({ label: c, value: c }))" />
+        <EvTabs v-model="active" :items="categories.map((c) => ({ label: c, value: c }))" />
         <span class="cb-count">{{ filtered.length }} 篇</span>
       </div>
-    </EwSection>
+    </EvSection>
 
-    <EwSection id="articles" gap="0">
+    <EvSection id="articles" gap="0">
       <div class="cb-grid">
-        <EwArticleCard
+        <EvArticleCard
           v-for="p in filtered"
           :key="p.title"
           tag="a"
@@ -81,11 +81,11 @@ const updates = [
         />
       </div>
       <p v-if="!filtered.length" class="cb-empty">这个分类下还没有文章。</p>
-    </EwSection>
+    </EvSection>
 
-    <EwSection id="featured" eyebrow="本期长文" title="把一个官网拆成 49 个组件的取舍" align="center">
+    <EvSection id="featured" eyebrow="本期长文" title="把一个官网拆成 49 个组件的取舍" align="center">
       <div class="cb-article">
-        <EwArticle
+        <EvArticle
           eyebrow="组件设计"
           description="组件粒度、插槽设计与令牌边界——一次开源组件库 API 设计的完整复盘。"
           author="陈山月"
@@ -98,25 +98,25 @@ const updates = [
           <p>粒度过细会让组合成本爆炸，过粗又失去灵活性。我们给自己立的规矩是：能被一句话描述清楚的，才配成为一个组件。</p>
           <blockquote>安静优雅不是没有设计，而是设计完成之后，退到了内容的后面。</blockquote>
           <p>剩下的部分，都是在这条原则之下的反复权衡——这也是这篇文章想讲清楚的事。</p>
-        </EwArticle>
+        </EvArticle>
       </div>
-    </EwSection>
+    </EvSection>
 
     <div class="case-band">
-      <EwSection id="hot" eyebrow="热榜" title="读者转得最多的三段话" align="center">
+      <EvSection id="hot" eyebrow="热榜" title="读者转得最多的三段话" align="center">
         <div class="cb-hot">
-          <EwCarousel :items="hot" :autoplay="5000">
+          <EvCarousel :items="hot" :autoplay="5000">
             <template #item="{ item }">
-              <EwQuote :quote="item.quote" :author="item.author" :role="item.role" />
+              <EvQuote :quote="item.quote" :author="item.author" :role="item.role" />
             </template>
-          </EwCarousel>
+          </EvCarousel>
         </div>
-      </EwSection>
+      </EvSection>
     </div>
 
-    <EwSection id="about" eyebrow="关于作者" title="白天写代码，晚上写札记" align="center">
+    <EvSection id="about" eyebrow="关于作者" title="白天写代码，晚上写札记" align="center">
       <div class="cb-about">
-        <EwProfileCard
+        <EvProfileCard
           name="陈山月"
           role="独立开发者 · 前端工程"
           bio="正在写一本关于组件设计的小书。相信好的工具应该安静，好的文字应该诚实。"
@@ -129,23 +129,23 @@ const updates = [
             </div>
           </template>
           <template #social>
-            <EwIconButton icon="github" aria-label="GitHub" />
-            <EwIconButton icon="x" aria-label="X" />
-            <EwIconButton icon="mail" aria-label="邮箱" />
+            <EvIconButton icon="github" aria-label="GitHub" />
+            <EvIconButton icon="x" aria-label="X" />
+            <EvIconButton icon="mail" aria-label="邮箱" />
           </template>
-        </EwProfileCard>
-        <EwCard tone="soft" class="cb-updates">
+        </EvProfileCard>
+        <EvCard tone="soft" class="cb-updates">
           <p class="cb-updates__title">最近更新</p>
-          <EwTimeline :items="updates" />
+          <EvTimeline :items="updates" />
           <div class="cb-subscribe">
             <p class="cb-subscribe__title">每周精选，直接进邮箱</p>
-            <EwNewsletter placeholder="你的邮箱" button-text="订阅" />
+            <EvNewsletter placeholder="你的邮箱" button-text="订阅" />
           </div>
-        </EwCard>
+        </EvCard>
       </div>
-    </EwSection>
+    </EvSection>
 
-    <EwFooter
+    <EvFooter
       soft
       logo-text="山月札记"
       slogan="写下来，才算想清楚。"
@@ -163,14 +163,14 @@ const updates = [
 .cb-motto {
   margin: 0;
   font-size: 34px;
-  font-weight: var(--ew-display-weight);
-  letter-spacing: var(--ew-display-letter-spacing);
-  color: var(--ew-text-primary);
+  font-weight: var(--ev-display-weight);
+  letter-spacing: var(--ev-display-letter-spacing);
+  color: var(--ev-text-primary);
 }
 .cb-sub {
   margin: 12px 0 0;
   font-size: 15px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cb-filter {
   display: flex;
@@ -181,7 +181,7 @@ const updates = [
 }
 .cb-count {
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cb-grid {
   display: grid;
@@ -195,7 +195,7 @@ const updates = [
   padding: 48px 0;
   text-align: center;
   font-size: 14px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cb-hot {
   max-width: 720px;
@@ -219,30 +219,30 @@ const updates = [
   justify-content: center;
   gap: 20px;
   font-size: 13px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cb-stats strong {
   margin-right: 4px;
   font-size: 18px;
-  font-weight: var(--ew-display-weight-strong);
-  color: var(--ew-text-primary);
+  font-weight: var(--ev-display-weight-strong);
+  color: var(--ev-text-primary);
 }
 .cb-updates__title {
   margin: 0 0 14px;
   font-size: 13px;
-  font-weight: var(--ew-font-weight-medium);
+  font-weight: var(--ev-font-weight-medium);
   letter-spacing: 0.06em;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 .cb-subscribe {
   margin-top: 18px;
   padding-top: 18px;
-  border-top: 1px dashed var(--ew-border-color);
+  border-top: 1px dashed var(--ev-border-color);
 }
 .cb-subscribe__title {
   margin: 0 0 12px;
   font-size: 13px;
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-regular);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-regular);
 }
 </style>

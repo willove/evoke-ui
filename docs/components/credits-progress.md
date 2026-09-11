@@ -1,6 +1,6 @@
 # CreditsProgress 用量进度
 
-额度条形进度：栅格细条墙按容器宽度自适应根数，配合刷新周期头与用量/剩余脚注，适合展示席位、Credits、存储、API 调用等配额型资源。超额自动转红，剩余不足 20% 高亮警示。默认无外围边框，干净融入页面；需要卡片质感时外层套 `ev-section-card` 即可。
+额度条形进度：栅格细条墙按容器宽度自适应根数，配合刷新周期头与用量/剩余脚注，适合展示席位、Credits、存储、API 调用等配额型资源。超额自动转红，剩余不足 20% 高亮警示。默认无外围边框，干净融入页面；需要卡片质感时外层套 `eb-section-card` 即可。
 
 ## 基础用法
 
@@ -8,18 +8,18 @@
 
 <DemoBlock>
   <div style="max-width: 480px;">
-    <ev-credits-progress :used="640" :total="1000" />
+    <eb-credits-progress :used="640" :total="1000" />
   </div>
 </DemoBlock>
 
 ## 卡片化包装
 
-默认无边框，套一层 `ev-section-card` 即获得带标题的卡片形态。
+默认无边框，套一层 `eb-section-card` 即获得带标题的卡片形态。
 
 <DemoBlock>
-  <ev-section-card title="本月 Credits" style="max-width: 480px;">
-    <ev-credits-progress :used="640" :total="1000" refresh-date="2026-10-01" />
-  </ev-section-card>
+  <eb-section-card title="本月 Credits" style="max-width: 480px;">
+    <eb-credits-progress :used="640" :total="1000" refresh-date="2026-10-01" />
+  </eb-section-card>
 </DemoBlock>
 
 ## 刷新周期
@@ -28,7 +28,7 @@
 
 <DemoBlock>
   <div style="max-width: 480px;">
-    <ev-credits-progress :used="182" :total="500" refresh-date="2026-10-01 00:00" refresh-label="本月 API 调用额度" />
+    <eb-credits-progress :used="182" :total="500" refresh-date="2026-10-01 00:00" refresh-label="本月 API 调用额度" />
   </div>
 </DemoBlock>
 
@@ -38,8 +38,8 @@
 
 <DemoBlock>
   <div style="display: grid; gap: 20px; max-width: 480px;">
-    <ev-credits-progress :used="940" :total="1000" refresh-date="2026-10-01" />
-    <ev-credits-progress :used="1260" :total="1000" refresh-date="2026-10-01" />
+    <eb-credits-progress :used="940" :total="1000" refresh-date="2026-10-01" />
+    <eb-credits-progress :used="1260" :total="1000" refresh-date="2026-10-01" />
   </div>
 </DemoBlock>
 
@@ -49,9 +49,9 @@
 
 <DemoBlock>
   <div style="display: grid; gap: 20px; max-width: 480px;">
-    <ev-credits-progress :used="320" :total="800" size="small" />
-    <ev-credits-progress :used="520" :total="800" bar-width="6" :gap="3" :bar-height="24" />
-    <ev-credits-progress :used="700" :total="800" :max-bars="30" :bar-width="10" :gap="4" :bar-height="28" />
+    <eb-credits-progress :used="320" :total="800" size="small" />
+    <eb-credits-progress :used="520" :total="800" bar-width="6" :gap="3" :bar-height="24" />
+    <eb-credits-progress :used="700" :total="800" :max-bars="30" :bar-width="10" :gap="4" :bar-height="28" />
   </div>
 </DemoBlock>
 
@@ -61,7 +61,7 @@
 
 <DemoBlock>
   <div style="max-width: 480px;">
-    <ev-credits-progress :used="450" :total="900" filled-color="#22A45D" empty-color="#E1F4E8" />
+    <eb-credits-progress :used="450" :total="900" filled-color="#22A45D" empty-color="#E1F4E8" />
   </div>
 </DemoBlock>
 
@@ -71,12 +71,12 @@
 
 <DemoBlock>
   <div style="display: grid; gap: 16px; max-width: 560px;">
-    <ev-section-card title="AI Credits">
-      <ev-credits-progress :used="7560" :total="10000" refresh-date="2026-10-01 00:00" size="small" />
-    </ev-section-card>
-    <ev-section-card title="存储空间">
-      <ev-credits-progress :used="212" :total="500" refresh-label="存储容量（GB）" size="small" />
-    </ev-section-card>
+    <eb-section-card title="AI Credits">
+      <eb-credits-progress :used="7560" :total="10000" refresh-date="2026-10-01 00:00" size="small" />
+    </eb-section-card>
+    <eb-section-card title="存储空间">
+      <eb-credits-progress :used="212" :total="500" refresh-label="存储容量（GB）" size="small" />
+    </eb-section-card>
   </div>
 </DemoBlock>
 
@@ -96,6 +96,6 @@ import { ref } from 'vue'
   { name: 'gap', desc: '细条间距（px）', type: 'number', default: '1.5' },
   { name: 'barWidth', desc: '单根细条宽度（px）', type: 'number', default: '3' },
   { name: 'barHeight', desc: '栅格总高（px），默认随字号', type: 'number', default: '0' },
-  { name: 'filledColor', desc: '填充颜色', type: 'string', default: 'var(--ev-color-primary)' },
-  { name: 'emptyColor', desc: '空置颜色', type: 'string', default: 'var(--ev-border-color-lighter)' },
+  { name: 'filledColor', desc: '填充颜色', type: 'string', default: 'var(--eb-color-primary)' },
+  { name: 'emptyColor', desc: '空置颜色', type: 'string', default: 'var(--eb-border-color-lighter)' },
 ]" />

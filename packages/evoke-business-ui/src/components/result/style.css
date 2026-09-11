@@ -1,6 +1,6 @@
-/* EvResult — 结果页（设计令牌驱动） */
+/* EbResult — 结果页（设计令牌驱动） */
 
-.ev-result {
+.eb-result {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,55 +9,55 @@
   text-align: center;
 }
 
-.ev-result__icon {
+.eb-result__icon {
   margin-bottom: 24px;
   line-height: 1;
 }
 
-.ev-result__icon--success {
-  color: var(--ev-color-success);
+.eb-result__icon--success {
+  color: var(--eb-color-success);
 }
-.ev-result__icon--error {
-  color: var(--ev-color-danger);
+.eb-result__icon--error {
+  color: var(--eb-color-danger);
 }
-.ev-result__icon--warning {
-  color: var(--ev-color-warning);
+.eb-result__icon--warning {
+  color: var(--eb-color-warning);
 }
-.ev-result__icon--info {
-  color: var(--ev-color-primary);
+.eb-result__icon--info {
+  color: var(--eb-color-primary);
 }
-.ev-result__icon--404,
-.ev-result__icon--403 {
-  color: var(--ev-text-color-secondary);
+.eb-result__icon--404,
+.eb-result__icon--403 {
+  color: var(--eb-text-color-secondary);
 }
-.ev-result__icon--500 {
-  color: var(--ev-color-danger);
+.eb-result__icon--500 {
+  color: var(--eb-color-danger);
 }
 
-.ev-result__title {
+.eb-result__title {
   margin-bottom: 8px;
-  font-size: var(--ev-font-size-xl);
-  font-weight: var(--ev-font-weight-semibold);
-  color: var(--ev-text-color-primary);
+  font-size: var(--eb-font-size-xl);
+  font-weight: var(--eb-font-weight-semibold);
+  color: var(--eb-text-color-primary);
   line-height: 1.4;
 }
 
-.ev-result__subtitle {
+.eb-result__subtitle {
   margin-bottom: 8px;
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-secondary);
-  line-height: var(--ev-line-height-loose);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-secondary);
+  line-height: var(--eb-line-height-loose);
 }
 
-.ev-result__extra {
+.eb-result__extra {
   margin-top: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 
-.ev-result__body {
+.eb-result__body {
   margin-top: 24px;
   width: 100%;
 }

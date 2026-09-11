@@ -1,8 +1,8 @@
 <template>
-  <div :class="['ew-search-box', `ew-search-box--${size}`, { 'is-remote-open': panelOpen }]">
-    <!-- 分类下拉（EwSelect bare 嵌入形态） -->
-    <div v-if="categories.length" class="ew-search-box__category">
-      <EwSelect
+  <div :class="['ev-search-box', `ev-search-box--${size}`, { 'is-remote-open': panelOpen }]">
+    <!-- 分类下拉（EvSelect bare 嵌入形态） -->
+    <div v-if="categories.length" class="ev-search-box__category">
+      <EvSelect
         bare
         :model-value="categoryProxy || (normalizedCategories[0] && normalizedCategories[0].value)"
         :options="normalizedCategories"
@@ -11,12 +11,12 @@
       />
     </div>
 
-    <EwIcon name="search" :size="iconSize" class="ew-search-box__magnifier" />
+    <EvIcon name="search" :size="iconSize" class="ev-search-box__magnifier" />
 
     <input
       ref="inputRef"
       v-bind="$attrs"
-      class="ew-search-box__input"
+      class="ev-search-box__input"
       type="search"
       :value="modelValue"
       :placeholder="placeholder"
@@ -33,29 +33,29 @@
       @keydown.esc.prevent="closePanel"
     />
 
-    <div v-if="$slots.suffix" class="ew-search-box__suffix">
+    <div v-if="$slots.suffix" class="ev-search-box__suffix">
       <slot name="suffix" />
     </div>
 
     <!-- 远程搜索结果（select 下拉形态） -->
-    <ul v-if="panelOpen" class="ew-search-box__dropdown" role="listbox">
-      <li v-if="remoteLoading" class="ew-search-box__option is-state">
-        <EwIcon name="search" :size="14" /> 搜索中…
+    <ul v-if="panelOpen" class="ev-search-box__dropdown" role="listbox">
+      <li v-if="remoteLoading" class="ev-search-box__option is-state">
+        <EvIcon name="search" :size="14" /> 搜索中…
       </li>
       <template v-else>
         <li v-for="(option, i) in remoteResults" :key="i" role="option" :aria-selected="i === activeIndex">
           <button
             type="button"
-            class="ew-search-box__option"
+            class="ev-search-box__option"
             :class="{ 'is-active': i === activeIndex }"
             @mousedown.prevent="choose(option)"
             @mouseenter="activeIndex = i"
           >
-            <span class="ew-search-box__option-title">{{ option.title }}</span>
-            <span v-if="option.description" class="ew-search-box__option-desc">{{ option.description }}</span>
+            <span class="ev-search-box__option-title">{{ option.title }}</span>
+            <span v-if="option.description" class="ev-search-box__option-desc">{{ option.description }}</span>
           </button>
         </li>
-        <li v-if="!remoteResults.length" class="ew-search-box__option is-state">无匹配结果</li>
+        <li v-if="!remoteResults.length" class="ev-search-box__option is-state">无匹配结果</li>
       </template>
     </ul>
   </div>
@@ -63,8 +63,8 @@
 
 <script setup>
 /**
- * EwSearchBox — 大搜索框（签名组件：分类下拉 + 搜索输入 + 后缀动作位）
- * v-model（搜索词） + v-model:category（分类值）；分类下拉为 EwSelect bare 嵌入
+ * EvSearchBox — 大搜索框（签名组件：分类下拉 + 搜索输入 + 后缀动作位）
+ * v-model（搜索词） + v-model:category（分类值）；分类下拉为 EvSelect bare 嵌入
  * 圆润 xl 圆角 + 藏青软阴影，穿透 attrs 到原生 input
  *
  * 远程搜索：传入 remote（async keyword => [{ title, description?, … }]）后，
@@ -72,8 +72,8 @@
  * ↑↓ 选择、Enter 确认、Esc 关闭；选中派发 select 事件并回填搜索词。
  */
 import { computed, onBeforeUnmount, ref } from 'vue'
-import EwIcon from '../icon/index.vue'
-import EwSelect from '../select/index.vue'
+import EvIcon from '../icon/index.vue'
+import EvSelect from '../select/index.vue'
 
 defineOptions({ inheritAttrs: false })
 

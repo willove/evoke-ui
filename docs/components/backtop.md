@@ -3,7 +3,7 @@
 滚动超过 `visibility-height` 后出现在右下角的返回顶部按钮，默认监听 window，可用 `target` 指定内部滚动容器。
 
 <DemoBlock>
-  <ev-alert type="info" :closable="false">向下滚动本页，右下角出现返回顶部按钮。</ev-alert>
+  <eb-alert type="info" :closable="false">向下滚动本页，右下角出现返回顶部按钮。</eb-alert>
 </DemoBlock>
 
 ## Backtop API

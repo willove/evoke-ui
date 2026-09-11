@@ -12,7 +12,7 @@
 ## 示例
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'bar',
       title: '季度营收',
@@ -26,7 +26,7 @@
 多系列时自动分组并列：
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'bar',
       title: '各季度分渠道营收',

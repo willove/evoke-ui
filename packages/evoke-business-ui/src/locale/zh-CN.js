@@ -3,7 +3,7 @@
  */
 export const zhCN = {
   name: 'zh-cn',
-  ev: {
+  eb: {
     colorpicker: {
       confirm: '确定',
       clear: '清空',

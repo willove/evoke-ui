@@ -2,41 +2,41 @@
   <component
     :is="tag"
     ref="rootRef"
-    class="ev-text"
-    :class="[`ev-text--${typeClass}`, sizeClass, { 'is-truncated': truncated }]"
+    class="eb-text"
+    :class="[`eb-text--${typeClass}`, sizeClass, { 'is-truncated': truncated }]"
     :style="ellipsisStyle"
   >
-    <mark v-if="mark" class="ev-text__mark"><slot /></mark>
-    <code v-else-if="code" class="ev-text__code"><slot /></code>
-    <del v-else-if="delete" class="ev-text__del"><slot /></del>
+    <mark v-if="mark" class="eb-text__mark"><slot /></mark>
+    <code v-else-if="code" class="eb-text__code"><slot /></code>
+    <del v-else-if="delete" class="eb-text__del"><slot /></del>
     <u v-else-if="underline"><slot /></u>
     <strong v-else-if="strong"><slot /></strong>
     <slot v-else />
     <span
       v-if="copyable"
-      class="ev-typography__copy"
+      class="eb-typography__copy"
       role="button"
       tabindex="0"
       aria-label="复制"
       @click.stop="doCopy"
       @keydown.enter.prevent="doCopy"
     >
-      <ev-icon name="file-copy" :size="14" />
+      <eb-icon name="file-copy" :size="14" />
     </span>
   </component>
 </template>
 
 <script setup>
 /**
- * EvText — 文本（Typography 家族）
+ * EbText — 文本（Typography 家族）
  * 语义配色 type + 行内语义标记（mark/code/delete/underline/strong）+
  * 复制（copyable）+ 截断（truncated 单行 / ellipsis 多行）
  */
 import { computed, ref } from 'vue'
 import { useSizeProp } from '../../composables/useFormItem'
 import { useClipboard } from '../../composables/useClipboard'
-import { EvMessage } from '../message'
-import EvIcon from '../icon/index.vue'
+import { EbMessage } from '../message'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   type: {
@@ -65,7 +65,7 @@ const props = defineProps({
 const emit = defineEmits(['copy'])
 
 const typeClass = computed(() => (props.type === 'error' ? 'danger' : props.type))
-const sizeClass = computed(() => (props.size && props.size !== 'default' ? `ev-text--${props.size}` : ''))
+const sizeClass = computed(() => (props.size && props.size !== 'default' ? `eb-text--${props.size}` : ''))
 
 const rows = computed(() => {
   if (!props.ellipsis) return 0
@@ -88,7 +88,7 @@ const rootRef = ref(null)
 async function doCopy() {
   const text = props.copyText || getCurrentText()
   const ok = await copy(text)
-  if (ok) EvMessage.success('已复制')
+  if (ok) EbMessage.success('已复制')
   emit('copy', ok, text)
 }
 
@@ -96,7 +96,7 @@ function getCurrentText() {
   const root = rootRef?.$el ?? rootRef
   if (!root) return ''
   const clone = root.cloneNode(true)
-  clone.querySelectorAll('.ev-typography__copy').forEach((n) => n.remove())
+  clone.querySelectorAll('.eb-typography__copy').forEach((n) => n.remove())
   return clone.textContent?.trim() ?? ''
 }
 

@@ -29,11 +29,11 @@ const liked = ref(false)
 ```
 
 内容区独立滚动（`overflow-y: auto` + `overscroll-behavior: contain`），底部固定区
-吸底不动；全面屏安全区用 `env(safe-area-inset-bottom)` 适配（EwTabbar 已内置）。
+吸底不动；全面屏安全区用 `env(safe-area-inset-bottom)` 适配（EvTabbar 已内置）。
 
 ## 底部标签栏
 
-一级导航压平为 3~5 个底部页签，用 `EwTabbar` 承载：真机上 `fixed` 默认吸底 +
+一级导航压平为 3~5 个底部页签，用 `EvTabbar` 承载：真机上 `fixed` 默认吸底 +
 安全区适配 + 自动等高占位；页内内容切换由 `v-model` 驱动。
 
 <DemoBlock title="Tabbar 驱动的页面切换" description="点击底部页签，内容区实时切换；badge 角标与页面数据同源。">
@@ -46,11 +46,11 @@ const liked = ref(false)
     </div>
   </div>
   <template #bottom>
-    <ew-tabbar v-model="tab" :fixed="false">
-      <ew-tabbar-item name="home">首页</ew-tabbar-item>
-      <ew-tabbar-item name="work" badge="3">作品</ew-tabbar-item>
-      <ew-tabbar-item name="about">关于</ew-tabbar-item>
-    </ew-tabbar>
+    <ev-tabbar v-model="tab" :fixed="false">
+      <ev-tabbar-item name="home">首页</ev-tabbar-item>
+      <ev-tabbar-item name="work" badge="3">作品</ev-tabbar-item>
+      <ev-tabbar-item name="about">关于</ev-tabbar-item>
+    </ev-tabbar>
   </template>
 </MobileStage>
 
@@ -65,11 +65,11 @@ const tab = ref('home')
   <component :is="pages[tab]" />
 
   <!-- 真机：fixed 吸底 + 安全区适配 + 自动占位 -->
-  <EwTabbar v-model="tab">
-    <EwTabbarItem name="home">首页</EwTabbarItem>
-    <EwTabbarItem name="work" badge="3">作品</EwTabbarItem>
-    <EwTabbarItem name="about">关于</EwTabbarItem>
-  </EwTabbar>
+  <EvTabbar v-model="tab">
+    <EvTabbarItem name="home">首页</EvTabbarItem>
+    <EvTabbarItem name="work" badge="3">作品</EvTabbarItem>
+    <EvTabbarItem name="about">关于</EvTabbarItem>
+  </EvTabbar>
 </template>
 ```
 
@@ -79,7 +79,7 @@ const tab = ref('home')
 
 ## 顶部导航的移动表达
 
-EwNavbar 在移动端只保留**一个高频动作位**（如「联系我们」「下载」），次级链接收进
+EvNavbar 在移动端只保留**一个高频动作位**（如「联系我们」「下载」），次级链接收进
 抽屉或页脚——不要把桌面导航链接原样搬到窄屏。移动端层级感由「页栈返回」承担：
 二级页面导航栏 = 返回箭头 + 页标题 + 单个动作位，标题即位置。
 
@@ -96,7 +96,7 @@ EwNavbar 在移动端只保留**一个高频动作位**（如「联系我们」�
     </div>
   </div>
   <template #action>
-    <span style="font-size: 14px; color: var(--ew-color-primary);" @click="liked = !liked">{{ liked ? '已收藏' : '收藏' }}</span>
+    <span style="font-size: 14px; color: var(--ev-color-primary);" @click="liked = !liked">{{ liked ? '已收藏' : '收藏' }}</span>
   </template>
 </MobileStage>
 

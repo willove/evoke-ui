@@ -1,27 +1,27 @@
 <template>
-  <div class="ev-scrollbar ev-scrollbar">
+  <div class="eb-scrollbar eb-scrollbar">
     <div
       ref="wrapRef"
-      class="ev-scrollbar__wrap"
-      :class="{ 'ev-scrollbar__wrap--hidden-default': native }"
+      class="eb-scrollbar__wrap"
+      :class="{ 'eb-scrollbar__wrap--hidden-default': native }"
       :style="wrapStyleComputed"
       @scroll="handleScroll"
     >
-      <component :is="tag" class="ev-scrollbar__view" :class="viewClass" :style="viewStyle">
+      <component :is="tag" class="eb-scrollbar__view" :class="viewClass" :style="viewStyle">
         <slot />
       </component>
     </div>
     <!-- 自绘滚动条（native 时隐藏，走系统滚动条样式；对应轴向无溢出时不显示，避免 hover 出现"假滚动条"） -->
     <template v-if="!native">
-      <div v-show="hasHorizontalScroll" class="ev-scrollbar__bar is-horizontal" :class="{ 'is-always': always }">
+      <div v-show="hasHorizontalScroll" class="eb-scrollbar__bar is-horizontal" :class="{ 'is-always': always }">
         <div
-          class="ev-scrollbar__thumb"
+          class="eb-scrollbar__thumb"
           :style="thumbStyleX"
         />
       </div>
-      <div v-show="hasVerticalScroll" class="ev-scrollbar__bar is-vertical" :class="{ 'is-always': always }">
+      <div v-show="hasVerticalScroll" class="eb-scrollbar__bar is-vertical" :class="{ 'is-always': always }">
         <div
-          class="ev-scrollbar__thumb"
+          class="eb-scrollbar__thumb"
           :style="thumbStyleY"
         />
       </div>
@@ -31,7 +31,7 @@
 
 <script setup>
 /**
- * EvScrollbar — 滚动条
+ * EbScrollbar — 滚动条
  * 自绘双向 thumb（滚动比例换算）；native 时走系统滚动条
  */
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'

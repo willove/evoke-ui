@@ -12,8 +12,8 @@ import { useClipboard, useDarkMode, usePermission } from '@wil-works/evoke-busin
 
 <DemoBlock>
   <div style="display: flex; gap: 12px; align-items: center;">
-    <ev-input v-model="text" style="width: 280px;"></ev-input>
-    <ev-button type="primary" :icon="copied ? 'check-line' : undefined" @click="copy(text)">{{ copied ? '已复制' : '复制' }}</ev-button>
+    <eb-input v-model="text" style="width: 280px;"></eb-input>
+    <eb-button type="primary" :icon="copied ? 'check-line' : undefined" @click="copy(text)">{{ copied ? '已复制' : '复制' }}</eb-button>
   </div>
 </DemoBlock>
 
@@ -22,7 +22,7 @@ import { useClipboard, useDarkMode, usePermission } from '@wil-works/evoke-busin
 读写 `html.dark`，全库令牌即时切换；配合 [主题定制](/guide/theming) 使用：
 
 <DemoBlock>
-  <ev-button :icon="isDark ? 'sun-line' : 'moon-line'" @click="toggleDark()">{{ isDark ? '切换亮色' : '切换暗色' }}</ev-button>
+  <eb-button :icon="isDark ? 'sun-line' : 'moon-line'" @click="toggleDark()">{{ isDark ? '切换亮色' : '切换暗色' }}</eb-button>
 </DemoBlock>
 
 ## useFullscreen — 全屏
@@ -30,25 +30,25 @@ import { useClipboard, useDarkMode, usePermission } from '@wil-works/evoke-busin
 控制整个页面或指定元素进入全屏。注意：进入全屏的元素**必须自带背景色**，否则会透出浏览器全屏态的黑底：
 
 <DemoBlock>
-  <ev-border-beam style="display: inline-block;" :active="isFullscreen">
-    <div ref="panelRef" class="ev-fs-demo-panel">
+  <eb-border-beam style="display: inline-block;" :active="isFullscreen">
+    <div ref="panelRef" class="eb-fs-demo-panel">
       看板面板（点击按钮进入全屏演示）
     </div>
-  </ev-border-beam>
+  </eb-border-beam>
   <div style="margin-top: 12px;">
-    <ev-button @click="toggle()">{{ isFullscreen ? '退出全屏' : '面板全屏' }}</ev-button>
+    <eb-button @click="toggle()">{{ isFullscreen ? '退出全屏' : '面板全屏' }}</eb-button>
   </div>
 </DemoBlock>
 
 <style>
-.ev-fs-demo-panel {
+.eb-fs-demo-panel {
   padding: 16px 24px;
   font-size: 13px;
-  background: var(--ev-bg-color);
-  color: var(--ev-text-color-primary);
+  background: var(--eb-bg-color);
+  color: var(--eb-text-color-primary);
 }
 /* 全屏态铺满居中，避免内容缩在左上角 */
-.ev-fs-demo-panel:fullscreen {
+.eb-fs-demo-panel:fullscreen {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,10 +62,10 @@ import { useClipboard, useDarkMode, usePermission } from '@wil-works/evoke-busin
 
 <DemoBlock>
   <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-    <ev-button @click="setPermissions(['order:view', 'order:export'])">切到只读角色</ev-button>
-    <ev-button @click="setPermissions(['order:view', 'order:export', 'order:delete'])">切到管理员</ev-button>
-    <ev-tag :type="has('order:delete') ? 'success' : 'info'">order:delete：{{ has('order:delete') ? '有权限' : '无权限' }}</ev-tag>
-    <ev-tag :type="hasAll(['order:view', 'order:export']) ? 'success' : 'info'">view+export：{{ hasAll(['order:view', 'order:export']) ? '满足' : '不满足' }}</ev-tag>
+    <eb-button @click="setPermissions(['order:view', 'order:export'])">切到只读角色</eb-button>
+    <eb-button @click="setPermissions(['order:view', 'order:export', 'order:delete'])">切到管理员</eb-button>
+    <eb-tag :type="has('order:delete') ? 'success' : 'info'">order:delete：{{ has('order:delete') ? '有权限' : '无权限' }}</eb-tag>
+    <eb-tag :type="hasAll(['order:view', 'order:export']) ? 'success' : 'info'">view+export：{{ hasAll(['order:view', 'order:export']) ? '满足' : '不满足' }}</eb-tag>
   </div>
 </DemoBlock>
 

@@ -2,6 +2,8 @@
 
 同一设计血统的三个 Vue 3 库：**Evoke UI** 面向官网与营销页，**Evoke Business UI** 面向中后台管理系统，**Evoke Charts** 是零依赖 Canvas 自绘图表库（与 business-ui 样式打通主题适配）。均基于纯 JS 实现、设计令牌驱动、MIT 开源。
 
+命名空间约定：`ev-*`（evoke-ui 与 evoke-charts，共享 `--ev-*` 令牌面）与 `eb-*`（evoke-business-ui，`--eb-*` 令牌）。
+
 | 包 | 定位 | 文档站 | npm |
 |----|------|--------|-----|
 | [@wil-works/evoke-ui](packages/evoke-ui) | 官网 / 营销页 / 纯前端站点组件库，Clean Navy 设计语言 | [evoke-ui.wil-works.com](https://evoke-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-ui) |

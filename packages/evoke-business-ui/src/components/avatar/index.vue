@@ -1,7 +1,7 @@
 <template>
   <span
-    class="ev-avatar ev-avatar"
-    :class="[`ev-avatar--${resolvedShape}`, sizeClass, { 'is-loaded': loaded, 'is-error': errored }]"
+    class="eb-avatar eb-avatar"
+    :class="[`eb-avatar--${resolvedShape}`, sizeClass, { 'is-loaded': loaded, 'is-error': errored }]"
     :style="avatarStyle"
   >
     <img
@@ -18,12 +18,12 @@
 
 <script setup>
 /**
- * EvAvatar — 头像
+ * EbAvatar — 头像
  * 加载失败回退插槽/首字符；size 数字或三档
  */
 import { computed, inject, ref } from 'vue'
 
-defineOptions({ name: 'EvAvatar' })
+defineOptions({ name: 'EbAvatar' })
 
 const props = defineProps({
   size: {
@@ -56,8 +56,8 @@ const resolvedShape = computed(() => group?.shape?.value ?? props.shape)
 
 const sizeClass = computed(() => {
   if (typeof resolvedSize.value === 'number') return ''
-  if (resolvedSize.value === 'small') return 'ev-avatar--small'
-  if (resolvedSize.value === 'large') return 'ev-avatar--large'
+  if (resolvedSize.value === 'small') return 'eb-avatar--small'
+  if (resolvedSize.value === 'large') return 'eb-avatar--large'
   return ''
 })
 

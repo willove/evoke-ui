@@ -1,65 +1,65 @@
-/* EwMarquee — 无限滚动横幅 */
+/* EvMarquee — 无限滚动横幅 */
 
-.ew-marquee {
+.ev-marquee {
   position: relative;
   overflow: hidden;
   /* 两端淡出 */
-  --ew-marquee-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-image: var(--ew-marquee-mask);
-  mask-image: var(--ew-marquee-mask);
+  --ev-marquee-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: var(--ev-marquee-mask);
+  mask-image: var(--ev-marquee-mask);
 }
 
-.ew-marquee__track {
+.ev-marquee__track {
   display: flex;
   width: max-content;
-  animation: ew-marquee-scroll var(--ew-marquee-duration) linear infinite;
+  animation: ev-marquee-scroll var(--ev-marquee-duration) linear infinite;
 }
 
-.ew-marquee.is-reverse .ew-marquee__track {
+.ev-marquee.is-reverse .ev-marquee__track {
   animation-direction: reverse;
 }
 
-.ew-marquee.is-pausable:hover .ew-marquee__track {
+.ev-marquee.is-pausable:hover .ev-marquee__track {
   animation-play-state: paused;
 }
 
-.ew-marquee__group {
+.ev-marquee__group {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: var(--ew-space-6);
-  padding-right: var(--ew-space-6);
+  gap: var(--ev-space-6);
+  padding-right: var(--ev-space-6);
 }
 
 /* ══════ 文本模式：商场 LED 大字横幅 ══════ */
-.ew-marquee__text {
-  font-size: var(--ew-marquee-text-size, clamp(32px, 5vw, 56px));
-  font-weight: var(--ew-display-weight-strong);
+.ev-marquee__text {
+  font-size: var(--ev-marquee-text-size, clamp(32px, 5vw, 56px));
+  font-weight: var(--ev-display-weight-strong);
   letter-spacing: -0.02em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
   line-height: 1.15;
 }
 
 /* 描边字（奇数项）：空心 + 描边，商场横幅的节奏感来源 */
-.ew-marquee__text.is-outline {
+.ev-marquee__text.is-outline {
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ew-marquee-stroke, var(--ew-text-secondary));
+  -webkit-text-stroke: 1.5px var(--ev-marquee-stroke, var(--ev-text-secondary));
 }
 
-.ew-marquee__separator {
-  color: var(--ew-color-primary);
+.ev-marquee__separator {
+  color: var(--ev-color-primary);
   flex-shrink: 0;
 }
 
-@keyframes ew-marquee-scroll {
+@keyframes ev-marquee-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ew-marquee__track {
+  .ev-marquee__track {
     animation: none;
   }
 }

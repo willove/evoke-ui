@@ -7,7 +7,7 @@
 `stages` 数组声明各阶段，`status` 取 `completed / active / pending`，高度按状态自动区分（1 / 0.7 / 0.35）。
 
 <DemoBlock>
-  <ev-gantt-progress
+  <eb-gantt-progress
     :stages="[
       { name: '需求评审', status: 'completed' },
       { name: '开发排期', status: 'completed' },
@@ -23,7 +23,7 @@
 阶段可携带 `date` 字段，显示在阶段名下方（如计划完成时间）。
 
 <DemoBlock>
-  <ev-gantt-progress
+  <eb-gantt-progress
     :stages="[
       { name: '立项', date: '09-01', status: 'completed' },
       { name: '设计', date: '09-08', status: 'completed' },
@@ -38,7 +38,7 @@
 `height` 覆盖状态默认高度（0 ~ 1，相对栅格总高的比例），可强调关键阶段。
 
 <DemoBlock>
-  <ev-gantt-progress
+  <eb-gantt-progress
     :stages="[
       { name: '风险评审', status: 'completed', height: 0.5 },
       { name: '灰度发布', status: 'active', height: 1 },
@@ -53,7 +53,7 @@
 `completed-color` / `active-color` / `pending-color` 三组颜色覆盖，可做健康度语义（如风险项转橙）。
 
 <DemoBlock>
-  <ev-gantt-progress
+  <eb-gantt-progress
     completed-color="#22A45D"
     active-color="#E67E17"
     pending-color="#E5E7EB"
@@ -72,8 +72,8 @@
 
 <DemoBlock>
   <div style="max-width: 640px;">
-    <ev-section-card title="v2.3 迭代 · 里程碑推进">
-      <ev-gantt-progress
+    <eb-section-card title="v2.3 迭代 · 里程碑推进">
+      <eb-gantt-progress
         :stages="[
           { name: '需求冻结', date: '09-02', status: 'completed' },
           { name: '开发完成', date: '09-18', status: 'completed' },
@@ -82,7 +82,7 @@
           { name: '发布', date: '09-30', status: 'pending' },
         ]"
       />
-    </ev-section-card>
+    </eb-section-card>
   </div>
 </DemoBlock>
 
@@ -94,9 +94,9 @@ import { ref } from 'vue'
 
 <ApiTable title="GanttProgress Props" :rows="[
   { name: 'stages', desc: '阶段数组：{ name, date?, status, height? }，status 取 completed / active / pending', type: 'array', default: '[]' },
-  { name: 'completedColor', desc: '已完成阶段颜色', type: 'string', default: 'var(--ev-color-primary)' },
-  { name: 'activeColor', desc: '进行中阶段颜色', type: 'string', default: 'var(--ev-color-primary)' },
-  { name: 'pendingColor', desc: '未开始阶段颜色', type: 'string', default: 'var(--ev-border-color)' },
+  { name: 'completedColor', desc: '已完成阶段颜色', type: 'string', default: 'var(--eb-color-primary)' },
+  { name: 'activeColor', desc: '进行中阶段颜色', type: 'string', default: 'var(--eb-color-primary)' },
+  { name: 'pendingColor', desc: '未开始阶段颜色', type: 'string', default: 'var(--eb-border-color)' },
 ]" />
 
 <ApiTable title="Stage 阶段项" :rows="[

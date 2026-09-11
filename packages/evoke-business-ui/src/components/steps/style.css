@@ -1,24 +1,24 @@
-/* EvSteps —步骤条 */
+/* EbSteps —步骤条 */
 
-.ev-steps.ev-steps {
+.eb-steps.eb-steps {
   display: flex;
 }
 
 /* 简洁模式 */
-.ev-steps.ev-steps.is-simple {
+.eb-steps.eb-steps.is-simple {
   gap: 0;
 }
 
 /* 横向模式用块级流：head(width:100%) 在上、main 在下；
    若此处用 flex row，head 的 width:100% + flex-shrink:0 会把 main 压到 min-content，文字一字一行 */
-.ev-step.ev-step {
+.eb-step.eb-step {
   position: relative;
   flex-shrink: 1;
   flex-grow: 1;
 }
 
 /* ── 图标区 ── */
-.ev-step.ev-step .ev-step__head {
+.eb-step.eb-step .eb-step__head {
   position: relative;
   display: flex;
   align-items: center;
@@ -27,7 +27,7 @@
   flex-shrink: 0;
 }
 
-.ev-step.ev-step .ev-step__icon {
+.eb-step.eb-step .eb-step__icon {
   position: relative;
   z-index: 1;
   display: inline-flex;
@@ -36,146 +36,146 @@
   box-sizing: border-box;
   width: 24px;
   height: 24px;
-  border-radius: var(--ev-radius-full);
-  font-size: var(--ev-font-size-xs);
-  background: var(--ev-fill-color-blank);
-  transition: all var(--ev-duration-base) var(--ev-ease-out);
+  border-radius: var(--eb-radius-full);
+  font-size: var(--eb-font-size-xs);
+  background: var(--eb-fill-color-blank);
+  transition: all var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-step.ev-step .ev-step__icon.is-text {
-  border: 2px solid var(--ev-border-color);
-  color: var(--ev-text-color-placeholder);
-  font-weight: var(--ev-font-weight-medium);
+.eb-step.eb-step .eb-step__icon.is-text {
+  border: 2px solid var(--eb-border-color);
+  color: var(--eb-text-color-placeholder);
+  font-weight: var(--eb-font-weight-medium);
 }
 
-.ev-step.ev-step .ev-step__icon-inner {
+.eb-step.eb-step .eb-step__icon-inner {
   display: inline-block;
   line-height: 1;
   user-select: none;
 }
 
 /* 连接线 */
-.ev-step.ev-step .ev-step__line {
+.eb-step.eb-step .eb-step__line {
   position: absolute;
   left: 0;
   right: 0;
   top: 50%;
   height: 2px;
   margin-top: -1px;
-  background-color: var(--ev-border-color-lighter);
+  background-color: var(--eb-border-color-lighter);
 }
-.ev-step.ev-step .ev-step__line-inner {
+.eb-step.eb-step .eb-step__line-inner {
   display: block;
   height: 100%;
   width: 0;
   border: none;
-  transition: width var(--ev-duration-slow) var(--ev-ease-out), background-color var(--ev-duration-base) var(--ev-ease-out);
+  transition: width var(--eb-duration-slow) var(--eb-ease-out), background-color var(--eb-duration-base) var(--eb-ease-out);
 }
 
 /* ── 文案区 ── */
-.ev-step.ev-step .ev-step__main {
+.eb-step.eb-step .eb-step__main {
   flex-grow: 1;
   text-align: center;
   white-space: normal;
-  padding-left: var(--ev-space-2);
+  padding-left: var(--eb-space-2);
 }
 
-.ev-step.ev-step .ev-step__title {
-  font-size: var(--ev-font-size-base);
+.eb-step.eb-step .eb-step__title {
+  font-size: var(--eb-font-size-base);
   line-height: 24px;
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
 }
-.ev-step.ev-step .ev-step__description {
-  margin-top: var(--ev-space-1);
-  font-size: var(--ev-font-size-xs);
-  line-height: var(--ev-line-height-base);
-  color: var(--ev-text-color-secondary);
-  padding-right: var(--ev-space-2);
+.eb-step.eb-step .eb-step__description {
+  margin-top: var(--eb-space-1);
+  font-size: var(--eb-font-size-xs);
+  line-height: var(--eb-line-height-base);
+  color: var(--eb-text-color-secondary);
+  padding-right: var(--eb-space-2);
 }
 
 /* ── 状态着色 ── */
-.ev-step.ev-step.is-finish .ev-step__icon.is-text {
-  border-color: var(--ev-color-primary);
-  color: var(--ev-color-primary);
+.eb-step.eb-step.is-finish .eb-step__icon.is-text {
+  border-color: var(--eb-color-primary);
+  color: var(--eb-color-primary);
 }
-.ev-step.ev-step.is-finish .ev-step__title,
-.ev-step.ev-step.is-finish .ev-step__description {
-  color: var(--ev-color-primary);
+.eb-step.eb-step.is-finish .eb-step__title,
+.eb-step.eb-step.is-finish .eb-step__description {
+  color: var(--eb-color-primary);
 }
-.ev-step.ev-step.is-finish .ev-step__head .ev-step__line {
-  background-color: var(--ev-color-primary);
+.eb-step.eb-step.is-finish .eb-step__head .eb-step__line {
+  background-color: var(--eb-color-primary);
 }
 
-.ev-step.ev-step.is-process .ev-step__icon.is-text {
-  border-color: var(--ev-color-primary);
-  background-color: var(--ev-color-primary);
+.eb-step.eb-step.is-process .eb-step__icon.is-text {
+  border-color: var(--eb-color-primary);
+  background-color: var(--eb-color-primary);
   color: #fff;
 }
-.ev-step.ev-step.is-process .ev-step__title {
-  color: var(--ev-text-color-primary);
+.eb-step.eb-step.is-process .eb-step__title {
+  color: var(--eb-text-color-primary);
 }
-.ev-step.ev-step.is-process .ev-step__description {
-  color: var(--ev-text-color-primary);
-}
-
-.ev-step.ev-step.is-wait .ev-step__title {
-  color: var(--ev-text-color-placeholder);
-}
-.ev-step.ev-step.is-wait .ev-step__description {
-  color: var(--ev-text-color-placeholder);
+.eb-step.eb-step.is-process .eb-step__description {
+  color: var(--eb-text-color-primary);
 }
 
-.ev-step.ev-step.is-error .ev-step__icon.is-text {
-  border-color: var(--ev-color-danger);
-  background-color: var(--ev-color-danger);
+.eb-step.eb-step.is-wait .eb-step__title {
+  color: var(--eb-text-color-placeholder);
+}
+.eb-step.eb-step.is-wait .eb-step__description {
+  color: var(--eb-text-color-placeholder);
+}
+
+.eb-step.eb-step.is-error .eb-step__icon.is-text {
+  border-color: var(--eb-color-danger);
+  background-color: var(--eb-color-danger);
   color: #fff;
 }
-.ev-step.ev-step.is-error .ev-step__title {
-  color: var(--ev-color-danger);
+.eb-step.eb-step.is-error .eb-step__title {
+  color: var(--eb-color-danger);
 }
 
-.ev-step.ev-step.is-success .ev-step__icon.is-text {
-  border-color: var(--ev-color-success);
-  background-color: var(--ev-color-success);
+.eb-step.eb-step.is-success .eb-step__icon.is-text {
+  border-color: var(--eb-color-success);
+  background-color: var(--eb-color-success);
   color: #fff;
 }
-.ev-step.ev-step.is-success .ev-step__title {
-  color: var(--ev-color-success);
+.eb-step.eb-step.is-success .eb-step__title {
+  color: var(--eb-color-success);
 }
 
 /* ── 居中 ── */
-.ev-step.ev-step.is-center .ev-step__head {
+.eb-step.eb-step.is-center .eb-step__head {
   justify-content: center;
 }
-.ev-step.ev-step.is-center .ev-step__main {
+.eb-step.eb-step.is-center .eb-step__main {
   text-align: center;
 }
 
 /* ── 垂直 ── */
-.ev-steps.ev-steps.is-vertical {
+.eb-steps.eb-steps.is-vertical {
   flex-direction: column;
   height: 100%;
 }
-.ev-steps.ev-steps.is-vertical .ev-step.ev-step {
+.eb-steps.eb-steps.is-vertical .eb-step.eb-step {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding-bottom: var(--ev-space-4);
+  padding-bottom: var(--eb-space-4);
 }
-.ev-steps.ev-steps.is-vertical .ev-step.ev-step .ev-step__head {
+.eb-steps.eb-steps.is-vertical .eb-step.eb-step .eb-step__head {
   width: auto;
   flex-grow: 0;
 }
-.ev-steps.ev-steps.is-vertical .ev-step.ev-step .ev-step__main {
+.eb-steps.eb-steps.is-vertical .eb-step.eb-step .eb-step__main {
   text-align: left;
-  padding-left: var(--ev-space-3);
+  padding-left: var(--eb-space-3);
 }
-.ev-steps.ev-steps.is-vertical .ev-step.ev-step.is-center .ev-step__main {
+.eb-steps.eb-steps.is-vertical .eb-step.eb-step.is-center .eb-step__main {
   text-align: left;
 }
 
 /* ── 简洁模式 ── */
-.ev-steps.ev-steps.is-simple .ev-step.ev-step {
+.eb-steps.eb-steps.is-simple .eb-step.eb-step {
   display: flex;
   background: transparent;
   flex-basis: auto !important;
@@ -183,49 +183,49 @@
   flex-grow: 0;
   flex-shrink: 0;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding-right: var(--ev-space-4);
+  gap: var(--eb-space-2);
+  padding-right: var(--eb-space-4);
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step .ev-step__head {
+.eb-steps.eb-steps.is-simple .eb-step.eb-step .eb-step__head {
   width: auto;
   flex-shrink: 0;
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step .ev-step__icon {
+.eb-steps.eb-steps.is-simple .eb-step.eb-step .eb-step__icon {
   width: 20px;
   height: 20px;
   border: none;
-  background: var(--ev-fill-color);
-  color: var(--ev-text-color-secondary);
+  background: var(--eb-fill-color);
+  color: var(--eb-text-color-secondary);
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step .ev-step__main {
+.eb-steps.eb-steps.is-simple .eb-step.eb-step .eb-step__main {
   flex-grow: 0;
   padding-left: 0;
   text-align: left;
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step .ev-step__title {
-  font-size: var(--ev-font-size-xs);
+.eb-steps.eb-steps.is-simple .eb-step.eb-step .eb-step__title {
+  font-size: var(--eb-font-size-xs);
   line-height: 20px;
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step.is-process .ev-step__icon {
-  background: var(--ev-color-primary);
+.eb-steps.eb-steps.is-simple .eb-step.eb-step.is-process .eb-step__icon {
+  background: var(--eb-color-primary);
   color: #fff;
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step.is-finish .ev-step__icon {
-  background: var(--ev-color-primary);
+.eb-steps.eb-steps.is-simple .eb-step.eb-step.is-finish .eb-step__icon {
+  background: var(--eb-color-primary);
   color: #fff;
 }
-.ev-steps.ev-steps.is-simple .ev-step.ev-step.is-wait .ev-step__icon {
-  background: var(--ev-fill-color);
-  color: var(--ev-text-color-placeholder);
+.eb-steps.eb-steps.is-simple .eb-step.eb-step.is-wait .eb-step__icon {
+  background: var(--eb-fill-color);
+  color: var(--eb-text-color-placeholder);
 }
 
 /* 分隔箭头（简洁模式的 ::after 伪元素箭头字符） */
-.ev-steps.ev-steps.is-simple .ev-step.ev-step:not(:last-child)::after {
+.eb-steps.eb-steps.is-simple .eb-step.eb-step:not(:last-child)::after {
   content: '\203A';
   position: absolute;
-  right: var(--ev-space-1);
-  color: var(--ev-text-color-placeholder);
-  font-size: var(--ev-font-size-md);
+  right: var(--eb-space-1);
+  color: var(--eb-text-color-placeholder);
+  font-size: var(--eb-font-size-md);
   top: 50%;
   transform: translateY(-50%);
 }

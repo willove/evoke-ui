@@ -1,73 +1,73 @@
-/* EvCascader —级联选择器 */
+/* EbCascader —级联选择器 */
 
 /* ─── 编辑器 ─── */
-.ev-cascader.ev-cascader {
+.eb-cascader.eb-cascader {
   display: inline-block;
   position: relative;
   vertical-align: middle;
   width: 100%;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
 }
-.ev-cascader.ev-cascader .ev-input__wrapper {
+.eb-cascader.eb-cascader .eb-input__wrapper {
   display: inline-flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   width: 100%;
-  min-height: var(--ev-component-size);
+  min-height: var(--eb-component-size);
   padding: 1px 11px;
-  line-height: var(--ev-component-size);
-  background-color: var(--ev-fill-color-blank);
-  border-radius: var(--ev-input-border-radius, var(--ev-radius-md));
-  box-shadow: 0 0 0 1px var(--ev-border-color) inset;
+  line-height: var(--eb-component-size);
+  background-color: var(--eb-fill-color-blank);
+  border-radius: var(--eb-input-border-radius, var(--eb-radius-md));
+  box-shadow: 0 0 0 1px var(--eb-border-color) inset;
   box-sizing: border-box;
   cursor: pointer;
-  transition: box-shadow var(--ev-transition-duration-fast) var(--ev-ease-out);
+  transition: box-shadow var(--eb-transition-duration-fast) var(--eb-ease-out);
 }
-.ev-cascader.ev-cascader.ev-cascader--large .ev-input__wrapper {
-  min-height: var(--ev-component-size-large);
-  line-height: var(--ev-component-size-large);
+.eb-cascader.eb-cascader.eb-cascader--large .eb-input__wrapper {
+  min-height: var(--eb-component-size-large);
+  line-height: var(--eb-component-size-large);
 }
-.ev-cascader.ev-cascader.ev-cascader--small .ev-input__wrapper {
-  min-height: var(--ev-component-size-small);
-  line-height: var(--ev-component-size-small);
+.eb-cascader.eb-cascader.eb-cascader--small .eb-input__wrapper {
+  min-height: var(--eb-component-size-small);
+  line-height: var(--eb-component-size-small);
   padding: 1px 7px;
 }
-.ev-cascader.ev-cascader .ev-input__wrapper:hover,
-.ev-cascader.ev-cascader .ev-input__wrapper.is-hovering {
-  box-shadow: 0 0 0 1px var(--ev-text-color-placeholder) inset;
+.eb-cascader.eb-cascader .eb-input__wrapper:hover,
+.eb-cascader.eb-cascader .eb-input__wrapper.is-hovering {
+  box-shadow: 0 0 0 1px var(--eb-text-color-placeholder) inset;
 }
-.ev-cascader.ev-cascader .ev-input__wrapper.is-focus {
-  box-shadow: 0 0 0 1px var(--ev-color-primary) inset;
+.eb-cascader.eb-cascader .eb-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--eb-color-primary) inset;
 }
-.ev-cascader.ev-cascader .ev-input__wrapper.is-disabled {
-  background-color: var(--ev-disabled-bg-color);
-  box-shadow: 0 0 0 1px var(--ev-disabled-border-color) inset;
+.eb-cascader.eb-cascader .eb-input__wrapper.is-disabled {
+  background-color: var(--eb-disabled-bg-color);
+  box-shadow: 0 0 0 1px var(--eb-disabled-border-color) inset;
   cursor: not-allowed;
 }
 
-.ev-cascader.ev-cascader .ev-cascader__label {
+.eb-cascader.eb-cascader .eb-cascader__label {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
 }
-.ev-cascader.ev-cascader .ev-cascader__placeholder {
+.eb-cascader.eb-cascader .eb-cascader__placeholder {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
 }
-.ev-cascader.ev-cascader .ev-cascader__input {
+.eb-cascader.eb-cascader .eb-cascader__input {
   border: none;
   outline: none;
   background: transparent;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   font-size: inherit;
-  height: calc(var(--ev-component-size) - 4px);
+  height: calc(var(--eb-component-size) - 4px);
   line-height: 1;
   cursor: pointer;
   /* 默认折叠为 0 宽：非搜索（readonly）或未聚焦时不存在"第二个输入框"空壳 */
@@ -77,191 +77,191 @@
   padding: 0;
 }
 /* 仅 filterable 且聚焦搜索时展开为可输入区域 */
-.ev-cascader.ev-cascader .ev-cascader__input:focus {
+.eb-cascader.eb-cascader .eb-cascader__input:focus {
   flex: 1;
   min-width: 20px;
 }
-.ev-cascader.ev-cascader .ev-input__wrapper.is-focus .ev-cascader__input:not([readonly]) {
+.eb-cascader.eb-cascader .eb-input__wrapper.is-focus .eb-cascader__input:not([readonly]) {
   flex: 1;
   min-width: 20px;
 }
-.ev-cascader.ev-cascader .ev-cascader__input::placeholder {
+.eb-cascader.eb-cascader .eb-cascader__input::placeholder {
   color: transparent;
 }
 
 /* multiple 标签 */
-.ev-cascader.ev-cascader .ev-cascader__tags {
+.eb-cascader.eb-cascader .eb-cascader__tags {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   flex: 1;
   min-width: 0;
 }
-.ev-cascader.ev-cascader .ev-cascader__tag {
+.eb-cascader.eb-cascader .eb-cascader__tag {
   display: inline-flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   height: 20px;
   padding: 0 6px;
-  font-size: var(--ev-font-size-xs);
-  background-color: var(--ev-fill-color);
-  color: var(--ev-text-color-regular);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-sm);
+  font-size: var(--eb-font-size-xs);
+  background-color: var(--eb-fill-color);
+  color: var(--eb-text-color-regular);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-sm);
   max-width: 100%;
   box-sizing: border-box;
 }
-.ev-cascader.ev-cascader .ev-cascader__tag .ev-tag__content {
+.eb-cascader.eb-cascader .eb-cascader__tag .eb-tag__content {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ev-cascader.ev-cascader .ev-cascader__tag .ev-tag__close {
+.eb-cascader.eb-cascader .eb-cascader__tag .eb-tag__close {
   cursor: pointer;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
 }
-.ev-cascader.ev-cascader .ev-cascader__tag .ev-tag__close:hover {
-  color: var(--ev-text-color-secondary);
+.eb-cascader.eb-cascader .eb-cascader__tag .eb-tag__close:hover {
+  color: var(--eb-text-color-secondary);
 }
-.ev-cascader.ev-cascader .ev-select__tags-collapse-item {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-cascader.eb-cascader .eb-select__tags-collapse-item {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
 /* 后缀 */
-.ev-cascader.ev-cascader .ev-cascader__suffix {
+.eb-cascader.eb-cascader .eb-cascader__suffix {
   display: inline-flex;
   align-items: center;
-  gap: var(--ev-space-1);
-  color: var(--ev-text-color-placeholder);
+  gap: var(--eb-space-1);
+  color: var(--eb-text-color-placeholder);
   flex-shrink: 0;
 }
-.ev-cascader.ev-cascader .ev-cascader__clear {
+.eb-cascader.eb-cascader .eb-cascader__clear {
   cursor: pointer;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
 }
-.ev-cascader.ev-cascader .ev-cascader__clear:hover {
-  color: var(--ev-text-color-secondary);
+.eb-cascader.eb-cascader .eb-cascader__clear:hover {
+  color: var(--eb-text-color-secondary);
 }
-.ev-cascader.ev-cascader .ev-cascader__arrow {
-  transition: transform var(--ev-duration-base) var(--ev-ease-out);
+.eb-cascader.eb-cascader .eb-cascader__arrow {
+  transition: transform var(--eb-duration-base) var(--eb-ease-out);
   cursor: pointer;
 }
-.ev-cascader.ev-cascader .ev-cascader__arrow.is-reverse {
+.eb-cascader.eb-cascader .eb-cascader__arrow.is-reverse {
   transform: rotate(180deg);
 }
 
 /* ─── 弹层 ─── */
-.ev-cascader__dropdown.ev-cascader__dropdown {
+.eb-cascader__dropdown.eb-cascader__dropdown {
   position: fixed;
   z-index: 2000;
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color-light);
-  border-radius: var(--ev-radius-md);
-  box-shadow: var(--ev-shadow-3);
-  padding: var(--ev-space-1) 0;
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-3);
+  padding: var(--eb-space-1) 0;
 }
-.ev-picker-dropdown-enter-active,
-.ev-picker-dropdown-leave-active {
+.eb-picker-dropdown-enter-active,
+.eb-picker-dropdown-leave-active {
   transition:
-    opacity var(--ev-duration-fast) var(--ev-ease-out),
-    transform var(--ev-duration-fast) var(--ev-ease-out);
+    opacity var(--eb-duration-fast) var(--eb-ease-out),
+    transform var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-picker-dropdown-enter-from,
-.ev-picker-dropdown-leave-to {
+.eb-picker-dropdown-enter-from,
+.eb-picker-dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px);
 }
 
 /* 面板：横向多级菜单 */
-.ev-cascader__dropdown .ev-cascader-panel {
+.eb-cascader__dropdown .eb-cascader-panel {
   display: flex;
 }
-.ev-cascader__dropdown .ev-cascader-menu {
+.eb-cascader__dropdown .eb-cascader-menu {
   min-width: 180px;
   max-height: 246px;
   overflow: auto;
   box-sizing: border-box;
-  padding: 0 var(--ev-space-1);
+  padding: 0 var(--eb-space-1);
 }
-.ev-cascader__dropdown .ev-cascader-menu + .ev-cascader-menu {
-  border-left: 1px solid var(--ev-border-color-lighter);
+.eb-cascader__dropdown .eb-cascader-menu + .eb-cascader-menu {
+  border-left: 1px solid var(--eb-border-color-lighter);
 }
-.ev-cascader__dropdown .ev-cascader-menu__list {
+.eb-cascader__dropdown .eb-cascader-menu__list {
   list-style: none;
   margin: 0;
-  padding: var(--ev-space-1) 0;
+  padding: var(--eb-space-1) 0;
 }
 
 /* 节点 */
-.ev-cascader__dropdown .ev-cascader-node {
+.eb-cascader__dropdown .eb-cascader-node {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-1);
+  gap: var(--eb-space-1);
   padding: 0 8px;
   height: 34px;
   line-height: 34px;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
-  border-radius: var(--ev-radius-sm);
+  border-radius: var(--eb-radius-sm);
   user-select: none;
 }
-.ev-cascader__dropdown .ev-cascader-node:hover:not(.is-disabled) {
-  background-color: var(--ev-fill-color-light);
+.eb-cascader__dropdown .eb-cascader-node:hover:not(.is-disabled) {
+  background-color: var(--eb-fill-color-light);
 }
-.ev-cascader__dropdown .ev-cascader-node.in-active-path {
-  color: var(--ev-color-primary);
+.eb-cascader__dropdown .eb-cascader-node.in-active-path {
+  color: var(--eb-color-primary);
   font-weight: 600;
 }
-.ev-cascader__dropdown .ev-cascader-node.is-disabled {
-  color: var(--ev-text-color-placeholder);
+.eb-cascader__dropdown .eb-cascader-node.is-disabled {
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
 }
-.ev-cascader__dropdown .ev-cascader-node__label {
+.eb-cascader__dropdown .eb-cascader-node__label {
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ev-cascader__dropdown .ev-cascader-node__postfix {
+.eb-cascader__dropdown .eb-cascader-node__postfix {
   display: inline-flex;
   align-items: center;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
   flex-shrink: 0;
 }
-.ev-cascader__dropdown .ev-cascader-node__checkbox {
-  --ev-checkbox-height: 20px;
+.eb-cascader__dropdown .eb-cascader-node__checkbox {
+  --eb-checkbox-height: 20px;
   flex-shrink: 0;
 }
 
 /* 过滤建议 */
-.ev-cascader__dropdown .ev-cascader__suggestion-panel {
+.eb-cascader__dropdown .eb-cascader__suggestion-panel {
   min-width: 180px;
   max-height: 246px;
   overflow: auto;
-  padding: var(--ev-space-1) 0;
+  padding: var(--eb-space-1) 0;
 }
-.ev-cascader__dropdown .ev-cascader__suggestion-item {
+.eb-cascader__dropdown .eb-cascader__suggestion-item {
   padding: 0 12px;
   line-height: 34px;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: none;
 }
-.ev-cascader__dropdown .ev-cascader__suggestion-item:hover {
-  background-color: var(--ev-fill-color-light);
+.eb-cascader__dropdown .eb-cascader__suggestion-item:hover {
+  background-color: var(--eb-fill-color-light);
 }
-.ev-cascader__dropdown .ev-cascader__suggestion-item.is-checked {
-  color: var(--ev-color-primary);
+.eb-cascader__dropdown .eb-cascader__suggestion-item.is-checked {
+  color: var(--eb-color-primary);
   font-weight: 600;
 }
-.ev-cascader__dropdown .ev-cascader__suggestion-item.is-empty {
-  color: var(--ev-text-color-secondary);
+.eb-cascader__dropdown .eb-cascader__suggestion-item.is-empty {
+  color: var(--eb-text-color-secondary);
   cursor: default;
   text-align: center;
 }

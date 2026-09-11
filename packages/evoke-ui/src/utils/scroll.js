@@ -1,5 +1,5 @@
 /**
- * 滚动定位工具 — 移动组件（EwPullRefresh / EwLoadMore 等）共用
+ * 滚动定位工具 — 移动组件（EvPullRefresh / EvLoadMore 等）共用
  */
 
 /** 元素是否为可纵向滚动的容器 */

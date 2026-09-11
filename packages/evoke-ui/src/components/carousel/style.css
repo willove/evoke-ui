@@ -1,27 +1,27 @@
-/* EwCarousel — 轮播 */
+/* EvCarousel — 轮播 */
 
-.ew-carousel {
+.ev-carousel {
   position: relative;
 }
 
-.ew-carousel__viewport {
+.ev-carousel__viewport {
   overflow: hidden;
-  border-radius: var(--ew-radius-lg);
+  border-radius: var(--ev-radius-lg);
 }
 
-.ew-carousel__track {
+.ev-carousel__track {
   display: flex;
-  transition: transform var(--ew-duration-slower) var(--ew-ease-smooth);
+  transition: transform var(--ev-duration-slower) var(--ev-ease-smooth);
 }
 
-.ew-carousel__slide {
+.ev-carousel__slide {
   flex: 0 0 100%;
   min-width: 0;
   padding: 2px;
 }
 
 /* ─── 箭头 ─── */
-.ew-carousel__arrow {
+.ev-carousel__arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -31,77 +31,77 @@
   width: 36px;
   height: 36px;
   border: none;
-  border-radius: var(--ew-radius-circle);
-  background-color: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-2);
-  color: var(--ew-text-primary);
+  border-radius: var(--ev-radius-circle);
+  background-color: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-2);
+  color: var(--ev-text-primary);
   cursor: pointer;
   opacity: 0.92;
-  transition: opacity var(--ew-duration-fast) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-in-out),
+    box-shadow var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ew-carousel__arrow:hover {
+.ev-carousel__arrow:hover {
   opacity: 1;
-  box-shadow: var(--ew-shadow-3);
+  box-shadow: var(--ev-shadow-3);
 }
 
-.ew-carousel__arrow.is-prev {
+.ev-carousel__arrow.is-prev {
   left: -14px;
 }
 
-.ew-carousel__arrow.is-next {
+.ev-carousel__arrow.is-next {
   right: -14px;
 }
 
 /* ─── 圆点 ─── */
-.ew-carousel__dots {
+.ev-carousel__dots {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: var(--ew-space-4);
+  margin-top: var(--ev-space-4);
 }
 
-.ew-carousel__dot {
+.ev-carousel__dot {
   width: 7px;
   height: 7px;
   padding: 0;
   border: none;
-  border-radius: var(--ew-radius-full);
-  background-color: var(--ew-fill-3);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-fill-3);
   cursor: pointer;
-  transition: background-color var(--ew-duration-base) var(--ew-ease-in-out),
-    width var(--ew-duration-base) var(--ew-ease-smooth);
+  transition: background-color var(--ev-duration-base) var(--ev-ease-in-out),
+    width var(--ev-duration-base) var(--ev-ease-smooth);
 }
 
-.ew-carousel__dot.is-active {
+.ev-carousel__dot.is-active {
   width: 18px;
-  background-color: var(--ew-color-primary);
+  background-color: var(--ev-color-primary);
 }
 
 /* ─── image / banner 形态 ─── */
 /* 内部链路高度全部填满视口（aspect-ratio 决定可见高度），
    保证 caption 的 bottom:0 锚定在可见区域内而不被裁掉 */
-.ew-carousel.is-media .ew-carousel__track,
-.ew-carousel.is-media .ew-carousel__slide,
-.ew-carousel.is-media .ew-carousel__banner,
-.ew-carousel.is-media .ew-carousel__img {
+.ev-carousel.is-media .ev-carousel__track,
+.ev-carousel.is-media .ev-carousel__slide,
+.ev-carousel.is-media .ev-carousel__banner,
+.ev-carousel.is-media .ev-carousel__img {
   height: 100%;
 }
-.ew-carousel__img {
+.ev-carousel__img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.ew-carousel__banner {
+.ev-carousel__banner {
   position: relative;
   height: 100%;
   overflow: hidden;
 }
 
-.ew-carousel__caption {
+.ev-carousel__caption {
   position: absolute;
   inset: auto 0 0 0;
   display: flex;
@@ -112,34 +112,34 @@
   text-align: left;
 }
 
-.ew-carousel__caption-title {
+.ev-carousel__caption-title {
   margin: 0;
-  font-size: var(--ew-font-size-xl);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
+  font-size: var(--ev-font-size-xl);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
   color: #ffffff;
 }
 
-.ew-carousel__caption-desc {
+.ev-carousel__caption-desc {
   margin: 0;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
 }
 
 /* ─── 宿主环境屏蔽：文档站 .vp-doc h3/p 的字号/颜色/边距侵入注释区 ─── */
-.ew-carousel .ew-carousel__caption-title {
+.ev-carousel .ev-carousel__caption-title {
   margin: 0;
-  font-size: var(--ew-font-size-xl);
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
+  font-size: var(--ev-font-size-xl);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
   color: #ffffff;
 }
 
-.ew-carousel .ew-carousel__caption-desc {
+.ev-carousel .ev-carousel__caption-desc {
   margin: 0;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.88);
 }

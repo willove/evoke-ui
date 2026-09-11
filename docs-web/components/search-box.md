@@ -1,31 +1,31 @@
 # SearchBox 搜索框
 
-`EwSearchBox` 是本库的招牌组件：一体式三段结构 —— 分类下拉 ∣ 放大镜输入 ∣ 后缀动作位。
+`EvSearchBox` 是本库的招牌组件：一体式三段结构 —— 分类下拉 ∣ 放大镜输入 ∣ 后缀动作位。
 16px 大圆角配弥散软阴影，focus 时浮现主色光环，适合作为首屏的视觉锚点。
 
 ## 基础用法
 
 <DemoBlock title="大搜索栏三段式" description="categories 为空数组时隐藏分类位；suffix 后缀位适合放快捷键提示（⌘ K）或收藏、历史记录等轻动作。">
 
-<EwSearchBox
+<EvSearchBox
   large
   placeholder="搜索文章、模板或帮助…"
   :categories="['全部', '文章', '模板', '帮助']"
   style="max-width:640px;"
 >
   <template #suffix>
-    <EwKeycap :keys="['⌘', 'K']" />
+    <EvKeycap :keys="['⌘', 'K']" />
   </template>
-</EwSearchBox>
+</EvSearchBox>
 
 ```vue
-<EwSearchBox large placeholder="搜索文章、模板或帮助…" :categories="['全部', '文章', '帮助']">
+<EvSearchBox large placeholder="搜索文章、模板或帮助…" :categories="['全部', '文章', '帮助']">
   <!-- 后缀位两种常见用法 -->
   <template #suffix>
-    <EwKeycap :keys="['⌘', 'K']" />                     <!-- 快捷键提示 -->
-    <EwIconButton icon="star-line" size="small" aria-label="收藏搜索结果" />  <!-- 轻动作 -->
+    <EvKeycap :keys="['⌘', 'K']" />                     <!-- 快捷键提示 -->
+    <EvIconButton icon="star-line" size="small" aria-label="收藏搜索结果" />  <!-- 轻动作 -->
   </template>
-</EwSearchBox>
+</EvSearchBox>
 ```
 
 </DemoBlock>
@@ -37,7 +37,7 @@
 
 <DemoBlock title="远程接口 + 下拉建议" description="演示用 600ms 延迟模拟接口；实际接入时把 remote 换成你的搜索接口即可。">
 
-<EwSearchBox
+<EvSearchBox
   large
   placeholder="搜索组件，试试「按钮」或「表单」…"
   :remote="remoteSearch"
@@ -45,10 +45,10 @@
   style="max-width:640px;"
   @select="onPick"
 />
-<p v-if="pickTip" style="margin:10px 0 0; font-size:13px; color:var(--ew-text-secondary);">{{ pickTip }}</p>
+<p v-if="pickTip" style="margin:10px 0 0; font-size:13px; color:var(--ev-text-secondary);">{{ pickTip }}</p>
 
 ```vue
-<EwSearchBox
+<EvSearchBox
   v-model="keyword"
   :remote="async (kw) => {
     const res = await fetch('/api/search?q=' + kw)
@@ -64,14 +64,14 @@
 
 <DemoBlock title="双向绑定" description="搜索词与分类分别双向绑定，search 事件在输入与切换分类时触发。">
 
-<EwSearchBox
+<EvSearchBox
   v-model="kw"
   v-model:category="cat"
   :categories="['全部', '箭头', '系统']"
   placeholder="试试输入 arrow…"
   style="max-width:520px;"
 />
-<p style="margin-top:12px; font-size:13px; color:var(--ew-text-secondary);">
+<p style="margin-top:12px; font-size:13px; color:var(--ev-text-secondary);">
   当前：词「{{ kw || '（空）' }}」 · 分类「{{ cat || '全部' }}」
 </p>
 
@@ -82,13 +82,13 @@ const cat = ref('')
 </script>
 
 ```vue
-<EwSearchBox v-model="kw" v-model:category="cat" :categories="cats" @search="onSearch" />
+<EvSearchBox v-model="kw" v-model:category="cat" :categories="cats" @search="onSearch" />
 ```
 
 </DemoBlock>
 
-::: tip 与 EwIconGrid 的关系
-[EwIconGrid](./icon-grid) 内部就使用本组件作为搜索头；单独引入 SearchBox 适合自定义搜索场景。
+::: tip 与 EvIconGrid 的关系
+[EvIconGrid](./icon-grid) 内部就使用本组件作为搜索头；单独引入 SearchBox 适合自定义搜索场景。
 :::
 
 ## API
@@ -116,4 +116,4 @@ const cat = ref('')
 
 | 插槽 | 说明 |
 | --- | --- |
-| suffix | 后缀动作位：快捷键提示（[EwKeycap](./keycap)）、收藏 / 历史记录（[EwIconButton](./icon-button)）等轻动作 |
+| suffix | 后缀动作位：快捷键提示（[EvKeycap](./keycap)）、收藏 / 历史记录（[EvIconButton](./icon-button)）等轻动作 |

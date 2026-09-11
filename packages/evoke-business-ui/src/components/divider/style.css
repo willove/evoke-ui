@@ -1,63 +1,63 @@
-/* EvDivider —分割线 */
+/* EbDivider —分割线 */
 
-.ev-divider.ev-divider {
-  --ev-border-color: var(--ev-border-color);
+.eb-divider.eb-divider {
+  --eb-border-color: var(--eb-border-color);
   position: relative;
-  border-top: 1px solid var(--ev-border-color-light);
-  margin: var(--ev-space-4) 0;
+  border-top: 1px solid var(--eb-border-color-light);
+  margin: var(--eb-space-4) 0;
   background-color: transparent;
 }
-.ev-divider.ev-divider--vertical.ev-divider {
+.eb-divider.eb-divider--vertical.eb-divider {
   display: inline-block;
   width: 1px;
   height: 1em;
-  margin: 0 var(--ev-space-2);
+  margin: 0 var(--eb-space-2);
   vertical-align: middle;
   border-top: none;
-  border-left: 1px solid var(--ev-border-color-light);
+  border-left: 1px solid var(--eb-border-color-light);
 }
 
 /* border-style 变体 */
-.ev-divider.ev-divider.ev-divider--dashed {
+.eb-divider.eb-divider.eb-divider--dashed {
   border-top-style: dashed;
 }
-.ev-divider.ev-divider.ev-divider--dotted {
+.eb-divider.eb-divider.eb-divider--dotted {
   border-top-style: dotted;
 }
-.ev-divider.ev-divider.ev-divider--double {
+.eb-divider.eb-divider.eb-divider--double {
   border-top-style: double;
 }
-.ev-divider.ev-divider.ev-divider--none {
+.eb-divider.eb-divider.eb-divider--none {
   border-top-style: none;
 }
-.ev-divider.ev-divider--vertical.ev-divider.ev-divider--dashed {
+.eb-divider.eb-divider--vertical.eb-divider.eb-divider--dashed {
   border-left-style: dashed;
   border-top-style: none;
 }
-.ev-divider.ev-divider--vertical.ev-divider.ev-divider--dotted {
+.eb-divider.eb-divider--vertical.eb-divider.eb-divider--dotted {
   border-left-style: dotted;
   border-top-style: none;
 }
 
 /* 文本 */
-.ev-divider.ev-divider .ev-divider__text {
+.eb-divider.eb-divider .eb-divider__text {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: var(--ev-bg-color);
-  padding: 0 var(--ev-space-4);
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-primary);
-  font-weight: var(--ev-font-weight-medium);
+  background-color: var(--eb-bg-color);
+  padding: 0 var(--eb-space-4);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-primary);
+  font-weight: var(--eb-font-weight-medium);
   white-space: nowrap;
 }
-.ev-divider.ev-divider .ev-divider__text.is-left {
-  left: var(--ev-space-4);
+.eb-divider.eb-divider .eb-divider__text.is-left {
+  left: var(--eb-space-4);
 }
-.ev-divider.ev-divider .ev-divider__text.is-center {
+.eb-divider.eb-divider .eb-divider__text.is-center {
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
-.ev-divider.ev-divider .ev-divider__text.is-right {
-  right: var(--ev-space-4);
+.eb-divider.eb-divider .eb-divider__text.is-right {
+  right: var(--eb-space-4);
 }

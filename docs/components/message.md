@@ -1,16 +1,16 @@
 # Message 全局提示
 
-命令式全局消息：通过 `$message()`（或导入 EvMessage）在页面顶部居中弹出轻提示，多条自动垂直堆叠重排，关闭后其余消息即时上移补位；提供 success / warning / info / error 快捷方法、grouping 合并同文案、showClose 手动关闭、duration 控制时长与 html 片段渲染。
+命令式全局消息：通过 `$message()`（或导入 EbMessage）在页面顶部居中弹出轻提示，多条自动垂直堆叠重排，关闭后其余消息即时上移补位；提供 success / warning / info / error 快捷方法、grouping 合并同文案、showClose 手动关闭、duration 控制时长与 html 片段渲染。
 
 ## 基础用法
 
 四种类型由快捷方法一键触发，图标与配色随类型自动匹配；未指定类型时按 info 展示。
 
 <DemoBlock>
-  <ev-button @click="$message('普通提示')">消息</ev-button>
-  <ev-button @click="$message.success('操作成功')">成功</ev-button>
-  <ev-button @click="$message.warning('请注意')">警告</ev-button>
-  <ev-button @click="$message.error('操作失败')">错误</ev-button>
+  <eb-button @click="$message('普通提示')">消息</eb-button>
+  <eb-button @click="$message.success('操作成功')">成功</eb-button>
+  <eb-button @click="$message.warning('请注意')">警告</eb-button>
+  <eb-button @click="$message.error('操作失败')">错误</eb-button>
 </DemoBlock>
 
 ## 多种调用形式
@@ -18,9 +18,9 @@
 支持三种入参：纯字符串（等价 info）、options 对象精细控制、字符串 + options 混用（后者仅覆盖 message 与快捷方法类型）。
 
 <DemoBlock>
-  <ev-button @click="$message('字符串调用')">字符串</ev-button>
-  <ev-button @click="$message({ message: '对象调用：5 秒后关闭', type: 'success', duration: 5000 })">对象</ev-button>
-  <ev-button @click="$message.success('快捷方法 + 追加配置', { showClose: true })">混合调用</ev-button>
+  <eb-button @click="$message('字符串调用')">字符串</eb-button>
+  <eb-button @click="$message({ message: '对象调用：5 秒后关闭', type: 'success', duration: 5000 })">对象</eb-button>
+  <eb-button @click="$message.success('快捷方法 + 追加配置', { showClose: true })">混合调用</eb-button>
 </DemoBlock>
 
 ## 显示时长与可关闭
@@ -28,9 +28,9 @@
 `duration` 控制自动关闭毫秒数（默认 3000，设 0 则不自动关闭）；`showClose` 显示右侧关闭按钮，配合 duration 0 可常驻提示；`$message.close()` 一键关闭当前全部实例。
 
 <DemoBlock>
-  <ev-button @click="$message({ message: '1 秒后自动关闭', duration: 1000 })">短时长</ev-button>
-  <ev-button @click="$message({ message: '点右侧 X 关闭', showClose: true, duration: 0 })">可关闭且常驻</ev-button>
-  <ev-button @click="$message.close()">关闭全部</ev-button>
+  <eb-button @click="$message({ message: '1 秒后自动关闭', duration: 1000 })">短时长</eb-button>
+  <eb-button @click="$message({ message: '点右侧 X 关闭', showClose: true, duration: 0 })">可关闭且常驻</eb-button>
+  <eb-button @click="$message.close()">关闭全部</eb-button>
 </DemoBlock>
 
 ## 居中展示
@@ -38,7 +38,7 @@
 `center: true` 时图标与文案整体居中，适合空屏引导类轻提示。
 
 <DemoBlock>
-  <ev-button @click="$message({ message: '居中展示的消息', center: true })">居中</ev-button>
+  <eb-button @click="$message({ message: '居中展示的消息', center: true })">居中</eb-button>
 </DemoBlock>
 
 ## 消息堆叠
@@ -46,7 +46,7 @@
 多条消息自上而下按 16px 间距垂直堆叠，任一条关闭后其余消息平滑上移补位，无需手动管理层级；层级 zIndex 自增分配，始终覆盖页面内容。
 
 <DemoBlock>
-  <ev-button @click="$message.success('任务 A 已提交'); $message.warning('任务 B 等待审核'); $message.error('任务 C 校验失败')">连发三条</ev-button>
+  <eb-button @click="$message.success('任务 A 已提交'); $message.warning('任务 B 等待审核'); $message.error('任务 C 校验失败')">连发三条</eb-button>
 </DemoBlock>
 
 ## 合并相同消息
@@ -54,7 +54,7 @@
 `grouping: true` 时再次弹出同类型同文案的消息不会新增一条，而是复用现有实例并重置关闭计时，适合轮询刷新、重复提交等场景。
 
 <DemoBlock>
-  <ev-button @click="$message({ message: '同步任务进行中', grouping: true })">重复触发（合并为一条）</ev-button>
+  <eb-button @click="$message({ message: '同步任务进行中', grouping: true })">重复触发（合并为一条）</eb-button>
 </DemoBlock>
 
 ## HTML 内容与关闭回调
@@ -62,8 +62,8 @@
 `html: true` 时 message 按 HTML 片段渲染（内容必须可信，警惕 XSS 注入）；`onClose` 在消息关闭（自动到期或手动）时回调。
 
 <DemoBlock>
-  <ev-button @click="$message({ message: '支持 <strong>加粗</strong> 片段', html: true })">HTML 内容</ev-button>
-  <ev-button @click="$message({ message: '关闭后看控制台', onClose: () => console.log('message closed') })">关闭回调</ev-button>
+  <eb-button @click="$message({ message: '支持 <strong>加粗</strong> 片段', html: true })">HTML 内容</eb-button>
+  <eb-button @click="$message({ message: '关闭后看控制台', onClose: () => console.log('message closed') })">关闭回调</eb-button>
 </DemoBlock>
 
 ## 组合场景：删除操作反馈
@@ -71,9 +71,9 @@
 真实业务的常见组合：发起时 info 提示、成功 success、失败 error 并附带 showClose 便于用户看清失败原因，三种状态共用一套交互语言。
 
 <DemoBlock>
-  <ev-button @click="$message.info('正在删除 3 个文件')">开始删除</ev-button>
-  <ev-button @click="$message.success('已删除 3 个文件')">删除成功</ev-button>
-  <ev-button @click="$message.error('删除失败：文件被占用', { showClose: true })">删除失败</ev-button>
+  <eb-button @click="$message.info('正在删除 3 个文件')">开始删除</eb-button>
+  <eb-button @click="$message.success('已删除 3 个文件')">删除成功</eb-button>
+  <eb-button @click="$message.error('删除失败：文件被占用', { showClose: true })">删除失败</eb-button>
 </DemoBlock>
 
 ## API

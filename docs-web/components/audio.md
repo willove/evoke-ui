@@ -1,18 +1,18 @@
 # Audio 音频
 
-`EwAudio` 以胶囊卡片承载音频：图标徽章 + 标题 + 播放控件，适合播客节目、产品语音介绍、
+`EvAudio` 以胶囊卡片承载音频：图标徽章 + 标题 + 播放控件，适合播客节目、产品语音介绍、
 课程试听等场景。`src` 缺省时可用默认插槽承载自定义播放器。
 
 ## 基础用法
 
 <DemoBlock title="播客单集" description="真实使用时传 src 即可；演示环境用插槽占位。">
 
-<EwAudio title="Vol.12 聊聊远程协作的工具栈" style="max-width:560px;">
-  <span style="font-size:12px; color:var(--ew-text-secondary);">播放控件占位（演示环境无音频源）</span>
-</EwAudio>
+<EvAudio title="Vol.12 聊聊远程协作的工具栈" style="max-width:560px;">
+  <span style="font-size:12px; color:var(--ev-text-secondary);">播放控件占位（演示环境无音频源）</span>
+</EvAudio>
 
 ```vue
-<EwAudio src="/ep12.mp3" title="Vol.12 聊聊远程协作的工具栈" />
+<EvAudio src="/ep12.mp3" title="Vol.12 聊聊远程协作的工具栈" />
 ```
 
 </DemoBlock>

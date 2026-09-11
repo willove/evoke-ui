@@ -42,7 +42,7 @@ async function next() {
   try {
     await formRef.validate()
   } catch {
-    EvMessage.warning('请先完善当前步骤的必填信息')
+    EbMessage.warning('请先完善当前步骤的必填信息')
     return
   }
   stepIndex.value++

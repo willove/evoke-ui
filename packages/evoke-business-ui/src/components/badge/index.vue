@@ -1,11 +1,11 @@
 <template>
-  <div class="ev-badge ev-badge">
+  <div class="eb-badge eb-badge">
     <slot />
     <sup
       v-if="showBadge"
-      class="ev-badge__content"
+      class="eb-badge__content"
       :class="[
-        `ev-badge__content--${type}`,
+        `eb-badge__content--${type}`,
         {
           'is-fixed': fixed,
           'is-dot': isDot,
@@ -19,11 +19,11 @@
 
 <script setup>
 /**
- * EvBadge — 徽标
+ * EbBadge — 徽标
  */
 import { computed } from 'vue'
 
-defineOptions({ name: 'EvBadge' })
+defineOptions({ name: 'EbBadge' })
 
 const props = defineProps({
   value: { type: [String, Number], default: '' },

@@ -1,8 +1,8 @@
 <template>
-  <transition name="ev-fade-in-linear">
-    <div v-show="visible" class="ev-backtop ev-backtop" :style="style" @click.stop="handleClick">
+  <transition name="eb-fade-in-linear">
+    <div v-show="visible" class="eb-backtop eb-backtop" :style="style" @click.stop="handleClick">
       <slot>
-        <ev-icon name="caret-top" :size="16" />
+        <eb-icon name="caret-top" :size="16" />
       </slot>
     </div>
   </transition>
@@ -10,11 +10,11 @@
 
 <script setup>
 /**
- * EvBacktop — 返回顶部
+ * EbBacktop — 返回顶部
  * 滚动监听挂载在生命周期内（Electron 安全）；target 支持选择器，缺省监听 window
  */
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   /** 监听滚动的目标元素选择器 */

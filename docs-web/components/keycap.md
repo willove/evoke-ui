@@ -1,6 +1,6 @@
 # Keycap 键帽
 
-`EwKeycap` 以键帽的视觉形态展示键盘快捷键，常用于产品说明文案与帮助提示，例如
+`EvKeycap` 以键帽的视觉形态展示键盘快捷键，常用于产品说明文案与帮助提示，例如
 「按 <kbd>c</kbd> 复制」或「按 <kbd>Cmd K</kbd> 呼出搜索」。
 
 ## 基础用法
@@ -8,15 +8,15 @@
 <DemoBlock title="单键与组合键" description="传入字符串时逐字符拆分为多个键帽；组合键传数组。">
 
 <p style="display:flex; align-items:center; gap:8px;">
-  按 <EwKeycap keys="c" /> 复制邮箱地址
+  按 <EvKeycap keys="c" /> 复制邮箱地址
 </p>
 <p style="display:flex; align-items:center; gap:8px; margin-top:10px;">
-  按 <EwKeycap :keys="['Cmd', 'K']" /> 呼出全局搜索
+  按 <EvKeycap :keys="['Cmd', 'K']" /> 呼出全局搜索
 </p>
 
 ```vue
-按 <EwKeycap keys="c" /> 复制邮箱地址
-按 <EwKeycap :keys="['Cmd', 'K']" /> 呼出全局搜索
+按 <EvKeycap keys="c" /> 复制邮箱地址
+按 <EvKeycap :keys="['Cmd', 'K']" /> 呼出全局搜索
 ```
 
 </DemoBlock>

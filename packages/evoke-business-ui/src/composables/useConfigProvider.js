@@ -7,7 +7,7 @@ import { zhCN } from '../locale'
 export const configProviderContextKey = Symbol('evConfigProviderContext')
 
 /**
- * 提供全局配置（EvConfigProvider 组件消费）
+ * 提供全局配置（EbConfigProvider 组件消费）
  * @param {Object} [defaults] { size, locale, zIndex, namespace, platform }
  */
 export function provideConfigProvider(defaults = {}) {

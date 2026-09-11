@@ -1,85 +1,85 @@
-/* EwQuote — 引用/评价卡 */
+/* EvQuote — 引用/评价卡 */
 
-.ew-quote {
+.ev-quote {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-4);
-  padding: var(--ew-space-6);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-bg-container);
+  gap: var(--ev-space-4);
+  padding: var(--ev-space-6);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-bg-container);
   margin: 0;
 }
 
-.ew-quote.is-sticker {
-  border: 3px solid var(--ew-border-sticker);
-  border-radius: var(--ew-radius-xl);
-  background-color: var(--ew-fill-1);
-  box-shadow: var(--ew-shadow-2);
+.ev-quote.is-sticker {
+  border: 3px solid var(--ev-border-sticker);
+  border-radius: var(--ev-radius-xl);
+  background-color: var(--ev-fill-1);
+  box-shadow: var(--ev-shadow-2);
 }
 
-.ew-quote__text {
+.ev-quote__text {
   position: relative;
   margin: 0;
-  font-size: var(--ew-font-size-base);
+  font-size: var(--ev-font-size-base);
   line-height: 1.75;
-  color: var(--ew-text-regular);
+  color: var(--ev-text-regular);
 }
 
 /* 引号装饰 */
-.ew-quote__text::before {
+.ev-quote__text::before {
   content: '\201C';
   display: block;
-  margin-bottom: var(--ew-space-1);
+  margin-bottom: var(--ev-space-1);
   font-size: 30px;
   line-height: 1;
-  font-weight: var(--ew-display-weight-strong);
-  color: var(--ew-color-primary-light-5);
+  font-weight: var(--ev-display-weight-strong);
+  color: var(--ev-color-primary-light-5);
 }
 
-.ew-quote__author {
+.ev-quote__author {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ew-space-2);
-  font-size: var(--ew-font-size-sm);
+  gap: var(--ev-space-2);
+  font-size: var(--ev-font-size-sm);
 }
 
-.ew-quote__name {
-  font-weight: var(--ew-font-weight-semibold);
-  color: var(--ew-text-primary);
+.ev-quote__name {
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
 }
 
-.ew-quote__role {
-  color: var(--ew-text-secondary);
+.ev-quote__role {
+  color: var(--ev-text-secondary);
 }
 
-.ew-quote__source {
+.ev-quote__source {
   display: inline-flex;
   align-items: center;
   gap: 2px;
   margin-left: auto;
-  color: var(--ew-color-primary);
-  font-weight: var(--ew-font-weight-medium);
+  color: var(--ev-color-primary);
+  font-weight: var(--ev-font-weight-medium);
 }
 
 /* ─── 宿主环境屏蔽 ───
    在 markdown/文档站等宿主里，元素级排版规则（如 .vp-doc h2/p/ul）
    会以更高优先级渗透进组件内部；这里用双类选择器重申组件自有排版。 */
 
-.ew-quote .ew-quote__text {
+.ev-quote .ev-quote__text {
   margin: 0;
   padding: 0;
   border: none;
-  font-size: var(--ew-font-size-base);
+  font-size: var(--ev-font-size-base);
 }
 
 /* <a> 形态来源链接：压过宿主链接样式（.vp-doc a 的下划线与链接色） */
-.ew-quote a.ew-quote__source {
-  color: var(--ew-color-primary);
+.ev-quote a.ev-quote__source {
+  color: var(--ev-color-primary);
   text-decoration: none;
 }
 
-.ew-quote a.ew-quote__source:hover {
-  color: var(--ew-color-primary-dark-2);
+.ev-quote a.ev-quote__source:hover {
+  color: var(--ev-color-primary-dark-2);
 }

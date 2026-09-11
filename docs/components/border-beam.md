@@ -8,18 +8,18 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-    <ev-border-beam :radius="8" :padding="0">
+    <eb-border-beam :radius="8" :padding="0">
       <div style="width: 220px; padding: 20px;">
         <div style="font-weight: 600; margin-bottom: 6px;">重点工单</div>
-        <div style="font-size: 12px; color: var(--ev-text-color-secondary);">SLA 剩余 15 分钟，即将超时</div>
+        <div style="font-size: 12px; color: var(--eb-text-color-secondary);">SLA 剩余 15 分钟，即将超时</div>
       </div>
-    </ev-border-beam>
-    <ev-border-beam :active="false">
+    </eb-border-beam>
+    <eb-border-beam :active="false">
       <div style="width: 220px; padding: 20px;">
         <div style="font-weight: 600; margin-bottom: 6px;">已停用流光</div>
-        <div style="font-size: 12px; color: var(--ev-text-color-secondary);">active=false 只留淡边</div>
+        <div style="font-size: 12px; color: var(--eb-text-color-secondary);">active=false 只留淡边</div>
       </div>
-    </ev-border-beam>
+    </eb-border-beam>
   </div>
 </DemoBlock>
 
@@ -29,15 +29,15 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-    <ev-border-beam color="#F5222D" color-to="#FF7A45" :duration="3">
+    <eb-border-beam color="#F5222D" color-to="#FF7A45" :duration="3">
       <div style="width: 200px; padding: 16px; font-size: 13px;">告警（红橙 3s）</div>
-    </ev-border-beam>
-    <ev-border-beam color="#52C41A" :duration="8">
+    </eb-border-beam>
+    <eb-border-beam color="#52C41A" :duration="8">
       <div style="width: 200px; padding: 16px; font-size: 13px;">运行中（绿色 8s）</div>
-    </ev-border-beam>
-    <ev-border-beam color="var(--ev-color-ext-violet)" color-to="var(--ev-color-ext-cyan)" :duration="5">
+    </eb-border-beam>
+    <eb-border-beam color="var(--eb-color-ext-violet)" color-to="var(--eb-color-ext-cyan)" :duration="5">
       <div style="width: 200px; padding: 16px; font-size: 13px;">大屏氛围（紫青 5s）</div>
-    </ev-border-beam>
+    </eb-border-beam>
   </div>
 </DemoBlock>
 
@@ -46,12 +46,12 @@
 `size` 控制光带厚度，`padding` 让流光框与内容留出间隙：
 
 <DemoBlock>
-  <ev-border-beam :size="4" :padding="12" :radius="12" background="var(--ev-fill-color-light)">
+  <eb-border-beam :size="4" :padding="12" :radius="12" background="var(--eb-fill-color-light)">
     <div style="padding: 16px 24px;">
       <div style="font-weight: 600;">年度总结报告</div>
-      <div style="font-size: 12px; color: var(--ev-text-color-secondary); margin-top: 4px;">size=4 / padding=12 / 加背景底</div>
+      <div style="font-size: 12px; color: var(--eb-text-color-secondary); margin-top: 4px;">size=4 / padding=12 / 加背景底</div>
     </div>
-  </ev-border-beam>
+  </eb-border-beam>
 </DemoBlock>
 
 ## BorderBeam API
@@ -77,5 +77,5 @@
 | default | 卡片内容 |
 
 ::: tip 实现说明
-流光通过 CSS `@property` 注册 `--ev-bb-angle` 角度变量并驱动 `conic-gradient` 旋转，配合 `mask-composite: exclude` 挖空中心只留边框带。依赖 Chrome 85+ / Electron，低版本浏览器中动画静止但边框正常显示。
+流光通过 CSS `@property` 注册 `--eb-bb-angle` 角度变量并驱动 `conic-gradient` 旋转，配合 `mask-composite: exclude` 挖空中心只留边框带。依赖 Chrome 85+ / Electron，低版本浏览器中动画静止但边框正常显示。
 :::

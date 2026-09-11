@@ -1,43 +1,43 @@
-/* EwStatistic — 数据指标 */
+/* EvStatistic — 数据指标 */
 
-.ew-statistic.is-center {
+.ev-statistic.is-center {
   text-align: center;
 }
 
-.ew-statistic__value {
+.ev-statistic__value {
   display: grid;
   justify-items: start;
   font-size: 34px;
-  font-weight: var(--ew-display-weight-strong);
-  letter-spacing: var(--ew-display-letter-spacing);
-  line-height: var(--ew-display-line-height);
-  color: var(--ew-text-primary);
+  font-weight: var(--ev-display-weight-strong);
+  letter-spacing: var(--ev-display-letter-spacing);
+  line-height: var(--ev-display-line-height);
+  color: var(--ev-text-primary);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
 
 /* 占位与数字叠放在同一网格单元：占位以最终值撑宽，
    滚动过程中容器宽度与居中位置保持不变 */
-.ew-statistic__sizer,
-.ew-statistic__num {
+.ev-statistic__sizer,
+.ev-statistic__num {
   grid-area: 1 / 1;
 }
 
-.ew-statistic__sizer {
+.ev-statistic__sizer {
   visibility: hidden;
   white-space: nowrap;
 }
 
-.ew-statistic.is-center .ew-statistic__value {
+.ev-statistic.is-center .ev-statistic__value {
   justify-items: center;
 }
 
-.ew-statistic__num {
+.ev-statistic__num {
   white-space: nowrap;
 }
 
-.ew-statistic__label {
-  margin-top: var(--ew-space-2);
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-secondary);
+.ev-statistic__label {
+  margin-top: var(--ev-space-2);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-secondary);
 }

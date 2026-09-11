@@ -1,43 +1,43 @@
 <template>
   <Teleport to="body" :disabled="!appendToBody">
     <Transition
-      :name="`ev-drawer-fade-${direction}`"
+      :name="`eb-drawer-fade-${direction}`"
       @after-enter="emit('opened')"
       @after-leave="emit('closed')"
     >
       <div
         v-if="visible"
-        class="ev-overlay ev-overlay ev-overlay--drawer"
+        class="eb-overlay eb-overlay eb-overlay--drawer"
         :style="{ zIndex }"
         @click.self="handleOverlayClick"
       >
         <div
           ref="drawerRef"
-          class="ev-drawer ev-drawer"
-          :class="[`ev-drawer--${direction}`, { 'is-with-header': withHeader, 'is-glass': glass === true, 'no-glass': glass === false }]"
+          class="eb-drawer eb-drawer"
+          :class="[`eb-drawer--${direction}`, { 'is-with-header': withHeader, 'is-glass': glass === true, 'no-glass': glass === false }]"
           :style="drawerStyle"
           role="dialog"
           aria-modal="true"
           :aria-label="title || 'drawer'"
         >
-          <header v-if="withHeader" class="ev-drawer__header">
+          <header v-if="withHeader" class="eb-drawer__header">
             <slot name="header">
-              <span class="ev-drawer__title">{{ title }}</span>
+              <span class="eb-drawer__title">{{ title }}</span>
             </slot>
             <button
               v-if="showClose"
               type="button"
-              class="ev-drawer__close-btn"
+              class="eb-drawer__close-btn"
               aria-label="Close"
               @click="handleClose"
             >
-              <ev-icon name="close" />
+              <eb-icon name="close" />
             </button>
           </header>
-          <div class="ev-drawer__body">
+          <div class="eb-drawer__body">
             <slot v-if="!destroyOnClose || rendered" />
           </div>
-          <footer v-if="$slots.footer" class="ev-drawer__footer">
+          <footer v-if="$slots.footer" class="eb-drawer__footer">
             <slot name="footer" />
           </footer>
         </div>
@@ -48,19 +48,19 @@
 
 <script setup>
 /**
- * EvDrawer — 抽屉
+ * EbDrawer — 抽屉
  * direction: ltr/rtl/ttb/btt；滑入滑出动画按方向
  */
 import { computed, nextTick, ref, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap'
 import { useLockScroll } from '../../composables/useLockScroll'
 import { useZIndex } from '../../composables/useZIndex'
 
-defineOptions({ name: 'EvDrawer' })
+defineOptions({ name: 'EbDrawer' })
 
 const props = defineProps({
-  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EvConfigProvider 的 glass） */
+  /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EbConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '' },

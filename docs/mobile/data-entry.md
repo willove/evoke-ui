@@ -9,45 +9,45 @@
 <DemoBlock>
 <MobileStage title="新建报销单">
   <div class="mb-page">
-    <ev-form label-position="top">
-      <ev-form-item label="报销类型"><ev-segmented v-model="draft.type" block :options="['差旅', '招待', '办公']" /></ev-form-item>
-      <ev-form-item label="金额（元）"><ev-input v-model="draft.amount" placeholder="0.00" inputmode="decimal" /></ev-form-item>
-      <ev-form-item label="所属项目">
+    <eb-form label-position="top">
+      <eb-form-item label="报销类型"><eb-segmented v-model="draft.type" block :options="['差旅', '招待', '办公']" /></eb-form-item>
+      <eb-form-item label="金额（元）"><eb-input v-model="draft.amount" placeholder="0.00" inputmode="decimal" /></eb-form-item>
+      <eb-form-item label="所属项目">
         <div class="mb-field" @click="projectOpen = true">
           <span :class="['mb-field__value', { 'is-placeholder': !draft.project }]">{{ draft.project || '请选择项目' }}</span>
           <BdIcon name="arrow-right" :size="14" class="mb-field__arrow" />
         </div>
-      </ev-form-item>
-      <ev-form-item label="发生日期">
+      </eb-form-item>
+      <eb-form-item label="发生日期">
         <div class="mb-field" @click="dateOpen = true">
           <span :class="['mb-field__value', { 'is-placeholder': !draft.date }]">{{ draft.date || '请选择日期' }}</span>
           <BdIcon name="arrow-right" :size="14" class="mb-field__arrow" />
         </div>
-      </ev-form-item>
-      <ev-form-item label="事由"><ev-input v-model="draft.reason" type="textarea" :rows="3" placeholder="简要说明报销事由，方便审批人理解" /></ev-form-item>
-    </ev-form>
+      </eb-form-item>
+      <eb-form-item label="事由"><eb-input v-model="draft.reason" type="textarea" :rows="3" placeholder="简要说明报销事由，方便审批人理解" /></eb-form-item>
+    </eb-form>
   </div>
   <template #bottom>
     <div class="mb-submit">
-      <ev-button type="primary" @click="onSubmit">提交审批</ev-button>
+      <eb-button type="primary" @click="onSubmit">提交审批</eb-button>
     </div>
   </template>
-  <ev-drawer v-model="projectOpen" direction="btt" size="320px" :append-to-body="false" :lock-scroll="false" title="选择项目">
+  <eb-drawer v-model="projectOpen" direction="btt" size="320px" :append-to-body="false" :lock-scroll="false" title="选择项目">
     <div class="mb-picker">
       <div v-for="p in projects" :key="p" :class="['mb-picker__item', { 'is-active': draft.project === p }]" @click="draft.project = p; projectOpen = false">
         <span>{{ p }}</span>
         <BdIcon v-if="draft.project === p" name="check" :size="16" />
       </div>
     </div>
-  </ev-drawer>
-  <ev-drawer v-model="dateOpen" direction="btt" size="300px" :append-to-body="false" :lock-scroll="false" title="发生日期">
+  </eb-drawer>
+  <eb-drawer v-model="dateOpen" direction="btt" size="300px" :append-to-body="false" :lock-scroll="false" title="发生日期">
     <div class="mb-picker">
       <div v-for="d in dateOptions" :key="d" :class="['mb-picker__item', { 'is-active': draft.date === d }]" @click="draft.date = d; dateOpen = false">
         <span>{{ d }}</span>
         <BdIcon v-if="draft.date === d" name="check" :size="16" />
       </div>
     </div>
-  </ev-drawer>
+  </eb-drawer>
 </MobileStage>
 </DemoBlock>
 
@@ -64,16 +64,16 @@
 <DemoBlock>
 <MobileStage title="报销单">
   <div class="mb-page">
-    <ev-input v-model="keyword" placeholder="搜索单号或申请人" clearable>
+    <eb-input v-model="keyword" placeholder="搜索单号或申请人" clearable>
       <template #prefix><BdIcon name="search" :size="14" /></template>
-    </ev-input>
-    <ev-segmented v-model="tab" block :options="['全部', '审批中', '已通过', '已驳回']" />
+    </eb-input>
+    <eb-segmented v-model="tab" block :options="['全部', '审批中', '已通过', '已驳回']" />
     <div class="mb-divider-text" style="padding: 0;">共 {{ filtered.length }} 条结果</div>
     <div class="mb-list-gap">
       <div v-for="o in filtered" :key="o.id" class="mb-card mb-card--pad">
         <div class="mb-card__head">
           <span class="mb-card__title">{{ o.id }}</span>
-          <ev-status-tag :value="o.status" :statuses="statuses" />
+          <eb-status-tag :value="o.status" :statuses="statuses" />
         </div>
         <div class="mb-card__rows">
           <div><div class="mb-card__label">申请人</div><div class="mb-card__value">{{ o.owner }}</div></div>
@@ -90,7 +90,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 
 const draft = ref({
   type: '差旅',
@@ -105,10 +105,10 @@ const projects = ['智慧园区一期', '中台改造', '数据大屏二期', '�
 const dateOptions = ['今天', '昨天', '本周一', '上周五', '自定义…']
 function onSubmit() {
   if (!draft.value.amount || !draft.value.project) {
-    EvMessage.warning('请先填写金额并选择项目')
+    EbMessage.warning('请先填写金额并选择项目')
     return
   }
-  EvMessage.success('已提交审批（演示）')
+  EbMessage.success('已提交审批（演示）')
 }
 
 const keyword = ref('')

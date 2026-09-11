@@ -1,7 +1,7 @@
 /**
  * useThemeConfig — 全站主题配置（响应式）
  *
- * 管理 主色/圆角/间距/容器宽 四类可调风格，写入 documentElement 的 --ew-* 令牌，
+ * 管理 主色/圆角/间距/容器宽 四类可调风格，写入 documentElement 的 --ev-* 令牌，
  * 全库组件全部经令牌取值，因此即时生效、明暗两套自动兼容。
  *
  * Usage:
@@ -12,7 +12,7 @@
  *   setContainer('wide')            // 'narrow' | 'default' | 'wide' | 'full'
  */
 import { reactive } from 'vue'
-import { resolveThemeVars, EW_STYLE_PRESETS } from '../presets'
+import { resolveThemeVars, EV_STYLE_PRESETS } from '../presets'
 
 const DEFAULT_CONFIG = {
   primary: '',
@@ -60,9 +60,9 @@ export function useThemeConfig() {
     if (typeof document === 'undefined') return
     const style = document.documentElement.style
     for (const name of [
-      '--ew-color-primary', '--ew-color-primary-light-3', '--ew-color-primary-light-5',
-      '--ew-color-primary-light-7', '--ew-color-primary-light-8', '--ew-color-primary-light-9',
-      '--ew-color-primary-dark-2', '--ew-color-primary-rgb',
+      '--ev-color-primary', '--ev-color-primary-light-3', '--ev-color-primary-light-5',
+      '--ev-color-primary-light-7', '--ev-color-primary-light-8', '--ev-color-primary-light-9',
+      '--ev-color-primary-dark-2', '--ev-color-primary-rgb',
     ]) style.removeProperty(name)
   }
 
@@ -77,7 +77,7 @@ export function useThemeConfig() {
       if (typeof document !== 'undefined') {
         for (const name of ['success', 'warning', 'danger', 'info']) {
           for (const suffix of ['', '-light-3', '-light-5', '-light-7', '-light-8', '-light-9', '-dark-2', '-rgb']) {
-            style.removeProperty(`--ew-color-${name}${suffix}`)
+            style.removeProperty(`--ev-color-${name}${suffix}`)
           }
         }
       }
@@ -89,7 +89,7 @@ export function useThemeConfig() {
   function setRadius(preset) {
     config.radius = preset
     if (preset === 'default') {
-      for (const name of ['--ew-radius-sm', '--ew-radius-md', '--ew-radius-lg', '--ew-radius-xl', '--ew-radius-2xl']) {
+      for (const name of ['--ev-radius-sm', '--ev-radius-md', '--ev-radius-lg', '--ev-radius-xl', '--ev-radius-2xl']) {
         document.documentElement.style.removeProperty(name)
       }
       return
@@ -101,7 +101,7 @@ export function useThemeConfig() {
     config.space = preset
     if (preset === 'default') {
       for (let i = 1; i <= 20; i++) {
-        document.documentElement.style.removeProperty(`--ew-space-${i}`)
+        document.documentElement.style.removeProperty(`--ev-space-${i}`)
       }
       return
     }
@@ -111,7 +111,7 @@ export function useThemeConfig() {
   function setContainer(preset) {
     config.container = preset
     if (preset === 'default') {
-      document.documentElement.style.removeProperty('--ew-container-width')
+      document.documentElement.style.removeProperty('--ev-container-width')
       return
     }
     apply()
@@ -120,8 +120,8 @@ export function useThemeConfig() {
   function setGlass(on) {
     config.glass = !!on
     if (typeof document === 'undefined') return
-    if (config.glass) document.documentElement.setAttribute('data-ew-glass', 'on')
-    else document.documentElement.removeAttribute('data-ew-glass')
+    if (config.glass) document.documentElement.setAttribute('data-ev-glass', 'on')
+    else document.documentElement.removeAttribute('data-ev-glass')
   }
 
   function reset() {
@@ -131,11 +131,11 @@ export function useThemeConfig() {
   }
 
   /**
-   * 应用一个风格方案（EW_STYLE_PRESETS 的 key）
+   * 应用一个风格方案（EV_STYLE_PRESETS 的 key）
    * 一整套 主色/圆角/间距/容器宽 即时生效
    */
   function applyPreset(key) {
-    const preset = EW_STYLE_PRESETS[key]
+    const preset = EV_STYLE_PRESETS[key]
     if (!preset) return
     Object.assign(config, DEFAULT_CONFIG, preset.config)
     clearApplied()
@@ -152,7 +152,7 @@ export function useThemeConfig() {
     setContainer,
     applyPreset,
     reset,
-    /** 一次性应用整份配置（EwConfigProvider 消费） */
+    /** 一次性应用整份配置（EvConfigProvider 消费） */
     applyConfig(next) {
       Object.assign(config, DEFAULT_CONFIG, next || {})
       clearApplied()

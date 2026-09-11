@@ -1,16 +1,16 @@
 <template>
   <div class="gl-page">
-    <ev-page-header title="商品列表" subtitle="商品档案、价格与上架状态">
+    <eb-page-header title="商品列表" subtitle="商品档案、价格与上架状态">
       <template #actions>
-        <ev-button type="primary" size="small" @click="openCreate">
-          <ev-icon name="plus" :size="14" />
+        <eb-button type="primary" size="small" @click="openCreate">
+          <eb-icon name="plus" :size="14" />
           新建商品
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-section-card class="gl-card">
-      <ev-data-table
+    <eb-section-card class="gl-card">
+      <eb-data-table
         title="全部商品"
         show-index
         :operations-width="150"
@@ -19,57 +19,57 @@
         :show-pagination="false"
       >
         <template #name="{ row }">
-          <ev-cell-stack :main="row.name" :sub="row.spec" />
+          <eb-cell-stack :main="row.name" :sub="row.spec" />
         </template>
         <template #category="{ row }">
-          <ev-tag effect="plain">{{ row.category }}</ev-tag>
+          <eb-tag effect="plain">{{ row.category }}</eb-tag>
         </template>
         <template #stock="{ row }">
           <span :class="{ 'gl-stock--low': row.stock < SAFE_STOCK }">{{ row.stock }}</span>
           <span v-if="row.stock < SAFE_STOCK" class="gl-stock__tip">低于安全线</span>
         </template>
         <template #listed="{ row }">
-          <ev-switch v-model="row.listed" size="small" @change="onToggle(row)" />
+          <eb-switch v-model="row.listed" size="small" @change="onToggle(row)" />
         </template>
         <template #operations="{ row }">
-          <ev-button text type="primary" size="small" @click="EvMessage.info('示例：进入商品编辑页')">编辑</ev-button>
-          <ev-popconfirm title="删除后不可恢复，确认删除？" icon-type="danger" @confirm="remove(row)">
-            <ev-button text type="danger" size="small">删除</ev-button>
-          </ev-popconfirm>
+          <eb-button text type="primary" size="small" @click="EbMessage.info('示例：进入商品编辑页')">编辑</eb-button>
+          <eb-popconfirm title="删除后不可恢复，确认删除？" icon-type="danger" @confirm="remove(row)">
+            <eb-button text type="danger" size="small">删除</eb-button>
+          </eb-popconfirm>
         </template>
-      </ev-data-table>
-    </ev-section-card>
+      </eb-data-table>
+    </eb-section-card>
 
-    <ev-dialog v-model="createVisible" title="新建商品" width="520px" :close-on-click-modal="false">
-      <ev-form ref="formRef" :model="form" :rules="rules" label-width="80px">
-        <ev-form-item label="商品名称" prop="name">
-          <ev-input v-model="form.name" placeholder="请输入商品名称" maxlength="30" />
-        </ev-form-item>
-        <ev-form-item label="所属分类" prop="category">
-          <ev-select v-model="form.category" style="width: 100%">
-            <ev-option v-for="c in GOODS_CATEGORY" :key="c" :label="c" :value="c" />
-          </ev-select>
-        </ev-form-item>
-        <ev-form-item label="售价" prop="price">
-          <ev-input-number v-model="form.price" :min="1" :step="10" style="width: 200px" />
+    <eb-dialog v-model="createVisible" title="新建商品" width="520px" :close-on-click-modal="false">
+      <eb-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+        <eb-form-item label="商品名称" prop="name">
+          <eb-input v-model="form.name" placeholder="请输入商品名称" maxlength="30" />
+        </eb-form-item>
+        <eb-form-item label="所属分类" prop="category">
+          <eb-select v-model="form.category" style="width: 100%">
+            <eb-option v-for="c in GOODS_CATEGORY" :key="c" :label="c" :value="c" />
+          </eb-select>
+        </eb-form-item>
+        <eb-form-item label="售价" prop="price">
+          <eb-input-number v-model="form.price" :min="1" :step="10" style="width: 200px" />
           <span class="gl-suffix">元</span>
-        </ev-form-item>
-        <ev-form-item label="库存" prop="stock">
-          <ev-input-number v-model="form.stock" :min="0" :step="5" style="width: 200px" />
+        </eb-form-item>
+        <eb-form-item label="库存" prop="stock">
+          <eb-input-number v-model="form.stock" :min="0" :step="5" style="width: 200px" />
           <span class="gl-suffix">件（安全线 {{ SAFE_STOCK }} 件）</span>
-        </ev-form-item>
-      </ev-form>
+        </eb-form-item>
+      </eb-form>
       <template #footer>
-        <ev-button @click="createVisible = false">取消</ev-button>
-        <ev-button type="primary" @click="create">保存</ev-button>
+        <eb-button @click="createVisible = false">取消</eb-button>
+        <eb-button type="primary" @click="create">保存</eb-button>
       </template>
-    </ev-dialog>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { goods, GOODS_CATEGORY } from '../mock.js'
 
 const SAFE_STOCK = 10
@@ -83,13 +83,13 @@ const columns = [
 ]
 
 function onToggle(row) {
-  EvMessage[row.listed ? 'success' : 'info'](`「${row.name}」已${row.listed ? '上架' : '下架'}`)
+  EbMessage[row.listed ? 'success' : 'info'](`「${row.name}」已${row.listed ? '上架' : '下架'}`)
 }
 
 function remove(row) {
   const i = goods.findIndex((g) => g.id === row.id)
   if (i > -1) goods.splice(i, 1)
-  EvMessage.success(`已删除「${row.name}」`)
+  EbMessage.success(`已删除「${row.name}」`)
 }
 
 /* ---------------- 新建商品 ---------------- */
@@ -120,10 +120,10 @@ function create() {
       stock: form.stock,
       listed: true,
     })
-    EvMessage.success('商品已创建并上架')
+    EbMessage.success('商品已创建并上架')
     createVisible.value = false
   }).catch(() => {
-    EvMessage.warning('请先完善表单必填项')
+    EbMessage.warning('请先完善表单必填项')
   })
 }
 </script>
@@ -136,17 +136,17 @@ function create() {
   margin-top: 12px;
 }
 .gl-stock--low {
-  color: var(--ev-color-danger, #e34d59);
+  color: var(--eb-color-danger, #e34d59);
   font-weight: 600;
 }
 .gl-stock__tip {
   margin-left: 6px;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-color-danger, #e34d59);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-color-danger, #e34d59);
 }
 .gl-suffix {
   margin-left: 10px;
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 </style>

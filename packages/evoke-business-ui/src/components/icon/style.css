@@ -1,5 +1,5 @@
-/* EvIcon — 图标容器 */
-.ev-icon {
+/* EbIcon — 图标容器 */
+.eb-icon {
   --font-size: 16px;
   display: inline-flex;
   justify-content: center;
@@ -17,7 +17,7 @@
   flex-shrink: 0;
 }
 
-.ev-icon > svg {
+.eb-icon > svg {
   width: 1em;
   height: 1em;
   display: inline-block;
@@ -25,6 +25,6 @@
 }
 
 /* 旋转动画（loading 类图标消费） */
-.ev-icon.is-rotating > svg {
-  animation: ev-rotate 1s linear infinite;
+.eb-icon.is-rotating > svg {
+  animation: eb-rotate 1s linear infinite;
 }

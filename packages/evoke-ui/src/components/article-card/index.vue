@@ -1,18 +1,18 @@
 <template>
-  <component :is="tag" :class="['ew-article-card', { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]" :href="tag === 'a' ? href : undefined">
-    <div class="ew-article-card__cover" :style="coverStyle">
+  <component :is="tag" :class="['ev-article-card', { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]" :href="tag === 'a' ? href : undefined">
+    <div class="ev-article-card__cover" :style="coverStyle">
       <img v-if="cover" :src="cover" :alt="title" loading="lazy" />
-      <EwIcon v-else-if="icon" :name="icon" :size="28" class="ew-article-card__cover-icon" />
+      <EvIcon v-else-if="icon" :name="icon" :size="28" class="ev-article-card__cover-icon" />
     </div>
-    <div class="ew-article-card__body">
-      <div class="ew-article-card__meta">
-        <span v-if="date" class="ew-article-card__date">{{ date }}</span>
-        <span v-for="t in tags" :key="t" class="ew-article-card__tag">{{ t }}</span>
+    <div class="ev-article-card__body">
+      <div class="ev-article-card__meta">
+        <span v-if="date" class="ev-article-card__date">{{ date }}</span>
+        <span v-for="t in tags" :key="t" class="ev-article-card__tag">{{ t }}</span>
       </div>
-      <h4 class="ew-article-card__title">
+      <h4 class="ev-article-card__title">
         <slot name="title">{{ title }}</slot>
       </h4>
-      <p v-if="excerpt || $slots.excerpt" class="ew-article-card__excerpt">
+      <p v-if="excerpt || $slots.excerpt" class="ev-article-card__excerpt">
         <slot name="excerpt">{{ excerpt }}</slot>
       </p>
     </div>
@@ -21,11 +21,11 @@
 
 <script setup>
 /**
- * EwArticleCard — 文章卡（博客/动态/教程列表）
+ * EvArticleCard — 文章卡（博客/动态/教程列表）
  * 封面（缺省用图标占位）+ 日期与标签元信息 + 标题 + 摘要；整卡可链接
  */
 import { computed } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
@@ -44,7 +44,7 @@ const props = defineProps({
 })
 
 const coverStyle = computed(() =>
-  props.cover ? undefined : { background: 'linear-gradient(135deg, var(--ew-fill-1), var(--ew-bg-soft))' }
+  props.cover ? undefined : { background: 'linear-gradient(135deg, var(--ev-fill-1), var(--ev-bg-soft))' }
 )
 </script>
 

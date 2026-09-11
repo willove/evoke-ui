@@ -43,89 +43,89 @@ function submitOrder() {
 
 <MobileStage title="商品详情">
   <div class="mb-page" style="gap: 12px; padding-bottom: 20px;">
-    <ew-alert v-if="ordered" tone="success" icon="check" title="下单成功，可在「我的订单」查看物流" />
-    <div class="mb-card" style="height: 210px; border: none; background: linear-gradient(160deg, var(--ew-color-primary-light-7), var(--ew-color-primary-light-9)); display: flex; align-items: center; justify-content: center; position: relative;">
-      <ew-icon name="shopping-bag" :size="56" style="color: var(--ew-color-primary-light-3);" />
-      <ew-tag tone="lime" variant="solid" size="small" style="position: absolute; left: 12px; top: 12px;">限时 8 折</ew-tag>
+    <ev-alert v-if="ordered" tone="success" icon="check" title="下单成功，可在「我的订单」查看物流" />
+    <div class="mb-card" style="height: 210px; border: none; background: linear-gradient(160deg, var(--ev-color-primary-light-7), var(--ev-color-primary-light-9)); display: flex; align-items: center; justify-content: center; position: relative;">
+      <ev-icon name="shopping-bag" :size="56" style="color: var(--ev-color-primary-light-3);" />
+      <ev-tag tone="lime" variant="solid" size="small" style="position: absolute; left: 12px; top: 12px;">限时 8 折</ev-tag>
     </div>
     <div>
       <div style="display: flex; align-items: baseline; gap: 8px;">
-        <span style="font-size: 26px; font-weight: var(--ew-display-weight); color: var(--ew-color-danger);">¥ 199</span>
-        <span style="font-size: 13px; color: var(--ew-text-secondary); text-decoration: line-through;">¥ 249</span>
+        <span style="font-size: 26px; font-weight: var(--ev-display-weight); color: var(--ev-color-danger);">¥ 199</span>
+        <span style="font-size: 13px; color: var(--ev-text-secondary); text-decoration: line-through;">¥ 249</span>
         <span style="flex: 1;" />
-        <span style="font-size: 12px; color: var(--ew-text-secondary);">已售 1.2 万</span>
+        <span style="font-size: 12px; color: var(--ev-text-secondary);">已售 1.2 万</span>
       </div>
-      <div style="margin-top: 6px; font-size: 16px; font-weight: var(--ew-font-weight-medium); color: var(--ew-text-primary);">Evoke 轻量通勤双肩包</div>
-      <div style="margin-top: 4px; font-size: 13px; line-height: 1.7; color: var(--ew-text-regular);">防泼水面料 · 16L 容量 · 15.6 寸笔电仓，为通勤与短途出行设计。</div>
+      <div style="margin-top: 6px; font-size: 16px; font-weight: var(--ev-font-weight-medium); color: var(--ev-text-primary);">Evoke 轻量通勤双肩包</div>
+      <div style="margin-top: 4px; font-size: 13px; line-height: 1.7; color: var(--ev-text-regular);">防泼水面料 · 16L 容量 · 15.6 寸笔电仓，为通勤与短途出行设计。</div>
     </div>
     <div class="mb-card" style="padding: 12px 14px; display: flex; flex-direction: column; gap: 12px;">
       <div>
-        <div style="font-size: 12px; color: var(--ew-text-secondary); margin-bottom: 8px;">颜色</div>
+        <div style="font-size: 12px; color: var(--ev-text-secondary); margin-bottom: 8px;">颜色</div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <ew-tag v-for="c in colors" :key="c" :tone="color === c ? 'primary' : 'neutral'" :variant="color === c ? 'solid' : 'outline'" size="default" style="cursor: pointer;" @click="color = c">{{ c }}</ew-tag>
+          <ev-tag v-for="c in colors" :key="c" :tone="color === c ? 'primary' : 'neutral'" :variant="color === c ? 'solid' : 'outline'" size="default" style="cursor: pointer;" @click="color = c">{{ c }}</ev-tag>
         </div>
       </div>
       <div>
-        <div style="font-size: 12px; color: var(--ew-text-secondary); margin-bottom: 8px;">尺码</div>
+        <div style="font-size: 12px; color: var(--ev-text-secondary); margin-bottom: 8px;">尺码</div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <ew-tag v-for="s in sizes" :key="s" :tone="size === s ? 'primary' : 'neutral'" :variant="size === s ? 'solid' : 'outline'" size="default" style="cursor: pointer;" @click="size = s">{{ s }}</ew-tag>
+          <ev-tag v-for="s in sizes" :key="s" :tone="size === s ? 'primary' : 'neutral'" :variant="size === s ? 'solid' : 'outline'" size="default" style="cursor: pointer;" @click="size = s">{{ s }}</ev-tag>
         </div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-size: 12px; color: var(--ew-text-secondary);">数量</span>
+        <span style="font-size: 12px; color: var(--ev-text-secondary);">数量</span>
         <span style="display: inline-flex; align-items: center; gap: 12px;">
-          <ew-icon-button icon="minus" variant="outline" size="small" :disabled="qty <= 1" @click="qty -= 1" />
-          <span style="min-width: 20px; text-align: center; font-size: 14px; color: var(--ew-text-primary);">{{ qty }}</span>
-          <ew-icon-button icon="plus" variant="outline" size="small" @click="qty += 1" />
+          <ev-icon-button icon="minus" variant="outline" size="small" :disabled="qty <= 1" @click="qty -= 1" />
+          <span style="min-width: 20px; text-align: center; font-size: 14px; color: var(--ev-text-primary);">{{ qty }}</span>
+          <ev-icon-button icon="plus" variant="outline" size="small" @click="qty += 1" />
         </span>
       </div>
     </div>
-    <div class="mb-card" style="padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--ew-text-secondary);">
-      <span style="display: inline-flex; align-items: center; gap: 4px;"><ew-icon name="shield-check" :size="14" style="color: var(--ew-color-success);" />正品保障</span>
-      <span style="display: inline-flex; align-items: center; gap: 4px;"><ew-icon name="truck" :size="14" style="color: var(--ew-color-primary);" />48 小时送达</span>
-      <span style="display: inline-flex; align-items: center; gap: 4px;"><ew-icon name="customer-service" :size="14" style="color: var(--ew-color-warning);" />七天无理由</span>
+    <div class="mb-card" style="padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--ev-text-secondary);">
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><ev-icon name="shield-check" :size="14" style="color: var(--ev-color-success);" />正品保障</span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><ev-icon name="truck" :size="14" style="color: var(--ev-color-primary);" />48 小时送达</span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><ev-icon name="customer-service" :size="14" style="color: var(--ev-color-warning);" />七天无理由</span>
     </div>
   </div>
   <template #bottom>
-    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px 22px; border-top: 1px solid var(--ew-border-color-light); background: var(--ew-bg-container);">
-      <ew-icon-button icon="customer-service" variant="ghost" aria-label="联系客服" />
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px 22px; border-top: 1px solid var(--ev-border-color-light); background: var(--ev-bg-container);">
+      <ev-icon-button icon="customer-service" variant="ghost" aria-label="联系客服" />
       <span style="position: relative; display: inline-flex;">
-        <ew-icon-button :icon="favorited ? 'star-fill' : 'star'" :variant="favorited ? 'primary' : 'ghost'" @click="favorited = !favorited" />
-        <ew-badge v-if="cartCount" :value="cartCount" style="position: absolute; top: -4px; right: -4px;" />
+        <ev-icon-button :icon="favorited ? 'star-fill' : 'star'" :variant="favorited ? 'primary' : 'ghost'" @click="favorited = !favorited" />
+        <ev-badge v-if="cartCount" :value="cartCount" style="position: absolute; top: -4px; right: -4px;" />
       </span>
-      <ew-button style="flex: 1;" @click="addCart">加入购物袋</ew-button>
-      <ew-button type="primary" style="flex: 1;" @click="buyNow">立即购买</ew-button>
+      <ev-button style="flex: 1;" @click="addCart">加入购物袋</ev-button>
+      <ev-button type="primary" style="flex: 1;" @click="buyNow">立即购买</ev-button>
     </div>
   </template>
-  <ew-action-sheet v-model="checkoutOpen" title="确认订单" :append-to-body="false" :lock-scroll="false">
+  <ev-action-sheet v-model="checkoutOpen" title="确认订单" :append-to-body="false" :lock-scroll="false">
     <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 12px 12px;">
-      <div style="display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: var(--ew-radius-md); background: var(--ew-bg-soft);">
-        <ew-icon name="map-pin" :size="16" style="color: var(--ew-color-primary); margin-top: 2px;" />
-        <div style="font-size: 13px; line-height: 1.6; color: var(--ew-text-primary);">
+      <div style="display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: var(--ev-radius-md); background: var(--ev-bg-soft);">
+        <ev-icon name="map-pin" :size="16" style="color: var(--ev-color-primary); margin-top: 2px;" />
+        <div style="font-size: 13px; line-height: 1.6; color: var(--ev-text-primary);">
           林岸 138****6688<br/>
-          <span style="color: var(--ew-text-secondary);">杭州市西湖区… 2 幢 901</span>
+          <span style="color: var(--ev-text-secondary);">杭州市西湖区… 2 幢 901</span>
         </div>
       </div>
       <div
         v-for="p in pays"
         :key="p.id"
-        style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid; border-radius: var(--ew-radius-md); cursor: pointer;"
-        :style="{ borderColor: pay === p.id ? 'var(--ew-color-primary)' : 'var(--ew-border-color-light)' }"
+        style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid; border-radius: var(--ev-radius-md); cursor: pointer;"
+        :style="{ borderColor: pay === p.id ? 'var(--ev-color-primary)' : 'var(--ev-border-color-light)' }"
         @click="pay = p.id"
       >
-        <span style="display: inline-flex; color: var(--ew-color-primary);"><ew-icon :name="p.icon" :size="18" /></span>
-        <span style="flex: 1; font-size: 14px; color: var(--ew-text-primary);">{{ p.name }}<span style="margin-left: 8px; font-size: 12px; color: var(--ew-text-secondary);">{{ p.desc }}</span></span>
-        <span style="width: 18px; height: 18px; border-radius: var(--ew-radius-full); border: 1px solid var(--ew-border-color); display: inline-flex; align-items: center; justify-content: center;" :style="pay === p.id ? 'border-color: var(--ew-color-primary); background: var(--ew-color-primary); color: #fff;' : 'color: transparent;'">
-          <ew-icon name="check" :size="12" />
+        <span style="display: inline-flex; color: var(--ev-color-primary);"><ev-icon :name="p.icon" :size="18" /></span>
+        <span style="flex: 1; font-size: 14px; color: var(--ev-text-primary);">{{ p.name }}<span style="margin-left: 8px; font-size: 12px; color: var(--ev-text-secondary);">{{ p.desc }}</span></span>
+        <span style="width: 18px; height: 18px; border-radius: var(--ev-radius-full); border: 1px solid var(--ev-border-color); display: inline-flex; align-items: center; justify-content: center;" :style="pay === p.id ? 'border-color: var(--ev-color-primary); background: var(--ev-color-primary); color: #fff;' : 'color: transparent;'">
+          <ev-icon name="check" :size="12" />
         </span>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 2px;">
-        <span style="font-size: 12px; color: var(--ew-text-secondary);">共 {{ qty }} 件 · 包邮</span>
-        <span style="font-size: 16px; font-weight: var(--ew-font-weight-bold); color: var(--ew-color-danger);">¥ {{ 199 * qty }}</span>
+        <span style="font-size: 12px; color: var(--ev-text-secondary);">共 {{ qty }} 件 · 包邮</span>
+        <span style="font-size: 16px; font-weight: var(--ev-font-weight-bold); color: var(--ev-color-danger);">¥ {{ 199 * qty }}</span>
       </div>
-      <ew-button type="primary" style="width: 100%;" @click="submitOrder">确认支付</ew-button>
+      <ev-button type="primary" style="width: 100%;" @click="submitOrder">确认支付</ev-button>
     </div>
-  </ew-action-sheet>
+  </ev-action-sheet>
 </MobileStage>
 
 </DemoBlock>
@@ -135,20 +135,20 @@ function submitOrder() {
 | 桌面版式 | 本案例的移动表达 |
 | --- | --- |
 | 左图右信息两栏 | 视觉区整宽置顶（16:9 级），信息纵向接续 |
-| 规格侧栏 + 下拉框 | 芯片点选（`EwTag` solid 表选中），能点选不下拉 |
+| 规格侧栏 + 下拉框 | 芯片点选（`EvTag` solid 表选中），能点选不下拉 |
 | 数量输入框 | 图标步进器：`minus / plus` 两端夹数值，下限 1 |
 | 服务条款页脚 | 一行三个「图标 + 短语」承诺条，打消下单顾虑 |
 | 侧栏结算按钮组 | 吸底操作栏：次级（加入购物袋）与主级（立即购买）并排 |
-| 结算页跳转 | `EwActionSheet` 自定义内容：地址 + 支付方式单选 + 合计 + 提交，不离开当前页 |
+| 结算页跳转 | `EvActionSheet` 自定义内容：地址 + 支付方式单选 + 合计 + 提交，不离开当前页 |
 
 ## 搭建清单
 
-1. 视觉区：真机放商品图（`aspect-ratio: 4 / 3`），促销角标用 `EwTag tone="lime"`，
+1. 视觉区：真机放商品图（`aspect-ratio: 4 / 3`），促销角标用 `EvTag tone="lime"`，
    对应官网语境的「限量促销黄绿」。
-2. 价格行：现价用危险色 + `--ew-display-weight` 大字重，划线原价紧随其后，
+2. 价格行：现价用危险色 + `--ev-display-weight` 大字重，划线原价紧随其后，
    销量等信息靠右侧弱化。
-3. 规格芯片：`EwTag` 的 `variant` 在 `solid / outline` 间切换即选中态，无需自造组件。
-4. 吸底操作栏：图标按钮（客服、收藏）用 `EwIconButton`，购物袋角标挂在收藏位
+3. 规格芯片：`EvTag` 的 `variant` 在 `solid / outline` 间切换即选中态，无需自造组件。
+4. 吸底操作栏：图标按钮（客服、收藏）用 `EvIconButton`，购物袋角标挂在收藏位
    示意库存动线；真机记得补 `env(safe-area-inset-bottom)`（见[安全区](/mobile/#视口与安全区)）。
-5. 结算面板：`EwActionSheet` 默认插槽放自定义内容，支付方式选中态用单选圆点
-   （`check` 图标反白）；提交后以 `EwAlert` 轻反馈收尾，不用阻塞弹窗。
+5. 结算面板：`EvActionSheet` 默认插槽放自定义内容，支付方式选中态用单选圆点
+   （`check` 图标反白）；提交后以 `EvAlert` 轻反馈收尾，不用阻塞弹窗。

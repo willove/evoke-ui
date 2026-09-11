@@ -1,40 +1,40 @@
-/* EvDropdownItem —菜单项 */
+/* EbDropdownItem —菜单项 */
 
-.ev-dropdown-menu__item.ev-dropdown-item {
+.eb-dropdown-menu__item.eb-dropdown-item {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   padding: 0 12px;
   height: 34px;
   line-height: 34px;
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-regular);
-  border-radius: var(--ev-radius-sm);
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
   white-space: nowrap;
   list-style: none;
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out), color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out), color var(--eb-duration-fast) var(--eb-ease-out);
 }
 
-.ev-dropdown-menu__item.ev-dropdown-item:not(.is-disabled):hover,
-.ev-dropdown-menu__item.ev-dropdown-item:not(.is-disabled):focus-visible {
-  background-color: var(--ev-fill-color-light);
-  color: var(--ev-color-primary);
+.eb-dropdown-menu__item.eb-dropdown-item:not(.is-disabled):hover,
+.eb-dropdown-menu__item.eb-dropdown-item:not(.is-disabled):focus-visible {
+  background-color: var(--eb-fill-color-light);
+  color: var(--eb-color-primary);
   outline: none;
 }
 
-.ev-dropdown-menu__item.ev-dropdown-item.is-disabled {
-  color: var(--ev-text-color-disabled);
+.eb-dropdown-menu__item.eb-dropdown-item.is-disabled {
+  color: var(--eb-text-color-disabled);
   cursor: not-allowed;
 }
 
-.ev-dropdown-menu__item.ev-dropdown-item.is-divided {
-  margin-top: var(--ev-space-1);
-  border-top: 1px solid var(--ev-border-color-lighter);
+.eb-dropdown-menu__item.eb-dropdown-item.is-divided {
+  margin-top: var(--eb-space-1);
+  border-top: 1px solid var(--eb-border-color-lighter);
   padding-top: 0;
   height: 35px;
 }
 
-.ev-dropdown-menu__item.ev-dropdown-item .ev-dropdown-menu__icon {
-  color: var(--ev-text-color-secondary);
+.eb-dropdown-menu__item.eb-dropdown-item .eb-dropdown-menu__icon {
+  color: var(--eb-text-color-secondary);
 }

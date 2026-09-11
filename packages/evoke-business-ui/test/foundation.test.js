@@ -29,10 +29,10 @@ describe('常量与 locale', () => {
     expect(BREAKPOINTS).toEqual({ xs: 0, sm: 640, md: 768, lg: 1024, xl: 1280, xxl: 1536 })
   })
 
-  it('locale 包含核心文案（ev 命名空间键路径）', () => {
-    expect(zhCN.ev.select.placeholder).toBe('请选择')
-    expect(zhCN.ev.pagination.total).toBe('共 {total} 条')
-    expect(zhCN.ev.table.emptyText).toBe('暂无数据')
-    expect(en.ev.select.placeholder).toBe('Select')
+  it('locale 包含核心文案（eb 命名空间键路径）', () => {
+    expect(zhCN.eb.select.placeholder).toBe('请选择')
+    expect(zhCN.eb.pagination.total).toBe('共 {total} 条')
+    expect(zhCN.eb.table.emptyText).toBe('暂无数据')
+    expect(en.eb.select.placeholder).toBe('Select')
   })
 })

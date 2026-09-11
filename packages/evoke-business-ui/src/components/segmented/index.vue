@@ -1,10 +1,10 @@
 <template>
   <div
     ref="rootRef"
-    class="ev-segmented"
+    class="eb-segmented"
     :class="[
-      `ev-segmented--${size}`,
-      `ev-segmented--shape-${shape}`,
+      `eb-segmented--${size}`,
+      `eb-segmented--shape-${shape}`,
       {
         'is-vertical': vertical,
         'is-block': block,
@@ -16,25 +16,25 @@
   >
     <div
       v-if="thumbVisible"
-      class="ev-segmented__thumb"
+      class="eb-segmented__thumb"
       :class="{ 'is-animating': animating }"
       :style="thumbStyle"
       aria-hidden="true"
     />
-    <div class="ev-segmented__items">
+    <div class="eb-segmented__items">
       <button
         v-for="(item, i) in normalized"
         :key="item.value ?? i"
         type="button"
-        class="ev-segmented__item"
+        class="eb-segmented__item"
         :class="{ 'is-selected': isSelected(item), 'is-disabled': item.disabled || disabled }"
         role="tab"
         :aria-selected="isSelected(item)"
         :disabled="(item.disabled || disabled) || undefined"
         @click="handleSelect(item)"
       >
-        <ev-icon v-if="resolveIcon(item)" :name="resolveIcon(item)" :size="iconSize" />
-        <span v-if="item.label !== undefined" class="ev-segmented__label">{{ item.label }}</span>
+        <eb-icon v-if="resolveIcon(item)" :name="resolveIcon(item)" :size="iconSize" />
+        <span v-if="item.label !== undefined" class="eb-segmented__label">{{ item.label }}</span>
       </button>
     </div>
   </div>
@@ -42,12 +42,12 @@
 
 <script setup>
 /**
- * EvSegmented — 分段控制器
+ * EbSegmented — 分段控制器
  * options 支持纯值/对象；滑块 thumb 实测定位 + 过渡动画；
  * size(middle/large/small) / shape(round) / vertical / labelPlacement / block / disabled
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: undefined },
@@ -127,7 +127,7 @@ function handleSelect(item) {
 function updateThumb() {
   const root = rootRef.value
   if (!root) return
-  const items = root.querySelectorAll('.ev-segmented__item')
+  const items = root.querySelectorAll('.eb-segmented__item')
   const idx = normalized.value.findIndex((it) => isSelected(it))
   const el = idx >= 0 ? items[idx] : null
   animating.value = false
@@ -151,7 +151,7 @@ watch(
   () => {
     const root = rootRef.value
     const idx = normalized.value.findIndex((it) => isSelected(it))
-    const el = idx >= 0 && root ? root.querySelectorAll('.ev-segmented__item')[idx] : null
+    const el = idx >= 0 && root ? root.querySelectorAll('.eb-segmented__item')[idx] : null
     if (!el) {
       updateThumb()
       return

@@ -1,7 +1,7 @@
 <template>
   <ul
-    class="ev-menu ev-menu"
-    :class="[`ev-menu--${mode}`, { 'ev-menu--collapse': collapse, 'is-collapsed': collapse }]"
+    class="eb-menu eb-menu"
+    :class="[`eb-menu--${mode}`, { 'eb-menu--collapse': collapse, 'is-collapsed': collapse }]"
     role="menubar"
   >
     <slot />
@@ -10,9 +10,9 @@
 
 <script setup>
 /**
- * EvMenu — 导航菜单容器
+ * EbMenu — 导航菜单容器
  * provide 菜单契约：activeIndex/openedMenus/unique-opened/select（router 模式跳转）；
- * 手柄：EvMenuItem / EvSubMenu / EvMenuItemGroup
+ * 手柄：EbMenuItem / EbSubMenu / EbMenuItemGroup
  */
 import { provide, ref, toRef, watch, inject } from 'vue'
 

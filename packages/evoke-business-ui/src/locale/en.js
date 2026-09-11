@@ -3,7 +3,7 @@
  */
 export const en = {
   name: 'en',
-  ev: {
+  eb: {
     colorpicker: {
       confirm: 'OK',
       clear: 'Clear',

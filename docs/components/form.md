@@ -85,13 +85,13 @@ function handleReset() {
 `prop` 对应 `model` 中的字段路径；规则通过 `trigger: 'blur' | 'change'` 声明校验时机，控件失焦或值变化时自动校验并在字段下方内联展示错误。
 
 <DemoBlock>
-  <ev-form ref="demoForm" :model="baseForm"
+  <eb-form ref="demoForm" :model="baseForm"
     :rules="{ name: [{ required: true, message: '请输入姓名', trigger: 'blur' }], region: [{ required: true, message: '请选择地区', trigger: 'change' }] }"
     label-width="80px">
-    <ev-form-item label="姓名" prop="name"><ev-input v-model="baseForm.name" placeholder="请输入姓名" /></ev-form-item>
-    <ev-form-item label="地区" prop="region"><ev-select v-model="baseForm.region" placeholder="请选择地区" style="width: 200px;"><ev-option label="华东" value="east" /><ev-option label="华南" value="south" /></ev-select></ev-form-item>
-    <ev-form-item><ev-button @click="$refs.demoForm.resetFields()">重置</ev-button></ev-form-item>
-  </ev-form>
+    <eb-form-item label="姓名" prop="name"><eb-input v-model="baseForm.name" placeholder="请输入姓名" /></eb-form-item>
+    <eb-form-item label="地区" prop="region"><eb-select v-model="baseForm.region" placeholder="请选择地区" style="width: 200px;"><eb-option label="华东" value="east" /><eb-option label="华南" value="south" /></eb-select></eb-form-item>
+    <eb-form-item><eb-button @click="$refs.demoForm.resetFields()">重置</eb-button></eb-form-item>
+  </eb-form>
 </DemoBlock>
 
 ## 典型场景：登录表单
@@ -99,12 +99,12 @@ function handleReset() {
 中后台表单页的推荐布局：`label-position="right"`（默认）配合固定 `label-width`，标签尾端与输入框对齐、间距一致，视线往返最短；校验时机按控件类型分开声明，文本类字段用 `blur`（输完即验，输入过程不打断）、选择类字段用 `change`（选中即反馈），同一字段的多条规则可各自声明 trigger；错误由 FormItem 在字段下方内联渲染（is-error 红字），占位稳定不引起布局跳动，提交时用 `validate` 统一拦截。
 
 <DemoBlock>
-  <ev-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-position="right" label-width="80px" style="max-width: 380px;">
-    <ev-form-item label="登录账号" prop="username"><ev-input v-model="loginForm.username" placeholder="工号 / 邮箱" /></ev-form-item>
-    <ev-form-item label="密码" prop="password"><ev-input v-model="loginForm.password" type="password" placeholder="至少 6 位" /></ev-form-item>
-    <ev-form-item label="账号类型" prop="scope"><ev-select v-model="loginForm.scope" placeholder="选择类字段用 change 校验" style="width: 100%;"><ev-option label="主账号" value="master" /><ev-option label="子账号" value="sub" /></ev-select></ev-form-item>
-    <ev-form-item><ev-button type="primary" @click="submitLogin">登录</ev-button></ev-form-item>
-  </ev-form>
+  <eb-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-position="right" label-width="80px" style="max-width: 380px;">
+    <eb-form-item label="登录账号" prop="username"><eb-input v-model="loginForm.username" placeholder="工号 / 邮箱" /></eb-form-item>
+    <eb-form-item label="密码" prop="password"><eb-input v-model="loginForm.password" type="password" placeholder="至少 6 位" /></eb-form-item>
+    <eb-form-item label="账号类型" prop="scope"><eb-select v-model="loginForm.scope" placeholder="选择类字段用 change 校验" style="width: 100%;"><eb-option label="主账号" value="master" /><eb-option label="子账号" value="sub" /></eb-select></eb-form-item>
+    <eb-form-item><eb-button type="primary" @click="submitLogin">登录</eb-button></eb-form-item>
+  </eb-form>
   <div style="margin-top: 8px;">{{ loginResult || '留空提交体验内联错误与提交拦截' }}</div>
 </DemoBlock>
 
@@ -113,16 +113,16 @@ function handleReset() {
 覆盖两种字段类型（输入框 + 下拉选择）；确认密码用自定义 `validator`，async-validator 协议：失败 `callback(new Error('文案'))`，通过 `callback()`，也可返回 `Promise.reject(new Error('文案'))`；提交按钮 `loading` 防重复提交，`validate` 全通过后再发请求，成功后 `resetFields` 还原初始值并清除校验；密码变化时用 `validateField('confirm')` 联动复检确认密码（返回 Promise 失败会 reject，需 catch 静默）。
 
 <DemoBlock>
-  <ev-form ref="registerFormRef" :model="registerForm" :rules="registerRules" label-width="90px" style="max-width: 400px;">
-    <ev-form-item label="用户名" prop="username"><ev-input v-model="registerForm.username" placeholder="3 到 12 个字符" /></ev-form-item>
-    <ev-form-item label="角色" prop="role"><ev-select v-model="registerForm.role" placeholder="请选择角色" style="width: 100%;"><ev-option label="管理员" value="admin" /><ev-option label="成员" value="member" /></ev-select></ev-form-item>
-    <ev-form-item label="密码" prop="password"><ev-input v-model="registerForm.password" type="password" placeholder="至少 6 位" @change="revalidateConfirm" /></ev-form-item>
-    <ev-form-item label="确认密码" prop="confirm"><ev-input v-model="registerForm.confirm" type="password" placeholder="再次输入密码" /></ev-form-item>
-    <ev-form-item>
-      <ev-button type="primary" :loading="submitting" @click="submitRegister">注册</ev-button>
-      <ev-button style="margin-left: 8px;" @click="registerFormRef?.resetFields()">重置</ev-button>
-    </ev-form-item>
-  </ev-form>
+  <eb-form ref="registerFormRef" :model="registerForm" :rules="registerRules" label-width="90px" style="max-width: 400px;">
+    <eb-form-item label="用户名" prop="username"><eb-input v-model="registerForm.username" placeholder="3 到 12 个字符" /></eb-form-item>
+    <eb-form-item label="角色" prop="role"><eb-select v-model="registerForm.role" placeholder="请选择角色" style="width: 100%;"><eb-option label="管理员" value="admin" /><eb-option label="成员" value="member" /></eb-select></eb-form-item>
+    <eb-form-item label="密码" prop="password"><eb-input v-model="registerForm.password" type="password" placeholder="至少 6 位" @change="revalidateConfirm" /></eb-form-item>
+    <eb-form-item label="确认密码" prop="confirm"><eb-input v-model="registerForm.confirm" type="password" placeholder="再次输入密码" /></eb-form-item>
+    <eb-form-item>
+      <eb-button type="primary" :loading="submitting" @click="submitRegister">注册</eb-button>
+      <eb-button style="margin-left: 8px;" @click="registerFormRef?.resetFields()">重置</eb-button>
+    </eb-form-item>
+  </eb-form>
   <div style="margin-top: 8px;">{{ registerResult || '故意让两次密码不一致，体验自定义校验' }}</div>
 </DemoBlock>
 
@@ -131,11 +131,11 @@ function handleReset() {
 `inline` 让表单项横向排列，适合筛选栏：字段少且标签短时可用 `label-position="left"` 让标签左对齐，字段过多换行后布局依旧稳定；`label-width` 与 `label-position` 均可在 FormItem 上单独覆盖。
 
 <DemoBlock>
-  <ev-form inline>
-    <ev-form-item label="审批人"><ev-input v-model="inlineForm.approver" placeholder="审批人" /></ev-form-item>
-    <ev-form-item label="状态"><ev-select v-model="inlineForm.status" placeholder="状态" style="width: 140px;"><ev-option label="已通过" value="passed" /><ev-option label="已驳回" value="rejected" /></ev-select></ev-form-item>
-    <ev-form-item label="城市"><ev-select v-model="inlineForm.city" placeholder="城市" style="width: 140px;"><ev-option label="杭州" value="hangzhou" /><ev-option label="上海" value="shanghai" /></ev-select></ev-form-item>
-  </ev-form>
+  <eb-form inline>
+    <eb-form-item label="审批人"><eb-input v-model="inlineForm.approver" placeholder="审批人" /></eb-form-item>
+    <eb-form-item label="状态"><eb-select v-model="inlineForm.status" placeholder="状态" style="width: 140px;"><eb-option label="已通过" value="passed" /><eb-option label="已驳回" value="rejected" /></eb-select></eb-form-item>
+    <eb-form-item label="城市"><eb-select v-model="inlineForm.city" placeholder="城市" style="width: 140px;"><eb-option label="杭州" value="hangzhou" /><eb-option label="上海" value="shanghai" /></eb-select></eb-form-item>
+  </eb-form>
 </DemoBlock>
 
 ## 标签位置
@@ -143,9 +143,9 @@ function handleReset() {
 `label-position` 三态选型：`right`（默认）是表单页首选，标签与输入框起始位置固定、逐行扫读最快；`left` 适合筛选栏与标签长短不一的工具条，视觉重心平稳；`top` 适合标签文案较长或容器较窄的场景（抽屉、弹窗、移动端），以纵向空间换横向空间。非 top 位置需配合 `label-width` 固定标签宽度。
 
 <DemoBlock>
-  <ev-form label-position="right" label-width="80px" style="max-width: 340px;"><ev-form-item label="右侧标签"><ev-input v-model="labelRight" placeholder="right，默认" /></ev-form-item></ev-form>
-  <ev-form label-position="left" label-width="80px" style="max-width: 340px;"><ev-form-item label="左侧标签"><ev-input v-model="labelLeft" placeholder="left" /></ev-form-item></ev-form>
-  <ev-form label-position="top" style="max-width: 340px;"><ev-form-item label="顶部标签"><ev-input v-model="labelTop" placeholder="top" /></ev-form-item></ev-form>
+  <eb-form label-position="right" label-width="80px" style="max-width: 340px;"><eb-form-item label="右侧标签"><eb-input v-model="labelRight" placeholder="right，默认" /></eb-form-item></eb-form>
+  <eb-form label-position="left" label-width="80px" style="max-width: 340px;"><eb-form-item label="左侧标签"><eb-input v-model="labelLeft" placeholder="left" /></eb-form-item></eb-form>
+  <eb-form label-position="top" style="max-width: 340px;"><eb-form-item label="顶部标签"><eb-input v-model="labelTop" placeholder="top" /></eb-form-item></eb-form>
 </DemoBlock>
 
 ## 尺寸与禁用
@@ -153,8 +153,8 @@ function handleReset() {
 `size` 统一注入表单内全部控件的尺寸，`disabled` 注入禁用态，FormItem 上的同名属性可单独覆盖。
 
 <DemoBlock>
-  <ev-form size="large" label-width="70px" style="max-width: 340px;"><ev-form-item label="大型"><ev-input v-model="sizeLarge" placeholder="large" /></ev-form-item></ev-form>
-  <ev-form disabled label-width="70px" style="max-width: 340px;"><ev-form-item label="禁用表单"><ev-input v-model="sizeDisabled" placeholder="整表禁用" /></ev-form-item></ev-form>
+  <eb-form size="large" label-width="70px" style="max-width: 340px;"><eb-form-item label="大型"><eb-input v-model="sizeLarge" placeholder="large" /></eb-form-item></eb-form>
+  <eb-form disabled label-width="70px" style="max-width: 340px;"><eb-form-item label="禁用表单"><eb-input v-model="sizeDisabled" placeholder="整表禁用" /></eb-form-item></eb-form>
 </DemoBlock>
 
 ## 手动错误信息与必填星号
@@ -162,10 +162,10 @@ function handleReset() {
 FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只控制必填星号展示，不参与校验；Form `hide-required-asterisk` 全局隐藏星号，`inline-message` 让错误信息行内展示。
 
 <DemoBlock>
-  <ev-form label-width="90px" style="max-width: 380px;">
-    <ev-form-item label="服务地址" prop="host" required error="地址需以 https:// 开头"><ev-input v-model="manualForm.host" placeholder="error 属性手动指定错误信息" /></ev-form-item>
-    <ev-form-item label="备注" prop="remark"><ev-input v-model="manualForm.remark" placeholder="required 只显示星号，不参与校验" /></ev-form-item>
-  </ev-form>
+  <eb-form label-width="90px" style="max-width: 380px;">
+    <eb-form-item label="服务地址" prop="host" required error="地址需以 https:// 开头"><eb-input v-model="manualForm.host" placeholder="error 属性手动指定错误信息" /></eb-form-item>
+    <eb-form-item label="备注" prop="remark"><eb-input v-model="manualForm.remark" placeholder="required 只显示星号，不参与校验" /></eb-form-item>
+  </eb-form>
 </DemoBlock>
 
 ## 嵌套字段路径
@@ -173,9 +173,9 @@ FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只�
 `prop` 支持 a.b.c 路径，rules 的 key 使用同样的路径字符串，深层对象字段无需拍平；`#label` 插槽可自定义标签内容。
 
 <DemoBlock>
-  <ev-form :model="nestedForm" :rules="{ 'user.city': [{ required: true, message: '请选择所在城市', trigger: 'change' }] }" label-width="80px" style="max-width: 380px;">
-    <ev-form-item label="所在城市" prop="user.city"><ev-select v-model="nestedForm.user.city" placeholder="prop 支持 a.b.c 路径" style="width: 220px;"><ev-option label="杭州" value="hangzhou" /><ev-option label="深圳" value="shenzhen" /></ev-select></ev-form-item>
-  </ev-form>
+  <eb-form :model="nestedForm" :rules="{ 'user.city': [{ required: true, message: '请选择所在城市', trigger: 'change' }] }" label-width="80px" style="max-width: 380px;">
+    <eb-form-item label="所在城市" prop="user.city"><eb-select v-model="nestedForm.user.city" placeholder="prop 支持 a.b.c 路径" style="width: 220px;"><eb-option label="杭州" value="hangzhou" /><eb-option label="深圳" value="shenzhen" /></eb-select></eb-form-item>
+  </eb-form>
 </DemoBlock>
 
 ## 表单校验
@@ -183,20 +183,20 @@ FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只�
 完整校验流程示例：`rules` 声明 required / type / min / max 等规则（async-validator 格式），blur、change 时机自动触发内联报错；提交前 `validate` 统一校验（回调可拿到失败字段集合），`clearValidate` 只清除报错不动数据，`resetFields` 还原初始值并清报错。
 
 <DemoBlock>
-  <ev-form ref="checkFormRef" :model="checkForm" :rules="checkRules" label-width="70px" style="max-width: 380px;">
-    <ev-form-item label="邮箱" prop="email">
-      <ev-input v-model="checkForm.email" placeholder="name@example.com" />
-    </ev-form-item>
-    <ev-form-item label="年龄" prop="age">
-      <ev-input-number v-model="checkForm.age" :min="1" :max="99" placeholder="18 - 60" style="width: 100%;" />
-    </ev-form-item>
-    <ev-form-item>
-      <ev-button type="primary" @click="handleValidate">提交校验</ev-button>
-      <ev-button style="margin-left: 8px;" @click="handleClearValidate">清除校验</ev-button>
-      <ev-button style="margin-left: 8px;" @click="handleReset">重置表单</ev-button>
-    </ev-form-item>
-  </ev-form>
-  <p v-if="checkResult" style="margin: 8px 0 0; font-size: 13px; color: var(--ev-text-color-secondary);">{{ checkResult }}</p>
+  <eb-form ref="checkFormRef" :model="checkForm" :rules="checkRules" label-width="70px" style="max-width: 380px;">
+    <eb-form-item label="邮箱" prop="email">
+      <eb-input v-model="checkForm.email" placeholder="name@example.com" />
+    </eb-form-item>
+    <eb-form-item label="年龄" prop="age">
+      <eb-input-number v-model="checkForm.age" :min="1" :max="99" placeholder="18 - 60" style="width: 100%;" />
+    </eb-form-item>
+    <eb-form-item>
+      <eb-button type="primary" @click="handleValidate">提交校验</eb-button>
+      <eb-button style="margin-left: 8px;" @click="handleClearValidate">清除校验</eb-button>
+      <eb-button style="margin-left: 8px;" @click="handleReset">重置表单</eb-button>
+    </eb-form-item>
+  </eb-form>
+  <p v-if="checkResult" style="margin: 8px 0 0; font-size: 13px; color: var(--eb-text-color-secondary);">{{ checkResult }}</p>
 </DemoBlock>
 
 ## API

@@ -5,21 +5,21 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-watermark content="Evoke Business UI 内部资料" :gap="[80, 80]" :alpha="0.6">
-    <div style="height: 200px; border: 1px dashed var(--ev-border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--ev-text-color-secondary);">
+  <eb-watermark content="Evoke Business UI 内部资料" :gap="[80, 80]" :alpha="0.6">
+    <div style="height: 200px; border: 1px dashed var(--eb-border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--eb-text-color-secondary);">
       受水印保护的报表区域
     </div>
-  </ev-watermark>
+  </eb-watermark>
 </DemoBlock>
 
 ## 多行文字水印
 
 <DemoBlock>
-  <ev-watermark :content="['王敏', '2026-09-07']" :gap="[100, 80]">
-    <div style="height: 160px; border: 1px dashed var(--ev-border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--ev-text-color-secondary);">
+  <eb-watermark :content="['王敏', '2026-09-07']" :gap="[100, 80]">
+    <div style="height: 160px; border: 1px dashed var(--eb-border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--eb-text-color-secondary);">
       合同预览区域
     </div>
-  </ev-watermark>
+  </eb-watermark>
 </DemoBlock>
 
 ## Watermark API

@@ -4,7 +4,7 @@
  * 由 scripts/generate-remix-icons.mjs 生成，请勿手动修改。
  *
  * 体积约 1.5MB，不随主包加载；通过 '@wil-works/evoke-business-ui/full-icons'
- * 的 loadFullIcons() 注册后，所有 Remix 原生名称即可经 ev-icon 直接使用。
+ * 的 loadFullIcons() 注册后，所有 Remix 原生名称即可经 eb-icon 直接使用。
  * 数据格式：值为单个 path 的 d 字符串（默认 viewBox 0 0 24 24），
  * 或 { paths: [{ d, fillRule? }] }（多段 / 带挖洞规则）。
  */

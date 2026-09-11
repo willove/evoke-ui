@@ -1,6 +1,6 @@
 <script setup>
 /**
- * EvTableColumn — 列定义（onMounted 向 EvTable 注册，自身不渲染）
+ * EbTableColumn — 列定义（onMounted 向 EbTable 注册，自身不渲染）
  * 注册的是普通快照对象（非 getter）——父级 render 不得直接依赖子组件响应式 props
  * （inline 数组 prop 每次渲染新引用会导致父 render effect 无限递归），故用 watch 同步。
  * type：selection / expand / index / 默认数据列
@@ -9,7 +9,7 @@
 import { onBeforeUnmount, onMounted, useSlots, watch } from 'vue'
 import { useTableContext } from './table-context'
 
-defineOptions({ name: 'EvTableColumn' })
+defineOptions({ name: 'EbTableColumn' })
 
 const props = defineProps({
   type: {

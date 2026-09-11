@@ -1,24 +1,24 @@
-/* EvPageHeader — 页头（设计令牌驱动） */
+/* EbPageHeader — 页头（设计令牌驱动） */
 
-.ev-page-header {
+.eb-page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: var(--ev-space-6);
+  margin-bottom: var(--eb-space-6);
 }
-.ev-page-header__main h2 {
-  font-size: var(--ev-font-size-lg);
-  font-weight: var(--ev-font-weight-semibold);
-  color: var(--ev-text-color-primary);
+.eb-page-header__main h2 {
+  font-size: var(--eb-font-size-lg);
+  font-weight: var(--eb-font-weight-semibold);
+  color: var(--eb-text-color-primary);
   margin: 0;
 }
-.ev-page-header__main p {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-page-header__main p {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
   margin: 2px 0 0;
 }
-.ev-page-header__actions {
+.eb-page-header__actions {
   display: flex;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   flex-shrink: 0;
 }

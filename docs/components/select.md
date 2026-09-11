@@ -40,11 +40,11 @@ function handleRemoteSearch(query) {
 ## 基础用法
 
 <DemoBlock>
-<ev-select v-model="v" placeholder="请选择" clearable style="width: 200px;">
-  <ev-option label="华东" value="east" />
-  <ev-option label="华南" value="south" />
-  <ev-option label="华北" value="north" />
-</ev-select>
+<eb-select v-model="v" placeholder="请选择" clearable style="width: 200px;">
+  <eb-option label="华东" value="east" />
+  <eb-option label="华南" value="south" />
+  <eb-option label="华北" value="north" />
+</eb-select>
 </DemoBlock>
 
 单选时绑定值为选中项的 value；clearable 默认关闭，开启后单选有值时展示清空按钮，点击清空绑定值并触发 clear 事件。
@@ -54,14 +54,14 @@ function handleRemoteSearch(query) {
 multiple 时绑定值为数组，选中项以可关闭的 tag 呈现，选择后下拉保持打开；collapse-tags 只展示前 max-collapse-tags 个 tag（默认 1），其余折叠为 + N 计数，避免撑高筛选区。
 
 <DemoBlock>
-<ev-select v-model="mv" multiple placeholder="请选择城市" style="width: 280px;">
-  <ev-option label="北京" value="beijing" /><ev-option label="上海" value="shanghai" />
-  <ev-option label="杭州" value="hangzhou" /><ev-option label="成都" value="chengdu" />
-</ev-select>
-<ev-select v-model="colV" multiple collapse-tags :max-collapse-tags="2" placeholder="已选城市" style="width: 300px;">
-  <ev-option label="北京" value="beijing" /><ev-option label="上海" value="shanghai" />
-  <ev-option label="杭州" value="hangzhou" /><ev-option label="成都" value="chengdu" />
-</ev-select>
+<eb-select v-model="mv" multiple placeholder="请选择城市" style="width: 280px;">
+  <eb-option label="北京" value="beijing" /><eb-option label="上海" value="shanghai" />
+  <eb-option label="杭州" value="hangzhou" /><eb-option label="成都" value="chengdu" />
+</eb-select>
+<eb-select v-model="colV" multiple collapse-tags :max-collapse-tags="2" placeholder="已选城市" style="width: 300px;">
+  <eb-option label="北京" value="beijing" /><eb-option label="上海" value="shanghai" />
+  <eb-option label="杭州" value="hangzhou" /><eb-option label="成都" value="chengdu" />
+</eb-select>
 </DemoBlock>
 
 ## 可搜索
@@ -69,10 +69,10 @@ multiple 时绑定值为数组，选中项以可关闭的 tag 呈现，选择后
 filterable 开启后可在输入框中按 label 关键字过滤选项；需要按拼音、编码等自定义规则过滤时传 filter-method（(query, option) => boolean 返回是否保留）。
 
 <DemoBlock>
-<ev-select v-model="filterV" filterable placeholder="输入关键字搜索" style="width: 220px;">
-  <ev-option label="北京" value="beijing" /><ev-option label="上海" value="shanghai" />
-  <ev-option label="广州" value="guangzhou" /><ev-option label="深圳" value="shenzhen" />
-</ev-select>
+<eb-select v-model="filterV" filterable placeholder="输入关键字搜索" style="width: 220px;">
+  <eb-option label="北京" value="beijing" /><eb-option label="上海" value="shanghai" />
+  <eb-option label="广州" value="guangzhou" /><eb-option label="深圳" value="shenzhen" />
+</eb-select>
 </DemoBlock>
 
 ## 允许创建
@@ -80,9 +80,9 @@ filterable 开启后可在输入框中按 label 关键字过滤选项；需要�
 allow-create 配合 filterable：搜索无匹配项时把当前输入作为临时选项出现在下拉首位，回车选中后写入绑定值，适合标签、备注类自由输入。
 
 <DemoBlock>
-<ev-select v-model="createV" filterable allow-create placeholder="选择或输入标签" style="width: 220px;">
-  <ev-option label="重点客户" value="vip" /><ev-option label="到期提醒" value="expire" />
-</ev-select>
+<eb-select v-model="createV" filterable allow-create placeholder="选择或输入标签" style="width: 220px;">
+  <eb-option label="重点客户" value="vip" /><eb-option label="到期提醒" value="expire" />
+</eb-select>
 </DemoBlock>
 
 ## 远程搜索
@@ -90,26 +90,26 @@ allow-create 配合 filterable：搜索无匹配项时把当前输入作为临�
 remote 声明远程模式：键入时调用 remote-method(query) 拉取选项（示例做了 400ms 防抖），loading 期间下拉展示加载文案，常用于大数据量字典搜索。
 
 <DemoBlock>
-<ev-select v-model="remoteV" filterable remote :remote-method="handleRemoteSearch" :loading="remoteLoading" placeholder="输入关键字远程搜索" style="width: 260px;">
-  <ev-option v-for="opt in remoteOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
-</ev-select>
+<eb-select v-model="remoteV" filterable remote :remote-method="handleRemoteSearch" :loading="remoteLoading" placeholder="输入关键字远程搜索" style="width: 260px;">
+  <eb-option v-for="opt in remoteOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+</eb-select>
 </DemoBlock>
 
 ## 选项分组
 
-ev-option-group 以 label 作为分组标题，把选项按业务维度归组，长列表更易扫读。
+eb-option-group 以 label 作为分组标题，把选项按业务维度归组，长列表更易扫读。
 
 <DemoBlock>
-<ev-select v-model="groupV" style="width: 220px;">
-  <ev-option-group label="华东">
-    <ev-option label="上海" value="shanghai" />
-    <ev-option label="杭州" value="hangzhou" />
-  </ev-option-group>
-  <ev-option-group label="华南">
-    <ev-option label="广州" value="guangzhou" />
-    <ev-option label="深圳" value="shenzhen" />
-  </ev-option-group>
-</ev-select>
+<eb-select v-model="groupV" style="width: 220px;">
+  <eb-option-group label="华东">
+    <eb-option label="上海" value="shanghai" />
+    <eb-option label="杭州" value="hangzhou" />
+  </eb-option-group>
+  <eb-option-group label="华南">
+    <eb-option label="广州" value="guangzhou" />
+    <eb-option label="深圳" value="shenzhen" />
+  </eb-option-group>
+</eb-select>
 </DemoBlock>
 
 ## 尺寸与禁用
@@ -117,19 +117,19 @@ ev-option-group 以 label 作为分组标题，把选项按业务维度归组，
 size 支持 large / small；disabled 禁用整个选择器，单个 option 设置 disabled 则该项不可选（呈置灰态）。
 
 <DemoBlock>
-<ev-select v-model="sizeL" size="large" style="width: 140px;">
-  <ev-option label="大" value="l" />
-</ev-select>
-<ev-select v-model="sizeS" size="small" style="width: 140px;">
-  <ev-option label="小" value="s" />
-</ev-select>
-<ev-select model-value="east" disabled style="width: 140px;">
-  <ev-option label="华东" value="east" />
-</ev-select>
-<ev-select v-model="sizeM" style="width: 140px;">
-  <ev-option label="可选" value="ok" />
-  <ev-option label="不可选" value="no" disabled />
-</ev-select>
+<eb-select v-model="sizeL" size="large" style="width: 140px;">
+  <eb-option label="大" value="l" />
+</eb-select>
+<eb-select v-model="sizeS" size="small" style="width: 140px;">
+  <eb-option label="小" value="s" />
+</eb-select>
+<eb-select model-value="east" disabled style="width: 140px;">
+  <eb-option label="华东" value="east" />
+</eb-select>
+<eb-select v-model="sizeM" style="width: 140px;">
+  <eb-option label="可选" value="ok" />
+  <eb-option label="不可选" value="no" disabled />
+</eb-select>
 </DemoBlock>
 
 ## API
@@ -191,12 +191,12 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
 容器环境为 mobile 时（优先级：ConfigProvider `platform` > 全局 `setPlatform()` > 自动探测：视口 ≤ 768px 或触屏设备），选择器不再渲染浮动下拉，而是**底部弹出选择面板**（带遮罩、圆角、安全区适配），点选即回填并关闭；桌面环境保持原形态。下方演示通过 `platform="mobile"` 强制移动形态（无论当前设备）：
 
 <DemoBlock>
-  <ev-config-provider platform="mobile">
-    <ev-select v-model="mSel" placeholder="请选择城市（移动形态）" style="width: 240px">
-      <ev-option label="上海" value="shanghai" />
-      <ev-option label="深圳" value="shenzhen" />
-      <ev-option label="杭州" value="hangzhou" />
-    </ev-select>
-  </ev-config-provider>
+  <eb-config-provider platform="mobile">
+    <eb-select v-model="mSel" placeholder="请选择城市（移动形态）" style="width: 240px">
+      <eb-option label="上海" value="shanghai" />
+      <eb-option label="深圳" value="shenzhen" />
+      <eb-option label="杭州" value="hangzhou" />
+    </eb-select>
+  </eb-config-provider>
 </DemoBlock>
 

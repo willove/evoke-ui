@@ -1,10 +1,10 @@
 /**
- * 主题预设 — 供 EwConfigProvider / 定制器与消费方直接取用
+ * 主题预设 — 供 EvConfigProvider / 定制器与消费方直接取用
  */
 import { generatePrimaryRamp } from './utils/color'
 
 /** 主色预设（name → hex） */
-export const EW_COLOR_PRESETS = {
+export const EV_COLOR_PRESETS = {
   blue:    { label: 'Launch Blue', primary: '#0D70FF' },
   violet:  { label: 'Violet',      primary: '#7C5CFC' },
   emerald: { label: 'Emerald',     primary: '#0FA968' },
@@ -18,11 +18,11 @@ export const EW_COLOR_PRESETS = {
  * 组内每色均可直接作为主色，淡色阶由 generatePrimaryRamp 自动生成；
  * semantic 为该色系配套的 success/warning/danger/info，切色系时整体联动
  */
-export const EW_PALETTE_PRESETS = {
+export const EV_PALETTE_PRESETS = {
   classic: {
     label: '经典',
     description: 'Launch 系高辨识度主色，SaaS 与工具站的稳妥选择',
-    colors: Object.values(EW_COLOR_PRESETS).map((c) => ({ label: c.label, value: c.primary })),
+    colors: Object.values(EV_COLOR_PRESETS).map((c) => ({ label: c.label, value: c.primary })),
     semantic: { success: '#16A34A', warning: '#F97316', danger: '#E5484D', info: '#5D667A' },
   },
   morandi: {
@@ -106,7 +106,7 @@ export const EW_PALETTE_PRESETS = {
 }
 
 /** 圆角档预设（scale 基准乘数作用于 6/10/14/20/28） */
-export const EW_RADIUS_PRESETS = {
+export const EV_RADIUS_PRESETS = {
   sharp:   { label: '硬朗', scale: 0.55 },
   soft:    { label: '柔和', scale: 0.8 },
   default: { label: '标准', scale: 1 },
@@ -114,14 +114,14 @@ export const EW_RADIUS_PRESETS = {
 }
 
 /** 间距档预设（作用于 4px 网格全部间距令牌） */
-export const EW_SPACE_PRESETS = {
+export const EV_SPACE_PRESETS = {
   compact: { label: '紧凑', scale: 0.85 },
   default: { label: '标准', scale: 1 },
   loose:   { label: '宽松', scale: 1.2 },
 }
 
 /** 内容容器宽度档 */
-export const EW_CONTAINER_PRESETS = {
+export const EV_CONTAINER_PRESETS = {
   narrow:   { label: '窄', width: 920 },
   default:  { label: '标准', width: 1152 },
   wide:     { label: '宽', width: 1360 },
@@ -129,7 +129,7 @@ export const EW_CONTAINER_PRESETS = {
 }
 
 /** 风格方案预设（站点类型 → 一整套 主色/圆角/间距/容器宽） */
-export const EW_STYLE_PRESETS = {
+export const EV_STYLE_PRESETS = {
   corporate: {
     label: '企业官网',
     description: '标准蓝 · 均衡节奏，稳重可信的第一印象',
@@ -163,7 +163,7 @@ const BASE_SPACES = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80]
 /** 语义色槽位（与主色同构，各生成一整条淡色阶） */
 const SEMANTIC_SLOTS = ['success', 'warning', 'danger', 'info']
 
-/** 由配置计算需要写入的 CSS 自定义属性（--ew-*） */
+/** 由配置计算需要写入的 CSS 自定义属性（--ev-*） */
 export function resolveThemeVars(config = {}) {
   const vars = {}
   const { primary, semantic, radius, space, container } = config
@@ -171,14 +171,14 @@ export function resolveThemeVars(config = {}) {
   if (primary) {
     const ramp = generatePrimaryRamp(primary)
     if (ramp) {
-      vars['--ew-color-primary'] = ramp.base
-      vars['--ew-color-primary-light-3'] = ramp.light3
-      vars['--ew-color-primary-light-5'] = ramp.light5
-      vars['--ew-color-primary-light-7'] = ramp.light7
-      vars['--ew-color-primary-light-8'] = ramp.light8
-      vars['--ew-color-primary-light-9'] = ramp.light9
-      vars['--ew-color-primary-dark-2'] = ramp.dark2
-      vars['--ew-color-primary-rgb'] = ramp.rgb
+      vars['--ev-color-primary'] = ramp.base
+      vars['--ev-color-primary-light-3'] = ramp.light3
+      vars['--ev-color-primary-light-5'] = ramp.light5
+      vars['--ev-color-primary-light-7'] = ramp.light7
+      vars['--ev-color-primary-light-8'] = ramp.light8
+      vars['--ev-color-primary-light-9'] = ramp.light9
+      vars['--ev-color-primary-dark-2'] = ramp.dark2
+      vars['--ev-color-primary-rgb'] = ramp.rgb
     }
   }
 
@@ -187,39 +187,39 @@ export function resolveThemeVars(config = {}) {
     for (const name of SEMANTIC_SLOTS) {
       const ramp = generatePrimaryRamp(semantic[name] || '')
       if (!ramp) continue
-      vars[`--ew-color-${name}`] = ramp.base
-      vars[`--ew-color-${name}-light-3`] = ramp.light3
-      vars[`--ew-color-${name}-light-5`] = ramp.light5
-      vars[`--ew-color-${name}-light-7`] = ramp.light7
-      vars[`--ew-color-${name}-light-8`] = ramp.light8
-      vars[`--ew-color-${name}-light-9`] = ramp.light9
-      vars[`--ew-color-${name}-dark-2`] = ramp.dark2
-      vars[`--ew-color-${name}-rgb`] = ramp.rgb
+      vars[`--ev-color-${name}`] = ramp.base
+      vars[`--ev-color-${name}-light-3`] = ramp.light3
+      vars[`--ev-color-${name}-light-5`] = ramp.light5
+      vars[`--ev-color-${name}-light-7`] = ramp.light7
+      vars[`--ev-color-${name}-light-8`] = ramp.light8
+      vars[`--ev-color-${name}-light-9`] = ramp.light9
+      vars[`--ev-color-${name}-dark-2`] = ramp.dark2
+      vars[`--ev-color-${name}-rgb`] = ramp.rgb
     }
   }
 
-  const radiusPreset = EW_RADIUS_PRESETS[radius]
+  const radiusPreset = EV_RADIUS_PRESETS[radius]
   if (radiusPreset) {
     const s = radiusPreset.scale
-    vars['--ew-radius-sm'] = `${Math.round(BASE_RADIUS.sm * s)}px`
-    vars['--ew-radius-md'] = `${Math.round(BASE_RADIUS.md * s)}px`
-    vars['--ew-radius-lg'] = `${Math.round(BASE_RADIUS.lg * s)}px`
-    vars['--ew-radius-xl'] = `${Math.round(BASE_RADIUS.xl * s)}px`
-    vars['--ew-radius-2xl'] = `${Math.round(BASE_RADIUS.xxl * s)}px`
+    vars['--ev-radius-sm'] = `${Math.round(BASE_RADIUS.sm * s)}px`
+    vars['--ev-radius-md'] = `${Math.round(BASE_RADIUS.md * s)}px`
+    vars['--ev-radius-lg'] = `${Math.round(BASE_RADIUS.lg * s)}px`
+    vars['--ev-radius-xl'] = `${Math.round(BASE_RADIUS.xl * s)}px`
+    vars['--ev-radius-2xl'] = `${Math.round(BASE_RADIUS.xxl * s)}px`
   }
 
-  const spacePreset = EW_SPACE_PRESETS[space]
+  const spacePreset = EV_SPACE_PRESETS[space]
   if (spacePreset) {
     const s = spacePreset.scale
     const names = ['space-1', 'space-2', 'space-3', 'space-4', 'space-5', 'space-6', 'space-8', 'space-10', 'space-12', 'space-16', 'space-20']
     BASE_SPACES.forEach((px, i) => {
-      vars[`--ew-${names[i]}`] = `${Math.round(px * s)}px`
+      vars[`--ev-${names[i]}`] = `${Math.round(px * s)}px`
     })
   }
 
-  const containerPreset = EW_CONTAINER_PRESETS[container]
+  const containerPreset = EV_CONTAINER_PRESETS[container]
   if (containerPreset) {
-    vars['--ew-container-width'] = containerPreset.width ? `${containerPreset.width}px` : '100%'
+    vars['--ev-container-width'] = containerPreset.width ? `${containerPreset.width}px` : '100%'
   }
 
   return vars

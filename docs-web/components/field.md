@@ -1,42 +1,42 @@
 # Field 字段包装
 
-`EwField` 是表单字段的排版外壳：标签 + 控件插槽 + 错误/提示文案。它不接管值与校验，
-只负责一个字段的视觉结构 —— 与 [EwInput](./input) / [EwTextarea](./textarea) /
-[EwSelect](./select) 任意组合出前台提交表单。
+`EvField` 是表单字段的排版外壳：标签 + 控件插槽 + 错误/提示文案。它不接管值与校验，
+只负责一个字段的视觉结构 —— 与 [EvInput](./input) / [EvTextarea](./textarea) /
+[EvSelect](./select) 任意组合出前台提交表单。
 
 ## 基础用法
 
 <DemoBlock title="标签 / 必填星标 / 错误与提示" description="error 传非空字符串即进入错误态，并隐藏 hint。">
 
 <div style="display:flex; flex-direction:column; gap:20px; max-width:440px;">
-  <EwField label="称呼" required>
-    <EwInput placeholder="怎么称呼你" />
-  </EwField>
-  <EwField label="邮箱" hint="仅用于回复，不会公开">
-    <EwInput type="email" icon="mail" placeholder="you@example.com" />
-  </EwField>
-  <EwField label="邮箱" error="邮箱格式不正确">
-    <EwInput model-value="not-an-email" error />
-  </EwField>
+  <EvField label="称呼" required>
+    <EvInput placeholder="怎么称呼你" />
+  </EvField>
+  <EvField label="邮箱" hint="仅用于回复，不会公开">
+    <EvInput type="email" icon="mail" placeholder="you@example.com" />
+  </EvField>
+  <EvField label="邮箱" error="邮箱格式不正确">
+    <EvInput model-value="not-an-email" error />
+  </EvField>
 </div>
 
 ```vue
-<EwField label="称呼" required>
-  <EwInput v-model="name" />
-</EwField>
-<EwField label="邮箱" hint="仅用于回复，不会公开">
-  <EwInput v-model="email" type="email" />
-</EwField>
-<EwField label="邮箱" :error="emailError">
-  <EwInput v-model="email" :error="!!emailError" />
-</EwField>
+<EvField label="称呼" required>
+  <EvInput v-model="name" />
+</EvField>
+<EvField label="邮箱" hint="仅用于回复，不会公开">
+  <EvInput v-model="email" type="email" />
+</EvField>
+<EvField label="邮箱" :error="emailError">
+  <EvInput v-model="email" :error="!!emailError" />
+</EvField>
 ```
 
 </DemoBlock>
 
-::: tip 与 EwContactForm 的分工
-三个字段以内的简单联系表单直接用 [EwContactForm](./contact-form)（已内置校验与成功态）；
-字段更多或需要自定义校验流程时，用 EwField + 各输入组件自由组装。
+::: tip 与 EvContactForm 的分工
+三个字段以内的简单联系表单直接用 [EvContactForm](./contact-form)（已内置校验与成功态）；
+字段更多或需要自定义校验流程时，用 EvField + 各输入组件自由组装。
 :::
 
 ## API

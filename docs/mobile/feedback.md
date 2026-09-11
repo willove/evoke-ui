@@ -12,16 +12,16 @@
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">报销单 CL-0908-01</span>
-        <ev-status-tag value="pending" :statuses="sheetStatuses" />
+        <eb-status-tag value="pending" :statuses="sheetStatuses" />
       </div>
       <div class="mb-card__rows">
         <div><div class="mb-card__label">申请人</div><div class="mb-card__value">李工</div></div>
         <div><div class="mb-card__label">金额</div><div class="mb-card__value">¥1,860</div></div>
       </div>
     </div>
-    <ev-button style="align-self: stretch;" @click="sheetOpen = true">更多操作</ev-button>
+    <eb-button style="align-self: stretch;" @click="sheetOpen = true">更多操作</eb-button>
   </div>
-  <ev-action-sheet
+  <eb-action-sheet
     v-model="sheetOpen"
     title="单据操作"
     :actions="sheetActions"
@@ -45,31 +45,31 @@
     <div class="mb-card mb-card--pad">
       <div class="mb-card__head">
         <span class="mb-card__title">上海云启科技有限公司</span>
-        <ev-tag type="primary">A 级</ev-tag>
+        <eb-tag type="primary">A 级</eb-tag>
       </div>
       <div class="mb-card__rows">
         <div><div class="mb-card__label">行业</div><div class="mb-card__value">软件与信息服务</div></div>
         <div><div class="mb-card__label">负责人</div><div class="mb-card__value">李工</div></div>
       </div>
     </div>
-    <ev-button type="primary" style="align-self: stretch;" @click="editOpen = true">编辑客户资料</ev-button>
+    <eb-button type="primary" style="align-self: stretch;" @click="editOpen = true">编辑客户资料</eb-button>
   </div>
-  <ev-dialog v-model="editOpen" fullscreen :append-to-body="false" :lock-scroll="false" title="编辑客户资料">
+  <eb-dialog v-model="editOpen" fullscreen :append-to-body="false" :lock-scroll="false" title="编辑客户资料">
     <div style="padding: 16px;">
-      <ev-form label-position="top">
-        <ev-form-item label="客户名称"><ev-input model-value="上海云启科技有限公司" /></ev-form-item>
-        <ev-form-item label="行业"><ev-input model-value="软件与信息服务" /></ev-form-item>
-        <ev-form-item label="规模"><ev-segmented model-value="200-500 人" block :options="['<50 人', '50-200 人', '200-500 人', '500+ 人']" /></ev-form-item>
-        <ev-form-item label="备注"><ev-input type="textarea" :rows="3" placeholder="选填" /></ev-form-item>
-      </ev-form>
+      <eb-form label-position="top">
+        <eb-form-item label="客户名称"><eb-input model-value="上海云启科技有限公司" /></eb-form-item>
+        <eb-form-item label="行业"><eb-input model-value="软件与信息服务" /></eb-form-item>
+        <eb-form-item label="规模"><eb-segmented model-value="200-500 人" block :options="['<50 人', '50-200 人', '200-500 人', '500+ 人']" /></eb-form-item>
+        <eb-form-item label="备注"><eb-input type="textarea" :rows="3" placeholder="选填" /></eb-form-item>
+      </eb-form>
     </div>
     <template #footer>
       <div style="display: flex; gap: 10px; padding: 0 16px;">
-        <ev-button style="flex: 1;" @click="editOpen = false">取消</ev-button>
-        <ev-button style="flex: 1;" type="primary" @click="editOpen = false; $message.success('已保存（演示）')">保存</ev-button>
+        <eb-button style="flex: 1;" @click="editOpen = false">取消</eb-button>
+        <eb-button style="flex: 1;" type="primary" @click="editOpen = false; $message.success('已保存（演示）')">保存</eb-button>
       </div>
     </template>
-  </ev-dialog>
+  </eb-dialog>
 </MobileStage>
 </DemoBlock>
 
@@ -83,17 +83,17 @@ Popconfirm 依赖 hover / popper 定位，触屏上改用**小型居中 Dialog**
 <MobileStage title="订单详情">
   <div class="mb-page">
     <div class="mb-divider-text" style="padding: 0;">删除后单据进入回收站，30 天内可恢复</div>
-    <ev-button type="danger" style="align-self: stretch;" @click="confirmOpen = true">删除报销单</ev-button>
+    <eb-button type="danger" style="align-self: stretch;" @click="confirmOpen = true">删除报销单</eb-button>
   </div>
-  <ev-dialog v-model="confirmOpen" title="删除报销单？" width="300px" align-center :append-to-body="false" :lock-scroll="false">
+  <eb-dialog v-model="confirmOpen" title="删除报销单？" width="300px" align-center :append-to-body="false" :lock-scroll="false">
     <p style="font-size: 13px; color: var(--bd-text-secondary);">CL-0908-01 将移入回收站，30 天内可恢复。</p>
     <template #footer>
       <div style="display: flex; gap: 10px;">
-        <ev-button style="flex: 1;" @click="confirmOpen = false">取消</ev-button>
-        <ev-button style="flex: 1;" type="danger" @click="confirmOpen = false; $message.success('已移入回收站（演示）')">删除</ev-button>
+        <eb-button style="flex: 1;" @click="confirmOpen = false">取消</eb-button>
+        <eb-button style="flex: 1;" type="danger" @click="confirmOpen = false; $message.success('已移入回收站（演示）')">删除</eb-button>
       </div>
     </template>
-  </ev-dialog>
+  </eb-dialog>
 </MobileStage>
 </DemoBlock>
 
@@ -104,16 +104,16 @@ Message 在移动端承担 toast 职责：成功 / 失败等操作结果用轻�
 <DemoBlock>
 <MobileStage title="轻提示">
   <div class="mb-page">
-    <ev-button style="align-self: stretch;" @click="$message.success('保存成功')">成功提示</ev-button>
-    <ev-button style="align-self: stretch;" type="warning" @click="$message.warning('网络不稳定，已自动重试')">警示提示</ev-button>
-    <ev-button style="align-self: stretch;" type="danger" @click="$message.error('提交失败，请检查网络')">失败提示</ev-button>
+    <eb-button style="align-self: stretch;" @click="$message.success('保存成功')">成功提示</eb-button>
+    <eb-button style="align-self: stretch;" type="warning" @click="$message.warning('网络不稳定，已自动重试')">警示提示</eb-button>
+    <eb-button style="align-self: stretch;" type="danger" @click="$message.error('提交失败，请检查网络')">失败提示</eb-button>
   </div>
 </MobileStage>
 </DemoBlock>
 
 <script setup>
 import { ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 
 const sheetOpen = ref(false)
 const editOpen = ref(false)
@@ -123,10 +123,10 @@ const sheetActions = [
   { name: '转发审批' },
   { name: '编辑单据', subname: '进入全屏编辑' },
   { name: '导出 PDF' },
-  { name: '撤回单据', color: 'var(--ev-color-danger)' },
+  { name: '撤回单据', color: 'var(--eb-color-danger)' },
 ]
 function onSelect(action) {
   sheetOpen.value = false
-  EvMessage.success(`已${action.name}（演示）`)
+  EbMessage.success(`已${action.name}（演示）`)
 }
 </script>

@@ -1,25 +1,25 @@
 <template>
-  <ev-popover ref="popoverRef" trigger="click" placement="bottom-end" :width="240">
-    <ev-button
-      class="ev-column-settings__trigger"
+  <eb-popover ref="popoverRef" trigger="click" placement="bottom-end" :width="240">
+    <eb-button
+      class="eb-column-settings__trigger"
       size="small"
       icon="setting"
       aria-label="列设置"
     >
-      <span v-if="buttonText" class="ev-column-settings__trigger-text">{{ buttonText }}</span>
-    </ev-button>
+      <span v-if="buttonText" class="eb-column-settings__trigger-text">{{ buttonText }}</span>
+    </eb-button>
 
     <template #content>
-      <div class="ev-column-settings__panel">
-      <div class="ev-column-settings__head">
-        <span class="ev-column-settings__head-title">列设置</span>
-        <button type="button" class="ev-column-settings__reset" @click="handleReset">重置</button>
+      <div class="eb-column-settings__panel">
+      <div class="eb-column-settings__head">
+        <span class="eb-column-settings__head-title">列设置</span>
+        <button type="button" class="eb-column-settings__reset" @click="handleReset">重置</button>
       </div>
-      <ul class="ev-column-settings__list" @dragover.prevent>
+      <ul class="eb-column-settings__list" @dragover.prevent>
         <li
           v-for="(col, i) in ordered"
           :key="col.prop"
-          class="ev-column-settings__item"
+          class="eb-column-settings__item"
           :class="{ 'is-dragging': dragIndex === i, 'is-drag-over': dragOverIndex === i && dragIndex !== i }"
           draggable="true"
           @dragstart="dragIndex = i"
@@ -27,30 +27,30 @@
           @dragend="handleDrop"
           @drop.prevent="handleDrop"
         >
-          <span class="ev-column-settings__drag-handle" aria-hidden="true">⠿</span>
-          <ev-checkbox
+          <span class="eb-column-settings__drag-handle" aria-hidden="true">⠿</span>
+          <eb-checkbox
             :model-value="isColumnVisible(col.prop)"
             :disabled="visibleCount <= 1 && isColumnVisible(col.prop)"
             @change="toggleColumn(col.prop)"
           />
-          <span class="ev-column-settings__item-label">{{ col.label }}</span>
+          <span class="eb-column-settings__item-label">{{ col.label }}</span>
         </li>
       </ul>
       </div>
     </template>
-  </ev-popover>
+  </eb-popover>
 </template>
 
 <script setup>
 /**
- * EvColumnSettings — 表格列设置（业务封装）
+ * EbColumnSettings — 表格列设置（业务封装）
  * 列显隐 + 拖拽排序（HTML5 DnD）；storageKey 提供时经 storageGet/storageSet 持久化
  * （value = 按显示顺序排列的可见列 prop 数组）；至少保留一列可见
  */
 import { ref, computed, watch, onMounted } from 'vue'
-import EvButton from '../button/index.vue'
-import EvCheckbox from '../checkbox/index.vue'
-import EvPopover from '../popover/index.vue'
+import EbButton from '../button/index.vue'
+import EbCheckbox from '../checkbox/index.vue'
+import EbPopover from '../popover/index.vue'
 import { storageGet, storageSet } from '../../utils/dom'
 
 const props = defineProps({

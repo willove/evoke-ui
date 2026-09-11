@@ -1,5 +1,5 @@
 <template>
-  <ev-app-layout
+  <eb-app-layout
     title="云眠研发 · 报销与审批"
     logo-text="财"
     :collapsed="collapsed"
@@ -10,28 +10,28 @@
     :active-title="activeTitle"
   >
     <template #menu>
-      <ev-menu-item index="mine" @click="switchView('mine')">
-        <ev-icon name="file-text" />
+      <eb-menu-item index="mine" @click="switchView('mine')">
+        <eb-icon name="file-text" />
         <span>我的申请</span>
-      </ev-menu-item>
-      <ev-menu-item index="approve" @click="switchView('approve')">
-        <ev-icon name="audit" />
+      </eb-menu-item>
+      <eb-menu-item index="approve" @click="switchView('approve')">
+        <eb-icon name="audit" />
         <span>审批中心（{{ approveQueue.length }}）</span>
-      </ev-menu-item>
+      </eb-menu-item>
     </template>
 
     <template #topbar-right>
       <div class="ap-topbar">
-        <ev-badge :value="approveQueue.length" :max="99">
-          <ev-icon name="bell" :size="18" />
-        </ev-badge>
-        <ev-avatar :size="28">林</ev-avatar>
+        <eb-badge :value="approveQueue.length" :max="99">
+          <eb-icon name="bell" :size="18" />
+        </eb-badge>
+        <eb-avatar :size="28">林</eb-avatar>
       </div>
     </template>
 
     <MyExpenses v-if="activeMenu === 'mine'" @create="onCreated" />
     <ApproveCenter v-else-if="activeMenu === 'approve'" />
-  </ev-app-layout>
+  </eb-app-layout>
 </template>
 
 <script setup>

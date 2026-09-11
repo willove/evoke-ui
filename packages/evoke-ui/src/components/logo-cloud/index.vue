@@ -1,12 +1,12 @@
 <template>
-  <div class="ew-logo-cloud">
-    <p v-if="title || $slots.title" class="ew-logo-cloud__title">
+  <div class="ev-logo-cloud">
+    <p v-if="title || $slots.title" class="ev-logo-cloud__title">
       <slot name="title">{{ title }}</slot>
     </p>
-    <div class="ew-logo-cloud__grid" :style="gridStyle">
-      <div v-for="(item, i) in normalizedItems" :key="i" class="ew-logo-cloud__item">
-        <EwIcon v-if="item.icon" :name="item.icon" :size="iconSize" />
-        <span class="ew-logo-cloud__label">{{ item.label }}</span>
+    <div class="ev-logo-cloud__grid" :style="gridStyle">
+      <div v-for="(item, i) in normalizedItems" :key="i" class="ev-logo-cloud__item">
+        <EvIcon v-if="item.icon" :name="item.icon" :size="iconSize" />
+        <span class="ev-logo-cloud__label">{{ item.label }}</span>
       </div>
     </div>
   </div>
@@ -14,11 +14,11 @@
 
 <script setup>
 /**
- * EwLogoCloud — 用户/合作品牌墙
+ * EvLogoCloud — 用户/合作品牌墙
  * 弱化的字标网格，社会证明位；items 为 [string] 或 [{ label, icon? }]
  */
 import { computed } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   items: { type: Array, default: () => [] },

@@ -18,7 +18,7 @@ import {
   saveThemeConfig,      // 持久化 { primary, semantic }
   loadThemeConfig,
   clearThemeConfig,
-  EV_THEME_PRESETS,     // 预设色板
+  EB_THEME_PRESETS,     // 预设色板
 } from '@wil-works/evoke-business-ui'
 
 setPrimaryColor('#0fa968')

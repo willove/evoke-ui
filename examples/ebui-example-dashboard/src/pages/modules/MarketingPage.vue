@@ -1,64 +1,64 @@
 <template>
   <div class="mk-page">
-    <ev-page-header title="营销中心" subtitle="促销活动与券效概览">
+    <eb-page-header title="营销中心" subtitle="促销活动与券效概览">
       <template #actions>
-        <ev-button type="primary" size="small" @click="EvMessage.info('示例：进入活动创建向导')">
-          <ev-icon name="plus" :size="14" />
+        <eb-button type="primary" size="small" @click="EbMessage.info('示例：进入活动创建向导')">
+          <eb-icon name="plus" :size="14" />
           创建活动
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-row :gutter="16" class="mk-block">
-      <ev-col :span="8">
-        <ev-stat-card label="进行中活动" :value="runningCount" unit="场" icon="marketing" type="primary" />
-      </ev-col>
-      <ev-col :span="8">
-        <ev-stat-card label="本月券核销" :value="1286" unit="张" icon="ticket" type="success" :trend="5.8" />
-      </ev-col>
-      <ev-col :span="8">
-        <ev-stat-card label="活动带动 GMV" :value="426800" unit="元" icon="turnover" type="warning" :trend="16.2" />
-      </ev-col>
-    </ev-row>
+    <eb-row :gutter="16" class="mk-block">
+      <eb-col :span="8">
+        <eb-stat-card label="进行中活动" :value="runningCount" unit="场" icon="marketing" type="primary" />
+      </eb-col>
+      <eb-col :span="8">
+        <eb-stat-card label="本月券核销" :value="1286" unit="张" icon="ticket" type="success" :trend="5.8" />
+      </eb-col>
+      <eb-col :span="8">
+        <eb-stat-card label="活动带动 GMV" :value="426800" unit="元" icon="turnover" type="warning" :trend="16.2" />
+      </eb-col>
+    </eb-row>
 
-    <ev-section-card title="促销活动" class="mk-block">
-      <ev-data-table
+    <eb-section-card title="促销活动" class="mk-block">
+      <eb-data-table
         :columns="columns"
         :data="campaigns"
         :operations-width="110"
         :show-pagination="false"
       >
         <template #type="{ row }">
-          <ev-tag :type="row.type === 'seckill' ? 'danger' : row.type === 'full' ? 'primary' : 'warning'" effect="plain">
+          <eb-tag :type="row.type === 'seckill' ? 'danger' : row.type === 'full' ? 'primary' : 'warning'" effect="plain">
             {{ CAMPAIGN_TYPE[row.type] }}
-          </ev-tag>
+          </eb-tag>
         </template>
         <template #time="{ row }">{{ row.start }} ~ {{ row.end }}</template>
         <template #progress="{ row }">
-          <ev-progress :percentage="row.progress" :stroke-width="8" />
+          <eb-progress :percentage="row.progress" :stroke-width="8" />
         </template>
         <template #status="{ row }">
-          <ev-status-tag :value="row.status" :statuses="CAMPAIGN_STATUS" />
+          <eb-status-tag :value="row.status" :statuses="CAMPAIGN_STATUS" />
         </template>
         <template #operations="{ row }">
-          <ev-popconfirm
+          <eb-popconfirm
             v-if="row.status === 'running'"
             title="提前结束后不可恢复，确认？"
             icon-type="warning"
             @confirm="finish(row)"
           >
-            <ev-button text type="danger" size="small">提前结束</ev-button>
-          </ev-popconfirm>
-          <ev-button v-else text size="small" disabled>—</ev-button>
+            <eb-button text type="danger" size="small">提前结束</eb-button>
+          </eb-popconfirm>
+          <eb-button v-else text size="small" disabled>—</eb-button>
         </template>
-      </ev-data-table>
-    </ev-section-card>
+      </eb-data-table>
+    </eb-section-card>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { campaigns, CAMPAIGN_TYPE, CAMPAIGN_STATUS } from '../mock.js'
 
 const columns = [
@@ -74,7 +74,7 @@ const runningCount = computed(() => campaigns.filter((c) => c.status === 'runnin
 function finish(row) {
   row.status = 'ended'
   row.progress = 100
-  EvMessage.warning(`活动「${row.name}」已提前结束`)
+  EbMessage.warning(`活动「${row.name}」已提前结束`)
 }
 </script>
 
@@ -86,11 +86,11 @@ function finish(row) {
   margin-top: 16px;
 }
 /* KPI 行三张卡等高拉伸（有无趋势行高度不一致时以最高者为准）；列内多卡保持纵向堆叠 */
-.mk-block :deep(.ev-col) {
+.mk-block :deep(.eb-col) {
   display: flex;
   flex-direction: column;
 }
-.mk-block :deep(.ev-col > *) {
+.mk-block :deep(.eb-col > *) {
   flex: 1;
   width: 100%;
 }

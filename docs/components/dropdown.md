@@ -14,20 +14,20 @@ const dropRef = ref(null)
 
 ## 基础用法
 
-触发区内容放 `#trigger` 插槽（保留下拉箭头），菜单项放在 `#dropdown` 的 ev-dropdown-menu 内；item 的 `label` / `icon` 是默认插槽的兜底，写入插槽内容时以插槽为准。
+触发区内容放 `#trigger` 插槽（保留下拉箭头），菜单项放在 `#dropdown` 的 eb-dropdown-menu 内；item 的 `label` / `icon` 是默认插槽的兜底，写入插槽内容时以插槽为准。
 
 <DemoBlock>
-  <ev-dropdown>
+  <eb-dropdown>
     <template #trigger>更多操作</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item icon="plus" label="新建" command="new" />
-        <ev-dropdown-item icon="edit" label="编辑" command="edit" />
-        <ev-dropdown-item icon="delete" label="删除" command="del" disabled />
-        <ev-dropdown-item icon="download" label="导出" command="export" divided />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item icon="plus" label="新建" command="new" />
+        <eb-dropdown-item icon="edit" label="编辑" command="edit" />
+        <eb-dropdown-item icon="delete" label="删除" command="del" disabled />
+        <eb-dropdown-item icon="download" label="导出" command="export" divided />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
+  </eb-dropdown>
 </DemoBlock>
 
 ## command 事件
@@ -35,16 +35,16 @@ const dropRef = ref(null)
 item 的 `command` 随事件抛出（支持字符串、数字、对象等任意类型），抛出后浮层自动收起；未设置 command 时值为 undefined。
 
 <DemoBlock>
-  <ev-dropdown @command="onCommand">
+  <eb-dropdown @command="onCommand">
     <template #trigger>分享到</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item icon="link" label="复制链接" command="copy-link" />
-        <ev-dropdown-item icon="message" label="站内信" command="mail" />
-        <ev-dropdown-item :command="{ id: 3, name: '钉钉' }">钉钉（对象指令）</ev-dropdown-item>
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item icon="link" label="复制链接" command="copy-link" />
+        <eb-dropdown-item icon="message" label="站内信" command="mail" />
+        <eb-dropdown-item :command="{ id: 3, name: '钉钉' }">钉钉（对象指令）</eb-dropdown-item>
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
+  </eb-dropdown>
   <p style="margin-top: 8px; font-size: 13px; color: #909399;">最近 command：{{ lastCommand || '点击菜单项试试' }}</p>
 </DemoBlock>
 
@@ -53,19 +53,19 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 `trigger` 支持 hover（默认，含开合延时）/ click / contextmenu（触发区右键弹出）；`split-button` 拆为主按钮 + 箭头按钮，主按钮点击触发 click 事件，此时菜单项直接写入默认插槽。
 
 <DemoBlock>
-  <ev-dropdown trigger="click">
+  <eb-dropdown trigger="click">
     <template #trigger>点击触发</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item label="选项 A" command="a" />
-        <ev-dropdown-item label="选项 B" command="b" />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item label="选项 A" command="a" />
+        <eb-dropdown-item label="选项 B" command="b" />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
-  <ev-dropdown split-button type="primary" text="发布" placement="top" style="margin-left: 48px;">
-    <ev-dropdown-item label="存草稿" command="draft" />
-    <ev-dropdown-item label="定时发布" command="schedule" divided />
-  </ev-dropdown>
+  </eb-dropdown>
+  <eb-dropdown split-button type="primary" text="发布" placement="top" style="margin-left: 48px;">
+    <eb-dropdown-item label="存草稿" command="draft" />
+    <eb-dropdown-item label="定时发布" command="schedule" divided />
+  </eb-dropdown>
 </DemoBlock>
 
 ## 右键触发与弹层位置
@@ -73,15 +73,15 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 `trigger="contextmenu"` 在触发区右键弹出（自动阻止浏览器默认菜单）；`placement` 调整弹层方位，可视空间不足时自动翻转。
 
 <DemoBlock>
-  <ev-dropdown trigger="contextmenu" placement="top-start">
+  <eb-dropdown trigger="contextmenu" placement="top-start">
     <template #trigger>右键此区域打开菜单</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item icon="copy" label="复制" command="copy" />
-        <ev-dropdown-item icon="delete" label="删除" command="delete" divided />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item icon="copy" label="复制" command="copy" />
+        <eb-dropdown-item icon="delete" label="删除" command="delete" divided />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
+  </eb-dropdown>
 </DemoBlock>
 
 ## 禁用与开合延时
@@ -89,23 +89,23 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 `disabled` 整体禁用（触发与弹出均失效，与 item 级 disabled 区分）；hover 触发下 `show-timeout` / `hide-timeout` 分别控制展开与收起延时（毫秒）。
 
 <DemoBlock>
-  <ev-dropdown disabled>
+  <eb-dropdown disabled>
     <template #trigger>禁用状态</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item label="选项 A" command="a" />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item label="选项 A" command="a" />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
-  <ev-dropdown :show-timeout="0" :hide-timeout="800" style="margin-left: 48px;">
+  </eb-dropdown>
+  <eb-dropdown :show-timeout="0" :hide-timeout="800" style="margin-left: 48px;">
     <template #trigger>立即展开、缓慢收起</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item label="选项 A" command="a" />
-        <ev-dropdown-item label="选项 B" command="b" />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item label="选项 A" command="a" />
+        <eb-dropdown-item label="选项 B" command="b" />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
+  </eb-dropdown>
 </DemoBlock>
 
 ## 命令式开关
@@ -113,17 +113,17 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 通过模板 ref 调用 open / close 方法程序化控制浮层，`visible-change` 事件可监听显隐变化；ESC 或点击外部区域也会关闭。
 
 <DemoBlock>
-  <ev-button @click="dropRef?.open()">打开</ev-button>
-  <ev-button style="margin-left: 8px;" @click="dropRef?.close()">关闭</ev-button>
-  <ev-dropdown ref="dropRef" trigger="click" style="margin-left: 16px;">
+  <eb-button @click="dropRef?.open()">打开</eb-button>
+  <eb-button style="margin-left: 8px;" @click="dropRef?.close()">关闭</eb-button>
+  <eb-dropdown ref="dropRef" trigger="click" style="margin-left: 16px;">
     <template #trigger>目标菜单</template>
     <template #dropdown>
-      <ev-dropdown-menu>
-        <ev-dropdown-item label="选项 A" command="a" />
-        <ev-dropdown-item label="选项 B" command="b" />
-      </ev-dropdown-menu>
+      <eb-dropdown-menu>
+        <eb-dropdown-item label="选项 A" command="a" />
+        <eb-dropdown-item label="选项 B" command="b" />
+      </eb-dropdown-menu>
     </template>
-  </ev-dropdown>
+  </eb-dropdown>
 </DemoBlock>
 
 ## API
@@ -155,7 +155,7 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 <ApiTable title="Dropdown Slots" :rows="[
   { name: 'trigger', desc: '触发区内容（位于默认触发样式内，带箭头）', type: '—', default: '—' },
   { name: 'default', desc: '自定义触发区（整体替换默认触发样式；同时渲染进浮层默认菜单）', type: '—', default: '—' },
-  { name: 'dropdown', desc: '浮层内容（默认以 ev-dropdown-menu 包裹 default 插槽）', type: '—', default: '—' },
+  { name: 'dropdown', desc: '浮层内容（默认以 eb-dropdown-menu 包裹 default 插槽）', type: '—', default: '—' },
   { name: 'default（DropdownItem）', desc: '菜单项内容，缺省渲染 icon + label', type: '—', default: '—' },
 ]" />
 
@@ -166,5 +166,5 @@ item 的 `command` 随事件抛出（支持字符串、数字、对象等任意�
 ]" />
 
 <ApiTable title="DropdownMenu Props" :rows="[
-  { name: '—', desc: '菜单容器，无 props，仅提供 default 插槽收纳 ev-dropdown-item', type: '—', default: '—' },
+  { name: '—', desc: '菜单容器，无 props，仅提供 default 插槽收纳 eb-dropdown-item', type: '—', default: '—' },
 ]" />

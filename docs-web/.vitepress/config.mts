@@ -16,7 +16,7 @@ export default defineConfig({
   title: 'Evoke UI',
   description: '面向官网与纯前端站点的 Vue3 组件库 —— Clean Navy 设计语言，明暗双主题与运行时主题定制',
 
-  // 暗色切换由库的 EwThemeToggle / useTheme 负责（与首页一致），关闭默认开关
+  // 暗色切换由库的 EvThemeToggle / useTheme 负责（与首页一致），关闭默认开关
   appearance: false,
 
   vite: {
@@ -37,7 +37,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    // 首页 EwNavbar 同款五项 + 首页入口，跨页切换导航内容不变
+    // 首页 EvNavbar 同款五项 + 首页入口，跨页切换导航内容不变
     nav: [
       { text: '首页', link: '/' },
       { text: '快速开始', link: '/guide/getting-started' },
@@ -49,7 +49,7 @@ export default defineConfig({
       { text: '动效', link: '/guide/motion' },
       { text: 'Business UI ↗', link: 'https://evoke-business-ui.wil-works.com' },
     ],
-    // 暗色切换与 GitHub 入口由 Layout 插槽注入（与首页同一套 Ew 组件）
+    // 暗色切换与 GitHub 入口由 Layout 插槽注入（与首页同一套 Ev 组件）
     outline: { label: '本页目录' },
     docFooter: { prev: '上一页', next: '下一页' },
     sidebarMenuLabel: '菜单',

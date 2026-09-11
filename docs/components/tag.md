@@ -27,23 +27,23 @@ const picked = ref('primary')
 `type` 决定语义色（默认 info），`effect` 决定填充方式：plain 透明底描边（默认）、light 浅色底、dark 实色底白字。
 
 <DemoBlock>
-  <ev-space direction="vertical" size="small">
-    <ev-space size="small">
-      <ev-tag>默认 info</ev-tag>
-      <ev-tag type="primary">主要</ev-tag>
-      <ev-tag type="success">成功</ev-tag>
-      <ev-tag type="warning">警告</ev-tag>
-      <ev-tag type="danger">危险</ev-tag>
-    </ev-space>
-    <ev-space size="small">
-      <ev-tag type="primary" effect="light">primary light</ev-tag>
-      <ev-tag type="primary" effect="dark">primary dark</ev-tag>
-      <ev-tag type="success" effect="light">success light</ev-tag>
-      <ev-tag type="success" effect="dark">success dark</ev-tag>
-      <ev-tag type="warning" effect="light">warning light</ev-tag>
-      <ev-tag type="danger" effect="dark">danger dark</ev-tag>
-    </ev-space>
-  </ev-space>
+  <eb-space direction="vertical" size="small">
+    <eb-space size="small">
+      <eb-tag>默认 info</eb-tag>
+      <eb-tag type="primary">主要</eb-tag>
+      <eb-tag type="success">成功</eb-tag>
+      <eb-tag type="warning">警告</eb-tag>
+      <eb-tag type="danger">危险</eb-tag>
+    </eb-space>
+    <eb-space size="small">
+      <eb-tag type="primary" effect="light">primary light</eb-tag>
+      <eb-tag type="primary" effect="dark">primary dark</eb-tag>
+      <eb-tag type="success" effect="light">success light</eb-tag>
+      <eb-tag type="success" effect="dark">success dark</eb-tag>
+      <eb-tag type="warning" effect="light">warning light</eb-tag>
+      <eb-tag type="danger" effect="dark">danger dark</eb-tag>
+    </eb-space>
+  </eb-space>
 </DemoBlock>
 
 ## 尺寸与形态
@@ -51,18 +51,18 @@ const picked = ref('primary')
 `size` 提供 small（默认，20px 高）/ default（24px）/ large（32px）三档；`round` 全圆角，`hit` 让边框加深为文字色，`closable` 显示关闭图标并 emit `close` 事件（组件本身不移除节点，删除逻辑由业务侧处理）。
 
 <DemoBlock>
-  <ev-space direction="vertical" size="small">
-    <ev-space size="small">
-      <ev-tag size="small">small</ev-tag>
-      <ev-tag size="default">default</ev-tag>
-      <ev-tag size="large">large</ev-tag>
-    </ev-space>
-    <ev-space size="small">
-      <ev-tag type="primary" round>圆角标签</ev-tag>
-      <ev-tag type="success" closable>可关闭</ev-tag>
-      <ev-tag type="warning" hit>hit 边框</ev-tag>
-    </ev-space>
-  </ev-space>
+  <eb-space direction="vertical" size="small">
+    <eb-space size="small">
+      <eb-tag size="small">small</eb-tag>
+      <eb-tag size="default">default</eb-tag>
+      <eb-tag size="large">large</eb-tag>
+    </eb-space>
+    <eb-space size="small">
+      <eb-tag type="primary" round>圆角标签</eb-tag>
+      <eb-tag type="success" closable>可关闭</eb-tag>
+      <eb-tag type="warning" hit>hit 边框</eb-tag>
+    </eb-space>
+  </eb-space>
 </DemoBlock>
 
 ## 自定义颜色
@@ -70,12 +70,12 @@ const picked = ref('primary')
 `color` 传入任意颜色即可覆盖主题配色：plain 效果下仅描边与文字着色（背景透明），light / dark 效果下填充该色（dark 下文字为白色）。
 
 <DemoBlock>
-  <ev-space size="small">
-    <ev-tag color="#6f42c1">自定义色</ev-tag>
-    <ev-tag color="#6f42c1" effect="dark">自定义深色</ev-tag>
-    <ev-tag color="#0ea5e9" effect="light">自定义浅色</ev-tag>
-    <ev-tag color="#0ea5e9" round effect="dark">组合形态</ev-tag>
-  </ev-space>
+  <eb-space size="small">
+    <eb-tag color="#6f42c1">自定义色</eb-tag>
+    <eb-tag color="#6f42c1" effect="dark">自定义深色</eb-tag>
+    <eb-tag color="#0ea5e9" effect="light">自定义浅色</eb-tag>
+    <eb-tag color="#0ea5e9" round effect="dark">组合形态</eb-tag>
+  </eb-space>
 </DemoBlock>
 
 ## 动态编辑标签
@@ -83,12 +83,12 @@ const picked = ref('primary')
 典型的标签管理场景：`closable` 加 `@close` 从数组移除，输入框加按钮向数组追加，`v-for` 渲染即可，组件不维护内部状态。
 
 <DemoBlock>
-  <ev-space wrap size="small">
-    <ev-tag v-for="(item, i) in tagList" :key="item" type="primary" closable @close="removeTag(i)">{{ item }}</ev-tag>
-  </ev-space>
+  <eb-space wrap size="small">
+    <eb-tag v-for="(item, i) in tagList" :key="item" type="primary" closable @close="removeTag(i)">{{ item }}</eb-tag>
+  </eb-space>
   <div style="margin-top:12px;display:flex;gap:8px;">
-    <ev-input v-model="tagInput" size="small" style="width:180px;" placeholder="输入标签，回车确认" @keydown.enter="addTag" />
-    <ev-button size="small" type="primary" @click="addTag">添加</ev-button>
+    <eb-input v-model="tagInput" size="small" style="width:180px;" placeholder="输入标签，回车确认" @keydown.enter="addTag" />
+    <eb-button size="small" type="primary" @click="addTag">添加</eb-button>
   </div>
 </DemoBlock>
 
@@ -97,16 +97,16 @@ const picked = ref('primary')
 标签整体可点击（emit `click`），结合动态 `type` / `effect` 可实现单选筛选器之类的轻交互。
 
 <DemoBlock>
-  <ev-space size="small">
-    <ev-tag
+  <eb-space size="small">
+    <eb-tag
       v-for="t in ['primary', 'success', 'warning', 'danger']"
       :key="t"
       :type="t"
       :effect="picked === t ? 'dark' : 'plain'"
       style="cursor:pointer;"
       @click="picked = t"
-    >{{ t }}</ev-tag>
-  </ev-space>
+    >{{ t }}</eb-tag>
+  </eb-space>
   <p style="margin-top:8px;font-size:13px;color:#909399;">当前选中：{{ picked }}</p>
 </DemoBlock>
 

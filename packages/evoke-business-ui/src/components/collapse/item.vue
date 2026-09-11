@@ -1,8 +1,8 @@
 <template>
-  <div class="ev-collapse-item ev-collapse-item" :class="{ 'is-active': isActive, 'is-disabled': disabled }">
+  <div class="eb-collapse-item eb-collapse-item" :class="{ 'is-active': isActive, 'is-disabled': disabled }">
     <button
       type="button"
-      class="ev-collapse-item__header"
+      class="eb-collapse-item__header"
       :class="{ 'is-active': isActive, 'is-disabled': disabled }"
       :aria-expanded="isActive"
       :aria-controls="contentId"
@@ -10,13 +10,13 @@
       @click="handleClick"
     >
       <slot name="title">{{ title }}</slot>
-      <span class="ev-collapse-item__arrow" aria-hidden="true">
-        <ev-icon name="arrow-right" :size="14" />
+      <span class="eb-collapse-item__arrow" aria-hidden="true">
+        <eb-icon name="arrow-right" :size="14" />
       </span>
     </button>
-    <transition name="ev-collapse-item" @enter="onEnter" @after-enter="onAfterEnter" @leave="onLeave">
-      <div v-show="isActive" :id="contentId" class="ev-collapse-item__wrap" role="region">
-        <div class="ev-collapse-item__content">
+    <transition name="eb-collapse-item" @enter="onEnter" @after-enter="onAfterEnter" @leave="onLeave">
+      <div v-show="isActive" :id="contentId" class="eb-collapse-item__wrap" role="region">
+        <div class="eb-collapse-item__content">
           <slot />
         </div>
       </div>
@@ -26,11 +26,11 @@
 
 <script setup>
 /**
- * EvCollapseItem — 折叠面板项
+ * EbCollapseItem — 折叠面板项
  * name 缺省时用索引（挂载顺序）；展开收起为高度过渡
  */
 import { inject, computed, getCurrentInstance } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   title: { type: String, default: '' },
@@ -45,7 +45,7 @@ const instance = getCurrentInstance()
 const itemKey = computed(() => props.name ?? instance.uid)
 const isActive = computed(() => ctx?.activeNames?.value?.includes(itemKey.value) ?? false)
 
-const contentId = `ev-collapse-item-${Math.random().toString(36).slice(2, 8)}`
+const contentId = `eb-collapse-item-${Math.random().toString(36).slice(2, 8)}`
 
 function handleClick() {
   if (props.disabled) return

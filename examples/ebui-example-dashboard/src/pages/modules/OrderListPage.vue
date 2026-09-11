@@ -1,17 +1,17 @@
 <template>
   <div class="odm-page">
-    <ev-page-header title="订单管理" subtitle="全渠道订单查询与流转">
+    <eb-page-header title="订单管理" subtitle="全渠道订单查询与流转">
       <template #actions>
-        <ev-button size="small" @click="exporting">
-          <ev-icon name="export" :size="14" />
+        <eb-button size="small" @click="exporting">
+          <eb-icon name="export" :size="14" />
           导出
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-section-card class="odm-card">
-      <ev-search-filter v-model="query" :fields="fields" :loading="loading" @search="onSearch" />
-      <ev-data-table
+    <eb-section-card class="odm-card">
+      <eb-search-filter v-model="query" :fields="fields" :loading="loading" @search="onSearch" />
+      <eb-data-table
         title="订单列表"
         show-index
         :operations-width="130"
@@ -22,38 +22,38 @@
         :show-total="false"
       >
         <template #status="{ row }">
-          <ev-status-tag :value="row.status" :statuses="ORDER_STATUS" />
+          <eb-status-tag :value="row.status" :statuses="ORDER_STATUS" />
         </template>
         <template #operations="{ row }">
-          <ev-button text type="primary" size="small" @click="view(row)">查看</ev-button>
-          <ev-popconfirm
+          <eb-button text type="primary" size="small" @click="view(row)">查看</eb-button>
+          <eb-popconfirm
             v-if="row.status === 'unpaid'"
             title="待付款订单确认取消？"
             icon-type="danger"
             @confirm="cancel(row)"
           >
-            <ev-button text type="danger" size="small">取消</ev-button>
-          </ev-popconfirm>
+            <eb-button text type="danger" size="small">取消</eb-button>
+          </eb-popconfirm>
         </template>
-      </ev-data-table>
+      </eb-data-table>
       <div class="odm-footer">
-        <ev-pagination v-model="page" :total="filteredRows.length" :page-size="pageSize" layout="total, prev, pager, next" />
+        <eb-pagination v-model="page" :total="filteredRows.length" :page-size="pageSize" layout="total, prev, pager, next" />
       </div>
-    </ev-section-card>
+    </eb-section-card>
 
-    <ev-dialog v-model="detailVisible" title="订单详情" width="560px">
-      <ev-detail-descriptions :column="2" border :data="current" :items="detailItems">
+    <eb-dialog v-model="detailVisible" title="订单详情" width="560px">
+      <eb-detail-descriptions :column="2" border :data="current" :items="detailItems">
         <template #status="{ value }">
-          <ev-status-tag :value="value" :statuses="ORDER_STATUS" />
+          <eb-status-tag :value="value" :statuses="ORDER_STATUS" />
         </template>
-      </ev-detail-descriptions>
-    </ev-dialog>
+      </eb-detail-descriptions>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { orders, ORDER_STATUS, CHANNELS } from '../mock.js'
 
 const query = ref({ orderNo: '', status: '', channel: '' })
@@ -108,11 +108,11 @@ function view(row) {
 
 function cancel(row) {
   row.status = 'cancelled'
-  EvMessage.warning(`订单 ${row.orderNo} 已取消`)
+  EbMessage.warning(`订单 ${row.orderNo} 已取消`)
 }
 
 function exporting() {
-  EvMessage.success(`已导出 ${filteredRows.value.length} 条订单`)
+  EbMessage.success(`已导出 ${filteredRows.value.length} 条订单`)
 }
 </script>
 
@@ -124,7 +124,7 @@ function exporting() {
   margin-top: 12px;
 }
 /* SearchFilter 自带外框，与表格之间只留间距 */
-.odm-card :deep(.ev-search-filter) {
+.odm-card :deep(.eb-search-filter) {
   margin-bottom: 16px;
 }
 .odm-footer {

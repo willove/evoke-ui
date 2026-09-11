@@ -12,7 +12,7 @@
 ## 基础用法
 
 <DemoBlock>
-  <ev-audit-timeline
+  <eb-audit-timeline
     :items="[
       { id: 'a1', operator: '张三', action: '更新了订单金额', createdAt: '2026-09-05 10:00', diff: [{ field: '金额', before: 100, after: 200 }] },
       { id: 'a2', operator: '李四', action: '创建了订单', createdAt: '2026-09-05 09:00', detail: '来源：后台录入' },
@@ -35,7 +35,7 @@ const atItems = [
 传 `expanded-items`（可配 `v-model:expanded-items`）即为受控模式，展开状态交给外部，便于默认展开某条或跨组件联动；未传时组件内部维护展开状态。本例默认展开 `a1`，其中备注字段的 `before` 为空串，渲染为（空）。
 
 <DemoBlock>
-  <ev-audit-timeline
+  <eb-audit-timeline
     v-model:expanded-items="atExpanded"
     :items="atItems"
   />
@@ -49,7 +49,7 @@ const atItems = [
 `expandable: false` 隐藏全部展开按钮，diff 内容不再可见，时间线退化为纯流水。
 
 <DemoBlock>
-  <ev-audit-timeline :items="atItems" :expandable="false" />
+  <eb-audit-timeline :items="atItems" :expandable="false" />
 </DemoBlock>
 
 ## 自定义格式化
@@ -57,7 +57,7 @@ const atItems = [
 `formatTime` 与 `formatDiffValue` 分别接管时间与 diff 值的展示，例如时间戳转本地格式、数值千分位。
 
 <DemoBlock>
-  <ev-audit-timeline
+  <eb-audit-timeline
     :items="[
       { id: 'b1', operator: '王五', action: '调整了库存', createdAt: 1757032800000, diff: [{ field: '库存', before: 10, after: 998000 }] },
     ]"

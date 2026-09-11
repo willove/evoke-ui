@@ -24,7 +24,7 @@ refresh()                  // 增删改后以当前参数重跑
 reset()                    // 恢复 defaultParams + 回到第 1 页
 ```
 
-翻页/修改页容量后自动重新请求；`loading` 可直接绑定 `<ev-spin>` 或 DataTable 的 loading 态。
+翻页/修改页容量后自动重新请求；`loading` 可直接绑定 `<eb-spin>` 或 DataTable 的 loading 态。
 
 ## v-copy — 点击复制
 

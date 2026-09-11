@@ -1,14 +1,14 @@
-/* EvCheckboxGroup */
+/* EbCheckboxGroup */
 
-.ev-checkbox-group.ev-checkbox-group {
+.eb-checkbox-group.eb-checkbox-group {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ev-space-4) var(--ev-space-6);
-  font-size: var(--ev-font-size-base);
+  gap: var(--eb-space-4) var(--eb-space-6);
+  font-size: var(--eb-font-size-base);
 }
 
 /* 连体按钮组（checkbox-button）：group 的 flex gap 会切开 -1px 重叠的连体按钮，需归零 */
-.ev-checkbox-group.ev-checkbox-group:has(.ev-checkbox-button) {
+.eb-checkbox-group.eb-checkbox-group:has(.eb-checkbox-button) {
   gap: 0;
 }

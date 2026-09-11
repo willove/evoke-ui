@@ -1,20 +1,20 @@
-/* EvOptionGroup —分组 */
+/* EbOptionGroup —分组 */
 
-.ev-select-group.ev-select-group {
+.eb-select-group.eb-select-group {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ev-select-group.ev-select-group .ev-select-group__title {
+.eb-select-group.eb-select-group .eb-select-group__title {
   padding: 0 12px;
   height: 34px;
   line-height: 34px;
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
-.ev-select-group.ev-select-group .ev-select-group__list {
+.eb-select-group.eb-select-group .eb-select-group__list {
   list-style: none;
   margin: 0;
   padding: 0;

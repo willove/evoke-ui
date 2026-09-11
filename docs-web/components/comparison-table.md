@@ -1,6 +1,6 @@
 # ComparisonTable 对比表
 
-`EwComparisonTable` 展示多档位间的功能差异，是定价区的标配补充：定价卡讲亮点，对比表讲全量。
+`EvComparisonTable` 展示多档位间的功能差异，是定价区的标配补充：定价卡讲亮点，对比表讲全量。
 单元格接受布尔与文本——`true` 渲染主色对勾，`false` 渲染安静破折号，字符串直出；
 `featured` 列整列淡主色底以突出主推档位。
 
@@ -8,7 +8,7 @@
 
 <DemoBlock title="三档对比" description="窄容器自动横向滚动，min-width 保证移动端可读。">
 
-<EwComparisonTable
+<EvComparisonTable
   :columns="[
     { label: '免费版' },
     { label: '专业版', note: '¥12/月', featured: true },
@@ -23,7 +23,7 @@
 />
 
 ```vue
-<EwComparisonTable
+<EvComparisonTable
   :columns="[{ label: '免费版' }, { label: '专业版', featured: true }]"
   :rows="[{ label: '离线同步', values: [false, true] }]"
 />
@@ -35,7 +35,7 @@
 
 <DemoBlock title="行描述" description="功能项可带二级说明，帮助访客理解术语。">
 
-<EwComparisonTable
+<EvComparisonTable
   :columns="[{ label: '免费版' }, { label: '专业版', featured: true }]"
   :rows="[
     { label: '版本历史', description: '保留文档的历史版本并可随时回滚', values: [false, true] },
@@ -44,7 +44,7 @@
 />
 
 ```vue
-<EwComparisonTable
+<EvComparisonTable
   :rows="[{ label: '版本历史', description: '保留文档历史版本', values: [false, true] }]"
 />
 ```

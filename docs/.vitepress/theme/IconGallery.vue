@@ -143,7 +143,7 @@ async function copyName(name) {
           :title="`点击复制 ${name}`"
           @click="copyName(name)"
         >
-          <ev-icon :name="name" :size="20" />
+          <eb-icon :name="name" :size="20" />
           <span class="icon-gallery__name">{{ copied === name ? '已复制' : name }}</span>
         </button>
       </div>
@@ -162,7 +162,7 @@ async function copyName(name) {
           :title="`点击复制 ${name}`"
           @click="copyName(name)"
         >
-          <ev-icon :name="name" :size="20" />
+          <eb-icon :name="name" :size="20" />
           <span class="icon-gallery__name">{{ copied === name ? '已复制' : name }}</span>
         </button>
       </div>
@@ -186,7 +186,7 @@ async function copyName(name) {
           :title="`点击复制 ${name}`"
           @click="copyName(name)"
         >
-          <ev-icon :name="name" :size="20" />
+          <eb-icon :name="name" :size="20" />
           <span class="icon-gallery__name">{{ copied === name ? '已复制' : name }}</span>
         </button>
       </div>
@@ -209,16 +209,16 @@ async function copyName(name) {
 
 .icon-gallery__load {
   padding: 8px 16px;
-  border: 1px dashed var(--ev-color-primary, #175dff);
+  border: 1px dashed var(--eb-color-primary, #175dff);
   border-radius: 6px;
-  background: var(--ev-fill-color-light, rgba(23, 93, 255, 0.04));
-  color: var(--ev-color-primary, #175dff);
+  background: var(--eb-fill-color-light, rgba(23, 93, 255, 0.04));
+  color: var(--eb-color-primary, #175dff);
   font-size: 13px;
   cursor: pointer;
 }
 
 .icon-gallery__load:hover:not(:disabled) {
-  background: var(--ev-color-primary-light-9, rgba(23, 93, 255, 0.1));
+  background: var(--eb-color-primary-light-9, rgba(23, 93, 255, 0.1));
 }
 
 .icon-gallery__load:disabled {
@@ -229,27 +229,27 @@ async function copyName(name) {
 .icon-gallery__more {
   margin: 10px 0 0;
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #909399);
+  color: var(--eb-text-color-secondary, #909399);
 }
 
 .icon-gallery__search {
   flex: 0 1 280px;
   padding: 7px 12px;
-  border: 1px solid var(--ev-border-color, #dcdfe6);
+  border: 1px solid var(--eb-border-color, #dcdfe6);
   border-radius: 6px;
-  background: var(--ev-bg-color, transparent);
-  color: var(--ev-text-color-primary, inherit);
+  background: var(--eb-bg-color, transparent);
+  color: var(--eb-text-color-primary, inherit);
   font-size: 13px;
   outline: none;
 }
 
 .icon-gallery__search:focus {
-  border-color: var(--ev-color-primary, #175dff);
+  border-color: var(--eb-color-primary, #175dff);
 }
 
 .icon-gallery__count {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #909399);
+  color: var(--eb-text-color-secondary, #909399);
 }
 
 .icon-gallery__group {
@@ -263,13 +263,13 @@ async function copyName(name) {
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 10px;
-  color: var(--ev-text-color-primary, inherit);
+  color: var(--eb-text-color-primary, inherit);
 }
 
 .icon-gallery__title-count {
   font-size: 12px;
   font-weight: 400;
-  color: var(--ev-text-color-secondary, #909399);
+  color: var(--eb-text-color-secondary, #909399);
 }
 
 .icon-gallery__grid {
@@ -287,14 +287,14 @@ async function copyName(name) {
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
-  color: var(--ev-text-color-primary, inherit);
+  color: var(--eb-text-color-primary, inherit);
   cursor: pointer;
 }
 
 .icon-gallery__cell:hover {
-  background: var(--ev-fill-color-light, rgba(23, 93, 255, 0.06));
-  border-color: var(--ev-color-primary-light-7, rgba(23, 93, 255, 0.18));
-  color: var(--ev-color-primary, #175dff);
+  background: var(--eb-fill-color-light, rgba(23, 93, 255, 0.06));
+  border-color: var(--eb-color-primary-light-7, rgba(23, 93, 255, 0.18));
+  color: var(--eb-color-primary, #175dff);
 }
 
 .icon-gallery__name {
@@ -303,18 +303,18 @@ async function copyName(name) {
   height: 14px;
   line-height: 14px;
   font-size: 11px;
-  color: var(--ev-text-color-secondary, #909399);
+  color: var(--eb-text-color-secondary, #909399);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .icon-gallery__cell:hover .icon-gallery__name {
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
 }
 
 .icon-gallery__empty {
   font-size: 13px;
-  color: var(--ev-text-color-secondary, #909399);
+  color: var(--eb-text-color-secondary, #909399);
 }
 </style>

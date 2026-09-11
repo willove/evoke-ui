@@ -1,6 +1,6 @@
 <template>
   <i
-    class="ev-icon"
+    class="eb-icon"
     :style="iconStyle"
     aria-hidden="true"
     v-bind="$attrs"
@@ -12,8 +12,8 @@
 
 <script setup>
 /**
- * EvIcon — 图标组件
- * 根节点挂 ev-icon class
+ * EbIcon — 图标组件
+ * 根节点挂 eb-icon class
  */
 import { computed, ref, watch } from 'vue'
 import { getIconByNameSync, getIconByName } from './iconRegistry'

@@ -2,36 +2,36 @@ import { describe, it, expect } from 'vitest'
 import { encodeQR, QRCODE_MAX_BYTES } from '../src/components/qrcode/qrcode'
 import { normalizeHex, mixHex, generatePrimaryRamp } from '../src/utils/theme'
 import { mount } from '@vue/test-utils'
-import EvVirtualList from '../src/components/virtual-list/index.vue'
-import EvListy from '../src/components/virtual-list/index.vue'
-import EvAutoComplete from '../src/components/auto-complete/index.vue'
+import EbVirtualList from '../src/components/virtual-list/index.vue'
+import EbListy from '../src/components/virtual-list/index.vue'
+import EbAutoComplete from '../src/components/auto-complete/index.vue'
 
 /**
  * VirtualList / AutoComplete / QRCode 编码器 / 主题工具
  */
 
-describe('EvVirtualList', () => {
+describe('EbVirtualList', () => {
   function makeItems(n) {
     return Array.from({ length: n }, (_, i) => ({ id: i, name: `item-${i}` }))
   }
 
   it('固定行高：只渲染可视窗口 + 缓冲', async () => {
-    const wrapper = mount(EvVirtualList, {
+    const wrapper = mount(EbVirtualList, {
       props: { items: makeItems(1000), itemKey: 'id', itemSize: 40, height: 400, buffer: 5 },
     })
     await wrapper.vm.$nextTick()
     // 视口 400/40=10 条 + 上下各 5 缓冲 → 远小于 1000
-    const rendered = wrapper.findAll('.ev-virtual-list__item').length
+    const rendered = wrapper.findAll('.eb-virtual-list__item').length
     expect(rendered).toBeLessThan(30)
     expect(rendered).toBeGreaterThan(0)
     // 占位总高 = 1000 * 40
-    const spacer = wrapper.find('.ev-virtual-list__spacer')
+    const spacer = wrapper.find('.eb-virtual-list__spacer')
     expect(spacer.element.style.height).toBe('40000px')
     wrapper.unmount()
   })
 
   it('range-change 事件与 scrollTo API', async () => {
-    const wrapper = mount(EvVirtualList, {
+    const wrapper = mount(EbVirtualList, {
       props: { items: makeItems(100), itemKey: 'id', itemSize: 20, height: 200 },
     })
     await wrapper.vm.$nextTick()
@@ -47,36 +47,36 @@ describe('EvVirtualList', () => {
   })
 
   it('空数据不渲染条目', async () => {
-    const wrapper = mount(EvVirtualList, {
+    const wrapper = mount(EbVirtualList, {
       props: { items: [], itemSize: 40, height: 200 },
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.findAll('.ev-virtual-list__item').length).toBe(0)
+    expect(wrapper.findAll('.eb-virtual-list__item').length).toBe(0)
     wrapper.unmount()
   })
 })
 
-describe('EvListy（EvVirtualList 别名）', () => {
-  it('同一组件对象：ev-listy 标签等价 ev-virtual-list', () => {
-    expect(EvListy).toBe(EvVirtualList)
+describe('EbListy（EbVirtualList 别名）', () => {
+  it('同一组件对象：eb-listy 标签等价 eb-virtual-list', () => {
+    expect(EbListy).toBe(EbVirtualList)
   })
 
   it('千级数据只渲染窗口', async () => {
     const items = Array.from({ length: 2000 }, (_, i) => ({ id: i, text: `x${i}` }))
-    const wrapper = mount(EvListy, {
+    const wrapper = mount(EbListy, {
       props: { items, itemKey: 'id', itemSize: 32, height: 320 },
       slots: { default: `<template #default="{ item }"><div class="row">{{ item.text }}</div></template>` },
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.findAll('.ev-virtual-list__item').length).toBeLessThan(40)
+    expect(wrapper.findAll('.eb-virtual-list__item').length).toBeLessThan(40)
     wrapper.unmount()
   })
 })
 
-describe('EvAutoComplete', () => {
+describe('EbAutoComplete', () => {
   // 弹层 Teleport 到 body，须 attachTo 并从 document 查询
   function mountAC(props = {}) {
-    const wrapper = mount(EvAutoComplete, {
+    const wrapper = mount(EbAutoComplete, {
       props,
       attachTo: document.body,
     })
@@ -120,7 +120,7 @@ describe('EvAutoComplete', () => {
     const input = wrapper.find('input')
     await input.setValue('a')
     await new Promise((r) => setTimeout(r, 10))
-    expect(document.querySelector('.ev-autocomplete__menu')).toBeNull()
+    expect(document.querySelector('.eb-autocomplete__menu')).toBeNull()
     wrapper.unmount()
   })
 })
@@ -234,6 +234,6 @@ describe('theme utils（回归）', () => {
   it('normalizeHex + mixHex 快照', () => {
     expect(normalizeHex('#4D8BFF')).toBe('#4d8bff')
     expect(mixHex('#ffffff', '#000000', 1)).toBe('#000000')
-    expect(generatePrimaryRamp('#175DFF')['--ev-color-primary']).toBe('#175dff')
+    expect(generatePrimaryRamp('#175DFF')['--eb-color-primary']).toBe('#175dff')
   })
 })

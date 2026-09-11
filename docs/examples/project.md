@@ -27,7 +27,7 @@ import projectSource from '../../examples/ebui-example-project/src/pages/Project
 **CreditsProgress 表达「配额型资源」**。席位、AI Credits、存储、API 调用这类资源的共同语义是「已用 / 总量 / 刷新周期」，组件按容器宽度自适应栅格根数，剩余不足 20% 高亮、超额自动转红：
 
 ```vue
-<ev-credits-progress
+<eb-credits-progress
   :used="q.used"
   :total="q.total"
   :refresh-date="q.refreshDate"
@@ -38,7 +38,7 @@ import projectSource from '../../examples/ebui-example-project/src/pages/Project
 **GanttProgress 表达「阶段推进」**。stages 数组声明里程碑（status 三态 + 可选 date），组件自动换算整体推进比例并绘制贯穿连接线，active 阶段脉冲提示当前焦点：
 
 ```vue
-<ev-gantt-progress :stages="project.stages" />
+<eb-gantt-progress :stages="project.stages" />
 ```
 
 **模块间联动**。项目总览的「进度计划」按钮通过 `defineExpose` 调用进度计划模块的 `selectProject(id)`，实现跨模块选中项目——比事件总线更直观的兄弟模块通信方式。

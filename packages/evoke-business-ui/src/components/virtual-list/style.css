@@ -1,16 +1,16 @@
-/* EvVirtualList — 虚拟滚动基元 */
-.ev-virtual-list {
+/* EbVirtualList — 虚拟滚动基元 */
+.eb-virtual-list {
   overflow-y: auto;
   position: relative;
   /* 中后台密集数据：细滚动条由全局规范提供 */
 }
 
-.ev-virtual-list__spacer {
+.eb-virtual-list__spacer {
   position: relative;
   width: 100%;
 }
 
-.ev-virtual-list__item {
+.eb-virtual-list__item {
   position: absolute;
   top: 0;
   left: 0;

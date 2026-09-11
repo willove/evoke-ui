@@ -23,8 +23,8 @@ app.use(EvokeBusinessUI)
 
 ```vue
 <template>
-  <ev-search-filter :fields="fields" v-model="query" @search="onSearch" />
-  <ev-data-table :columns="columns" :data="rows" :total="total" title="订单列表" />
+  <eb-search-filter :fields="fields" v-model="query" @search="onSearch" />
+  <eb-data-table :columns="columns" :data="rows" :total="total" title="订单列表" />
 </template>
 ```
 

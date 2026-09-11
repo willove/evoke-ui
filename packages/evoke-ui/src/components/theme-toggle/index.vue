@@ -1,5 +1,5 @@
 <template>
-  <EwIconButton
+  <EvIconButton
     :icon="isDark ? 'sun' : 'moon'"
     :variant="variant"
     :size="size"
@@ -11,10 +11,10 @@
 
 <script setup>
 /**
- * EwThemeToggle — 明暗主题切换按钮
+ * EvThemeToggle — 明暗主题切换按钮
  * 基于 useTheme（html.dark 驱动暗色令牌重映射），日/月图标随状态切换
  */
-import EwIconButton from '../icon-button/index.vue'
+import EvIconButton from '../icon-button/index.vue'
 import { useTheme } from '../../composables/useTheme'
 
 defineProps({

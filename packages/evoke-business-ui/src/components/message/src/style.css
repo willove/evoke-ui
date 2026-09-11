@@ -1,86 +1,86 @@
-/* EvMessage — 命令式消息 */
+/* EbMessage — 命令式消息 */
 
-.ev-message.ev-message {
-  --ev-message-bg-color: var(--ev-color-info-light-9);
-  --ev-message-border-color: var(--ev-color-info-light-8);
-  --ev-message-text-color: var(--ev-color-info);
+.eb-message.eb-message {
+  --eb-message-bg-color: var(--eb-color-info-light-9);
+  --eb-message-border-color: var(--eb-color-info-light-8);
+  --eb-message-text-color: var(--eb-color-info);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  border-radius: var(--ev-radius-md);
-  border: 1px solid var(--ev-message-border-color);
-  background-color: var(--ev-message-bg-color);
-  color: var(--ev-message-text-color);
+  border-radius: var(--eb-radius-md);
+  border: 1px solid var(--eb-message-border-color);
+  background-color: var(--eb-message-bg-color);
+  color: var(--eb-message-text-color);
   transition:
-    opacity var(--ev-duration-base) var(--ev-ease-out),
-    transform var(--ev-duration-base) var(--ev-ease-out),
-    top var(--ev-duration-slow) var(--ev-ease-out);
+    opacity var(--eb-duration-base) var(--eb-ease-out),
+    transform var(--eb-duration-base) var(--eb-ease-out),
+    top var(--eb-duration-slow) var(--eb-ease-out);
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   pointer-events: all;
-  box-shadow: var(--ev-shadow-2);
+  box-shadow: var(--eb-shadow-2);
 }
 
-.ev-message.ev-message--success.ev-message {
-  --ev-message-bg-color: var(--ev-color-success-light-9);
-  --ev-message-border-color: var(--ev-color-success-light-8);
-  --ev-message-text-color: var(--ev-color-success);
+.eb-message.eb-message--success.eb-message {
+  --eb-message-bg-color: var(--eb-color-success-light-9);
+  --eb-message-border-color: var(--eb-color-success-light-8);
+  --eb-message-text-color: var(--eb-color-success);
 }
-.ev-message.ev-message--warning.ev-message {
-  --ev-message-bg-color: var(--ev-color-warning-light-9);
-  --ev-message-border-color: var(--ev-color-warning-light-8);
-  --ev-message-text-color: var(--ev-color-warning);
+.eb-message.eb-message--warning.eb-message {
+  --eb-message-bg-color: var(--eb-color-warning-light-9);
+  --eb-message-border-color: var(--eb-color-warning-light-8);
+  --eb-message-text-color: var(--eb-color-warning);
 }
-.ev-message.ev-message--error.ev-message {
-  --ev-message-bg-color: var(--ev-color-danger-light-9);
-  --ev-message-border-color: var(--ev-color-danger-light-8);
-  --ev-message-text-color: var(--ev-color-danger);
+.eb-message.eb-message--error.eb-message {
+  --eb-message-bg-color: var(--eb-color-danger-light-9);
+  --eb-message-border-color: var(--eb-color-danger-light-8);
+  --eb-message-text-color: var(--eb-color-danger);
 }
 
-.ev-message.ev-message .ev-message__icon {
-  color: var(--ev-message-text-color);
+.eb-message.eb-message .eb-message__icon {
+  color: var(--eb-message-text-color);
   flex-shrink: 0;
 }
 
-.ev-message.ev-message .ev-message__content {
-  font-size: var(--ev-font-size-base);
+.eb-message.eb-message .eb-message__content {
+  font-size: var(--eb-font-size-base);
   line-height: 1.5;
-  color: var(--ev-message-text-color);
+  color: var(--eb-message-text-color);
   word-break: break-word;
   padding: 0;
 }
 
-.ev-message.ev-message .ev-message__closeBtn {
+.eb-message.eb-message .eb-message__closeBtn {
   display: inline-flex;
   align-items: center;
   background: transparent;
   border: none;
   padding: 2px;
-  margin-left: var(--ev-space-1);
+  margin-left: var(--eb-space-1);
   cursor: pointer;
-  color: var(--ev-text-color-placeholder);
-  transition: color var(--ev-duration-fast) var(--ev-ease-out);
+  color: var(--eb-text-color-placeholder);
+  transition: color var(--eb-duration-fast) var(--eb-ease-out);
   flex-shrink: 0;
 }
-.ev-message.ev-message .ev-message__closeBtn:hover {
-  color: var(--ev-text-color-secondary);
+.eb-message.eb-message .eb-message__closeBtn:hover {
+  color: var(--eb-text-color-secondary);
 }
 
-.ev-message.ev-message.is-center {
+.eb-message.eb-message.is-center {
   justify-content: center;
 }
 
 /* 过渡 */
-.ev-message-fade-enter-active,
-.ev-message-fade-leave-active {
+.eb-message-fade-enter-active,
+.eb-message-fade-leave-active {
   transition:
-    opacity var(--ev-duration-base) var(--ev-ease-out),
-    transform var(--ev-duration-base) var(--ev-ease-out);
+    opacity var(--eb-duration-base) var(--eb-ease-out),
+    transform var(--eb-duration-base) var(--eb-ease-out);
 }
-.ev-message-fade-enter-from,
-.ev-message-fade-leave-to {
+.eb-message-fade-enter-from,
+.eb-message-fade-leave-to {
   opacity: 0;
   transform: translateY(-12px);
 }

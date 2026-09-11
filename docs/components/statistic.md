@@ -6,9 +6,9 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; flex-wrap: wrap;">
-    <ev-statistic title="今日订单" :value="12893"></ev-statistic>
-    <ev-statistic title="本月 GMV" :value="3984721.56"></ev-statistic>
-    <ev-statistic title="系统在线用户" :value="867"></ev-statistic>
+    <eb-statistic title="今日订单" :value="12893"></eb-statistic>
+    <eb-statistic title="本月 GMV" :value="3984721.56"></eb-statistic>
+    <eb-statistic title="系统在线用户" :value="867"></eb-statistic>
   </div>
 </DemoBlock>
 
@@ -18,10 +18,10 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; flex-wrap: wrap;">
-    <ev-statistic title="转化率" :value="0.9752" :precision="2"></ev-statistic>
-    <ev-statistic title="账户余额" :value="1234567.891" :precision="2"></ev-statistic>
-    <ev-statistic title="欧式分组" :value="98765" separator="."></ev-statistic>
-    <ev-statistic title="无分组" :value="98765" separator=""></ev-statistic>
+    <eb-statistic title="转化率" :value="0.9752" :precision="2"></eb-statistic>
+    <eb-statistic title="账户余额" :value="1234567.891" :precision="2"></eb-statistic>
+    <eb-statistic title="欧式分组" :value="98765" separator="."></eb-statistic>
+    <eb-statistic title="无分组" :value="98765" separator=""></eb-statistic>
   </div>
 </DemoBlock>
 
@@ -31,14 +31,14 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; flex-wrap: wrap;">
-    <ev-statistic title="营收" :value="286530" prefix="¥" :value-style="{ color: 'var(--ev-color-success)' }"></ev-statistic>
-    <ev-statistic title="退款" :value="9820" prefix="¥" :value-style="{ color: 'var(--ev-color-danger)' }"></ev-statistic>
-    <ev-statistic title="库存周转" :value="12" suffix="天"></ev-statistic>
-    <ev-statistic title="同比" :value="18">
+    <eb-statistic title="营收" :value="286530" prefix="¥" :value-style="{ color: 'var(--eb-color-success)' }"></eb-statistic>
+    <eb-statistic title="退款" :value="9820" prefix="¥" :value-style="{ color: 'var(--eb-color-danger)' }"></eb-statistic>
+    <eb-statistic title="库存周转" :value="12" suffix="天"></eb-statistic>
+    <eb-statistic title="同比" :value="18">
       <template #suffix>
-        <span style="font-size: 14px; color: var(--ev-color-danger);">↑ 18%</span>
+        <span style="font-size: 14px; color: var(--eb-color-danger);">↑ 18%</span>
       </template>
-    </ev-statistic>
+    </eb-statistic>
   </div>
 </DemoBlock>
 
@@ -48,8 +48,8 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; flex-wrap: wrap;">
-    <ev-statistic title="处理人次" :value="20486" :formatter="(v) => v + ' 人次'"></ev-statistic>
-    <ev-statistic title="任务耗时" :value="3725" :formatter="(v) => formatDuration(v)"></ev-statistic>
+    <eb-statistic title="处理人次" :value="20486" :formatter="(v) => v + ' 人次'"></eb-statistic>
+    <eb-statistic title="任务耗时" :value="3725" :formatter="(v) => formatDuration(v)"></eb-statistic>
   </div>
 </DemoBlock>
 
@@ -59,8 +59,8 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 48px; flex-wrap: wrap; align-items: flex-start;">
-    <ev-statistic title="接口拉取中" :value="0" loading></ev-statistic>
-    <ev-statistic title="实时 QPS（每秒刷新）" :value="qps" flip :value-style="{ color: 'var(--ev-color-primary)' }"></ev-statistic>
+    <eb-statistic title="接口拉取中" :value="0" loading></eb-statistic>
+    <eb-statistic title="实时 QPS（每秒刷新）" :value="qps" flip :value-style="{ color: 'var(--eb-color-primary)' }"></eb-statistic>
   </div>
 </DemoBlock>
 
@@ -103,4 +103,4 @@ onBeforeUnmount(() => clearInterval(timer))
 
 ## 配套工具
 
-配合 [format 工具](/utils/format) 的 `formatNumber` / `formatDuration` / `formatPercent` 使用；指标区块布局可搭配业务组件 `EvStatCard` / `EvStatRow`。
+配合 [format 工具](/utils/format) 的 `formatNumber` / `formatDuration` / `formatPercent` 使用；指标区块布局可搭配业务组件 `EbStatCard` / `EbStatRow`。

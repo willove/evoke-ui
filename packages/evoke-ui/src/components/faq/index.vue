@@ -1,22 +1,22 @@
 <template>
-  <div class="ew-faq">
+  <div class="ev-faq">
     <div
       v-for="(item, i) in items"
       :key="i"
-      class="ew-faq__item"
+      class="ev-faq__item"
       :class="{ 'is-open': isOpen(i) }"
     >
       <button
         type="button"
-        class="ew-faq__question"
+        class="ev-faq__question"
         :aria-expanded="isOpen(i)"
         @click="toggle(i)"
       >
-        <span class="ew-faq__question-text">{{ item.question }}</span>
-        <span class="ew-faq__indicator" aria-hidden="true">{{ isOpen(i) ? '−' : '+' }}</span>
+        <span class="ev-faq__question-text">{{ item.question }}</span>
+        <span class="ev-faq__indicator" aria-hidden="true">{{ isOpen(i) ? '−' : '+' }}</span>
       </button>
-      <div class="ew-faq__answer-wrap">
-        <div class="ew-faq__answer">
+      <div class="ev-faq__answer-wrap">
+        <div class="ev-faq__answer">
           <slot name="answer" :item="item" :index="i">{{ item.answer }}</slot>
         </div>
       </div>
@@ -26,7 +26,7 @@
 
 <script setup>
 /**
- * EwFaq — 常见问题手风琴（launchos FAQ 语言：+/− 指示器 + 平滑展开）
+ * EvFaq — 常见问题手风琴（launchos FAQ 语言：+/− 指示器 + 平滑展开）
  * items [{ question, answer }]；accordion 单开模式，multiple 允许多开
  */
 import { ref } from 'vue'

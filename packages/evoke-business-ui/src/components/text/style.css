@@ -1,38 +1,38 @@
-/* EvText —文本 */
+/* EbText —文本 */
 
-.ev-text.ev-text {
+.eb-text.eb-text {
   display: inline-flex;
   align-items: center;
   margin: 0;
-  color: var(--ev-text-color-regular);
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
 }
 
-.ev-text.ev-text.ev-text--large {
-  font-size: var(--ev-font-size-lg);
+.eb-text.eb-text.eb-text--large {
+  font-size: var(--eb-font-size-lg);
 }
-.ev-text.ev-text.ev-text--small {
-  font-size: var(--ev-font-size-xs);
-}
-
-.ev-text.ev-text.ev-text--primary {
-  color: var(--ev-color-primary);
-}
-.ev-text.ev-text.ev-text--success {
-  color: var(--ev-color-success);
-}
-.ev-text.ev-text.ev-text--warning {
-  color: var(--ev-color-warning);
-}
-.ev-text.ev-text.ev-text--info {
-  color: var(--ev-text-color-secondary);
-}
-.ev-text.ev-text.ev-text--danger {
-  color: var(--ev-color-danger);
+.eb-text.eb-text.eb-text--small {
+  font-size: var(--eb-font-size-xs);
 }
 
-.ev-text.ev-text.is-truncated {
+.eb-text.eb-text.eb-text--primary {
+  color: var(--eb-color-primary);
+}
+.eb-text.eb-text.eb-text--success {
+  color: var(--eb-color-success);
+}
+.eb-text.eb-text.eb-text--warning {
+  color: var(--eb-color-warning);
+}
+.eb-text.eb-text.eb-text--info {
+  color: var(--eb-text-color-secondary);
+}
+.eb-text.eb-text.eb-text--danger {
+  color: var(--eb-color-danger);
+}
+
+.eb-text.eb-text.is-truncated {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,25 +41,25 @@
 }
 
 /* ─── 行内语义标记 ─── */
-.ev-text .ev-text__mark {
-  background-color: var(--ev-color-warning-light-8);
+.eb-text .eb-text__mark {
+  background-color: var(--eb-color-warning-light-8);
   color: inherit;
   padding: 0 2px;
-  border-radius: var(--ev-radius-xs);
+  border-radius: var(--eb-radius-xs);
 }
 
-.ev-text .ev-text__code {
-  font-family: var(--ev-font-family);
-  background-color: var(--ev-fill-color);
-  border: 1px solid var(--ev-border-color-lighter);
-  border-radius: var(--ev-radius-sm);
+.eb-text .eb-text__code {
+  font-family: var(--eb-font-family);
+  background-color: var(--eb-fill-color);
+  border: 1px solid var(--eb-border-color-lighter);
+  border-radius: var(--eb-radius-sm);
   padding: 1px 6px;
   margin: 0 2px;
   font-size: 0.92em;
-  color: var(--ev-text-color-primary);
+  color: var(--eb-text-color-primary);
 }
 
-.ev-text .ev-text__del {
+.eb-text .eb-text__del {
   text-decoration: line-through;
-  color: var(--ev-text-color-secondary);
+  color: var(--eb-text-color-secondary);
 }

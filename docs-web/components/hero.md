@@ -1,34 +1,34 @@
 # Hero 首屏
 
-`EwHero` 承载官网的第一印象：淡蓝灰光带渐变底、细字重展示标题、顶部胶囊徽章位与动作区。
+`EvHero` 承载官网的第一印象：淡蓝灰光带渐变底、细字重展示标题、顶部胶囊徽章位与动作区。
 访客对整站的第一印象在首屏成形，本组件把这套视觉语言封装成 props 与插槽。
 
 ## 基础用法
 
 <DemoBlock title="徽章 + 展示标题 + 描述 + 动作" description="标题自动平衡换行；actions 内常用 pill 大按钮。">
 
-<EwHero
+<EvHero
   title="轻盈优雅的云端笔记"
   description="为专注写作与团队协作而生的云笔记。免费开始，随处访问，灵感永不丢失。"
 >
   <template #badge>
-    <EwTag tone="primary" icon="star">v2.0 全新发布</EwTag>
+    <EvTag tone="primary" icon="star">v2.0 全新发布</EvTag>
   </template>
   <template #actions>
-    <EwButton size="large" pill icon="download">立即下载</EwButton>
-    <EwButton size="large" variant="outline" icon-right="arrow-right">了解更多</EwButton>
+    <EvButton size="large" pill icon="download">立即下载</EvButton>
+    <EvButton size="large" variant="outline" icon-right="arrow-right">了解更多</EvButton>
   </template>
-</EwHero>
+</EvHero>
 
 ```vue
-<EwHero title="轻盈优雅的云端笔记" description="…">
+<EvHero title="轻盈优雅的云端笔记" description="…">
   <template #badge>
-    <EwTag tone="primary" icon="star">v2.0 全新发布</EwTag>
+    <EvTag tone="primary" icon="star">v2.0 全新发布</EvTag>
   </template>
   <template #actions>
-    <EwButton size="large" pill icon="download">立即下载</EwButton>
+    <EvButton size="large" pill icon="download">立即下载</EvButton>
   </template>
-</EwHero>
+</EvHero>
 ```
 
 </DemoBlock>
@@ -37,13 +37,13 @@
 
 <DemoBlock title="center 对齐 + default 插槽" description="居中标题 + 特性行 + 大搜索栏，是知识库、帮助中心与工具站的经典首屏结构。">
 
-<EwHero
+<EvHero
   align="center"
   title="答案，一搜即达"
   description="接入你的内容源，为用户提供即时、精准的全站检索体验。"
 >
   <template #actions>
-    <EwFeatureGrid
+    <EvFeatureGrid
       variant="bullets"
       :items="[
         { icon: 'device-line', title: '即时返回' },
@@ -52,16 +52,16 @@
       ]"
     />
   </template>
-  <EwSearchBox large placeholder="搜索文章、模板或帮助…" :categories="['全部', '文章', '模板', '帮助']" style="max-width:640px; margin-inline:auto; width:100%;" />
-</EwHero>
+  <EvSearchBox large placeholder="搜索文章、模板或帮助…" :categories="['全部', '文章', '模板', '帮助']" style="max-width:640px; margin-inline:auto; width:100%;" />
+</EvHero>
 
 ```vue
-<EwHero align="center" title="答案，一搜即达" description="…">
+<EvHero align="center" title="答案，一搜即达" description="…">
   <template #actions>
-    <EwFeatureGrid variant="bullets" :items="featureBullets" />
+    <EvFeatureGrid variant="bullets" :items="featureBullets" />
   </template>
-  <EwSearchBox large placeholder="搜索文章、模板或帮助…" :categories="categories" />
-</EwHero>
+  <EvSearchBox large placeholder="搜索文章、模板或帮助…" :categories="categories" />
+</EvHero>
 ```
 
 </DemoBlock>
@@ -70,24 +70,24 @@
 
 <DemoBlock title="reveal 错峰入场" description="reveal 开启后，徽章→标题→描述→动作按 60ms 步进依次浮现；刷新页面即可看到。">
 
-<EwHero
+<EvHero
   reveal
   align="center"
   title="轻盈，也是一种生产力"
   description="本演示开启了 reveal —— 徽章、标题、描述与按钮依次入场。"
 >
   <template #badge>
-    <EwTag tone="primary" icon="star">reveal</EwTag>
+    <EvTag tone="primary" icon="star">reveal</EvTag>
   </template>
   <template #actions>
-    <EwButton pill>立即体验</EwButton>
+    <EvButton pill>立即体验</EvButton>
   </template>
-</EwHero>
+</EvHero>
 
 ```vue
-<EwHero reveal title="…" description="…">
-  <template #actions><EwButton pill>立即体验</EwButton></template>
-</EwHero>
+<EvHero reveal title="…" description="…">
+  <template #actions><EvButton pill>立即体验</EvButton></template>
+</EvHero>
 ```
 
 </DemoBlock>

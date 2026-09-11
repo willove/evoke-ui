@@ -1,27 +1,27 @@
 <template>
   <div class="dc-page">
-    <ev-page-header title="知识文档" subtitle="产品手册、接入指南与最佳实践">
+    <eb-page-header title="知识文档" subtitle="产品手册、接入指南与最佳实践">
       <template #actions>
-        <ev-button type="primary" size="small" @click="EvMessage.info('示例：进入文档编辑器')">
-          <ev-icon name="plus" :size="14" />
+        <eb-button type="primary" size="small" @click="EbMessage.info('示例：进入文档编辑器')">
+          <eb-icon name="plus" :size="14" />
           新建文档
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-row :gutter="16" class="dc-block">
+    <eb-row :gutter="16" class="dc-block">
       <!-- 左：目录树 -->
-      <ev-col :xs="24" :sm="8" :lg="6">
-        <ev-section-card title="知识目录" :padding="false" class="dc-tree-card">
+      <eb-col :xs="24" :sm="8" :lg="6">
+        <eb-section-card title="知识目录" :padding="false" class="dc-tree-card">
           <div class="dc-tree-search">
-            <ev-input v-model="keyword" placeholder="搜索目录 / 文档">
+            <eb-input v-model="keyword" placeholder="搜索目录 / 文档">
               <template #prefix>
-                <ev-icon name="search" :size="14" />
+                <eb-icon name="search" :size="14" />
               </template>
-            </ev-input>
+            </eb-input>
           </div>
           <div class="dc-tree-body">
-            <ev-tree
+            <eb-tree
               ref="treeRef"
               :data="docTree"
               node-key="id"
@@ -34,27 +34,27 @@
               @node-click="onNodeClick"
             />
           </div>
-        </ev-section-card>
-      </ev-col>
+        </eb-section-card>
+      </eb-col>
 
       <!-- 右：文章列表 -->
-      <ev-col :xs="24" :sm="16" :lg="18">
-        <ev-section-card :padding="false" class="dc-list-card">
+      <eb-col :xs="24" :sm="16" :lg="18">
+        <eb-section-card :padding="false" class="dc-list-card">
           <template #header>
             <div class="dc-list-title">
               <span>{{ categoryName }}</span>
-              <ev-tag size="small" effect="plain">共 {{ filteredArticles.length }} 篇</ev-tag>
+              <eb-tag size="small" effect="plain">共 {{ filteredArticles.length }} 篇</eb-tag>
             </div>
           </template>
           <template #extra>
-            <ev-input v-model="articleKeyword" placeholder="搜索文档标题" style="width: 200px">
+            <eb-input v-model="articleKeyword" placeholder="搜索文档标题" style="width: 200px">
               <template #prefix>
-                <ev-icon name="search" :size="14" />
+                <eb-icon name="search" :size="14" />
               </template>
-            </ev-input>
+            </eb-input>
           </template>
 
-          <ev-data-table
+          <eb-data-table
             :columns="columns"
             :data="filteredArticles"
             :show-pagination="false"
@@ -65,19 +65,19 @@
             <template #title="{ row }">
               <div class="dc-doc">
                 <div class="dc-doc__main">
-                  <ev-icon name="file-text" :size="15" class="dc-doc__icon" />
-                  <span class="dc-doc__name" @click="EvMessage.info(`示例：阅读「${row.title}」`)">{{ row.title }}</span>
-                  <ev-tag v-for="t in row.tags" :key="t" size="small" effect="plain" class="dc-doc__tag">{{ t }}</ev-tag>
+                  <eb-icon name="file-text" :size="15" class="dc-doc__icon" />
+                  <span class="dc-doc__name" @click="EbMessage.info(`示例：阅读「${row.title}」`)">{{ row.title }}</span>
+                  <eb-tag v-for="t in row.tags" :key="t" size="small" effect="plain" class="dc-doc__tag">{{ t }}</eb-tag>
                 </div>
                 <div class="dc-doc__meta">{{ row.id }} · 更新于 {{ row.updatedAt }}</div>
               </div>
             </template>
             <template #category="{ row }">
-              <ev-tag effect="plain">{{ row.category }}</ev-tag>
+              <eb-tag effect="plain">{{ row.category }}</eb-tag>
             </template>
             <template #author="{ row }">
               <div class="dc-author">
-                <ev-avatar :size="22">{{ row.author.slice(0, 1) }}</ev-avatar>
+                <eb-avatar :size="22">{{ row.author.slice(0, 1) }}</eb-avatar>
                 <span>{{ row.author }}</span>
               </div>
             </template>
@@ -85,22 +85,22 @@
               <span class="dc-views">{{ row.views.toLocaleString() }}</span>
             </template>
             <template #status="{ row }">
-              <ev-status-tag :value="row.status" :statuses="ARTICLE_STATUS" />
+              <eb-status-tag :value="row.status" :statuses="ARTICLE_STATUS" />
             </template>
             <template #operations="{ row }">
-              <ev-button text type="primary" size="small" @click="EvMessage.info(`示例：阅读「${row.title}」`)">阅读</ev-button>
-              <ev-button text size="small" @click="EvMessage.info(`示例：编辑「${row.title}」`)">编辑</ev-button>
+              <eb-button text type="primary" size="small" @click="EbMessage.info(`示例：阅读「${row.title}」`)">阅读</eb-button>
+              <eb-button text size="small" @click="EbMessage.info(`示例：编辑「${row.title}」`)">编辑</eb-button>
             </template>
-          </ev-data-table>
-        </ev-section-card>
-      </ev-col>
-    </ev-row>
+          </eb-data-table>
+        </eb-section-card>
+      </eb-col>
+    </eb-row>
   </div>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { docTree, articles, ARTICLE_STATUS } from '../mock.js'
 
 /* ---------------- 左树 ---------------- */
@@ -195,8 +195,8 @@ const columns = [
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .dc-views {
   font-variant-numeric: tabular-nums;
@@ -208,19 +208,19 @@ const columns = [
   min-width: 0;
 }
 .dc-doc__icon {
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
   flex-shrink: 0;
 }
 .dc-doc__name {
-  font-weight: var(--ev-font-weight-medium, 500);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-medium, 500);
+  color: var(--eb-text-color-primary, #1f2329);
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .dc-doc__name:hover {
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
 }
 .dc-doc__tag {
   flex-shrink: 0;
@@ -228,8 +228,8 @@ const columns = [
 .dc-doc__meta {
   margin-top: 3px;
   padding-left: 23px;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .dc-author {
   display: inline-flex;

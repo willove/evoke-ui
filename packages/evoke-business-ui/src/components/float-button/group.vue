@@ -1,33 +1,33 @@
 <template>
   <div
     ref="groupRef"
-    class="ev-float-button-group ev-float-button-group"
+    class="eb-float-button-group eb-float-button-group"
     :class="[
       `is-${positionType}`,
-      `ev-float-button-group--${direction}`,
+      `eb-float-button-group--${direction}`,
       { 'is-open': opened },
     ]"
     :style="positionStyle"
   >
     <!-- 展开的子按钮区 -->
-    <Transition name="ev-float-list">
+    <Transition name="eb-float-list">
       <div
         v-if="trigger && opened"
-        class="ev-float-button-group__list"
-        :class="[`ev-float-button-group__list--${direction}`]"
+        class="eb-float-button-group__list"
+        :class="[`eb-float-button-group__list--${direction}`]"
       >
         <slot />
       </div>
     </Transition>
     <!-- 无触发器：平铺子按钮 -->
-    <div v-if="!trigger" class="ev-float-button-group__list" :class="[`ev-float-button-group__list--${direction}`]">
+    <div v-if="!trigger" class="eb-float-button-group__list" :class="[`eb-float-button-group__list--${direction}`]">
       <slot />
     </div>
 
     <!-- 触发主按钮 -->
-    <div v-if="trigger" class="ev-float-button-group__trigger">
+    <div v-if="trigger" class="eb-float-button-group__trigger">
       <slot name="trigger">
-        <ev-button
+        <eb-button
           :type="type"
           :circle="shape === 'circle'"
           :icon="opened ? closeIcon : trigger"
@@ -40,7 +40,7 @@
 
 <script setup>
 /**
- * EvFloatButtonGroup — 悬浮按钮组
+ * EbFloatButtonGroup — 悬浮按钮组
  *
  * - trigger（图标名）传入后为主按钮展开/收起形态：点击主按钮弹出子按钮，
  *   点击外部 / Esc 自动收起，主按钮图标旋转过渡
@@ -50,9 +50,9 @@
  */
 import { computed, onBeforeUnmount, ref, watchEffect } from 'vue'
 import { useClickOutside } from '../../composables/useClickOutside'
-import EvButton from '../button/index.vue'
+import EbButton from '../button/index.vue'
 
-defineOptions({ name: 'EvFloatButtonGroup' })
+defineOptions({ name: 'EbFloatButtonGroup' })
 
 const props = defineProps({
   /** 展开触发图标名（不传则平铺展示子按钮） */

@@ -54,54 +54,54 @@ function onSubmit() {
 <MobileStage title="登录">
   <div class="mb-page" style="gap: 14px;">
     <div style="padding: 12px 4px 0;">
-      <div style="font-size: 26px; font-weight: var(--ew-display-weight); letter-spacing: var(--ew-display-letter-spacing); color: var(--ew-text-primary);">EVOKE</div>
-      <div style="margin-top: 6px; font-size: 13px; line-height: 1.7; color: var(--ew-text-regular);">还没有账号？验证通过后自动注册。</div>
+      <div style="font-size: 26px; font-weight: var(--ev-display-weight); letter-spacing: var(--ev-display-letter-spacing); color: var(--ev-text-primary);">EVOKE</div>
+      <div style="margin-top: 6px; font-size: 13px; line-height: 1.7; color: var(--ev-text-regular);">还没有账号？验证通过后自动注册。</div>
     </div>
-    <ew-field label="手机号" :error="phoneError">
-      <ew-input v-model="phone" icon="smartphone" inputmode="tel" placeholder="用于登录与找回账号" :clearable="true" @input="phoneError = ''" />
-    </ew-field>
-    <ew-field label="验证码">
-      <ew-input v-model="code" icon="shield-check" inputmode="numeric" placeholder="6 位短信验证码">
+    <ev-field label="手机号" :error="phoneError">
+      <ev-input v-model="phone" icon="smartphone" inputmode="tel" placeholder="用于登录与找回账号" :clearable="true" @input="phoneError = ''" />
+    </ev-field>
+    <ev-field label="验证码">
+      <ev-input v-model="code" icon="shield-check" inputmode="numeric" placeholder="6 位短信验证码">
         <template #suffix>
-          <ew-button variant="ghost" size="small" :disabled="counting > 0" style="padding: 0 4px;" @click="sendCode">
+          <ev-button variant="ghost" size="small" :disabled="counting > 0" style="padding: 0 4px;" @click="sendCode">
             {{ counting > 0 ? counting + ' s 后重发' : '获取验证码' }}
-          </ew-button>
+          </ev-button>
         </template>
-      </ew-input>
-    </ew-field>
-    <ew-field label="设置密码" hint="8 位以上，建议字母 + 数字组合">
-      <ew-input v-model="password" :type="showPwd ? 'text' : 'password'" icon="lock" placeholder="用于后续登录">
+      </ev-input>
+    </ev-field>
+    <ev-field label="设置密码" hint="8 位以上，建议字母 + 数字组合">
+      <ev-input v-model="password" :type="showPwd ? 'text' : 'password'" icon="lock" placeholder="用于后续登录">
         <template #suffix>
-          <span style="display: inline-flex; color: var(--ew-text-secondary); cursor: pointer;" @click="showPwd = !showPwd">
-            <ew-icon :name="showPwd ? 'eye-off' : 'eye'" :size="16" />
+          <span style="display: inline-flex; color: var(--ev-text-secondary); cursor: pointer;" @click="showPwd = !showPwd">
+            <ev-icon :name="showPwd ? 'eye-off' : 'eye'" :size="16" />
           </span>
         </template>
-      </ew-input>
-    </ew-field>
+      </ev-input>
+    </ev-field>
     <div style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;" @click="agreed = !agreed; agreedWarn = false">
-      <span style="flex: none; width: 16px; height: 16px; margin-top: 1px; border-radius: var(--ew-radius-full); border: 1px solid; display: inline-flex; align-items: center; justify-content: center;"
-        :style="agreed ? 'background: var(--ew-color-primary); border-color: var(--ew-color-primary); color: #fff;' : (agreedWarn ? 'border-color: var(--ew-color-danger); color: transparent;' : 'color: transparent;')"
+      <span style="flex: none; width: 16px; height: 16px; margin-top: 1px; border-radius: var(--ev-radius-full); border: 1px solid; display: inline-flex; align-items: center; justify-content: center;"
+        :style="agreed ? 'background: var(--ev-color-primary); border-color: var(--ev-color-primary); color: #fff;' : (agreedWarn ? 'border-color: var(--ev-color-danger); color: transparent;' : 'color: transparent;')"
       >
-        <ew-icon name="check" :size="10" />
+        <ev-icon name="check" :size="10" />
       </span>
-      <span style="font-size: 12px; line-height: 1.6;" :style="agreedWarn ? 'color: var(--ew-color-danger);' : 'color: var(--ew-text-secondary);'">
-        我已阅读并同意<span style="color: var(--ew-color-primary);">《服务协议》</span>与<span style="color: var(--ew-color-primary);">《隐私政策》</span>
+      <span style="font-size: 12px; line-height: 1.6;" :style="agreedWarn ? 'color: var(--ev-color-danger);' : 'color: var(--ev-text-secondary);'">
+        我已阅读并同意<span style="color: var(--ev-color-primary);">《服务协议》</span>与<span style="color: var(--ev-color-primary);">《隐私政策》</span>
       </span>
     </div>
   </div>
   <template #bottom>
-    <div style="padding: 12px 16px 22px; border-top: 1px solid var(--ew-border-color-light); background: var(--ew-bg-container);">
-      <ew-button type="primary" block :loading="submitting" @click="onSubmit">
+    <div style="padding: 12px 16px 22px; border-top: 1px solid var(--ev-border-color-light); background: var(--ev-bg-container);">
+      <ev-button type="primary" block :loading="submitting" @click="onSubmit">
         {{ submitting ? '验证中…' : '登录 / 注册' }}
-      </ew-button>
+      </ev-button>
       <div style="display: flex; align-items: center; gap: 12px; margin-top: 14px;">
-        <span style="flex: 1; height: 1px; background: var(--ew-border-color-light);" />
-        <span style="font-size: 11px; color: var(--ew-text-secondary);">其他方式登录</span>
-        <span style="flex: 1; height: 1px; background: var(--ew-border-color-light);" />
+        <span style="flex: 1; height: 1px; background: var(--ev-border-color-light);" />
+        <span style="font-size: 11px; color: var(--ev-text-secondary);">其他方式登录</span>
+        <span style="flex: 1; height: 1px; background: var(--ev-border-color-light);" />
       </div>
       <div style="display: flex; justify-content: center; gap: 20px; margin-top: 12px;">
-        <span v-for="s in ['wechat', 'apple', 'github']" :key="s" style="width: 40px; height: 40px; border-radius: var(--ew-radius-full); border: 1px solid var(--ew-border-color-light); display: inline-flex; align-items: center; justify-content: center; color: var(--ew-text-regular); cursor: pointer;">
-          <ew-icon :name="s" :size="18" />
+        <span v-for="s in ['wechat', 'apple', 'github']" :key="s" style="width: 40px; height: 40px; border-radius: var(--ev-radius-full); border: 1px solid var(--ev-border-color-light); display: inline-flex; align-items: center; justify-content: center; color: var(--ev-text-regular); cursor: pointer;">
+          <ev-icon :name="s" :size="18" />
         </span>
       </div>
     </div>
@@ -115,7 +115,7 @@ function onSubmit() {
 | 桌面版式 | 本案例的移动表达 |
 | --- | --- |
 | 登录/注册双卡切换 | 合并为一个动作：验证通过自动注册，少一次选择 |
-| 三栏表单行 | 单列字段，`EwField` label 上置 + 错误内联（不弹窗报错） |
+| 三栏表单行 | 单列字段，`EvField` label 上置 + 错误内联（不弹窗报错） |
 | 图形验证码 + 刷新按钮 | 短信验证码 + 倒计时后缀按钮，60 s 内置灰防重发 |
 | 密码强度条 | `hint` 一句话给到规则，可见性切换收进输入框后缀 |
 | 页脚协议小字 | 勾选圆点上移到按钮上方，未勾选提交时整句标红拦截 |
@@ -124,8 +124,8 @@ function onSubmit() {
 ## 搭建清单
 
 1. 字段纪律：手机号 `inputmode="tel"`、验证码 `inputmode="numeric"`，键盘直接
-   出数字；错误用 `EwField` 的 `error` 内联展示，输入即清除。
-2. 验证码倒计时：后缀按钮放 `EwInput` 的 `#suffix` 插槽，倒计时期间 `disabled`
+   出数字；错误用 `EvField` 的 `error` 内联展示，输入即清除。
+2. 验证码倒计时：后缀按钮放 `EvInput` 的 `#suffix` 插槽，倒计时期间 `disabled`
    置灰；倒计时逻辑在页面层，组件不感知业务。
 3. 密码可见性：`#suffix` 放 `eye / eye-off` 切换，`type` 在 `password / text`
    间切换即可。

@@ -1,23 +1,23 @@
 <template>
-  <div class="ew-md-editor" :class="{ 'is-disabled': disabled }">
-    <div v-if="toolbar" class="ew-md-editor__toolbar">
+  <div class="ev-md-editor" :class="{ 'is-disabled': disabled }">
+    <div v-if="toolbar" class="ev-md-editor__toolbar">
       <button
         v-for="act in actions"
         :key="act.name"
         type="button"
-        class="ew-md-editor__btn"
+        class="ev-md-editor__btn"
         :title="act.title"
         :aria-label="act.title"
         :disabled="disabled"
         @click="act.run"
       >
-        <ew-icon :name="act.icon" :size="15" />
+        <ev-icon :name="act.icon" :size="15" />
       </button>
-      <span class="ew-md-editor__spacer" />
-      <div v-if="preview === 'toggle'" class="ew-md-editor__tabs">
+      <span class="ev-md-editor__spacer" />
+      <div v-if="preview === 'toggle'" class="ev-md-editor__tabs">
         <button
           type="button"
-          class="ew-md-editor__tab"
+          class="ev-md-editor__tab"
           :class="{ 'is-active': tab === 'edit' }"
           @click="tab = 'edit'"
         >
@@ -25,7 +25,7 @@
         </button>
         <button
           type="button"
-          class="ew-md-editor__tab"
+          class="ev-md-editor__tab"
           :class="{ 'is-active': tab === 'preview' }"
           @click="tab = 'preview'"
         >
@@ -33,19 +33,19 @@
         </button>
       </div>
     </div>
-    <div class="ew-md-editor__panes" :class="{ 'is-single': isSingle }" :style="panesStyle">
+    <div class="ev-md-editor__panes" :class="{ 'is-single': isSingle }" :style="panesStyle">
       <textarea
         v-show="showInput"
         ref="inputRef"
-        class="ew-md-editor__input"
+        class="ev-md-editor__input"
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
         @input="onInput"
         @keydown="onKeydown"
       />
-      <div v-show="showPreview" class="ew-md-editor__preview">
-        <ew-markdown :content="modelValue" />
+      <div v-show="showPreview" class="ev-md-editor__preview">
+        <ev-markdown :content="modelValue" />
       </div>
     </div>
   </div>
@@ -53,14 +53,14 @@
 
 <script setup>
 /**
- * EwMarkdownEditor — Markdown 编辑器
+ * EvMarkdownEditor — Markdown 编辑器
  * 工具栏（加粗/斜体/删除线/行内代码/标题/引用/列表/链接）+ 编辑预览双栏；
  * preview='split' 左右分栏实时预览，'toggle' 编辑/预览切换（Ctrl/⌘+B / I 快捷加粗斜体）。
- * 预览由 EwMarkdown 承载（零依赖解析 + 语法高亮），颜色走 --ew-* 语义令牌
+ * 预览由 EvMarkdown 承载（零依赖解析 + 语法高亮），颜色走 --ev-* 语义令牌
  */
 import { computed, nextTick, ref } from 'vue'
-import EwIcon from '../icon/index.vue'
-import EwMarkdown from '../markdown/index.vue'
+import EvIcon from '../icon/index.vue'
+import EvMarkdown from '../markdown/index.vue'
 
 const props = defineProps({
   /** Markdown 源文本（v-model） */

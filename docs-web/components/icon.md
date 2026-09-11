@@ -11,22 +11,22 @@
 <DemoBlock title="核心集" description="size 接受数字与任意 CSS 尺寸；color 独立覆写，缺省继承文字色。">
 
 <div style="display:flex; align-items:center; gap:20px; font-size:15px;">
-  <EwIcon name="search" :size="18" />
-  <EwIcon name="arrow-right" :size="18" />
-  <EwIcon name="close" :size="18" />
-  <EwIcon name="check" :size="18" color="var(--ew-color-success)" />
-  <EwIcon name="heart" :size="22" color="#e5484d" />
-  <EwIcon name="star-fill" :size="22" color="#f97316" />
-  <EwIcon name="github" :size="22" />
+  <EvIcon name="search" :size="18" />
+  <EvIcon name="arrow-right" :size="18" />
+  <EvIcon name="close" :size="18" />
+  <EvIcon name="check" :size="18" color="var(--ev-color-success)" />
+  <EvIcon name="heart" :size="22" color="#e5484d" />
+  <EvIcon name="star-fill" :size="22" color="#f97316" />
+  <EvIcon name="github" :size="22" />
   <span style="display:inline-flex; align-items:center; gap:6px;">
-    Continue <EwIcon name="arrow-up-right" :size="16" />
+    Continue <EvIcon name="arrow-up-right" :size="16" />
   </span>
 </div>
 
 ```vue
-<EwIcon name="search" :size="18" />
-<EwIcon name="check" :size="18" color="var(--ew-color-success)" />
-<EwIcon name="arrow-up-right" :size="16" />
+<EvIcon name="search" :size="18" />
+<EvIcon name="check" :size="18" color="var(--ev-color-success)" />
+<EvIcon name="arrow-up-right" :size="16" />
 ```
 
 </DemoBlock>
@@ -39,7 +39,7 @@
 
 <div class="icon-core-grid">
   <figure v-for="(paths, name) in coreIcons" :key="name" class="icon-core-cell">
-    <EwIcon :name="name" :size="22" />
+    <EvIcon :name="name" :size="22" />
     <figcaption>{{ name }}</figcaption>
   </figure>
 </div>
@@ -57,13 +57,13 @@
   gap: 6px;
   margin: 0;
   padding: 12px 4px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-sm);
-  color: var(--ew-text-primary);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-sm);
+  color: var(--ev-text-primary);
 }
 .icon-core-cell figcaption {
   font-size: 11px;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   word-break: break-all;
   text-align: center;
 }
@@ -74,7 +74,7 @@
 ## 展示集（Remix 原生命名）
 
 展示集按 Remix 分类每类限量采样 24 对（line + fill 成对），共 900+ 图标，打包为独立 chunk。
-[EwIconGrid](./icon-grid) 开箱即用整套展示集（搜索 / 分类 / 点击复制图标名），也可在
+[EvIconGrid](./icon-grid) 开箱即用整套展示集（搜索 / 分类 / 点击复制图标名），也可在
 [全部图标](./icons) 页直接浏览。
 
 ```js
@@ -85,17 +85,17 @@ loadShowcaseIcons() // 幂等；加载完成后全部 900+ 图标可同步渲染
 <DemoBlock title="展示集加载后" description="文档站已预载展示集，下列 Remix 原生名直接可用。">
 
 <div style="display:flex; align-items:center; gap:20px;">
-  <EwIcon name="brush-line" :size="20" />
-  <EwIcon name="camera-line" :size="20" />
-  <EwIcon name="flashlight-line" :size="20" />
-  <EwIcon name="compass-3-line" :size="20" />
-  <EwIcon name="moon-line" :size="20" />
-  <EwIcon name="chrome-fill" :size="20" color="#4c8bf5" />
+  <EvIcon name="brush-line" :size="20" />
+  <EvIcon name="camera-line" :size="20" />
+  <EvIcon name="flashlight-line" :size="20" />
+  <EvIcon name="compass-3-line" :size="20" />
+  <EvIcon name="moon-line" :size="20" />
+  <EvIcon name="chrome-fill" :size="20" color="#4c8bf5" />
 </div>
 
 ```vue
-<EwIcon name="brush-line" :size="20" />
-<EwIcon name="compass-3-line" :size="20" />
+<EvIcon name="brush-line" :size="20" />
+<EvIcon name="compass-3-line" :size="20" />
 ```
 
 </DemoBlock>
@@ -105,7 +105,7 @@ loadShowcaseIcons() // 幂等；加载完成后全部 900+ 图标可同步渲染
 两级扩展路径，按需选择：
 
 1. **运行时加载内置展示集**（零配置）：`loadShowcaseIcons()` 动态加载 900+ 采样图标，
-   适合绝大多数官网场景；[EwIconGrid](./icon-grid) 内部已自动处理。
+   适合绝大多数官网场景；[EvIconGrid](./icon-grid) 内部已自动处理。
 2. **生成期扩大采样乃至全量**：改包内 `scripts/generate-remix-icons.mjs` 的采样上限后重新生成——
 
 ```bash
@@ -132,7 +132,7 @@ registerIcons({ 'my-logo': MyLogo }) // 值可以是组件或 { viewBox, paths }
 
 ## API
 
-### EwIcon Props
+### EvIcon Props
 
 | 属性 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |

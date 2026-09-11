@@ -1,37 +1,37 @@
 <template>
   <div
     ref="rootRef"
-    :class="['ew-select', `is-${size}`, { 'is-bare': bare, 'is-open': open, 'is-disabled': disabled, 'is-error': error }]"
+    :class="['ev-select', `is-${size}`, { 'is-bare': bare, 'is-open': open, 'is-disabled': disabled, 'is-error': error }]"
     @keydown.esc.stop="close"
   >
     <button
       type="button"
-      class="ew-select__trigger"
+      class="ev-select__trigger"
       :disabled="disabled"
       :aria-haspopup="`listbox`"
       :aria-expanded="open"
       @click="toggle"
     >
-      <EwIcon v-if="selectedIcon" :name="selectedIcon" :size="iconSize" class="ew-select__icon" />
-      <span class="ew-select__label" :class="{ 'is-placeholder': !selectedLabel }">
+      <EvIcon v-if="selectedIcon" :name="selectedIcon" :size="iconSize" class="ev-select__icon" />
+      <span class="ev-select__label" :class="{ 'is-placeholder': !selectedLabel }">
         {{ selectedLabel || placeholder }}
       </span>
-      <EwIcon name="chevron-down" :size="caretSize" class="ew-select__caret" :class="{ 'is-open': open }" />
+      <EvIcon name="chevron-down" :size="caretSize" class="ev-select__caret" :class="{ 'is-open': open }" />
     </button>
 
-    <Transition name="ew-select-drop">
-      <ul v-if="open" class="ew-select__menu" role="listbox">
+    <Transition name="ev-select-drop">
+      <ul v-if="open" class="ev-select__menu" role="listbox">
         <li
           v-for="opt in options"
           :key="opt.value"
           role="option"
           :aria-selected="opt.value === current"
-          :class="['ew-select__option', { 'is-selected': opt.value === modelValue, 'is-disabled': opt.disabled }]"
+          :class="['ev-select__option', { 'is-selected': opt.value === modelValue, 'is-disabled': opt.disabled }]"
           @click="pick(opt)"
         >
-          <EwIcon v-if="opt.icon" :name="opt.icon" :size="14" class="ew-select__option-icon" />
-          <span class="ew-select__option-label">{{ opt.label }}</span>
-          <EwIcon v-if="opt.value === current" name="check" :size="14" class="ew-select__option-check" />
+          <EvIcon v-if="opt.icon" :name="opt.icon" :size="14" class="ev-select__option-icon" />
+          <span class="ev-select__option-label">{{ opt.label }}</span>
+          <EvIcon v-if="opt.value === current" name="check" :size="14" class="ev-select__option-check" />
         </li>
       </ul>
     </Transition>
@@ -40,11 +40,11 @@
 
 <script setup>
 /**
- * EwSelect — 下拉选择（自定义菜单，替代原生 select 的生硬外观）
+ * EvSelect — 下拉选择（自定义菜单，替代原生 select 的生硬外观）
  * bare 模式去边框，用于嵌入搜索栏等复合控件；点击外部自动收起，Esc 关闭
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 import { useUncontrolled } from '../../composables/useUncontrolled'
 
 const props = defineProps({

@@ -6,23 +6,23 @@
 
 <DemoBlock>
   <div style="display: flex; gap: 32px;">
-    <ev-anchor style="width: 140px; flex-shrink: 0">
-      <ev-anchor-link href="#anchor-demo-a" title="基本信息" />
-      <ev-anchor-link href="#anchor-demo-b" title="合同条款" />
-      <ev-anchor-link href="#anchor-demo-c" title="付款记录" />
-    </ev-anchor>
+    <eb-anchor style="width: 140px; flex-shrink: 0">
+      <eb-anchor-link href="#anchor-demo-a" title="基本信息" />
+      <eb-anchor-link href="#anchor-demo-b" title="合同条款" />
+      <eb-anchor-link href="#anchor-demo-c" title="付款记录" />
+    </eb-anchor>
     <div style="flex: 1; min-width: 0;">
-      <div id="anchor-demo-a" style="height: 180px; border: 1px dashed var(--ev-border-color); border-radius: 8px; padding: 16px;">
+      <div id="anchor-demo-a" style="height: 180px; border: 1px dashed var(--eb-border-color); border-radius: 8px; padding: 16px;">
         <strong>基本信息</strong>
-        <p style="margin-top: 8px; color: var(--ev-text-color-secondary); font-size: 13px;">滚动下方容器，观察左侧高亮跟随。</p>
+        <p style="margin-top: 8px; color: var(--eb-text-color-secondary); font-size: 13px;">滚动下方容器，观察左侧高亮跟随。</p>
       </div>
-      <div id="anchor-demo-b" style="height: 180px; border: 1px dashed var(--ev-border-color); border-radius: 8px; padding: 16px; margin-top: 16px;">
+      <div id="anchor-demo-b" style="height: 180px; border: 1px dashed var(--eb-border-color); border-radius: 8px; padding: 16px; margin-top: 16px;">
         <strong>合同条款</strong>
-        <p style="margin-top: 8px; color: var(--ev-text-color-secondary); font-size: 13px;">第二区块。</p>
+        <p style="margin-top: 8px; color: var(--eb-text-color-secondary); font-size: 13px;">第二区块。</p>
       </div>
-      <div id="anchor-demo-c" style="height: 180px; border: 1px dashed var(--ev-border-color); border-radius: 8px; padding: 16px; margin-top: 16px;">
+      <div id="anchor-demo-c" style="height: 180px; border: 1px dashed var(--eb-border-color); border-radius: 8px; padding: 16px; margin-top: 16px;">
         <strong>付款记录</strong>
-        <p style="margin-top: 8px; color: var(--ev-text-color-secondary); font-size: 13px;">第三区块。</p>
+        <p style="margin-top: 8px; color: var(--eb-text-color-secondary); font-size: 13px;">第三区块。</p>
       </div>
     </div>
   </div>
@@ -31,10 +31,10 @@
 滚动容器内的锚点用 `target` 指定容器选择器（上例滚动发生在文档流外层容器时可直接不传，默认监听 window）：
 
 ```vue
-<ev-anchor target="#detail-scroll-container">
-  <ev-anchor-link href="#section-1" title="基本信息" />
-  <ev-anchor-link href="#section-2" title="合同条款" />
-</ev-anchor>
+<eb-anchor target="#detail-scroll-container">
+  <eb-anchor-link href="#section-1" title="基本信息" />
+  <eb-anchor-link href="#section-2" title="合同条款" />
+</eb-anchor>
 ```
 
 ## Anchor API
@@ -49,7 +49,7 @@
 
 事件：`click(e, href)`、`change(href)`；暴露 `scrollTo(href)` / `refresh()`。
 
-## EvAnchorLink API
+## EbAnchorLink API
 
 | 名称 | 类型 | 说明 |
 | --- | --- | --- |

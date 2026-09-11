@@ -1,12 +1,12 @@
 <template>
-  <div class="ev-json-viewer">
-    <div v-if="toolbar" class="ev-json-viewer__toolbar">
-      <span class="ev-json-viewer__type">{{ rootTypeLabel }}</span>
-      <button v-if="copyable" type="button" class="ev-json-viewer__btn" @click="copy">
+  <div class="eb-json-viewer">
+    <div v-if="toolbar" class="eb-json-viewer__toolbar">
+      <span class="eb-json-viewer__type">{{ rootTypeLabel }}</span>
+      <button v-if="copyable" type="button" class="eb-json-viewer__btn" @click="copy">
         {{ copied ? '已复制' : '复制' }}
       </button>
     </div>
-    <div class="ev-json-viewer__content">
+    <div class="eb-json-viewer__content">
       <JsonNode :data="data" :depth="0" :default-depth="expandedDepth" key-path="root" />
     </div>
   </div>
@@ -14,7 +14,7 @@
 
 <script setup>
 /**
- * EvJsonViewer — JSON 查看器
+ * EbJsonViewer — JSON 查看器
  * 递归函数组件渲染节点；展开/折叠 caret、长字符串截断展开、工具条类型标注 + 复制
  */
 import { ref, computed, defineComponent, h } from 'vue'
@@ -60,7 +60,7 @@ function bracketsText(isArray) {
 }
 
 const JsonNode = defineComponent({
-  name: 'EvJsonNode',
+  name: 'EbJsonNode',
   props: {
     data: { type: null, required: true },
     keyName: { type: String, default: '' },
@@ -87,7 +87,7 @@ const JsonNode = defineComponent({
         if (type === 'string') {
           const text = String(data)
           const truncated = text.length > 120 && !expanded.value
-          valueNode = h('span', { class: 'ev-json-viewer__value' }, [
+          valueNode = h('span', { class: 'eb-json-viewer__value' }, [
             h(
               'span',
               { style: { color: VALUE_COLOR[type] } },
@@ -97,7 +97,7 @@ const JsonNode = defineComponent({
               ? h(
                   'button',
                   {
-                    class: 'ev-json-viewer__toggle-inline',
+                    class: 'eb-json-viewer__toggle-inline',
                     onClick: () => {
                       expanded.value = !expanded.value
                     },
@@ -110,14 +110,14 @@ const JsonNode = defineComponent({
           valueNode = h(
             'span',
             {
-              class: 'ev-json-viewer__value',
+              class: 'eb-json-viewer__value',
               style: { color: VALUE_COLOR[type] },
             },
             type === 'null' ? 'null' : String(data),
           )
         }
-        return h('div', { class: 'ev-json-viewer__line' }, [
-          keyName ? h('span', { class: 'ev-json-viewer__key' }, `${keyName}: `) : null,
+        return h('div', { class: 'eb-json-viewer__line' }, [
+          keyName ? h('span', { class: 'eb-json-viewer__key' }, `${keyName}: `) : null,
           valueNode,
         ])
       }
@@ -129,25 +129,25 @@ const JsonNode = defineComponent({
       const count = entries.length
 
       const caret = h('span', {
-        class: ['ev-json-viewer__caret', { 'is-open': expanded.value }],
+        class: ['eb-json-viewer__caret', { 'is-open': expanded.value }],
         onClick: toggle,
       })
 
       const preview =
         !expanded.value && count > 0
-          ? h('span', { class: 'ev-json-viewer__preview' }, `${openB}${count} 项${closeB}`)
+          ? h('span', { class: 'eb-json-viewer__preview' }, `${openB}${count} 项${closeB}`)
           : null
 
-      const head = h('div', { class: 'ev-json-viewer__line ev-json-viewer__line--head', onClick: toggle }, [
+      const head = h('div', { class: 'eb-json-viewer__line eb-json-viewer__line--head', onClick: toggle }, [
         caret,
-        keyName ? h('span', { class: 'ev-json-viewer__key' }, `${keyName}: `) : null,
-        h('span', { class: 'ev-json-viewer__bracket' }, openB),
+        keyName ? h('span', { class: 'eb-json-viewer__key' }, `${keyName}: `) : null,
+        h('span', { class: 'eb-json-viewer__bracket' }, openB),
         preview,
-        !expanded.value ? h('span', { class: 'ev-json-viewer__bracket' }, closeB) : null,
+        !expanded.value ? h('span', { class: 'eb-json-viewer__bracket' }, closeB) : null,
       ])
 
       const children = expanded.value
-        ? h('div', { class: 'ev-json-viewer__children' }, [
+        ? h('div', { class: 'eb-json-viewer__children' }, [
             ...entries.map(([k, v], i) =>
               h(JsonNode, {
                 key: k ?? String(i),
@@ -158,13 +158,13 @@ const JsonNode = defineComponent({
                 isArrayItem: isArray,
               }),
             ),
-            h('div', { class: 'ev-json-viewer__line' }, [
-              h('span', { class: 'ev-json-viewer__bracket' }, `${closeB}${isArrayItem ? ',' : ''}`),
+            h('div', { class: 'eb-json-viewer__line' }, [
+              h('span', { class: 'eb-json-viewer__bracket' }, `${closeB}${isArrayItem ? ',' : ''}`),
             ]),
           ])
         : null
 
-      return h('div', { class: 'ev-json-viewer__node' }, [head, children])
+      return h('div', { class: 'eb-json-viewer__node' }, [head, children])
     }
   },
 })

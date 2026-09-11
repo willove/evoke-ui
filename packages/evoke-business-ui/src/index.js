@@ -15,174 +15,177 @@
 import './styles/index.css'
 
 // ─── Components ───
-import EvButton from './components/button/index.vue'
-import EvButtonGroup from './components/button/group.vue'
-import EvIcon from './components/icon/index.vue'
-import EvConfigProvider from './components/config-provider/index.vue'
-import EvInput from './components/input/index.vue'
-import EvTextarea from './components/textarea/index.vue'
-import EvTag from './components/tag/index.vue'
-import EvSpin from './components/spin/index.vue'
-import EvAlert from './components/alert/index.vue'
-import EvDivider from './components/divider/index.vue'
-import EvSkeleton from './components/skeleton/index.vue'
-import EvSkeletonItem from './components/skeleton/item.vue'
-import EvSkeletonButton from './components/skeleton/skeleton-button.vue'
-import EvSkeletonAvatar from './components/skeleton/skeleton-avatar.vue'
-import EvSkeletonInput from './components/skeleton/skeleton-input.vue'
-import EvSkeletonImage from './components/skeleton/skeleton-image.vue'
-import EvRadio from './components/radio/index.vue'
-import EvRadioGroup from './components/radio/group.vue'
-import EvRadioButton from './components/radio/button.vue'
-import EvCheckbox from './components/checkbox/index.vue'
-import EvCheckboxGroup from './components/checkbox/group.vue'
-import EvCheckboxButton from './components/checkbox/button.vue'
-import EvSwitch from './components/switch-comp/index.vue'
-import EvInputNumber from './components/input-number/index.vue'
-import EvForm from './components/form/index.vue'
-import EvFormItem from './components/form/item.vue'
-import EvDialog from './components/dialog/index.vue'
+import EbButton from './components/button/index.vue'
+import EbButtonGroup from './components/button/group.vue'
+import EbIcon from './components/icon/index.vue'
+import EbConfigProvider from './components/config-provider/index.vue'
+import EbInput from './components/input/index.vue'
+import EbTextarea from './components/textarea/index.vue'
+import EbTag from './components/tag/index.vue'
+import EbSpin from './components/spin/index.vue'
+import EbAlert from './components/alert/index.vue'
+import EbDivider from './components/divider/index.vue'
+import EbSkeleton from './components/skeleton/index.vue'
+import EbSkeletonItem from './components/skeleton/item.vue'
+import EbSkeletonButton from './components/skeleton/skeleton-button.vue'
+import EbSkeletonAvatar from './components/skeleton/skeleton-avatar.vue'
+import EbSkeletonInput from './components/skeleton/skeleton-input.vue'
+import EbSkeletonImage from './components/skeleton/skeleton-image.vue'
+import EbRadio from './components/radio/index.vue'
+import EbRadioGroup from './components/radio/group.vue'
+import EbRadioButton from './components/radio/button.vue'
+import EbCheckbox from './components/checkbox/index.vue'
+import EbCheckboxGroup from './components/checkbox/group.vue'
+import EbCheckboxButton from './components/checkbox/button.vue'
+import EbSwitch from './components/switch-comp/index.vue'
+import EbInputNumber from './components/input-number/index.vue'
+import EbForm from './components/form/index.vue'
+import EbFormItem from './components/form/item.vue'
+import EbDialog from './components/dialog/index.vue'
 // 浮层与选择器
-import EvPopper from './components/popper/index.vue'
-import EvTooltip from './components/tooltip/index.vue'
-import EvPopover from './components/popover/index.vue'
-import EvPopconfirm from './components/popconfirm/index.vue'
-import EvSelect from './components/select/index.vue'
-import EvOption from './components/select/option.vue'
-import EvOptionGroup from './components/select/option-group.vue'
-import EvDropdown from './components/dropdown/index.vue'
-import EvDropdownMenu from './components/dropdown/menu.vue'
-import EvDropdownItem from './components/dropdown/item.vue'
-import EvTabs from './components/tabs/index.vue'
-import EvTabPane from './components/tabs/pane.vue'
-import EvDrawer from './components/drawer/index.vue'
-import EvPagination from './components/pagination/index.vue'
-import EvAvatar from './components/avatar/index.vue'
-import EvAvatarGroup from './components/avatar/group.vue'
-import EvBadge from './components/badge/index.vue'
-import EvProgress from './components/progress/index.vue'
-import EvEmpty from './components/empty/index.vue'
-import EvImageViewer from './components/image-viewer/index.vue'
+import EbPopper from './components/popper/index.vue'
+import EbTooltip from './components/tooltip/index.vue'
+import EbPopover from './components/popover/index.vue'
+import EbPopconfirm from './components/popconfirm/index.vue'
+import EbSelect from './components/select/index.vue'
+import EbOption from './components/select/option.vue'
+import EbOptionGroup from './components/select/option-group.vue'
+import EbDropdown from './components/dropdown/index.vue'
+import EbDropdownMenu from './components/dropdown/menu.vue'
+import EbDropdownItem from './components/dropdown/item.vue'
+import EbTabs from './components/tabs/index.vue'
+import EbTabPane from './components/tabs/pane.vue'
+import EbDrawer from './components/drawer/index.vue'
+import EbPagination from './components/pagination/index.vue'
+import EbAvatar from './components/avatar/index.vue'
+import EbAvatarGroup from './components/avatar/group.vue'
+import EbBadge from './components/badge/index.vue'
+import EbProgress from './components/progress/index.vue'
+import EbEmpty from './components/empty/index.vue'
+import EbImageViewer from './components/image-viewer/index.vue'
 // 数据组件（表格 / 树 / 日期时间 / 级联）
-import EvTable from './components/table/index.vue'
-import EvTableColumn from './components/table/column.vue'
-import EvTree from './components/tree/index.vue'
-import EvTreeSelect from './components/tree-select/index.vue'
-import EvDatePicker from './components/date-picker/index.vue'
-import EvTimePicker from './components/time-picker/index.vue'
-import EvTimeSelect from './components/time-select/index.vue'
-import EvCascader from './components/cascader/index.vue'
+import EbTable from './components/table/index.vue'
+import EbTableColumn from './components/table/column.vue'
+import EbTree from './components/tree/index.vue'
+import EbTreeSelect from './components/tree-select/index.vue'
+import EbDatePicker from './components/date-picker/index.vue'
+import EbTimePicker from './components/time-picker/index.vue'
+import EbTimeSelect from './components/time-select/index.vue'
+import EbCascader from './components/cascader/index.vue'
 // 其余通用组件
-import EvBreadcrumb from './components/breadcrumb/index.vue'
-import EvBreadcrumbItem from './components/breadcrumb/item.vue'
-import EvLink from './components/link/index.vue'
-import EvText from './components/text/index.vue'
-import EvCollapse from './components/collapse/index.vue'
-import EvCollapseItem from './components/collapse/item.vue'
-import EvDescriptions from './components/descriptions/index.vue'
-import EvDescriptionsItem from './components/descriptions/item.vue'
-import EvSteps from './components/steps/index.vue'
-import EvStep from './components/steps/item.vue'
-import EvCard from './components/card/index.vue'
-import EvImage from './components/image/index.vue'
-import EvBacktop from './components/backtop/index.vue'
-import EvAffix from './components/affix/index.vue'
-import EvRate from './components/rate/index.vue'
-import EvSlider from './components/slider/index.vue'
-import EvColorPicker from './components/color-picker/index.vue'
-import EvColorPickerPanel from './components/color-picker/panel.vue'
-import EvMenu from './components/menu/index.vue'
-import EvMenuItem from './components/menu/item.vue'
-import EvSubMenu from './components/menu/sub-menu.vue'
-import EvMenuItemGroup from './components/menu/item-group.vue'
-import EvTimeline from './components/timeline/index.vue'
-import EvTimelineItem from './components/timeline/item.vue'
-import EvResult from './components/result/index.vue'
-import EvWatermark from './components/watermark/index.vue'
-import EvEmptyState from './components/empty-state/index.vue'
-import EvSegmented from './components/segmented/index.vue'
-import EvContainer from './components/container/index.vue'
-import EvHeader from './components/header/index.vue'
-import EvAside from './components/aside/index.vue'
-import EvMain from './components/main/index.vue'
-import EvFooter from './components/footer/index.vue'
-import EvRow from './components/row/index.vue'
-import EvCol from './components/col/index.vue'
-import EvSpace from './components/space/index.vue'
-import EvScrollbar from './components/scrollbar/index.vue'
-import EvStack from './components/stack/index.vue'
-import EvSplitter from './components/splitter/index.vue'
-import EvSplitterPanel from './components/splitter/panel.vue'
-import EvUpload from './components/upload/index.vue'
-import EvCalendar from './components/calendar/index.vue'
-import EvBorderBeam from './components/border-beam/index.vue'
-import EvCreditsProgress from './components/credits-progress/index.vue'
-import EvGanttProgress from './components/gantt-progress/index.vue'
-import EvJsonViewer from './components/json-viewer/index.vue'
-import EvAppLayout from './components/app-layout/index.vue'
-import EvAppToolbar from './components/app-toolbar/index.vue'
-import EvPageHeader from './components/page-header/index.vue'
-import EvSectionCard from './components/section-card/index.vue'
-import EvStatCard from './components/stat-card/index.vue'
-import EvStatRow from './components/stat-row/index.vue'
-import EvTransfer from './components/transfer/index.vue'
-import EvCarousel from './components/carousel/index.vue'
-import EvCarouselItem from './components/carousel/item.vue'
-import EvCascaderPanel from './components/cascader-panel/index.vue'
-import EvCommandPalette from './components/command-palette/index.vue'
+import EbBreadcrumb from './components/breadcrumb/index.vue'
+import EbBreadcrumbItem from './components/breadcrumb/item.vue'
+import EbLink from './components/link/index.vue'
+import EbText from './components/text/index.vue'
+import EbCollapse from './components/collapse/index.vue'
+import EbCollapseItem from './components/collapse/item.vue'
+import EbDescriptions from './components/descriptions/index.vue'
+import EbDescriptionsItem from './components/descriptions/item.vue'
+import EbSteps from './components/steps/index.vue'
+import EbStep from './components/steps/item.vue'
+import EbCard from './components/card/index.vue'
+import EbImage from './components/image/index.vue'
+import EbBacktop from './components/backtop/index.vue'
+import EbAffix from './components/affix/index.vue'
+import EbRate from './components/rate/index.vue'
+import EbSlider from './components/slider/index.vue'
+import EbColorPicker from './components/color-picker/index.vue'
+import EbColorPickerPanel from './components/color-picker/panel.vue'
+import EbMenu from './components/menu/index.vue'
+import EbMenuItem from './components/menu/item.vue'
+import EbSubMenu from './components/menu/sub-menu.vue'
+import EbMenuItemGroup from './components/menu/item-group.vue'
+import EbTimeline from './components/timeline/index.vue'
+import EbTimelineItem from './components/timeline/item.vue'
+import EbResult from './components/result/index.vue'
+import EbWatermark from './components/watermark/index.vue'
+import EbEmptyState from './components/empty-state/index.vue'
+import EbSegmented from './components/segmented/index.vue'
+import EbContainer from './components/container/index.vue'
+import EbHeader from './components/header/index.vue'
+import EbAside from './components/aside/index.vue'
+import EbMain from './components/main/index.vue'
+import EbFooter from './components/footer/index.vue'
+import EbRow from './components/row/index.vue'
+import EbCol from './components/col/index.vue'
+import EbSpace from './components/space/index.vue'
+import EbScrollbar from './components/scrollbar/index.vue'
+import EbStack from './components/stack/index.vue'
+import EbSplitter from './components/splitter/index.vue'
+import EbSplitterPanel from './components/splitter/panel.vue'
+import EbUpload from './components/upload/index.vue'
+import EbCalendar from './components/calendar/index.vue'
+import EbBorderBeam from './components/border-beam/index.vue'
+import EbCreditsProgress from './components/credits-progress/index.vue'
+import EbGanttProgress from './components/gantt-progress/index.vue'
+import EbJsonViewer from './components/json-viewer/index.vue'
+import EbAppLayout from './components/app-layout/index.vue'
+import EbAppToolbar from './components/app-toolbar/index.vue'
+import EbPageHeader from './components/page-header/index.vue'
+import EbSectionCard from './components/section-card/index.vue'
+import EbStatCard from './components/stat-card/index.vue'
+import EbStatRow from './components/stat-row/index.vue'
+import EbTransfer from './components/transfer/index.vue'
+import EbCarousel from './components/carousel/index.vue'
+import EbCarouselItem from './components/carousel/item.vue'
+import EbCascaderPanel from './components/cascader-panel/index.vue'
+import EbCommandPalette from './components/command-palette/index.vue'
 // Chatbot 家族
-import EvChatbot from './components/chatbot/Chatbot.vue'
-import EvChatList from './components/chatbot/ChatList.vue'
-import EvChatMessage from './components/chatbot/ChatMessage.vue'
-import EvChatSender from './components/chatbot/ChatSender.vue'
-import EvChatContent from './components/chatbot/ChatContent.vue'
-import EvChatMarkdown from './components/chatbot/ChatMarkdown.vue'
-import EvChatThinking from './components/chatbot/ChatThinking.vue'
-import EvChatLoading from './components/chatbot/ChatLoading.vue'
-import EvChatActionbar from './components/chatbot/ChatActionbar.vue'
-import EvChatAttachments from './components/chatbot/ChatAttachments.vue'
+import EbChatbot from './components/chatbot/Chatbot.vue'
+import EbChatList from './components/chatbot/ChatList.vue'
+import EbChatMessage from './components/chatbot/ChatMessage.vue'
+import EbChatSender from './components/chatbot/ChatSender.vue'
+import EbChatContent from './components/chatbot/ChatContent.vue'
+import EbChatMarkdown from './components/chatbot/ChatMarkdown.vue'
+import EbChatThinking from './components/chatbot/ChatThinking.vue'
+import EbChatLoading from './components/chatbot/ChatLoading.vue'
+import EbChatActionbar from './components/chatbot/ChatActionbar.vue'
+import EbChatAttachments from './components/chatbot/ChatAttachments.vue'
 export { useChatEngine } from './components/chatbot/useChatEngine'
 // 业务组件
-import EvStatusTag from './components/status-tag/index.vue'
-import EvCellStack from './components/cell-stack/index.vue'
-import EvDetailDescriptions from './components/detail-descriptions/index.vue'
-import EvSearchFilter from './components/search-filter/index.vue'
-import EvDataTable from './components/data-table/index.vue'
-import EvImportExportPanel from './components/import-export-panel/index.vue'
-import EvAuditTimeline from './components/audit-timeline/index.vue'
-import EvColumnSettings from './components/column-settings/index.vue'
+import EbStatusTag from './components/status-tag/index.vue'
+import EbCellStack from './components/cell-stack/index.vue'
+import EbDetailDescriptions from './components/detail-descriptions/index.vue'
+import EbSearchFilter from './components/search-filter/index.vue'
+import EbDataTable from './components/data-table/index.vue'
+import EbImportExportPanel from './components/import-export-panel/index.vue'
+import EbAuditTimeline from './components/audit-timeline/index.vue'
+import EbColumnSettings from './components/column-settings/index.vue'
 // 增强组件（虚拟滚动 / 联想 / 引导 / 二维码等）
-import EvVirtualList from './components/virtual-list/index.vue'
-// EvListy 为 EvVirtualList 的别名注册
-import EvAutoComplete from './components/auto-complete/index.vue'
-import EvTour from './components/tour/index.vue'
-import EvQrcode from './components/qrcode/index.vue'
-import EvMention from './components/mention/index.vue'
-import EvStatistic from './components/statistic/index.vue'
-import EvFloatButton from './components/float-button/index.vue'
-import EvFloatButtonGroup from './components/float-button/group.vue'
-import EvComment from './components/comment/index.vue'
-import EvAuth from './components/auth/index.vue'
+import EbVirtualList from './components/virtual-list/index.vue'
+// EbListy 为 EbVirtualList 的别名注册
+import EbAutoComplete from './components/auto-complete/index.vue'
+import EbTour from './components/tour/index.vue'
+import EbQrcode from './components/qrcode/index.vue'
+import EbMention from './components/mention/index.vue'
+import EbStatistic from './components/statistic/index.vue'
+import EbFloatButton from './components/float-button/index.vue'
+import EbFloatButtonGroup from './components/float-button/group.vue'
+import EbComment from './components/comment/index.vue'
+import EbAuth from './components/auth/index.vue'
 import { encodeQR, QRCODE_MAX_BYTES } from './components/qrcode/qrcode'
 // 排版与锚点
-import EvTitle from './components/typography/title.vue'
-import EvParagraph from './components/typography/paragraph.vue'
-import EvAnchor from './components/anchor/index.vue'
-import EvAnchorLink from './components/anchor/link.vue'
+import EbTitle from './components/typography/title.vue'
+import EbParagraph from './components/typography/paragraph.vue'
+import EbAnchor from './components/anchor/index.vue'
+import EbAnchorLink from './components/anchor/link.vue'
 
 // ─── Mobile 移动组件 ───
-import EvPullRefresh from './components/pull-refresh/index.vue'
-import EvLoadMore from './components/load-more/index.vue'
-import EvActionSheet from './components/action-sheet/index.vue'
-import EvTabbar from './components/tabbar/index.vue'
-import EvTabbarItem from './components/tabbar/item.vue'
-import EvNavBar from './components/nav-bar/index.vue'
+import EbPullRefresh from './components/pull-refresh/index.vue'
+import EbLoadMore from './components/load-more/index.vue'
+import EbActionSheet from './components/action-sheet/index.vue'
+import EbTabbar from './components/tabbar/index.vue'
+import EbTabbarItem from './components/tabbar/item.vue'
+import EbNavBar from './components/nav-bar/index.vue'
+
+// ─── 图表（独立包 @wil-works/evoke-charts，以 EbChart 别名提供） ───
+import { EvChart } from '@wil-works/evoke-charts'
 
 // ─── Command APIs ───
-import { EvMessage } from './components/message'
-import { EvMsgbox } from './components/msgbox'
-import { EvNotify } from './components/notify'
-import { EvLoading, createLoadingDirective } from './components/loading'
+import { EbMessage } from './components/message'
+import { EbMsgbox } from './components/msgbox'
+import { EbNotify } from './components/notify'
+import { EbLoading, createLoadingDirective } from './components/loading'
 
 // ─── Directives ───
 import { createPermissionDirective } from './directives/permission'
@@ -230,7 +233,7 @@ import {
   saveThemeConfig,
   loadThemeConfig,
   clearThemeConfig,
-  EV_THEME_PRESETS,
+  EB_THEME_PRESETS,
   setDensity,
   getDensity,
 } from './utils/theme'
@@ -250,164 +253,166 @@ import { BREAKPOINTS } from './constants'
 // ─── Component Registry ───
 const components = {
   // 基础
-  EvButton,
-  EvButtonGroup,
-  EvIcon,
-  EvConfigProvider,
+  EbButton,
+  EbButtonGroup,
+  EbIcon,
+  EbConfigProvider,
   // 表单与基础
-  EvInput,
-  EvTextarea,
-  EvTag,
-  EvSpin,
-  EvAlert,
-  EvDivider,
-  EvSkeleton,
-  EvSkeletonItem,
-  EvSkeletonButton,
-  EvSkeletonAvatar,
-  EvSkeletonInput,
-  EvSkeletonImage,
-  EvRadio,
-  EvRadioGroup,
-  EvRadioButton,
-  EvCheckbox,
-  EvCheckboxGroup,
-  EvCheckboxButton,
-  EvSwitch,
-  EvInputNumber,
-  EvForm,
-  EvFormItem,
-  EvDialog,
+  EbInput,
+  EbTextarea,
+  EbTag,
+  EbSpin,
+  EbAlert,
+  EbDivider,
+  EbSkeleton,
+  EbSkeletonItem,
+  EbSkeletonButton,
+  EbSkeletonAvatar,
+  EbSkeletonInput,
+  EbSkeletonImage,
+  EbRadio,
+  EbRadioGroup,
+  EbRadioButton,
+  EbCheckbox,
+  EbCheckboxGroup,
+  EbCheckboxButton,
+  EbSwitch,
+  EbInputNumber,
+  EbForm,
+  EbFormItem,
+  EbDialog,
   // 浮层与选择器
-  EvPopper,
-  EvTooltip,
-  EvPopover,
-  EvPopconfirm,
-  EvSelect,
-  EvOption,
-  EvOptionGroup,
-  EvDropdown,
-  EvDropdownMenu,
-  EvDropdownItem,
-  EvTabs,
-  EvTabPane,
-  EvDrawer,
-  EvPagination,
-  EvAvatar,
-  EvAvatarGroup,
-  EvBadge,
-  EvProgress,
-  EvEmpty,
-  EvImageViewer,
+  EbPopper,
+  EbTooltip,
+  EbPopover,
+  EbPopconfirm,
+  EbSelect,
+  EbOption,
+  EbOptionGroup,
+  EbDropdown,
+  EbDropdownMenu,
+  EbDropdownItem,
+  EbTabs,
+  EbTabPane,
+  EbDrawer,
+  EbPagination,
+  EbAvatar,
+  EbAvatarGroup,
+  EbBadge,
+  EbProgress,
+  EbEmpty,
+  EbImageViewer,
   // 数据组件
-  EvTable,
-  EvTableColumn,
-  EvTree,
-  EvTreeSelect,
-  EvDatePicker,
-  EvTimePicker,
-  EvTimeSelect,
-  EvCascader,
+  EbTable,
+  EbTableColumn,
+  EbTree,
+  EbTreeSelect,
+  EbDatePicker,
+  EbTimePicker,
+  EbTimeSelect,
+  EbCascader,
   // 通用组件
-  EvBreadcrumb,
-  EvBreadcrumbItem,
-  EvLink,
-  EvText,
-  EvCollapse,
-  EvCollapseItem,
-  EvDescriptions,
-  EvDescriptionsItem,
-  EvSteps,
-  EvStep,
-  EvCard,
-  EvImage,
-  EvBacktop,
-  EvAffix,
-  EvRate,
-  EvSlider,
-  EvColorPicker,
-  EvColorPickerPanel,
-  EvMenu,
-  EvMenuItem,
-  EvSubMenu,
-  EvMenuItemGroup,
-  EvTimeline,
-  EvTimelineItem,
-  EvResult,
-  EvWatermark,
-  EvEmptyState,
-  EvSegmented,
-  EvContainer,
-  EvHeader,
-  EvAside,
-  EvMain,
-  EvFooter,
-  EvRow,
-  EvCol,
-  EvSpace,
-  EvScrollbar,
-  EvStack,
-  EvSplitter,
-  EvSplitterPanel,
-  EvUpload,
-  EvCalendar,
-  EvBorderBeam,
-  EvCreditsProgress,
-  EvGanttProgress,
-  EvJsonViewer,
-  EvAppLayout,
-  EvAppToolbar,
-  EvPageHeader,
-  EvSectionCard,
-  EvStatCard,
-  EvStatRow,
-  EvTransfer,
-  EvCarousel,
-  EvCarouselItem,
-  EvCascaderPanel,
-  EvCommandPalette,
-  EvChatbot,
-  EvChatList,
-  EvChatMessage,
-  EvChatSender,
-  EvChatContent,
-  EvChatMarkdown,
-  EvChatThinking,
-  EvChatLoading,
-  EvChatActionbar,
-  EvChatAttachments,
-  EvStatusTag,
-  EvCellStack,
-  EvDetailDescriptions,
-  EvSearchFilter,
-  EvDataTable,
-  EvImportExportPanel,
-  EvAuditTimeline,
-  EvColumnSettings,
+  EbBreadcrumb,
+  EbBreadcrumbItem,
+  EbLink,
+  EbText,
+  EbCollapse,
+  EbCollapseItem,
+  EbDescriptions,
+  EbDescriptionsItem,
+  EbSteps,
+  EbStep,
+  EbCard,
+  EbImage,
+  EbBacktop,
+  EbAffix,
+  EbRate,
+  EbSlider,
+  EbColorPicker,
+  EbColorPickerPanel,
+  EbMenu,
+  EbMenuItem,
+  EbSubMenu,
+  EbMenuItemGroup,
+  EbTimeline,
+  EbTimelineItem,
+  EbResult,
+  EbWatermark,
+  EbEmptyState,
+  EbSegmented,
+  EbContainer,
+  EbHeader,
+  EbAside,
+  EbMain,
+  EbFooter,
+  EbRow,
+  EbCol,
+  EbSpace,
+  EbScrollbar,
+  EbStack,
+  EbSplitter,
+  EbSplitterPanel,
+  EbUpload,
+  EbCalendar,
+  EbBorderBeam,
+  EbCreditsProgress,
+  EbGanttProgress,
+  EbJsonViewer,
+  EbAppLayout,
+  EbAppToolbar,
+  EbPageHeader,
+  EbSectionCard,
+  EbStatCard,
+  EbStatRow,
+  EbTransfer,
+  EbCarousel,
+  EbCarouselItem,
+  EbCascaderPanel,
+  EbCommandPalette,
+  EbChatbot,
+  EbChatList,
+  EbChatMessage,
+  EbChatSender,
+  EbChatContent,
+  EbChatMarkdown,
+  EbChatThinking,
+  EbChatLoading,
+  EbChatActionbar,
+  EbChatAttachments,
+  EbStatusTag,
+  EbCellStack,
+  EbDetailDescriptions,
+  EbSearchFilter,
+  EbDataTable,
+  EbImportExportPanel,
+  EbAuditTimeline,
+  EbColumnSettings,
   // 增强组件
-  EvVirtualList,
-  EvListy: EvVirtualList,
-  EvStatistic,
-  EvAutoComplete,
-  EvTour,
-  EvQrcode,
-  EvMention,
-  EvFloatButton,
-  EvFloatButtonGroup,
-  EvComment,
-  EvAuth,
+  EbVirtualList,
+  EbListy: EbVirtualList,
+  EbStatistic,
+  EbAutoComplete,
+  EbTour,
+  EbQrcode,
+  EbMention,
+  EbFloatButton,
+  EbFloatButtonGroup,
+  EbComment,
+  EbAuth,
   // 排版与锚点
-  EvTitle,
-  EvParagraph,
-  EvAnchor,
-  EvAnchorLink,
+  EbTitle,
+  EbParagraph,
+  EbAnchor,
+  EbAnchorLink,
   // Components — Mobile 移动组件
-  EvPullRefresh,
-  EvLoadMore,
-  EvActionSheet,
-  EvTabbar,
-  EvTabbarItem,
-  EvNavBar,
+  EbPullRefresh,
+  EbLoadMore,
+  EbActionSheet,
+  EbTabbar,
+  EbTabbarItem,
+  EbNavBar,
+  // 图表（evoke-charts 独立包别名）
+  EbChart: EvChart,
 }
 
 // ─── Vue Plugin Install ───
@@ -417,21 +422,21 @@ function install(app, _options = {}) {
     app.component(name, component)
   }
   // 命令式 API（provide + globalProperties 双轨注册）
-  app.provide('$message', EvMessage)
-  app.provide('$notify', EvNotify)
-  app.provide('$msgbox', EvMsgbox)
-  app.provide('$alert', EvMsgbox.alert)
-  app.provide('$confirm', EvMsgbox.confirm)
-  app.provide('$prompt', EvMsgbox.prompt)
-  app.provide('$loading', EvLoading.service)
+  app.provide('$message', EbMessage)
+  app.provide('$notify', EbNotify)
+  app.provide('$msgbox', EbMsgbox)
+  app.provide('$alert', EbMsgbox.alert)
+  app.provide('$confirm', EbMsgbox.confirm)
+  app.provide('$prompt', EbMsgbox.prompt)
+  app.provide('$loading', EbLoading.service)
 
-  app.config.globalProperties.$message = EvMessage
-  app.config.globalProperties.$notify = EvNotify
-  app.config.globalProperties.$msgbox = EvMsgbox
-  app.config.globalProperties.$alert = EvMsgbox.alert
-  app.config.globalProperties.$confirm = EvMsgbox.confirm
-  app.config.globalProperties.$prompt = EvMsgbox.prompt
-  app.config.globalProperties.$loading = EvLoading.service
+  app.config.globalProperties.$message = EbMessage
+  app.config.globalProperties.$notify = EbNotify
+  app.config.globalProperties.$msgbox = EbMsgbox
+  app.config.globalProperties.$alert = EbMsgbox.alert
+  app.config.globalProperties.$confirm = EbMsgbox.confirm
+  app.config.globalProperties.$prompt = EbMsgbox.prompt
+  app.config.globalProperties.$loading = EbLoading.service
 
   // 指令：v-loading / v-permission / v-copy / v-infinite-scroll
   app.directive('loading', createLoadingDirective())
@@ -443,179 +448,181 @@ function install(app, _options = {}) {
 // ─── Exports ───
 export {
   // 基础
-  EvButton,
-  EvButtonGroup,
-  EvIcon,
-  EvConfigProvider,
+  EbButton,
+  EbButtonGroup,
+  EbIcon,
+  EbConfigProvider,
   // 表单与基础
-  EvInput,
-  EvTextarea,
-  EvTag,
-  EvSpin,
-  EvAlert,
-  EvDivider,
-  EvSkeleton,
-  EvSkeletonItem,
-  EvSkeletonButton,
-  EvSkeletonAvatar,
-  EvSkeletonInput,
-  EvSkeletonImage,
-  EvRadio,
-  EvRadioGroup,
-  EvRadioButton,
-  EvCheckbox,
-  EvCheckboxGroup,
-  EvCheckboxButton,
-  EvSwitch,
-  EvInputNumber,
-  EvForm,
-  EvFormItem,
-  EvDialog,
+  EbInput,
+  EbTextarea,
+  EbTag,
+  EbSpin,
+  EbAlert,
+  EbDivider,
+  EbSkeleton,
+  EbSkeletonItem,
+  EbSkeletonButton,
+  EbSkeletonAvatar,
+  EbSkeletonInput,
+  EbSkeletonImage,
+  EbRadio,
+  EbRadioGroup,
+  EbRadioButton,
+  EbCheckbox,
+  EbCheckboxGroup,
+  EbCheckboxButton,
+  EbSwitch,
+  EbInputNumber,
+  EbForm,
+  EbFormItem,
+  EbDialog,
   // 浮层与选择器
-  EvPopper,
-  EvTooltip,
-  EvPopover,
-  EvPopconfirm,
-  EvSelect,
-  EvOption,
-  EvOptionGroup,
-  EvDropdown,
-  EvDropdownMenu,
-  EvDropdownItem,
-  EvTabs,
-  EvTabPane,
-  EvDrawer,
-  EvPagination,
-  EvAvatar,
-  EvAvatarGroup,
-  EvBadge,
-  EvProgress,
-  EvEmpty,
-  EvImageViewer,
+  EbPopper,
+  EbTooltip,
+  EbPopover,
+  EbPopconfirm,
+  EbSelect,
+  EbOption,
+  EbOptionGroup,
+  EbDropdown,
+  EbDropdownMenu,
+  EbDropdownItem,
+  EbTabs,
+  EbTabPane,
+  EbDrawer,
+  EbPagination,
+  EbAvatar,
+  EbAvatarGroup,
+  EbBadge,
+  EbProgress,
+  EbEmpty,
+  EbImageViewer,
   // 数据组件
-  EvTable,
-  EvTableColumn,
-  EvTree,
-  EvTreeSelect,
-  EvDatePicker,
-  EvTimePicker,
-  EvTimeSelect,
-  EvCascader,
+  EbTable,
+  EbTableColumn,
+  EbTree,
+  EbTreeSelect,
+  EbDatePicker,
+  EbTimePicker,
+  EbTimeSelect,
+  EbCascader,
   // 通用组件（导航 / 展示）
-  EvBreadcrumb,
-  EvBreadcrumbItem,
-  EvLink,
-  EvText,
-  EvCollapse,
-  EvCollapseItem,
-  EvDescriptions,
-  EvDescriptionsItem,
-  EvSteps,
-  EvStep,
+  EbBreadcrumb,
+  EbBreadcrumbItem,
+  EbLink,
+  EbText,
+  EbCollapse,
+  EbCollapseItem,
+  EbDescriptions,
+  EbDescriptionsItem,
+  EbSteps,
+  EbStep,
   // 卡片 / 图片 / 评分 / 滑块 / 取色器
-  EvCard,
-  EvImage,
-  EvBacktop,
-  EvAffix,
-  EvRate,
-  EvSlider,
-  EvColorPicker,
-  EvColorPickerPanel,
+  EbCard,
+  EbImage,
+  EbBacktop,
+  EbAffix,
+  EbRate,
+  EbSlider,
+  EbColorPicker,
+  EbColorPickerPanel,
   // 菜单 / 时间线 / 结果 / 水印
-  EvMenu,
-  EvMenuItem,
-  EvSubMenu,
-  EvMenuItemGroup,
-  EvTimeline,
-  EvTimelineItem,
-  EvResult,
-  EvWatermark,
-  EvEmptyState,
-  EvSegmented,
+  EbMenu,
+  EbMenuItem,
+  EbSubMenu,
+  EbMenuItemGroup,
+  EbTimeline,
+  EbTimelineItem,
+  EbResult,
+  EbWatermark,
+  EbEmptyState,
+  EbSegmented,
   // 布局
-  EvContainer,
-  EvHeader,
-  EvAside,
-  EvMain,
-  EvFooter,
-  EvRow,
-  EvCol,
-  EvSpace,
-  EvScrollbar,
-  EvStack,
+  EbContainer,
+  EbHeader,
+  EbAside,
+  EbMain,
+  EbFooter,
+  EbRow,
+  EbCol,
+  EbSpace,
+  EbScrollbar,
+  EbStack,
   // 分栏 / 上传 / 日历
-  EvSplitter,
-  EvSplitterPanel,
-  EvUpload,
-  EvCalendar,
+  EbSplitter,
+  EbSplitterPanel,
+  EbUpload,
+  EbCalendar,
   // 装饰与展示
-  EvBorderBeam,
-  EvCreditsProgress,
-  EvGanttProgress,
-  EvJsonViewer,
+  EbBorderBeam,
+  EbCreditsProgress,
+  EbGanttProgress,
+  EbJsonViewer,
   // 应用框架
-  EvAppLayout,
-  EvAppToolbar,
-  EvPageHeader,
-  EvSectionCard,
-  EvStatCard,
-  EvStatRow,
+  EbAppLayout,
+  EbAppToolbar,
+  EbPageHeader,
+  EbSectionCard,
+  EbStatCard,
+  EbStatRow,
   // 穿梭框 / 轮播 / 级联面板
-  EvTransfer,
-  EvCarousel,
-  EvCarouselItem,
-  EvCascaderPanel,
+  EbTransfer,
+  EbCarousel,
+  EbCarouselItem,
+  EbCascaderPanel,
   // 命令面板
-  EvCommandPalette,
+  EbCommandPalette,
   // Chatbot 家族
-  EvChatbot,
-  EvChatList,
-  EvChatMessage,
-  EvChatSender,
-  EvChatContent,
-  EvChatMarkdown,
-  EvChatThinking,
-  EvChatLoading,
-  EvChatActionbar,
-  EvChatAttachments,
+  EbChatbot,
+  EbChatList,
+  EbChatMessage,
+  EbChatSender,
+  EbChatContent,
+  EbChatMarkdown,
+  EbChatThinking,
+  EbChatLoading,
+  EbChatActionbar,
+  EbChatAttachments,
   // 业务组件
-  EvStatusTag,
-  EvCellStack,
-  EvDetailDescriptions,
-  EvSearchFilter,
-  EvDataTable,
-  EvImportExportPanel,
-  EvAuditTimeline,
-  EvColumnSettings,
+  EbStatusTag,
+  EbCellStack,
+  EbDetailDescriptions,
+  EbSearchFilter,
+  EbDataTable,
+  EbImportExportPanel,
+  EbAuditTimeline,
+  EbColumnSettings,
   // 增强组件
-  EvVirtualList,
-  EvVirtualList as EvListy,
-  EvStatistic,
-  EvAutoComplete,
-  EvTour,
-  EvQrcode,
-  EvMention,
-  EvFloatButton,
-  EvFloatButtonGroup,
-  EvComment,
-  EvAuth,
+  EbVirtualList,
+  EbVirtualList as EbListy,
+  EbStatistic,
+  EbAutoComplete,
+  EbTour,
+  EbQrcode,
+  EbMention,
+  EbFloatButton,
+  EbFloatButtonGroup,
+  EbComment,
+  EbAuth,
   // 排版与锚点
-  EvTitle,
-  EvParagraph,
-  EvAnchor,
-  EvAnchorLink,
+  EbTitle,
+  EbParagraph,
+  EbAnchor,
+  EbAnchorLink,
   // Components — Mobile 移动组件
-  EvPullRefresh,
-  EvLoadMore,
-  EvActionSheet,
-  EvTabbar,
-  EvTabbarItem,
-  EvNavBar,
+  EbPullRefresh,
+  EbLoadMore,
+  EbActionSheet,
+  EbTabbar,
+  EbTabbarItem,
+  EbNavBar,
+  // 图表（evoke-charts 独立包别名）
+  EvChart as EbChart,
   // Command APIs
-  EvMessage,
-  EvMsgbox,
-  EvNotify,
-  EvLoading,
+  EbMessage,
+  EbMsgbox,
+  EbNotify,
+  EbLoading,
   // Icon Registry
   getIconByName,
   getIconByNameSync,
@@ -664,7 +671,7 @@ export {
   saveThemeConfig,
   loadThemeConfig,
   clearThemeConfig,
-  EV_THEME_PRESETS,
+  EB_THEME_PRESETS,
   setDensity,
   getDensity,
   // 格式化工具

@@ -1,5 +1,5 @@
 <template>
-  <table class="ev-month-table" cellspacing="0" cellpadding="0">
+  <table class="eb-month-table" cellspacing="0" cellpadding="0">
     <tbody>
       <tr v-for="(row, ri) in rows" :key="ri">
         <td
@@ -8,8 +8,8 @@
           :class="cellClass(cell)"
           @click="handleClick(cell)"
         >
-          <div class="ev-date-table-cell">
-            <span class="ev-date-table-cell__text">{{ cell.text }}</span>
+          <div class="eb-date-table-cell">
+            <span class="eb-date-table-cell__text">{{ cell.text }}</span>
           </div>
         </td>
       </tr>
@@ -19,13 +19,13 @@
 
 <script setup>
 /**
- * BasicMonthTable — 月份网格（12 个月，3 行 × 4 列，.ev-month-table 结构类）
+ * BasicMonthTable — 月份网格（12 个月，3 行 × 4 列，.eb-month-table 结构类）
  */
 import { computed } from 'vue'
 import { dayjs, isSameMonth } from './utils'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvBasicMonthTable' })
+defineOptions({ name: 'EbBasicMonthTable' })
 
 const props = defineProps({
   /** 视图年份（dayjs，取 year） */
@@ -44,7 +44,7 @@ const emit = defineEmits(['pick'])
 const { locale } = useLocale()
 
 const monthTexts = computed(() => {
-  const months = locale.value?.ev?.datepicker?.months || {}
+  const months = locale.value?.eb?.datepicker?.months || {}
   const keys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
   return keys.map((k, i) => months[k] || `${i + 1} 月`)
 })

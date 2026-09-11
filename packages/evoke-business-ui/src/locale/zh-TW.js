@@ -3,7 +3,7 @@
  */
 export const zhTW = {
   name: 'zh-tw',
-  ev: {
+  eb: {
     colorpicker: {
       confirm: '確定',
       clear: '清空',

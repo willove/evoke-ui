@@ -1,42 +1,42 @@
-import { mount, describe, it, expect, EwSection, EwCard, EwNavbar, EwFooter, EwHero, EwQuote } from './helpers'
+import { mount, describe, it, expect, EvSection, EvCard, EvNavbar, EvFooter, EvHero, EvQuote } from './helpers'
 
-describe('EwSection', () => {
+describe('EvSection', () => {
   it('渲染眉题 + 标题 + 描述（remixdesign WORK 区块语言）', () => {
-    const wrapper = mount(EwSection, {
+    const wrapper = mount(EvSection, {
       props: { eyebrow: 'work', title: 'A Selection of Works', description: 'Our recent products.' },
     })
-    expect(wrapper.find('.ew-section__eyebrow').text()).toBe('work')
-    expect(wrapper.find('.ew-section__title').text()).toBe('A Selection of Works')
-    expect(wrapper.find('.ew-section__description').text()).toBe('Our recent products.')
+    expect(wrapper.find('.ev-section__eyebrow').text()).toBe('work')
+    expect(wrapper.find('.ev-section__title').text()).toBe('A Selection of Works')
+    expect(wrapper.find('.ev-section__description').text()).toBe('Our recent products.')
   })
 
   it('center 对齐', () => {
-    const wrapper = mount(EwSection, { props: { title: 'T', align: 'center' } })
+    const wrapper = mount(EvSection, { props: { title: 'T', align: 'center' } })
     expect(wrapper.classes()).toContain('is-center')
   })
 })
 
-describe('EwCard', () => {
+describe('EvCard', () => {
   it('粉彩 tone 与贴纸形态', () => {
-    const wrapper = mount(EwCard, { props: { tone: 'cream', sticker: true }, slots: { default: 'body' } })
+    const wrapper = mount(EvCard, { props: { tone: 'cream', sticker: true }, slots: { default: 'body' } })
     expect(wrapper.classes()).toContain('is-cream')
     expect(wrapper.classes()).toContain('is-sticker')
   })
 
   it('featured 深色主推形态优先渲染', () => {
-    const wrapper = mount(EwCard, { props: { featured: true } })
+    const wrapper = mount(EvCard, { props: { featured: true } })
     expect(wrapper.classes()).toContain('is-featured')
   })
 
   it('tag 属性渲染为链接卡', () => {
-    const wrapper = mount(EwCard, { props: { tag: 'a' } })
+    const wrapper = mount(EvCard, { props: { tag: 'a' } })
     expect(wrapper.element.tagName).toBe('A')
   })
 })
 
-describe('EwNavbar', () => {
+describe('EvNavbar', () => {
   it('渲染 logo 文本与导航项', () => {
-    const wrapper = mount(EwNavbar, {
+    const wrapper = mount(EvNavbar, {
       props: {
         logoText: 'Remix UI',
         items: [
@@ -45,21 +45,21 @@ describe('EwNavbar', () => {
         ],
       },
     })
-    expect(wrapper.find('.ew-navbar__logo-text').text()).toBe('Remix UI')
-    const links = wrapper.findAll('.ew-navbar__link')
+    expect(wrapper.find('.ev-navbar__logo-text').text()).toBe('Remix UI')
+    const links = wrapper.findAll('.ev-navbar__link')
     expect(links).toHaveLength(2)
     expect(links[0].attributes('href')).toBe('#features')
   })
 
   it('active 高亮当前项', () => {
-    const wrapper = mount(EwNavbar, {
+    const wrapper = mount(EvNavbar, {
       props: { items: [{ label: 'A', href: '#' }, { label: 'B', href: '#' }], active: 'B' },
     })
-    expect(wrapper.findAll('.ew-navbar__link')[1].classes()).toContain('is-active')
+    expect(wrapper.findAll('.ev-navbar__link')[1].classes()).toContain('is-active')
   })
 
   it('actions 插槽渲染', () => {
-    const wrapper = mount(EwNavbar, {
+    const wrapper = mount(EvNavbar, {
       props: { items: [] },
       slots: { actions: '<button class="demo-action">★</button>' },
     })
@@ -67,9 +67,9 @@ describe('EwNavbar', () => {
   })
 })
 
-describe('EwFooter', () => {
+describe('EvFooter', () => {
   it('多栏链接 + 版权条', () => {
-    const wrapper = mount(EwFooter, {
+    const wrapper = mount(EvFooter, {
       props: {
         columns: [
           { title: 'Product', links: [{ label: 'Features', href: '#' }, { label: 'Pricing', href: '#' }] },
@@ -78,25 +78,25 @@ describe('EwFooter', () => {
         copyright: '© 2026 Remix Design',
       },
     })
-    const cols = wrapper.findAll('.ew-footer__col')
+    const cols = wrapper.findAll('.ev-footer__col')
     expect(cols).toHaveLength(2)
-    expect(wrapper.findAll('.ew-footer__link')).toHaveLength(3)
-    expect(wrapper.find('.ew-footer__copyright').text()).toBe('© 2026 Remix Design')
+    expect(wrapper.findAll('.ev-footer__link')).toHaveLength(3)
+    expect(wrapper.find('.ev-footer__copyright').text()).toBe('© 2026 Remix Design')
   })
 })
 
-describe('EwHero', () => {
+describe('EvHero', () => {
   it('标题 + 描述 + 渐变底', () => {
-    const wrapper = mount(EwHero, {
+    const wrapper = mount(EvHero, {
       props: { title: 'Simply Delightful Icon System', description: 'Open-source neutral-style symbols.' },
     })
     expect(wrapper.classes()).toContain('is-tinted')
-    expect(wrapper.find('.ew-hero__title').text()).toBe('Simply Delightful Icon System')
-    expect(wrapper.find('.ew-hero__description').exists()).toBe(true)
+    expect(wrapper.find('.ev-hero__title').text()).toBe('Simply Delightful Icon System')
+    expect(wrapper.find('.ev-hero__description').exists()).toBe(true)
   })
 
   it('badge / actions / aside 插槽', () => {
-    const wrapper = mount(EwHero, {
+    const wrapper = mount(EvHero, {
       props: { title: 'H' },
       slots: {
         badge: '<span class="hero-badge">v1.0</span>',
@@ -107,13 +107,13 @@ describe('EwHero', () => {
     expect(wrapper.find('.hero-badge').exists()).toBe(true)
     expect(wrapper.find('.hero-cta').exists()).toBe(true)
     expect(wrapper.find('.hero-art').exists()).toBe(true)
-    expect(wrapper.find('.ew-hero__inner').classes()).toContain('has-aside')
+    expect(wrapper.find('.ev-hero__inner').classes()).toContain('has-aside')
   })
 })
 
-describe('EwQuote', () => {
+describe('EvQuote', () => {
   it('引用 + 作者 + 来源链接', () => {
-    const wrapper = mount(EwQuote, {
+    const wrapper = mount(EvQuote, {
       props: {
         quote: 'The best Launchpad alternative.',
         author: 'John',
@@ -122,8 +122,8 @@ describe('EwQuote', () => {
         sourceHref: 'https://example.com',
       },
     })
-    expect(wrapper.find('.ew-quote__text').text()).toContain('Launchpad')
-    expect(wrapper.find('.ew-quote__name').text()).toBe('John')
-    expect(wrapper.find('.ew-quote__source').attributes('href')).toBe('https://example.com')
+    expect(wrapper.find('.ev-quote__text').text()).toContain('Launchpad')
+    expect(wrapper.find('.ev-quote__name').text()).toBe('John')
+    expect(wrapper.find('.ev-quote__source').attributes('href')).toBe('https://example.com')
   })
 })

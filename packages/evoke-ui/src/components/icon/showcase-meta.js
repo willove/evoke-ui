@@ -5,7 +5,7 @@
 
 export const REMIX_ICON_VERSION = '4.9.1'
 
-export const EW_SHOWCASE_META = {
+export const EV_SHOWCASE_META = {
  "arrow-down-box-fill": {
   "category": "Arrows",
   "categoryZh": "箭头与方向",

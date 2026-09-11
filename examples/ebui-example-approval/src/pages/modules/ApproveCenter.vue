@@ -1,15 +1,15 @@
 <template>
   <div class="ac-page">
-    <ev-page-header title="审批中心" subtitle="待部门经理处理的报销单据">
+    <eb-page-header title="审批中心" subtitle="待部门经理处理的报销单据">
       <template #actions>
-        <ev-tag size="small" effect="plain">当前身份：部门经理</ev-tag>
+        <eb-tag size="small" effect="plain">当前身份：部门经理</eb-tag>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-row :gutter="16" class="ac-block">
+    <eb-row :gutter="16" class="ac-block">
       <!-- 左：待审队列 -->
-      <ev-col :xs="24" :lg="8">
-        <ev-section-card :title="`待审批（${approveQueue.length}）`" :padding="false" class="ac-queue-card">
+      <eb-col :xs="24" :lg="8">
+        <eb-section-card :title="`待审批（${approveQueue.length}）`" :padding="false" class="ac-queue-card">
           <div class="ac-queue">
             <div
               v-for="item in approveQueue"
@@ -29,66 +29,66 @@
             </div>
             <div v-if="!approveQueue.length" class="ac-queue__empty">待审批已清空</div>
           </div>
-        </ev-section-card>
-      </ev-col>
+        </eb-section-card>
+      </eb-col>
 
       <!-- 右：审批工作区 -->
-      <ev-col :xs="24" :lg="16">
-        <ev-section-card :padding="false" class="ac-detail-card">
+      <eb-col :xs="24" :lg="16">
+        <eb-section-card :padding="false" class="ac-detail-card">
           <template #header>
             <div class="ac-detail-title">
               <span class="ac-detail-title__no">{{ selected.no }}</span>
-              <ev-status-tag :value="selected.status || 'pending'" :statuses="EXPENSE_STATUS" />
+              <eb-status-tag :value="selected.status || 'pending'" :statuses="EXPENSE_STATUS" />
             </div>
           </template>
           <template #extra>
-            <ev-popconfirm title="确认同意该报销申请？" @confirm="agree">
-              <ev-button type="primary" size="small">同意</ev-button>
-            </ev-popconfirm>
-            <ev-button size="small" type="danger" plain @click="rejectVisible = true">驳回</ev-button>
+            <eb-popconfirm title="确认同意该报销申请？" @confirm="agree">
+              <eb-button type="primary" size="small">同意</eb-button>
+            </eb-popconfirm>
+            <eb-button size="small" type="danger" plain @click="rejectVisible = true">驳回</eb-button>
           </template>
 
           <div class="ac-detail-body">
-            <ev-steps :active="activeStep" align-center :process-status="selected.status === 'rejected' ? 'error' : 'process'">
-              <ev-step v-for="node in FLOW_NODES" :key="node" :title="node" />
-            </ev-steps>
+            <eb-steps :active="activeStep" align-center :process-status="selected.status === 'rejected' ? 'error' : 'process'">
+              <eb-step v-for="node in FLOW_NODES" :key="node" :title="node" />
+            </eb-steps>
 
-            <ev-detail-descriptions :column="3" :border="false" :data="selected" :items="detailItems" class="ac-desc" />
+            <eb-detail-descriptions :column="3" :border="false" :data="selected" :items="detailItems" class="ac-desc" />
 
             <div class="ac-sub-title">费用明细（{{ selected.items?.length || 0 }} 项）</div>
-            <ev-table :data="selected.items || []">
-              <ev-table-column prop="type" label="费用类型" width="120">
+            <eb-table :data="selected.items || []">
+              <eb-table-column prop="type" label="费用类型" width="120">
                 <template #default="{ row }">{{ TYPE_LABEL[row.type] }}</template>
-              </ev-table-column>
-              <ev-table-column prop="note" label="说明" min-width="200" />
-              <ev-table-column prop="amount" label="金额（元）" align="right" width="110" />
-            </ev-table>
+              </eb-table-column>
+              <eb-table-column prop="note" label="说明" min-width="200" />
+              <eb-table-column prop="amount" label="金额（元）" align="right" width="110" />
+            </eb-table>
 
             <div class="ac-sub-title">审批记录</div>
-            <ev-audit-timeline :items="auditItems" />
+            <eb-audit-timeline :items="auditItems" />
           </div>
-        </ev-section-card>
-      </ev-col>
-    </ev-row>
+        </eb-section-card>
+      </eb-col>
+    </eb-row>
 
     <!-- 驳回意见 -->
-    <ev-dialog v-model="rejectVisible" title="驳回申请" width="460px">
-      <ev-form :model="rejectForm" label-width="72px">
-        <ev-form-item label="驳回意见">
-          <ev-textarea v-model="rejectForm.reason" :rows="3" maxlength="100" show-word-limit placeholder="请填写驳回意见（必填），将通知申请人" />
-        </ev-form-item>
-      </ev-form>
+    <eb-dialog v-model="rejectVisible" title="驳回申请" width="460px">
+      <eb-form :model="rejectForm" label-width="72px">
+        <eb-form-item label="驳回意见">
+          <eb-textarea v-model="rejectForm.reason" :rows="3" maxlength="100" show-word-limit placeholder="请填写驳回意见（必填），将通知申请人" />
+        </eb-form-item>
+      </eb-form>
       <template #footer>
-        <ev-button @click="rejectVisible = false">取消</ev-button>
-        <ev-button type="danger" @click="reject">确认驳回</ev-button>
+        <eb-button @click="rejectVisible = false">取消</eb-button>
+        <eb-button type="danger" @click="reject">确认驳回</eb-button>
       </template>
-    </ev-dialog>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { approveQueue, EXPENSE_STATUS, TYPE_LABEL, FLOW_NODES } from '../mock.js'
 
 /* ---------------- 选中单据（默认第一张） ---------------- */
@@ -144,7 +144,7 @@ function agree() {
   pushFlow('钱多多', '财务审核通过', '发票已核验（演示自动流转）')
   pushFlow('周予安', '打款完成', '已转账至申请人账户（演示自动流转）')
   selected.value.status = 'approved'
-  EvMessage.success(`报销单 ${selected.value.no} 审批通过，财务与出纳节点已完成打款`)
+  EbMessage.success(`报销单 ${selected.value.no} 审批通过，财务与出纳节点已完成打款`)
 }
 
 const rejectVisible = ref(false)
@@ -152,14 +152,14 @@ const rejectForm = reactive({ reason: '' })
 
 function reject() {
   if (!rejectForm.reason.trim()) {
-    EvMessage.warning('请填写驳回意见')
+    EbMessage.warning('请填写驳回意见')
     return
   }
   selected.value.status = 'rejected'
   pushFlow('沈从文', '部门经理驳回了申请', rejectForm.reason.trim())
   rejectVisible.value = false
   rejectForm.reason = ''
-  EvMessage.warning(`报销单 ${selected.value.no} 已驳回`)
+  EbMessage.warning(`报销单 ${selected.value.no} 已驳回`)
 }
 </script>
 
@@ -180,15 +180,15 @@ function reject() {
 .ac-queue__item {
   padding: 12px 16px;
   cursor: pointer;
-  border-bottom: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-bottom: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
   transition: background-color 0.2s;
 }
 .ac-queue__item:hover {
-  background: var(--ev-fill-color-light, #f5f6f8);
+  background: var(--eb-fill-color-light, #f5f6f8);
 }
 .ac-queue__item.is-active {
-  background: var(--ev-color-primary-light-9, rgba(23, 93, 255, 0.06));
-  box-shadow: inset 3px 0 0 var(--ev-color-primary, #175dff);
+  background: var(--eb-color-primary-light-9, rgba(23, 93, 255, 0.06));
+  box-shadow: inset 3px 0 0 var(--eb-color-primary, #175dff);
 }
 .ac-queue__main {
   display: flex;
@@ -197,12 +197,12 @@ function reject() {
   gap: 8px;
 }
 .ac-queue__no {
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .ac-queue__type {
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .ac-queue__meta {
   display: flex;
@@ -210,17 +210,17 @@ function reject() {
   justify-content: space-between;
   gap: 8px;
   margin-top: 6px;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .ac-queue__amount {
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-color-danger, #e34d59);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-color-danger, #e34d59);
 }
 .ac-queue__empty {
   padding: 40px 0;
   text-align: center;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .ac-detail-card {
   min-height: 520px;
@@ -231,9 +231,9 @@ function reject() {
   gap: 10px;
 }
 .ac-detail-title__no {
-  font-size: var(--ev-font-size-base, 14px);
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-size: var(--eb-font-size-base, 14px);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .ac-detail-body {
   padding: 16px;
@@ -244,8 +244,8 @@ function reject() {
 .ac-sub-title {
   margin: 20px 0 10px;
   padding-left: 8px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
-  border-left: 3px solid var(--ev-color-primary, #175dff);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
+  border-left: 3px solid var(--eb-color-primary, #175dff);
 }
 </style>

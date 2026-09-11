@@ -1,6 +1,6 @@
 <template>
   <li
-    class="ev-menu-item ev-menu-item"
+    class="eb-menu-item eb-menu-item"
     :class="{ 'is-active': isActive, 'is-disabled': disabled }"
     role="menuitem"
     :tabindex="disabled ? -1 : -1"
@@ -13,7 +13,7 @@
 
 <script setup>
 /**
- * EvMenuItem — 菜单项
+ * EbMenuItem — 菜单项
  * 点击 → 菜单根 select（含 indexPath）；router 模式由根负责跳转
  */
 import { inject, computed, watch } from 'vue'

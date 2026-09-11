@@ -1,6 +1,6 @@
 /**
  * v-reveal — 滚动入场指令（轻盈浮现语言）v2
- * 元素进入视口时添加 .is-revealed（配合 utilities.css 的 .ew-reveal 过渡）
+ * 元素进入视口时添加 .is-revealed（配合 utilities.css 的 .ev-reveal 过渡）
  *
  * Usage:
  *   <div v-reveal>…</div>
@@ -38,7 +38,7 @@ function getObserver() {
  */
 export function revealElement(el, options = {}) {
   const { type = 'up', delay = 0, once = true } = options
-  el.classList.add('ew-reveal')
+  el.classList.add('ev-reveal')
   el.dataset.ewReveal = REVEAL_TYPES.includes(type) ? type : 'up'
   el.dataset.ewRevealOnce = String(once)
   if (delay) el.style.transitionDelay = `${delay}ms`

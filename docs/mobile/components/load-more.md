@@ -12,16 +12,16 @@
 后转 noMore 收束。
 
 <DemoBlock>
-<div style="max-width: 375px; margin: 0 auto; height: 300px; overflow-y: auto; border: 1px solid var(--ev-border-color-lighter); border-radius: 12px; padding: 12px 16px 0; box-sizing: border-box;">
-  <div v-for="i in items" :key="i" style="padding: 10px 0; border-bottom: 1px solid var(--ev-border-color-lighter); font-size: 14px; color: var(--ev-text-color-regular);">内容条目 #{{ i }}</div>
-  <ev-load-more v-model:status="status" :preload="40" @load-more="onLoad" />
+<div style="max-width: 375px; margin: 0 auto; height: 300px; overflow-y: auto; border: 1px solid var(--eb-border-color-lighter); border-radius: 12px; padding: 12px 16px 0; box-sizing: border-box;">
+  <div v-for="i in items" :key="i" style="padding: 10px 0; border-bottom: 1px solid var(--eb-border-color-lighter); font-size: 14px; color: var(--eb-text-color-regular);">内容条目 #{{ i }}</div>
+  <eb-load-more v-model:status="status" :preload="40" @load-more="onLoad" />
 </div>
 </DemoBlock>
 
 ```html
 <div class="list">
   <Item v-for="i in items" :key="i" />
-  <ev-load-more v-model:status="status" :preload="40" @load-more="onLoad" />
+  <eb-load-more v-model:status="status" :preload="40" @load-more="onLoad" />
 </div>
 ```
 
@@ -38,7 +38,7 @@ async function onLoad() {
 加载失败时父级把状态置 `error`，状态条转警示色，点击即重试（重新发出 `load-more`）。
 
 <DemoBlock>
-<ev-load-more :status="errStatus" style="max-width: 375px; margin: 0 auto;" @load-more="onErrLoad" @update:status="errStatus = $event" />
+<eb-load-more :status="errStatus" style="max-width: 375px; margin: 0 auto;" @load-more="onErrLoad" @update:status="errStatus = $event" />
 </DemoBlock>
 
 ## API

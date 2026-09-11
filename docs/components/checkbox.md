@@ -20,16 +20,16 @@ function handleCityChange() {
 </script>
 
 
-可多选的勾选控件：在 `ev-checkbox-group` 中放置若干 `ev-checkbox`（或按钮风格的 `ev-checkbox-button`），绑定值为选中 label 组成的数组；独立使用时支持 boolean / 数组 / true-label 等值语义。在 ev-form 中 change 时机自动触发校验。
+可多选的勾选控件：在 `eb-checkbox-group` 中放置若干 `eb-checkbox`（或按钮风格的 `eb-checkbox-button`），绑定值为选中 label 组成的数组；独立使用时支持 boolean / 数组 / true-label 等值语义。在 eb-form 中 change 时机自动触发校验。
 
 ## 基础用法
 
 <DemoBlock>
-  <ev-checkbox-group v-model="v">
-    <ev-checkbox label="vue">Vue</ev-checkbox>
-    <ev-checkbox label="react">React</ev-checkbox>
-    <ev-checkbox label="svelte" disabled>Svelte</ev-checkbox>
-  </ev-checkbox-group>
+  <eb-checkbox-group v-model="v">
+    <eb-checkbox label="vue">Vue</eb-checkbox>
+    <eb-checkbox label="react">React</eb-checkbox>
+    <eb-checkbox label="svelte" disabled>Svelte</eb-checkbox>
+  </eb-checkbox-group>
 </DemoBlock>
 
 绑定值为选中 label 组成的数组；单个 checkbox 设置 disabled 只禁用自身（如上例 Svelte），适合个别选项不可勾选的场景。
@@ -39,10 +39,10 @@ function handleCityChange() {
 group 设置 disabled 后整组不可勾选，常用于权限不足、前置条件未满足时的回显展示。
 
 <DemoBlock>
-  <ev-checkbox-group :model-value="['北京', '上海']" disabled>
-    <ev-checkbox label="北京">北京</ev-checkbox>
-    <ev-checkbox label="上海">上海</ev-checkbox>
-  </ev-checkbox-group>
+  <eb-checkbox-group :model-value="['北京', '上海']" disabled>
+    <eb-checkbox label="北京">北京</eb-checkbox>
+    <eb-checkbox label="上海">上海</eb-checkbox>
+  </eb-checkbox-group>
 </DemoBlock>
 
 ## 边框与尺寸
@@ -50,21 +50,21 @@ group 设置 disabled 后整组不可勾选，常用于权限不足、前置条�
 border 呈卡片描边样式；size 控制尺寸（large / small），组内可由 group 的 size 统一设置。
 
 <DemoBlock>
-  <ev-checkbox v-model="borderV" border>默认尺寸</ev-checkbox>
-  <ev-checkbox v-model="borderV" border size="large">large</ev-checkbox>
-  <ev-checkbox v-model="borderV" border size="small">small</ev-checkbox>
+  <eb-checkbox v-model="borderV" border>默认尺寸</eb-checkbox>
+  <eb-checkbox v-model="borderV" border size="large">large</eb-checkbox>
+  <eb-checkbox v-model="borderV" border size="small">small</eb-checkbox>
 </DemoBlock>
 
 ## 按钮风格
 
-ev-checkbox-button 为连体按钮组风格，适合筛选项较多的紧凑布局。
+eb-checkbox-button 为连体按钮组风格，适合筛选项较多的紧凑布局。
 
 <DemoBlock>
-  <ev-checkbox-group v-model="btnV">
-    <ev-checkbox-button label="a">选项 A</ev-checkbox-button>
-    <ev-checkbox-button label="b">选项 B</ev-checkbox-button>
-    <ev-checkbox-button label="c">选项 C</ev-checkbox-button>
-  </ev-checkbox-group>
+  <eb-checkbox-group v-model="btnV">
+    <eb-checkbox-button label="a">选项 A</eb-checkbox-button>
+    <eb-checkbox-button label="b">选项 B</eb-checkbox-button>
+    <eb-checkbox-button label="c">选项 C</eb-checkbox-button>
+  </eb-checkbox-group>
 </DemoBlock>
 
 ## 数量限制
@@ -72,11 +72,11 @@ ev-checkbox-button 为连体按钮组风格，适合筛选项较多的紧凑布�
 group 的 `max / min` 限制可勾选数量：达到上限后未选项自动禁用，达到下限后已选项禁止取消，用于限选场景（如最多选 2 个标签）。
 
 <DemoBlock>
-  <ev-checkbox-group v-model="limitV" :max="2">
-    <ev-checkbox label="a">选项 A</ev-checkbox>
-    <ev-checkbox label="b">选项 B</ev-checkbox>
-    <ev-checkbox label="c">选项 C</ev-checkbox>
-  </ev-checkbox-group>
+  <eb-checkbox-group v-model="limitV" :max="2">
+    <eb-checkbox label="a">选项 A</eb-checkbox>
+    <eb-checkbox label="b">选项 B</eb-checkbox>
+    <eb-checkbox label="c">选项 C</eb-checkbox>
+  </eb-checkbox-group>
 </DemoBlock>
 
 ## 全选联动
@@ -84,10 +84,10 @@ group 的 `max / min` 限制可勾选数量：达到上限后未选项自动禁�
 经典全选组合：全选框用 indeterminate 表达半选态（部分选中），change 时全量写入 / 清空数组；子项 change 里根据选中数量同步全选态。indeterminate 只影响样式，不写入绑定值。
 
 <DemoBlock>
-  <ev-checkbox v-model="checkAll" :indeterminate="checkedCities.length > 0 && checkedCities.length < cities.length" @change="handleCheckAll">全选</ev-checkbox>
-  <ev-checkbox-group v-model="checkedCities" @change="handleCityChange" style="margin-top: 12px; display: flex;">
-    <ev-checkbox v-for="city in cities" :key="city" :label="city">{{ city }}</ev-checkbox>
-  </ev-checkbox-group>
+  <eb-checkbox v-model="checkAll" :indeterminate="checkedCities.length > 0 && checkedCities.length < cities.length" @change="handleCheckAll">全选</eb-checkbox>
+  <eb-checkbox-group v-model="checkedCities" @change="handleCityChange" style="margin-top: 12px; display: flex;">
+    <eb-checkbox v-for="city in cities" :key="city" :label="city">{{ city }}</eb-checkbox>
+  </eb-checkbox-group>
 </DemoBlock>
 
 handleCheckAll / handleCityChange 定义见页面顶部 script：全选时写入 `[...cities]`，取消时清空数组，子项变化后按数量回写 checkAll。

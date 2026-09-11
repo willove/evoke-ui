@@ -1,27 +1,27 @@
 <template>
-  <section :class="['ew-cta', { 'is-tinted': tinted }]">
-    <EwContainer :width="container" class="ew-cta__inner">
-      <h2 class="ew-cta__title">
+  <section :class="['ev-cta', { 'is-tinted': tinted }]">
+    <EvContainer :width="container" class="ev-cta__inner">
+      <h2 class="ev-cta__title">
         <slot name="title">{{ title }}</slot>
       </h2>
-      <p v-if="description || $slots.description" class="ew-cta__description">
+      <p v-if="description || $slots.description" class="ev-cta__description">
         <slot name="description">{{ description }}</slot>
       </p>
-      <div v-if="$slots.actions" class="ew-cta__actions">
+      <div v-if="$slots.actions" class="ev-cta__actions">
         <slot name="actions" />
       </div>
-      <div v-if="$slots.default" class="ew-cta__body">
+      <div v-if="$slots.default" class="ev-cta__body">
         <slot />
       </div>
-    </EwContainer>
+    </EvContainer>
   </section>
 </template>
 
 <script setup>
 /**
- * EwCta — 行动召唤区（官网转化收尾）
+ * EvCta — 行动召唤区（官网转化收尾）
  */
-import EwContainer from '../container/index.vue'
+import EvContainer from '../container/index.vue'
 
 defineProps({
   title: { type: String, default: '' },

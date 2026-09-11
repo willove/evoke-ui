@@ -2,8 +2,8 @@
   <button
     ref="btnRef"
     :class="[
-      'ew-icon-button',
-      `ew-icon-button--${size}`,
+      'ev-icon-button',
+      `ev-icon-button--${size}`,
       `is-${variant}`,
       { 'is-round': round, 'is-disabled': disabled },
     ]"
@@ -12,18 +12,18 @@
     :aria-label="ariaLabel || icon"
     @click="handleClick"
   >
-    <EwIcon :name="icon" :size="iconSize" />
+    <EvIcon :name="icon" :size="iconSize" />
     <slot />
   </button>
 </template>
 
 <script setup>
 /**
- * EwIconButton — 图标按钮（官网头部动作：主题切换 / GitHub / 下载等）
+ * EvIconButton — 图标按钮（官网头部动作：主题切换 / GitHub / 下载等）
  * remixicon 头部语言：方圆角小按钮，round 转正圆
  */
 import { ref, computed } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
 const props = defineProps({
   /** 图标名（kebab-case） */

@@ -1,12 +1,12 @@
 <template>
-  <component :is="tag" class="ev-main ev-main">
+  <component :is="tag" class="eb-main eb-main">
     <slot />
   </component>
 </template>
 
 <script setup>
 /**
- * EvMain — 主内容区
+ * EbMain — 主内容区
  */
 defineProps({
   tag: { type: String, default: 'main' },

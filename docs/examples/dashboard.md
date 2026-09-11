@@ -39,7 +39,7 @@ import dashboardSource from '../../examples/ebui-example-dashboard/src/pages/Das
 
 ## 关键实现说明
 
-**无路由的视图切换**。AppLayout 内置菜单为 router 模式，未装 vue-router 时点击只回发事件不跳转 —— 示例在 `ev-menu-item` 上直接监听原生 `click` 切换 `activeMenu`，`activeMenu` 同时回传给 `default-active` 保持高亮：
+**无路由的视图切换**。AppLayout 内置菜单为 router 模式，未装 vue-router 时点击只回发事件不跳转 —— 示例在 `eb-menu-item` 上直接监听原生 `click` 切换 `activeMenu`，`activeMenu` 同时回传给 `default-active` 保持高亮：
 
 ```js
 function switchView(index) {
@@ -59,7 +59,7 @@ const selectedGoods = computed(() => {
 })
 ```
 
-**KPI 刷新**。StatCard 的数字滚动（`countUp`）在挂载时执行，给外层 `ev-row` 绑定 `:key="refreshTick"`，点「刷新数据」时递增即可整组重播滚动动画。
+**KPI 刷新**。StatCard 的数字滚动（`countUp`）在挂载时执行，给外层 `eb-row` 绑定 `:key="refreshTick"`，点「刷新数据」时递增即可整组重播滚动动画。
 
 **图表配置同构**。折线与饼图只差数据字段：直角系用 `labels + series`，饼系用 `pieData: [{ name, value }]`，其余能力（图例、tooltip、标题）全部收敛在 `options` 单对象里。
 
@@ -85,5 +85,5 @@ examples/ebui-example-dashboard/
 
 ## 接入真实业务
 
-- 把 `mock.js` 的各数据源换成接口返回；`ec-chart` 的 `options` 是响应式的，数据到达后自动重绘（同结构数据走补间动画）。
+- 把 `mock.js` 的各数据源换成接口返回；`eb-chart` 的 `options` 是响应式的，数据到达后自动重绘（同结构数据走补间动画）。
 - 菜单接 vue-router 时无需改动：AppLayout 内部菜单自带 router 集成，`index` 即路由路径。

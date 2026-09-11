@@ -2,7 +2,7 @@
   <header
     ref="navRef"
     :class="[
-      'ew-navbar',
+      'ev-navbar',
       {
         'is-sticky': sticky,
         'is-scrolled': isScrolled && sticky,
@@ -13,19 +13,19 @@
       },
     ]"
   >
-    <div class="ew-navbar__inner ew-container">
-      <div class="ew-navbar__left">
+    <div class="ev-navbar__inner ev-container">
+      <div class="ev-navbar__left">
         <slot name="logo">
-          <a v-if="logo" href="/" class="ew-navbar__logo">
-            <EwIcon v-if="logoIcon" :name="logoIcon" :size="22" />
-            <img v-else-if="logoImage" :src="logoImage" alt="logo" class="ew-navbar__logo-img" />
-            <span v-if="logoText" class="ew-navbar__logo-text">{{ logoText }}</span>
+          <a v-if="logo" href="/" class="ev-navbar__logo">
+            <EvIcon v-if="logoIcon" :name="logoIcon" :size="22" />
+            <img v-else-if="logoImage" :src="logoImage" alt="logo" class="ev-navbar__logo-img" />
+            <span v-if="logoText" class="ev-navbar__logo-text">{{ logoText }}</span>
           </a>
         </slot>
         <slot name="start" />
       </div>
 
-      <nav v-if="items.length || $slots.center" class="ew-navbar__nav" aria-label="主导航">
+      <nav v-if="items.length || $slots.center" class="ev-navbar__nav" aria-label="主导航">
         <slot name="center">
           <component
             :is="item.href ? 'a' : 'span'"
@@ -34,7 +34,7 @@
             :href="item.href"
             :target="item.target"
             :rel="item.rel"
-            class="ew-navbar__link"
+            class="ev-navbar__link"
             :class="{ 'is-active': isActive(item) }"
           >
             {{ item.label }}
@@ -42,12 +42,12 @@
         </slot>
       </nav>
 
-      <div class="ew-navbar__actions">
+      <div class="ev-navbar__actions">
         <slot name="actions" />
         <!-- 移动端菜单开关 -->
-        <EwIconButton
+        <EvIconButton
           v-if="items.length || $slots.default"
-          class="ew-navbar__burger"
+          class="ev-navbar__burger"
           icon="menu"
           aria-label="打开菜单"
           @click="menuOpen = !menuOpen"
@@ -56,8 +56,8 @@
     </div>
 
     <!-- 移动端下拉菜单 -->
-    <Transition name="ew-navbar-collapse">
-      <nav v-if="menuOpen && ($slots.default || items.length)" class="ew-navbar__mobile" aria-label="移动端导航">
+    <Transition name="ev-navbar-collapse">
+      <nav v-if="menuOpen && ($slots.default || items.length)" class="ev-navbar__mobile" aria-label="移动端导航">
         <slot />
         <component
           :is="item.href ? 'a' : 'span'"
@@ -66,7 +66,7 @@
           :href="item.href"
           :target="item.target"
           :rel="item.rel"
-          class="ew-navbar__mobile-link"
+          class="ev-navbar__mobile-link"
           @click="menuOpen = false"
         >
           {{ item.label }}
@@ -78,14 +78,14 @@
 
 <script setup>
 /**
- * EwNavbar — 站点导航
+ * EvNavbar — 站点导航
  * sticky 吸顶 + 滚动后加边框投影；blur 追加背景磨砂
  * hideOnScroll 开启后：下滑隐藏、上滑浮现（长页面的沉浸式阅读）
  * items [{ label, href, target }]；插槽 logo / start / center / actions / default(移动端)
  */
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import EwIcon from '../icon/index.vue'
-import EwIconButton from '../icon-button/index.vue'
+import EvIcon from '../icon/index.vue'
+import EvIconButton from '../icon-button/index.vue'
 
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */

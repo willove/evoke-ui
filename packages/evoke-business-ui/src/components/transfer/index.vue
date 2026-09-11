@@ -1,19 +1,19 @@
 <template>
-  <div class="ev-transfer ev-transfer">
+  <div class="eb-transfer eb-transfer">
     <!-- 左面板：待选 -->
-    <div class="ev-transfer-panel ev-transfer-panel">
-      <div class="ev-transfer-panel__header">
-        <ev-checkbox
+    <div class="eb-transfer-panel eb-transfer-panel">
+      <div class="eb-transfer-panel__header">
+        <eb-checkbox
           :model-value="isAllLeftChecked"
           :indeterminate="isLeftIndeterminate"
           @change="toggleAllLeft"
         />
-        <span class="ev-transfer-panel__header-title">{{ leftTitle }}</span>
-        <span class="ev-transfer-panel__header-num">{{ leftList.length }}</span>
+        <span class="eb-transfer-panel__header-title">{{ leftTitle }}</span>
+        <span class="eb-transfer-panel__header-num">{{ leftList.length }}</span>
       </div>
-      <div class="ev-transfer-panel__body">
-        <div v-if="filterable" class="ev-transfer-panel__filter">
-          <ev-input
+      <div class="eb-transfer-panel__body">
+        <div v-if="filterable" class="eb-transfer-panel__filter">
+          <eb-input
             v-model="leftQuery"
             :placeholder="filterPlaceholder"
             prefix-icon="search"
@@ -21,21 +21,21 @@
             size="small"
           />
         </div>
-        <div class="ev-transfer-panel__list">
+        <div class="eb-transfer-panel__list">
           <label
             v-for="item in filteredLeft"
             :key="item.key"
-            class="ev-transfer-panel__item"
+            class="eb-transfer-panel__item"
             :class="{ 'is-disabled': item.disabled }"
           >
-            <ev-checkbox
+            <eb-checkbox
               :model-value="leftChecked.includes(item.key)"
               :disabled="item.disabled"
               @change="toggleLeftItem(item.key)"
             />
-            <span class="ev-transfer-panel__item-label">{{ item.label }}</span>
+            <span class="eb-transfer-panel__item-label">{{ item.label }}</span>
           </label>
-          <div v-if="filteredLeft.length === 0" class="ev-transfer-panel__empty">
+          <div v-if="filteredLeft.length === 0" class="eb-transfer-panel__empty">
             {{ leftQuery ? '无匹配数据' : '暂无数据' }}
           </div>
         </div>
@@ -43,43 +43,43 @@
     </div>
 
     <!-- 中间按钮 -->
-    <div class="ev-transfer__buttons">
+    <div class="eb-transfer__buttons">
       <button
         type="button"
-        class="ev-button ev-button--primary ev-transfer__btn"
+        class="eb-button eb-button--primary eb-transfer__btn"
         :class="{ 'is-disabled': !leftChecked.length }"
         :disabled="!leftChecked.length || undefined"
         aria-label="向右移动"
         @click="moveTo('right')"
       >
-        <ev-icon name="arrow-right" :size="14" />
+        <eb-icon name="arrow-right" :size="14" />
       </button>
       <button
         type="button"
-        class="ev-button ev-button--primary ev-transfer__btn"
+        class="eb-button eb-button--primary eb-transfer__btn"
         :class="{ 'is-disabled': !rightChecked.length }"
         :disabled="!rightChecked.length || undefined"
         aria-label="向左移动"
         @click="moveTo('left')"
       >
-        <ev-icon name="arrow-left" :size="14" />
+        <eb-icon name="arrow-left" :size="14" />
       </button>
     </div>
 
     <!-- 右面板：已选 -->
-    <div class="ev-transfer-panel ev-transfer-panel">
-      <div class="ev-transfer-panel__header">
-        <ev-checkbox
+    <div class="eb-transfer-panel eb-transfer-panel">
+      <div class="eb-transfer-panel__header">
+        <eb-checkbox
           :model-value="isAllRightChecked"
           :indeterminate="isRightIndeterminate"
           @change="toggleAllRight"
         />
-        <span class="ev-transfer-panel__header-title">{{ rightTitle }}</span>
-        <span class="ev-transfer-panel__header-num">{{ rightList.length }}</span>
+        <span class="eb-transfer-panel__header-title">{{ rightTitle }}</span>
+        <span class="eb-transfer-panel__header-num">{{ rightList.length }}</span>
       </div>
-      <div class="ev-transfer-panel__body">
-        <div v-if="filterable" class="ev-transfer-panel__filter">
-          <ev-input
+      <div class="eb-transfer-panel__body">
+        <div v-if="filterable" class="eb-transfer-panel__filter">
+          <eb-input
             v-model="rightQuery"
             :placeholder="filterPlaceholder"
             prefix-icon="search"
@@ -87,21 +87,21 @@
             size="small"
           />
         </div>
-        <div class="ev-transfer-panel__list">
+        <div class="eb-transfer-panel__list">
           <label
             v-for="item in filteredRight"
             :key="item.key"
-            class="ev-transfer-panel__item"
+            class="eb-transfer-panel__item"
             :class="{ 'is-disabled': item.disabled }"
           >
-            <ev-checkbox
+            <eb-checkbox
               :model-value="rightChecked.includes(item.key)"
               :disabled="item.disabled"
               @change="toggleRightItem(item.key)"
             />
-            <span class="ev-transfer-panel__item-label">{{ item.label }}</span>
+            <span class="eb-transfer-panel__item-label">{{ item.label }}</span>
           </label>
-          <div v-if="filteredRight.length === 0" class="ev-transfer-panel__empty">
+          <div v-if="filteredRight.length === 0" class="eb-transfer-panel__empty">
             {{ rightQuery ? '无匹配数据' : '暂无数据' }}
           </div>
         </div>
@@ -112,14 +112,14 @@
 
 <script setup>
 /**
- * EvTransfer — 穿梭框
+ * EbTransfer — 穿梭框
  * 左右面板 + 中间移动按钮；checked 为面板内临时勾选（区别于 modelValue 已选项）；
  * filterable 双侧独立过滤；disabled 项不可勾选不参与移动
  */
 import { ref, computed, watch } from 'vue'
-import EvCheckbox from '../checkbox/index.vue'
-import EvInput from '../input/index.vue'
-import EvIcon from '../icon/index.vue'
+import EbCheckbox from '../checkbox/index.vue'
+import EbInput from '../input/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },

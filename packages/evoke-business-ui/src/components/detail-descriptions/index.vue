@@ -1,6 +1,6 @@
 <template>
-  <ev-descriptions
-    class="ev-detail-descriptions"
+  <eb-descriptions
+    class="eb-detail-descriptions"
     :column="column"
     :border="border"
     :size="size"
@@ -9,7 +9,7 @@
   >
     <template v-if="$slots.title" #title><slot name="title" /></template>
     <template v-if="$slots.extra" #extra><slot name="extra" /></template>
-    <ev-descriptions-item
+    <eb-descriptions-item
       v-for="item in items"
       :key="item.prop || item.label"
       :label="item.label"
@@ -17,19 +17,19 @@
     >
       <slot v-if="item.slot" :name="item.slot" :item="item" :value="valueOf(item)" />
       <template v-else>{{ formatValue(item) }}</template>
-    </ev-descriptions-item>
-  </ev-descriptions>
+    </eb-descriptions-item>
+  </eb-descriptions>
 </template>
 
 <script setup>
 /**
- * EvDetailDescriptions — 详情描述（业务封装，items 配置式）
+ * EbDetailDescriptions — 详情描述（业务封装，items 配置式）
  * items = [{ prop, label, span?, slot?, formatter? }]；
  * 值从 data 按 prop 取（支持 'a.b' 路径）；slot 按 item.slot 命名分发；
  * formatter: (value, data) => string
  */
-import EvDescriptions from '../descriptions/index.vue'
-import EvDescriptionsItem from '../descriptions/item.vue'
+import EbDescriptions from '../descriptions/index.vue'
+import EbDescriptionsItem from '../descriptions/item.vue'
 
 const props = defineProps({
   /** 数据源对象 */

@@ -1,7 +1,7 @@
 <template>
   <canvas
     ref="canvasRef"
-    class="ev-qrcode ev-qrcode"
+    class="eb-qrcode eb-qrcode"
     role="img"
     :aria-label="`QR Code: ${value}`"
     :style="{ width: size + 'px', height: size + 'px' }"
@@ -10,14 +10,14 @@
 
 <script setup>
 /**
- * EvQrcode — 二维码（注意：注册名 Qrcode 单大写段，保证 kebab-case `ev-qrcode` 可解析）
+ * EbQrcode — 二维码（注意：注册名 Qrcode 单大写段，保证 kebab-case `eb-qrcode` 可解析）
  * 纯 JS 编码（byte 模式 / M 级纠错 / 版本 1-10 自动，见 qrcode.js），Canvas 渲染
  */
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { inBrowser } from '../../utils/dom'
 import { encodeQR } from './qrcode'
 
-defineOptions({ name: 'EvQrcode' })
+defineOptions({ name: 'EbQrcode' })
 
 const props = defineProps({
   /** 编码内容（过长时 console.error 并保持上次内容） */

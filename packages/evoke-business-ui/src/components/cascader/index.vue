@@ -1,41 +1,41 @@
 <template>
   <div
-    class="ev-cascader ev-cascader"
+    class="eb-cascader eb-cascader"
     :class="[sizeClass, { 'is-disabled': isDisabled }]"
   >
     <div
       ref="referenceRef"
-      class="ev-input__wrapper"
+      class="eb-input__wrapper"
       :class="{ 'is-focus': dropdownVisible, 'is-disabled': isDisabled, 'is-hovering': hovering }"
       @click="handleWrapperClick"
       @mouseenter="hovering = true"
       @mouseleave="hovering = false"
     >
       <!-- multiple 标签 -->
-      <span v-if="multiple && checkedTags.length" class="ev-cascader__tags">
+      <span v-if="multiple && checkedTags.length" class="eb-cascader__tags">
         <span
           v-for="tag in collapsedTags"
           :key="tag.key"
-          class="ev-tag ev-tag--info ev-tag--light ev-cascader__tag"
+          class="eb-tag eb-tag--info eb-tag--light eb-cascader__tag"
         >
-          <span class="ev-tag__content">{{ tag.label }}</span>
-          <ev-icon
+          <span class="eb-tag__content">{{ tag.label }}</span>
+          <eb-icon
             v-if="!isDisabled"
-            class="ev-tag__close"
+            class="eb-tag__close"
             name="close"
             @click.stop="removeTag(tag.path)"
           />
         </span>
-        <span v-if="overflowCount > 0" class="ev-select__tags-collapse-item">
+        <span v-if="overflowCount > 0" class="eb-select__tags-collapse-item">
           + {{ overflowCount }}
         </span>
       </span>
-      <span v-else-if="hasSelection && !filterActive" class="ev-cascader__label">{{ selectedLabel }}</span>
-      <span v-else-if="!filterActive" class="ev-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+      <span v-else-if="hasSelection && !filterActive" class="eb-cascader__label">{{ selectedLabel }}</span>
+      <span v-else-if="!filterActive" class="eb-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
 
       <input
         ref="inputRef"
-        class="ev-input__inner ev-cascader__input"
+        class="eb-input__inner eb-cascader__input"
         :value="query"
         :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
         :readonly="!filterable || isDisabled"
@@ -44,15 +44,15 @@
         @focus="handleFocus"
       />
 
-      <span class="ev-cascader__suffix">
-        <ev-icon
+      <span class="eb-cascader__suffix">
+        <eb-icon
           v-if="clearable && hasSelection && !isDisabled"
-          class="ev-cascader__clear"
+          class="eb-cascader__clear"
           name="circle-close"
           @click.stop="handleClear"
         />
-        <ev-icon
-          class="ev-cascader__arrow"
+        <eb-icon
+          class="eb-cascader__arrow"
           :class="{ 'is-reverse': dropdownVisible }"
           name="arrow-down"
         />
@@ -60,37 +60,37 @@
     </div>
 
     <Teleport to="body">
-      <Transition name="ev-picker-dropdown">
+      <Transition name="eb-picker-dropdown">
         <div
           v-if="dropdownVisible"
           ref="floatingRef"
-          class="ev-cascader__dropdown ev-popper ev-cascader__dropdown"
+          class="eb-cascader__dropdown eb-popper eb-cascader__dropdown"
           :style="popperStyle"
         >
           <!-- 过滤建议 -->
-          <div v-if="filterActive" class="ev-cascader__suggestion-panel">
+          <div v-if="filterActive" class="eb-cascader__suggestion-panel">
             <div
               v-for="item in suggestions"
               :key="item.key"
-              class="ev-cascader__suggestion-item"
+              class="eb-cascader__suggestion-item"
               :class="{ 'is-checked': isPathChecked(item.path) }"
               @click="handleSuggestionClick(item)"
             >
               {{ item.text }}
             </div>
-            <div v-if="suggestions.length === 0" class="ev-cascader__suggestion-item is-empty">
+            <div v-if="suggestions.length === 0" class="eb-cascader__suggestion-item is-empty">
               {{ t('select.noMatch') }}
             </div>
           </div>
           <!-- 多级菜单 -->
-          <div v-else class="ev-cascader-panel">
-            <div v-for="(menu, mi) in menus" :key="mi" class="ev-cascader-menu">
-              <div class="ev-cascader-menu__wrap">
-                <ul class="ev-cascader-menu__list">
+          <div v-else class="eb-cascader-panel">
+            <div v-for="(menu, mi) in menus" :key="mi" class="eb-cascader-menu">
+              <div class="eb-cascader-menu__wrap">
+                <ul class="eb-cascader-menu__list">
                   <li
                     v-for="node in menu"
                     :key="String(node.value)"
-                    class="ev-cascader-node"
+                    class="eb-cascader-node"
                     :class="{
                       'is-active': activePath.includes(node.value),
                       'in-active-path': activePath.includes(node.value),
@@ -100,18 +100,18 @@
                     @click="handleNodeClick(node)"
                     @mouseenter="handleNodeHover(node)"
                   >
-                    <ev-checkbox
+                    <eb-checkbox
                       v-if="multiple"
-                      class="ev-cascader-node__checkbox"
+                      class="eb-cascader-node__checkbox"
                       :model-value="isNodeChecked(node)"
                       :indeterminate="isNodeIndeterminate(node)"
                       :disabled="node.disabled"
                       @click.stop
                       @change="handleNodeCheck(node)"
                     />
-                    <span class="ev-cascader-node__label">{{ node.label }}</span>
-                    <span v-if="!node.isLeaf" class="ev-cascader-node__postfix">
-                      <ev-icon name="arrow-right" :size="12" />
+                    <span class="eb-cascader-node__label">{{ node.label }}</span>
+                    <span v-if="!node.isLeaf" class="eb-cascader-node__postfix">
+                      <eb-icon name="arrow-right" :size="12" />
                     </span>
                   </li>
                 </ul>
@@ -126,13 +126,13 @@
 
 <script setup>
 /**
- * EvCascader — 级联选择器（.ev-cascader / .ev-cascader-panel / .ev-cascader-node 结构类）
+ * EbCascader — 级联选择器（.eb-cascader / .eb-cascader-panel / .eb-cascader-node 结构类）
  * 多级菜单浮层；emitPath（值=路径 or 叶值）；check-strictly 任意层级可选；
  * multiple 复选（父子级联勾选叶路径）；filterable 路径建议
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvCheckbox from '../checkbox/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbCheckbox from '../checkbox/index.vue'
 import {
   normalizeOptions, walkNodes, findByValue, pathToNodes,
   nodeToPath, nodeToLabels, leafPathsOf, filterNodes, arrayEqual,
@@ -143,7 +143,7 @@ import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvCascader', inheritAttrs: false })
+defineOptions({ name: 'EbCascader', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [Array, String, Number], default: null },
@@ -192,8 +192,8 @@ const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
 const isDisabled = computed(() => formDisabled.value || props.disabled)
 const sizeClass = computed(() => {
   const s = props.size || formSize.value
-  if (s === 'large') return 'ev-cascader--large'
-  if (s === 'small') return 'ev-cascader--small'
+  if (s === 'large') return 'eb-cascader--large'
+  if (s === 'small') return 'eb-cascader--small'
   return ''
 })
 

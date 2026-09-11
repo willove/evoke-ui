@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ev-radio-group ev-radio-group"
+    class="eb-radio-group eb-radio-group"
     :class="sizeClass"
     role="radiogroup"
     :aria-disabled="isDisabled"
@@ -11,7 +11,7 @@
 
 <script setup>
 /**
- * EvRadioGroup — 单选组
+ * EbRadioGroup — 单选组
  * provide radioGroupContextKey，子 Radio/Button inject 共享 modelValue
  */
 import { computed, provide, toRef } from 'vue'
@@ -31,8 +31,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const sizeClass = computed(() => {
-  if (props.size === 'large') return 'ev-radio-group--large'
-  if (props.size === 'small') return 'ev-radio-group--small'
+  if (props.size === 'large') return 'eb-radio-group--large'
+  if (props.size === 'small') return 'eb-radio-group--small'
   return ''
 })
 

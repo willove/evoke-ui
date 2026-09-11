@@ -4,7 +4,7 @@
  * 无前缀解析优先级：custom（运行时注册）→ 内置 SVG（Remix 静态图标集，含文件类型别名）→ 完整图标库
  *
  * Usage:
- *   <ev-icon name="search" size="14" />
+ *   <eb-icon name="search" size="14" />
  *   registerIcons({ 'search': MySearchIcon })
  */
 import { h } from 'vue'
@@ -34,7 +34,7 @@ export function isFullIconsLoaded() {
 
 /**
  * 按需加载完整图标库（动态 import，主包不含其体积）
- * 加载完成后，全部 3000+ Remix 原生名称可经 ev-icon 同步渲染
+ * 加载完成后，全部 3000+ Remix 原生名称可经 eb-icon 同步渲染
  */
 export function loadFullIcons() {
   if (!fullLoadPromise) {

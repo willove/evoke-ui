@@ -1,6 +1,6 @@
 <template>
-  <div class="ev-border-beam" :class="{ 'is-active': active }" :style="beamVars">
-    <div class="ev-border-beam__inner">
+  <div class="eb-border-beam" :class="{ 'is-active': active }" :style="beamVars">
+    <div class="eb-border-beam__inner">
       <slot />
     </div>
   </div>
@@ -8,7 +8,7 @@
 
 <script setup>
 /**
- * EvBorderBeam — 装饰性边框流光
+ * EbBorderBeam — 装饰性边框流光
  * conic-gradient + CSS @property 驱动旋转光带，纯 CSS 动画零 JS 开销。
  * 装饰定位：不携带业务状态语义。
  */
@@ -27,19 +27,19 @@ const props = defineProps({
 })
 
 const beamVars = computed(() => {
-  const color = props.color || 'var(--ev-color-primary, #175DFF)'
+  const color = props.color || 'var(--eb-color-primary, #175DFF)'
   const colorTo = props.colorTo != null
     ? props.colorTo
     : `color-mix(in srgb, ${color} 0%, transparent)`
   return {
-    '--ev-bb-color': color,
-    '--ev-bb-color-to': colorTo,
-    '--ev-bb-size': `${props.size}px`,
-    '--ev-bb-radius': `${props.radius}px`,
-    '--ev-bb-duration': `${props.duration}s`,
-    '--ev-bb-delay': `${props.delay}s`,
-    '--ev-bb-padding': `${props.padding}px`,
-    '--ev-bb-bg': props.background,
+    '--eb-bb-color': color,
+    '--eb-bb-color-to': colorTo,
+    '--eb-bb-size': `${props.size}px`,
+    '--eb-bb-radius': `${props.radius}px`,
+    '--eb-bb-duration': `${props.duration}s`,
+    '--eb-bb-delay': `${props.delay}s`,
+    '--eb-bb-padding': `${props.padding}px`,
+    '--eb-bb-bg': props.background,
   }
 })
 </script>

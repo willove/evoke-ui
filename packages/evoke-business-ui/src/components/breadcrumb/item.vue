@@ -1,15 +1,15 @@
 <template>
-  <span class="ev-breadcrumb__item ev-breadcrumb__item">
+  <span class="eb-breadcrumb__item eb-breadcrumb__item">
     <span
-      class="ev-breadcrumb__inner"
+      class="eb-breadcrumb__inner"
       :class="{ 'is-link': !!to }"
       :role="to ? 'link' : undefined"
       @click="handleClick"
     >
       <slot />
     </span>
-    <span v-if="!isLast" class="ev-breadcrumb__separator" role="presentation">
-      <ev-icon v-if="separatorIcon" :name="separatorIcon" :size="12" />
+    <span v-if="!isLast" class="eb-breadcrumb__separator" role="presentation">
+      <eb-icon v-if="separatorIcon" :name="separatorIcon" :size="12" />
       <template v-else>{{ separator }}</template>
     </span>
   </span>
@@ -17,11 +17,11 @@
 
 <script setup>
 /**
- * EvBreadcrumbItem — 面包屑项
+ * EbBreadcrumbItem — 面包屑项
  * separator / separator-icon 从父级 breadcrumb 注入；is-last 按同层兄弟节点判定
  */
 import { inject, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   to: { type: [String, Object], default: '' },

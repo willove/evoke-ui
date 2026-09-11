@@ -1,18 +1,18 @@
 <template>
-  <div class="ev-empty-state" :class="[`ev-empty-state--${size}`, `ev-empty-state--tone-${tone}`]" role="status">
-    <div class="ev-empty-state__icon">
+  <div class="eb-empty-state" :class="[`eb-empty-state--${size}`, `eb-empty-state--tone-${tone}`]" role="status">
+    <div class="eb-empty-state__icon">
       <slot name="icon">
-        <ev-icon v-if="icon" :name="icon" :size="iconSize" />
+        <eb-icon v-if="icon" :name="icon" :size="iconSize" />
       </slot>
     </div>
-    <div class="ev-empty-state__body">
-      <div class="ev-empty-state__title">
+    <div class="eb-empty-state__body">
+      <div class="eb-empty-state__title">
         <slot name="title">{{ title }}</slot>
       </div>
-      <div v-if="description || $slots.description" class="ev-empty-state__description">
+      <div v-if="description || $slots.description" class="eb-empty-state__description">
         <slot name="description">{{ description }}</slot>
       </div>
-      <div v-if="$slots.actions" class="ev-empty-state__actions">
+      <div v-if="$slots.actions" class="eb-empty-state__actions">
         <slot name="actions" />
       </div>
     </div>
@@ -21,11 +21,11 @@
 
 <script setup>
 /**
- * EvEmptyState — 统一空态
+ * EbEmptyState — 统一空态
  * default 纵向页面级 / compact 横向紧凑；tone 决定图标底色语义
  */
 import { computed } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   icon: { type: String, default: 'box' },

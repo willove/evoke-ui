@@ -1,6 +1,6 @@
 # ContactForm 留言表单
 
-`EwContactForm` 是企业站的「联系我们 / 商务合作」表单：称呼 + 邮箱 + 留言三字段，内置
+`EvContactForm` 是企业站的「联系我们 / 商务合作」表单：称呼 + 邮箱 + 留言三字段，内置
 必填与邮箱格式校验（错误即时标红提示），提交派发 `submit` 并切换成功态。表单宽度自适应，
 窄屏自动单列。
 
@@ -8,14 +8,14 @@
 
 <DemoBlock title="校验与成功态" description="试试空提交看校验反馈；填写完整后提交切换成功态。">
 
-<EwContactForm
+<EvContactForm
   button-text="发送留言"
   sent-text="已收到你的留言，会尽快回复！"
   style="max-width:560px;"
 />
 
 ```vue
-<EwContactForm
+<EvContactForm
   button-text="发送留言"
   @submit="(data) => api.send(data)"
 />

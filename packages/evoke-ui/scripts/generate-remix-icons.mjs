@@ -3,8 +3,8 @@
  *
  * 用法: node scripts/generate-remix-icons.mjs
  * 输出:
- *   src/components/icon/svg-paths.js       — 核心图标集（EwIcon 静态内置，组件内部 + 常用语义名）
- *   src/components/icon/showcase-paths.js  — 展示图标集（EwIconGrid 动态加载，每类限量配对采样）
+ *   src/components/icon/svg-paths.js       — 核心图标集（EvIcon 静态内置，组件内部 + 常用语义名）
+ *   src/components/icon/showcase-paths.js  — 展示图标集（EvIconGrid 动态加载，每类限量配对采样）
  *   src/components/icon/showcase-meta.js   — 展示集元数据（分类目录 + Remix 原名 + 中文分类名）
  *
  * 核心集键名为 kebab-case 语义命名（如 arrow-right、close）；
@@ -169,7 +169,7 @@ if (missing.length) {
 writeFileSync(
   resolve(srcDir, 'svg-paths.js'),
   `/**
- * EwIcon 核心图标集（${Object.keys(core).length} 个，静态快照数据）
+ * EvIcon 核心图标集（${Object.keys(core).length} 个，静态快照数据）
  * 图标形状源自 Remix Icon v${version}（https://remixicon.com/，Remix Icon License v1.0，免费商用）
  * 由 scripts/generate-remix-icons.mjs 生成，键名为 kebab-case 语义命名，请勿手动修改；
  * 需增删图标时在脚本 MAPPING 中登记后重新执行生成
@@ -219,7 +219,7 @@ for (const cat of categories) {
 writeFileSync(
   resolve(srcDir, 'showcase-paths.js'),
   `/**
- * 展示图标集（${total} 个，Remix 原生命名，EwIconGrid 动态加载，不进主包）
+ * 展示图标集（${total} 个，Remix 原生命名，EvIconGrid 动态加载，不进主包）
  * 每分类限量 ${SHOWCASE_PER_CATEGORY} 对（line/fill）配对采样，源自 Remix Icon v${version}
  * （Remix Icon License v1.0，免费商用）。由 scripts/generate-remix-icons.mjs 生成，请勿手动修改
  */
@@ -236,7 +236,7 @@ writeFileSync(
 
 export const REMIX_ICON_VERSION = '${version}'
 
-export const EW_SHOWCASE_META = ` + JSON.stringify(showcaseMeta, null, 1) + '\n'
+export const EV_SHOWCASE_META = ` + JSON.stringify(showcaseMeta, null, 1) + '\n'
 )
 
 console.log(

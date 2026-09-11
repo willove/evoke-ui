@@ -1,11 +1,11 @@
 <template>
   <div
-    class="ev-date-editor ev-time-editor ev-input ev-time-picker"
+    class="eb-date-editor eb-time-editor eb-input eb-time-picker"
     :class="[
       sizeClass,
       {
         'is-disabled': isDisabled,
-        'ev-date-editor--timerange': isRange,
+        'eb-date-editor--timerange': isRange,
       },
     ]"
   >
@@ -13,16 +13,16 @@
     <div
       v-if="!isRange"
       ref="referenceRef"
-      class="ev-input__wrapper"
+      class="eb-input__wrapper"
       :class="{ 'is-focus': pickerVisible, 'is-disabled': isDisabled }"
       @click="handleWrapperClick"
     >
-      <span class="ev-input__prefix">
-        <ev-icon :name="prefixIcon" class="ev-input__icon" />
+      <span class="eb-input__prefix">
+        <eb-icon :name="prefixIcon" class="eb-input__icon" />
       </span>
       <input
         ref="inputRef"
-        class="ev-input__inner"
+        class="eb-input__inner"
         :value="displayValue"
         :name="name"
         :placeholder="placeholder || t('datepicker.selectTime')"
@@ -31,9 +31,9 @@
         @change="handleSingleInput"
         @focus="emit('focus')"
       />
-      <span v-if="clearable && hasValue && !isDisabled" class="ev-input__suffix" @click.stop>
-        <ev-icon
-          class="ev-input__icon ev-range__close-icon"
+      <span v-if="clearable && hasValue && !isDisabled" class="eb-input__suffix" @click.stop>
+        <eb-icon
+          class="eb-input__icon eb-range__close-icon"
           name="circle-close"
           @click.stop="handleClear"
         />
@@ -44,20 +44,20 @@
     <div
       v-else
       ref="referenceRef"
-      class="ev-input__wrapper ev-range-editor"
+      class="eb-input__wrapper eb-range-editor"
       :class="[
         {
           'is-active': pickerVisible,
           'is-disabled': isDisabled,
-          'ev-range-editor--large': sizeResolved === 'large',
-          'ev-range-editor--small': sizeResolved === 'small',
+          'eb-range-editor--large': sizeResolved === 'large',
+          'eb-range-editor--small': sizeResolved === 'small',
         },
       ]"
       @click="handleWrapperClick"
     >
-      <ev-icon :name="prefixIcon" class="ev-range__icon" />
+      <eb-icon :name="prefixIcon" class="eb-range__icon" />
       <input
-        class="ev-range-input"
+        class="eb-range-input"
         :value="startDisplay"
         :name="name"
         :placeholder="startPlaceholder || t('datepicker.startTime')"
@@ -65,9 +65,9 @@
         :disabled="isDisabled"
         @focus="emit('focus')"
       />
-      <span class="ev-range-separator">{{ rangeSeparator }}</span>
+      <span class="eb-range-separator">{{ rangeSeparator }}</span>
       <input
-        class="ev-range-input"
+        class="eb-range-input"
         :value="endDisplay"
         :name="name"
         :placeholder="endPlaceholder || t('datepicker.endTime')"
@@ -75,9 +75,9 @@
         :disabled="isDisabled"
         @focus="emit('focus')"
       />
-      <ev-icon
+      <eb-icon
         v-if="clearable && hasValue && !isDisabled"
-        class="ev-range__close-icon"
+        class="eb-range__close-icon"
         name="circle-close"
         @click.stop="handleClear"
       />
@@ -85,11 +85,11 @@
 
     <!-- 弹层 -->
     <Teleport to="body">
-      <Transition name="ev-picker-dropdown">
+      <Transition name="eb-picker-dropdown">
         <div
           v-if="pickerVisible"
           ref="floatingRef"
-          class="ev-time-picker__popper ev-picker__popper"
+          class="eb-time-picker__popper eb-picker__popper"
           :style="popperStyle"
         >
           <time-panel
@@ -101,34 +101,34 @@
             @cancel="closePanel"
           />
           <!-- 区间：双滚轮 + 统一 footer -->
-          <div v-else class="ev-time-range-picker">
-            <div class="ev-time-range-picker__content">
-              <div class="ev-time-range-picker__cell">
-                <div class="ev-time-range-picker__header">{{ t('datepicker.startTime') }}</div>
+          <div v-else class="eb-time-range-picker">
+            <div class="eb-time-range-picker__content">
+              <div class="eb-time-range-picker__cell">
+                <div class="eb-time-range-picker__header">{{ t('datepicker.startTime') }}</div>
                 <time-panel
                   :model-value="draftStart"
                   :show-seconds="showSeconds"
                   :show-footer="false"
-                  class="ev-time-picker__cell-panel"
+                  class="eb-time-picker__cell-panel"
                   @pick="(d) => (draftStart = d)"
                 />
               </div>
-              <div class="ev-time-range-picker__cell">
-                <div class="ev-time-range-picker__header">{{ t('datepicker.endTime') }}</div>
+              <div class="eb-time-range-picker__cell">
+                <div class="eb-time-range-picker__header">{{ t('datepicker.endTime') }}</div>
                 <time-panel
                   :model-value="draftEnd"
                   :show-seconds="showSeconds"
                   :show-footer="false"
-                  class="ev-time-picker__cell-panel"
+                  class="eb-time-picker__cell-panel"
                   @pick="(d) => (draftEnd = d)"
                 />
               </div>
             </div>
-            <div class="ev-time-panel__footer">
-              <button type="button" class="ev-time-panel__btn cancel" @click="closePanel">
+            <div class="eb-time-panel__footer">
+              <button type="button" class="eb-time-panel__btn cancel" @click="closePanel">
                 {{ t('datepicker.cancel') }}
               </button>
-              <button type="button" class="ev-time-panel__btn confirm" @click="confirmRange">
+              <button type="button" class="eb-time-panel__btn confirm" @click="confirmRange">
                 {{ t('datepicker.confirm') }}
               </button>
             </div>
@@ -141,11 +141,11 @@
 
 <script setup>
 /**
- * EvTimePicker — 时间选择器（复用 date-picker 的 TimePanel 滚轮）
+ * EbTimePicker — 时间选择器（复用 date-picker 的 TimePanel 滚轮）
  * is-range：双滚轮区间；value-format 存在时对外输出字符串
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import TimePanel from '../date-picker/time-panel.vue'
 import { dayjs } from '../date-picker/utils'
 import { useFloating } from '../../composables/useFloating'
@@ -154,7 +154,7 @@ import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvTimePicker', inheritAttrs: false })
+defineOptions({ name: 'EbTimePicker', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [Date, String, Array], default: null },
@@ -187,8 +187,8 @@ const isDisabled = computed(() => formDisabled.value || props.disabled)
 const sizeResolved = computed(() => props.size || formSize.value || 'default')
 const sizeClass = computed(() => {
   const s = sizeResolved.value
-  if (s === 'large') return props.isRange ? '' : 'ev-input--large'
-  if (s === 'small') return props.isRange ? '' : 'ev-input--small'
+  if (s === 'large') return props.isRange ? '' : 'eb-input--large'
+  if (s === 'small') return props.isRange ? '' : 'eb-input--small'
   return ''
 })
 

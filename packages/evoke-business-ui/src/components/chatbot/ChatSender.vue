@@ -1,37 +1,37 @@
 <template>
-  <div class="ev-chat-sender">
-    <div v-if="showAttachments && attachments.length" class="ev-chat-sender__attachments">
+  <div class="eb-chat-sender">
+    <div v-if="showAttachments && attachments.length" class="eb-chat-sender__attachments">
       <ChatAttachments 
         :attachments="attachments" 
         :removable="!disabled"
         @remove="handleRemoveAttachment"
       />
     </div>
-    <div class="ev-chat-sender__input-wrapper">
-      <div class="ev-chat-sender__toolbar">
+    <div class="eb-chat-sender__input-wrapper">
+      <div class="eb-chat-sender__toolbar">
         <button 
           v-if="allowAttachments"
-          class="ev-chat-sender__tool-btn"
+          class="eb-chat-sender__tool-btn"
           title="添加附件"
           :disabled="disabled || attachments.length >= maxAttachments"
           @click="triggerFileUpload"
         >
-          <ev-icon name="plus" />
+          <eb-icon name="plus" />
         </button>
         <input 
           ref="fileInputRef"
           type="file"
-          class="ev-chat-sender__file-input"
+          class="eb-chat-sender__file-input"
           :multiple="maxAttachments > 1"
           @change="handleFileSelect"
         />
         <slot name="toolbar" />
       </div>
-      <div class="ev-chat-sender__textarea-wrapper">
+      <div class="eb-chat-sender__textarea-wrapper">
         <textarea
           ref="textareaRef"
           v-model="inputValue"
-          class="ev-chat-sender__textarea"
+          class="eb-chat-sender__textarea"
           :placeholder="placeholder"
           :disabled="disabled"
           rows="1"
@@ -39,16 +39,16 @@
           @input="handleInput"
         />
       </div>
-      <div class="ev-chat-sender__actions">
-        <span v-if="showWordCount && maxLength" class="ev-chat-sender__word-count">
+      <div class="eb-chat-sender__actions">
+        <span v-if="showWordCount && maxLength" class="eb-chat-sender__word-count">
           {{ inputValue.length }}/{{ maxLength }}
         </span>
         <button 
-          class="ev-chat-sender__send-btn"
+          class="eb-chat-sender__send-btn"
           :disabled="disabled || !canSend"
           @click="handleSend"
         >
-          <ev-icon name="promotion" />
+          <eb-icon name="promotion" />
         </button>
       </div>
     </div>
@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import EvIcon from "../icon/index.vue"
+import EbIcon from "../icon/index.vue"
 import { ref, computed, watch, nextTick } from "vue";
 import { generateId } from "./utils";
 import ChatAttachments from "./ChatAttachments.vue";
@@ -185,35 +185,35 @@ watch(() => props.loading, () => {
 
 <style scoped>
 
-.ev-chat-sender {
-  background: var(--ev-bg-color-overlay);
-  border: 1px solid var(--ev-border-color);
-  border-radius: var(--ev-radius-xl);
-  transition: border-color var(--ev-duration-base) var(--ev-ease-out),
-              box-shadow var(--ev-duration-base) var(--ev-ease-out);
+.eb-chat-sender {
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color);
+  border-radius: var(--eb-radius-xl);
+  transition: border-color var(--eb-duration-base) var(--eb-ease-out),
+              box-shadow var(--eb-duration-base) var(--eb-ease-out);
 }
 
-.ev-chat-sender:focus-within {
-  border-color: var(--ev-color-primary);
-  box-shadow: 0 0 0 3px var(--ev-color-primary-light-8);
+.eb-chat-sender:focus-within {
+  border-color: var(--eb-color-primary);
+  box-shadow: 0 0 0 3px var(--eb-color-primary-light-8);
 }
 
-.ev-chat-sender__attachments {
-  padding: var(--ev-space-3) var(--ev-space-4) 0;
+.eb-chat-sender__attachments {
+  padding: var(--eb-space-3) var(--eb-space-4) 0;
 }
 
-.ev-chat-sender__input-wrapper {
-  padding: var(--ev-space-2) var(--ev-space-3);
+.eb-chat-sender__input-wrapper {
+  padding: var(--eb-space-2) var(--eb-space-3);
 }
 
-.ev-chat-sender__toolbar {
+.eb-chat-sender__toolbar {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-1);
-  padding-bottom: var(--ev-space-1);
+  gap: var(--eb-space-1);
+  padding-bottom: var(--eb-space-1);
 }
 
-.ev-chat-sender__tool-btn {
+.eb-chat-sender__tool-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -221,42 +221,42 @@ watch(() => props.loading, () => {
   height: 32px;
   border: none;
   background: transparent;
-  border-radius: var(--ev-radius-md);
+  border-radius: var(--eb-radius-md);
   cursor: pointer;
-  color: var(--ev-text-color-secondary);
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  color: var(--eb-text-color-secondary);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
   padding: 0;
 }
 
-.ev-chat-sender__tool-btn:hover:not(:disabled) {
-  background: var(--ev-fill-color);
-  color: var(--ev-color-primary);
+.eb-chat-sender__tool-btn:hover:not(:disabled) {
+  background: var(--eb-fill-color);
+  color: var(--eb-color-primary);
 }
 
-.ev-chat-sender__tool-btn:disabled {
+.eb-chat-sender__tool-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.ev-chat-sender__file-input {
+.eb-chat-sender__file-input {
   display: none;
 }
 
-.ev-chat-sender__textarea-wrapper {
+.eb-chat-sender__textarea-wrapper {
   position: relative;
 }
 
-.ev-chat-sender__textarea {
+.eb-chat-sender__textarea {
   width: 100%;
   border: none;
   background: transparent;
   resize: none;
   outline: none;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
   line-height: 24px;
-  color: var(--ev-text-color-primary);
+  color: var(--eb-text-color-primary);
   font-family: inherit;
-  padding: 4px var(--ev-space-1);
+  padding: 4px var(--eb-space-1);
   min-height: 32px;
   height: 32px;
   max-height: 152px;
@@ -265,55 +265,55 @@ watch(() => props.loading, () => {
   transition: height 0.1s ease;
 }
 
-.ev-chat-sender__textarea::placeholder {
-  color: var(--ev-text-color-placeholder);
+.eb-chat-sender__textarea::placeholder {
+  color: var(--eb-text-color-placeholder);
 }
 
-.ev-chat-sender__textarea:disabled {
+.eb-chat-sender__textarea:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.ev-chat-sender__actions {
+.eb-chat-sender__actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--ev-space-2);
-  padding-top: var(--ev-space-1);
+  gap: var(--eb-space-2);
+  padding-top: var(--eb-space-1);
 }
 
-.ev-chat-sender__word-count {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-placeholder);
+.eb-chat-sender__word-count {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
 }
 
-.ev-chat-sender__send-btn {
+.eb-chat-sender__send-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
   border: none;
-  background: var(--ev-color-primary);
-  border-radius: var(--ev-radius-lg);
+  background: var(--eb-color-primary);
+  border-radius: var(--eb-radius-lg);
   cursor: pointer;
   color: white;
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
   padding: 0;
 }
 
-.ev-chat-sender__send-btn:hover:not(:disabled) {
-  background: var(--ev-color-primary-dark-2);
+.eb-chat-sender__send-btn:hover:not(:disabled) {
+  background: var(--eb-color-primary-dark-2);
   transform: scale(1.02);
 }
 
-.ev-chat-sender__send-btn:active:not(:disabled) {
+.eb-chat-sender__send-btn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-.ev-chat-sender__send-btn:disabled {
-  background: var(--ev-fill-color-dark);
-  color: var(--ev-text-color-placeholder);
+.eb-chat-sender__send-btn:disabled {
+  background: var(--eb-fill-color-dark);
+  color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
 }
 </style>

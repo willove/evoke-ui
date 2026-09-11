@@ -7,16 +7,16 @@
 `span` 相加等于 24 即占满一行；列数与 span 可自由组合（3 x 8、2 x 12 等）。
 
 <DemoBlock>
-<ev-row>
-  <ev-col :span="8"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 8</div></ev-col>
-  <ev-col :span="8"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 8</div></ev-col>
-  <ev-col :span="8"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 8</div></ev-col>
-</ev-row>
+<eb-row>
+  <eb-col :span="8"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 8</div></eb-col>
+  <eb-col :span="8"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 8</div></eb-col>
+  <eb-col :span="8"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 8</div></eb-col>
+</eb-row>
 <div style="height:12px;"></div>
-<ev-row>
-  <ev-col :span="12"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 12</div></ev-col>
-  <ev-col :span="12"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 12</div></ev-col>
-</ev-row>
+<eb-row>
+  <eb-col :span="12"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 12</div></eb-col>
+  <eb-col :span="12"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 12</div></eb-col>
+</eb-row>
 </DemoBlock>
 
 ## 栅格间隔
@@ -24,12 +24,12 @@
 `gutter` 为列间距（px），Col 左右各取一半内边距，Row 用负外边距补偿；视觉上列内容之间的间隔即 gutter 值。
 
 <DemoBlock>
-<ev-row :gutter="16">
-  <ev-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 6</div></ev-col>
-  <ev-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 6</div></ev-col>
-  <ev-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 6</div></ev-col>
-  <ev-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 6</div></ev-col>
-</ev-row>
+<eb-row :gutter="16">
+  <eb-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 6</div></eb-col>
+  <eb-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 6</div></eb-col>
+  <eb-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:16px;">span 6</div></eb-col>
+  <eb-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:16px;">span 6</div></eb-col>
+</eb-row>
 </DemoBlock>
 
 ## 水平排列 justify
@@ -37,20 +37,20 @@
 `justify` 控制主轴分布：start / end / center / space-around / space-between / space-evenly；列未占满 24 格时效果明显。
 
 <DemoBlock>
-<ev-row justify="center">
-  <ev-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">center</div></ev-col>
-  <ev-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">center</div></ev-col>
-</ev-row>
+<eb-row justify="center">
+  <eb-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">center</div></eb-col>
+  <eb-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">center</div></eb-col>
+</eb-row>
 <div style="height:12px;"></div>
-<ev-row justify="space-between">
-  <ev-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">space-between</div></ev-col>
-  <ev-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">space-between</div></ev-col>
-</ev-row>
+<eb-row justify="space-between">
+  <eb-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">space-between</div></eb-col>
+  <eb-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">space-between</div></eb-col>
+</eb-row>
 <div style="height:12px;"></div>
-<ev-row justify="end">
-  <ev-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">end</div></ev-col>
-  <ev-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">end</div></ev-col>
-</ev-row>
+<eb-row justify="end">
+  <eb-col :span="4"><div style="background:#eef3ff;border-radius:4px;padding:12px;">end</div></eb-col>
+  <eb-col :span="4"><div style="background:#dce6ff;border-radius:4px;padding:12px;">end</div></eb-col>
+</eb-row>
 </DemoBlock>
 
 ## 垂直对齐 align
@@ -58,38 +58,38 @@
 `align` 控制交叉轴对齐：top / middle / bottom；同一行内列高度不一致时差异最明显。
 
 <DemoBlock>
-<ev-row align="middle" style="margin-bottom:12px;">
-  <ev-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:12px;">middle</div></ev-col>
-  <ev-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:28px 12px;">middle 较高</div></ev-col>
-</ev-row>
-<ev-row align="bottom">
-  <ev-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:12px;">bottom</div></ev-col>
-  <ev-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:28px 12px;">bottom 较高</div></ev-col>
-</ev-row>
+<eb-row align="middle" style="margin-bottom:12px;">
+  <eb-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:12px;">middle</div></eb-col>
+  <eb-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:28px 12px;">middle 较高</div></eb-col>
+</eb-row>
+<eb-row align="bottom">
+  <eb-col :span="6"><div style="background:#eef3ff;border-radius:4px;padding:12px;">bottom</div></eb-col>
+  <eb-col :span="6"><div style="background:#dce6ff;border-radius:4px;padding:28px 12px;">bottom 较高</div></eb-col>
+</eb-row>
 </DemoBlock>
 
 ## 组合场景：等距卡片列表
 
-gutter 提供列间距，Col 内放置任意内容（这里用 EvCard），是最常见的后台仪表盘排版方式。
+gutter 提供列间距，Col 内放置任意内容（这里用 EbCard），是最常见的后台仪表盘排版方式。
 
 <DemoBlock>
-<ev-row :gutter="16">
-  <ev-col :span="8">
-    <ev-card header="待办事项">
-      <ev-tag type="warning">12 项待处理</ev-tag>
-    </ev-card>
-  </ev-col>
-  <ev-col :span="8">
-    <ev-card header="项目进度">
-      <ev-tag type="success">按期推进</ev-tag>
-    </ev-card>
-  </ev-col>
-  <ev-col :span="8">
-    <ev-card header="成员动态">
-      <ev-tag type="primary">3 人在线</ev-tag>
-    </ev-card>
-  </ev-col>
-</ev-row>
+<eb-row :gutter="16">
+  <eb-col :span="8">
+    <eb-card header="待办事项">
+      <eb-tag type="warning">12 项待处理</eb-tag>
+    </eb-card>
+  </eb-col>
+  <eb-col :span="8">
+    <eb-card header="项目进度">
+      <eb-tag type="success">按期推进</eb-tag>
+    </eb-card>
+  </eb-col>
+  <eb-col :span="8">
+    <eb-card header="成员动态">
+      <eb-tag type="primary">3 人在线</eb-tag>
+    </eb-card>
+  </eb-col>
+</eb-row>
 </DemoBlock>
 
 ## API
@@ -102,5 +102,5 @@ gutter 提供列间距，Col 内放置任意内容（这里用 EvCard），是�
 ]" />
 
 <ApiTable title="Row Slots" :rows="[
-  { name: 'default', desc: '行内容，一般为 EvCol 列表', type: '—', default: '—' },
+  { name: 'default', desc: '行内容，一般为 EbCol 列表', type: '—', default: '—' },
 ]" />

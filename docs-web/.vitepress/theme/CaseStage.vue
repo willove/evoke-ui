@@ -50,7 +50,7 @@ onBeforeUnmount(() => observer && observer.disconnect())
           class="case-stage__open"
           title="在新窗口打开原生全屏版本"
         >
-          <EwIcon name="external-link" :size="13" />
+          <EvIcon name="external-link" :size="13" />
           <span>新窗口打开</span>
         </a>
       </div>

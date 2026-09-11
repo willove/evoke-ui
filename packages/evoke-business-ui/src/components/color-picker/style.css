@@ -1,78 +1,78 @@
-/* EvColorPicker —颜色选择器 trigger */
+/* EbColorPicker —颜色选择器 trigger */
 
-.ev-color-picker.ev-color-picker {
+.eb-color-picker.eb-color-picker {
   display: inline-block;
   line-height: normal;
 }
 
-.ev-color-picker.ev-color-picker .ev-color-picker__trigger {
+.eb-color-picker.eb-color-picker .eb-color-picker__trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border: 1px solid var(--ev-border-color);
-  border-radius: var(--ev-radius-sm);
-  background-color: var(--ev-fill-color-blank);
+  border: 1px solid var(--eb-border-color);
+  border-radius: var(--eb-radius-sm);
+  background-color: var(--eb-fill-color-blank);
   cursor: pointer;
   outline: none;
   box-sizing: border-box;
-  transition: border-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: border-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-color-picker.ev-color-picker .ev-color-picker__trigger:hover {
-  border-color: var(--ev-color-primary);
+.eb-color-picker.eb-color-picker .eb-color-picker__trigger:hover {
+  border-color: var(--eb-color-primary);
 }
-.ev-color-picker.ev-color-picker .ev-color-picker__trigger:focus-visible {
-  border-color: var(--ev-color-primary);
-  box-shadow: var(--ev-focus-ring);
+.eb-color-picker.eb-color-picker .eb-color-picker__trigger:focus-visible {
+  border-color: var(--eb-color-primary);
+  box-shadow: var(--eb-focus-ring);
 }
-.ev-color-picker.ev-color-picker.is-disabled .ev-color-picker__trigger {
+.eb-color-picker.eb-color-picker.is-disabled .eb-color-picker__trigger {
   cursor: not-allowed;
   opacity: 0.55;
 }
 
-.ev-color-picker.ev-color-picker .ev-color-picker__color {
+.eb-color-picker.eb-color-picker .eb-color-picker__color {
   position: relative;
   display: inline-block;
   width: 24px;
   height: 24px;
-  border-radius: var(--ev-radius-xs);
+  border-radius: var(--eb-radius-xs);
   box-sizing: border-box;
   text-align: center;
 }
-.ev-color-picker.ev-color-picker .ev-color-picker__color.is-alpha {
+.eb-color-picker.eb-color-picker .eb-color-picker__color.is-alpha {
   /* 透明度棋盘底 */
-  background-image: linear-gradient(45deg, var(--ev-fill-color-dark) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--ev-fill-color-dark) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--ev-fill-color-dark) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--ev-fill-color-dark) 75%) !important;
+  background-image: linear-gradient(45deg, var(--eb-fill-color-dark) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--eb-fill-color-dark) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--eb-fill-color-dark) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--eb-fill-color-dark) 75%) !important;
   background-size: 8px 8px;
   background-position: 0 0, 0 4px, 4px -4px, -4px 0;
 }
-.ev-color-picker.ev-color-picker .ev-color-picker__icon {
+.eb-color-picker.eb-color-picker .eb-color-picker__icon {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ev-text-color-placeholder);
+  color: var(--eb-text-color-placeholder);
 }
 
 /* 尺寸 */
-.ev-color-picker.ev-color-picker.ev-color-picker--large .ev-color-picker__color {
+.eb-color-picker.eb-color-picker.eb-color-picker--large .eb-color-picker__color {
   width: 32px;
   height: 32px;
 }
-.ev-color-picker.ev-color-picker.ev-color-picker--small .ev-color-picker__color {
+.eb-color-picker.eb-color-picker.eb-color-picker--small .eb-color-picker__color {
   width: 18px;
   height: 18px;
 }
 
 /* 弹层过渡 */
-.ev-color-picker-fade-enter-active,
-.ev-color-picker-fade-leave-active {
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-out);
+.eb-color-picker-fade-enter-active,
+.eb-color-picker-fade-leave-active {
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-color-picker-fade-enter-from,
-.ev-color-picker-fade-leave-to {
+.eb-color-picker-fade-enter-from,
+.eb-color-picker-fade-leave-to {
   opacity: 0;
 }

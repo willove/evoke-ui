@@ -1,41 +1,41 @@
-/* EvColumnSettings — 表格列设置（业务封装） */
+/* EbColumnSettings — 表格列设置（业务封装） */
 
-/* 触发器复用 ev-button（size=small），仅补文字间距 */
-.ev-column-settings__trigger .ev-column-settings__trigger-text {
-  font-size: var(--ev-font-size-xs);
+/* 触发器复用 eb-button（size=small），仅补文字间距 */
+.eb-column-settings__trigger .eb-column-settings__trigger-text {
+  font-size: var(--eb-font-size-xs);
 }
 
-.ev-column-settings__panel {
+.eb-column-settings__panel {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
 
-.ev-column-settings__head {
+.eb-column-settings__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: var(--ev-space-1);
-  border-bottom: 1px solid var(--ev-border-color-lighter);
+  padding-bottom: var(--eb-space-1);
+  border-bottom: 1px solid var(--eb-border-color-lighter);
 }
-.ev-column-settings__head-title {
-  font-size: var(--ev-font-size-xs);
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+.eb-column-settings__head-title {
+  font-size: var(--eb-font-size-xs);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
 }
-.ev-column-settings__reset {
+.eb-column-settings__reset {
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--ev-color-primary);
-  font-size: var(--ev-font-size-xs);
+  color: var(--eb-color-primary);
+  font-size: var(--eb-font-size-xs);
   cursor: pointer;
 }
-.ev-column-settings__reset:hover {
-  color: var(--ev-color-primary-light-3);
+.eb-column-settings__reset:hover {
+  color: var(--eb-color-primary-light-3);
 }
 
-.ev-column-settings__list {
+.eb-column-settings__list {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -45,37 +45,37 @@
   overflow-y: auto;
 }
 
-.ev-column-settings__item {
+.eb-column-settings__item {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding: var(--ev-space-1) var(--ev-space-1);
-  border-radius: var(--ev-radius-sm);
+  gap: var(--eb-space-2);
+  padding: var(--eb-space-1) var(--eb-space-1);
+  border-radius: var(--eb-radius-sm);
   cursor: grab;
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-column-settings__item:hover {
-  background: var(--ev-fill-color-light);
+.eb-column-settings__item:hover {
+  background: var(--eb-fill-color-light);
 }
-.ev-column-settings__item.is-dragging {
+.eb-column-settings__item.is-dragging {
   opacity: 0.5;
 }
-.ev-column-settings__item.is-drag-over {
-  box-shadow: inset 0 2px 0 var(--ev-color-primary);
+.eb-column-settings__item.is-drag-over {
+  box-shadow: inset 0 2px 0 var(--eb-color-primary);
 }
 
-.ev-column-settings__drag-handle {
-  color: var(--ev-text-color-placeholder);
+.eb-column-settings__drag-handle {
+  color: var(--eb-text-color-placeholder);
   cursor: grab;
-  font-size: var(--ev-font-size-xs);
+  font-size: var(--eb-font-size-xs);
   user-select: none;
 }
 
-.ev-column-settings__item-label {
+.eb-column-settings__item-label {
   flex: 1;
   min-width: 0;
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-regular);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-regular);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

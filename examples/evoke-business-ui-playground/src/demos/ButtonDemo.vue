@@ -1,81 +1,81 @@
 <template>
   <section class="demo">
-    <h2>EvButton</h2>
+    <h2>EbButton</h2>
 
     <div class="demo-row">
       <span class="demo-label">类型</span>
-      <ev-button>Default</ev-button>
-      <ev-button type="primary">Primary</ev-button>
-      <ev-button type="success">Success</ev-button>
-      <ev-button type="warning">Warning</ev-button>
-      <ev-button type="danger">Danger</ev-button>
-      <ev-button type="info">Info</ev-button>
+      <eb-button>Default</eb-button>
+      <eb-button type="primary">Primary</eb-button>
+      <eb-button type="success">Success</eb-button>
+      <eb-button type="warning">Warning</eb-button>
+      <eb-button type="danger">Danger</eb-button>
+      <eb-button type="info">Info</eb-button>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">plain</span>
-      <ev-button plain>Default</ev-button>
-      <ev-button type="primary" plain>Primary</ev-button>
-      <ev-button type="success" plain>Success</ev-button>
-      <ev-button type="danger" plain>Danger</ev-button>
+      <eb-button plain>Default</eb-button>
+      <eb-button type="primary" plain>Primary</eb-button>
+      <eb-button type="success" plain>Success</eb-button>
+      <eb-button type="danger" plain>Danger</eb-button>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">round / circle</span>
-      <ev-button type="primary" round>Round</ev-button>
-      <ev-button type="primary" :icon="'search'" circle />
-      <ev-button type="primary" :icon="'plus'" circle />
+      <eb-button type="primary" round>Round</eb-button>
+      <eb-button type="primary" :icon="'search'" circle />
+      <eb-button type="primary" :icon="'plus'" circle />
     </div>
 
     <div class="demo-row">
       <span class="demo-label">尺寸</span>
-      <ev-button size="large">Large</ev-button>
-      <ev-button>Default</ev-button>
-      <ev-button size="small">Small</ev-button>
+      <eb-button size="large">Large</eb-button>
+      <eb-button>Default</eb-button>
+      <eb-button size="small">Small</eb-button>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">状态</span>
-      <ev-button type="primary" loading>Loading</ev-button>
-      <ev-button type="primary" disabled>Disabled</ev-button>
-      <ev-button type="primary" ghost>Ghost</ev-button>
-      <ev-button type="danger" danger-solid>Danger Solid</ev-button>
-      <ev-button text>Text</ev-button>
-      <ev-button type="primary" link>Link</ev-button>
+      <eb-button type="primary" loading>Loading</eb-button>
+      <eb-button type="primary" disabled>Disabled</eb-button>
+      <eb-button type="primary" ghost>Ghost</eb-button>
+      <eb-button type="danger" danger-solid>Danger Solid</eb-button>
+      <eb-button text>Text</eb-button>
+      <eb-button type="primary" link>Link</eb-button>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">图标按钮</span>
-      <ev-button type="primary" icon="search">搜索</ev-button>
-      <ev-button icon="download">下载</ev-button>
-      <ev-button-group>
-        <ev-button icon="arrow-left">上一页</ev-button>
-        <ev-button>1</ev-button>
-        <ev-button>
+      <eb-button type="primary" icon="search">搜索</eb-button>
+      <eb-button icon="download">下载</eb-button>
+      <eb-button-group>
+        <eb-button icon="arrow-left">上一页</eb-button>
+        <eb-button>1</eb-button>
+        <eb-button>
           下一页
-          <ev-icon name="arrow-right" />
-        </ev-button>
-      </ev-button-group>
+          <eb-icon name="arrow-right" />
+        </eb-button>
+      </eb-button-group>
     </div>
   </section>
 </template>
 
 <style scoped>
 .demo h2 {
-  font-size: var(--ev-font-size-md);
-  font-weight: var(--ev-font-weight-semibold);
-  margin-bottom: var(--ev-space-4);
+  font-size: var(--eb-font-size-md);
+  font-weight: var(--eb-font-weight-semibold);
+  margin-bottom: var(--eb-space-4);
 }
 .demo-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ev-space-2);
-  margin-bottom: var(--ev-space-4);
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-4);
 }
 .demo-label {
   width: 90px;
-  font-size: var(--ev-font-size-sm);
-  color: var(--ev-text-color-secondary);
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
 }
 </style>

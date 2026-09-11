@@ -1,36 +1,36 @@
 <template>
   <button
-    class="ev-float-button ev-float-button"
-    :class="[`ev-float-button--${shape}`, `ev-float-button--${type}`]"
+    class="eb-float-button eb-float-button"
+    :class="[`eb-float-button--${shape}`, `eb-float-button--${type}`]"
     type="button"
     :style="{ width: size + 'px', height: size + 'px' }"
     @click="handleClick"
   >
-    <ev-badge v-if="badgeValue !== null" :value="badgeValue" :max="badgeMax">
-      <span class="ev-float-button__inner">
+    <eb-badge v-if="badgeValue !== null" :value="badgeValue" :max="badgeMax">
+      <span class="eb-float-button__inner">
         <slot>
-          <ev-icon v-if="icon" :name="icon" :size="18" />
+          <eb-icon v-if="icon" :name="icon" :size="18" />
         </slot>
       </span>
-    </ev-badge>
-    <span v-else class="ev-float-button__inner">
+    </eb-badge>
+    <span v-else class="eb-float-button__inner">
       <slot>
-        <ev-icon v-if="icon" :name="icon" :size="18" />
+        <eb-icon v-if="icon" :name="icon" :size="18" />
       </slot>
     </span>
-    <span v-if="tooltip" class="ev-float-button__tooltip">{{ tooltip }}</span>
+    <span v-if="tooltip" class="eb-float-button__tooltip">{{ tooltip }}</span>
   </button>
 </template>
 
 <script setup>
 /**
- * EvFloatButton — 悬浮操作按钮（返回顶部 / 客服 / 快捷入口）
+ * EbFloatButton — 悬浮操作按钮（返回顶部 / 客服 / 快捷入口）
  * 定位由业务方容器控制，或用 FloatButtonGroup 的 position 统一布置
  */
-import EvIcon from '../icon/index.vue'
-import EvBadge from '../badge/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbBadge from '../badge/index.vue'
 
-defineOptions({ name: 'EvFloatButton' })
+defineOptions({ name: 'EbFloatButton' })
 
 const props = defineProps({
   /** 图标名（默认插槽优先） */

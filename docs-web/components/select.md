@@ -1,14 +1,14 @@
 # Select 下拉选择
 
-`EwSelect` 用自定义菜单替代原生 select 的生硬外观：选中态打勾、禁用项置灰、spring 展开、
-点击外部自动收起。`bare` 嵌入形态用于 [EwSearchBox](./search-box) 等复合控件内部。
+`EvSelect` 用自定义菜单替代原生 select 的生硬外观：选中态打勾、禁用项置灰、spring 展开、
+点击外部自动收起。`bare` 嵌入形态用于 [EvSearchBox](./search-box) 等复合控件内部。
 
 ## 基础用法
 
 <DemoBlock title="标准形态" description="点击展开菜单；选中项标主色并对勾标记。">
 
 <div style="display:flex; gap:16px; max-width:480px;">
-  <EwSelect
+  <EvSelect
     v-model="city"
     :options="[
       { label: '北京', value: 'bj' },
@@ -19,7 +19,7 @@
     placeholder="选择城市"
   />
 </div>
-<p style="margin-top:8px; font-size:13px; color:var(--ew-text-secondary);">当前：{{ city || '（未选择）' }}</p>
+<p style="margin-top:8px; font-size:13px; color:var(--ev-text-secondary);">当前：{{ city || '（未选择）' }}</p>
 
 <script setup>
 import { ref } from 'vue'
@@ -27,7 +27,7 @@ const city = ref('sh')
 </script>
 
 ```vue
-<EwSelect
+<EvSelect
   v-model="city"
   :options="[
     { label: '北京', value: 'bj' },
@@ -44,13 +44,13 @@ const city = ref('sh')
 <DemoBlock title="选项图标 / small / large">
 
 <div style="display:flex; gap:16px; align-items:center; max-width:520px;">
-  <EwSelect
+  <EvSelect
     v-model="scene"
     size="small"
     :options="[{ label: '企业官网', value: 'a', icon: 'compass-3-line' }, { label: '个人站', value: 'b', icon: 'device-line' }]"
     placeholder="场景"
   />
-  <EwSelect
+  <EvSelect
     v-model="scene2"
     size="large"
     :options="[{ label: '企业官网', value: 'a' }, { label: '个人站', value: 'b' }]"
@@ -59,13 +59,13 @@ const city = ref('sh')
 </div>
 
 ```vue
-<EwSelect v-model="scene" size="small" :options="withIcons" />
+<EvSelect v-model="scene" size="small" :options="withIcons" />
 ```
 
 </DemoBlock>
 
 ::: tip 在搜索栏中嵌入
-`bare` 形态去边框与最小宽度，专为复合控件准备 —— [EwSearchBox](./search-box) 的分类下拉就是它。
+`bare` 形态去边框与最小宽度，专为复合控件准备 —— [EvSearchBox](./search-box) 的分类下拉就是它。
 :::
 
 ## API

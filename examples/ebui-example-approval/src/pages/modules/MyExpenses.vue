@@ -1,38 +1,38 @@
 <template>
   <div class="me-page">
-    <ev-page-header title="我的申请" subtitle="报销单提交、进度跟踪与撤回">
+    <eb-page-header title="我的申请" subtitle="报销单提交、进度跟踪与撤回">
       <template #actions>
-        <ev-button type="primary" size="small" @click="openCreate">
-          <ev-icon name="plus" :size="14" />
+        <eb-button type="primary" size="small" @click="openCreate">
+          <eb-icon name="plus" :size="14" />
           发起报销
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-row :gutter="16" class="me-block">
-      <ev-col :xs="24" :sm="12" :lg="6">
-        <ev-stat-card label="累计提交" :value="myApplications.length" unit="单" icon="file-text" type="primary" />
-      </ev-col>
-      <ev-col :xs="24" :sm="12" :lg="6">
-        <ev-stat-card label="审批中" :value="countOf('pending')" unit="单" icon="time-circle" type="warning" />
-      </ev-col>
-      <ev-col :xs="24" :sm="12" :lg="6">
-        <ev-stat-card label="已通过" :value="countOf('approved')" unit="单" icon="check-circle" type="success" />
-      </ev-col>
-      <ev-col :xs="24" :sm="12" :lg="6">
-        <ev-stat-card label="被驳回" :value="countOf('rejected')" unit="单" icon="close-circle" type="danger" />
-      </ev-col>
-    </ev-row>
+    <eb-row :gutter="16" class="me-block">
+      <eb-col :xs="24" :sm="12" :lg="6">
+        <eb-stat-card label="累计提交" :value="myApplications.length" unit="单" icon="file-text" type="primary" />
+      </eb-col>
+      <eb-col :xs="24" :sm="12" :lg="6">
+        <eb-stat-card label="审批中" :value="countOf('pending')" unit="单" icon="time-circle" type="warning" />
+      </eb-col>
+      <eb-col :xs="24" :sm="12" :lg="6">
+        <eb-stat-card label="已通过" :value="countOf('approved')" unit="单" icon="check-circle" type="success" />
+      </eb-col>
+      <eb-col :xs="24" :sm="12" :lg="6">
+        <eb-stat-card label="被驳回" :value="countOf('rejected')" unit="单" icon="close-circle" type="danger" />
+      </eb-col>
+    </eb-row>
 
-    <ev-section-card class="me-card">
+    <eb-section-card class="me-card">
       <div class="me-filter">
-        <ev-segmented
+        <eb-segmented
           v-model="statusFilter"
           :options="[{ label: '全部', value: 'all' }, ...EXPENSE_STATUS.map((s) => ({ label: s.label, value: s.value }))]"
           size="small"
         />
       </div>
-      <ev-data-table
+      <eb-data-table
         title="报销单"
         :operations-width="150"
         :columns="columns"
@@ -40,68 +40,68 @@
         :show-pagination="false"
       >
         <template #no="{ row }">
-          <ev-cell-stack :main="row.no" :sub="TYPE_LABEL[row.type] + ' · ' + row.submittedAt" />
+          <eb-cell-stack :main="row.no" :sub="TYPE_LABEL[row.type] + ' · ' + row.submittedAt" />
         </template>
         <template #amount="{ row }">
           <span class="me-amount">¥{{ row.amount.toLocaleString() }}</span>
         </template>
         <template #status="{ row }">
-          <ev-status-tag :value="row.status" :statuses="EXPENSE_STATUS" />
+          <eb-status-tag :value="row.status" :statuses="EXPENSE_STATUS" />
         </template>
         <template #operations="{ row }">
-          <ev-button text type="primary" size="small" @click="view(row)">详情</ev-button>
-          <ev-popconfirm
+          <eb-button text type="primary" size="small" @click="view(row)">详情</eb-button>
+          <eb-popconfirm
             v-if="row.status === 'pending'"
             title="撤回后需重新提交，确认撤回？"
             icon-type="warning"
             @confirm="withdraw(row)"
           >
-            <ev-button text type="danger" size="small">撤回</ev-button>
-          </ev-popconfirm>
+            <eb-button text type="danger" size="small">撤回</eb-button>
+          </eb-popconfirm>
         </template>
-      </ev-data-table>
-    </ev-section-card>
+      </eb-data-table>
+    </eb-section-card>
 
     <!-- 详情弹窗 -->
-    <ev-dialog v-model="detailVisible" :title="`报销单 · ${current.no}`" width="640px">
-      <ev-steps :active="current.currentStep" align-center :process-status="current.status === 'rejected' ? 'error' : 'process'">
-        <ev-step v-for="node in FLOW_NODES" :key="node" :title="node" />
-      </ev-steps>
-      <ev-detail-descriptions :column="2" border :data="current" :items="detailItems" class="me-detail-desc">
+    <eb-dialog v-model="detailVisible" :title="`报销单 · ${current.no}`" width="640px">
+      <eb-steps :active="current.currentStep" align-center :process-status="current.status === 'rejected' ? 'error' : 'process'">
+        <eb-step v-for="node in FLOW_NODES" :key="node" :title="node" />
+      </eb-steps>
+      <eb-detail-descriptions :column="2" border :data="current" :items="detailItems" class="me-detail-desc">
         <template #type="{ value }">{{ TYPE_LABEL[value] }}</template>
         <template #amount="{ value }">¥{{ value.toLocaleString() }}</template>
-      </ev-detail-descriptions>
+      </eb-detail-descriptions>
 
       <div class="me-sub-title">费用明细（{{ current.items?.length || 0 }} 项）</div>
-      <ev-table :data="current.items || []">
-        <ev-table-column prop="type" label="费用类型" width="120">
+      <eb-table :data="current.items || []">
+        <eb-table-column prop="type" label="费用类型" width="120">
           <template #default="{ row }">{{ TYPE_LABEL[row.type] }}</template>
-        </ev-table-column>
-        <ev-table-column prop="note" label="说明" min-width="180" />
-        <ev-table-column prop="amount" label="金额（元）" align="right" width="110" />
-      </ev-table>
+        </eb-table-column>
+        <eb-table-column prop="note" label="说明" min-width="180" />
+        <eb-table-column prop="amount" label="金额（元）" align="right" width="110" />
+      </eb-table>
 
       <div class="me-sub-title">审批记录</div>
-      <ev-audit-timeline :items="auditItems" />
-    </ev-dialog>
+      <eb-audit-timeline :items="auditItems" />
+    </eb-dialog>
 
     <!-- 发起报销 -->
-    <ev-dialog v-model="createVisible" title="发起报销" width="680px" :close-on-click-modal="false">
-      <ev-form ref="formRef" :model="form" :rules="rules" label-width="80px">
-        <ev-form-item label="费用类型" prop="type">
-          <ev-select v-model="form.type" style="width: 240px">
-            <ev-option v-for="t in EXPENSE_TYPES" :key="t.value" :label="t.label" :value="t.value" />
-          </ev-select>
-        </ev-form-item>
-        <ev-form-item label="费用明细" prop="items">
+    <eb-dialog v-model="createVisible" title="发起报销" width="680px" :close-on-click-modal="false">
+      <eb-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+        <eb-form-item label="费用类型" prop="type">
+          <eb-select v-model="form.type" style="width: 240px">
+            <eb-option v-for="t in EXPENSE_TYPES" :key="t.value" :label="t.label" :value="t.value" />
+          </eb-select>
+        </eb-form-item>
+        <eb-form-item label="费用明细" prop="items">
           <div class="me-items">
             <div v-for="(item, i) in form.items" :key="i" class="me-items__row">
-              <ev-select v-model="item.type" style="width: 130px">
-                <ev-option v-for="t in EXPENSE_TYPES" :key="t.value" :label="t.label" :value="t.value" />
-              </ev-select>
-              <ev-input-number v-model="item.amount" :min="0" :step="50" style="width: 130px" />
-              <ev-input v-model="item.note" placeholder="费用说明" style="flex: 1" />
-              <ev-button
+              <eb-select v-model="item.type" style="width: 130px">
+                <eb-option v-for="t in EXPENSE_TYPES" :key="t.value" :label="t.label" :value="t.value" />
+              </eb-select>
+              <eb-input-number v-model="item.amount" :min="0" :step="50" style="width: 130px" />
+              <eb-input v-model="item.note" placeholder="费用说明" style="flex: 1" />
+              <eb-button
                 text
                 type="danger"
                 size="small"
@@ -109,32 +109,32 @@
                 @click="form.items.splice(i, 1)"
               >
                 删除
-              </ev-button>
+              </eb-button>
             </div>
-            <ev-button size="small" @click="addItem">
-              <ev-icon name="plus" :size="12" />
+            <eb-button size="small" @click="addItem">
+              <eb-icon name="plus" :size="12" />
               添加明细
-            </ev-button>
+            </eb-button>
           </div>
-        </ev-form-item>
-        <ev-form-item label="合计金额">
+        </eb-form-item>
+        <eb-form-item label="合计金额">
           <span class="me-total">¥{{ totalAmount.toLocaleString() }}</span>
-        </ev-form-item>
-        <ev-form-item label="事由备注" prop="remark">
-          <ev-textarea v-model="form.remark" :rows="2" maxlength="100" show-word-limit placeholder="补充报销事由，帮助审批人理解" />
-        </ev-form-item>
-      </ev-form>
+        </eb-form-item>
+        <eb-form-item label="事由备注" prop="remark">
+          <eb-textarea v-model="form.remark" :rows="2" maxlength="100" show-word-limit placeholder="补充报销事由，帮助审批人理解" />
+        </eb-form-item>
+      </eb-form>
       <template #footer>
-        <ev-button @click="createVisible = false">取消</ev-button>
-        <ev-button type="primary" @click="submit">提交审批</ev-button>
+        <eb-button @click="createVisible = false">取消</eb-button>
+        <eb-button type="primary" @click="submit">提交审批</eb-button>
       </template>
-    </ev-dialog>
+    </eb-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import {
   myApplications,
   createApplication,
@@ -165,7 +165,7 @@ const columns = [
 /* ---------------- 撤回 ---------------- */
 function withdraw(row) {
   row.status = 'withdrawn'
-  EvMessage.info(`报销单 ${row.no} 已撤回`)
+  EbMessage.info(`报销单 ${row.no} 已撤回`)
 }
 
 /* ---------------- 详情弹窗 ---------------- */
@@ -236,7 +236,7 @@ function submit() {
     .validate()
     .then(() => {
       if (totalAmount.value <= 0) {
-        EvMessage.warning('合计金额需大于 0')
+        EbMessage.warning('合计金额需大于 0')
         return
       }
       const app = createApplication({
@@ -250,10 +250,10 @@ function submit() {
       emit('create', app)
       createVisible.value = false
       statusFilter.value = 'all'
-      EvMessage.success(`报销单 ${app.no} 已提交，等待部门经理审批`)
+      EbMessage.success(`报销单 ${app.no} 已提交，等待部门经理审批`)
     })
     .catch(() => {
-      EvMessage.warning('请完善费用明细后提交')
+      EbMessage.warning('请完善费用明细后提交')
     })
 }
 </script>
@@ -282,9 +282,9 @@ function submit() {
 .me-sub-title {
   margin: 20px 0 10px;
   padding-left: 8px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
-  border-left: 3px solid var(--ev-color-primary, #175dff);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
+  border-left: 3px solid var(--eb-color-primary, #175dff);
 }
 .me-items {
   display: flex;
@@ -299,7 +299,7 @@ function submit() {
 }
 .me-total {
   font-size: 18px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-color-danger, #e34d59);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-color-danger, #e34d59);
 }
 </style>

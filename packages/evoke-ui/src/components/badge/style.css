@@ -1,23 +1,23 @@
-/* EwBadge — 计数徽标 */
-.ew-badge {
+/* EvBadge — 计数徽标 */
+.ev-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: var(--ew-radius-full);
+  border-radius: var(--ev-radius-full);
   background-color: #f04438;
   color: #ffffff;
   font-size: 11px;
-  font-weight: var(--ew-font-weight-medium);
+  font-weight: var(--ev-font-weight-medium);
   line-height: 1;
   white-space: nowrap;
   vertical-align: top;
 }
 
 /* 圆点模式 */
-.ew-badge.is-dot {
+.ev-badge.is-dot {
   min-width: 8px;
   width: 8px;
   height: 8px;

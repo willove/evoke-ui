@@ -1,13 +1,13 @@
 <template>
   <div
-    class="ev-slider ev-slider"
-    :class="{ 'is-vertical': vertical, 'ev-slider--with-input': showInput && !range && !vertical }"
+    class="eb-slider eb-slider"
+    :class="{ 'is-vertical': vertical, 'eb-slider--with-input': showInput && !range && !vertical }"
     :aria-label="label || ariaLabel || undefined"
   >
     <!-- 数值输入（仅水平单值模式） -->
-    <ev-input-number
+    <eb-input-number
       v-if="showInput && !range && !vertical"
-      class="ev-slider__input"
+      class="eb-slider__input"
       :model-value="firstValue"
       :step="step"
       :min="min"
@@ -20,37 +20,37 @@
 
     <div
       ref="runwayRef"
-      class="ev-slider__runway"
+      class="eb-slider__runway"
       :class="{ 'show-input': showInput && !range && !vertical, 'is-disabled': disabled }"
       :style="runwayStyle"
       @mousedown="handleRunwayMousedown"
     >
-      <div class="ev-slider__bar" :style="barStyle" />
+      <div class="eb-slider__bar" :style="barStyle" />
       <!-- 步进挡点 -->
       <template v-if="showStops">
         <div
           v-for="stop in stops"
           :key="stop"
-          class="ev-slider__stop"
+          class="eb-slider__stop"
           :style="stopStyle(stop)"
         />
       </template>
       <!-- marks -->
-      <div v-if="hasMarks" class="ev-slider__marks">
+      <div v-if="hasMarks" class="eb-slider__marks">
         <div
           v-for="(mk, key) in marksList"
           :key="key"
-          class="ev-slider__mark"
+          class="eb-slider__mark"
           :style="markPositionStyle(mk.value)"
         >
-          <span class="ev-slider__mark-text" :style="mk.style">{{ mk.label }}</span>
+          <span class="eb-slider__mark-text" :style="mk.style">{{ mk.label }}</span>
         </div>
       </div>
       <!-- 拖拽手柄 -->
       <div
         v-for="(btn, bi) in thumbValues"
         :key="bi"
-        class="ev-slider__button-wrapper"
+        class="eb-slider__button-wrapper"
         :class="{ 'is-dragging': draggingIndex === bi, hovering: hoveringIndex === bi }"
         :style="thumbStyle(bi)"
         role="slider"
@@ -65,10 +65,10 @@
         @focus="activeIndex = bi"
         @keydown="handleKeydown(bi, $event)"
       >
-        <div v-if="tooltipVisibleFor(bi)" class="ev-slider__tooltip">
-          <span class="ev-slider__tooltip-text">{{ formatTooltipValue(btn) }}</span>
+        <div v-if="tooltipVisibleFor(bi)" class="eb-slider__tooltip">
+          <span class="eb-slider__tooltip-text">{{ formatTooltipValue(btn) }}</span>
         </div>
-        <div class="ev-slider__button" />
+        <div class="eb-slider__button" />
       </div>
     </div>
   </div>
@@ -76,12 +76,12 @@
 
 <script setup>
 /**
- * EvSlider — 滑块
+ * EbSlider — 滑块
  * 单值/区间双手柄、垂直模式、步进吸附、marks/show-stops、format-tooltip、show-input
  * 拖拽用 window 级 pointer 监听（事件上下文内挂载，Electron 安全）
  */
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
-import EvInputNumber from '../input-number/index.vue'
+import EbInputNumber from '../input-number/index.vue'
 
 const props = defineProps({
   modelValue: { type: [Number, Array], default: 0 },
@@ -334,12 +334,12 @@ function formatTooltipValue(value) {
 // 实例方法：focus / blur 聚焦激活手柄
 function focus() {
   runwayRef.value
-    ?.querySelectorAll('.ev-slider__button-wrapper')
+    ?.querySelectorAll('.eb-slider__button-wrapper')
     ?.[activeIndex.value]?.focus?.()
 }
 function blur() {
   runwayRef.value
-    ?.querySelectorAll('.ev-slider__button-wrapper')
+    ?.querySelectorAll('.eb-slider__button-wrapper')
     ?.[activeIndex.value]?.blur?.()
 }
 

@@ -1,101 +1,101 @@
-/* EwContactForm — 留言/合作表单 */
+/* EvContactForm — 留言/合作表单 */
 
-.ew-contact-form {
+.ev-contact-form {
   display: flex;
   flex-direction: column;
-  gap: var(--ew-space-5);
+  gap: var(--ev-space-5);
 }
 
-.ew-contact-form__row {
+.ev-contact-form__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--ew-space-5);
+  gap: var(--ev-space-5);
 }
 
-.ew-contact-form__field {
+.ev-contact-form__field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.ew-contact-form__label {
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
+.ev-contact-form__label {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
 }
 
-.ew-contact-form__input {
+.ev-contact-form__input {
   padding: 10px 14px;
-  border: 1px solid var(--ew-border-color);
-  border-radius: var(--ew-radius-md);
-  background-color: var(--ew-bg-container);
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-bg-container);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
   outline: none;
-  transition: border-color var(--ew-duration-base) var(--ew-ease-in-out),
-    box-shadow var(--ew-duration-base) var(--ew-ease-in-out);
+  transition: border-color var(--ev-duration-base) var(--ev-ease-in-out),
+    box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-contact-form__input::placeholder {
-  color: var(--ew-text-placeholder);
+.ev-contact-form__input::placeholder {
+  color: var(--ev-text-placeholder);
 }
 
-.ew-contact-form__input:focus,
-.ew-contact-form__input:focus-visible {
+.ev-contact-form__input:focus,
+.ev-contact-form__input:focus-visible {
   outline: none;
-  border-color: var(--ew-color-primary-light-5);
-  box-shadow: var(--ew-focus-ring);
+  border-color: var(--ev-color-primary-light-5);
+  box-shadow: var(--ev-focus-ring);
 }
 
-.ew-contact-form__input.is-error {
-  border-color: var(--ew-color-danger-light-5);
+.ev-contact-form__input.is-error {
+  border-color: var(--ev-color-danger-light-5);
 }
 
-.ew-contact-form__textarea {
+.ev-contact-form__textarea {
   resize: vertical;
   min-height: 96px;
 }
 
-.ew-contact-form__error {
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-color-danger);
+.ev-contact-form__error {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-danger);
 }
 
-.ew-contact-form__footer {
+.ev-contact-form__footer {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-4);
+  gap: var(--ev-space-4);
 }
 
-.ew-contact-form__hint {
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
+.ev-contact-form__hint {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
 }
 
 /* 成功态 */
-.ew-contact-form__done {
+.ev-contact-form__done {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-3);
-  padding: var(--ew-space-5);
-  border: 1px solid var(--ew-color-success-light-7);
-  border-radius: var(--ew-radius-lg);
-  background-color: var(--ew-color-success-light-9);
+  gap: var(--ev-space-3);
+  padding: var(--ev-space-5);
+  border: 1px solid var(--ev-color-success-light-7);
+  border-radius: var(--ev-radius-lg);
+  background-color: var(--ev-color-success-light-9);
 }
 
-.ew-contact-form__done-icon {
-  color: var(--ew-color-success);
+.ev-contact-form__done-icon {
+  color: var(--ev-color-success);
   flex-shrink: 0;
 }
 
-.ew-contact-form__done-text {
+.ev-contact-form__done-text {
   flex: 1;
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
 }
 
 @media (max-width: 560px) {
-  .ew-contact-form__row {
+  .ev-contact-form__row {
     grid-template-columns: 1fr;
   }
 }

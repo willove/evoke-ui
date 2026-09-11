@@ -1,6 +1,6 @@
 <template>
   <li
-    class="ev-timeline-item"
+    class="eb-timeline-item"
     :class="[
       `is-mode-${mode}`,
       `is-placement-${itemPlacement}`,
@@ -24,36 +24,36 @@
   >
     <div
       v-if="(label && itemPlacement === 'end') || (isTimestampAside && timestampSide === 'start')"
-      class="ev-timeline-item__aside ev-timeline-item__aside--left"
+      class="eb-timeline-item__aside eb-timeline-item__aside--left"
     >
       <slot v-if="label && itemPlacement === 'end'" name="label">{{ label }}</slot>
-      <div v-if="isTimestampAside && timestampSide === 'start'" class="ev-timeline-item__timestamp is-aside">
+      <div v-if="isTimestampAside && timestampSide === 'start'" class="eb-timeline-item__timestamp is-aside">
         {{ timestamp }}
       </div>
     </div>
 
-    <div class="ev-timeline-item__content">
-      <div v-if="timestamp && placement === 'top'" class="ev-timeline-item__timestamp is-top">{{ timestamp }}</div>
-      <div class="ev-timeline-item__body">
+    <div class="eb-timeline-item__content">
+      <div v-if="timestamp && placement === 'top'" class="eb-timeline-item__timestamp is-top">{{ timestamp }}</div>
+      <div class="eb-timeline-item__body">
         <slot />
       </div>
-      <div v-if="timestamp && placement === 'bottom'" class="ev-timeline-item__timestamp is-bottom">{{ timestamp }}</div>
+      <div v-if="timestamp && placement === 'bottom'" class="eb-timeline-item__timestamp is-bottom">{{ timestamp }}</div>
     </div>
 
-    <div class="ev-timeline-item__axis">
-      <div class="ev-timeline-item__dot" :class="{ 'has-custom': hasDotSlot }">
+    <div class="eb-timeline-item__axis">
+      <div class="eb-timeline-item__dot" :class="{ 'has-custom': hasDotSlot }">
         <slot name="dot">
-          <ev-icon v-if="icon" :name="typeof icon === 'string' ? icon : 'more-filled'" :size="10" />
+          <eb-icon v-if="icon" :name="typeof icon === 'string' ? icon : 'more-filled'" :size="10" />
         </slot>
       </div>
     </div>
 
     <div
       v-if="(label && itemPlacement === 'start') || (isTimestampAside && timestampSide === 'end')"
-      class="ev-timeline-item__aside ev-timeline-item__aside--right"
+      class="eb-timeline-item__aside eb-timeline-item__aside--right"
     >
       <slot v-if="label && itemPlacement === 'start'" name="label">{{ label }}</slot>
-      <div v-if="isTimestampAside && timestampSide === 'end'" class="ev-timeline-item__timestamp is-aside">
+      <div v-if="isTimestampAside && timestampSide === 'end'" class="eb-timeline-item__timestamp is-aside">
         {{ timestamp }}
       </div>
     </div>
@@ -62,12 +62,12 @@
 
 <script setup>
 /**
- * EvTimelineItem — 时间轴节点
+ * EbTimelineItem — 时间轴节点
  * label（轴对侧标签）/ placement 扩展 + timestamp / type / color / hollow / size；
  * 竖线由父容器 ::before 绘制，item 只画 dot。
  */
 import { computed, inject, useSlots, ref, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   label: { type: String, default: undefined },
@@ -115,15 +115,15 @@ const finalVariant = computed(() => props.variant ?? (props.hollow ? 'outlined' 
 
 // 颜色解析：语义色 → token（主题/暗色自动适配）
 const colorMap = {
-  blue: 'var(--ev-color-primary)',
-  primary: 'var(--ev-color-primary)',
-  green: 'var(--ev-color-success)',
-  success: 'var(--ev-color-success)',
-  red: 'var(--ev-color-danger)',
-  danger: 'var(--ev-color-danger)',
-  gray: 'var(--ev-color-info)',
-  info: 'var(--ev-color-info)',
-  warning: 'var(--ev-color-warning)',
+  blue: 'var(--eb-color-primary)',
+  primary: 'var(--eb-color-primary)',
+  green: 'var(--eb-color-success)',
+  success: 'var(--eb-color-success)',
+  red: 'var(--eb-color-danger)',
+  danger: 'var(--eb-color-danger)',
+  gray: 'var(--eb-color-info)',
+  info: 'var(--eb-color-info)',
+  warning: 'var(--eb-color-warning)',
 }
 const isSemanticColor = (c) => c in colorMap
 const resolvedColor = computed(() => {

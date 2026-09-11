@@ -1,137 +1,137 @@
-/* EwMarkdown — Markdown 渲染排版
-   颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随 */
+/* EvMarkdown — Markdown 渲染排版
+   颜色全部走 --ev-* 语义令牌，明暗双主题自动跟随 */
 @import '../code-block/tok.css';
 
-.ew-markdown {
-  color: var(--ew-text-primary);
-  font-size: var(--ew-font-size-base);
+.ev-markdown {
+  color: var(--ev-text-primary);
+  font-size: var(--ev-font-size-base);
   line-height: 1.75;
   word-break: break-word;
 }
 
-.ew-markdown > :first-child {
+.ev-markdown > :first-child {
   margin-top: 0;
 }
-.ew-markdown > :last-child {
+.ev-markdown > :last-child {
   margin-bottom: 0;
 }
 
 /* ─── 标题 ─── */
-.ew-markdown .ew-md__h {
+.ev-markdown .ev-md__h {
   font-weight: 600;
   line-height: 1.4;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
-.ew-markdown h1.ew-md__h {
+.ev-markdown h1.ev-md__h {
   font-size: 1.55em;
   margin: 0.4em 0 0.6em;
 }
-.ew-markdown h2.ew-md__h {
+.ev-markdown h2.ev-md__h {
   font-size: 1.3em;
   margin: 1.3em 0 0.6em;
 }
-.ew-markdown h3.ew-md__h {
+.ev-markdown h3.ev-md__h {
   font-size: 1.15em;
   margin: 1.2em 0 0.5em;
 }
-.ew-markdown h4.ew-md__h,
-.ew-markdown h5.ew-md__h,
-.ew-markdown h6.ew-md__h {
+.ev-markdown h4.ev-md__h,
+.ev-markdown h5.ev-md__h,
+.ev-markdown h6.ev-md__h {
   font-size: 1.05em;
   margin: 1.1em 0 0.5em;
 }
 
 /* ─── 段落 / 列表 ─── */
-.ew-markdown .ew-md__p {
+.ev-markdown .ev-md__p {
   margin: 0.75em 0;
 }
-.ew-markdown ul.ew-md__list {
+.ev-markdown ul.ev-md__list {
   list-style: disc;
 }
-.ew-markdown ol.ew-md__list {
+.ev-markdown ol.ev-md__list {
   list-style: decimal;
 }
-.ew-markdown .ew-md__list {
+.ev-markdown .ev-md__list {
   margin: 0.6em 0;
   padding-left: 1.5em;
 }
-.ew-markdown .ew-md__list li {
+.ev-markdown .ev-md__list li {
   margin: 0.3em 0;
 }
 
 /* ─── 引用 / 分隔线 ─── */
-.ew-markdown .ew-md__quote {
+.ev-markdown .ev-md__quote {
   margin: 0.9em 0;
   padding: 0.6em 1em;
-  border-left: 3px solid var(--ew-color-primary);
-  background: var(--ew-fill-1);
-  border-radius: var(--ew-radius-sm);
-  color: var(--ew-text-secondary);
+  border-left: 3px solid var(--ev-color-primary);
+  background: var(--ev-fill-1);
+  border-radius: var(--ev-radius-sm);
+  color: var(--ev-text-secondary);
 }
-.ew-markdown .ew-md__quote .ew-md__p {
+.ev-markdown .ev-md__quote .ev-md__p {
   margin: 0.3em 0;
 }
-.ew-markdown .ew-md__hr {
+.ev-markdown .ev-md__hr {
   margin: 1.4em 0;
   border: none;
-  border-top: 1px solid var(--ew-border-color-light);
+  border-top: 1px solid var(--ev-border-color-light);
 }
 
 /* ─── 行内代码 / 代码块 ─── */
-.ew-markdown .ew-md__code-inline {
+.ev-markdown .ev-md__code-inline {
   padding: 0.15em 0.45em;
-  border-radius: var(--ew-radius-sm);
-  background: var(--ew-fill-2);
-  color: var(--ew-color-primary);
+  border-radius: var(--ev-radius-sm);
+  background: var(--ev-fill-2);
+  color: var(--ev-color-primary);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.9em;
 }
-.ew-markdown .ew-md__pre {
+.ev-markdown .ev-md__pre {
   margin: 0.9em 0;
-  padding: var(--ew-space-4);
+  padding: var(--ev-space-4);
   overflow-x: auto;
-  background: var(--ew-bg-muted);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-md);
+  background: var(--ev-bg-muted);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-md);
 }
-.ew-markdown .ew-md__pre code {
+.ev-markdown .ev-md__pre code {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
   white-space: pre;
-  color: var(--ew-text-primary);
+  color: var(--ev-text-primary);
 }
 
 /* ─── 表格 ─── */
-.ew-markdown .ew-md__table-wrap {
+.ev-markdown .ev-md__table-wrap {
   margin: 0.9em 0;
   overflow-x: auto;
 }
-.ew-markdown .ew-md__table {
+.ev-markdown .ev-md__table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95em;
 }
-.ew-markdown .ew-md__table th,
-.ew-markdown .ew-md__table td {
+.ev-markdown .ev-md__table th,
+.ev-markdown .ev-md__table td {
   padding: 0.5em 0.8em;
-  border: 1px solid var(--ew-border-color-light);
+  border: 1px solid var(--ev-border-color-light);
   text-align: left;
 }
-.ew-markdown .ew-md__table th {
-  background: var(--ew-fill-1);
+.ev-markdown .ev-md__table th {
+  background: var(--ev-fill-1);
   font-weight: 600;
 }
 
 /* ─── 链接 / 图片 ─── */
-.ew-markdown .ew-md__link {
-  color: var(--ew-color-primary);
+.ev-markdown .ev-md__link {
+  color: var(--ev-color-primary);
   text-decoration: none;
 }
-.ew-markdown .ew-md__link:hover {
+.ev-markdown .ev-md__link:hover {
   text-decoration: underline;
 }
-.ew-markdown .ew-md__img {
+.ev-markdown .ev-md__img {
   max-width: 100%;
-  border-radius: var(--ew-radius-md);
+  border-radius: var(--ev-radius-md);
 }

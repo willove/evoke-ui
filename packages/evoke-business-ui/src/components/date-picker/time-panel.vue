@@ -1,13 +1,13 @@
 <template>
-  <div class="ev-time-panel ev-popper" :class="{ 'is-disabled': disabled }">
-    <div class="ev-time-panel__content" :class="{ 'has-seconds': showSeconds }">
-      <div class="ev-time-spinner" :class="{ 'has-seconds': showSeconds }">
-        <div v-for="col in columns" :key="col.key" class="ev-time-spinner__wrapper">
-          <ul class="ev-time-spinner__list">
+  <div class="eb-time-panel eb-popper" :class="{ 'is-disabled': disabled }">
+    <div class="eb-time-panel__content" :class="{ 'has-seconds': showSeconds }">
+      <div class="eb-time-spinner" :class="{ 'has-seconds': showSeconds }">
+        <div v-for="col in columns" :key="col.key" class="eb-time-spinner__wrapper">
+          <ul class="eb-time-spinner__list">
             <li
               v-for="item in col.items"
               :key="item.value"
-              class="ev-time-spinner__item"
+              class="eb-time-spinner__item"
               :class="{
                 'is-active': item.value === col.active,
                 'is-disabled': item.disabled,
@@ -20,11 +20,11 @@
         </div>
       </div>
     </div>
-    <div v-if="showFooter" class="ev-time-panel__footer">
-      <button type="button" class="ev-time-panel__btn cancel" @click="emit('cancel')">
+    <div v-if="showFooter" class="eb-time-panel__footer">
+      <button type="button" class="eb-time-panel__btn cancel" @click="emit('cancel')">
         {{ t('datepicker.cancel') }}
       </button>
-      <button type="button" class="ev-time-panel__btn confirm" @click="emit('confirm')">
+      <button type="button" class="eb-time-panel__btn confirm" @click="emit('confirm')">
         {{ t('datepicker.confirm') }}
       </button>
     </div>
@@ -33,14 +33,14 @@
 
 <script setup>
 /**
- * TimePanel — 时间滚轮面板（.ev-time-panel / .ev-time-spinner 结构类）
+ * TimePanel — 时间滚轮面板（.eb-time-panel / .eb-time-spinner 结构类）
  * 三列（时/分/秒），点击项即时 emit pick；底部 取消/确定
- * 供 EvDatePicker（datetime 系列头部）与 EvTimePicker 复用
+ * 供 EbDatePicker（datetime 系列头部）与 EbTimePicker 复用
  */
 import { computed } from 'vue'
 import { useLocale } from '../../composables/useLocale'
 
-defineOptions({ name: 'EvTimePanel' })
+defineOptions({ name: 'EbTimePanel' })
 
 const props = defineProps({
   /** 当前时间（Date|null） */

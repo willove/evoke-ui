@@ -1,32 +1,32 @@
-/* EwField — 表单字段包装 */
+/* EvField — 表单字段包装 */
 
-.ew-field {
+.ev-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.ew-field__label {
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
+.ev-field__label {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
 }
 
-.ew-field__required {
+.ev-field__required {
   margin-left: 2px;
-  color: var(--ew-color-danger);
+  color: var(--ev-color-danger);
 }
 
-.ew-field__control {
+.ev-field__control {
   min-width: 0;
 }
 
-.ew-field__error {
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-color-danger);
+.ev-field__error {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-danger);
 }
 
-.ew-field__hint {
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
+.ev-field__hint {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
 }

@@ -1,34 +1,34 @@
 <template>
   <section class="demo">
-    <h2>EvIcon（内置图标 / 业务语义 / 文件类型 / PascalCase 容错）</h2>
+    <h2>EbIcon（内置图标 / 业务语义 / 文件类型 / PascalCase 容错）</h2>
 
     <div class="demo-row">
       <span class="demo-label">常用图标</span>
       <span v-for="name in epIcons" :key="name" class="icon-cell" :title="name">
-        <ev-icon :name="name" :size="20" />
+        <eb-icon :name="name" :size="20" />
       </span>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">业务语义</span>
       <span v-for="name in fontIcons" :key="name" class="icon-cell" :title="name">
-        <ev-icon :name="name" :size="20" />
+        <eb-icon :name="name" :size="20" />
       </span>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">文件类型</span>
       <span v-for="name in colorIcons" :key="name" class="icon-cell" :title="name">
-        <ev-icon :name="name" :size="22" />
+        <eb-icon :name="name" :size="22" />
       </span>
     </div>
 
     <div class="demo-row">
       <span class="demo-label">PascalCase</span>
-      <ev-icon name="CircleCheckFilled" :size="20" />
-      <ev-icon name="Search" :size="20" />
-      <ev-icon name="WarningFilled" :size="20" color="var(--ev-color-warning)" />
-      <ev-icon name="loading" :size="20" class="is-rotating" />
+      <eb-icon name="CircleCheckFilled" :size="20" />
+      <eb-icon name="Search" :size="20" />
+      <eb-icon name="WarningFilled" :size="20" color="var(--eb-color-warning)" />
+      <eb-icon name="loading" :size="20" class="is-rotating" />
     </div>
   </section>
 </template>
@@ -41,21 +41,21 @@ const colorIcons = ['file-excel', 'xlsx', 'xls', 'file-word', 'docx', 'file-ppt'
 
 <style scoped>
 .demo h2 {
-  font-size: var(--ev-font-size-md);
-  font-weight: var(--ev-font-weight-semibold);
-  margin-bottom: var(--ev-space-4);
+  font-size: var(--eb-font-size-md);
+  font-weight: var(--eb-font-weight-semibold);
+  margin-bottom: var(--eb-space-4);
 }
 .demo-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--ev-space-2);
-  margin-bottom: var(--ev-space-4);
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-4);
 }
 .demo-label {
   width: 90px;
-  font-size: var(--ev-font-size-sm);
-  color: var(--ev-text-color-secondary);
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
 }
 .icon-cell {
   display: inline-flex;
@@ -63,11 +63,11 @@ const colorIcons = ['file-excel', 'xlsx', 'xls', 'file-word', 'docx', 'file-ppt'
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--ev-radius-md);
-  color: var(--ev-text-color-regular);
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  border-radius: var(--eb-radius-md);
+  color: var(--eb-text-color-regular);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
 .icon-cell:hover {
-  background-color: var(--ev-fill-color-light);
+  background-color: var(--eb-fill-color-light);
 }
 </style>

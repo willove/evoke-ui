@@ -1,124 +1,124 @@
-/* EvTransfer —穿梭框 */
+/* EbTransfer —穿梭框 */
 
-.ev-transfer.ev-transfer {
+.eb-transfer.eb-transfer {
   display: flex;
   align-items: center;
-  font-size: var(--ev-font-size-base);
+  font-size: var(--eb-font-size-base);
 }
 
 /* ─── 面板 ─── */
-.ev-transfer.ev-transfer .ev-transfer-panel {
+.eb-transfer.eb-transfer .eb-transfer-panel {
   width: 200px;
-  border: 1px solid var(--ev-border-color-lighter);
-  border-radius: var(--ev-radius-md);
-  background: var(--ev-bg-color);
+  border: 1px solid var(--eb-border-color-lighter);
+  border-radius: var(--eb-radius-md);
+  background: var(--eb-bg-color);
   box-sizing: border-box;
   overflow: hidden;
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__header {
+.eb-transfer.eb-transfer .eb-transfer-panel__header {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   height: 40px;
-  padding: 0 var(--ev-space-3);
-  background: var(--ev-fill-color-light);
-  border-bottom: 1px solid var(--ev-border-color-lighter);
+  padding: 0 var(--eb-space-3);
+  background: var(--eb-fill-color-light);
+  border-bottom: 1px solid var(--eb-border-color-lighter);
   box-sizing: border-box;
 }
-.ev-transfer.ev-transfer .ev-transfer-panel__header-title {
+.eb-transfer.eb-transfer .eb-transfer-panel__header-title {
   flex: 1;
   min-width: 0;
-  font-size: var(--ev-font-size-base);
-  font-weight: var(--ev-font-weight-medium);
-  color: var(--ev-text-color-primary);
+  font-size: var(--eb-font-size-base);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ev-transfer.ev-transfer .ev-transfer-panel__header-num {
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+.eb-transfer.eb-transfer .eb-transfer-panel__header-num {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__body {
-  padding: var(--ev-space-2);
+.eb-transfer.eb-transfer .eb-transfer-panel__body {
+  padding: var(--eb-space-2);
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__filter {
-  margin-bottom: var(--ev-space-2);
+.eb-transfer.eb-transfer .eb-transfer-panel__filter {
+  margin-bottom: var(--eb-space-2);
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__list {
+.eb-transfer.eb-transfer .eb-transfer-panel__list {
   height: 246px;
   margin: 0;
-  padding: var(--ev-space-1) 0;
+  padding: var(--eb-space-1) 0;
   list-style: none;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__item {
+.eb-transfer.eb-transfer .eb-transfer-panel__item {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding: var(--ev-space-1) var(--ev-space-2);
-  border-radius: var(--ev-radius-sm);
+  gap: var(--eb-space-2);
+  padding: var(--eb-space-1) var(--eb-space-2);
+  border-radius: var(--eb-radius-sm);
   cursor: pointer;
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-transfer.ev-transfer .ev-transfer-panel__item:hover {
-  background: var(--ev-fill-color-light);
+.eb-transfer.eb-transfer .eb-transfer-panel__item:hover {
+  background: var(--eb-fill-color-light);
 }
-.ev-transfer.ev-transfer .ev-transfer-panel__item.is-disabled {
+.eb-transfer.eb-transfer .eb-transfer-panel__item.is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
-.ev-transfer.ev-transfer .ev-transfer-panel__item-label {
+.eb-transfer.eb-transfer .eb-transfer-panel__item-label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ev-text-color-regular);
+  color: var(--eb-text-color-regular);
 }
 
-.ev-transfer.ev-transfer .ev-transfer-panel__empty {
-  padding: var(--ev-space-4) 0;
+.eb-transfer.eb-transfer .eb-transfer-panel__empty {
+  padding: var(--eb-space-4) 0;
   text-align: center;
-  font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
 }
 
 /* ─── 中间按钮 ─── */
-.ev-transfer.ev-transfer .ev-transfer__buttons {
+.eb-transfer.eb-transfer .eb-transfer__buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ev-space-2);
-  padding: 0 var(--ev-space-3);
+  gap: var(--eb-space-2);
+  padding: 0 var(--eb-space-3);
 }
 
-.ev-transfer.ev-transfer .ev-transfer__btn {
+.eb-transfer.eb-transfer .eb-transfer__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 32px;
   padding: 0;
-  border: 1px solid var(--ev-color-primary);
-  border-radius: var(--ev-radius-sm);
-  background: var(--ev-color-primary);
+  border: 1px solid var(--eb-color-primary);
+  border-radius: var(--eb-radius-sm);
+  background: var(--eb-color-primary);
   color: #fff;
   cursor: pointer;
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-transfer.ev-transfer .ev-transfer__btn:hover {
-  background: var(--ev-color-primary-light-3);
-  border-color: var(--ev-color-primary-light-3);
+.eb-transfer.eb-transfer .eb-transfer__btn:hover {
+  background: var(--eb-color-primary-light-3);
+  border-color: var(--eb-color-primary-light-3);
 }
-.ev-transfer.ev-transfer .ev-transfer__btn.is-disabled,
-.ev-transfer.ev-transfer .ev-transfer__btn:disabled {
+.eb-transfer.eb-transfer .eb-transfer__btn.is-disabled,
+.eb-transfer.eb-transfer .eb-transfer__btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: var(--ev-color-primary);
-  border-color: var(--ev-color-primary);
+  background: var(--eb-color-primary);
+  border-color: var(--eb-color-primary);
 }

@@ -1,6 +1,6 @@
 # DetailDescriptions 详情描述
 
-items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 路径），支持 formatter 与按名分发插槽，基于 EvDescriptions 渲染。
+items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 路径），支持 formatter 与按名分发插槽，基于 EbDescriptions 渲染。
 
 取值规则：
 
@@ -11,7 +11,7 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
 ## 基础用法
 
 <DemoBlock>
-  <ev-detail-descriptions
+  <eb-detail-descriptions
     title="订单详情"
     :column="2"
     :data="{ orderNo: 'A-1001', user: { name: '张三', phone: '13800000000' }, amount: 9900 }"
@@ -29,7 +29,7 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
 `item.slot` 指定插槽名，作用域携带 `{ item, value }`，适合渲染状态标签、链接、操作按钮等富内容；未命中的字段继续走默认文本渲染。
 
 <DemoBlock>
-  <ev-detail-descriptions
+  <eb-detail-descriptions
     title="支付信息"
     :column="2"
     :data="{ orderNo: 'A-2001', status: 'paid', channel: { name: '支付宝' }, remark: null }"
@@ -41,9 +41,9 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
     ]"
   >
     <template #status="{ item, value }">
-      <ev-status-tag :value="value" :statuses="[{ value: 'paid', label: '已支付', type: 'success' }, { value: 'pending', label: '待支付', type: 'warning' }]" />
+      <eb-status-tag :value="value" :statuses="[{ value: 'paid', label: '已支付', type: 'success' }, { value: 'pending', label: '待支付', type: 'warning' }]" />
     </template>
-  </ev-detail-descriptions>
+  </eb-detail-descriptions>
 </DemoBlock>
 
 ## 空值与格式化
@@ -51,7 +51,7 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
 `remark` 为 null 时显示 `placeholder`；时间戳经 formatter 转为可读文本；`border: false` 切换为无边框模式。
 
 <DemoBlock>
-  <ev-detail-descriptions
+  <eb-detail-descriptions
     :column="1"
     :border="false"
     :data="{ amount: 9900, discount: null, createdAt: 1757032800000 }"
@@ -68,7 +68,7 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
 `extra` 插槽渲染在标题行右侧，常放编辑按钮；`span` 让字段占据多列，适合备注类长文本。
 
 <DemoBlock>
-  <ev-detail-descriptions
+  <eb-detail-descriptions
     title="用户资料"
     :column="2"
     :data="{ name: '张三', role: '管理员', email: 'zhang@example.com', remark: '内部账号，勿外传' }"
@@ -80,9 +80,9 @@ items 配置式的详情描述：值从 `data` 对象自动取（支持 `'a.b'` 
     ]"
   >
     <template #extra>
-      <ev-button size="small">编辑资料</ev-button>
+      <eb-button size="small">编辑资料</eb-button>
     </template>
-  </ev-detail-descriptions>
+  </eb-detail-descriptions>
 </DemoBlock>
 
 ## API

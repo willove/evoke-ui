@@ -1,10 +1,10 @@
-/* EvAffix —固钉 */
+/* EbAffix —固钉 */
 
-.ev-affix.ev-affix {
+.eb-affix.eb-affix {
   box-sizing: border-box;
 }
 
-.ev-affix.ev-affix .ev-affix__affix {
+.eb-affix.eb-affix .eb-affix__affix {
   position: fixed;
   box-sizing: border-box;
 }

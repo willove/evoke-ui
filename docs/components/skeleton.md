@@ -6,14 +6,14 @@ import { ref } from 'vue'
 const loading = ref(true)
 </script>
 
-在内容加载完成前提供占位图形，减少布局闪动。`loading` 为 true 时渲染占位，false 时切换渲染默认插槽的真实内容；`throttle` 可延迟占位渲染，避免快速加载完成时的闪烁。也可脱离 ev-skeleton 单独使用各形态占位单元。
+在内容加载完成前提供占位图形，减少布局闪动。`loading` 为 true 时渲染占位，false 时切换渲染默认插槽的真实内容；`throttle` 可延迟占位渲染，避免快速加载完成时的闪烁。也可脱离 eb-skeleton 单独使用各形态占位单元。
 
 ## 基础用法
 
 默认按 `rows` 渲染多行段落占位（末行自动短一截），`animated` 开启扫光动画。
 
 <DemoBlock>
-  <ev-skeleton animated :rows="4" />
+  <eb-skeleton animated :rows="4" />
 </DemoBlock>
 
 ## 常用版式预设 preset
@@ -23,24 +23,24 @@ const loading = ref(true)
 <DemoBlock>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
   <div>
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ev-text-color-secondary);">article</p>
-    <ev-skeleton animated preset="article" />
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--eb-text-color-secondary);">article</p>
+    <eb-skeleton animated preset="article" />
   </div>
   <div>
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ev-text-color-secondary);">avatar-text</p>
-    <ev-skeleton animated preset="avatar-text" />
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--eb-text-color-secondary);">avatar-text</p>
+    <eb-skeleton animated preset="avatar-text" />
   </div>
   <div>
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ev-text-color-secondary);">profile</p>
-    <ev-skeleton animated preset="profile" />
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--eb-text-color-secondary);">profile</p>
+    <eb-skeleton animated preset="profile" />
   </div>
   <div>
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ev-text-color-secondary);">card</p>
-    <ev-skeleton animated preset="card" />
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--eb-text-color-secondary);">card</p>
+    <eb-skeleton animated preset="card" />
   </div>
 </div>
-<p style="margin: 20px 0 8px; font-size: 13px; color: var(--ev-text-color-secondary);">table（:table-rows="5" :table-cols="5"）</p>
-<ev-skeleton animated preset="table" :table-rows="5" :table-cols="5" />
+<p style="margin: 20px 0 8px; font-size: 13px; color: var(--eb-text-color-secondary);">table（:table-rows="5" :table-cols="5"）</p>
+<eb-skeleton animated preset="table" :table-rows="5" :table-cols="5" />
 </DemoBlock>
 
 ## 多块与渲染延迟
@@ -48,8 +48,8 @@ const loading = ref(true)
 `count` 渲染多个占位块（如列表多卡片场景）；`throttle` 延迟毫秒数后才渲染占位，快速返回的请求不会闪出骨架屏。
 
 <DemoBlock>
-  <ev-skeleton animated :rows="2" :count="2" style="margin-bottom: 20px;" />
-  <ev-skeleton animated :rows="2" :throttle="500" />
+  <eb-skeleton animated :rows="2" :count="2" style="margin-bottom: 20px;" />
+  <eb-skeleton animated :rows="2" :throttle="500" />
 </DemoBlock>
 
 ## 动态切换加载态
@@ -57,34 +57,34 @@ const loading = ref(true)
 `loading` 置为 false 时渲染默认插槽中的真实内容，与占位结构保持一致可避免跳动。
 
 <DemoBlock>
-  <ev-skeleton :loading="loading" animated :rows="3">
+  <eb-skeleton :loading="loading" animated :rows="3">
     <div style="display: flex; align-items: center; gap: 12px;">
-      <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--ev-color-primary-light-7);"></div>
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--eb-color-primary-light-7);"></div>
       <div>
         <p style="margin: 0; font-weight: 600;">Evoke Design</p>
-        <p style="margin: 4px 0 0; font-size: 13px; color: var(--ev-text-color-secondary);">内容加载完成，骨架屏已被默认插槽替换。</p>
+        <p style="margin: 4px 0 0; font-size: 13px; color: var(--eb-text-color-secondary);">内容加载完成，骨架屏已被默认插槽替换。</p>
       </div>
     </div>
-  </ev-skeleton>
-  <ev-button style="margin-top: 12px;" @click="loading = !loading">{{ loading ? '完成加载' : '重新加载' }}</ev-button>
+  </eb-skeleton>
+  <eb-button style="margin-top: 12px;" @click="loading = !loading">{{ loading ? '完成加载' : '重新加载' }}</eb-button>
 </DemoBlock>
 
 ## 组合占位单元
 
-直接使用 `ev-skeleton-item`（variant 可选 text / p / caption / h1 / h3 / h5 / circle / rect / image / button / avatar）及 `ev-skeleton-avatar`、`ev-skeleton-button`、`ev-skeleton-input`、`ev-skeleton-image` 快捷组件拼装任意占位结构。
+直接使用 `eb-skeleton-item`（variant 可选 text / p / caption / h1 / h3 / h5 / circle / rect / image / button / avatar）及 `eb-skeleton-avatar`、`eb-skeleton-button`、`eb-skeleton-input`、`eb-skeleton-image` 快捷组件拼装任意占位结构。
 
 <DemoBlock>
   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-    <ev-skeleton-avatar animated />
+    <eb-skeleton-avatar animated />
     <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-      <ev-skeleton-item variant="h3" animated />
-      <ev-skeleton-item variant="caption" animated />
+      <eb-skeleton-item variant="h3" animated />
+      <eb-skeleton-item variant="caption" animated />
     </div>
   </div>
   <div style="display: flex; gap: 12px;">
-    <ev-skeleton-button animated />
-    <ev-skeleton-input animated />
-    <ev-skeleton-image animated />
+    <eb-skeleton-button animated />
+    <eb-skeleton-input animated />
+    <eb-skeleton-image animated />
   </div>
 </DemoBlock>
 
@@ -93,17 +93,17 @@ const loading = ref(true)
 `#template` 插槽替换每块的默认段落占位（插槽内容按 `count` 次重复渲染），可自由组合占位单元。
 
 <DemoBlock>
-  <ev-skeleton animated :count="2" style="display: flex; flex-direction: column; gap: 16px;">
+  <eb-skeleton animated :count="2" style="display: flex; flex-direction: column; gap: 16px;">
     <template #template>
       <div style="display: flex; gap: 12px;">
-        <ev-skeleton-item variant="circle" animated style="width: 40px; height: 40px; flex-shrink: 0;" />
+        <eb-skeleton-item variant="circle" animated style="width: 40px; height: 40px; flex-shrink: 0;" />
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-          <ev-skeleton-item variant="h3" animated />
-          <ev-skeleton-item variant="p" animated />
+          <eb-skeleton-item variant="h3" animated />
+          <eb-skeleton-item variant="p" animated />
         </div>
       </div>
     </template>
-  </ev-skeleton>
+  </eb-skeleton>
 </DemoBlock>
 
 ## API

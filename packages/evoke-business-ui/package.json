@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.8.0",
+    "@wil-works/evoke-charts": "workspace:^",
     "async-validator": "^4.2.5",
     "dayjs": "^1.11.13",
     "highlight.js": "^11.12.0",

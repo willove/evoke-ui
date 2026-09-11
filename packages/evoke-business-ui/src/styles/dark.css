@@ -1,141 +1,141 @@
 /* ============================================
    Evoke Business UI — Dark Mode
-   html.dark 触发，重映射 --ev-* 语义层与阴影层
+   html.dark 触发，重映射 --eb-* 语义层与阴影层
    ============================================ */
 
 html.dark {
-  --ev-color-primary:         #4d8bff;
-  --ev-color-primary-light-3: #3e70cc;
-  --ev-color-primary-light-5: #274680;
-  --ev-color-primary-light-7: #17294d;
-  --ev-color-primary-light-8: #0f1a33;
-  --ev-color-primary-light-9: #080e1a;
-  --ev-color-primary-dark-2:  #80b0ff;
-  --ev-color-primary-rgb:     77, 139, 255;
+  --eb-color-primary:         #4d8bff;
+  --eb-color-primary-light-3: #3e70cc;
+  --eb-color-primary-light-5: #274680;
+  --eb-color-primary-light-7: #17294d;
+  --eb-color-primary-light-8: #0f1a33;
+  --eb-color-primary-light-9: #080e1a;
+  --eb-color-primary-dark-2:  #80b0ff;
+  --eb-color-primary-rgb:     77, 139, 255;
 
   /* Evoke 设计令牌 — 暗色覆盖 */
-  --ev-focus-ring: 0 0 0 2px var(--ev-color-primary-light-5);
-  --ev-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 6px -1px rgba(0, 0, 0, 0.2);
-  --ev-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --ev-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --ev-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-  --ev-shadow-5: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  --eb-focus-ring: 0 0 0 2px var(--eb-color-primary-light-5);
+  --eb-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 6px -1px rgba(0, 0, 0, 0.2);
+  --eb-shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --eb-shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --eb-shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --eb-shadow-5: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 
-  --ev-color-success:         #4ade80;
-  --ev-color-success-light-3: #34a05a;
-  --ev-color-success-light-5: #257340;
-  --ev-color-success-light-7: #164526;
-  --ev-color-success-light-8: #0f2e1a;
-  --ev-color-success-light-9: #08180d;
-  --ev-color-success-dark-2:  #86efac;
-  --ev-color-success-rgb:     74, 222, 128;
+  --eb-color-success:         #4ade80;
+  --eb-color-success-light-3: #34a05a;
+  --eb-color-success-light-5: #257340;
+  --eb-color-success-light-7: #164526;
+  --eb-color-success-light-8: #0f2e1a;
+  --eb-color-success-light-9: #08180d;
+  --eb-color-success-dark-2:  #86efac;
+  --eb-color-success-rgb:     74, 222, 128;
 
-  --ev-color-warning:         #fbbf24;
-  --ev-color-warning-light-3: #b0861a;
-  --ev-color-warning-light-5: #7e6012;
-  --ev-color-warning-light-7: #4c3a0b;
-  --ev-color-warning-light-8: #322607;
-  --ev-color-warning-light-9: #191304;
-  --ev-color-warning-dark-2:  #fcd34d;
-  --ev-color-warning-rgb:     251, 191, 36;
+  --eb-color-warning:         #fbbf24;
+  --eb-color-warning-light-3: #b0861a;
+  --eb-color-warning-light-5: #7e6012;
+  --eb-color-warning-light-7: #4c3a0b;
+  --eb-color-warning-light-8: #322607;
+  --eb-color-warning-light-9: #191304;
+  --eb-color-warning-dark-2:  #fcd34d;
+  --eb-color-warning-rgb:     251, 191, 36;
 
-  --ev-color-danger:          #f87171;
-  --ev-color-danger-light-3:  #ae4f4f;
-  --ev-color-danger-light-5:  #7c3939;
-  --ev-color-danger-light-7:  #4b2222;
-  --ev-color-danger-light-8:  #321717;
-  --ev-color-danger-light-9:  #190c0c;
-  --ev-color-danger-dark-2:   #fca5a5;
-  --ev-color-danger-rgb:      248, 113, 113;
+  --eb-color-danger:          #f87171;
+  --eb-color-danger-light-3:  #ae4f4f;
+  --eb-color-danger-light-5:  #7c3939;
+  --eb-color-danger-light-7:  #4b2222;
+  --eb-color-danger-light-8:  #321717;
+  --eb-color-danger-light-9:  #190c0c;
+  --eb-color-danger-dark-2:   #fca5a5;
+  --eb-color-danger-rgb:      248, 113, 113;
 
-  --ev-color-info:            #94a3b8;
-  --ev-color-info-light-3:    #687281;
-  --ev-color-info-light-5:    #4a525c;
-  --ev-color-info-light-7:    #2c3137;
-  --ev-color-info-light-8:    #1e2125;
-  --ev-color-info-light-9:    #0f1113;
-  --ev-color-info-dark-2:     #cbd5e1;
-  --ev-color-info-rgb:        148, 163, 184;
+  --eb-color-info:            #94a3b8;
+  --eb-color-info-light-3:    #687281;
+  --eb-color-info-light-5:    #4a525c;
+  --eb-color-info-light-7:    #2c3137;
+  --eb-color-info-light-8:    #1e2125;
+  --eb-color-info-light-9:    #0f1113;
+  --eb-color-info-dark-2:     #cbd5e1;
+  --eb-color-info-rgb:        148, 163, 184;
 
-  --ev-color-error:           var(--ev-color-danger);
-  --ev-color-error-light-3:   var(--ev-color-danger-light-3);
-  --ev-color-error-light-5:   var(--ev-color-danger-light-5);
-  --ev-color-error-light-7:   var(--ev-color-danger-light-7);
-  --ev-color-error-light-8:   var(--ev-color-danger-light-8);
-  --ev-color-error-light-9:   var(--ev-color-danger-light-9);
-  --ev-color-error-dark-2:    var(--ev-color-danger-dark-2);
-  --ev-color-error-rgb:       var(--ev-color-danger-rgb);
+  --eb-color-error:           var(--eb-color-danger);
+  --eb-color-error-light-3:   var(--eb-color-danger-light-3);
+  --eb-color-error-light-5:   var(--eb-color-danger-light-5);
+  --eb-color-error-light-7:   var(--eb-color-danger-light-7);
+  --eb-color-error-light-8:   var(--eb-color-danger-light-8);
+  --eb-color-error-light-9:   var(--eb-color-danger-light-9);
+  --eb-color-error-dark-2:    var(--eb-color-danger-dark-2);
+  --eb-color-error-rgb:       var(--eb-color-danger-rgb);
 
   /* 扩展分类色 — 暗色下提亮一档，浅底档向页面底色混合 */
-  --ev-color-ext-cyan:    #22D3EE;
-  --ev-color-ext-teal:    #2DD4BF;
-  --ev-color-ext-violet:  #A78BFA;
-  --ev-color-ext-magenta: #F472B6;
-  --ev-color-ext-indigo:  #818CF8;
-  --ev-color-ext-lime:    #A3E635;
-  --ev-color-ext-amber:   #FCD34D;
-  --ev-color-ext-slate:   #94A3B8;
+  --eb-color-ext-cyan:    #22D3EE;
+  --eb-color-ext-teal:    #2DD4BF;
+  --eb-color-ext-violet:  #A78BFA;
+  --eb-color-ext-magenta: #F472B6;
+  --eb-color-ext-indigo:  #818CF8;
+  --eb-color-ext-lime:    #A3E635;
+  --eb-color-ext-amber:   #FCD34D;
+  --eb-color-ext-slate:   #94A3B8;
 
-  --ev-color-ext-cyan-light:    color-mix(in srgb, var(--ev-color-ext-cyan) 18%, var(--ev-bg-color));
-  --ev-color-ext-teal-light:    color-mix(in srgb, var(--ev-color-ext-teal) 18%, var(--ev-bg-color));
-  --ev-color-ext-violet-light:  color-mix(in srgb, var(--ev-color-ext-violet) 18%, var(--ev-bg-color));
-  --ev-color-ext-magenta-light: color-mix(in srgb, var(--ev-color-ext-magenta) 18%, var(--ev-bg-color));
-  --ev-color-ext-indigo-light:  color-mix(in srgb, var(--ev-color-ext-indigo) 18%, var(--ev-bg-color));
-  --ev-color-ext-lime-light:    color-mix(in srgb, var(--ev-color-ext-lime) 18%, var(--ev-bg-color));
-  --ev-color-ext-amber-light:   color-mix(in srgb, var(--ev-color-ext-amber) 18%, var(--ev-bg-color));
-  --ev-color-ext-slate-light:   color-mix(in srgb, var(--ev-color-ext-slate) 18%, var(--ev-bg-color));
+  --eb-color-ext-cyan-light:    color-mix(in srgb, var(--eb-color-ext-cyan) 18%, var(--eb-bg-color));
+  --eb-color-ext-teal-light:    color-mix(in srgb, var(--eb-color-ext-teal) 18%, var(--eb-bg-color));
+  --eb-color-ext-violet-light:  color-mix(in srgb, var(--eb-color-ext-violet) 18%, var(--eb-bg-color));
+  --eb-color-ext-magenta-light: color-mix(in srgb, var(--eb-color-ext-magenta) 18%, var(--eb-bg-color));
+  --eb-color-ext-indigo-light:  color-mix(in srgb, var(--eb-color-ext-indigo) 18%, var(--eb-bg-color));
+  --eb-color-ext-lime-light:    color-mix(in srgb, var(--eb-color-ext-lime) 18%, var(--eb-bg-color));
+  --eb-color-ext-amber-light:   color-mix(in srgb, var(--eb-color-ext-amber) 18%, var(--eb-bg-color));
+  --eb-color-ext-slate-light:   color-mix(in srgb, var(--eb-color-ext-slate) 18%, var(--eb-bg-color));
 
-  --ev-text-color-primary:    #f3f4f6;
-  --ev-text-color-regular:    #d1d5db;
-  --ev-text-color-secondary:  #9ca3af;
-  --ev-text-color-placeholder:#4b5563;
-  --ev-text-color-disabled:   #374151;
+  --eb-text-color-primary:    #f3f4f6;
+  --eb-text-color-regular:    #d1d5db;
+  --eb-text-color-secondary:  #9ca3af;
+  --eb-text-color-placeholder:#4b5563;
+  --eb-text-color-disabled:   #374151;
 
-  --ev-bg-color:              #111827;
-  --ev-bg-color-page:         #030712;
-  --ev-bg-color-overlay:      #1f2937;
-  --ev-color-white:           #ffffff;
-  --ev-color-black:           #000000;
+  --eb-bg-color:              #111827;
+  --eb-bg-color-page:         #030712;
+  --eb-bg-color-overlay:      #1f2937;
+  --eb-color-white:           #ffffff;
+  --eb-color-black:           #000000;
 
-  --ev-border-color:          #1f2937;
-  --ev-border-color-hover:    #3b4759;
-  --ev-border-color-light:    #1f2937;
-  --ev-border-color-lighter:  #172033;
-  --ev-border-color-extra-light: #111827;
-  --ev-border-color-dark:     #374151;
+  --eb-border-color:          #1f2937;
+  --eb-border-color-hover:    #3b4759;
+  --eb-border-color-light:    #1f2937;
+  --eb-border-color-lighter:  #172033;
+  --eb-border-color-extra-light: #111827;
+  --eb-border-color-dark:     #374151;
 
-  --ev-fill-color:            #1f2937;
-  --ev-fill-color-light:      #172033;
-  --ev-fill-color-lighter:    #111827;
-  --ev-fill-color-extra-light:#0d1117;
-  --ev-fill-color-blank:      #111827;
-  --ev-fill-color-dark:       #374151;
-  --ev-fill-color-darker:     #4b5563;
+  --eb-fill-color:            #1f2937;
+  --eb-fill-color-light:      #172033;
+  --eb-fill-color-lighter:    #111827;
+  --eb-fill-color-extra-light:#0d1117;
+  --eb-fill-color-blank:      #111827;
+  --eb-fill-color-dark:       #374151;
+  --eb-fill-color-darker:     #4b5563;
 
-  --ev-disabled-bg-color:     var(--ev-fill-color-light);
-  --ev-disabled-text-color:   var(--ev-text-color-placeholder);
-  --ev-disabled-border-color: var(--ev-border-color-light);
+  --eb-disabled-bg-color:     var(--eb-fill-color-light);
+  --eb-disabled-text-color:   var(--eb-text-color-placeholder);
+  --eb-disabled-border-color: var(--eb-border-color-light);
 
-  --ev-box-shadow:            0 1px 2px rgba(0,0,0,.2);
-  --ev-box-shadow-light:      0 1px 2px rgba(0,0,0,.15);
-  --ev-box-shadow-lighter:    none;
-  --ev-box-shadow-dark:       0 2px 8px rgba(0,0,0,.3);
+  --eb-box-shadow:            0 1px 2px rgba(0,0,0,.2);
+  --eb-box-shadow-light:      0 1px 2px rgba(0,0,0,.15);
+  --eb-box-shadow-lighter:    none;
+  --eb-box-shadow-dark:       0 2px 8px rgba(0,0,0,.3);
 
-  --ev-sidebar-bg:               #111827;
-  --ev-sidebar-text:             #9ca3af;
-  --ev-sidebar-text-hover:       #d1d5db;
-  --ev-sidebar-text-active:      #93c5fd;
-  --ev-sidebar-hover-bg:         #1f2937;
-  --ev-sidebar-active-bg:        rgba(23,93,255,.12);
-  --ev-sidebar-border:           #1f2937;
+  --eb-sidebar-bg:               #111827;
+  --eb-sidebar-text:             #9ca3af;
+  --eb-sidebar-text-hover:       #d1d5db;
+  --eb-sidebar-text-active:      #93c5fd;
+  --eb-sidebar-hover-bg:         #1f2937;
+  --eb-sidebar-active-bg:        rgba(23,93,255,.12);
+  --eb-sidebar-border:           #1f2937;
 
-  --ev-header-bg:                #111827;
-  --ev-header-border:            #1f2937;
+  --eb-header-bg:                #111827;
+  --eb-header-border:            #1f2937;
 
-  --ev-app-card-shadow:          none;
-  --ev-app-card-shadow-hover:    0 4px 12px rgba(0,0,0,.2);
-  --ev-app-card-border:          #1f2937;
+  --eb-app-card-shadow:          none;
+  --eb-app-card-shadow-hover:    0 4px 12px rgba(0,0,0,.2);
+  --eb-app-card-border:          #1f2937;
 
   /* 暗色模式：固定列阴影加深以呈现层次 */
-  --ev-table-fixed-shadow:    -4px 0 8px rgba(0, 0, 0, 0.5);
+  --eb-table-fixed-shadow:    -4px 0 8px rgba(0, 0, 0, 0.5);
 }

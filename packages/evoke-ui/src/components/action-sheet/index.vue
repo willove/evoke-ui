@@ -1,39 +1,39 @@
 <template>
   <Teleport to="body" :disabled="!appendToBody">
-    <Transition name="ew-action-sheet-fade" @after-enter="emit('opened')" @after-leave="emit('closed')">
+    <Transition name="ev-action-sheet-fade" @after-enter="emit('opened')" @after-leave="emit('closed')">
       <div
         v-if="visible"
-        class="ew-action-sheet__overlay"
+        class="ev-action-sheet__overlay"
         :style="{ zIndex }"
         @click.self="onOverlayClick"
       >
         <div
           ref="panelRef"
-          :class="['ew-action-sheet', { 'is-round': round }]"
+          :class="['ev-action-sheet', { 'is-round': round }]"
           role="dialog"
           aria-modal="true"
           :aria-label="title || 'action sheet'"
         >
-          <div v-if="title || $slots.title" class="ew-action-sheet__title">
+          <div v-if="title || $slots.title" class="ev-action-sheet__title">
             <slot name="title">{{ title }}</slot>
           </div>
-          <div class="ew-action-sheet__list">
+          <div class="ev-action-sheet__list">
             <slot>
               <button
                 v-for="(action, index) in actions"
                 :key="index"
                 type="button"
-                :class="['ew-action-sheet__item', { 'is-disabled': action.disabled }]"
+                :class="['ev-action-sheet__item', { 'is-disabled': action.disabled }]"
                 :style="{ color: action.color }"
                 :disabled="action.disabled"
                 @click="onAction(action, index)"
               >
-                <span class="ew-action-sheet__name">{{ action.name }}</span>
-                <span v-if="action.subname" class="ew-action-sheet__subname">{{ action.subname }}</span>
+                <span class="ev-action-sheet__name">{{ action.name }}</span>
+                <span v-if="action.subname" class="ev-action-sheet__subname">{{ action.subname }}</span>
               </button>
             </slot>
           </div>
-          <button v-if="cancelText" type="button" class="ew-action-sheet__cancel" @click="onCancel">
+          <button v-if="cancelText" type="button" class="ev-action-sheet__cancel" @click="onCancel">
             {{ cancelText }}
           </button>
         </div>
@@ -44,7 +44,7 @@
 
 <script setup>
 /**
- * EwActionSheet — 底部动作面板
+ * EvActionSheet — 底部动作面板
  * 移动端「更多操作」的标准形态：底部滑入的纵向动作列表 + 取消栏，
  * 替代 hover 类菜单在触屏上的缺位。动作项 { name, subname, color, disabled }。
  * 前台库保持零外部依赖：ESC 关闭 / 层级自增在组件内实现，滚动锁定走共享 useScrollLock。
@@ -52,7 +52,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLock'
 
-defineOptions({ name: 'EwActionSheet' })
+defineOptions({ name: 'EvActionSheet' })
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },

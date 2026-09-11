@@ -18,12 +18,12 @@ export function useLocale() {
   const locale = computed(() => config?.locale?.value ?? globalLocale.value ?? zhCN)
 
   /**
-   * 取文案：t('select.placeholder') → locale.ev.select.placeholder
+   * 取文案：t('select.placeholder') → locale.eb.select.placeholder
    * 支持插值：t('pagination.total', 100) → '共 100 条'
    */
   function t(path, ...args) {
     const segments = path.split('.')
-    let value = locale.value?.ev
+    let value = locale.value?.eb
     for (const key of segments) {
       value = value?.[key]
       if (value === undefined) break

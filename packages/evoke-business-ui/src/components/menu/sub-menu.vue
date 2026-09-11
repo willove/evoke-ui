@@ -1,13 +1,13 @@
 <template>
   <li
-    class="ev-sub-menu ev-sub-menu"
+    class="eb-sub-menu eb-sub-menu"
     :class="{ 'is-active': isChildActive, 'is-opened': isOpen, 'is-disabled': disabled }"
     @mouseenter="handleEnter"
     @mouseleave="handleLeave"
   >
     <div
       ref="titleRef"
-      class="ev-sub-menu__title"
+      class="eb-sub-menu__title"
       role="menuitem"
       aria-haspopup="true"
       :aria-expanded="usePopper ? popOpen : isOpen"
@@ -16,23 +16,23 @@
       @click="handleTitleClick"
     >
       <slot name="title">{{ title }}</slot>
-      <ev-icon class="ev-sub-menu__icon-arrow" name="arrow-down" :size="12" />
+      <eb-icon class="eb-sub-menu__icon-arrow" name="arrow-down" :size="12" />
     </div>
 
     <!-- inline 展开模式（垂直未折叠） -->
-    <transition name="ev-sub-menu-collapse" @enter="onEnter" @after-enter="onAfterEnter" @leave="onLeave">
-      <ul v-show="isOpen" class="ev-menu ev-menu--inline" role="menu">
+    <transition name="eb-sub-menu-collapse" @enter="onEnter" @after-enter="onAfterEnter" @leave="onLeave">
+      <ul v-show="isOpen" class="eb-menu eb-menu--inline" role="menu">
         <slot />
       </ul>
     </transition>
 
     <!-- popper 模式（水平 / 折叠垂直）：Teleport 弹层 -->
     <Teleport to="body">
-      <transition name="ev-color-picker-fade">
+      <transition name="eb-color-picker-fade">
         <div
           v-if="usePopper && popOpen"
           ref="floatingRef"
-          class="ev-menu ev-menu--vertical ev-menu--popper ev-menu__popper ev-menu"
+          class="eb-menu eb-menu--vertical eb-menu--popper eb-menu__popper eb-menu"
           :class="popperClass"
           :style="popperStyle"
           role="menu"
@@ -48,11 +48,11 @@
 
 <script setup>
 /**
- * EvSubMenu — 子菜单
+ * EbSubMenu — 子菜单
  * 垂直未折叠 → inline 高度展开；水平 / 折叠垂直 → Teleport 弹层（hover/click 触发）
  */
 import { inject, computed, ref, toRef, provide, watch, nextTick, onBeforeUnmount } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 

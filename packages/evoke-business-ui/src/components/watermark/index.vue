@@ -1,8 +1,8 @@
 <template>
-  <div class="ev-watermark ev-watermark" :style="{ position: 'relative', overflow: 'hidden' }">
+  <div class="eb-watermark eb-watermark" :style="{ position: 'relative', overflow: 'hidden' }">
     <div
       v-if="dataUrl"
-      class="ev-watermark__body"
+      class="eb-watermark__body"
       :style="bodyStyle"
     >
       <slot />
@@ -13,7 +13,7 @@
 
 <script setup>
 /**
- * EvWatermark — 水印（双层结构类）
+ * EbWatermark — 水印（双层结构类）
  * canvas 绘制文字/图片 → dataURL 平铺为背景图；绘制在 mounted 后执行（Electron 安全）
  */
 import { ref, computed, watch, onMounted, nextTick } from 'vue'

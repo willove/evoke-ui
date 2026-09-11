@@ -1,18 +1,18 @@
 <template>
-  <div :class="['ev-load-more', `is-${status}`]">
+  <div :class="['eb-load-more', `is-${status}`]">
     <!-- 触底哨兵：autoLoad 时用 IntersectionObserver 自动触发 -->
-    <div v-if="autoLoad && !disabled" ref="sentinelRef" class="ev-load-more__sentinel" />
+    <div v-if="autoLoad && !disabled" ref="sentinelRef" class="eb-load-more__sentinel" />
     <button
       type="button"
-      class="ev-load-more__body"
+      class="eb-load-more__body"
       :disabled="disabled || status === 'loading' || status === 'noMore'"
       @click="trigger"
     >
       <slot name="loading" v-if="status === 'loading'">
-        <span class="ev-load-more__spinner" />
+        <span class="eb-load-more__spinner" />
       </slot>
       <slot :status="status">
-        <span class="ev-load-more__text">{{ statusText }}</span>
+        <span class="eb-load-more__text">{{ statusText }}</span>
       </slot>
     </button>
   </div>
@@ -20,7 +20,7 @@
 
 <script setup>
 /**
- * EvLoadMore — 上拉加载 / 加载更多
+ * EbLoadMore — 上拉加载 / 加载更多
  * 列表尾部状态条：idle（可点击/触底自动）→ loading（外部拉数据）→ idle / noMore / error。
  * 状态由父级持有（v-model:status）：触发时组件置 loading 并发出 load-more，
  * 加载完成后由父级改回 idle（还有数据）或 noMore（到底）/ error（失败可点重试）。
@@ -29,7 +29,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { getScrollParent } from '../../utils/scroll'
 
-defineOptions({ name: 'EvLoadMore' })
+defineOptions({ name: 'EbLoadMore' })
 
 const props = defineProps({
   /** 列表状态（v-model:status）：idle | loading | noMore | error */

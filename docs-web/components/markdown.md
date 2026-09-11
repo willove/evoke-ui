@@ -1,8 +1,8 @@
 # Markdown 渲染
 
-`EwMarkdown` 将 Markdown 源文本渲染为富文本：内置零依赖轻量解析器，
+`EvMarkdown` 将 Markdown 源文本渲染为富文本：内置零依赖轻量解析器，
 覆盖标题、段落、有序/无序列表（含嵌套）、引用、分隔线、表格与代码围栏
-（代码围栏复用 EwCodeBlock 的语法高亮分词器）。
+（代码围栏复用 EvCodeBlock 的语法高亮分词器）。
 安全模型：原文全量 HTML 转义后再渲染，`javascript:` 等注入向量被阻断，
 明暗双主题自动跟随。
 
@@ -10,10 +10,10 @@
 
 <DemoBlock title="content" description="传入 Markdown 源文本即可渲染；语法着色与排版走语义令牌。">
 
-<EwMarkdown :content="basicDemo" />
+<EvMarkdown :content="basicDemo" />
 
 ```vue
-<EwMarkdown :content="content" />
+<EvMarkdown :content="content" />
 ```
 
 </DemoBlock>

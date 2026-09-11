@@ -1,5 +1,5 @@
 <template>
-  <ev-app-layout
+  <eb-app-layout
     title="云眠研发 · 知识库"
     logo-text="知"
     :collapsed="collapsed"
@@ -10,33 +10,33 @@
     :active-title="activeTitle"
   >
     <template #menu>
-      <ev-menu-item index="docs" @click="switchView('docs')">
-        <ev-icon name="book" />
+      <eb-menu-item index="docs" @click="switchView('docs')">
+        <eb-icon name="book" />
         <span>知识文档</span>
-      </ev-menu-item>
-      <ev-menu-item index="faq" @click="switchView('faq')">
-        <ev-icon name="question-circle" />
+      </eb-menu-item>
+      <eb-menu-item index="faq" @click="switchView('faq')">
+        <eb-icon name="question-circle" />
         <span>问答库</span>
-      </ev-menu-item>
-      <ev-menu-item index="graph" @click="switchView('graph')">
-        <ev-icon name="cluster" />
+      </eb-menu-item>
+      <eb-menu-item index="graph" @click="switchView('graph')">
+        <eb-icon name="cluster" />
         <span>知识图谱</span>
-      </ev-menu-item>
+      </eb-menu-item>
     </template>
 
     <template #topbar-right>
       <div class="kb-topbar">
-        <ev-badge :value="3" :max="99">
-          <ev-icon name="bell" :size="18" />
-        </ev-badge>
-        <ev-avatar :size="28">知</ev-avatar>
+        <eb-badge :value="3" :max="99">
+          <eb-icon name="bell" :size="18" />
+        </eb-badge>
+        <eb-avatar :size="28">知</eb-avatar>
       </div>
     </template>
 
     <DocsCenter v-if="activeMenu === 'docs'" />
     <FaqBank v-else-if="activeMenu === 'faq'" />
     <KnowledgeGraph v-else-if="activeMenu === 'graph'" />
-  </ev-app-layout>
+  </eb-app-layout>
 </template>
 
 <script setup>

@@ -1,86 +1,86 @@
-/* EwComparisonTable — 功能对比表 */
+/* EvComparisonTable — 功能对比表 */
 
-.ew-comparison-table {
+.ev-comparison-table {
   overflow-x: auto;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
 }
 
-.ew-comparison-table table {
+.ev-comparison-table table {
   width: 100%;
   border-collapse: collapse;
   min-width: 560px;
 }
 
-.ew-comparison-table th,
-.ew-comparison-table td {
+.ev-comparison-table th,
+.ev-comparison-table td {
   padding: 14px 20px;
   text-align: center;
-  font-size: var(--ew-font-size-sm);
-  border-bottom: 1px solid var(--ew-border-color-light);
+  font-size: var(--ev-font-size-sm);
+  border-bottom: 1px solid var(--ev-border-color-light);
 }
 
-.ew-comparison-table tbody tr:last-child th,
-.ew-comparison-table tbody tr:last-child td {
+.ev-comparison-table tbody tr:last-child th,
+.ev-comparison-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.ew-comparison-table thead th {
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
-  background-color: var(--ew-bg-muted);
+.ev-comparison-table thead th {
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
+  background-color: var(--ev-bg-muted);
 }
 
-.ew-comparison-table tbody tr:hover td {
-  background-color: color-mix(in srgb, var(--ew-bg-muted) 55%, transparent);
+.ev-comparison-table tbody tr:hover td {
+  background-color: color-mix(in srgb, var(--ev-bg-muted) 55%, transparent);
 }
 
 /* featured 列：淡主色底贯穿 */
-.ew-comparison-table th.is-featured,
-.ew-comparison-table td.is-featured {
-  background-color: var(--ew-color-primary-light-9);
+.ev-comparison-table th.is-featured,
+.ev-comparison-table td.is-featured {
+  background-color: var(--ev-color-primary-light-9);
 }
 
 /* 功能名列 */
-.ew-comparison-table__feature-col {
+.ev-comparison-table__feature-col {
   text-align: left !important;
   width: 32%;
 }
 
-.ew-comparison-table__feature-label {
+.ev-comparison-table__feature-label {
   display: block;
-  color: var(--ew-text-primary);
-  font-weight: var(--ew-font-weight-regular);
+  color: var(--ev-text-primary);
+  font-weight: var(--ev-font-weight-regular);
 }
 
-.ew-comparison-table__feature-desc {
-  display: block;
-  margin-top: 2px;
-  font-size: var(--ew-font-size-xs);
-  color: var(--ew-text-secondary);
-}
-
-.ew-comparison-table__col-label {
-  display: block;
-}
-
-.ew-comparison-table__col-note {
+.ev-comparison-table__feature-desc {
   display: block;
   margin-top: 2px;
-  font-size: var(--ew-font-size-xs);
-  font-weight: var(--ew-font-weight-regular);
-  color: var(--ew-text-secondary);
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
 }
 
-.ew-comparison-table__check {
-  color: var(--ew-color-primary);
+.ev-comparison-table__col-label {
+  display: block;
+}
+
+.ev-comparison-table__col-note {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-regular);
+  color: var(--ev-text-secondary);
+}
+
+.ev-comparison-table__check {
+  color: var(--ev-color-primary);
   vertical-align: middle;
 }
 
-.ew-comparison-table__dash {
-  color: var(--ew-text-disabled);
+.ev-comparison-table__dash {
+  color: var(--ev-text-disabled);
 }
 
-.ew-comparison-table__text {
-  color: var(--ew-text-regular);
+.ev-comparison-table__text {
+  color: var(--ev-text-regular);
 }

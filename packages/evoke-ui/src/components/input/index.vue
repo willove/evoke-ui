@@ -1,9 +1,9 @@
 <template>
-  <div :class="['ew-input', `is-${size}`, { 'is-disabled': disabled, 'is-error': error }]">
-    <EwIcon v-if="icon" :name="icon" :size="iconSize" class="ew-input__prefix" />
+  <div :class="['ev-input', `is-${size}`, { 'is-disabled': disabled, 'is-error': error }]">
+    <EvIcon v-if="icon" :name="icon" :size="iconSize" class="ev-input__prefix" />
     <input
       v-bind="filteredAttrs"
-      class="ew-input__inner"
+      class="ev-input__inner"
       :value="modelValue"
       :type="type"
       :disabled="disabled"
@@ -13,25 +13,25 @@
     <button
       v-if="clearable && modelValue && !disabled"
       type="button"
-      class="ew-input__clear"
+      class="ev-input__clear"
       aria-label="清空"
       @click="clear"
     >
-      <EwIcon name="close" :size="12" />
+      <EvIcon name="close" :size="12" />
     </button>
-    <div v-if="$slots.suffix" class="ew-input__suffix"><slot name="suffix" /></div>
+    <div v-if="$slots.suffix" class="ev-input__suffix"><slot name="suffix" /></div>
   </div>
 </template>
 
 <script setup>
 /**
- * EwInput — 文本输入（留言/评论/订阅等前台提交场景的基础件）
+ * EvInput — 文本输入（留言/评论/订阅等前台提交场景的基础件）
  * prefix 图标、可清空、错误态、三档尺寸；穿透 attrs 到原生 input
  */
 import { computed, ref, useAttrs } from 'vue'
-import EwIcon from '../icon/index.vue'
+import EvIcon from '../icon/index.vue'
 
-defineOptions({ inheritAttrs: false, name: 'EwInput' })
+defineOptions({ inheritAttrs: false, name: 'EvInput' })
 
 const props = defineProps({
   /** 当前值（v-model） */

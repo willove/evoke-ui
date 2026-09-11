@@ -1,22 +1,22 @@
 <template>
   <div class="fq-page">
-    <ev-page-header title="问答库" subtitle="高频问题沉淀，检索即答案">
+    <eb-page-header title="问答库" subtitle="高频问题沉淀，检索即答案">
       <template #actions>
-        <ev-button type="primary" size="small" @click="EvMessage.info('示例：进入问答编辑器')">
-          <ev-icon name="plus" :size="14" />
+        <eb-button type="primary" size="small" @click="EbMessage.info('示例：进入问答编辑器')">
+          <eb-icon name="plus" :size="14" />
           新增问答
-        </ev-button>
+        </eb-button>
       </template>
-    </ev-page-header>
+    </eb-page-header>
 
-    <ev-section-card class="fq-block">
+    <eb-section-card class="fq-block">
       <div class="fq-toolbar">
-        <ev-input v-model="keyword" placeholder="搜索问题关键词，如：权限 / 导出" style="width: 320px">
+        <eb-input v-model="keyword" placeholder="搜索问题关键词，如：权限 / 导出" style="width: 320px">
           <template #prefix>
-            <ev-icon name="search" :size="14" />
+            <eb-icon name="search" :size="14" />
           </template>
-        </ev-input>
-        <ev-segmented
+        </eb-input>
+        <eb-segmented
           v-model="category"
           :options="[{ label: '全部', value: 'all' }, ...categories]"
           size="small"
@@ -28,9 +28,9 @@
           <div class="fq-item__head" @click="toggle(faq.id)">
             <span class="fq-item__q">{{ faq.question }}</span>
             <span class="fq-item__meta">
-              <ev-tag v-if="faq.accepted" size="small" type="success" effect="plain">已采纳</ev-tag>
-              <ev-tag size="small" effect="plain">{{ faq.category }}</ev-tag>
-              <ev-icon :name="expanded.has(faq.id) ? 'up' : 'down'" :size="14" />
+              <eb-tag v-if="faq.accepted" size="small" type="success" effect="plain">已采纳</eb-tag>
+              <eb-tag size="small" effect="plain">{{ faq.category }}</eb-tag>
+              <eb-icon :name="expanded.has(faq.id) ? 'up' : 'down'" :size="14" />
             </span>
           </div>
           <div v-show="expanded.has(faq.id)" class="fq-item__answer">
@@ -39,20 +39,20 @@
               <span>{{ faq.author }} 回复</span>
               <span class="fq-item__helpful">
                 有帮助（{{ faq.helpful }}）
-                <ev-button text type="primary" size="small" @click="markHelpful(faq)">+1</ev-button>
+                <eb-button text type="primary" size="small" @click="markHelpful(faq)">+1</eb-button>
               </span>
             </div>
           </div>
         </div>
         <div v-if="!filteredFaqs.length" class="fq-empty">没有匹配「{{ keyword }}」的问答</div>
       </div>
-    </ev-section-card>
+    </eb-section-card>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import { faqs } from '../mock.js'
 
 const keyword = ref('')
@@ -78,7 +78,7 @@ function toggle(id) {
 
 function markHelpful(faq) {
   faq.helpful++
-  EvMessage.success('感谢反馈')
+  EbMessage.success('感谢反馈')
 }
 </script>
 
@@ -103,13 +103,13 @@ function markHelpful(faq) {
   gap: 10px;
 }
 .fq-item {
-  border: 1px solid var(--ev-border-color-light, #e5e7eb);
+  border: 1px solid var(--eb-border-color-light, #e5e7eb);
   border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s;
 }
 .fq-item:hover {
-  border-color: var(--ev-color-primary-light-5, #94b4ff);
+  border-color: var(--eb-color-primary-light-5, #94b4ff);
 }
 .fq-item__head {
   display: flex;
@@ -120,8 +120,8 @@ function markHelpful(faq) {
   cursor: pointer;
 }
 .fq-item__q {
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .fq-item__meta {
   display: inline-flex;
@@ -131,20 +131,20 @@ function markHelpful(faq) {
 }
 .fq-item__answer {
   padding: 0 16px 12px;
-  border-top: 1px dashed var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px dashed var(--eb-border-color-extra-light, #f0f1f3);
 }
 .fq-item__text {
   margin: 10px 0;
-  font-size: var(--ev-font-size-base, 14px);
+  font-size: var(--eb-font-size-base, 14px);
   line-height: 1.8;
-  color: var(--ev-text-color-regular, #4e545c);
+  color: var(--eb-text-color-regular, #4e545c);
 }
 .fq-item__foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--ev-text-color-secondary, #8a9099);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .fq-item__helpful {
   display: inline-flex;
@@ -154,6 +154,6 @@ function markHelpful(faq) {
 .fq-empty {
   padding: 40px 0;
   text-align: center;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 </style>

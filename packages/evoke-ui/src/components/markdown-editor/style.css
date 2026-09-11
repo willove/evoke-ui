@@ -1,127 +1,127 @@
-/* EwMarkdownEditor — Markdown 编辑器
-   颜色全部走 --ew-* 语义令牌，明暗双主题自动跟随 */
+/* EvMarkdownEditor — Markdown 编辑器
+   颜色全部走 --ev-* 语义令牌，明暗双主题自动跟随 */
 
-.ew-md-editor {
+.ev-md-editor {
   overflow: hidden;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-lg);
-  background: var(--ew-bg-container);
-  transition: border-color var(--ew-duration-fast) var(--ew-ease-in-out);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  background: var(--ev-bg-container);
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
-/* 大面积编辑面板不做主色激活（区别于 EwInput）：聚焦仅把边框加深一档中性色 */
-.ew-md-editor:focus-within {
-  border-color: var(--ew-border-color);
+/* 大面积编辑面板不做主色激活（区别于 EvInput）：聚焦仅把边框加深一档中性色 */
+.ev-md-editor:focus-within {
+  border-color: var(--ev-border-color);
 }
-.ew-md-editor.is-disabled {
+.ev-md-editor.is-disabled {
   opacity: 0.6;
 }
 
 /* ─── 工具栏 ─── */
-.ew-md-editor__toolbar {
+.ev-md-editor__toolbar {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: var(--ew-space-2) var(--ew-space-3);
-  border-bottom: 1px solid var(--ew-border-color-light);
-  background: var(--ew-bg-muted);
+  padding: var(--ev-space-2) var(--ev-space-3);
+  border-bottom: 1px solid var(--ev-border-color-light);
+  background: var(--ev-bg-muted);
 }
 
-.ew-md-editor__btn {
+.ev-md-editor__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
   border: none;
-  border-radius: var(--ew-radius-sm);
+  border-radius: var(--ev-radius-sm);
   background: transparent;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
   cursor: pointer;
   transition:
-    background-color var(--ew-duration-fast) var(--ew-ease-in-out),
-    color var(--ew-duration-fast) var(--ew-ease-in-out);
+    background-color var(--ev-duration-fast) var(--ev-ease-in-out),
+    color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
-.ew-md-editor__btn:hover {
-  background: var(--ew-fill-2);
-  color: var(--ew-text-primary);
+.ev-md-editor__btn:hover {
+  background: var(--ev-fill-2);
+  color: var(--ev-text-primary);
 }
-.ew-md-editor__btn:disabled {
+.ev-md-editor__btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.ew-md-editor__spacer {
+.ev-md-editor__spacer {
   flex: 1;
 }
 
-.ew-md-editor__tabs {
+.ev-md-editor__tabs {
   display: inline-flex;
   gap: 4px;
 }
-.ew-md-editor__tab {
+.ev-md-editor__tab {
   padding: 4px 12px;
   border: none;
-  border-radius: var(--ew-radius-sm);
+  border-radius: var(--ev-radius-sm);
   background: transparent;
-  color: var(--ew-text-secondary);
-  font-size: var(--ew-font-size-xs);
+  color: var(--ev-text-secondary);
+  font-size: var(--ev-font-size-xs);
   cursor: pointer;
   transition:
-    background-color var(--ew-duration-fast) var(--ew-ease-in-out),
-    color var(--ew-duration-fast) var(--ew-ease-in-out);
+    background-color var(--ev-duration-fast) var(--ev-ease-in-out),
+    color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
-.ew-md-editor__tab.is-active {
-  background: var(--ew-fill-2);
-  color: var(--ew-text-primary);
+.ev-md-editor__tab.is-active {
+  background: var(--ev-fill-2);
+  color: var(--ev-text-primary);
   font-weight: 600;
 }
 
 /* ─── 双栏 ─── */
-.ew-md-editor__panes {
+.ev-md-editor__panes {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  height: var(--ew-md-editor-height, 320px);
+  height: var(--ev-md-editor-height, 320px);
 }
-.ew-md-editor__panes.is-single {
+.ev-md-editor__panes.is-single {
   grid-template-columns: 1fr;
 }
 
-.ew-md-editor__input {
+.ev-md-editor__input {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: var(--ew-space-4);
+  padding: var(--ev-space-4);
   border: none;
   outline: none;
-  background: var(--ew-bg-container);
-  color: var(--ew-text-primary);
+  background: var(--ev-bg-container);
+  color: var(--ev-text-primary);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
   line-height: 1.7;
   resize: none;
 }
-.ew-md-editor__input::placeholder {
-  color: var(--ew-text-placeholder);
+.ev-md-editor__input::placeholder {
+  color: var(--ev-text-placeholder);
 }
-.ew-md-editor__input:disabled {
+.ev-md-editor__input:disabled {
   cursor: not-allowed;
 }
 
 /* 编辑器环境屏蔽全局 :focus-visible 焦点环（utilities.css）：
    聚焦反馈由面板边框加深承担，textarea 不再叠加主色光环 */
-.ew-md-editor .ew-md-editor__input:focus,
-.ew-md-editor .ew-md-editor__input:focus-visible {
+.ev-md-editor .ev-md-editor__input:focus,
+.ev-md-editor .ev-md-editor__input:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
-.ew-md-editor__preview {
+.ev-md-editor__preview {
   box-sizing: border-box;
   height: 100%;
-  padding: var(--ew-space-4);
+  padding: var(--ev-space-4);
   overflow: auto;
-  border-left: 1px solid var(--ew-border-color-light);
+  border-left: 1px solid var(--ev-border-color-light);
 }
-.ew-md-editor__panes.is-single .ew-md-editor__preview {
+.ev-md-editor__panes.is-single .ev-md-editor__preview {
   border-left: none;
 }

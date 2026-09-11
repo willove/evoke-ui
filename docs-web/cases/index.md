@@ -7,30 +7,30 @@
 ## 在线案例
 
 <a class="case-card" href="/cases/corporate">
-  <span class="case-card__icon"><EwIcon name="building-line" :size="22" /></span>
+  <span class="case-card__icon"><EvIcon name="building-line" :size="22" /></span>
   <span class="case-card__body">
-    <span class="case-card__title">企业官网<EwTag size="small" tone="primary">14 个组件</EwTag></span>
+    <span class="case-card__title">企业官网<EvTag size="small" tone="primary">14 个组件</EvTag></span>
     <span class="case-card__desc">从 Hero 到 Footer 的完整营销页：品牌墙、特性栅格、指标带、定价、对比表、FAQ、客户评价与 CTA。</span>
   </span>
-  <EwIcon class="case-card__arrow" name="arrow-right" :size="16" />
+  <EvIcon class="case-card__arrow" name="arrow-right" :size="16" />
 </a>
 
 <a class="case-card" href="/cases/blog">
-  <span class="case-card__icon"><EwIcon name="article-line" :size="22" /></span>
+  <span class="case-card__icon"><EvIcon name="article-line" :size="22" /></span>
   <span class="case-card__body">
-    <span class="case-card__title">个人博客<EwTag size="small" tone="primary">10 个组件</EwTag></span>
+    <span class="case-card__title">个人博客<EvTag size="small" tone="primary">10 个组件</EvTag></span>
     <span class="case-card__desc">内容站的经典结构：分类筛选的文章流、热榜轮播、作者名片、更新时间线与邮件订阅。</span>
   </span>
-  <EwIcon class="case-card__arrow" name="arrow-right" :size="16" />
+  <EvIcon class="case-card__arrow" name="arrow-right" :size="16" />
 </a>
 
 <a class="case-card" href="/cases/notes">
-  <span class="case-card__icon"><EwIcon name="book-open-line" :size="22" /></span>
+  <span class="case-card__icon"><EvIcon name="book-open-line" :size="22" /></span>
   <span class="case-card__body">
-    <span class="case-card__title">云笔记工作台<EwTag size="small" tone="primary">12 个组件</EwTag></span>
+    <span class="case-card__title">云笔记工作台<EvTag size="small" tone="primary">12 个组件</EvTag></span>
     <span class="case-card__desc">用官网组件拼出的轻应用：搜索过滤、分类切换、笔记卡片、编辑面板、收藏与归档，全交互可玩。</span>
   </span>
-  <EwIcon class="case-card__arrow" name="arrow-right" :size="16" />
+  <EvIcon class="case-card__arrow" name="arrow-right" :size="16" />
 </a>
 
 ## 怎么用这些案例
@@ -55,6 +55,6 @@
 
 三个案例拆开看，套路是一致的：
 
-- **版块化思维**：页面 = 一串版块。`EwSection` 的眉题 + 标题 + 描述三件套统一了每个版块的开头节奏，版块之间的留白交给组件自己。
+- **版块化思维**：页面 = 一串版块。`EvSection` 的眉题 + 标题 + 描述三件套统一了每个版块的开头节奏，版块之间的留白交给组件自己。
 - **数据进数组**：文案、卡片、FAQ、定价方案全部收进 `<script setup>` 的数组，模板只留一个 `v-for`。改版就是改数据，不是改结构。
-- **动效节制**：`EwHero` 的 `reveal` 入场、`EwFeatureGrid` 的 `stagger` 交错、至多一处 `EwCarousel` 或 `EwMarquee`——整页有两处动效记忆点就足够，多了就吵。
+- **动效节制**：`EvHero` 的 `reveal` 入场、`EvFeatureGrid` 的 `stagger` 交错、至多一处 `EvCarousel` 或 `EvMarquee`——整页有两处动效记忆点就足够，多了就吵。

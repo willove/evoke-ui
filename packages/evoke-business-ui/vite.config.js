@@ -20,10 +20,12 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.mjs`,
     },
     rollupOptions: {
-      external: ['vue'],
+      // external：vue + 图表独立包（EbChart 别名重导出，样式由消费端单独引入 charts 包）
+      external: ['vue', '@wil-works/evoke-charts'],
       output: {
         globals: {
           vue: 'Vue',
+          '@wil-works/evoke-charts': 'EvokeCharts',
         },
         // 单文件产物，样式聚合为 evoke-business-ui.css
         assetFileNames: (assetInfo) =>

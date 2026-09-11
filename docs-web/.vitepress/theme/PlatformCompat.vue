@@ -1,10 +1,10 @@
 <template>
   <div v-if="platform" class="platform-compat" :class="`is-${platform}`" role="note" :aria-label="label">
     <span v-if="platform !== 'mobile'" class="platform-compat__icon" :title="`${desktopLabel} · 桌面端`">
-      <EwIcon name="desktop" :size="14" />
+      <EvIcon name="desktop" :size="14" />
     </span>
     <span v-if="platform !== 'desktop'" class="platform-compat__icon" :title="`${mobileLabel} · 移动端`">
-      <EwIcon name="smartphone" :size="14" />
+      <EvIcon name="smartphone" :size="14" />
     </span>
     <span class="platform-compat__text">{{ label }}</span>
   </div>
@@ -40,9 +40,9 @@ const mobileLabel = computed(() => (platform.value === 'both' ? '双端兼容' :
   gap: 8px;
   margin-bottom: 14px;
   padding: 4px 10px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background: var(--ew-bg-soft);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background: var(--ev-bg-soft);
 }
 
 .platform-compat__icon {
@@ -57,18 +57,18 @@ const mobileLabel = computed(() => (platform.value === 'both' ? '双端兼容' :
 .platform-compat__text {
   font-size: 12px;
   line-height: 1;
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 .is-both .platform-compat__icon {
-  color: var(--ew-color-primary);
+  color: var(--ev-color-primary);
 }
 
 .is-desktop .platform-compat__icon {
-  color: var(--ew-text-secondary);
+  color: var(--ev-text-secondary);
 }
 
 .is-mobile .platform-compat__icon {
-  color: var(--ew-color-primary);
+  color: var(--ev-color-primary);
 }
 </style>

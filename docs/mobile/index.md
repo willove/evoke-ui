@@ -51,9 +51,9 @@
       <div class="mb-stat"><span class="mb-stat__label">未读消息</span><span class="mb-stat__value">12</span></div>
     </div>
     <div class="mb-card">
-      <ev-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 待审批" />
-      <ev-cell-stack main="服务器扩容审批" sub="张三提交于 10:24" />
-      <ev-cell-stack main="9 月迭代排期确认" sub="今天 14:00 · 会议邀请" />
+      <eb-cell-stack main="差旅报销单 CL-0908-01" sub="¥1,860 · 待审批" />
+      <eb-cell-stack main="服务器扩容审批" sub="张三提交于 10:24" />
+      <eb-cell-stack main="9 月迭代排期确认" sub="今天 14:00 · 会议邀请" />
     </div>
   </div>
   <template #bottom>

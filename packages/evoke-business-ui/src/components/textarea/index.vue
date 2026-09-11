@@ -1,12 +1,12 @@
 <template>
   <div
-    class="ev-textarea ev-textarea"
+    class="eb-textarea eb-textarea"
     :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
       ref="textareaRef"
-      class="ev-textarea__inner"
+      class="eb-textarea__inner"
       v-bind="inputAttrs"
       :value="innerValue"
       :placeholder="placeholder"
@@ -23,10 +23,10 @@
     />
     <span
       v-if="wordLimitVisible"
-      class="ev-input__count"
+      class="eb-input__count"
       :class="{ 'is-exceed': isExceed }"
     >{{ textLength }} / {{ maxlength }}</span>
-    <div v-if="error || help" class="ev-input-hint" :class="{ 'is-error': !!error }">
+    <div v-if="error || help" class="eb-input-hint" :class="{ 'is-error': !!error }">
       <span v-if="error" class="hint-error">{{ error }}</span>
       <span v-else class="hint-help">{{ help }}</span>
     </div>
@@ -35,13 +35,13 @@
 
 <script setup>
 /**
- * EvTextarea — 多行文本框
+ * EbTextarea — 多行文本框
  * 支持 autosize（boolean | { minRows, maxRows }）、error/help 提示
  */
 import { ref, computed, useAttrs, watch, nextTick } from 'vue'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
-defineOptions({ inheritAttrs: false, name: 'EvTextarea' })
+defineOptions({ inheritAttrs: false, name: 'EbTextarea' })
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -77,8 +77,8 @@ const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
 
 const sizeClass = computed(() => {
   const s = formSize.value
-  if (s === 'large') return 'ev-textarea--large'
-  if (s === 'small') return 'ev-textarea--small'
+  if (s === 'large') return 'eb-textarea--large'
+  if (s === 'small') return 'eb-textarea--small'
   return ''
 })
 

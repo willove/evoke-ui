@@ -1,15 +1,15 @@
 <template>
-  <ev-popper
+  <eb-popper
     :visible="panelVisible && suggestions.length > 0"
     trigger="manual"
     placement="bottom-start"
     match-width
     :offset="6"
-    popper-class="ev-autocomplete__popper"
+    popper-class="eb-autocomplete__popper"
     @hide="panelVisible = false"
   >
     <template #trigger>
-      <ev-input
+      <eb-input
         v-model="inputValue"
         v-bind="filterInputProps"
         role="combobox"
@@ -26,11 +26,11 @@
       />
     </template>
 
-    <ul :id="panelId" class="ev-autocomplete__menu" role="listbox">
+    <ul :id="panelId" class="eb-autocomplete__menu" role="listbox">
       <li
         v-for="(item, i) in suggestions"
         :key="i"
-        class="ev-autocomplete__option"
+        class="eb-autocomplete__option"
         :class="{ 'is-highlight': i === highlightIndex }"
         role="option"
         :aria-selected="i === highlightIndex"
@@ -40,12 +40,12 @@
         <slot name="option" :item="item">{{ item.value ?? item }}</slot>
       </li>
     </ul>
-  </ev-popper>
+  </eb-popper>
 </template>
 
 <script setup>
 /**
- * EvAutoComplete — 输入联想
+ * EbAutoComplete — 输入联想
  *
  * 数据源二选一：
  * - suggestions：静态候选数组（string 或 { value, ...payload }）
@@ -54,10 +54,10 @@
  * 键盘：↑↓ 移动高亮、Enter 选中、Esc 关闭；选中后可被 select 拦截（返回 false 不回填）
  */
 import { computed, ref, useAttrs, watch } from 'vue'
-import EvInput from '../input/index.vue'
-import EvPopper from '../popper/index.vue'
+import EbInput from '../input/index.vue'
+import EbPopper from '../popper/index.vue'
 
-defineOptions({ name: 'EvAutoComplete', inheritAttrs: false })
+defineOptions({ name: 'EbAutoComplete', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
@@ -73,7 +73,7 @@ const props = defineProps({
   minlength: { type: Number, default: 0 },
   /** 选中后是否回填输入框 */
   valueOnSelect: { type: Boolean, default: true },
-  /** 透传给内部 EvInput 的原生属性（placeholder / clearable / size / disabled 等） */
+  /** 透传给内部 EbInput 的原生属性（placeholder / clearable / size / disabled 等） */
   inputProps: { type: Object, default: () => ({}) },
 })
 
@@ -82,7 +82,7 @@ const emit = defineEmits(['update:modelValue', 'select', 'suggest', 'clear'])
 // 未声明的 attrs（placeholder / size / disabled / clearable…）透传给内部输入框
 const restAttrs = useAttrs()
 const filterInputProps = computed(() => ({ ...restAttrs, ...props.inputProps }))
-const panelId = `ev-autocomplete-${Math.random().toString(36).slice(2, 8)}`
+const panelId = `eb-autocomplete-${Math.random().toString(36).slice(2, 8)}`
 
 const inputValue = computed({
   get: () => props.modelValue,

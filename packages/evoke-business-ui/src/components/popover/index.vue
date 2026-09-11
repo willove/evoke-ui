@@ -1,12 +1,12 @@
 <template>
-  <ev-popper
+  <eb-popper
     :placement="placement"
     :trigger="trigger"
     :disabled="disabled"
     :show-after="showAfter"
     :hide-after="hideAfter"
     :show-arrow="true"
-    popper-class="ev-popover ev-popover"
+    popper-class="eb-popover eb-popover"
     :virtual-triggering="virtualTriggering"
     :virtual-ref="virtualRef"
     :offset="12"
@@ -14,22 +14,22 @@
     <template #trigger>
       <slot />
     </template>
-    <div class="ev-popover__title" v-if="title || $slots.title">
+    <div class="eb-popover__title" v-if="title || $slots.title">
       <slot name="title">{{ title }}</slot>
     </div>
-    <div class="ev-popover__content">
+    <div class="eb-popover__content">
       <slot name="content">{{ content }}</slot>
     </div>
-  </ev-popper>
+  </eb-popper>
 </template>
 
 <script setup>
 /**
- * EvPopover — 气泡卡片（.ev-popover / .ev-popover__title 结构类）
+ * EbPopover — 气泡卡片（.eb-popover / .eb-popover__title 结构类）
  */
-import EvPopper from '../popper/index.vue'
+import EbPopper from '../popper/index.vue'
 
-defineOptions({ name: 'EvPopover' })
+defineOptions({ name: 'EbPopover' })
 
 defineProps({
   title: { type: String, default: '' },

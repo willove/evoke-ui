@@ -1,36 +1,36 @@
 <template>
   <div
     ref="rootRef"
-    class="ev-dropdown ev-dropdown"
+    class="eb-dropdown eb-dropdown"
     :class="[sizeClass, { 'is-disabled': disabled }]"
   >
     <slot v-if="!splitButton" name="default">
-      <span class="ev-dropdown__trigger-inner">
+      <span class="eb-dropdown__trigger-inner">
         <slot name="trigger" />
-        <ev-icon name="arrow-down" class="ev-dropdown__caret" :class="{ 'is-reverse': open }" />
+        <eb-icon name="arrow-down" class="eb-dropdown__caret" :class="{ 'is-reverse': open }" />
       </span>
     </slot>
-    <ev-button-group v-else>
-      <ev-button :type="type" :size="size" @click="handleMainClick">
+    <eb-button-group v-else>
+      <eb-button :type="type" :size="size" @click="handleMainClick">
         <slot name="trigger">{{ text }}</slot>
-      </ev-button>
-      <ev-button :type="type" :size="size" class="ev-dropdown__caret-button" @click="toggle">
-        <ev-icon name="arrow-down" class="ev-dropdown__caret" :class="{ 'is-reverse': open }" />
-      </ev-button>
-    </ev-button-group>
+      </eb-button>
+      <eb-button :type="type" :size="size" class="eb-dropdown__caret-button" @click="toggle">
+        <eb-icon name="arrow-down" class="eb-dropdown__caret" :class="{ 'is-reverse': open }" />
+      </eb-button>
+    </eb-button-group>
 
     <Teleport to="body">
-      <Transition name="ev-dropdown-fade">
+      <Transition name="eb-dropdown-fade">
         <div
           v-if="open"
           ref="floatingRef"
-          class="ev-dropdown__popper ev-popper ev-dropdown__popper"
+          class="eb-dropdown__popper eb-popper eb-dropdown__popper"
           :style="popperStyle"
         >
           <slot name="dropdown">
-            <ev-dropdown-menu>
+            <eb-dropdown-menu>
               <slot />
-            </ev-dropdown-menu>
+            </eb-dropdown-menu>
           </slot>
         </div>
       </Transition>
@@ -40,14 +40,14 @@
 
 <script setup>
 /**
- * EvDropdown — 下拉菜单
+ * EbDropdown — 下拉菜单
  * trigger 语义 hover/click/contextmenu；split-button 模式
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, toRef, watch } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvButton from '../button/index.vue'
-import EvButtonGroup from '../button/group.vue'
-import EvDropdownMenu from './menu.vue'
+import EbIcon from '../icon/index.vue'
+import EbButton from '../button/index.vue'
+import EbButtonGroup from '../button/group.vue'
+import EbDropdownMenu from './menu.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
@@ -55,7 +55,7 @@ import { provideDropdownContext } from './dropdown-context'
 import { on as onEvent } from '../../utils/events'
 import { inBrowser } from '../../utils/dom'
 
-defineOptions({ name: 'EvDropdown' })
+defineOptions({ name: 'EbDropdown' })
 
 const props = defineProps({
   trigger: {
@@ -102,8 +102,8 @@ const popperStyle = computed(() => ({
 }))
 
 const sizeClass = computed(() => {
-  if (props.size === 'large') return 'ev-dropdown--large'
-  if (props.size === 'small') return 'ev-dropdown--small'
+  if (props.size === 'large') return 'eb-dropdown--large'
+  if (props.size === 'small') return 'eb-dropdown--small'
   return ''
 })
 
@@ -176,7 +176,7 @@ function bindEvents() {
       onEvent(el, 'click', (e) => {
         if (props.disabled) return
         // split-button 模式：仅箭头按钮 toggle（已绑定）；否则整体 toggle
-        if (!props.splitButton || e.target.closest?.('.ev-dropdown__caret-button')) toggle()
+        if (!props.splitButton || e.target.closest?.('.eb-dropdown__caret-button')) toggle()
       })
     )
   } else if (props.trigger === 'contextmenu') {

@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="active"
-    class="ev-tab-pane ev-tab-pane"
+    class="eb-tab-pane eb-tab-pane"
     role="tabpanel"
     :aria-hidden="!active"
   >
@@ -11,12 +11,12 @@
 
 <script setup>
 /**
- * EvTabPane — 标签页项（onMounted 向 EvTabs 注册，）
+ * EbTabPane — 标签页项（onMounted 向 EbTabs 注册，）
  */
 import { computed, onMounted, onBeforeUnmount, ref, useSlots, watch } from 'vue'
 import { useTabsContext } from './tabs-context'
 
-defineOptions({ name: 'EvTabPane' })
+defineOptions({ name: 'EbTabPane' })
 
 const props = defineProps({
   label: { type: String, default: '' },

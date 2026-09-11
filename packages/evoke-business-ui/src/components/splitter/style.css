@@ -1,85 +1,85 @@
-/* EvSplitter / EvSplitterPanel — 分隔面板（设计令牌驱动） */
+/* EbSplitter / EbSplitterPanel — 分隔面板（设计令牌驱动） */
 
-.ev-splitter {
+.eb-splitter {
   display: flex;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
-.ev-splitter.is-horizontal {
+.eb-splitter.is-horizontal {
   flex-direction: row;
 }
-.ev-splitter.is-vertical {
+.eb-splitter.is-vertical {
   flex-direction: column;
 }
 
-.ev-splitter-panel {
+.eb-splitter-panel {
   position: relative;
   overflow: hidden;
 }
-.ev-splitter-panel__content {
+.eb-splitter-panel__content {
   width: 100%;
   height: 100%;
   overflow: auto;
 }
 
 /* ─── 拖拽条 ─── */
-.ev-splitter__bar {
+.eb-splitter__bar {
   position: relative;
   flex-shrink: 0;
-  background: var(--ev-border-color);
+  background: var(--eb-border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color var(--ev-duration-fast) var(--ev-ease-out);
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-splitter__bar.is-horizontal {
+.eb-splitter__bar.is-horizontal {
   width: 6px;
   cursor: col-resize;
 }
-.ev-splitter__bar.is-vertical {
+.eb-splitter__bar.is-vertical {
   height: 6px;
   cursor: row-resize;
 }
-.ev-splitter__bar.is-draggable:hover {
-  background: var(--ev-color-primary-light-7);
+.eb-splitter__bar.is-draggable:hover {
+  background: var(--eb-color-primary-light-7);
 }
-.ev-splitter__bar.is-dragging {
-  background: var(--ev-color-primary-light-5);
+.eb-splitter__bar.is-dragging {
+  background: var(--eb-color-primary-light-5);
 }
-.ev-splitter__bar.is-disabled {
+.eb-splitter__bar.is-disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-.ev-splitter__bar-handle {
+.eb-splitter__bar-handle {
   display: flex;
   gap: 2px;
   align-items: center;
   justify-content: center;
 }
-.ev-splitter__bar.is-horizontal .ev-splitter__bar-handle {
+.eb-splitter__bar.is-horizontal .eb-splitter__bar-handle {
   flex-direction: column;
 }
-.ev-splitter__bar.is-vertical .ev-splitter__bar-handle {
+.eb-splitter__bar.is-vertical .eb-splitter__bar-handle {
   flex-direction: row;
 }
 
-.ev-splitter__bar-btn {
+.eb-splitter__bar-btn {
   width: 16px;
   height: 16px;
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--ev-text-color-secondary);
+  color: var(--eb-text-color-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--ev-radius-xs);
-  transition: all var(--ev-duration-fast) var(--ev-ease-out);
+  border-radius: var(--eb-radius-xs);
+  transition: all var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-splitter__bar-btn:hover {
-  background: var(--ev-color-primary-light-9);
-  color: var(--ev-color-primary);
+.eb-splitter__bar-btn:hover {
+  background: var(--eb-color-primary-light-9);
+  color: var(--eb-color-primary);
 }

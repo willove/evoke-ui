@@ -1,57 +1,57 @@
-/* EvSectionCard — 区块卡片（设计令牌驱动） */
+/* EbSectionCard — 区块卡片（设计令牌驱动） */
 
-.ev-section-card {
-  background: var(--ev-bg-color);
-  border-radius: var(--ev-radius-lg);
-  border: 1px solid var(--ev-border-color-light);
+.eb-section-card {
+  background: var(--eb-bg-color);
+  border-radius: var(--eb-radius-lg);
+  border: 1px solid var(--eb-border-color-light);
   box-sizing: border-box;
   transition:
-    border-color var(--ev-duration-fast) var(--ev-ease-out),
-    background-color var(--ev-duration-fast) var(--ev-ease-out);
+    border-color var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
 }
-.ev-section-card:hover {
-  border-color: var(--ev-border-color);
+.eb-section-card:hover {
+  border-color: var(--eb-border-color);
 }
-.ev-section-card__header {
+.eb-section-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--ev-space-3) var(--ev-space-5);
-  border-bottom: 1px solid var(--ev-border-color-light);
+  padding: var(--eb-space-3) var(--eb-space-5);
+  border-bottom: 1px solid var(--eb-border-color-light);
 }
-.ev-section-card__header-left {
+.eb-section-card__header-left {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
 }
-.ev-section-card .ev-section-card__header-left h3 {
-  font-size: var(--ev-font-size-base);
-  font-weight: var(--ev-font-weight-semibold);
-  color: var(--ev-text-color-primary);
+.eb-section-card .eb-section-card__header-left h3 {
+  font-size: var(--eb-font-size-base);
+  font-weight: var(--eb-font-weight-semibold);
+  color: var(--eb-text-color-primary);
   margin: 0;
 }
-.ev-section-card__body {
-  padding: var(--ev-space-5);
+.eb-section-card__body {
+  padding: var(--eb-space-5);
 }
-.ev-section-card__body--no-padding {
+.eb-section-card__body--no-padding {
   padding: 0;
 }
 
 /* extra 插槽容器：多个根节点保持成组靠右，避免被 header 的 space-between 摊开 */
-.ev-section-card__extra {
+.eb-section-card__extra {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-2);
+  gap: var(--eb-space-2);
   flex-shrink: 0;
 }
 
-/* ─── 磨砂（glass）：EvConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
+/* ─── 磨砂（glass）：EbConfigProvider 全局开关（html[data-eb-glass]）或组件 glass prop；
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ev-section-card.is-glass,
-  html[data-ev-glass='on'] .ev-section-card:not(.no-glass) {
-    background-color: var(--ev-glass-bg);
-    -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
-    backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
+  .eb-section-card.is-glass,
+  html[data-eb-glass='on'] .eb-section-card:not(.no-glass) {
+    background-color: var(--eb-glass-bg);
+    -webkit-backdrop-filter: blur(var(--eb-glass-blur)) saturate(var(--eb-glass-saturate));
+    backdrop-filter: blur(var(--eb-glass-blur)) saturate(var(--eb-glass-saturate));
   }
 }

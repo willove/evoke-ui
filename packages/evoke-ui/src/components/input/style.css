@@ -1,81 +1,81 @@
-/* EwInput — 文本输入 */
+/* EvInput — 文本输入 */
 
-.ew-input {
+.ev-input {
   display: inline-flex;
   align-items: center;
-  gap: var(--ew-space-2);
+  gap: var(--ev-space-2);
   width: 100%;
   padding: 0 12px;
-  border: 1px solid var(--ew-border-color);
-  border-radius: var(--ew-radius-md);
-  background-color: var(--ew-bg-container);
-  transition: border-color var(--ew-duration-slow) var(--ew-ease-smooth),
-    box-shadow var(--ew-duration-slow) var(--ew-ease-smooth);
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-bg-container);
+  transition: border-color var(--ev-duration-slow) var(--ev-ease-smooth),
+    box-shadow var(--ev-duration-slow) var(--ev-ease-smooth);
 }
 
-.ew-input:focus-within,
-.ew-input__inner:focus-visible {
+.ev-input:focus-within,
+.ev-input__inner:focus-visible {
   outline: none;
 }
 
-.ew-input:focus-within {
-  border-color: var(--ew-color-primary-light-5);
+.ev-input:focus-within {
+  border-color: var(--ev-color-primary-light-5);
 }
 
-.ew-input__inner {
+.ev-input__inner {
   flex: 1;
   min-width: 0;
   height: 38px;
   border: none;
   background: transparent;
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
 }
 
-.ew-input__inner::placeholder {
-  color: var(--ew-text-placeholder);
+.ev-input__inner::placeholder {
+  color: var(--ev-text-placeholder);
 }
 
-.ew-input__inner:focus,
-.ew-input__inner:focus-visible {
+.ev-input__inner:focus,
+.ev-input__inner:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
 /* ─── 尺寸 ─── */
-.ew-input.is-small .ew-input__inner {
+.ev-input.is-small .ev-input__inner {
   height: 30px;
-  font-size: var(--ew-font-size-xs);
+  font-size: var(--ev-font-size-xs);
 }
 
-.ew-input.is-large .ew-input__inner {
+.ev-input.is-large .ev-input__inner {
   height: 46px;
-  font-size: var(--ew-font-size-base);
+  font-size: var(--ev-font-size-base);
 }
 
 /* ─── 状态 ─── */
-.ew-input.is-disabled {
+.ev-input.is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
-  background-color: var(--ew-fill-1);
+  background-color: var(--ev-fill-1);
 }
 
-.ew-input.is-error {
-  border-color: var(--ew-color-danger-light-5);
+.ev-input.is-error {
+  border-color: var(--ev-color-danger-light-5);
 }
 
-.ew-input.is-error:focus-within {
-  border-color: var(--ew-color-danger);
+.ev-input.is-error:focus-within {
+  border-color: var(--ev-color-danger);
 }
 
-.ew-input__prefix,
-.ew-input__suffix {
+.ev-input__prefix,
+.ev-input__suffix {
   display: inline-flex;
   align-items: center;
-  color: var(--ew-text-placeholder);
+  color: var(--ev-text-placeholder);
 }
 
-.ew-input__clear {
+.ev-input__clear {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -84,51 +84,51 @@
   flex-shrink: 0;
   padding: 0;
   border: none;
-  border-radius: var(--ew-radius-circle);
-  background-color: var(--ew-fill-2);
-  color: var(--ew-text-secondary);
+  border-radius: var(--ev-radius-circle);
+  background-color: var(--ev-fill-2);
+  color: var(--ev-text-secondary);
   cursor: pointer;
-  transition: background-color var(--ew-duration-fast) var(--ew-ease-in-out),
-    color var(--ew-duration-fast) var(--ew-ease-in-out);
+  transition: background-color var(--ev-duration-fast) var(--ev-ease-in-out),
+    color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ew-input__clear:hover {
-  background-color: var(--ew-fill-3);
-  color: var(--ew-text-primary);
+.ev-input__clear:hover {
+  background-color: var(--ev-fill-3);
+  color: var(--ev-text-primary);
 }
 
 /* ─── 聚焦涟漪：聚焦瞬间一块与输入体同形状的实体色层自框体向外扩展约 4px 后消散（单次）；
-   错误态色层跟随 danger 色；全局关闭 html[data-ew-ripple='off']；
+   错误态色层跟随 danger 色；全局关闭 html[data-ev-ripple='off']；
    prefers-reduced-motion 自动停用 ─── */
 /* 定位锚点：涟漪层与清空按钮的定位参考 */
-.ew-input {
+.ev-input {
   position: relative;
 }
 
-.ew-input.is-error {
-  --ew-field-ring-color: var(--ew-color-danger);
+.ev-input.is-error {
+  --ev-field-ring-color: var(--ev-color-danger);
 }
 
-.ew-input::after {
+.ev-input::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--ew-field-ring-color, var(--ew-color-primary)) 30%, transparent);
+  background: color-mix(in srgb, var(--ev-field-ring-color, var(--ev-color-primary)) 30%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-ew-ripple='off']) .ew-input:focus-within::after {
-    animation: ew-field-ring 0.7s var(--ew-ease-out) 1;
+  html:not([data-ev-ripple='off']) .ev-input:focus-within::after {
+    animation: ev-field-ring 0.7s var(--ev-ease-out) 1;
   }
 }
 
 /* 扩散时圆角同步放大，保证外扩后边角仍是圆弧 */
-@keyframes ew-field-ring {
+@keyframes ev-field-ring {
   0% { opacity: 1; inset: 0; }
-  55% { opacity: 1; inset: -4px; border-radius: calc(var(--ew-radius-md) + 4px); }
-  100% { opacity: 0; inset: -4px; border-radius: calc(var(--ew-radius-md) + 4px); }
+  55% { opacity: 1; inset: -4px; border-radius: calc(var(--ev-radius-md) + 4px); }
+  100% { opacity: 0; inset: -4px; border-radius: calc(var(--ev-radius-md) + 4px); }
 }

@@ -1,8 +1,8 @@
 <template>
   <a
-    class="ev-link ev-link"
+    class="eb-link eb-link"
     :class="[
-      `ev-link--${typeClass}`,
+      `eb-link--${typeClass}`,
       { 'is-disabled': disabled, 'is-underline': underlined, 'is-underline-hover': underline === 'hover' },
     ]"
     :href="disabled || !href ? undefined : href"
@@ -10,18 +10,18 @@
     :aria-disabled="disabled || undefined"
     @click="handleClick"
   >
-    <ev-icon v-if="icon" :name="icon" :size="14" style="margin-right: 4px;" />
-    <span class="ev-link__inner"><slot /></span>
+    <eb-icon v-if="icon" :name="icon" :size="14" style="margin-right: 4px;" />
+    <span class="eb-link__inner"><slot /></span>
   </a>
 </template>
 
 <script setup>
 /**
- * EvLink — 文字链接
+ * EbLink — 文字链接
  * underline 入参兼容布尔与字符串两种写法，布尔一律映射为 always / never
  */
 import { computed } from 'vue'
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
 const props = defineProps({
   type: {

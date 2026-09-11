@@ -13,7 +13,7 @@
 数据结构与 treemap 一致：`{ name, value?, children? }` 嵌套数组。
 
 <DemoBlock>
-  <ec-chart
+  <ev-chart
     :options="{
       type: 'sunburst',
       title: '销售额构成',

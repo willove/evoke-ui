@@ -10,7 +10,7 @@
 
 <DemoBlock>
 <MobileStage>
-  <ev-nav-bar title="审批详情" left-arrow left-text="返回" right-text="协办" @click-left="hint = 'click-left：返回上一页'" @click-right="hint = 'click-right：打开协办人'" />
+  <eb-nav-bar title="审批详情" left-arrow left-text="返回" right-text="协办" @click-left="hint = 'click-left：返回上一页'" @click-right="hint = 'click-right：打开协办人'" />
   <div class="mb-page">
     <div class="mb-card mb-card--pad">
       <div class="mb-card__title">页面内容</div>
@@ -21,7 +21,7 @@
 </DemoBlock>
 
 ```html
-<ev-nav-bar
+<eb-nav-bar
   title="审批详情"
   left-arrow
   left-text="返回"
@@ -38,14 +38,14 @@
 
 <DemoBlock>
 <MobileStage>
-  <ev-nav-bar title="EVOKE">
+  <eb-nav-bar title="EVOKE">
     <template #left>
-      <ev-icon name="close" :size="16" style="color: var(--ev-text-color-secondary);" />
+      <eb-icon name="close" :size="16" style="color: var(--eb-text-color-secondary);" />
     </template>
     <template #right>
-      <ev-button type="primary" size="small">提交审批</ev-button>
+      <eb-button type="primary" size="small">提交审批</eb-button>
     </template>
-  </ev-nav-bar>
+  </eb-nav-bar>
   <div class="mb-page">
     <div class="mb-card mb-card--pad">
       <div class="mb-card__title">表单第三步</div>
@@ -62,7 +62,7 @@
 内容不会被头部遮挡：
 
 ```html
-<ev-nav-bar title="订单详情" left-arrow left-text="返回" fixed placeholder @click-left="router.back()" />
+<eb-nav-bar title="订单详情" left-arrow left-text="返回" fixed placeholder @click-left="router.back()" />
 ```
 
 ## API

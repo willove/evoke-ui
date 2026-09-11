@@ -1,18 +1,18 @@
 <template>
-  <div class="ew-image-wall" :style="gridStyle">
+  <div class="ev-image-wall" :style="gridStyle">
     <button
       v-for="(img, i) in normalized"
       :key="i"
       type="button"
-      class="ew-image-wall__item"
-      :style="{ '--ew-image-wall-radius': `${radius}px` }"
+      class="ev-image-wall__item"
+      :style="{ '--ev-image-wall-radius': `${radius}px` }"
       :aria-label="img.alt || `查看第 ${i + 1} 张图片`"
       @click="open(i)"
     >
       <img :src="img.src" :alt="img.alt || ''" loading="lazy" />
     </button>
 
-    <EwImagePreview
+    <EvImagePreview
       v-if="preview"
       v-model="previewVisible"
       v-model:index="previewIndex"
@@ -23,12 +23,12 @@
 
 <script setup>
 /**
- * EwImageWall — 图片墙
- * 均匀网格图片墙，点击任意图片打开 EwImagePreview 灯箱预览（可关）。
+ * EvImageWall — 图片墙
+ * 均匀网格图片墙，点击任意图片打开 EvImagePreview 灯箱预览（可关）。
  * images 项：字符串 url 或 { src, alt }；columns 列数；preview=false 时仅发出 select 事件。
  */
 import { computed, ref } from 'vue'
-import EwImagePreview from '../image-preview/index.vue'
+import EvImagePreview from '../image-preview/index.vue'
 
 const props = defineProps({
   /** 图片列表：url 字符串或 { src, alt } */

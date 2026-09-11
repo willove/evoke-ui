@@ -1,13 +1,13 @@
 <template>
   <div
-    class="ev-skeleton__item"
-    :class="[`ev-skeleton__${variant}`, 'ev-skeleton-item']"
+    class="eb-skeleton__item"
+    :class="[`eb-skeleton__${variant}`, 'eb-skeleton-item']"
   >
     <svg
       v-if="variant === 'image'"
       viewBox="0 0 1024 1024"
       xmlns="http://www.w3.org/2000/svg"
-      class="ev-skeleton__image"
+      class="eb-skeleton__image"
       aria-hidden="true"
     >
       <path
@@ -20,7 +20,7 @@
 
 <script setup>
 /**
- * EvSkeletonItem — 骨架屏占位单元
+ * EbSkeletonItem — 骨架屏占位单元
  */
 defineProps({
   variant: {

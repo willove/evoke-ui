@@ -1,22 +1,22 @@
 <template>
-  <div :class="['ev-nav-bar', { 'is-bordered': bordered }]">
-    <div v-if="fixed && placeholder" class="ev-nav-bar__placeholder" aria-hidden="true" />
+  <div :class="['eb-nav-bar', { 'is-bordered': bordered }]">
+    <div v-if="fixed && placeholder" class="eb-nav-bar__placeholder" aria-hidden="true" />
     <header
-      :class="['ev-nav-bar__inner', { 'is-fixed': fixed }]"
+      :class="['eb-nav-bar__inner', { 'is-fixed': fixed }]"
       :style="fixed ? { zIndex } : undefined"
     >
-      <div class="ev-nav-bar__side is-left" @click="emit('click-left')">
+      <div class="eb-nav-bar__side is-left" @click="emit('click-left')">
         <slot name="left">
-          <EvIcon v-if="leftArrow" name="arrow-left" :size="18" />
-          <span v-if="leftText" class="ev-nav-bar__text">{{ leftText }}</span>
+          <EbIcon v-if="leftArrow" name="arrow-left" :size="18" />
+          <span v-if="leftText" class="eb-nav-bar__text">{{ leftText }}</span>
         </slot>
       </div>
-      <div class="ev-nav-bar__title">
+      <div class="eb-nav-bar__title">
         <slot name="title">{{ title }}</slot>
       </div>
-      <div class="ev-nav-bar__side is-right" @click="emit('click-right')">
+      <div class="eb-nav-bar__side is-right" @click="emit('click-right')">
         <slot name="right">
-          <span v-if="rightText" class="ev-nav-bar__text">{{ rightText }}</span>
+          <span v-if="rightText" class="eb-nav-bar__text">{{ rightText }}</span>
         </slot>
       </div>
     </header>
@@ -25,14 +25,14 @@
 
 <script setup>
 /**
- * EvNavBar — 移动端页头（返回 + 标题 + 右侧动作）
+ * EbNavBar — 移动端页头（返回 + 标题 + 右侧动作）
  * H5 页面的标准头部：左区返回箭头/文案、居中标题（超长省略）、右区动作；
  * fixed 吸顶时自动吸收 env(safe-area-inset-top)（刘海屏独立 PWA 生效，普通浏览器为 0），
- * 配 placeholder 生成等高占位避免内容顶到头下。与 evoke-ui 的 EwNavBar 同名同 API。
+ * 配 placeholder 生成等高占位避免内容顶到头下。API 对齐通用移动端导航栏。
  */
-import EvIcon from '../icon/index.vue'
+import EbIcon from '../icon/index.vue'
 
-defineOptions({ name: 'EvNavBar' })
+defineOptions({ name: 'EbNavBar' })
 
 defineProps({
   /** 标题文本（title 插槽可替换） */

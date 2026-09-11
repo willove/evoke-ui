@@ -1,66 +1,66 @@
-/* EwNewsletter — 邮件订阅框 */
+/* EvNewsletter — 邮件订阅框 */
 
-.ew-newsletter {
+.ev-newsletter {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-2);
+  gap: var(--ev-space-2);
   width: 100%;
   max-width: 440px;
   margin-inline: auto;
   padding: 5px 5px 5px 16px;
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background-color: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-1);
-  transition: box-shadow var(--ew-duration-base) var(--ew-ease-in-out),
-    border-color var(--ew-duration-base) var(--ew-ease-in-out);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-1);
+  transition: box-shadow var(--ev-duration-base) var(--ev-ease-in-out),
+    border-color var(--ev-duration-base) var(--ev-ease-in-out);
 }
 
-.ew-newsletter:focus-within {
-  border-color: var(--ew-color-primary-light-5);
-  box-shadow: var(--ew-shadow-2);
+.ev-newsletter:focus-within {
+  border-color: var(--ev-color-primary-light-5);
+  box-shadow: var(--ev-shadow-2);
 }
 
-.ew-newsletter__icon {
+.ev-newsletter__icon {
   flex-shrink: 0;
-  color: var(--ew-text-placeholder);
+  color: var(--ev-text-placeholder);
 }
 
-.ew-newsletter__input {
+.ev-newsletter__input {
   flex: 1;
   min-width: 0;
   border: none;
   background: transparent;
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-primary);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-primary);
   outline: none;
 }
 
-.ew-newsletter__input::placeholder {
-  color: var(--ew-text-placeholder);
+.ev-newsletter__input::placeholder {
+  color: var(--ev-text-placeholder);
 }
 
 /* 焦点光环由整条订阅框（:focus-within）承担，内部 input 不再自绘 */
-.ew-newsletter__input:focus,
-.ew-newsletter__input:focus-visible {
+.ev-newsletter__input:focus,
+.ev-newsletter__input:focus-visible {
   outline: none;
   box-shadow: none;
   border-radius: 0;
 }
 
 /* 成功态 */
-.ew-newsletter.is-subscribed {
+.ev-newsletter.is-subscribed {
   justify-content: center;
-  border-color: var(--ew-color-success-light-7);
-  background-color: var(--ew-color-success-light-9);
+  border-color: var(--ev-color-success-light-7);
+  background-color: var(--ev-color-success-light-9);
 }
 
-.ew-newsletter__done {
+.ev-newsletter__done {
   display: inline-flex;
   align-items: center;
-  gap: var(--ew-space-2);
+  gap: var(--ev-space-2);
   padding: 8px 4px;
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-color-success);
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-color-success);
 }

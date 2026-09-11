@@ -1,20 +1,20 @@
-/* EwVideo — 视频区块 */
+/* EvVideo — 视频区块 */
 
-.ew-video {
+.ev-video {
   margin: 0;
 }
 
-.ew-video__frame {
+.ev-video__frame {
   position: relative;
   width: 100%;
   padding-top: 56.25%;
-  border-radius: var(--ew-radius-lg);
+  border-radius: var(--ev-radius-lg);
   overflow: hidden;
   background-color: #101014;
 }
 
-.ew-video__frame > video,
-.ew-video__frame > :deep(iframe) {
+.ev-video__frame > video,
+.ev-video__frame > :deep(iframe) {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -22,25 +22,25 @@
   border: none;
 }
 
-.ew-video__frame > :deep(video) {
+.ev-video__frame > :deep(video) {
   object-fit: cover;
 }
 
-.ew-video__placeholder {
+.ev-video__placeholder {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ew-space-2);
+  gap: var(--ev-space-2);
   color: rgba(245, 247, 252, 0.4);
-  font-size: var(--ew-font-size-sm);
+  font-size: var(--ev-font-size-sm);
 }
 
-.ew-video__caption {
-  margin-top: var(--ew-space-3);
-  font-size: var(--ew-font-size-sm);
-  color: var(--ew-text-secondary);
+.ev-video__caption {
+  margin-top: var(--ev-space-3);
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-text-secondary);
   text-align: center;
 }

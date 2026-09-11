@@ -1,34 +1,34 @@
-/* EwAudio — 音频卡片 */
+/* EvAudio — 音频卡片 */
 
-.ew-audio {
+.ev-audio {
   display: flex;
   align-items: center;
-  gap: var(--ew-space-4);
-  padding: var(--ew-space-4) var(--ew-space-5);
-  border: 1px solid var(--ew-border-color-light);
-  border-radius: var(--ew-radius-full);
-  background-color: var(--ew-bg-container);
-  box-shadow: var(--ew-shadow-1);
+  gap: var(--ev-space-4);
+  padding: var(--ev-space-4) var(--ev-space-5);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-1);
 }
 
-.ew-audio__badge {
+.ev-audio__badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
   flex-shrink: 0;
-  border-radius: var(--ew-radius-circle);
-  background-color: var(--ew-color-ink);
+  border-radius: var(--ev-radius-circle);
+  background-color: var(--ev-color-ink);
   color: #ffffff;
 }
 
-html.dark .ew-audio__badge {
-  background-color: var(--ew-text-primary);
-  color: var(--ew-color-ink);
+html.dark .ev-audio__badge {
+  background-color: var(--ev-text-primary);
+  color: var(--ev-color-ink);
 }
 
-.ew-audio__body {
+.ev-audio__body {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -36,16 +36,16 @@ html.dark .ew-audio__badge {
   gap: 4px;
 }
 
-.ew-audio__title {
-  font-size: var(--ew-font-size-sm);
-  font-weight: var(--ew-font-weight-medium);
-  color: var(--ew-text-primary);
+.ev-audio__title {
+  font-size: var(--ev-font-size-sm);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.ew-audio__player {
+.ev-audio__player {
   width: 100%;
   height: 32px;
 }

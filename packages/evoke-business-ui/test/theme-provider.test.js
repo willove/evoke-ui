@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import EvConfigProvider from '../src/components/config-provider/index.vue'
+import EbConfigProvider from '../src/components/config-provider/index.vue'
 import { resetTheme, loadThemeConfig, clearThemeConfig } from '../src/utils/theme'
 
 afterEach(() => {
@@ -8,9 +8,9 @@ afterEach(() => {
   clearThemeConfig()
 })
 
-describe('EvConfigProvider 主题动态配置', () => {
+describe('EbConfigProvider 主题动态配置', () => {
   it('themeColor + semantic 注入运行时令牌', () => {
-    mount(EvConfigProvider, {
+    mount(EbConfigProvider, {
       props: {
         themeColor: '#7b2ff2',
         semantic: { success: '#16a34a' },
@@ -18,23 +18,23 @@ describe('EvConfigProvider 主题动态配置', () => {
       slots: { default: 'x' },
     })
     const html = document.documentElement
-    expect(html.style.getPropertyValue('--ev-color-primary')).toBe('#7b2ff2')
-    expect(html.style.getPropertyValue('--ev-color-success')).toBe('#16a34a')
+    expect(html.style.getPropertyValue('--eb-color-primary')).toBe('#7b2ff2')
+    expect(html.style.getPropertyValue('--eb-color-success')).toBe('#16a34a')
   })
 
   it('卸载后移除注入的内联令牌', () => {
-    const wrapper = mount(EvConfigProvider, {
+    const wrapper = mount(EbConfigProvider, {
       props: { themeColor: '#7b2ff2' },
       slots: { default: 'x' },
     })
     wrapper.unmount()
     expect(
-      document.documentElement.style.getPropertyValue('--ev-color-primary'),
+      document.documentElement.style.getPropertyValue('--eb-color-primary'),
     ).toBe('')
   })
 
   it('persistTheme：变更自动保存到 localStorage，卸载不清除存档', async () => {
-    const wrapper = mount(EvConfigProvider, {
+    const wrapper = mount(EbConfigProvider, {
       props: { themeColor: '#7b2ff2', persistTheme: true },
       slots: { default: 'x' },
     })
@@ -47,17 +47,17 @@ describe('EvConfigProvider 主题动态配置', () => {
 
   it('persistTheme + 存档存在时：存档优先于声明式 themeColor', () => {
     saveThemeConfigDirect({ primary: '#0fa968' })
-    mount(EvConfigProvider, {
+    mount(EbConfigProvider, {
       props: { themeColor: '#7b2ff2', persistTheme: true },
       slots: { default: 'x' },
     })
     expect(
-      document.documentElement.style.getPropertyValue('--ev-color-primary'),
+      document.documentElement.style.getPropertyValue('--eb-color-primary'),
     ).toBe('#0fa968')
   })
 })
 
 // 直接经 localStorage 写入存档（模拟上一个会话保存的主题）
 function saveThemeConfigDirect(config) {
-  localStorage.setItem('ev-theme-config', JSON.stringify(config))
+  localStorage.setItem('eb-theme-config', JSON.stringify(config))
 }

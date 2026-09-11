@@ -1,8 +1,8 @@
 <template>
-  <div class="ev-mention ev-mention" :class="{ 'is-disabled': disabled }">
+  <div class="eb-mention eb-mention" :class="{ 'is-disabled': disabled }">
     <textarea
       ref="textareaRef"
-      class="ev-mention__inner"
+      class="eb-mention__inner"
       :value="modelValue"
       :placeholder="placeholder"
       :disabled="disabled"
@@ -13,14 +13,14 @@
     />
     <div
       v-if="panelVisible && filteredOptions.length"
-      class="ev-mention__panel"
+      class="eb-mention__panel"
       :style="panelStyle"
       role="listbox"
     >
       <div
         v-for="(opt, i) in filteredOptions"
         :key="i"
-        class="ev-mention__option"
+        class="eb-mention__option"
         :class="{ 'is-highlight': i === highlightIndex }"
         role="option"
         :aria-selected="i === highlightIndex"
@@ -35,14 +35,14 @@
 
 <script setup>
 /**
- * EvMention — @提及输入框
+ * EbMention — @提及输入框
  * 输入 prefix（默认 @）触发候选面板（镜像 div 测量光标坐标定位）；
  * ↑↓ 选择、Enter 确认、Esc 关闭；选中后以 `prefix + value + split` 回填
  */
 import { computed, ref } from 'vue'
 import { inBrowser } from '../../utils/dom'
 
-defineOptions({ name: 'EvMention' })
+defineOptions({ name: 'EbMention' })
 
 const props = defineProps({
   modelValue: { type: String, default: '' },

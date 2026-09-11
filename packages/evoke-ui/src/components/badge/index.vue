@@ -1,12 +1,12 @@
 <template>
-  <sup :class="['ew-badge', { 'is-dot': dot }]" :style="badgeStyle">
+  <sup :class="['ev-badge', { 'is-dot': dot }]" :style="badgeStyle">
     <slot v-if="!dot">{{ displayValue }}</slot>
   </sup>
 </template>
 
 <script setup>
 /**
- * EwBadge — 计数徽标（remixicon 版本红点 / 分类计数语言）
+ * EvBadge — 计数徽标（remixicon 版本红点 / 分类计数语言）
  * 独立使用或配合相对定位父级悬挂；dot 模式仅显示圆点
  */
 import { computed } from 'vue'

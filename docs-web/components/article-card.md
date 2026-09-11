@@ -1,6 +1,6 @@
 # ArticleCard 文章卡
 
-`EwArticleCard` 展示博客文章、公司动态或教程条目：封面（缺省为图标占位底）+ 日期与标签
+`EvArticleCard` 展示博客文章、公司动态或教程条目：封面（缺省为图标占位底）+ 日期与标签
 元信息 + 两行截断的标题与摘要。`tag="a"` 整卡可点击，配合多列 grid 构成博客列表页。
 
 ## 基础用法
@@ -8,21 +8,21 @@
 <DemoBlock title="文章列表三连" description="无封面时用图标占位底；有封面时 hover 缓慢放大。">
 
 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
-  <EwArticleCard
+  <EvArticleCard
     title="从 0 到 1 搭建团队知识库"
     excerpt="工具选型、目录设计与冷启动策略，一次讲清知识库落地。"
     date="2026-09-01"
     :tags="['最佳实践']"
     icon="brush-line"
   />
-  <EwArticleCard
+  <EvArticleCard
     title="远程协作的 12 个小习惯"
     excerpt="异步优先的沟通节奏，让分布在世界各地的团队保持同频。"
     date="2026-08-18"
     :tags="['团队', '效率']"
     icon="device-line"
   />
-  <EwArticleCard
+  <EvArticleCard
     title="版本 2.0 发布说明"
     excerpt="全新编辑器内核与团队空间，同步引擎性能提升 60%。"
     date="2026-09-01"
@@ -32,7 +32,7 @@
 </div>
 
 ```vue
-<EwArticleCard
+<EvArticleCard
   title="从 0 到 1 搭建团队知识库"
   excerpt="…"
   date="2026-09-01"

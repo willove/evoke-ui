@@ -9,23 +9,23 @@
 `size` 作为所有组件的兜底尺寸：组件自身的 `size` 属性 > Form/FormItem 继承 > ConfigProvider 的 `size` > 默认值。输入类组件经 `useFormItem` 自动接入，Button 亦已接入：
 
 <DemoBlock>
-  <ev-config-provider :size="globalSize">
+  <eb-config-provider :size="globalSize">
     <div style="display: flex; flex-direction: column; gap: 12px; width: 360px;">
       <div style="display: flex; gap: 8px;">
-        <ev-button v-for="s in ['small', 'default', 'large']" :key="s" :type="globalSize === s ? 'primary' : 'default'" @click="globalSize = s">{{ s }}</ev-button>
+        <eb-button v-for="s in ['small', 'default', 'large']" :key="s" :type="globalSize === s ? 'primary' : 'default'" @click="globalSize = s">{{ s }}</eb-button>
       </div>
-      <ev-input placeholder="继承全局 size 的输入框"></ev-input>
+      <eb-input placeholder="继承全局 size 的输入框"></eb-input>
       <div style="display: flex; gap: 12px;">
-        <ev-select placeholder="选择器"></ev-select>
-        <ev-input-number :min="0" :max="100"></ev-input-number>
+        <eb-select placeholder="选择器"></eb-select>
+        <eb-input-number :min="0" :max="100"></eb-input-number>
       </div>
       <div style="display: flex; gap: 12px;">
-        <ev-button type="primary">主操作</ev-button>
-        <ev-button>次操作</ev-button>
-        <ev-button size="small" text>小字号按钮（显式 size 优先）</ev-button>
+        <eb-button type="primary">主操作</eb-button>
+        <eb-button>次操作</eb-button>
+        <eb-button size="small" text>小字号按钮（显式 size 优先）</eb-button>
       </div>
     </div>
-  </ev-config-provider>
+  </eb-config-provider>
 </DemoBlock>
 
 ## 运行时主题色
@@ -38,20 +38,20 @@
 `persist-theme` 开启后主题写入 localStorage，刷新页面仍生效（存档优先于声明式 prop）：
 
 <DemoBlock>
-  <ev-config-provider :theme-color="themeColor" :semantic="semanticColors" persist-theme>
+  <eb-config-provider :theme-color="themeColor" :semantic="semanticColors" persist-theme>
     <div style="display: flex; flex-direction: column; gap: 14px;">
       <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <span style="font-size: 13px; color: var(--ev-text-color-secondary);">主色</span>
+        <span style="font-size: 13px; color: var(--eb-text-color-secondary);">主色</span>
         <button
           v-for="c in colors"
           :key="c"
           type="button"
-          :style="{ width: '32px', height: '32px', borderRadius: '8px', background: c, border: themeColor === c ? '2px solid var(--ev-text-color-primary)' : '2px solid transparent', cursor: 'pointer' }"
+          :style="{ width: '32px', height: '32px', borderRadius: '8px', background: c, border: themeColor === c ? '2px solid var(--eb-text-color-primary)' : '2px solid transparent', cursor: 'pointer' }"
           @click="themeColor = c"
         ></button>
       </div>
       <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <span style="font-size: 13px; color: var(--ev-text-color-secondary);">语义色（点击换色）</span>
+        <span style="font-size: 13px; color: var(--eb-text-color-secondary);">语义色（点击换色）</span>
         <button
           v-for="(hex, key) in semanticColors"
           :key="key"
@@ -60,35 +60,35 @@
           :style="{ width: '32px', height: '32px', borderRadius: '8px', background: hex, cursor: 'pointer' }"
           @click="cycleSemantic(key)"
         ></button>
-        <span style="font-size: 12px; color: var(--ev-text-color-tertiary);">{{ semanticTip }}</span>
+        <span style="font-size: 12px; color: var(--eb-text-color-tertiary);">{{ semanticTip }}</span>
       </div>
       <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <ev-button type="primary">主色按钮</ev-button>
-        <ev-button type="success">成功</ev-button>
-        <ev-button type="warning">警告</ev-button>
-        <ev-button type="danger">危险</ev-button>
-        <ev-input placeholder="聚焦看主色"></ev-input>
-        <ev-switch v-model="on"></ev-switch>
+        <eb-button type="primary">主色按钮</eb-button>
+        <eb-button type="success">成功</eb-button>
+        <eb-button type="warning">警告</eb-button>
+        <eb-button type="danger">危险</eb-button>
+        <eb-input placeholder="聚焦看主色"></eb-input>
+        <eb-switch v-model="on"></eb-switch>
       </div>
-      <p style="margin: 0; font-size: 12px; color: var(--ev-text-color-tertiary);">persist-theme 已开启：刷新页面后主题仍是上次选择。组合式 API 见下方说明。</p>
+      <p style="margin: 0; font-size: 12px; color: var(--eb-text-color-tertiary);">persist-theme 已开启：刷新页面后主题仍是上次选择。组合式 API 见下方说明。</p>
     </div>
-  </ev-config-provider>
+  </eb-config-provider>
 </DemoBlock>
 
 ## 全局密度
 
-`density` 作用于 `html[data-ev-density]`，compact / loose 两档调整所有控件的默认高度与间距，适合信息密度差异明显的场景（监控大屏 vs 移动端）：
+`density` 作用于 `html[data-eb-density]`，compact / loose 两档调整所有控件的默认高度与间距，适合信息密度差异明显的场景（监控大屏 vs 移动端）：
 
 <DemoBlock>
-  <ev-config-provider :density="density">
+  <eb-config-provider :density="density">
     <div style="display: flex; flex-direction: column; gap: 12px; width: 360px;">
       <div style="display: flex; gap: 8px;">
-        <ev-button v-for="d in ['compact', 'default', 'loose']" :key="d" :type="density === d ? 'primary' : 'default'" @click="density = d">{{ d }}</ev-button>
+        <eb-button v-for="d in ['compact', 'default', 'loose']" :key="d" :type="density === d ? 'primary' : 'default'" @click="density = d">{{ d }}</eb-button>
       </div>
-      <ev-input placeholder="密度切换看控件高度"></ev-input>
-      <ev-button type="primary">提交</ev-button>
+      <eb-input placeholder="密度切换看控件高度"></eb-input>
+      <eb-button type="primary">提交</eb-button>
     </div>
-  </ev-config-provider>
+  </eb-config-provider>
 </DemoBlock>
 
 ## 全局磨砂
@@ -98,37 +98,37 @@
 组件级 `glass` prop 可单独强制开或关（三态）。浏览器不支持 `backdrop-filter` 时自动回落实底。
 
 <DemoBlock>
-  <ev-config-provider :glass="glassOn">
+  <eb-config-provider :glass="glassOn">
     <div style="display: flex; flex-direction: column; gap: 12px;">
-      <ev-switch v-model="glassOn" active-text="全局磨砂"></ev-switch>
+      <eb-switch v-model="glassOn" active-text="全局磨砂"></eb-switch>
       <div style="background: linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius: 10px; padding: 20px; display: grid; gap: 12px;">
-        <ev-card glass>玻璃卡 A：跟随全局开关</ev-card>
-        <ev-card :glass="false">实底卡：显式 glass=false 脱离全局</ev-card>
+        <eb-card glass>玻璃卡 A：跟随全局开关</eb-card>
+        <eb-card :glass="false">实底卡：显式 glass=false 脱离全局</eb-card>
       </div>
     </div>
-  </ev-config-provider>
+  </eb-config-provider>
 </DemoBlock>
 
 ## 权限码表下发
 
-`permissions` 是 `v-permission` 指令 / `EvAuth` 组件 / `usePermission` 的判定来源。权限在登录后一次性传入，组件树内全部自动响应（切换按钮模拟不同角色的码表）：
+`permissions` 是 `v-permission` 指令 / `EbAuth` 组件 / `usePermission` 的判定来源。权限在登录后一次性传入，组件树内全部自动响应（切换按钮模拟不同角色的码表）：
 
 <DemoBlock>
-  <ev-config-provider :permissions="role === 'admin' ? ['order:view', 'order:delete', 'order:export'] : ['order:view']">
+  <eb-config-provider :permissions="role === 'admin' ? ['order:view', 'order:delete', 'order:export'] : ['order:view']">
     <div style="display: flex; flex-direction: column; gap: 12px;">
       <div style="display: flex; gap: 8px;">
-        <ev-button :type="role === 'admin' ? 'primary' : 'default'" @click="role = 'admin'">管理员</ev-button>
-        <ev-button :type="role === 'guest' ? 'primary' : 'default'" @click="role = 'guest'">普通用户</ev-button>
+        <eb-button :type="role === 'admin' ? 'primary' : 'default'" @click="role = 'admin'">管理员</eb-button>
+        <eb-button :type="role === 'guest' ? 'primary' : 'default'" @click="role = 'guest'">普通用户</eb-button>
       </div>
       <div style="display: flex; gap: 12px;">
-        <ev-button>查看订单（所有人可见）</ev-button>
-        <ev-auth has="order:delete">
-          <ev-button type="danger">删除订单（需 order:delete）</ev-button>
-        </ev-auth>
-        <ev-button v-permission="'order:export'">导出（指令控制）</ev-button>
+        <eb-button>查看订单（所有人可见）</eb-button>
+        <eb-auth has="order:delete">
+          <eb-button type="danger">删除订单（需 order:delete）</eb-button>
+        </eb-auth>
+        <eb-button v-permission="'order:export'">导出（指令控制）</eb-button>
       </div>
     </div>
-  </ev-config-provider>
+  </eb-config-provider>
 </DemoBlock>
 
 <script setup>
@@ -169,11 +169,11 @@ const role = ref('admin')
 | zIndex | Number | `2000` | 弹层 z-index 基准（保留扩展位） |
 | platform | String | `'auto'` | 容器环境 `auto` / `desktop` / `mobile`；移动端下 Select、DatePicker 呈底部弹出形态 |
 | themeColor | String | — | 运行时主色（十六进制）；注入后 7 档色阶与图表色板自动跟随，卸载时恢复默认 |
-| density | String | — | 全局密度 `compact` / `default` / `loose`，作用于 `html[data-ev-density]` |
-| glass | Boolean | `false` | 全局磨砂，作用于 `html[data-ev-glass]`；容器组件级 glass prop 可单独覆盖 |
+| density | String | — | 全局密度 `compact` / `default` / `loose`，作用于 `html[data-eb-density]` |
+| glass | Boolean | `false` | 全局磨砂，作用于 `html[data-eb-glass]`；容器组件级 glass prop 可单独覆盖 |
 | semantic | Object | — | 运行时语义色 `{ success, warning, danger, info }`（十六进制），各生成完整梯度 |
-| persistTheme | Boolean | `false` | 持久化主题到 localStorage（`ev-theme-config`）；挂载时存档优先于声明式 prop，变更自动保存 |
-| permissions | Array | — | 权限码表；`v-permission` / `EvAuth` / `usePermission` 的判定来源 |
+| persistTheme | Boolean | `false` | 持久化主题到 localStorage（`eb-theme-config`）；挂载时存档优先于声明式 prop，变更自动保存 |
+| permissions | Array | — | 权限码表；`v-permission` / `EbAuth` / `usePermission` 的判定来源 |
 
 ### 编程式用法
 

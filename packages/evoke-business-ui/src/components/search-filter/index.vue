@@ -1,14 +1,14 @@
 <template>
   <div
-    class="ev-search-filter"
-    :class="[`ev-search-filter--cols-${columns}`]"
+    class="eb-search-filter"
+    :class="[`eb-search-filter--cols-${columns}`]"
     @keydown.enter="handleSearch"
   >
-    <div class="ev-search-filter__fields">
-      <div v-for="field in fields" :key="field.prop" class="ev-search-filter__field">
-        <label v-if="field.label" class="ev-search-filter__label">{{ field.label }}</label>
-        <div class="ev-search-filter__control">
-          <ev-select
+    <div class="eb-search-filter__fields">
+      <div v-for="field in fields" :key="field.prop" class="eb-search-filter__field">
+        <label v-if="field.label" class="eb-search-filter__label">{{ field.label }}</label>
+        <div class="eb-search-filter__control">
+          <eb-select
             v-if="field.type === 'select'"
             :model-value="modelValue[field.prop]"
             :placeholder="field.placeholder || '请选择'"
@@ -17,14 +17,14 @@
             size="default"
             @update:model-value="setField(field.prop, $event)"
           >
-            <ev-option
+            <eb-option
               v-for="opt in field.options || []"
               :key="opt.value"
               :label="opt.label"
               :value="opt.value"
             />
-          </ev-select>
-          <ev-input
+          </eb-select>
+          <eb-input
             v-else
             :model-value="modelValue[field.prop]"
             :placeholder="field.placeholder || '请输入'"
@@ -35,15 +35,15 @@
         </div>
       </div>
     </div>
-    <div class="ev-search-filter__actions">
-      <ev-button type="primary" :loading="loading" @click="handleSearch">
-        <ev-icon v-if="!loading" name="search" :size="14" />
+    <div class="eb-search-filter__actions">
+      <eb-button type="primary" :loading="loading" @click="handleSearch">
+        <eb-icon v-if="!loading" name="search" :size="14" />
         查询
-      </ev-button>
-      <ev-button @click="handleReset">
-        <ev-icon name="refresh-right" :size="14" />
+      </eb-button>
+      <eb-button @click="handleReset">
+        <eb-icon name="refresh-right" :size="14" />
         重置
-      </ev-button>
+      </eb-button>
       <slot name="actions" />
     </div>
   </div>
@@ -51,16 +51,16 @@
 
 <script setup>
 /**
- * EvSearchFilter — 查询/重置筛选表单（业务封装，fields 配置式）
+ * EbSearchFilter — 查询/重置筛选表单（业务封装，fields 配置式）
  * fields = [{ prop, label, type: 'input'|'select', options?, placeholder?, defaultValue?, disabled? }]；
  * v-model 为筛选值对象；查询 emit('search', values)，重置恢复 defaultValue 并 emit('search', reset 值)
  */
 import { computed } from 'vue'
-import EvButton from '../button/index.vue'
-import EvIcon from '../icon/index.vue'
-import EvInput from '../input/index.vue'
-import EvSelect from '../select/index.vue'
-import EvOption from '../select/option.vue'
+import EbButton from '../button/index.vue'
+import EbIcon from '../icon/index.vue'
+import EbInput from '../input/index.vue'
+import EbSelect from '../select/index.vue'
+import EbOption from '../select/option.vue'
 
 const props = defineProps({
   modelValue: { type: Object, default: () => ({}) },

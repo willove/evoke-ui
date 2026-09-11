@@ -1,21 +1,21 @@
-/* EvTimeline — 时间轴（设计令牌驱动） */
+/* EbTimeline — 时间轴（设计令牌驱动） */
 
-.ev-timeline {
-  --ev-timeline-dot-size: 10px;
-  --ev-timeline-tail-width: 2px;
-  --ev-timeline-tail-color: var(--ev-border-color);
-  --ev-timeline-item-padding-bottom: 20px;
+.eb-timeline {
+  --eb-timeline-dot-size: 10px;
+  --eb-timeline-tail-width: 2px;
+  --eb-timeline-tail-color: var(--eb-border-color);
+  --eb-timeline-item-padding-bottom: 20px;
   position: relative;
   display: flex;
   flex-direction: column;
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ev-timeline.is-reverse {
+.eb-timeline.is-reverse {
   flex-direction: column-reverse;
 }
 
@@ -24,33 +24,33 @@
     逐段绘制天然对齐任意 padding / 滚动容器） */
 
 /* ══════ item 布局：固定 20px axis 列保证 dot 对齐 ══════ */
-.ev-timeline-item {
+.eb-timeline-item {
   position: relative;
   /* 清除 li 默认外边距：margin 会切断竖线段的首尾衔接 */
   margin: 0;
-  padding-bottom: var(--ev-timeline-item-padding-bottom);
+  padding-bottom: var(--eb-timeline-item-padding-bottom);
   display: grid;
   align-items: flex-start;
   min-height: 28px;
   list-style: none;
 }
 
-.ev-timeline-item.is-mode-left {
+.eb-timeline-item.is-mode-left {
   grid-template-columns: 20px 1fr;
 }
-.ev-timeline-item.is-mode-left .ev-timeline-item__axis {
+.eb-timeline-item.is-mode-left .eb-timeline-item__axis {
   grid-column: 1;
   grid-row: 1;
   /* 撑满行高：竖线段 ::after 依赖轴列高度（top:dot下缘 → bottom:0） */
   padding-top: 6px;
 }
-.ev-timeline-item.is-mode-left .ev-timeline-item__content {
+.eb-timeline-item.is-mode-left .eb-timeline-item__content {
   grid-column: 2;
   grid-row: 1;
   padding-left: 18px;
   text-align: left;
 }
-.ev-timeline-item.is-mode-left.has-timestamp-aside-start .ev-timeline-item__aside--left {
+.eb-timeline-item.is-mode-left.has-timestamp-aside-start .eb-timeline-item__aside--left {
   position: absolute;
   right: calc(100% + 10px);
   top: 0;
@@ -58,7 +58,7 @@
   text-align: right;
 }
 /* 交叉组合：left 模式 + placement=end，时间戳 absolute 到轴右侧外 */
-.ev-timeline-item.is-mode-left.has-timestamp-aside-end .ev-timeline-item__aside--right {
+.eb-timeline-item.is-mode-left.has-timestamp-aside-end .eb-timeline-item__aside--right {
   position: absolute;
   left: calc(100% + 10px);
   top: 0;
@@ -66,7 +66,7 @@
   text-align: left;
 }
 /* 交叉组合：right 模式 + placement=start，时间戳 absolute 到轴左侧外 */
-.ev-timeline-item.is-mode-right.has-timestamp-aside-start .ev-timeline-item__aside--left {
+.eb-timeline-item.is-mode-right.has-timestamp-aside-start .eb-timeline-item__aside--left {
   position: absolute;
   right: calc(100% + 10px);
   top: 0;
@@ -74,21 +74,21 @@
   text-align: right;
 }
 
-.ev-timeline-item.is-mode-right {
+.eb-timeline-item.is-mode-right {
   grid-template-columns: 1fr 20px;
 }
-.ev-timeline-item.is-mode-right .ev-timeline-item__axis {
+.eb-timeline-item.is-mode-right .eb-timeline-item__axis {
   grid-column: 2;
   grid-row: 1;
   padding-top: 6px;
 }
-.ev-timeline-item.is-mode-right .ev-timeline-item__content {
+.eb-timeline-item.is-mode-right .eb-timeline-item__content {
   grid-column: 1;
   grid-row: 1;
   padding-right: 18px;
   text-align: right;
 }
-.ev-timeline-item.is-mode-right.has-timestamp-aside-end .ev-timeline-item__aside--right {
+.eb-timeline-item.is-mode-right.has-timestamp-aside-end .eb-timeline-item__aside--right {
   position: absolute;
   left: calc(100% + 10px);
   top: 0;
@@ -96,34 +96,34 @@
   text-align: left;
 }
 
-.ev-timeline-item.is-mode-alternate {
+.eb-timeline-item.is-mode-alternate {
   grid-template-columns: 1fr 20px 1fr;
 }
-.ev-timeline-item.is-mode-alternate .ev-timeline-item__axis {
+.eb-timeline-item.is-mode-alternate .eb-timeline-item__axis {
   grid-column: 2;
   grid-row: 1;
   padding-top: 6px;
 }
-.ev-timeline-item.is-mode-alternate.is-placement-start .ev-timeline-item__aside--left {
+.eb-timeline-item.is-mode-alternate.is-placement-start .eb-timeline-item__aside--left {
   grid-column: 1;
   grid-row: 1;
   padding-right: 18px;
   text-align: right;
   align-self: start;
 }
-.ev-timeline-item.is-mode-alternate.is-placement-start .ev-timeline-item__content {
+.eb-timeline-item.is-mode-alternate.is-placement-start .eb-timeline-item__content {
   grid-column: 3;
   grid-row: 1;
   padding-left: 18px;
   text-align: left;
 }
-.ev-timeline-item.is-mode-alternate.is-placement-end .ev-timeline-item__content {
+.eb-timeline-item.is-mode-alternate.is-placement-end .eb-timeline-item__content {
   grid-column: 1;
   grid-row: 1;
   padding-right: 18px;
   text-align: right;
 }
-.ev-timeline-item.is-mode-alternate.is-placement-end .ev-timeline-item__aside--right {
+.eb-timeline-item.is-mode-alternate.is-placement-end .eb-timeline-item__aside--right {
   grid-column: 3;
   grid-row: 1;
   padding-left: 18px;
@@ -132,7 +132,7 @@
 }
 
 /* ══════ 节点轴与 dot ══════ */
-.ev-timeline-item__axis {
+.eb-timeline-item__axis {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -142,60 +142,60 @@
   align-self: stretch;
 }
 /* 竖线段：从 dot 下缘画穿 item 的 padding-bottom 到边框盒底部，与下一个 dot 首尾相接 */
-.ev-timeline-item__axis::after {
+.eb-timeline-item__axis::after {
   content: '';
   position: absolute;
   top: calc(6px + var(--dot-size, 10px));
-  bottom: calc(-1 * var(--ev-timeline-item-padding-bottom) - 6px);
-  width: var(--ev-timeline-tail-width);
-  background: var(--ev-timeline-tail-color);
+  bottom: calc(-1 * var(--eb-timeline-item-padding-bottom) - 6px);
+  width: var(--eb-timeline-tail-width);
+  background: var(--eb-timeline-tail-color);
   pointer-events: none;
 }
 /* 末节点：线只延伸到 dot 下方少许即止 */
-.ev-timeline-item:last-child .ev-timeline-item__axis::after {
-  bottom: calc(var(--ev-timeline-item-padding-bottom) * -1 + 8px);
+.eb-timeline-item:last-child .eb-timeline-item__axis::after {
+  bottom: calc(var(--eb-timeline-item-padding-bottom) * -1 + 8px);
 }
 
 /* 倒序（column-reverse）：视觉末/首节点与 DOM 末/首节点对调，短尾线规则随之对调，
    否则视觉最顶上的节点线段过短，与下一节点之间的竖线断开 */
-.ev-timeline.is-reverse .ev-timeline-item:first-child .ev-timeline-item__axis::after {
-  bottom: calc(var(--ev-timeline-item-padding-bottom) * -1 + 8px);
+.eb-timeline.is-reverse .eb-timeline-item:first-child .eb-timeline-item__axis::after {
+  bottom: calc(var(--eb-timeline-item-padding-bottom) * -1 + 8px);
 }
-.ev-timeline.is-reverse .ev-timeline-item:last-child .ev-timeline-item__axis::after {
-  bottom: calc(-1 * var(--ev-timeline-item-padding-bottom) - 6px);
+.eb-timeline.is-reverse .eb-timeline-item:last-child .eb-timeline-item__axis::after {
+  bottom: calc(-1 * var(--eb-timeline-item-padding-bottom) - 6px);
 }
 
-.ev-timeline-item__dot {
+.eb-timeline-item__dot {
   width: var(--dot-size, 10px);
   height: var(--dot-size, 10px);
-  border-radius: var(--ev-radius-full);
-  border: var(--dot-border-width, 2px) solid var(--dot-color, var(--ev-color-primary));
-  background: var(--ev-bg-color);
+  border-radius: var(--eb-radius-full);
+  border: var(--dot-border-width, 2px) solid var(--dot-color, var(--eb-color-primary));
+  background: var(--eb-bg-color);
   flex-shrink: 0;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ev-font-size-xs, 12px);
-  color: var(--dot-color, var(--ev-color-primary));
-  transition: all var(--ev-duration-base) var(--ev-ease-out);
+  font-size: var(--eb-font-size-xs, 12px);
+  color: var(--dot-color, var(--eb-color-primary));
+  transition: all var(--eb-duration-base) var(--eb-ease-out);
 }
 
-.ev-timeline-item.is-variant-filled .ev-timeline-item__dot {
-  background: var(--dot-color, var(--ev-color-primary));
-  border-color: var(--dot-color, var(--ev-color-primary));
+.eb-timeline-item.is-variant-filled .eb-timeline-item__dot {
+  background: var(--dot-color, var(--eb-color-primary));
+  border-color: var(--dot-color, var(--eb-color-primary));
 }
-.ev-timeline-item.is-variant-filled .ev-timeline-item__dot.has-custom {
+.eb-timeline-item.is-variant-filled .eb-timeline-item__dot.has-custom {
   color: #fff;
 }
 
-.ev-timeline-item.is-loading .ev-timeline-item__dot {
-  animation: ev-timeline-pulse 1.4s ease-in-out infinite;
-  background: var(--ev-color-info);
-  border-color: var(--ev-color-info);
+.eb-timeline-item.is-loading .eb-timeline-item__dot {
+  animation: eb-timeline-pulse 1.4s ease-in-out infinite;
+  background: var(--eb-color-info);
+  border-color: var(--eb-color-info);
 }
 
-@keyframes ev-timeline-pulse {
+@keyframes eb-timeline-pulse {
   0%,
   100% {
     opacity: 1;
@@ -208,47 +208,47 @@
 }
 
 /* ══════ 内容与时间戳 ══════ */
-.ev-timeline-item__body {
-  font-size: var(--ev-font-size-base);
-  line-height: var(--ev-line-height-base);
-  color: var(--ev-text-color-regular);
+.eb-timeline-item__body {
+  font-size: var(--eb-font-size-base);
+  line-height: var(--eb-line-height-base);
+  color: var(--eb-text-color-regular);
   word-break: break-word;
   margin: 0;
 }
 
-.ev-timeline-item__timestamp {
-  font-size: var(--ev-font-size-xs, 12px);
+.eb-timeline-item__timestamp {
+  font-size: var(--eb-font-size-xs, 12px);
   line-height: 1.5;
-  color: var(--ev-text-color-secondary);
+  color: var(--eb-text-color-secondary);
 }
-.ev-timeline-item__timestamp.is-top {
+.eb-timeline-item__timestamp.is-top {
   margin-bottom: 4px;
-  font-size: var(--ev-font-size-xs);
+  font-size: var(--eb-font-size-xs);
 }
-.ev-timeline-item__timestamp.is-bottom {
+.eb-timeline-item__timestamp.is-bottom {
   margin-top: 4px;
 }
-.ev-timeline-item__timestamp.is-aside {
-  font-size: var(--ev-font-size-xs);
-  line-height: var(--ev-line-height-base);
+.eb-timeline-item__timestamp.is-aside {
+  font-size: var(--eb-font-size-xs);
+  line-height: var(--eb-line-height-base);
   display: block;
 }
 
-.ev-timeline-item__aside {
-  font-size: var(--ev-font-size-base);
-  color: var(--ev-text-color-secondary);
-  line-height: var(--ev-line-height-base);
+.eb-timeline-item__aside {
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-secondary);
+  line-height: var(--eb-line-height-base);
   align-self: start;
 }
-.ev-timeline-item__aside--left {
+.eb-timeline-item__aside--left {
   padding-right: 18px;
 }
-.ev-timeline-item__aside--right {
+.eb-timeline-item__aside--right {
   padding-left: 18px;
   text-align: right;
 }
 
-.ev-timeline-item.is-pending .ev-timeline-item__body {
-  color: var(--ev-text-color-secondary);
+.eb-timeline-item.is-pending .eb-timeline-item__body {
+  color: var(--eb-text-color-secondary);
   font-style: italic;
 }

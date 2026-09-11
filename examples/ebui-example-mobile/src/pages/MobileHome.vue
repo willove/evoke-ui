@@ -9,10 +9,10 @@
         <div class="mb-appbar__sub">云眠研发 · 移动工作台</div>
       </div>
       <div class="mb-appbar__right">
-        <ev-badge v-if="activeTab === 'home'" :value="unreadCount" :max="99">
-          <ev-icon name="bell" :size="18" />
-        </ev-badge>
-        <ev-avatar :size="30">林</ev-avatar>
+        <eb-badge v-if="activeTab === 'home'" :value="unreadCount" :max="99">
+          <eb-icon name="bell" :size="18" />
+        </eb-badge>
+        <eb-avatar :size="30">林</eb-avatar>
       </div>
     </header>
 
@@ -29,13 +29,13 @@
 
         <div class="mb-simple">
           <span>简单模式</span>
-          <ev-switch v-model="simpleMode" size="small" />
+          <eb-switch v-model="simpleMode" size="small" />
         </div>
 
         <div v-if="!simpleMode" class="mb-card">
           <div class="mb-card__title">本月用量</div>
           <div class="mb-usage">
-            <ev-credits-progress
+            <eb-credits-progress
               v-for="u in usage"
               :key="u.label"
               :used="u.used"
@@ -49,33 +49,33 @@
 
         <div v-if="!simpleMode" class="mb-card">
           <div class="mb-card__title">差旅报销审批</div>
-          <ev-steps :active="1" align-center>
-            <ev-step v-for="s in approvalStages" :key="s.name" :title="s.name" :description="s.date" />
-          </ev-steps>
+          <eb-steps :active="1" align-center>
+            <eb-step v-for="s in approvalStages" :key="s.name" :title="s.name" :description="s.date" />
+          </eb-steps>
         </div>
 
         <div class="mb-card">
           <div class="mb-card__title">快速登记</div>
-          <ev-config-provider platform="mobile">
+          <eb-config-provider platform="mobile">
             <div class="mb-form">
               <div class="mb-form__item">
                 <label class="mb-form__label">费用类型</label>
-                <ev-select v-model="form.type" placeholder="请选择费用类型" style="width: 100%">
-                  <ev-option label="差旅费" value="travel" />
-                  <ev-option label="交通费" value="transport" />
-                  <ev-option label="餐饮招待" value="meal" />
-                </ev-select>
+                <eb-select v-model="form.type" placeholder="请选择费用类型" style="width: 100%">
+                  <eb-option label="差旅费" value="travel" />
+                  <eb-option label="交通费" value="transport" />
+                  <eb-option label="餐饮招待" value="meal" />
+                </eb-select>
               </div>
               <div class="mb-form__item">
                 <label class="mb-form__label">发生日期</label>
-                <ev-date-picker v-model="form.date" type="date" placeholder="选择日期" style="width: 100%" />
+                <eb-date-picker v-model="form.date" type="date" placeholder="选择日期" style="width: 100%" />
               </div>
             </div>
-          </ev-config-provider>
+          </eb-config-provider>
         </div>
 
         <div class="mb-card">
-          <ev-segmented
+          <eb-segmented
             v-model="homeTab"
             block
             :options="[
@@ -90,7 +90,7 @@
                   <span class="mb-row__title">{{ t.title }}</span>
                   <span class="mb-row__sub" :class="{ 'is-urgent': t.urgent }">{{ t.time }}</span>
                 </div>
-                <ev-button size="small" type="primary" plain @click="handleTodo(t)">处理</ev-button>
+                <eb-button size="small" type="primary" plain @click="handleTodo(t)">处理</eb-button>
               </div>
               <div v-if="!todos.length" class="mb-list__empty">待办已清空</div>
             </template>
@@ -98,13 +98,13 @@
               <div v-for="o in orders.slice(0, 3)" :key="o.id" class="mb-row mb-row--col">
                 <div class="mb-row__top">
                   <span class="mb-row__title">{{ o.id }} · {{ o.buyer }}</span>
-                  <ev-status-tag :value="o.status" :statuses="ORDER_STATUS" />
+                  <eb-status-tag :value="o.status" :statuses="ORDER_STATUS" />
                 </div>
                 <div class="mb-row__bottom">
                   <span class="mb-row__channel">{{ o.channel }}</span>
                   <strong class="mb-row__amount">¥{{ o.amount.toLocaleString() }}</strong>
                 </div>
-                <ev-progress :percentage="o.progress" :stroke-width="6" />
+                <eb-progress :percentage="o.progress" :stroke-width="6" />
               </div>
             </template>
           </div>
@@ -115,13 +115,13 @@
       <template v-else-if="activeTab === 'orders'">
         <div class="mb-card">
           <div class="mb-filter">
-            <ev-input v-model="orderKeyword" placeholder="搜索订单号 / 客户" style="flex: 1">
+            <eb-input v-model="orderKeyword" placeholder="搜索订单号 / 客户" style="flex: 1">
               <template #prefix>
-                <ev-icon name="search" :size="14" />
+                <eb-icon name="search" :size="14" />
               </template>
-            </ev-input>
+            </eb-input>
           </div>
-          <ev-segmented
+          <eb-segmented
             v-model="orderStatus"
             block
             :options="[{ label: '全部', value: 'all' }, ...ORDER_STATUS]"
@@ -130,15 +130,15 @@
             <div v-for="o in filteredOrders" :key="o.id" class="mb-row mb-row--col">
               <div class="mb-row__top">
                 <span class="mb-row__title">{{ o.id }} · {{ o.buyer }}</span>
-                <ev-status-tag :value="o.status" :statuses="ORDER_STATUS" />
+                <eb-status-tag :value="o.status" :statuses="ORDER_STATUS" />
               </div>
               <div class="mb-row__bottom">
                 <span class="mb-row__channel">{{ o.channel }}</span>
                 <strong class="mb-row__amount">¥{{ o.amount.toLocaleString() }}</strong>
               </div>
-              <ev-progress :percentage="o.progress" :stroke-width="6" />
+              <eb-progress :percentage="o.progress" :stroke-width="6" />
               <div class="mb-row__actions">
-                <ev-button size="small" @click="EvMessage.info(`示例：查看订单 ${o.id} 详情`)">查看详情</ev-button>
+                <eb-button size="small" @click="EbMessage.info(`示例：查看订单 ${o.id} 详情`)">查看详情</eb-button>
               </div>
             </div>
             <div v-if="!filteredOrders.length" class="mb-list__empty">没有匹配的订单</div>
@@ -150,7 +150,7 @@
       <template v-else-if="activeTab === 'message'">
         <div class="mb-card">
           <div class="mb-filter">
-            <ev-segmented
+            <eb-segmented
               v-model="messageType"
               block
               :options="[{ label: '全部', value: 'all' }, { label: '审批', value: 'approve' }, { label: '系统', value: 'system' }]"
@@ -165,7 +165,7 @@
               @click="msg.unread = false"
             >
               <span class="mb-msg__icon" :class="`is-${msg.type}`">
-                <ev-icon :name="MESSAGE_TYPE[msg.type].icon" :size="15" />
+                <eb-icon :name="MESSAGE_TYPE[msg.type].icon" :size="15" />
               </span>
               <div class="mb-msg__main">
                 <div class="mb-msg__title">
@@ -178,9 +178,9 @@
             </div>
           </div>
           <div class="mb-list__actions">
-            <ev-button size="small" text type="primary" :disabled="!unreadCount" @click="clearUnread">
+            <eb-button size="small" text type="primary" :disabled="!unreadCount" @click="clearUnread">
               全部标为已读
-            </ev-button>
+            </eb-button>
           </div>
         </div>
       </template>
@@ -188,24 +188,24 @@
       <!-- ═══════ 我的 ═══════ -->
       <template v-else-if="activeTab === 'mine'">
         <div class="mb-card mb-profile">
-          <ev-avatar :size="52">林</ev-avatar>
+          <eb-avatar :size="52">林</eb-avatar>
           <div class="mb-profile__meta">
             <div class="mb-profile__name">林晓</div>
             <div class="mb-profile__desc">业务组 · 全栈工程师</div>
           </div>
-          <ev-button size="small" text type="primary" @click="EvMessage.info('示例：编辑资料')">编辑</ev-button>
+          <eb-button size="small" text type="primary" @click="EbMessage.info('示例：编辑资料')">编辑</eb-button>
         </div>
 
         <div class="mb-card">
           <div class="mb-card__title">本月概要</div>
           <div class="mb-mine-usage">
             <span>AI Credits</span>
-            <ev-progress :percentage="Math.round((profile.creditsUsed / profile.creditsTotal) * 100)" :stroke-width="8" />
+            <eb-progress :percentage="Math.round((profile.creditsUsed / profile.creditsTotal) * 100)" :stroke-width="8" />
             <span class="mb-mine-usage__num">{{ profile.creditsUsed }} / {{ profile.creditsTotal }}</span>
           </div>
           <div class="mb-mine-usage">
             <span>报销单</span>
-            <ev-progress :percentage="100" :stroke-width="8" status="success" />
+            <eb-progress :percentage="100" :stroke-width="8" status="success" />
             <span class="mb-mine-usage__num">{{ profile.expenseCount }} 单</span>
           </div>
         </div>
@@ -215,20 +215,20 @@
             v-for="m in mineMenus"
             :key="m.label"
             class="mb-menu-row"
-            @click="EvMessage.info(`示例：${m.label}`)"
+            @click="EbMessage.info(`示例：${m.label}`)"
           >
             <span class="mb-menu-row__left">
-              <ev-icon :name="m.icon" :size="16" />
+              <eb-icon :name="m.icon" :size="16" />
               {{ m.label }}
             </span>
-            <ev-icon name="arrow-right" :size="14" />
+            <eb-icon name="arrow-right" :size="14" />
           </div>
         </div>
 
         <div class="mb-card">
-          <div class="mb-menu-row" @click="EvMessage.info('示例：退出登录（需二次确认）')">
+          <div class="mb-menu-row" @click="EbMessage.info('示例：退出登录（需二次确认）')">
             <span class="mb-menu-row__left is-danger">
-              <ev-icon name="signout" :size="16" />
+              <eb-icon name="signout" :size="16" />
               退出登录
             </span>
           </div>
@@ -249,7 +249,7 @@
         @click="switchTab(t.key)"
       >
         <span class="mb-tab__icon-wrap">
-          <ev-icon :name="t.icon" :size="19" />
+          <eb-icon :name="t.icon" :size="19" />
           <i v-if="t.key === 'message' && unreadCount" class="mb-tab__dot">{{ unreadCount }}</i>
         </span>
         <span>{{ t.label }}</span>
@@ -260,7 +260,7 @@
 
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { EvMessage } from '@wil-works/evoke-business-ui'
+import { EbMessage } from '@wil-works/evoke-business-ui'
 import {
   stats,
   todos,
@@ -343,7 +343,7 @@ const filteredMessages = computed(() =>
 
 function clearUnread() {
   messages.forEach((m) => (m.unread = false))
-  EvMessage.success('已全部标为已读')
+  EbMessage.success('已全部标为已读')
 }
 
 /* ── 我的 ── */
@@ -365,7 +365,7 @@ watch(activeTab, () => {})
   max-width: 420px;
   margin: 0 auto;
   min-height: 100dvh;
-  background: var(--ev-bg-color-page, #f5f6f8);
+  background: var(--eb-bg-color-page, #f5f6f8);
 }
 
 /* ── 应用栏 ── */
@@ -377,18 +377,18 @@ watch(activeTab, () => {})
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--ev-bg-color, #fff);
-  border-bottom: 1px solid var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-bg-color, #fff);
+  border-bottom: 1px solid var(--eb-border-color-light, #e5e7eb);
 }
 .mb-appbar__hello {
   font-size: 16px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .mb-appbar__sub {
   margin-top: 2px;
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-appbar__right {
   display: flex;
@@ -412,22 +412,22 @@ watch(activeTab, () => {})
   flex-direction: column;
   gap: 3px;
   padding: 12px 14px;
-  background: var(--ev-bg-color, #fff);
-  border: 1px solid var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-bg-color, #fff);
+  border: 1px solid var(--eb-border-color-light, #e5e7eb);
   border-radius: 10px;
 }
 .mb-stat__label {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-stat__value {
   font-size: 20px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .mb-stat__trend {
   font-size: 12px;
-  color: var(--ev-color-success, #22a45d);
+  color: var(--eb-color-success, #22a45d);
 }
 
 /* ── 简单模式 ── */
@@ -438,9 +438,9 @@ watch(activeTab, () => {})
   margin-top: 12px;
   padding: 10px 14px;
   font-size: 13px;
-  color: var(--ev-text-color-regular, #4e545c);
-  background: var(--ev-bg-color, #fff);
-  border: 1px solid var(--ev-border-color-light, #e5e7eb);
+  color: var(--eb-text-color-regular, #4e545c);
+  background: var(--eb-bg-color, #fff);
+  border: 1px solid var(--eb-border-color-light, #e5e7eb);
   border-radius: 10px;
 }
 
@@ -448,16 +448,16 @@ watch(activeTab, () => {})
 .mb-card {
   margin-top: 12px;
   padding: 14px;
-  background: var(--ev-bg-color, #fff);
-  border: 1px solid var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-bg-color, #fff);
+  border: 1px solid var(--eb-border-color-light, #e5e7eb);
   border-radius: 10px;
 }
 .mb-card__title {
   margin-bottom: 12px;
   padding-left: 8px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
-  border-left: 3px solid var(--ev-color-primary, #175dff);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
+  border-left: 3px solid var(--eb-color-primary, #175dff);
 }
 .mb-usage {
   display: flex;
@@ -478,7 +478,7 @@ watch(activeTab, () => {})
 }
 .mb-form__label {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 
 /* ── 通用行 / 列表 ── */
@@ -498,7 +498,7 @@ watch(activeTab, () => {})
   padding: 11px 2px;
 }
 .mb-row + .mb-row {
-  border-top: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
 }
 .mb-row--col {
   flex-direction: column;
@@ -519,25 +519,25 @@ watch(activeTab, () => {})
 }
 .mb-row__title {
   font-size: 14px;
-  color: var(--ev-text-color-primary, #1f2329);
+  color: var(--eb-text-color-primary, #1f2329);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .mb-row__sub {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-row__sub.is-urgent {
-  color: var(--ev-color-danger, #e34d59);
+  color: var(--eb-color-danger, #e34d59);
 }
 .mb-row__channel {
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-row__amount {
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .mb-row__actions {
   display: flex;
@@ -547,7 +547,7 @@ watch(activeTab, () => {})
   padding: 24px 0;
   text-align: center;
   font-size: 13px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-list__actions {
   display: flex;
@@ -565,7 +565,7 @@ watch(activeTab, () => {})
   cursor: pointer;
 }
 .mb-msg + .mb-msg {
-  border-top: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
 }
 .mb-msg__icon {
   display: inline-flex;
@@ -575,12 +575,12 @@ watch(activeTab, () => {})
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: var(--ev-color-primary-light-9, rgba(23, 93, 255, 0.08));
-  color: var(--ev-color-primary, #175dff);
+  background: var(--eb-color-primary-light-9, rgba(23, 93, 255, 0.08));
+  color: var(--eb-color-primary, #175dff);
 }
 .mb-msg__icon.is-system {
-  background: var(--ev-fill-color, #f2f3f5);
-  color: var(--ev-text-color-secondary, #8a9099);
+  background: var(--eb-fill-color, #f2f3f5);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-msg__main {
   flex: 1;
@@ -591,19 +591,19 @@ watch(activeTab, () => {})
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  color: var(--ev-text-color-primary, #1f2329);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .mb-msg__dot {
   width: 6px;
   height: 6px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--ev-color-danger, #e34d59);
+  background: var(--eb-color-danger, #e34d59);
 }
 .mb-msg__desc {
   margin-top: 3px;
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -611,7 +611,7 @@ watch(activeTab, () => {})
 .mb-msg__time {
   flex-shrink: 0;
   font-size: 11px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 
 /* ── 我的 ── */
@@ -625,13 +625,13 @@ watch(activeTab, () => {})
 }
 .mb-profile__name {
   font-size: 17px;
-  font-weight: var(--ev-font-weight-semibold, 600);
-  color: var(--ev-text-color-primary, #1f2329);
+  font-weight: var(--eb-font-weight-semibold, 600);
+  color: var(--eb-text-color-primary, #1f2329);
 }
 .mb-profile__desc {
   margin-top: 3px;
   font-size: 12px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-mine-usage {
   display: flex;
@@ -643,9 +643,9 @@ watch(activeTab, () => {})
   flex-shrink: 0;
   width: 76px;
   font-size: 13px;
-  color: var(--ev-text-color-regular, #4e545c);
+  color: var(--eb-text-color-regular, #4e545c);
 }
-.mb-mine-usage .ev-progress,
+.mb-mine-usage .eb-progress,
 .mb-mine-usage [class*="progress"] {
   flex: 1;
 }
@@ -653,7 +653,7 @@ watch(activeTab, () => {})
   flex-shrink: 0;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 .mb-menu-row {
   display: flex;
@@ -661,11 +661,11 @@ watch(activeTab, () => {})
   justify-content: space-between;
   padding: 13px 2px;
   font-size: 14px;
-  color: var(--ev-text-color-primary, #1f2329);
+  color: var(--eb-text-color-primary, #1f2329);
   cursor: pointer;
 }
 .mb-menu-row + .mb-menu-row {
-  border-top: 1px solid var(--ev-border-color-extra-light, #f0f1f3);
+  border-top: 1px solid var(--eb-border-color-extra-light, #f0f1f3);
 }
 .mb-menu-row__left {
   display: inline-flex;
@@ -673,13 +673,13 @@ watch(activeTab, () => {})
   gap: 10px;
 }
 .mb-menu-row__left.is-danger {
-  color: var(--ev-color-danger, #e34d59);
+  color: var(--eb-color-danger, #e34d59);
 }
 .mb-version {
   margin-top: 16px;
   text-align: center;
   font-size: 11px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
 }
 
 /* ── 底部标签栏 ── */
@@ -688,8 +688,8 @@ watch(activeTab, () => {})
   bottom: 0;
   z-index: 10;
   display: flex;
-  background: var(--ev-bg-color, #fff);
-  border-top: 1px solid var(--ev-border-color-light, #e5e7eb);
+  background: var(--eb-bg-color, #fff);
+  border-top: 1px solid var(--eb-border-color-light, #e5e7eb);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .mb-tab {
@@ -700,13 +700,13 @@ watch(activeTab, () => {})
   gap: 2px;
   padding: 7px 0 8px;
   font-size: 11px;
-  color: var(--ev-text-color-secondary, #8a9099);
+  color: var(--eb-text-color-secondary, #8a9099);
   background: transparent;
   border: none;
   cursor: pointer;
 }
 .mb-tab.is-active {
-  color: var(--ev-color-primary, #175dff);
+  color: var(--eb-color-primary, #175dff);
 }
 .mb-tab__icon-wrap {
   position: relative;
@@ -724,7 +724,7 @@ watch(activeTab, () => {})
   line-height: 14px;
   text-align: center;
   color: #fff;
-  background: var(--ev-color-danger, #e34d59);
+  background: var(--eb-color-danger, #e34d59);
   border-radius: 999px;
 }
 </style>

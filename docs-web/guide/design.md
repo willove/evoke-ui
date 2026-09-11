@@ -19,7 +19,7 @@ Evoke UI 的设计主线是「**安静优雅**」。官网是产品的第一印�
 
 ## 五条设计准则
 
-1. **细字重展示体** —— 标题默认 weight 400 + `-0.02em` 字距，大而轻；需要冲击时再切 `--ew-display-weight-strong: 600`
+1. **细字重展示体** —— 标题默认 weight 400 + `-0.02em` 字距，大而轻；需要冲击时再切 `--ev-display-weight-strong: 600`
 2. **呼吸感** —— 区块间距 96px 级、正文行高 1.7、标题 `text-wrap: balance`；结构靠留白而非线
 3. **安静组件** —— 边框用最轻一档（`#F0F2F8`），阴影是"托起"不是"投影"；主色 `#0D70FF` 只给交互焦点与关键 CTA
 4. **微交互有弹性** —— hover 徽标弹入、卡片轻抬 2~3px；其余一律 0.2s ease-in-out
@@ -29,19 +29,19 @@ Evoke UI 的设计主线是「**安静优雅**」。官网是产品的第一印�
 
 | 分组 | 令牌 |
 | --- | --- |
-| 主色 | `--ew-color-primary`（#0D70FF）及 light-3/5/7/8/9、dark-2、rgb 游标 |
-| 墨色 | `--ew-color-ink`（#1A2947）`--ew-color-ink-secondary` `--ew-color-ink-muted` |
-| 背景 | `--ew-bg-page/soft/muted/container` `--ew-gradient-hero` |
-| 边框/填充 | `--ew-border-color(-light/-dark)` `--ew-fill-1/2/3` |
-| 粉彩 | `--ew-pastel-cream/blue/mint/pink/lime` |
-| 展示体 | `--ew-display-weight(-strong)` `--ew-display-letter-spacing` `--ew-display-line-height` |
-| 动效 | `--ew-ease-spring/smooth` `--ew-duration-fast/base/slow/slower` |
-| 形状 | `--ew-radius-sm…2xl/full` `--ew-shadow-1…4` |
+| 主色 | `--ev-color-primary`（#0D70FF）及 light-3/5/7/8/9、dark-2、rgb 游标 |
+| 墨色 | `--ev-color-ink`（#1A2947）`--ev-color-ink-secondary` `--ev-color-ink-muted` |
+| 背景 | `--ev-bg-page/soft/muted/container` `--ev-gradient-hero` |
+| 边框/填充 | `--ev-border-color(-light/-dark)` `--ev-fill-1/2/3` |
+| 粉彩 | `--ev-pastel-cream/blue/mint/pink/lime` |
+| 展示体 | `--ev-display-weight(-strong)` `--ev-display-letter-spacing` `--ev-display-line-height` |
+| 动效 | `--ev-ease-spring/smooth` `--ev-duration-fast/base/slow/slower` |
+| 形状 | `--ev-radius-sm…2xl/full` `--ev-shadow-1…4` |
 
 ## 组件与语言的关系
 
-- **EwHero / EwSection**：光带渐变底 + 细字重标题，是设计语言的门面
-- **EwSearchBox / EwIconGrid**：三段式大搜索栏与致密图标网格，是工具站与开源项目站首页的焦点组件
-- **EwCard**：粉彩贴纸与深色精选两种卡面，覆盖作品集与转化场景
-- **EwPricingCard / EwFaq / EwCta / EwNewsletter**：完整的转化链路区块
+- **EvHero / EvSection**：光带渐变底 + 细字重标题，是设计语言的门面
+- **EvSearchBox / EvIconGrid**：三段式大搜索栏与致密图标网格，是工具站与开源项目站首页的焦点组件
+- **EvCard**：粉彩贴纸与深色精选两种卡面，覆盖作品集与转化场景
+- **EvPricingCard / EvFaq / EvCta / EvNewsletter**：完整的转化链路区块
 - **v-reveal**：滚动入场时的统一浮现动效，配合 spring 微交互

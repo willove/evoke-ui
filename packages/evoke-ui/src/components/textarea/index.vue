@@ -1,8 +1,8 @@
 <template>
-  <div :class="['ew-textarea', { 'is-disabled': disabled, 'is-error': error }]">
+  <div :class="['ev-textarea', { 'is-disabled': disabled, 'is-error': error }]">
     <textarea
       v-bind="filteredAttrs"
-      class="ew-textarea__inner"
+      class="ev-textarea__inner"
       :value="modelValue"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -10,18 +10,18 @@
       :maxlength="maxlength"
       @input="onInput"
     />
-    <span v-if="maxlength" class="ew-textarea__count">{{ count }} / {{ maxlength }}</span>
+    <span v-if="maxlength" class="ev-textarea__count">{{ count }} / {{ maxlength }}</span>
   </div>
 </template>
 
 <script setup>
 /**
- * EwTextarea — 多行文本（留言/评论正文）
+ * EvTextarea — 多行文本（留言/评论正文）
  * rows 控制高度，maxlength 显示字数计数；穿透 attrs 到原生 textarea
  */
 import { computed, useAttrs } from 'vue'
 
-defineOptions({ inheritAttrs: false, name: 'EwTextarea' })
+defineOptions({ inheritAttrs: false, name: 'EvTextarea' })
 
 const props = defineProps({
   /** 当前值（v-model） */

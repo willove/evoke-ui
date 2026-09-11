@@ -1,11 +1,11 @@
 <template>
-  <div ref="rootRef" :class="['ew-statistic', `is-${align}`]">
-    <div class="ew-statistic__value">
+  <div ref="rootRef" :class="['ev-statistic', `is-${align}`]">
+    <div class="ev-statistic__value">
       <!-- 定宽占位：以最终值的宽度撑住容器，滚动过程中布局零位移（防左右抖动） -->
-      <span v-if="animated && sizerText" class="ew-statistic__sizer" aria-hidden="true">{{ sizerText }}</span>
-      <span class="ew-statistic__num"><slot name="value">{{ shown }}</slot></span>
+      <span v-if="animated && sizerText" class="ev-statistic__sizer" aria-hidden="true">{{ sizerText }}</span>
+      <span class="ev-statistic__num"><slot name="value">{{ shown }}</slot></span>
     </div>
-    <div v-if="label || $slots.label" class="ew-statistic__label">
+    <div v-if="label || $slots.label" class="ev-statistic__label">
       <slot name="label">{{ label }}</slot>
     </div>
   </div>
@@ -13,7 +13,7 @@
 
 <script setup>
 /**
- * EwStatistic — 数据指标（GitHub Star 数 / 下载量等社会证明位）
+ * EvStatistic — 数据指标（GitHub Star 数 / 下载量等社会证明位）
  * animated 开启后：数值在进入视口时从 0 缓动滚动到目标值
  * （自动解析「前缀 + 数字 + 后缀」：¥120.5 / 99.99% / 1,200+；无法解析的纯文案直接显示）
  */

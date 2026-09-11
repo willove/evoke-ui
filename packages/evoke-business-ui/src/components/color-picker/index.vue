@@ -1,36 +1,36 @@
 <template>
   <div
     ref="referenceRef"
-    class="ev-color-picker ev-color-picker"
+    class="eb-color-picker eb-color-picker"
     :class="[sizeClass, { 'is-disabled': isDisabled }]"
   >
     <button
       type="button"
-      class="ev-color-picker__trigger"
+      class="eb-color-picker__trigger"
       :aria-label="`颜色选择器${modelValue ? '，当前 ' + modelValue : ''}`"
       :disabled="isDisabled || undefined"
       @click="togglePanel"
     >
       <span
-        class="ev-color-picker__color"
+        class="eb-color-picker__color"
         :class="{ 'is-alpha': showAlpha }"
         :style="{ backgroundColor: displayColor }"
       >
-        <ev-icon v-if="empty" class="ev-color-picker__icon" name="close" :size="14" />
+        <eb-icon v-if="empty" class="eb-color-picker__icon" name="close" :size="14" />
       </span>
     </button>
 
     <Teleport to="body">
-      <Transition name="ev-color-picker-fade">
+      <Transition name="eb-color-picker-fade">
         <div
           v-if="panelVisible"
           ref="floatingRef"
-          class="ev-color-picker__panel"
+          class="eb-color-picker__panel"
           :class="popperClass"
           :style="panelStyle"
           @keydown.esc.stop="closePanel"
         >
-          <ev-color-picker-panel
+          <eb-color-picker-panel
             ref="panelRef"
             v-model="panelColor"
             :show-alpha="showAlpha"
@@ -48,13 +48,13 @@
 
 <script setup>
 /**
- * EvColorPicker — 颜色选择器
+ * EbColorPicker — 颜色选择器
  * trigger + Teleport 弹层（useFloating/useZIndex/useClickOutside，与 Select 同管线）；
  * 面板内实时编辑、change 即时提交；空值显示遮罩图标
  */
 import { ref, computed, watch, onBeforeUnmount, nextTick, toRef } from 'vue'
-import EvIcon from '../icon/index.vue'
-import EvColorPickerPanel from './panel.vue'
+import EbIcon from '../icon/index.vue'
+import EbColorPickerPanel from './panel.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
@@ -117,7 +117,7 @@ const displayColor = computed(() => props.modelValue || 'transparent')
 
 const sizeClass = computed(() => {
   const s = formSize.value
-  return s && s !== 'default' ? `ev-color-picker--${s}` : ''
+  return s && s !== 'default' ? `eb-color-picker--${s}` : ''
 })
 
 function openPanel() {
