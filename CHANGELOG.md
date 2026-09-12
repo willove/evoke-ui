@@ -2,7 +2,11 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased]
+## [charts 0.3.0] — 2026-09-12
+
+> 单包发版波（workflow_dispatch charts）：仅 @wil-works/evoke-charts 0.2.0 → 0.3.0，
+> business-ui / ui 版本不变。含**行为变化**：容器默认去边框、显式 ticks 升级为
+> 硬上限，升级前请核对以下各节。
 
 ### @wil-works/evoke-charts — lint 视觉自检加深
 
