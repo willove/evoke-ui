@@ -2,6 +2,16 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [Unreleased]
+
+### @wil-works/evoke-charts — 修复：旭日图父节点省略 value 时只剩第一个分支
+
+- `sunburstData` 父节点省略 `value` 时布局层直接读 `n.value` 得到 NaN——
+  顶层角宽分配失效，**只有第一个分支的子层可见**（多分支数据被画成两三片的
+  环形图模样），后续兄弟分支角度全部失效。现在父节点由子孙节点递归汇总，
+  与文档「父节点可省略（由子节点汇总）」的承诺一致；显式 value 行为不变
+- `showValues` 标注同步改用聚合值，父节点不再出现 undefined
+
 ## [charts 0.3.0] — 2026-09-12
 
 > 单包发版波（workflow_dispatch charts）：仅 @wil-works/evoke-charts 0.2.0 → 0.3.0，
