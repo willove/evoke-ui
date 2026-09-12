@@ -3,33 +3,18 @@
  * Layout — 在默认主题布局上注入插槽，抹平首页与文档内页的观感差异：
  * 导航栏品牌区（名称 + v0.4.1）与动作区（主题切换 / GitHub / 下载）复刻首页 EvNavbar
  */
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import PlatformCompat from './PlatformCompat.vue'
 
 const { Layout } = DefaultTheme
-
-// 横幅高度实时写入 VitePress 原生偏移变量：窄屏文字换行时导航/侧栏/正文随之让位
-const bannerEl = ref(null)
-let bannerRo = null
-onMounted(() => {
-  if (!bannerEl.value || !('ResizeObserver' in window)) return
-  bannerRo = new ResizeObserver(() => {
-    document.documentElement.style.setProperty(
-      '--vp-layout-top-height',
-      `${bannerEl.value.offsetHeight}px`,
-    )
-  })
-  bannerRo.observe(bannerEl.value)
-})
-onBeforeUnmount(() => bannerRo?.disconnect())
 </script>
 
 <template>
   <Layout>
     <template #layout-top>
-      <div ref="bannerEl" class="dev-warn-banner dev-warn-banner--fixed">
-        <span>项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。</span>
+      <div class="dev-warn-banner dev-warn-banner--fixed">
+        <span class="dev-warn-banner__full">项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。</span>
+        <span class="dev-warn-banner__short">开发迭代中，<strong>请勿用于生产环境</strong>。</span>
       </div>
     </template>
     <template #doc-before>

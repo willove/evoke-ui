@@ -3,7 +3,8 @@ layout: false
 ---
 
 <div class="dev-warn-banner">
-  项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。
+  <span class="dev-warn-banner__full">项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。</span>
+  <span class="dev-warn-banner__short">开发迭代中，<strong>请勿用于生产环境</strong>。</span>
 </div>
 
 <script setup>
@@ -110,7 +111,7 @@ function goSearch() {
 }
 </script>
 
-<EvNavbar logo-text="Evoke UI" :items="[
+<EvNavbar class="home-navbar" logo-text="Evoke UI" :items="[
   { label: '首页', href: '/' },
   { label: '快速开始', href: '/guide/getting-started' },
   { label: '组件', href: '/components/overview' },

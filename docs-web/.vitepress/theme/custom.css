@@ -697,9 +697,19 @@
   color: var(--ev-text-secondary);
 }
 
-/* 顶部开发中警示横幅（Layout 的 layout-top 与首页 layout:false 裸页共用） */
+/* 顶部开发中警示横幅：三站一致永驻吸顶。首页裸页用 sticky（占文档流、滚后钉顶，
+   刷新恢复滚动位置时视口位置不变、不闪现）；内页 Layout 注入的追加 --fixed（脱离文档流，
+   导航/侧栏/正文全部挂在 VitePress 原生 --vp-layout-top-height 偏移上）。
+   窄屏换短文案保证单行，高度恒等于偏移变量 */
 .dev-warn-banner {
-  padding: 8px 16px;
+  position: sticky;
+  top: 0;
+  z-index: calc(var(--vp-z-index-nav) + 1);
+  min-height: var(--vp-layout-top-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
   font-size: 13px;
   line-height: 1.5;
   text-align: center;
@@ -715,32 +725,29 @@ html.dark .dev-warn-banner {
   background: #2b2414;
   border-bottom-color: #3f3418;
 }
+.dev-warn-banner__short {
+  display: none;
+}
 @media (max-width: 640px) {
   .dev-warn-banner {
     font-size: 12px;
-    padding: 7px 12px;
-  }
-}
-/* 内页（Layout 注入）横幅 fixed 吸顶；首页 layout:false 裸页的横幅保持文档流随页滚走。
-   高度不写死：窄屏换行时撑高，Layout 的 ResizeObserver 把真实高度同步进偏移变量。
-   min-height 用常量而非偏移变量，避免「量自己撑起来的高度」死循环 */
-.dev-warn-banner--fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: calc(var(--vp-z-index-nav) + 1);
-  min-height: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 16px;
-  line-height: 1.4;
-  text-wrap: balance;
-}
-@media (max-width: 640px) {
-  .dev-warn-banner--fixed {
-    font-size: 11.5px;
     padding: 4px 12px;
   }
+  .dev-warn-banner__full {
+    display: none;
+  }
+  .dev-warn-banner__short {
+    display: inline;
+  }
+}
+/* 内页（Layout 注入）：fixed 吸顶 */
+.dev-warn-banner--fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
+/* 首页裸页导航：吸顶时让位常驻横幅（库默认 top:0 会盖住横幅） */
+.ev-navbar.home-navbar.is-sticky {
+  top: var(--vp-layout-top-height);
 }
