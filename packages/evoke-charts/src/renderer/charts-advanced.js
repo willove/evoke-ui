@@ -13,12 +13,16 @@ function renderFunnelChart(ctx) {
   const stepHeight = totalHeight / funnelData.length;
   const maxValue = Math.max(...funnelData.map((d) => d.value));
   const drawData = options.pyramid === true ? [...funnelData].reverse() : funnelData;
+  // 标签在进度后段平滑淡入，不硬蹦
+  const labelAlpha = Math.min(1, Math.max(0, (progress - 0.72) / 0.28));
+  const outsideLabels = [];
   drawData.forEach((data, i) => {
     const color = data.color || theme.colors[funnelData.indexOf(data) % theme.colors.length];
     const isHover = i === hoverIndex;
-    const currentWidth = data.value / maxValue * maxWidth * progress;
+    const easedWidth = 1 - Math.pow(1 - progress, 3);
+    const currentWidth = data.value / maxValue * maxWidth * easedWidth;
     const nextValue = drawData[i + 1]?.value ?? data.value * 0.5;
-    const nextWidth = nextValue / maxValue * maxWidth * progress;
+    const nextWidth = nextValue / maxValue * maxWidth * easedWidth;
     const y = topY + i * stepHeight;
     const yOffset = isHover ? -3 : 0;
     canvasCtx.save();
@@ -33,49 +37,70 @@ function renderFunnelChart(ctx) {
     canvasCtx.strokeStyle = theme.backgroundColor;
     canvasCtx.lineWidth = 2;
     canvasCtx.stroke();
-    if (progress > 0.8) {
-      const labelY = y + stepHeight / 2 + yOffset;
-      const percentage = (data.value / drawData[0].value * 100).toFixed(1);
-      const label = `${data.label}`;
-      const valueText = `${data.value} (${percentage}%)`;
+    canvasCtx.restore();
+    if (labelAlpha <= 0) return;
+    const labelY = y + stepHeight / 2 + yOffset;
+    const percentage = (data.value / drawData[0].value * 100).toFixed(1);
+    const label = `${data.label}`;
+    const valueText = `${data.value} (${percentage}%)`;
+    canvasCtx.save();
+    canvasCtx.font = "bold 13px Inter, sans-serif";
+    const labelWidth = canvasCtx.measureText(label).width;
+    canvasCtx.font = "11px Inter, sans-serif";
+    const valueWidth = canvasCtx.measureText(valueText).width;
+    const minTextWidth = Math.max(labelWidth, valueWidth) + 28;
+    const trapezoidWidth = (currentWidth + nextWidth) / 2;
+    // 段内两行：名称与数值行距 18px；梯形放不下（两侧各留 14px）或层高不足时转外侧引线
+    if (trapezoidWidth >= minTextWidth && stepHeight >= 36) {
+      canvasCtx.globalAlpha = labelAlpha;
+      canvasCtx.fillStyle = theme.backgroundColor;
       canvasCtx.font = "bold 13px Inter, sans-serif";
-      const labelWidth = canvasCtx.measureText(label).width;
+      canvasCtx.textAlign = "center";
+      canvasCtx.textBaseline = "middle";
+      canvasCtx.fillText(label, centerX, labelY - 9);
       canvasCtx.font = "11px Inter, sans-serif";
-      const valueWidth = canvasCtx.measureText(valueText).width;
-      const minTextWidth = Math.max(labelWidth, valueWidth) + 16;
-      const trapezoidWidth = (currentWidth + nextWidth) / 2;
-      if (trapezoidWidth >= minTextWidth) {
-        canvasCtx.fillStyle = theme.backgroundColor;
-        canvasCtx.font = "bold 13px Inter, sans-serif";
-        canvasCtx.textAlign = "center";
-        canvasCtx.textBaseline = "middle";
-        canvasCtx.fillText(label, centerX, labelY - 8);
-        canvasCtx.font = "11px Inter, sans-serif";
-        canvasCtx.fillText(valueText, centerX, labelY + 8);
-      } else {
-        const lineEndX = centerX + currentWidth / 2;
-        const textX = plotArea.x + plotArea.width - 4;
-        canvasCtx.save();
-        canvasCtx.strokeStyle = theme.textColorSecondary;
-        canvasCtx.lineWidth = 1;
-        canvasCtx.setLineDash([3, 3]);
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(lineEndX, labelY);
-        canvasCtx.lineTo(textX - 4, labelY);
-        canvasCtx.stroke();
-        canvasCtx.setLineDash([]);
-        canvasCtx.restore();
-        canvasCtx.fillStyle = theme.textColor;
-        canvasCtx.font = "bold 12px Inter, sans-serif";
-        canvasCtx.textAlign = "right";
-        canvasCtx.textBaseline = "bottom";
-        canvasCtx.fillText(label, textX, labelY - 1);
-        canvasCtx.font = "11px Inter, sans-serif";
-        canvasCtx.fillStyle = theme.textColorSecondary;
-        canvasCtx.textBaseline = "top";
-        canvasCtx.fillText(valueText, textX, labelY + 1);
-      }
+      canvasCtx.fillText(valueText, centerX, labelY + 9);
+    } else {
+      outsideLabels.push({
+        labelY,
+        lineEndX: centerX + currentWidth / 2,
+        label,
+        valueText,
+        labelTextWidth: Math.max(labelWidth, valueWidth),
+      });
     }
+    canvasCtx.restore();
+  });
+  // 外侧引线标签：右对齐两行，纵向最小间距 34px 防重叠
+  outsideLabels.sort((a, b) => a.labelY - b.labelY);
+  const textX = plotArea.x + plotArea.width - 4;
+  let lastBottom = -Infinity;
+  const placed = outsideLabels.map((o) => {
+    const top = Math.max(o.labelY - 13, lastBottom + 2);
+    lastBottom = top + 36;
+    return { ...o, top };
+  });
+  placed.forEach((o) => {
+    canvasCtx.save();
+    canvasCtx.globalAlpha = labelAlpha;
+    canvasCtx.strokeStyle = theme.textColorSecondary;
+    canvasCtx.lineWidth = 1;
+    canvasCtx.setLineDash([3, 3]);
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(o.lineEndX, o.labelY);
+    canvasCtx.lineTo(textX - o.labelTextWidth - 10, o.top + 12);
+    canvasCtx.stroke();
+    canvasCtx.setLineDash([]);
+    const nameY = o.top + 12;
+    canvasCtx.fillStyle = theme.textColor;
+    canvasCtx.font = "bold 12px Inter, sans-serif";
+    canvasCtx.textAlign = "right";
+    canvasCtx.textBaseline = "bottom";
+    canvasCtx.fillText(o.label, textX, nameY);
+    canvasCtx.font = "11px Inter, sans-serif";
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.textBaseline = "top";
+    canvasCtx.fillText(o.valueText, textX, nameY + 2);
     canvasCtx.restore();
   });
 }

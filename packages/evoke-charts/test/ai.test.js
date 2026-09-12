@@ -12,6 +12,7 @@ import {
 } from '../src/ai/index.js'
 import { validateOptions } from '../src/schema.js'
 import { layoutSunburst, renderSunburstChart } from '../src/renderer/charts-extra.js'
+import { renderFunnelChart } from '../src/renderer/charts-advanced.js'
 
 const CSV = `月份,线上商城,线下门店,社群团购
 1月,320,280,120
@@ -359,5 +360,55 @@ describe('旭日图渲染：外层叶子标签外置', () => {
     const inner = fills.find((f) => f[0] === '自有')
     expect(inner).toBeTruthy()
     expect(Math.hypot(inner[1] - 240, inner[2] - 160)).toBeLessThan(126)
+  })
+})
+
+describe('漏斗图标签布局', () => {
+  it('窄层转外侧引线标签，纵向步进 ≥ 34px 防重叠', () => {
+    const fills = []
+    const proxy = new Proxy(
+      { measureText: () => ({ width: 10 }) },
+      {
+        get(obj, prop) {
+          return prop in obj ? obj[prop] : (...args) => { fills.push([String(prop), args]) }
+        },
+      },
+    )
+    renderFunnelChart(
+      {
+        ctx: proxy,
+        theme: {
+          colors: ['#175DFF', '#5AD8A6', '#f5a623', '#7fd3ed', '#f87171'],
+          textColorSecondary: '#6b7280',
+          backgroundColor: '#ffffff',
+          textColor: '#111827',
+        },
+        plotArea: { x: 40, y: 10, width: 400, height: 120 },
+        options: {
+          type: 'funnel',
+          funnelData: [
+            { label: '收到简历', value: 4860 },
+            { label: '笔试通过', value: 400 },
+            { label: '初面通过', value: 60 },
+            { label: '终面通过', value: 20 },
+            { label: '接受 Offer', value: 10 },
+          ],
+        },
+        width: 480,
+        height: 140,
+        progress: 1,
+        hoverIndex: -1,
+        hiddenSeries: new Set(),
+      },
+    )
+    // 外侧 value 行（右对齐 x = plotArea 右缘 - 4 = 436）纵向步进 ≥ 34
+    const ys = fills
+      .filter((f) => f[0] === 'fillText' && /\(\d/.test(String(f[1][0])) && f[1][1] === 436)
+      .map((f) => f[1][2])
+      .sort((a, b) => a - b)
+    expect(ys.length).toBeGreaterThanOrEqual(3)
+    for (let i = 1; i < ys.length; i++) {
+      expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(34)
+    }
   })
 })
