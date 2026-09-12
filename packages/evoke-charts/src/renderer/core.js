@@ -516,10 +516,13 @@ function calculateRange(options, hiddenSeries, useRightAxis) {
     return { min: Math.floor(min), max: Math.ceil(max) };
   }
   const range = max - min || 1;
+  // 余量取「数据极差 10%」与「幅值 5%」的较大者：极差相对幅值很小的平直数据
+  // （内存 580±6 这类）在零基线轴上不再顶满绘图区上缘
   if (min >= 0) {
-    return { min: 0, max: max + range * 0.1 };
+    return { min: 0, max: max + Math.max(range * 0.1, max * 0.05) };
   } else {
-    return { min: min - range * 0.1, max: max + range * 0.1 };
+    const pad = Math.max(range * 0.1, Math.max(Math.abs(max), Math.abs(min)) * 0.05);
+    return { min: min - pad, max: max + pad };
   }
 }
 function applyLogTransform(options) {

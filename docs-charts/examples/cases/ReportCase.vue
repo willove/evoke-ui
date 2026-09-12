@@ -86,11 +86,15 @@ const bulletOptions = {
 </script>
 
 <style scoped>
+/* minimal：demo-block 已是唯一外框，案例自身不再套框；表格行用发丝线即可，
+   迷你图与子弹图去自带底色描边，不另加面板框 */
 .case-report {
-  padding: 20px;
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 12px;
-  background: var(--ev-bg-color);
+  padding: 4px 0 0;
+}
+.case-report :deep(.ev-chart) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 .case-report__header {
   margin-bottom: 12px;
@@ -128,11 +132,7 @@ const bulletOptions = {
   border-bottom: none;
 }
 .case-report__bullets {
-  margin-top: 16px;
-  padding: 8px 10px;
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 10px;
-  background: var(--ev-bg-color-overlay);
+  margin-top: 20px;
 }
 .case-report__table .is-num {
   text-align: right;

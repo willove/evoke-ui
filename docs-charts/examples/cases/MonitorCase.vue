@@ -180,10 +180,8 @@ onUnmounted(stop)
 
 <style scoped>
 .case-mon {
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 12px;
-  background: var(--ev-bg-color);
-  padding: 16px 20px 8px;
+  /* minimal：demo-block 已是唯一外框，案例自身不再套框 */
+  padding: 4px 0 0;
 }
 .case-mon__header {
   display: flex;

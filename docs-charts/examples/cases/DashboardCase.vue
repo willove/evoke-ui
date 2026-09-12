@@ -122,11 +122,15 @@ function exportPNG() {
 </script>
 
 <style scoped>
+/* minimal：demo-block 已是唯一外框，案例自身不再套框；
+   图表去掉自带底色与描边，看板靠留白与字重分组 */
 .case-dashboard {
-  padding: 20px;
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 12px;
-  background: var(--ev-bg-color);
+  padding: 4px 0 0;
+}
+.case-dashboard :deep(.ev-chart) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 .case-dashboard__header {
   display: flex;
@@ -152,6 +156,7 @@ function exportPNG() {
   background: var(--ev-color-primary);
   color: #fff;
   font-size: 13px;
+  white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;
 }
@@ -161,14 +166,11 @@ function exportPNG() {
 .case-dashboard__kpis {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 .case-kpi {
-  padding: 12px 14px 4px;
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 10px;
-  background: var(--ev-bg-color-overlay);
+  min-width: 0;
 }
 .case-kpi__row {
   display: flex;
@@ -197,13 +199,10 @@ function exportPNG() {
 .case-dashboard__grid {
   display: grid;
   grid-template-columns: 2fr 1.2fr;
-  gap: 12px;
+  gap: 20px;
 }
 .case-panel {
-  padding: 8px 10px;
-  border: 1px solid var(--ev-app-card-border);
-  border-radius: 10px;
-  background: var(--ev-bg-color-overlay);
+  min-width: 0;
 }
 .case-panel--wide {
   grid-column: span 1;

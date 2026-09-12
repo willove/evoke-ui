@@ -267,6 +267,39 @@ describe('y 轴刻度密度自适应与硬上限', () => {
     expect(result.tickValues).toEqual([0, 20, 40, 60, 80, 100])
   })
 
+  it('零基线轴余量取幅值 5% 下限：平直数据不顶满绘图区上缘', () => {
+    // 旧逻辑余量 = 极差 10% = 0.8，588 的数据在 0..588.8 轴上贴顶
+    const options = { type: 'line', series: [{ name: '内存', data: [580, 588] }], yAxis: { ticks: 3 } }
+    const result = renderYAxis(
+      {
+        ctx: stubCtx(),
+        theme: THEME,
+        plotArea: { x: 40, y: 6, width: 400, height: 300 },
+        options,
+        width: 480,
+        hiddenSeries: new Set(),
+      },
+      'left'
+    )
+    expect(result.max).toBeGreaterThan(588 * 1.04)
+  })
+
+  it('显式 min/max 完全尊重，不追加余量', () => {
+    const options = { type: 'line', series: [{ name: 'x', data: [95, 98] }], yAxis: { min: 0, max: 100, ticks: 3 } }
+    const result = renderYAxis(
+      {
+        ctx: stubCtx(),
+        theme: THEME,
+        plotArea: { x: 40, y: 6, width: 400, height: 300 },
+        options,
+        width: 480,
+        hiddenSeries: new Set(),
+      },
+      'left'
+    )
+    expect(result.max).toBe(100)
+  })
+
   it('端到端：64px 监控条只画 ≤3 档刻度标签', async () => {
     const wrapper = mount(EvChart, {
       props: {
