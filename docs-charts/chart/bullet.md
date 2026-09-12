@@ -27,6 +27,45 @@
   />
 </DemoBlock>
 
+### 部门季度经营盘
+
+一屏铺开全公司的季度达成：营收、毛利、人效各带目标线——经营会上从上往下扫一遍，哪条线没达标清清楚楚。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'bullet',
+      title: 'Q3 部门经营达成',
+      bulletData: [
+        { name: '销售额（万）', value: 866, target: 800 },
+        { name: '毛利（万）', value: 312, target: 350 },
+        { name: '新增客户', value: 47, target: 40 },
+        { name: '回款率（%）', value: 93, target: 95 },
+      ],
+    }"
+    :height="240"
+  />
+</DemoBlock>
+
+### 基金定投进度
+
+理财场景：今年的定投计划过半，三条子弹图分别是权益、债券、黄金三笔计划的「已投 vs 全年目标」——不用翻账单就知道哪笔计划落后了。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'bullet',
+      title: '2026 定投计划进度（元）',
+      bulletData: [
+        { name: '权益定投', value: 45600, target: 60000 },
+        { name: '债券定投', value: 21800, target: 24000 },
+        { name: '黄金积存', value: 9600, target: 12000 },
+      ],
+    }"
+    :height="220"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - `target` 是可选项：有目标的 KPI 才传；

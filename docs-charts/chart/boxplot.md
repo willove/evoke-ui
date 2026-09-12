@@ -27,6 +27,47 @@
   />
 </DemoBlock>
 
+### 各岗位薪酬分布
+
+HR 与财务的定薪依据：五个分位值来自薪酬调研报告，箱体高低与重叠区间直接回答「我们给得起吗」「和市场差多少」——均值会骗人，箱线图不会。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'boxplot',
+      title: '各岗位年薪分布（万）',
+      boxData: [
+        { label: '后端研发', min: 18, q1: 26, median: 34, q3: 45, max: 68 },
+        { label: '前端研发', min: 16, q1: 24, median: 30, q3: 40, max: 58 },
+        { label: '产品经理', min: 15, q1: 22, median: 29, q3: 38, max: 55 },
+        { label: '市场营销', min: 12, q1: 17, median: 22, q3: 30, max: 46 },
+        { label: '职能支持', min: 10, q1: 14, median: 18, q3: 24, max: 35 },
+      ],
+    }"
+    :height="280"
+  />
+</DemoBlock>
+
+### 城市二手房挂牌价
+
+生活购房决策：几个候选板块的挂牌价五分位对比——中位数定预算、箱体长度看板块价格是否混乱（箱体越长砍价空间的故事越多）。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'boxplot',
+      title: '候选板块挂牌价（万 / 套）',
+      boxData: [
+        { label: '市中心学区', min: 380, q1: 450, median: 520, q3: 610, max: 780 },
+        { label: '地铁新城区', min: 220, q1: 265, median: 300, q3: 345, max: 420 },
+        { label: '老城生活区', min: 160, q1: 195, median: 230, q3: 270, max: 350 },
+        { label: '远郊刚需盘', min: 110, q1: 135, median: 155, q3: 180, max: 230 },
+      ],
+    }"
+    :height="280"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - 统计值由业务侧算好传入（与后端聚合口径一致）；
