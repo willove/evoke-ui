@@ -13,9 +13,6 @@
     <header class="bd-header">
       <div class="bd-header__inner">
         <a class="bd-logo" href="/" @click.prevent="go('/')">
-          <span class="bd-logo__mark">
-            <Icon name="layers" :size="18" />
-          </span>
           <span class="bd-logo__name">Evoke Business UI</span>
           <span class="bd-logo__version">{{ version }}</span>
         </a>

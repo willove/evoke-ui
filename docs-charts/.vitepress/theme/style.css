@@ -116,16 +116,6 @@ a {
   cursor: pointer;
   user-select: none;
 }
-.cd-logo__mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--cd-primary);
-  color: #fff;
-}
 .cd-logo__name {
   font-size: 17px;
   font-weight: 600;

@@ -89,16 +89,6 @@ body.eb-scroll-locked .bd-header {
   cursor: pointer;
   user-select: none;
 }
-.bd-logo__mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--bd-primary);
-  color: #fff;
-}
 .bd-logo__name {
   font-size: 17px;
   font-weight: 600;

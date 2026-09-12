@@ -4,9 +4,6 @@
     <header class="cd-header">
       <div class="cd-header__inner">
         <a class="cd-logo" href="/" @click.prevent="go('/')">
-          <span class="cd-logo__mark">
-            <Icon name="chart" :size="18" />
-          </span>
           <span class="cd-logo__name">Evoke Charts</span>
           <span class="cd-logo__version">{{ version }}</span>
         </a>
