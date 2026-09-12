@@ -626,9 +626,27 @@ function stopHoverAnimation() {
     hoverAnimFrameId = null;
   }
 }
-function startHoverAnimation(dir) {
+// 饼/环/玫瑰是「抽出」动画，旭日图与矩形树图是「聚焦子树」淡化——都要缓动
+function usesHoverAnimation() {
   const t = props.options.type;
-  if (t !== "pie" && t !== "doughnut" && t !== "rose") {
+  return t === "pie" || t === "doughnut" || t === "rose" || t === "sunburst" || t === "treemap";
+}
+// 清空悬浮焦点：饼类收回动画，层级图直接回到原色（焦点一没就没有淡化对象）
+function clearHover() {
+  if (hoverIndex === -1) return false;
+  hoverIndex = -1;
+  const t = props.options.type;
+  if (t === "pie" || t === "doughnut" || t === "rose") {
+    startHoverAnimation(-1);
+  } else {
+    stopHoverAnimation();
+    hoverAnimProgress = 0;
+    redraw();
+  }
+  return true;
+}
+function startHoverAnimation(dir) {
+  if (!usesHoverAnimation()) {
     return;
   }
   if (props.options.animation?.enabled === false) {
@@ -1497,15 +1515,7 @@ function handlePointerMove(e) {
     }
   }
   if (legendName) {
-    if (hoverIndex !== -1) {
-      hoverIndex = -1;
-      const t = props.options.type;
-      if (t === "pie" || t === "doughnut" || t === "rose") {
-        startHoverAnimation(-1);
-      } else {
-        redraw();
-      }
-    }
+    clearHover();
     tooltipVisible.value = false;
     return;
   }
@@ -1525,6 +1535,11 @@ function handlePointerMove(e) {
           hoverAnimProgress = 0.35;
           startHoverAnimation(1);
         }
+      } else if (usesHoverAnimation()) {
+        // 层级图切换焦段不重播淡化：直接停在终值，避免每次移动都闪一下
+        stopHoverAnimation();
+        hoverAnimProgress = 1;
+        redraw();
       } else {
         redraw();
       }
@@ -1553,13 +1568,7 @@ function handlePointerMove(e) {
     }
     tooltipVisible.value = true;
   } else {
-    if (hoverIndex !== -1) {
-      hoverIndex = -1;
-      if (isPieLike) {
-        startHoverAnimation(-1);
-      } else {
-        redraw();
-      }
+    if (clearHover()) {
       emit("unhover");
       ariaLiveText.value = "";
     }
@@ -1646,14 +1655,7 @@ function handlePointerLeave() {
     redraw();
   }
   dragMode = "none";
-  if (hoverIndex !== -1) {
-    hoverIndex = -1;
-    const t = props.options.type;
-    if (t === "pie" || t === "doughnut" || t === "rose") {
-      startHoverAnimation(-1);
-    } else {
-      redraw();
-    }
+  if (clearHover()) {
     emit("unhover");
     ariaLiveText.value = "";
   }

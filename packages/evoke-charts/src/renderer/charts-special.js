@@ -3,6 +3,7 @@ import {
   drawLabelWithBg,
   calculateTicks,
   getContrastText,
+  mixColor,
   buildSeriesColorIndex,
   isMissingValue
 } from "./core";
@@ -246,42 +247,49 @@ function squarifyTreemap(nodes, x, y, w, h, depth, result) {
   });
   return result;
 }
+// 与旭日图同一套层级强调：悬浮时自身与子孙原色、其余淡出
+const TREEMAP_DIM_ALPHA = 0.25;
+function isRectWithinFocus(rect, focus) {
+  return (
+    rect.depth >= focus.depth &&
+    rect.x >= focus.x - 0.5 &&
+    rect.y >= focus.y - 0.5 &&
+    rect.x + rect.w <= focus.x + focus.w + 0.5 &&
+    rect.y + rect.h <= focus.y + focus.h + 0.5
+  );
+}
 function renderTreemapChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hoverAnimProgress = 1 } = ctx;
   const rootData = options.treemapData || [];
   if (rootData.length === 0) return;
   const rects = [];
   squarifyTreemap(rootData, plotArea.x, plotArea.y, plotArea.width, plotArea.height, 0, rects);
   const totalValue = rootData.reduce((s, n) => s + treemapValueOf(n), 0);
   const scale = progress;
-  function drawRect(rect, isHover) {
+  const focus = hoverIndex >= 0 && hoverIndex < rects.length ? rects[hoverIndex] : null;
+  const dimAlpha = 1 - (1 - TREEMAP_DIM_ALPHA) * hoverAnimProgress;
+  function drawRect(rect, isFocusRoot) {
     const cx = rect.x + rect.w / 2;
     const cy = rect.y + rect.h / 2;
     const aw = rect.w * scale;
     const ah = rect.h * scale;
     const ax = cx - aw / 2;
     const ay = cy - ah / 2;
-    const color = rect.node.color || theme.colors[(rect.colorSeed + rect.depth) % theme.colors.length];
+    const base = rect.node.color || theme.colors[(rect.colorSeed + rect.depth) % theme.colors.length];
+    // 被悬浮块加深一档；非焦块淡出——不画阴影、不加描边
+    const color = isFocusRoot ? mixColor(base, 0.08, "#000000") : base;
     canvasCtx.save();
-    canvasCtx.fillStyle = isHover ? color : color + (rect.depth === 0 ? "" : "cc");
+    canvasCtx.globalAlpha = !focus || isRectWithinFocus(rect, focus) ? 1 : dimAlpha;
+    canvasCtx.fillStyle = isFocusRoot ? color : color + (rect.depth === 0 ? "" : "cc");
     roundRect(canvasCtx, ax, ay, Math.max(0, aw), Math.max(0, ah), 3);
     canvasCtx.fill();
-    if (!isHover) {
-      canvasCtx.strokeStyle = theme.backgroundColor;
-      canvasCtx.lineWidth = 2;
-      canvasCtx.stroke();
-    } else {
-      canvasCtx.shadowColor = color;
-      canvasCtx.shadowBlur = 10;
-      canvasCtx.strokeStyle = theme.textColor;
-      canvasCtx.lineWidth = 2.5;
-      canvasCtx.stroke();
-      canvasCtx.shadowBlur = 0;
-      canvasCtx.stroke();
-    }
+    canvasCtx.strokeStyle = theme.backgroundColor;
+    canvasCtx.lineWidth = 2;
+    canvasCtx.stroke();
     canvasCtx.restore();
     if (progress > 0.8 && aw > 50 && ah > 24) {
       canvasCtx.save();
+      canvasCtx.globalAlpha = !focus || isRectWithinFocus(rect, focus) ? 1 : dimAlpha;
       canvasCtx.fillStyle = getContrastText(color);
       if (rect.node.children && rect.node.children.length > 0) {
         canvasCtx.font = "bold 11px Inter, sans-serif";
@@ -302,12 +310,7 @@ function renderTreemapChart(ctx) {
       canvasCtx.restore();
     }
   }
-  rects.forEach((rect, i) => {
-    if (i !== hoverIndex) drawRect(rect, false);
-  });
-  if (hoverIndex >= 0 && hoverIndex < rects.length) {
-    drawRect(rects[hoverIndex], true);
-  }
+  rects.forEach((rect) => drawRect(rect, focus === rect));
 }
 function renderSparklineChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;

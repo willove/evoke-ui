@@ -163,12 +163,7 @@ describe('颜色工具（取反色 / 混合）', () => {
   })
 })
 
-describe('旭日图标签排布', () => {
-  // 数据里只有 4 个节点真正落在最外层环（其余在中间环就已收口），
-  // 标签按「环」分层：最外环外置，内环留在环带里
-  const OUTER_RING = ['容器化', '可观测', '增长实验', '活动系统']
-  const INNER_RING = ['基础架构', '数据平台', '安全', '用户增长', '交易中台', '开放平台', 'AI 实验室', '创新孵化']
-
+describe('旭日图标签排布（各环一律沿半径旋转）', () => {
   function render(options = {}) {
     const { proxy, calls } = recorder()
     renderSunburstChart({
@@ -180,57 +175,63 @@ describe('旭日图标签排布', () => {
       hoverIndex: -1,
       valueFormatter: (v) => String(v),
     })
-    return { calls, texts: calls.filter((c) => c.name === 'fillText').map((c) => ({ text: c.args[0], x: c.args[1], y: c.args[2] })) }
+    return {
+      calls,
+      texts: calls.filter((c) => c.name === 'fillText').map((c) => ({ text: c.args[0], x: c.args[1], y: c.args[2] })),
+      rotations: calls.filter((c) => c.name === 'rotate').map((c) => c.args[0]),
+    }
   }
 
-  it('最外层环标签外置到圆盘之外，每条引线两次 lineTo', () => {
-    const geo = geometry()
-    const { calls, texts } = render()
-    OUTER_RING.forEach((name) => {
+  it('内环、中环、外环的标签都以 translate + rotate 落在局部原点，不再外置', () => {
+    const { texts, calls } = render()
+    ;['平台研发', '基础架构', '容器化', '安全'].forEach((name) => {
       const item = texts.find((t) => t.text === name)
-      expect(item, `最外环「${name}」缺标签`).toBeTruthy()
-      const distance = Math.hypot(item.x - geo.centerX, item.y - geo.centerY)
-      expect(distance, `最外环「${name}」标签落在盘内`).toBeGreaterThan(geo.maxR)
+      expect(item, `「${name}」缺标签`).toBeTruthy()
+      expect(item.x).toBe(0)
+      expect(item.y).toBe(0)
     })
-    // 段内标签走 translate+rotate，不产生引线
-    const lineTos = calls.filter((c) => c.name === 'lineTo').length
-    expect(lineTos).toBe(OUTER_RING.length * 2)
+    expect(calls.filter((c) => c.name === 'lineTo')).toHaveLength(0)
+    expect(render().rotations.length).toBe(texts.length)
   })
 
-  it('中间环标签沿半径排布（局部坐标落字），不额外画引线', () => {
-    const { calls, texts } = render()
-    INNER_RING.forEach((name) => {
-      expect(texts.some((t) => t.text === name), `中间环「${name}」缺标签`).toBe(true)
-    })
-    const radialText = texts.find((t) => t.text === '基础架构')
-    expect(radialText.x).toBe(0)
-    expect(radialText.y).toBe(0)
-    const rotations = calls.filter((c) => c.name === 'rotate').length
-    expect(rotations).toBeGreaterThanOrEqual(INNER_RING.length)
+  it('左半圆翻转 180°：标签方向一律可读（文字方向 x 分量非负）', () => {
+    const { rotations } = render()
+    expect(rotations.length).toBeGreaterThan(0)
+    rotations.forEach((rot) => expect(Math.cos(rot)).toBeGreaterThanOrEqual(0))
   })
 
-  it('showValues 打开时外置标签带数值', () => {
+  it('showValues：数值作为第二行沿环厚方向堆叠（名称在上、数值在下）', () => {
     const { texts } = render({ showValues: true })
-    expect(texts.map((t) => t.text)).toContain('容器化 180')
+    const name = texts.find((t) => t.text === '容器化')
+    const value = texts.find((t) => t.text === '180')
+    expect(name).toBeTruthy()
+    expect(value).toBeTruthy()
+    expect(name.y).toBeLessThan(value.y)
   })
 
-  it('单层数据（环形图形态）标签同样外置，不会往环带里塞字', () => {
+  it('环带放不下的长名字不画，留给 tooltip', () => {
+    const longName = '一个特别长的部门名称'
+    const data = [{ name: '甲', children: [{ name: longName, value: 10 }, { name: '乙', value: 90 }] }]
+    // 矮容器 → 半径小、环带薄，长名字必然放不下
     const { proxy, calls } = recorder()
-    const geo = computeSunburstGeometry(PLOT, { sunburstData: [{ name: '自有', value: 800 }, { name: '付费', value: 600 }] }, THEME, (v) => String(v))
     renderSunburstChart({
       ctx: proxy,
       theme: THEME,
-      plotArea: PLOT,
-      options: { sunburstData: [{ name: '自有', value: 800 }, { name: '付费', value: 600 }] },
+      plotArea: { x: 0, y: 0, width: 300, height: 200 },
+      options: { sunburstData: data },
       progress: 1,
       hoverIndex: -1,
       valueFormatter: (v) => String(v),
     })
-    const texts = calls.filter((c) => c.name === 'fillText').map((c) => ({ text: c.args[0], x: c.args[1], y: c.args[2] }))
-    ;['自有', '付费'].forEach((name) => {
-      const item = texts.find((t) => t.text === name)
-      expect(Math.hypot(item.x - geo.centerX, item.y - geo.centerY)).toBeGreaterThan(geo.maxR)
-    })
+    const shortPlot = calls.filter((c) => c.name === 'fillText').map((c) => c.args[0])
+    expect(shortPlot).not.toContain(longName)
+    expect(shortPlot).toContain('乙')
+  })
+
+  it('单层数据（环形图形态）标签同样在环带内旋转', () => {
+    const { texts, rotations } = render({ sunburstData: [{ name: '自有', value: 800 }, { name: '付费', value: 600 }] })
+    ;['自有', '付费'].forEach((name) => expect(texts.some((t) => t.text === name)).toBe(true))
+    expect(rotations).toHaveLength(2)
   })
 
   it('标签只在动画收尾后出现（progress 0.5 不画字）', () => {
@@ -246,27 +247,9 @@ describe('旭日图标签排布', () => {
     })
     expect(calls.filter((c) => c.name === 'fillText')).toHaveLength(0)
   })
-
-  it('悬浮段加深同色一档，不引入位移或强调色描边', () => {
-    const { calls } = render()
-    const idleFills = calls.filter((c) => c.name === 'set:fillStyle').map((c) => c.args[0])
-    const hovered = recorder()
-    renderSunburstChart({
-      ctx: hovered.proxy,
-      theme: THEME,
-      plotArea: PLOT,
-      options: { sunburstData: THREE_LEVEL() },
-      progress: 1,
-      hoverIndex: 1,
-      valueFormatter: (v) => String(v),
-    })
-    const hoverFills = hovered.calls.filter((c) => c.name === 'set:fillStyle').map((c) => c.args[0])
-    expect(hoverFills).not.toEqual(idleFills)
-    expect(hoverFills).toContain(THEME.colors[0]) // 其余段保持原色
-  })
 })
 
-describe('外置引线标签（饼图与旭日图共用）', () => {
+describe('外置引线标签（饼图与环形图共用）', () => {
   const base = { centerX: 400, centerY: 300, plotArea: PLOT, theme: THEME }
 
   it('引线为径向 + 横向折线：每条两次 lineTo，文本落在锚点外侧', () => {

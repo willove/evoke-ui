@@ -314,8 +314,8 @@ describe('旭日图布局：父节点省略 value 由子孙汇总', () => {
   })
 })
 
-describe('旭日图渲染：外层叶子标签外置', () => {
-  it('最外层叶子标签画在圆盘外侧，内层标签留在段内', () => {
+describe('旭日图渲染：各环标签沿半径旋转', () => {
+  it('内环与外环标签都在环带内以「平移 + 旋转」落字，不牵外置引线', () => {
     const texts = []
     const arcs = []
     const proxy = new Proxy(
@@ -350,16 +350,17 @@ describe('旭日图渲染：外层叶子标签外置', () => {
       },
     )
     const fills = texts.filter((t) => t[0] === 'fillText').map((t) => t[1])
-    // 外置叶子标签存在（最外层叶子不再塞进环带）
-    const outer = fills.find((f) => f[0] === 'App 启动')
-    expect(outer).toBeTruthy()
-    // 外置标签到圆心的距离大于外环半径 126
-    const dist = Math.hypot(outer[1] - 240, outer[2] - 160)
-    expect(dist).toBeGreaterThan(126)
-    // 深度 0 段内标签仍在环内（距圆心 < 外环半径）
-    const inner = fills.find((f) => f[0] === '自有')
-    expect(inner).toBeTruthy()
-    expect(Math.hypot(inner[1] - 240, inner[2] - 160)).toBeLessThan(126)
+    // 外层叶子与内环标签都在局部原点落字（靠 translate + rotate 定位到各自环带）
+    ;['App 启动', '自有'].forEach((name) => {
+      const item = fills.find((f) => f[0] === name)
+      expect(item, `${name} 缺标签`).toBeTruthy()
+      expect(item[1]).toBe(0)
+      expect(item[2]).toBe(0)
+    })
+    // 不再有外置引线：绘制调用里没有 lineTo
+    expect(texts.some((t) => t[0] === 'lineTo')).toBe(false)
+    // 每个标签各自旋转一次
+    expect(texts.filter((t) => t[0] === 'rotate')).toHaveLength(fills.length)
   })
 })
 

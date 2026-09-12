@@ -19,6 +19,14 @@ function mockCanvas() {
     createLinearGradient: () => ({ addColorStop: () => {} }),
     createRadialGradient: () => ({ addColorStop: () => {} }),
   }
+  // globalAlpha 走 setter 记录：层级图聚焦淡化是否真的落笔，靠它断言
+  const alphas = []
+  let currentAlpha = 1
+  Object.defineProperty(target, 'globalAlpha', {
+    configurable: true,
+    get: () => currentAlpha,
+    set: (v) => { currentAlpha = v; alphas.push(v) },
+  })
   const ctx = new Proxy(target, {
     get(obj, prop) {
       if (prop in obj) return obj[prop]
@@ -29,6 +37,7 @@ function mockCanvas() {
     },
   })
   ctx.__calls = calls
+  ctx.__alphas = alphas
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx)
   return ctx
 }
@@ -187,6 +196,39 @@ describe('EvChart（提取冒烟（ev 命名空间））', () => {
     expect(tooltip.exists()).toBe(true)
     expect(tooltip.text()).toContain('甲一')
     expect(tooltip.text()).toContain('60')
+    wrapper.unmount()
+  })
+
+  it('旭日图悬浮聚焦：子树保持原色、其余淡出（hoverAnimProgress 走完缓动）', async () => {
+    const sunburstData = [
+      { name: '甲', children: [{ name: '甲一', value: 60 }, { name: '甲二', value: 40 }] },
+      { name: '乙', value: 100 },
+    ]
+    const options = { type: 'sunburst', sunburstData }
+    const wrapper = mount(EvChart, { props: { options }, attachTo: document.body })
+    await flushRender()
+    const padding = getPadding(options, 800)
+    const plotArea = {
+      x: padding.left,
+      y: padding.top,
+      width: 800 - padding.left - padding.right,
+      height: 400 - padding.top - padding.bottom,
+    }
+    const geo = computeSunburstGeometry(plotArea, options, getTheme(false, undefined), (v) => String(v))
+    const seg = geo.segments.find((s) => s.node.name === '甲')
+    ctx.__alphas.length = 0
+    wrapper.find('canvas').element.dispatchEvent(
+      new MouseEvent('pointermove', {
+        clientX: geo.centerX + Math.cos(seg.midAngle) * ((seg.r0 + seg.r1) / 2),
+        clientY: geo.centerY + Math.sin(seg.midAngle) * ((seg.r0 + seg.r1) / 2),
+        bubbles: true,
+      }),
+    )
+    await flushRender()
+    await flushRender()
+    // 「甲」的子树（甲 + 甲一 + 甲二）原色；「乙」淡出
+    expect(ctx.__alphas).toContain(1)
+    expect(ctx.__alphas).toContain(0.25)
     wrapper.unmount()
   })
 })

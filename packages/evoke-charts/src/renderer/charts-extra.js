@@ -1,6 +1,5 @@
 import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeriesColorIndex, isMissingValue, focusAlpha } from "./core";
 import { renderLineChart } from "./charts-basic";
-import { CALLOUT_RADIAL_LEN, CALLOUT_STUB_LEN, CALLOUT_TEXT_GAP, drawCalloutLabels } from "./calloutLabels";
 function renderWaterfallChart(ctx, yRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hiddenSeries } = ctx;
   const wf = options.waterfall || {};
@@ -187,7 +186,7 @@ function sunburstValue(node) {
   if (node.children && node.children.length > 0) return node.children.reduce((s, c) => s + sunburstValue(c), 0);
   return 0;
 }
-function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, result, sweep = Math.PI * 2) {
+function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, result, sweep = Math.PI * 2, parentIndex = -1) {
   const total = nodes.reduce((s, n) => s + sunburstValue(n), 0);
   if (total <= 0) return result;
   let a = startAngle;
@@ -196,6 +195,7 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
     const slot = depth === 0 ? (colorOffset + i) % 8 : colorOffset % 8;
     // 子节点扇区收敛在父扇区内：整圆占比 × 父扇区扫角，同一射线各层边界对齐
     const span = sweep * sunburstValue(n) / total;
+    const selfIndex = result.length;
     result.push({
       startAngle: a,
       endAngle: a + span,
@@ -205,14 +205,25 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
       node: n,
       value: sunburstValue(n),
       depth,
-      colorIndex: slot
+      colorIndex: slot,
+      parentIndex
     });
     if (n.children && n.children.length > 0) {
-      layoutSunburst(n.children, r0 + ringWidth, ringWidth, depth + 1, a, slot, result, span);
+      layoutSunburst(n.children, r0 + ringWidth, ringWidth, depth + 1, a, slot, result, span, selfIndex);
     }
     a += span;
   });
   return result;
+}
+// 悬浮聚焦：自身与子孙保持原色，其余段与标签淡出
+const SUNBURST_DIM_ALPHA = 0.25;
+function isSunburstDescendant(segments, index, ancestorIndex) {
+  let cursor = index;
+  while (cursor >= 0) {
+    if (cursor === ancestorIndex) return true;
+    cursor = segments[cursor].parentIndex;
+  }
+  return false;
 }
 /** 环带颜色：同色系按深度向背景方向混合，外圈大面积不刺眼 */
 function sunburstDepthColor(base, depth, theme) {
@@ -228,54 +239,45 @@ function sunburstNodeColor(seg, theme) {
   if (seg.node.color && seg.depth > 0) return seg.node.color;
   return sunburstDepthColor(base, seg.depth, theme);
 }
-function sunburstLeafLabel(node, showValues, valueFormatter) {
-  const name = node.name || "";
-  return showValues ? `${name} ${valueFormatter(sunburstValue(node))}` : name;
-}
-function collectSunburstLabels(nodes, depthCount, showValues, valueFormatter, depth = 0, out = []) {
-  nodes.forEach((n) => {
-    if (depth === depthCount - 1 || !n.children || n.children.length === 0) {
-      if (n.name) out.push(sunburstLeafLabel(n, showValues, valueFormatter));
-      return;
-    }
-    collectSunburstLabels(n.children, depthCount, showValues, valueFormatter, depth + 1, out);
-  });
-  return out;
-}
-/** 旭日图几何：渲染与悬浮命中共用一份口径（环厚、留白、外置标签让位） */
+/** 旭日图几何：渲染与悬浮命中共用一份口径（环厚、留白、半径预算） */
 function computeSunburstGeometry(plotArea, options, theme, valueFormatter) {
   const data = options.sunburstData || [];
   const depthCount = computeSunburstDepth(data);
   if (data.length === 0 || depthCount === 0) return null;
-  const showValues = options.showValues === true;
-  const labelTexts = collectSunburstLabels(data, depthCount, showValues, valueFormatter);
-  const maxTextWidth = Math.max(40, ...labelTexts.map((t) => estimateTextWidth(t, 12)));
-  // 与饼图同口径：可用半径 = min(短边/2 - 20, 宽/2 - 引线与文本预算)
-  const horizNeed = CALLOUT_RADIAL_LEN + CALLOUT_STUB_LEN + CALLOUT_TEXT_GAP + maxTextWidth + 10;
   const centerX = plotArea.x + plotArea.width / 2;
   const centerY = plotArea.y + plotArea.height / 2;
-  const maxR = Math.max(
-    40,
-    Math.min(Math.min(plotArea.width, plotArea.height) / 2 - 20, plotArea.width / 2 - horizNeed)
-  );
+  const maxR = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 20);
   const innerHole = Math.max(0, maxR * SUNBURST_HOLE_RATIO);
   const ringWidth = (maxR - innerHole) / depthCount;
   const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
   segments.forEach((seg) => {
     seg.color = sunburstNodeColor(seg, theme);
   });
-  return { centerX, centerY, maxR, innerHole, ringWidth, depthCount, segments, showValues };
+  return {
+    centerX,
+    centerY,
+    maxR,
+    innerHole,
+    ringWidth,
+    depthCount,
+    segments,
+    showValues: options.showValues === true,
+    valueFormatter
+  };
 }
 function renderSunburstChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hoverAnimProgress = 1 } = ctx;
   const geo = computeSunburstGeometry(plotArea, options, theme, valueFormatter);
   if (!geo) return;
   const { centerX, centerY, maxR, ringWidth, depthCount, segments, showValues } = geo;
   const sweep = -Math.PI / 2 + Math.PI * 2 * progress;
   // 入场：角度按 progress 扫开 + 半径轻微生长，终态即静态形态
   const grow = 0.94 + 0.06 * progress;
-  const insideLabels = [];
-  const outerLabels = [];
+  const focusIndex = hoverIndex >= 0 && hoverIndex < segments.length ? hoverIndex : -1;
+  // 悬浮聚焦子树：焦段原色、其余淡出（随 hoverAnimProgress 缓动）
+  const dimAlpha = 1 - (1 - SUNBURST_DIM_ALPHA) * hoverAnimProgress;
+  const alphaAt = (i) => (focusIndex < 0 || isSunburstDescendant(segments, i, focusIndex) ? 1 : dimAlpha);
+  const labels = [];
   canvasCtx.save();
   canvasCtx.beginPath();
   canvasCtx.moveTo(centerX, centerY);
@@ -283,9 +285,10 @@ function renderSunburstChart(ctx) {
   canvasCtx.closePath();
   canvasCtx.clip();
   segments.forEach((seg, i) => {
-    // 悬浮只加深同色一档：不位移、不引入强调色描边
-    const color = i === hoverIndex ? mixColor(seg.color, 0.12, "#000000") : seg.color;
+    // 被悬浮节点再加深一档：同色不引强调色，也不位移
+    const color = i === focusIndex ? mixColor(seg.color, 0.08, "#000000") : seg.color;
     canvasCtx.save();
+    canvasCtx.globalAlpha = alphaAt(i);
     canvasCtx.beginPath();
     canvasCtx.arc(centerX, centerY, seg.r1 * grow, seg.startAngle, seg.endAngle);
     canvasCtx.arc(centerX, centerY, seg.r0 * grow, seg.endAngle, seg.startAngle, true);
@@ -297,76 +300,47 @@ function renderSunburstChart(ctx) {
     canvasCtx.stroke();
     canvasCtx.restore();
     if (progress <= 0.9) return;
+    // 标签：各环一律沿半径方向旋转，居中在自己的环带里
     const name = seg.node.name || "";
+    if (!name) return;
     const span = seg.endAngle - seg.startAngle;
     const midR = (seg.r0 + seg.r1) / 2;
     const chord = midR * span;
-    if (seg.depth === depthCount - 1) {
-      // 最外层叶子：标签外置到圆盘外侧，外圈边缘保持一条干净的圆
-      if (span > 0.03 && name) {
-        outerLabels.push({
-          angle: seg.midAngle,
-          r: maxR,
-          text: sunburstLeafLabel(seg.node, showValues, valueFormatter),
-        });
-      }
-      return;
-    }
-    if (seg.depth === 0) {
-      // 内环：水平加粗，弦长放得下才画
-      if (span > 0.14 && chord > estimateTextWidth(name, 12) + 10) {
-        insideLabels.push({
-          x: centerX + Math.cos(seg.midAngle) * midR,
-          y: centerY + Math.sin(seg.midAngle) * midR - (showValues ? 6 : 0),
-          name,
-          value: showValues && ringWidth > 26 ? valueFormatter(seg.value) : null,
-          bold: true,
-          fill: getContrastText(color),
-          radial: false,
-          midAngle: seg.midAngle,
-        });
-      }
-      return;
-    }
-    // 中间环：沿半径方向旋转排布——环带窄，允许文字略超出环带（≤ 环厚 + 20px）
-    if (ringWidth >= 14 && span > 0.06 && chord >= 13 && name && estimateTextWidth(name, 10) <= ringWidth + 20) {
-      insideLabels.push({
-        x: centerX + Math.cos(seg.midAngle) * midR,
-        y: centerY + Math.sin(seg.midAngle) * midR,
-        name,
-        value: null,
-        bold: false,
-        fill: getContrastText(color),
-        radial: true,
-        midAngle: seg.midAngle,
-      });
-    }
+    if (ringWidth < 12 || chord < 11) return;
+    const value = showValues && ringWidth >= 26 ? valueFormatter(seg.value) : null;
+    const textWidth = Math.max(estimateTextWidth(name, 11), value ? estimateTextWidth(value, 10) : 0);
+    if (textWidth > ringWidth + 20) return;
+    labels.push({
+      x: centerX + Math.cos(seg.midAngle) * midR,
+      y: centerY + Math.sin(seg.midAngle) * midR,
+      midAngle: seg.midAngle,
+      name,
+      value,
+      bold: seg.depth === 0,
+      fill: getContrastText(color),
+      alpha: alphaAt(i),
+    });
   });
   canvasCtx.restore();
-  // 段内标签（不受圆盘裁剪影响，本身就在盘内）
-  insideLabels.forEach((l) => {
+  // 段内标签（本身就在盘内，不受圆盘裁剪影响）
+  labels.forEach((l) => {
     canvasCtx.save();
+    canvasCtx.globalAlpha = l.alpha;
     canvasCtx.fillStyle = l.fill;
-    canvasCtx.font = l.radial ? "10px Inter, sans-serif" : l.bold ? "bold 12px Inter, sans-serif" : "11px Inter, sans-serif";
+    canvasCtx.font = l.bold ? "bold 11px Inter, sans-serif" : "11px Inter, sans-serif";
     canvasCtx.textAlign = "center";
     canvasCtx.textBaseline = "middle";
-    if (l.radial) {
-      canvasCtx.translate(l.x, l.y);
-      let rot = l.midAngle;
-      if (rot > Math.PI / 2 || rot < -Math.PI / 2) rot += Math.PI;
-      canvasCtx.rotate(rot);
-      canvasCtx.fillText(l.name, 0, 0);
-    } else {
-      canvasCtx.fillText(l.name, l.x, l.y);
-      if (l.value) {
-        canvasCtx.font = "10px Inter, sans-serif";
-        canvasCtx.fillText(l.value, l.x, l.y + 14);
-      }
+    canvasCtx.translate(l.x, l.y);
+    let rot = l.midAngle;
+    if (rot > Math.PI / 2 || rot < -Math.PI / 2) rot += Math.PI;
+    canvasCtx.rotate(rot);
+    canvasCtx.fillText(l.name, 0, l.value ? -7 : 0);
+    if (l.value) {
+      canvasCtx.font = "10px Inter, sans-serif";
+      canvasCtx.fillText(l.value, 0, 7);
     }
     canvasCtx.restore();
   });
-  // 外置叶子标签：与饼图共用引线规范（径向 + 折线、左右分列、纵向防重叠）
-  drawCalloutLabels(outerLabels, { canvasCtx, centerX, centerY, plotArea, theme });
 }
 function renderMixedChart(ctx, leftRange, rightRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
@@ -420,8 +394,10 @@ function renderMixedChart(ctx, leftRange, rightRange) {
   return points;
 }
 export {
+  SUNBURST_DIM_ALPHA,
   computeSunburstDepth,
   computeSunburstGeometry,
+  isSunburstDescendant,
   layoutSunburst,
   renderBoxplotChart,
   renderMixedChart,
