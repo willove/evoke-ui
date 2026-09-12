@@ -278,6 +278,78 @@ describe('AI 生成引擎：提示词契约与渲染自检', () => {
   })
 })
 
+describe('AI 生成引擎：年份维度与双轴混合', () => {
+  // 量级差 6 个数量级的年度宽表（对标数据看板里「次数 + 能量」类场景）
+  const quakesCsv = [
+    '年份,地震次数,释放能量（吨TNT）',
+    ...Array.from({ length: 45 }, (_, i) => {
+      const y = 1970 + i
+      return `${y},${120 + (y % 40)},${(1 + (y % 50)) * 1e7}`
+    }),
+  ].join('\n')
+
+  it('looksLikeTime：裸年份（1970 / 2024年）命中，越界与旧样貌不变', () => {
+    expect(looksLikeTime('1970')).toBe(true)
+    expect(looksLikeTime('2024年')).toBe(true)
+    expect(looksLikeTime('1899')).toBe(false)
+    expect(looksLikeTime('1483')).toBe(false)
+    expect(looksLikeTime('12345')).toBe(false)
+    expect(looksLikeTime('2024-01')).toBe(true)
+  })
+
+  it('裸年份 CSV：年份归为时间维度，不再混进数据系列', () => {
+    const cols = inferColumns(parseDataTable(quakesCsv))
+    expect(cols[0].type).toBe('time')
+    const { spec } = generateChartSpec(quakesCsv, { intent: 'trend' })
+    expect(spec.series.map((s) => s.name)).toEqual(['地震次数', '释放能量（吨TNT）'])
+    expect(spec.labels[0]).toBe('1970')
+  })
+
+  it('数值型年份 + 时间语义表头（JSON 对象数组）同样归为时间维度', () => {
+    const rows = Array.from({ length: 10 }, (_, i) => ({ 年份: 2000 + i, 销量: (i + 1) * 10, 金额: (i + 1) * 1e7 }))
+    const cols = inferColumns(parseDataTable(rows))
+    expect(cols[0].type).toBe('time')
+    const { spec } = generateChartSpec(rows)
+    expect(spec.type).toBe('mixed')
+    expect(spec.labels[0]).toBe('2000')
+  })
+
+  it('非时间语义表头的年份区间数值列不被误判（人口 / 月薪 / 无表头裸年份）', () => {
+    const rows = Array.from({ length: 10 }, (_, i) => ({ 区县: `C${i}`, 人口: 1900 + i * 20, 月薪: 1950 + i }))
+    const cols = inferColumns(parseDataTable(rows))
+    expect(cols[1].type).toBe('number')
+    expect(cols[2].type).toBe('number')
+    // 字符串形态同理：裸年份与数值同形，没有时间语义表头就不认
+    const csv = ['编号,金额', ...Array.from({ length: 6 }, (_, i) => `${1970 + i * 5},${320 + i * 40}`)].join('\n')
+    const cols2 = inferColumns(parseDataTable(csv))
+    expect(cols2[0].type).toBe('number')
+    expect(cols2[1].type).toBe('number')
+  })
+
+  it('量级悬殊 → mixed 双轴：最大度量柱走左轴，其余线走右轴', () => {
+    const { spec, report } = generateChartSpec(quakesCsv, { intent: 'trend' })
+    expect(spec.type).toBe('mixed')
+    expect(spec.yAxisRight).toBeTruthy()
+    const bar = spec.series.find((s) => s.chartType === 'bar')
+    const lines = spec.series.filter((s) => s.chartType === 'line')
+    expect(bar.name).toBe('释放能量（吨TNT）')
+    expect(bar.yAxis).toBe('left')
+    expect(lines).toHaveLength(1)
+    expect(lines[0].name).toBe('地震次数')
+    expect(lines[0].yAxis).toBe('right')
+    expect(report.some((r) => r.level === 'info' && r.message.includes('双轴混合图'))).toBe(true)
+    // 生成结果自身过 schema 校验
+    expect(validateOptions(spec).ok).toBe(true)
+  })
+
+  it('量级接近不触发双轴，仍走单轴折线', () => {
+    const near = ['年份,收入,成本', ...Array.from({ length: 12 }, (_, i) => `${2000 + i},${100 + i * 5},${90 + i * 4}`)].join('\n')
+    const { spec } = generateChartSpec(near, { intent: 'trend' })
+    expect(spec.type).toBe('line')
+    expect(spec.series.every((s) => s.yAxis === undefined)).toBe(true)
+  })
+})
+
 describe('旭日图布局：父节点省略 value 由子孙汇总', () => {
   it('layoutSunburst：无 value 父节点正确聚合，两分支都进布局', () => {
     const segments = layoutSunburst(

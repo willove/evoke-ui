@@ -158,7 +158,22 @@ export function generateChartSpec(data, hint = {}) {
     return { spec, report };
   }
 
-  if (intent === "stack" && seriesList.length >= 2) {
+  // 量级悬殊的多度量 → 双轴混合：最大度量柱走左轴，其余线走右轴
+  const splitIdx = intent === "trend" ? planDualAxis(seriesList) : -1;
+  if (splitIdx >= 0) {
+    spec.type = "mixed";
+    spec.yAxisRight = { show: true };
+    const peakOf = (s) =>
+      Math.max(0, ...s.data.filter((v) => typeof v === "number" && Number.isFinite(v)).map(Math.abs));
+    const peakMax = peakOf(seriesList[splitIdx]);
+    const peakMin = Math.min(...seriesList.filter((_, i) => i !== splitIdx).map(peakOf).filter((v) => v > 0));
+    const ratioText =
+      Number.isFinite(peakMin) && peakMin > 0 ? `（最高约为最低的 ${fmtRatio(peakMax / peakMin)} 倍）` : "";
+    report.push({
+      level: "info",
+      message: `双轴混合图：多度量量级悬殊${ratioText}，「${seriesList[splitIdx].name}」走左轴柱，其余走右轴线`,
+    });
+  } else if (intent === "stack" && seriesList.length >= 2) {
     spec.type = "stacked-bar";
     report.push({ level: "info", message: "堆叠柱状图：多度量叠加看构成" });
   } else if ((intent === "compare" || intent === "rank") && seriesList.length <= 3 && labels.length <= 12) {
@@ -168,6 +183,12 @@ export function generateChartSpec(data, hint = {}) {
     spec.type = "line";
     report.push({ level: "info", message: "折线图：维度有序（时间/类目），看走势与多系列对比" });
   }
+  seriesList.forEach((s, i) => {
+    if (splitIdx >= 0) {
+      s.chartType = i === splitIdx ? "bar" : "line";
+      s.yAxis = i === splitIdx ? "left" : "right";
+    }
+  });
   spec.labels = labels;
   spec.series = seriesList;
   if (seriesList.length > 1) spec.legend = { show: true };
@@ -175,9 +196,29 @@ export function generateChartSpec(data, hint = {}) {
   return { spec, report };
 }
 
+// 双轴混合判定：多度量的每系列峰值相差 ≥100 倍时，同轴必然把小度量压成贴地线。
+// 返回最大度量所在系列下标，不满足返回 -1。
+function planDualAxis(seriesList) {
+  const maxes = seriesList.map((s) =>
+    s.data.reduce((m, v) => (typeof v === "number" && Number.isFinite(v) ? Math.max(m, Math.abs(v)) : m), 0)
+  );
+  const valid = maxes.filter((m) => m > 0);
+  if (seriesList.length < 2 || valid.length < 2) return -1;
+  const max = Math.max(...maxes);
+  const min = Math.min(...valid);
+  return max / min >= 100 ? maxes.indexOf(max) : -1;
+}
+
+function fmtRatio(ratio) {
+  if (ratio >= 1e8) return `${(ratio / 1e8).toFixed(1)}亿`;
+  if (ratio >= 1e4) return `${(ratio / 1e4).toFixed(1)}万`;
+  return `${Math.round(ratio).toLocaleString("en")}`;
+}
+
 function finishCartesian(spec, hint, labels, seriesList, report) {
   if (hint.narrative) {
-    buildNarrative(spec, labels, seriesList);
+    // 注解统一按左轴坐标落位（渲染器注解只认左轴 range），右轴系列不参与，避免错位
+    buildNarrative(spec, labels, seriesList.filter((s) => s.yAxis !== "right"));
     if (spec.annotations) {
       report.push({ level: "info", message: `叙述注解 ${spec.annotations.length} 处（峰值 callout / 末点环比 delta）` });
     }

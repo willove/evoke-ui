@@ -39,6 +39,8 @@ export function looksLikeTime(v) {
   if (/^\d{4}[-/年.]\d{1,2}月?(?:[-/.]\d{1,2}日?)?$/.test(s)) return true;
   if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) return true;
   if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(s)) return true;
+  // 裸年份（1970 / 2024年）：CSV 里最常见的年度维度，限 1900–2099 防止普通数值误伤
+  if (/^(19|20)\d{2}年?$/.test(s)) return true;
   return false;
 }
 
@@ -133,19 +135,36 @@ export function parseDataTable(input) {
   return null;
 }
 
-// 逐列推断：number（≥60% 可解析数值）/ time（≥60% 命中时间样貌）/ category
+// 时间语义表头：裸年份（1970，含 JSON 里的数值型）与普通数值同形，必须靠表头消歧；
+// 用完整词避免「月薪」沾「月」被误伤
+const TIME_HEADER = /(年份|年度|日期|时间|月份|季度|year|date|time|quarter|month)/i;
+const BARE_YEAR = /^(19|20)\d{2}年?$/;
+
+// 逐列推断：time（≥60% 命中时间样貌，先于 number——带分隔符的日期过不了数值解析，
+// 顺序不影响它们；裸年份能过数值解析，先判数值会把年份列当成度量）/
+// number（≥60% 可解析数值）/ category
 export function inferColumns(table) {
   const { headers, rows } = table;
   return headers.map((name) => {
     const values = rows.map((r) => (r[name] === undefined ? null : r[name]));
     const present = values.filter((v) => v !== null && v !== "").length;
+    const timeHits = values.filter((v) => looksLikeTime(v)).length;
+    // 无表头兜底只认「绝不可能是数值」的时间样貌；裸年份与数值同形，交给表头分支
+    const strictTimeHits = values.filter((v) => looksLikeTime(v) && parseNumeric(v) === null).length;
+    const bareYearHits = values.filter((v) =>
+      typeof v === "number"
+        ? Number.isInteger(v) && v >= 1900 && v <= 2100
+        : BARE_YEAR.test(String(v).trim())
+    ).length;
+    if (present > 0 && TIME_HEADER.test(name) && (timeHits / present >= 0.6 || bareYearHits / present >= 0.6)) {
+      return { name, type: "time", values };
+    }
+    if (present > 0 && strictTimeHits / present >= 0.6) {
+      return { name, type: "time", values };
+    }
     const numericHits = values.filter((v) => parseNumeric(v) !== null).length;
     if (present > 0 && numericHits / present >= 0.6) {
       return { name, type: "number", values: values.map((v) => parseNumeric(v)) };
-    }
-    const timeHits = values.filter((v) => looksLikeTime(v)).length;
-    if (present > 0 && timeHits / present >= 0.6) {
-      return { name, type: "time", values };
     }
     return { name, type: "category", values };
   });
