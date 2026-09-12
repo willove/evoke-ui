@@ -38,6 +38,22 @@
         </div>
 
         <div class="cz-row">
+          <span class="cz-label">图表配色</span>
+          <button
+            v-for="p in CHART_PALETTES"
+            :key="p.name"
+            type="button"
+            class="cz-palette"
+            :class="{ 'is-active': chartPalette === p.name }"
+            :title="`数据色板：${p.name}`"
+            @click="applyChartPalette(p)"
+          >
+            <span v-for="(c, i) in p.colors.slice(0, 5)" :key="i" class="cz-palette__chip" :style="{ background: c }"></span>
+            <span class="cz-palette__name">{{ p.name }}</span>
+          </button>
+        </div>
+
+        <div class="cz-row">
           <span class="cz-label">密度</span>
           <button
             v-for="d in ['compact', 'default', 'loose']"
@@ -74,6 +90,13 @@
             <eb-switch v-model="on"></eb-switch>
             <eb-progress :percentage="62" class="cz-progress"></eb-progress>
           </div>
+          <div class="cz-preview__row">
+            <eb-chart
+              :options="chartPreview"
+              :height="180"
+              style="max-width: 460px;"
+            ></eb-chart>
+          </div>
         </div>
       </div>
     </eb-config-provider>
@@ -95,7 +118,7 @@
  * 独立 SFC：复杂交互演示不走 markdown 内联，规避 md HTML 块解析限制。
  */
 import { ref, computed } from 'vue'
-import { EB_THEME_PRESETS } from '@wil-works/evoke-business-ui'
+import { EB_THEME_PRESETS, setSeriesPalette, clearSeriesPalette } from '@wil-works/evoke-business-ui'
 
 const primary = ref('#175dff')
 const semantic = ref({
@@ -107,6 +130,45 @@ const semantic = ref({
 const density = ref('default')
 const glassOn = ref(false)
 const on = ref(true)
+
+/** 图表数据色板预设（--ev-color-series-1..8，契约与工具来自 evoke-charts） */
+const CHART_PALETTES = [
+  {
+    name: '品牌蓝',
+    colors: ['#175DFF', '#5AD8A6', '#F6BD16', '#6DC8EC', '#E8684A', '#9270CA', '#FF9D4D', '#5D7092'],
+  },
+  {
+    name: '青碧',
+    colors: ['#12A5A0', '#4D8BFF', '#67C23A', '#F6BD16', '#9270CA', '#E8684A', '#6DC8EC', '#5D7092'],
+  },
+  {
+    name: '暖阳',
+    colors: ['#F0852B', '#E8684A', '#F6BD16', '#D9539B', '#9270CA', '#12A5A0', '#5D7092', '#6DC8EC'],
+  },
+  {
+    name: '石墨',
+    colors: ['#175DFF', '#6C8CFF', '#98B4FF', '#46557A', '#93A5C8', '#2E4470', '#B9C8E8', '#748199'],
+  },
+]
+const chartPalette = ref('品牌蓝')
+
+function applyChartPalette(p) {
+  chartPalette.value = p.name
+  setSeriesPalette(p.colors)
+}
+
+/** 色板预览图：当前预设的前四个系列 */
+const chartPreview = {
+  type: 'bar',
+  labels: ['一季度', '二季度', '三季度', '四季度'],
+  series: [
+    { name: '系列一', data: [120, 132, 101, 134] },
+    { name: '系列二', data: [80, 92, 91, 94] },
+    { name: '系列三', data: [60, 72, 81, 84] },
+    { name: '系列四', data: [40, 52, 61, 54] },
+  ],
+  legend: { show: true },
+}
 
 const SEMANTIC_PALETTES = {
   success: ['#16a34a', '#0d9488', '#65a30d', '#059669'],
@@ -123,10 +185,13 @@ function cycleSemantic(key) {
 
 const codeSnippet = computed(() => {
   const semanticJson = JSON.stringify(semantic.value)
+  const preset = CHART_PALETTES.find((p) => p.name === chartPalette.value)
+  const seriesJson = JSON.stringify(preset.colors)
   const lines = [
     '<eb-config-provider',
     `  theme-color="${primary.value}"`,
     `  :semantic='${semanticJson}'`,
+    `  :series='${seriesJson}'`,
     `  density="${density.value}"`,
   ]
   if (glassOn.value) lines.push('  glass')
@@ -193,6 +258,29 @@ const codeSnippet = computed(() => {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+.cz-palette {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 10px;
+  border: 1px solid var(--bd-border-light, var(--eb-border-color-light));
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+.cz-palette.is-active {
+  border-color: var(--eb-color-primary);
+}
+.cz-palette__chip {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.cz-palette__name {
+  margin-left: 4px;
+  font-size: 12px;
+  color: var(--bd-text-secondary, var(--eb-text-color-secondary));
 }
 .cz-semantic-key {
   font-size: 12px;

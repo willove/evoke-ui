@@ -12,6 +12,7 @@ import { configProviderContextKey } from '../../composables/useConfigProvider'
 import {
   setPrimaryColor,
   setSemanticColors,
+  setSeriesPalette,
   setDensity,
   setGlass,
   resetTheme,
@@ -40,6 +41,8 @@ const props = defineProps({
   glass: { type: Boolean, default: false },
   /** 运行时语义色（{ success, warning, danger, info } 十六进制），梯度随主色规则自动生成 */
   semantic: { type: Object, default: undefined },
+  /** 图表系列色板（≤8 色数组），写入 --ev-color-series-1..8，内嵌图表即时换色 */
+  series: { type: Array, default: undefined },
   /** 持久化主题（localStorage）：挂载时若有存档则优先生效，变更时自动保存 */
   persistTheme: { type: Boolean, default: false },
 })
@@ -65,14 +68,18 @@ watchEffect(() => {
   if (semantic) setSemanticColors(semantic)
 })
 watchEffect(() => {
+  const series = savedTheme?.series || props.series
+  if (Array.isArray(series) && series.length) setSeriesPalette(series)
+})
+watchEffect(() => {
   if (props.density) setDensity(props.density)
 })
 watchEffect(() => {
   setGlass(props.glass)
 })
 watchEffect(() => {
-  if (props.persistTheme && (props.themeColor || props.semantic)) {
-    saveThemeConfig({ primary: props.themeColor, semantic: props.semantic })
+  if (props.persistTheme && (props.themeColor || props.semantic || props.series)) {
+    saveThemeConfig({ primary: props.themeColor, semantic: props.semantic, series: props.series })
   }
 })
 onUnmounted(() => {

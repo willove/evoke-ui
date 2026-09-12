@@ -165,79 +165,13 @@ export const GUIDE_NAV = [
   },
 ]
 
-/** 图表分区导航 — 侧栏在 /chart 路由下展示（按图表类型细分，参考 G2 风格） */
+/** 图表分区导航 — 侧栏在 /chart 路由下展示（图表文档已独立成站，本站仅保留使用指引） */
 export const CHART_NAV = [
   {
     name: '图表',
-    key: 'chart-basics',
+    key: 'chart',
     components: [
-      { name: '总览与快速上手', zh: '', path: '/chart' },
-      { name: 'API 参考', zh: '', path: '/chart/api' },
-    ],
-  },
-  {
-    name: '折线与面积',
-    key: 'chart-line',
-    components: [
-      { name: '折线图', zh: 'line', path: '/chart/line' },
-      { name: '面积图', zh: 'area', path: '/chart/area' },
-      { name: '迷你趋势图', zh: 'sparkline', path: '/chart/sparkline' },
-    ],
-  },
-  {
-    name: '柱状与条形',
-    key: 'chart-bar',
-    components: [
-      { name: '柱状图', zh: 'bar', path: '/chart/bar' },
-      { name: '堆叠柱状图', zh: 'stacked-bar', path: '/chart/stacked-bar' },
-      { name: '条形图', zh: 'horizontal-bar', path: '/chart/horizontal-bar' },
-      { name: '瀑布图', zh: 'waterfall', path: '/chart/waterfall' },
-    ],
-  },
-  {
-    name: '占比与转化',
-    key: 'chart-pie',
-    components: [
-      { name: '饼图', zh: 'pie', path: '/chart/pie' },
-      { name: '环形图', zh: 'doughnut', path: '/chart/doughnut' },
-      { name: '玫瑰图', zh: 'rose', path: '/chart/rose' },
-      { name: '漏斗图', zh: 'funnel', path: '/chart/funnel' },
-    ],
-  },
-  {
-    name: '指标与目标',
-    key: 'chart-kpi',
-    components: [
-      { name: '仪表盘', zh: 'gauge', path: '/chart/gauge' },
-      { name: '子弹图', zh: 'bullet', path: '/chart/bullet' },
-    ],
-  },
-  {
-    name: '分布与关系',
-    key: 'chart-distribution',
-    components: [
-      { name: '散点图', zh: 'scatter', path: '/chart/scatter' },
-      { name: '直方图', zh: 'bin', path: '/chart/bin' },
-      { name: '热力图', zh: 'heatmap', path: '/chart/heatmap' },
-      { name: '箱线图', zh: 'boxplot', path: '/chart/boxplot' },
-      { name: 'K 线图', zh: 'candle', path: '/chart/candle' },
-    ],
-  },
-  {
-    name: '层级与多维',
-    key: 'chart-hierarchy',
-    components: [
-      { name: '矩形树图', zh: 'treemap', path: '/chart/treemap' },
-      { name: '旭日图', zh: 'sunburst', path: '/chart/sunburst' },
-      { name: '雷达图', zh: 'radar', path: '/chart/radar' },
-    ],
-  },
-  {
-    name: '组合与进阶',
-    key: 'chart-advanced',
-    components: [
-      { name: '混合图', zh: 'mixed', path: '/chart/mixed' },
-      { name: '交互与联动', zh: '', path: '/chart/interaction' },
+      { name: '使用指引', zh: '', path: '/chart' },
     ],
   },
 ]

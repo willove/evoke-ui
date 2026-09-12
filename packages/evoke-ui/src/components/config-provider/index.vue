@@ -21,6 +21,8 @@ import { resolveThemeVars } from '../../presets'
 const props = defineProps({
   /** 主色（hex），淡色阶自动生成 */
   primary: { type: String, default: '' },
+  /** 图表系列色板（≤8 色数组），写入 --ev-color-series-1..8（evoke-charts 按槽读取） */
+  series: { type: Array, default: () => [] },
   radius: {
     type: String,
     default: 'default',
@@ -47,6 +49,7 @@ const scopedStyle = computed(() => {
   return Object.fromEntries(
     Object.entries(resolveThemeVars({
       primary: props.primary,
+      series: props.series,
       radius: props.radius,
       space: props.space,
       container: props.container,
@@ -55,7 +58,7 @@ const scopedStyle = computed(() => {
 })
 
 watch(
-  () => [props.primary, props.radius, props.space, props.container, props.global],
+  () => [props.primary, props.series, props.radius, props.space, props.container, props.global],
   () => {
     if (typeof document === 'undefined' || !props.global) return
     const style = document.documentElement.style
