@@ -171,6 +171,21 @@ describe('getPadding 绘图区空间利用', () => {
     expect(small.left).toBeLessThan(65)
   })
 
+  it('横向条形图 left 按最宽分类名自适应，分类标签零截断', () => {
+    const HB = {
+      type: 'horizontal-bar',
+      labels: ['线下门店', '社群裂变', '外部引流', '直接访问', '搜索引擎'],
+      series: [{ name: '成交额', data: [320, 260, 200, 150, 90] }],
+      legend: { show: false },
+    }
+    // 4 字分类名 ≈ 48px + 26 → 约 74，远大于数值刻度的 40 档
+    const p = getPadding(HB, 800)
+    expect(p.left).toBeGreaterThan(60)
+    expect(p.left).toBeLessThanOrEqual(140)
+    // 显式 padding.left 仍然优先
+    expect(getPadding({ ...HB, padding: { left: 100 } }, 800).left).toBe(100)
+  })
+
   it('默认底部图例带叠加（46 + 26）', () => {
     const p = getPadding({ ...LINE, legend: { show: true } }, 800)
     expect(p.bottom).toBe(46 + 26)

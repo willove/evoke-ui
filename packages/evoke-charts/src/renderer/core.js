@@ -196,6 +196,16 @@ function estimateYAxisLeft(options) {
   const axisConfig = options.yAxis || {};
   if (axisConfig.type === "log") return 65;
   try {
+    // 横向条形图左列是分类标签（非数值刻度），按最宽分类名估宽，同一 [40, 140] 契约
+    if (options.type === "horizontal-bar") {
+      const formatter = axisConfig.formatter;
+      const maxW = (options.labels || []).reduce((m, l) => {
+        const label = formatter ? String(formatter(l)) : String(l);
+        return Math.max(m, estimateTextWidth(label, 12));
+      }, 0);
+      if (!maxW) return 65;
+      return Math.max(40, Math.min(140, Math.round(maxW + 26)));
+    }
     const range = calculateRange(options, new Set(), false);
     const min = axisConfig.min ?? range?.min;
     const max = axisConfig.max ?? range?.max;
