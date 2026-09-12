@@ -114,7 +114,7 @@ function goSearch() {
   { label: '案例', href: '/cases/' },
   { label: '主题定制器', href: '/guide/customizer' },
   { label: '动效', href: '/guide/motion' },
-  { label: 'Business UI ↗', href: 'https://evoke-business-ui.wil-works.com', target: '_blank', rel: 'noopener' },
+  { label: '中后台 UI 框架 ↗', href: 'https://evoke-business-ui.wil-works.com', target: '_blank', rel: 'noopener' },
 ]">
   <template #logo>
     <a href="/" class="home-brand">

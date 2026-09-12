@@ -145,8 +145,8 @@ const navItems = computed(() => [
   { key: 'guide', label: '指南', icon: 'book', path: '/guide/install', active: isGuide.value },
   { key: 'charts', label: '图表类型', icon: 'chart', path: '/chart', active: isChart.value },
   { key: 'examples', label: '案例', icon: 'play', path: '/examples/', active: isExamples.value },
-  { key: 'evoke', label: 'Evoke UI', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
-  { key: 'ebui', label: 'Business UI', icon: 'external-link', path: 'https://evoke-business-ui.wil-works.com', external: true },
+  { key: 'evoke', label: '官网级 UI 框架', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
+  { key: 'ebui', label: '中后台 UI 框架', icon: 'external-link', path: 'https://evoke-business-ui.wil-works.com', external: true },
 ])
 
 const results = computed(() => {

@@ -187,7 +187,7 @@ const navItems = computed(() => [
   { key: 'charts', label: '图表', icon: 'chart', path: '/chart', active: isChart.value },
   { key: 'mobile', label: '移动端', icon: 'smartphone', path: '/mobile/', active: isMobileDocs.value },
   { key: 'examples', label: '示例', icon: 'play', path: '/examples/', active: isExamples.value },
-  { key: 'evoke', label: 'Evoke UI', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
+  { key: 'evoke', label: '官网级 UI 框架', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
 ])
 
 const results = computed(() => {
