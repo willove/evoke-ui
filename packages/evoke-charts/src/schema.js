@@ -21,6 +21,7 @@ const seriesSchema = {
     smooth: { type: "boolean" },
     yAxis: { type: "string", enum: ["left", "right"] },
     type: { type: "string" },
+    chartType: { type: "string", enum: ["bar", "line"] },
     area: { type: "boolean" }
   }
 };

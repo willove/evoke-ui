@@ -10,7 +10,7 @@
 
 ## 示例
 
-沿用 `labels` + `series`：`type: 'mixed'` 时引擎自动按语义分配柱与线的表达，多系列图例照常可点选。
+沿用 `labels` + `series`：`type: 'mixed'` 时系列项用 `chartType` 指定柱（`bar`）或线（`line`，默认），系列命名带单位避免读图歧义。
 
 <DemoBlock>
   <ev-chart
@@ -19,7 +19,7 @@
       title: '营收与增长率',
       labels: ['Q1', 'Q2', 'Q3', 'Q4'],
       series: [
-        { name: '营收（万）', data: [320, 402, 361, 490] },
+        { name: '营收（万）', data: [320, 402, 361, 490], chartType: 'bar' },
         { name: '增长率（%）', data: [12, 26, -10, 36] },
       ],
       legend: { show: true },
@@ -39,7 +39,7 @@
       title: '沪深300指数基金 · 近四季',
       labels: ['2025Q4', '2026Q1', '2026Q2', '2026Q3'],
       series: [
-        { name: '基金份额（亿份）', data: [86, 102, 118, 135] },
+        { name: '基金份额（亿份）', data: [86, 102, 118, 135], chartType: 'bar' },
         { name: '期间收益率（%）', data: [4.2, -2.8, 6.5, 9.1] },
       ],
       legend: { show: true },
@@ -59,7 +59,7 @@
       title: '销售额与毛利率',
       labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
       series: [
-        { name: '销售额（万）', data: [168, 142, 195, 210, 265, 248] },
+        { name: '销售额（万）', data: [168, 142, 195, 210, 265, 248], chartType: 'bar' },
         { name: '毛利率（%）', data: [32, 28, 31, 26, 22, 29] },
       ],
       legend: { show: true },

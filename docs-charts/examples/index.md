@@ -33,6 +33,16 @@
     <p class="case-card__desc">招聘漏斗、薪酬五分位、年龄结构、部门人效——年度人才盘点的四个切面。</p>
     <span class="case-card__tags">funnel · boxplot · bin · scatter</span>
   </a>
+  <a class="case-card" href="/examples/delivery">
+    <strong class="case-card__title">交付效能看板</strong>
+    <p class="case-card__desc">发布节奏与变更失败率同轴、各服务构建时长箱线、发布窗口热力——DORA 效能的可见化。</p>
+    <span class="case-card__tags">mixed · boxplot · heatmap</span>
+  </a>
+  <a class="case-card" href="/examples/slo">
+    <strong class="case-card__title">核心链路 SLO 看板</strong>
+    <p class="case-card__desc">请求量与 P95 延迟同轴、网关延迟直方、四条 SLO 子弹图——错误预算烧没烧完一眼可见。</p>
+    <span class="case-card__tags">mixed · bin · bullet · 令牌取色</span>
+  </a>
 </div>
 
 ## 挑案例还是挑图？

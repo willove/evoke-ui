@@ -105,6 +105,8 @@ export const EXAMPLES_NAV = [
       { name: '财务月度结算', zh: '', path: '/examples/finance' },
       { name: '基金持仓体检', zh: '', path: '/examples/fund' },
       { name: '人力资源年度盘点', zh: '', path: '/examples/hr' },
+      { name: '交付效能看板', zh: '', path: '/examples/delivery' },
+      { name: '核心链路 SLO 看板', zh: '', path: '/examples/slo' },
     ],
   },
 ]
