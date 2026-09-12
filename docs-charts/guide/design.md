@@ -60,7 +60,7 @@ EvChart 的默认视觉遵循一套克制的规范：结构元素（网格、轴
   />
 </DemoBlock>
 
-接入方实现自己的配色方案切换，按同样的令牌契约写槽位令牌并派发 `ev-theme-change` 即可。
+接入方调用内置的 `applySeriesPalette` / `clearSeriesPalette` 即可复现这一效果（本页演示即由它驱动），无需自行处理令牌写入与事件广播。
 
 ### 状态语义色边界
 
@@ -111,15 +111,11 @@ EvChart 的默认视觉遵循一套克制的规范：结构元素（网格、轴
 ## 相关
 
 - 令牌契约与暗色约定：[主题接入](/guide/theme)
-- 两种组件名的关系：[ev-chart 与 eb-chart](/guide/integration)
-
-## 相关
-
-- 令牌契约与暗色约定：[主题接入](/guide/theme)
-- 两种组件名的关系：[ev-chart 与 eb-chart](/guide/integration)
+- 组件库内嵌说明：[内嵌于组件库](/guide/integration)
 
 <script setup>
 import { ref } from 'vue'
+import { applySeriesPalette, clearSeriesPalette } from '@wil-works/evoke-charts'
 
 const PALETTES = {
   brand: { name: '品牌蓝' },
@@ -155,22 +151,8 @@ const paletteDemo = {
 function applyPalette(key) {
   current.value = key
   const preset = PALETTES[key]
-  let el = document.getElementById('ec-series-palette')
-  if (!preset?.light) {
-    // 默认方案：移除覆写样式表即回到内置色板
-    el?.remove()
-  } else {
-    if (!el) {
-      el = document.createElement('style')
-      el.id = 'ec-series-palette'
-      document.head.appendChild(el)
-    }
-    const vars = (colors) => colors.map((c, i) => `--ev-color-series-${i + 1}: ${c}`).join(';')
-    el.textContent = `:root { ${vars(preset.light)}; } html.dark { ${vars(preset.dark)}; }`
-  }
-  document.documentElement.dispatchEvent(
-    new CustomEvent('ev-theme-change', { bubbles: true, detail: { dark: document.documentElement.classList.contains('dark') } }),
-  )
+  if (preset?.light) applySeriesPalette({ light: preset.light, dark: preset.dark })
+  else clearSeriesPalette()
 }
 </script>
 

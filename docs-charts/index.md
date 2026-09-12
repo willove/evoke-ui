@@ -65,7 +65,7 @@ layout: home
   <h2 class="cd-sibling__title">搭整套中后台界面？</h2>
   <p class="cd-sibling__desc">同族的 Evoke Business UI 依赖本包并以 <code>&lt;eb-chart&gt;</code> 提供同一图表引擎，主题与暗色自动跟随组件库；做官网与营销页可以看看姊妹库 Evoke UI。</p>
   <a class="cd-sibling__btn" href="/guide/integration">
-    查看 ev-chart 与 eb-chart 的用法差异
+    查看 business 内嵌使用的方式
     <CdIcon name="arrow-right" :size="14" />
   </a>
 </div>

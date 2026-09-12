@@ -2,7 +2,7 @@
 
 EvChart 是零依赖的 Canvas 自绘图表引擎，来自独立包 `@wil-works/evoke-charts`：零图表库依赖，ECharts 风格的 `options` 配置式声明，内置图例点选、tooltip、dataZoom 缩放、框选、联动与暗色模式；高清屏自动按 devicePixelRatio 渲染，数据变化时自动做数值补间动画，空数据、加载中与渲染错误均有内置占位。
 
-> 在 [evoke-business-ui](https://evoke-business-ui.wil-works.com) 中使用时无需单独安装：组件库依赖本包并以 `<eb-chart>` 组件名提供同一引擎，主题/暗色自动跟随组件库。两种用法的差异见 [ev-chart 与 eb-chart](/guide/integration)。
+> 在 [evoke-business-ui](https://evoke-business-ui.wil-works.com) 中使用时无需单独安装：组件库默认内嵌本引擎并以 `<eb-chart>` 组件名提供，主题/暗色自动跟随组件库。详见[内嵌于组件库](/guide/integration)。
 
 <script setup>
 import { ref, computed } from 'vue'

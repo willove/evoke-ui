@@ -150,8 +150,9 @@
 | 9 | 空态/加载/错误态视觉精修（错误态字符图标改内联 SVG） | ✅ | 无字符图标残留 |
 | 10 | 暗色主题逐项对照 | ✅ | 折线/监控页暗色截图核对通过 |
 | 11 | 文档站「设计规范」页发布 | ✅ | /guide/design 上线并纳入指南导航 |
-| 12 | 配色方案动态切换——站点级演示 | 🔜 | 设计规范页/主题页提供预设方案按钮，图表实时跟随 |
-| 13 | 配色方案动态切换——组件层 API | 🔜 | evoke-ui useThemeConfig / business theme.js 支持 series palette 预设与持久化 |
+| 12 | 配色方案动态切换——站点级演示 | ✅ | 设计规范页四预设按钮，整页图表实时跟随 |
+| 13 | 配色方案动态切换——组件层 API | ✅ | evoke-ui useThemeConfig / business theme.js 支持 series palette 预设与持久化 |
+| 14 | 内置 `applySeriesPalette` / `clearSeriesPalette` 中性工具 | ✅ | 契约官方实现，宿主零重复；单测覆盖数组/对象/非法输入 |
 
 ## 13. 配色方案动态切换（规划稿）
 
@@ -165,8 +166,8 @@
 - **切换时序**：写令牌（同步 setProperty）→ 派发 `ev-theme-change` → 图表监听重绘。
   与暗色/换肤共用同一事件通道，不新增事件。
 - **分层落地**：
-  1. 🔜 #12 站点级：设计规范页/主题页提供预设按钮，直接写令牌 + 手动派发事件——
-     零 API 成本验证色板观感与交互；
-  2. 🔜 #13 组件层：evoke-ui `useThemeConfig` 增加 series palette 预设与持久化；
-     business `theme.js` 同步支持（经 `--eb-*` 映射层写入 series 槽）。
+  1. ✅ #14 charts 内置中性工具 `applySeriesPalette` / `clearSeriesPalette`（src/palette.js）——
+     契约的官方实现，宿主调用即可；
+  2. ✅ #12 站点级：设计规范页预设按钮（由该工具驱动）；
+  3. ✅ #13 组件层：evoke-ui `useThemeConfig.setSeries` / business `setSeriesPalette` 作为宿主封装。
 - **业务联动**：`series[].color` 显式指定的颜色不随方案切换（显式优先级最高）。

@@ -46,7 +46,7 @@ const { options, chartProps, chartRef, resize, exportPNG, setTheme } = useChart(
 
 ## 在 evoke-business-ui 中
 
-组件库已依赖本包，无需安装：以 `<eb-chart>` 组件名提供同一引擎，样式与主题映射随组件库走，详见 [ev-chart 与 eb-chart](/guide/integration)。
+组件库已依赖本包，无需安装：以 `<eb-chart>` 组件名提供同一引擎，样式与主题映射随组件库走，详见[内嵌于组件库](/guide/integration)。
 
 ## 下一步
 

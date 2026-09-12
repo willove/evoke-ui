@@ -16,6 +16,13 @@
   写入或清除 `--ev-color-series-1..8` 并派发 `ev-theme-change`（图表即时重绘）；
   `resetTheme` 一并清除系列槽位；持久化沿用 `eb-theme-config` 存档通道
 
+### @wil-works/evoke-charts — 新增配色方案应用工具
+
+- `applySeriesPalette(palette)` / `clearSeriesPalette()`：把一套数据色板写入
+  `--ev-color-series-1..8` 并派发 `ev-theme-change`（全图重绘）；
+  `palette` 支持数组（明暗共用）或 `{ light, dark }`（随暗色自动换挡）——
+  宿主接入图表配色无需各自实现令牌写入与事件广播
+
 ### @wil-works/evoke-charts — y 轴留白自适应与单调平滑曲线
 
 - 左留白按 y 刻度标签实测宽度自适应（夹在 40–140，替代固定 65）——大数量级

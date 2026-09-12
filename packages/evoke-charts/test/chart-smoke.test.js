@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
+import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 
 // Chart 渲染走 canvas 2d + rAF；jsdom 无 2d context，用 Proxy 兜底任意 ctx 方法
 function mockCanvas() {
@@ -198,5 +199,41 @@ describe('getPadding 绘图区空间利用', () => {
   it('sparkline padding 覆写', () => {
     const p = getPadding({ type: 'sparkline', labels: ['一'], series: [{ name: 'x', data: [1] }], padding: 4 }, 800)
     expect(p).toEqual({ top: 4, right: 4, bottom: 4, left: 4 })
+  })
+})
+
+describe('applySeriesPalette 配色方案工具', () => {
+  afterEach(() => {
+    clearSeriesPalette()
+  })
+
+  it('数组形态：写入内联槽位并派发 ev-theme-change', () => {
+    const spy = vi.fn()
+    document.addEventListener('ev-theme-change', spy)
+    expect(applySeriesPalette(['#175DFF', '#5AD8A6'])).toBe(true)
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-1')).toBe('#175DFF')
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-2')).toBe('#5AD8A6')
+    expect(spy).toHaveBeenCalled()
+    document.removeEventListener('ev-theme-change', spy)
+  })
+
+  it('对象形态：注入样式表随暗色换挡，清除后一并移除', () => {
+    applySeriesPalette({ light: ['#111111'], dark: ['#222222'] })
+    const el = document.querySelector('style[data-ev-series-palette]')
+    expect(el).toBeTruthy()
+    expect(el.textContent).toContain(':root')
+    expect(el.textContent).toContain('html.dark')
+    expect(el.textContent).toContain('#111111')
+    expect(el.textContent).toContain('#222222')
+    expect(clearSeriesPalette()).toBe(true)
+    expect(document.querySelector('style[data-ev-series-palette]')).toBe(null)
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-1')).toBe('')
+  })
+
+  it('非法输入返回 false 且不触碰 DOM', () => {
+    const before = document.documentElement.getAttribute('style') ?? ''
+    expect(applySeriesPalette(null)).toBe(false)
+    expect(applySeriesPalette({})).toBe(false)
+    expect(document.documentElement.getAttribute('style') ?? '').toBe(before)
   })
 })

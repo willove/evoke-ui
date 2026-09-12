@@ -69,9 +69,7 @@ const options = {
 
 暗色跟随约定：在 `html.dark` 选择器下重映射上述令牌（组件内部监听 `<html>` 的 `class` 变化自动重绘）。
 
-### 与 evoke-business-ui 搭配
-
-`evoke-business-ui` 依赖本包并以 `EbChart`（模板 `<eb-chart>`）提供同一组件，其样式包内置了 `--eb-*` 令牌到 `--ev-*`（本包读取面）的映射，两库同用时图表自动跟随其主题、暗色与运行时换肤（其换肤时会派发 `ev-theme-change` 事件），无需额外配置。
+图表引擎对宿主保持中立：不为任何组件库做特殊配置；组件库或站点需要个性化时，走通用扩展接口——槽位令牌、`padding` / `theme` / `animation` 配置，以及 `applySeriesPalette` 配色方案工具。
 
 ## 组件 API（摘要）
 

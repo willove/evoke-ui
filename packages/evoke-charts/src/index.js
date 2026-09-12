@@ -1,5 +1,6 @@
 import EvChart from './chart.vue'
 import { useChart, provideChartContext, injectChartContext } from './useChart'
+import { applySeriesPalette, clearSeriesPalette } from './palette'
 
 const components = {
   EvChart,
@@ -21,6 +22,9 @@ export {
   useChart,
   provideChartContext,
   injectChartContext,
+  // 配色方案
+  applySeriesPalette,
+  clearSeriesPalette,
   // Install
   install,
   components,

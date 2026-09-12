@@ -46,4 +46,4 @@
 ## 相关
 
 - 令牌的完整清单与暗色示例值：evoke-ui 的 [主题与颜色](https://evoke-ui.wil-works.com/utils/theme-color)
-- 组件库内的跟随约定：[ev-chart 与 eb-chart](/guide/integration)
+- 组件库内的跟随约定：[内嵌于组件库](/guide/integration)
