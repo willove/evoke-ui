@@ -47,9 +47,14 @@ function renderDataZoomSlider(ctx, zoom) {
   }
   const { xStart, xEnd } = windowToX(zoom, geo);
   const windowFill = theme.crosshairColor.includes("rgba") ? theme.crosshairColor.replace(/[\d.]+\)$/, "0.12)") : theme.crosshairColor + "1f";
+  // 遮罩裁剪进圆角轨道，直角矩形不会溢出圆角
+  canvasCtx.save();
+  roundRect(canvasCtx, geo.x, geo.y, geo.width, geo.height, 4);
+  canvasCtx.clip();
   canvasCtx.fillStyle = theme.backgroundColor + "aa";
   canvasCtx.fillRect(geo.x, geo.y, xStart - geo.x, geo.height);
   canvasCtx.fillRect(xEnd, geo.y, geo.x + geo.width - xEnd, geo.height);
+  canvasCtx.restore();
   canvasCtx.strokeStyle = theme.gridColor;
   canvasCtx.lineWidth = 1;
   roundRect(canvasCtx, geo.x, geo.y, geo.width, geo.height, 4);
@@ -61,21 +66,27 @@ function renderDataZoomSlider(ctx, zoom) {
   canvasCtx.lineWidth = 1;
   roundRect(canvasCtx, xStart, geo.y, Math.max(2, xEnd - xStart), geo.height, 4);
   canvasCtx.stroke();
-  const handleW = 8;
+  const handleW = 9;
   const handleH = 18;
   const handleY = geo.y + (geo.height - handleH) / 2;
   [xStart - handleW / 2, xEnd - handleW / 2].forEach((hx) => {
-    roundRect(canvasCtx, hx, handleY, handleW, handleH, 3);
-    canvasCtx.fillStyle = theme.crosshairColor;
+    // 手柄：面板底 + 准线描边 + 同色圆帽 grip 线（ECharts 式手柄）
+    roundRect(canvasCtx, hx, handleY, handleW, handleH, 4);
+    canvasCtx.fillStyle = theme.backgroundColor;
     canvasCtx.fill();
-    canvasCtx.strokeStyle = theme.backgroundColor;
-    canvasCtx.lineWidth = 1;
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(hx + handleW / 2 - 2, handleY + 5);
-    canvasCtx.lineTo(hx + handleW / 2 - 2, handleY + handleH - 5);
-    canvasCtx.moveTo(hx + handleW / 2 + 2, handleY + 5);
-    canvasCtx.lineTo(hx + handleW / 2 + 2, handleY + handleH - 5);
+    canvasCtx.strokeStyle = theme.crosshairColor;
+    canvasCtx.lineWidth = 1.5;
     canvasCtx.stroke();
+    canvasCtx.strokeStyle = theme.crosshairColor;
+    canvasCtx.lineWidth = 1.5;
+    canvasCtx.lineCap = "round";
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(hx + handleW / 2 - 2, handleY + 6);
+    canvasCtx.lineTo(hx + handleW / 2 - 2, handleY + handleH - 6);
+    canvasCtx.moveTo(hx + handleW / 2 + 2, handleY + 6);
+    canvasCtx.lineTo(hx + handleW / 2 + 2, handleY + handleH - 6);
+    canvasCtx.stroke();
+    canvasCtx.lineCap = "butt";
   });
   canvasCtx.restore();
   void width;

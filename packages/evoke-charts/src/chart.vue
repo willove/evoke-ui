@@ -41,7 +41,13 @@
     <!-- 错误边界 -->
     <Transition name="ev-chart-fade">
       <div v-if="internalError" class="ev-chart__error">
-        <span class="ev-chart__error-icon">⚠</span>
+        <span class="ev-chart__error-icon">
+          <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <line x1="12" y1="7.5" x2="12" y2="13" />
+            <line x1="12" y1="16.5" x2="12" y2="16.51" />
+          </svg>
+        </span>
         <span class="ev-chart__error-text">{{ internalError }}</span>
       </div>
     </Transition>
@@ -2034,8 +2040,10 @@ defineExpose({
 }
 
 .ev-chart__error-icon {
-  font-size: 28px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
 }
 
 .ev-chart__error-text {
