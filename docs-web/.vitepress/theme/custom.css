@@ -6,6 +6,9 @@
   /* 与首页 EvNavbar 同高 */
   --vp-nav-height: 68px;
 
+  /* 内页开发中警示横幅定高：导航/侧栏/正文均挂在 VitePress 原生偏移上 */
+  --vp-layout-top-height: 37px;
+
   /* 品牌色 → Launch Blue（联动 EvConfigProvider / useThemeConfig） */
   --vp-c-brand-1: var(--ev-color-primary);
   --vp-c-brand-2: var(--ev-color-primary-light-3);
@@ -716,5 +719,28 @@ html.dark .dev-warn-banner {
   .dev-warn-banner {
     font-size: 12px;
     padding: 7px 12px;
+  }
+}
+/* 内页（Layout 注入）横幅 fixed 吸顶；首页 layout:false 裸页的横幅保持文档流随页滚走。
+   高度不写死：窄屏换行时撑高，Layout 的 ResizeObserver 把真实高度同步进偏移变量。
+   min-height 用常量而非偏移变量，避免「量自己撑起来的高度」死循环 */
+.dev-warn-banner--fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--vp-z-index-nav) + 1);
+  min-height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+@media (max-width: 640px) {
+  .dev-warn-banner--fixed {
+    font-size: 11.5px;
+    padding: 4px 12px;
   }
 }
