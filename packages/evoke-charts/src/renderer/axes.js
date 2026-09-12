@@ -354,6 +354,10 @@ function xToCategoryIndex(options, plotArea, labels, x) {
   return Math.round((x - plotArea.x) / step);
 }
 function renderAnnotations(ctx, yRange) {
+  renderLegacyAnnotation(ctx, yRange);
+  renderNarrativeAnnotations(ctx, yRange);
+}
+function renderLegacyAnnotation(ctx, yRange) {
   const { ctx: canvasCtx, theme, plotArea, options } = ctx;
   const annotation = options.annotation;
   if (!annotation) return;
@@ -408,6 +412,158 @@ function renderAnnotations(ctx, yRange) {
       canvasCtx.textBaseline = "bottom";
       canvasCtx.fillText(a.label, (x1 + x2) / 2, (y1 + y2) / 2 - 4);
     }
+    canvasCtx.restore();
+  });
+}
+const ANNOTATION_ANCHORS = {
+  top: [0, -1, "center", "bottom"],
+  bottom: [0, 1, "center", "top"],
+  left: [-1, 0, "end", "middle"],
+  right: [1, 0, "start", "middle"],
+  "top-left": [-1, -1, "end", "bottom"],
+  "top-right": [1, -1, "start", "bottom"],
+  "bottom-left": [-1, 1, "end", "top"],
+  "bottom-right": [1, 1, "start", "top"]
+};
+function resolveAnnotationX(ctx, x, xPx) {
+  if (typeof xPx === "number") return xPx;
+  const { plotArea, options } = ctx;
+  const labels = options.labels || [];
+  const idx = typeof x === "number" ? x : labels.indexOf(x);
+  if (idx < 0) return NaN;
+  return categoryToX(options, plotArea, labels, idx);
+}
+function resolveAnnotationY(ctx, y, yPx, yRange) {
+  if (typeof yPx === "number") return yPx;
+  if (typeof y !== "number" || !yRange) return NaN;
+  const { plotArea } = ctx;
+  return plotArea.y + plotArea.height - (y - yRange.min) / (yRange.max - yRange.min) * plotArea.height;
+}
+function annotationSeriesColor(ctx, ref) {
+  const { theme, options } = ctx;
+  const series = options.series || [];
+  if (typeof ref === "number") {
+    return series[ref]?.color || theme.colors[ref] || theme.colors[0] || "#175DFF";
+  }
+  if (typeof ref === "string") {
+    const i = series.findIndex((s) => s.name === ref);
+    if (i >= 0) return series[i].color || theme.colors[i] || theme.colors[0] || "#175DFF";
+  }
+  return theme.colors[0] || "#175DFF";
+}
+function renderNarrativeAnnotations(ctx, yRange) {
+  const { ctx: canvasCtx, theme, plotArea, options } = ctx;
+  const list = options.annotations || [];
+  if (list.length === 0) return;
+  const secondary = theme.textColorSecondary;
+  list.forEach((a) => {
+    if (!a || !a.type) return;
+    if (a.type === "region") {
+      const x1 = resolveAnnotationX(ctx, a.from);
+      const x2 = resolveAnnotationX(ctx, a.to);
+      if (!Number.isFinite(x1) || !Number.isFinite(x2)) return;
+      const labels = options.labels || [];
+      const band = labels.length > 0 ? plotArea.width / labels.length : 0;
+      const left = Math.min(x1, x2) - band / 2;
+      const width = Math.abs(x2 - x1) + band;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = 0.06;
+      canvasCtx.fillStyle = a.color || theme.colors[0] || "#175DFF";
+      canvasCtx.fillRect(left, plotArea.y, width, plotArea.height);
+      canvasCtx.restore();
+      if (a.label) {
+        canvasCtx.save();
+        canvasCtx.fillStyle = secondary;
+        canvasCtx.font = "italic 400 11px Inter, sans-serif";
+        canvasCtx.textAlign = "left";
+        canvasCtx.textBaseline = "top";
+        canvasCtx.fillText(a.label, left + 4, plotArea.y + 6);
+        canvasCtx.restore();
+      }
+      return;
+    }
+    const px = resolveAnnotationX(ctx, a.x, a.xPx);
+    const py = resolveAnnotationY(ctx, a.y, a.yPx, yRange);
+    if (!Number.isFinite(px) || !Number.isFinite(py)) return;
+    const color = a.color || annotationSeriesColor(ctx, a.series);
+    canvasCtx.save();
+    if (a.type === "point") {
+      canvasCtx.fillStyle = color;
+      canvasCtx.beginPath();
+      canvasCtx.arc(px, py, 3, 0, Math.PI * 2);
+      canvasCtx.fill();
+      canvasCtx.globalAlpha = 0.85;
+      canvasCtx.strokeStyle = color;
+      canvasCtx.lineWidth = 1.5;
+      canvasCtx.beginPath();
+      canvasCtx.arc(px, py, 6, 0, Math.PI * 2);
+      canvasCtx.stroke();
+      canvasCtx.restore();
+      return;
+    }
+    if (a.type === "delta") {
+      const up = a.direction !== "down";
+      const deltaColor = a.color || (up ? options.candleUpColor || "#dc2626" : options.candleDownColor || "#16a34a");
+      const text = a.text || a.label || "";
+      canvasCtx.fillStyle = deltaColor;
+      canvasCtx.beginPath();
+      if (up) {
+        canvasCtx.moveTo(px, py - 16);
+        canvasCtx.lineTo(px - 5, py - 9);
+        canvasCtx.lineTo(px + 5, py - 9);
+      } else {
+        canvasCtx.moveTo(px, py + 16);
+        canvasCtx.lineTo(px - 5, py + 9);
+        canvasCtx.lineTo(px + 5, py + 9);
+      }
+      canvasCtx.closePath();
+      canvasCtx.fill();
+      if (text) {
+        canvasCtx.fillStyle = deltaColor;
+        canvasCtx.font = "600 11px Inter, sans-serif";
+        canvasCtx.textAlign = "center";
+        if (up) {
+          canvasCtx.textBaseline = "bottom";
+          canvasCtx.fillText(text, px, py - 20);
+        } else {
+          canvasCtx.textBaseline = "top";
+          canvasCtx.fillText(text, px, py + 20);
+        }
+      }
+      canvasCtx.restore();
+      return;
+    }
+    if (a.type === "callout") {
+      const [dx, dy, align, baseline] = ANNOTATION_ANCHORS[a.anchor] || ANNOTATION_ANCHORS["top-right"];
+      const lx = px + dx * 16 + (a.offsetX || 0);
+      const ly = py + dy * 16 + (a.offsetY || 0);
+      canvasCtx.fillStyle = color;
+      canvasCtx.strokeStyle = color;
+      canvasCtx.lineWidth = 1;
+      canvasCtx.setLineDash([3, 3]);
+      canvasCtx.beginPath();
+      canvasCtx.arc(px, py, 2, 0, Math.PI * 2);
+      canvasCtx.fill();
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(px + dx * 2, py + dy * 2);
+      canvasCtx.lineTo(lx - dx * 2, ly - dy * 2);
+      canvasCtx.stroke();
+      canvasCtx.setLineDash([]);
+      if (a.label) {
+        canvasCtx.fillStyle = a.textColor || secondary;
+        canvasCtx.font = "italic 400 11px Inter, sans-serif";
+        canvasCtx.textAlign = align;
+        canvasCtx.textBaseline = baseline;
+        canvasCtx.fillText(a.label, lx + dx * 2, ly + dy * 2);
+      }
+      canvasCtx.restore();
+      return;
+    }
+    canvasCtx.fillStyle = a.color || secondary;
+    canvasCtx.font = `italic ${a.fontWeight || 400} 11px Inter, sans-serif`;
+    canvasCtx.textAlign = "center";
+    canvasCtx.textBaseline = "bottom";
+    canvasCtx.fillText(a.text || a.label || "", px + (a.offsetX || 0), py + (a.offsetY !== undefined ? a.offsetY : -6));
     canvasCtx.restore();
   });
 }

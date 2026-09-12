@@ -263,7 +263,7 @@ function renderChart(canvas, params) {
     default:
       break;
   }
-  if (leftRange && options.annotation) {
+  if (leftRange && (options.annotation || (options.annotations && options.annotations.length > 0))) {
     renderAnnotations(renderCtx, leftRange);
   }
   if ((options.type === "line" || options.type === "area") && points.length > 0) {

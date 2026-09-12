@@ -200,6 +200,15 @@ let hoverAnimProgress = 0;
 let hoverAnimFrameId = null;
 const hiddenSeries = ref(/* @__PURE__ */ new Set());
 const focusSeries = ref(null);
+// 显式 emphasis 焦点（系列名或索引）：优先于图例悬浮强调
+const emphasisSeriesName = computed(() => {
+  const em = props.options.emphasis;
+  if (!em || em.series === undefined || em.dimOthers === false) return null;
+  if (typeof em.series === "number") {
+    return props.options.series?.[em.series]?.name ?? null;
+  }
+  return em.series || null;
+});
 const hoveredToolbox = ref(null);
 let mouseX = -1;
 let mouseY = -1;
@@ -1400,11 +1409,15 @@ function handlePointerMove(e) {
     redraw();
   }
   const legendName = checkLegendHit(e.clientX, e.clientY);
-  const hoverEmphasis = props.options.legend?.hoverEmphasis !== false;
-  const nextFocus = hoverEmphasis && legendName ? legendName : null;
-  if (nextFocus !== focusSeries.value) {
-    focusSeries.value = nextFocus;
-    redraw();
+  if (emphasisSeriesName.value) {
+    // 显式 emphasis 生效期间，图例悬浮不得抢占或清除焦点
+  } else {
+    const hoverEmphasis = props.options.legend?.hoverEmphasis !== false;
+    const nextFocus = hoverEmphasis && legendName ? legendName : null;
+    if (nextFocus !== focusSeries.value) {
+      focusSeries.value = nextFocus;
+      redraw();
+    }
   }
   if (legendName) {
     if (hoverIndex !== -1) {
@@ -1549,7 +1562,7 @@ function handlePointerLeave() {
   tooltipVisible.value = false;
   mouseX = -1;
   mouseY = -1;
-  if (focusSeries.value !== null) focusSeries.value = null;
+  if (focusSeries.value !== null && !emphasisSeriesName.value) focusSeries.value = null;
   if (hoveredToolbox.value !== null) hoveredToolbox.value = null;
   if (dragMode === "brush") {
     brushRect.value = null;
@@ -1648,6 +1661,7 @@ watch(
     cachedPlotArea = null;
     internalError.value = null;
     runDevValidation();
+    focusSeries.value = emphasisSeriesName.value;
     const zoom = getDataZoomConfig(props.options);
     const zoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
     if (zoomKey !== lastZoomKey) {

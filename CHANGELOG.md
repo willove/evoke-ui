@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 叙述注解 annotations[] 与焦点 emphasis
+
+- 新增 `annotations[]` 五类型（直角系图表）：`text`（次要色斜体文字）、
+  `callout`（旁注 + 1px 虚线引线 + 端点小圆点，8 向锚点）、`point`（r3 实心 +
+  r6 外环固定高亮点，按系列名取色）、`delta`（三角符号 + 结论数字，涨跌色
+  跟随 K 线涨跌约定）、`region`（类目区间 primary @6% 填充 + 左上斜体标签）
+- 定位：`x`（类目值或索引）+ `y`（数值），或 `xPx` / `yPx` 像素定位（优先）；
+  `offsetX` / `offsetY` 像素微调
+- 新增 `emphasis: { series, dimOthers: true }` 焦点强调：焦点系列原样、其余
+  系列降到 22% 透明度（与图例悬浮强调同一通道）；生效期间图例悬浮不抢占，
+  移除即恢复
+- 旧 `annotation: { texts, arrows }` 字段兼容保留，行为不变
+
 ### @wil-works/evoke-charts — Spec 契约：getSpec / setSpec 与 options JSON Schema
 
 - 新增 `getSpec()` / `setSpec(spec)` 组件方法：前者返回当前 Spec 的深拷贝

@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
-import { renderYAxis, thinTickValues } from '../src/renderer/axes.js'
+import { renderYAxis, thinTickValues, renderAnnotations } from '../src/renderer/axes.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 import { chartOptionsSchema, validateOptions } from '../src/schema.js'
 
@@ -488,6 +488,191 @@ describe('Spec 契约（getSpec / setSpec / validateOptions / exportSVG）', () 
     expect(svg).toContain('<svg')
     expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"')
     expect(svg).toContain('<text')
+    wrapper.unmount()
+  })
+})
+
+describe('叙述注解 annotations[] 与 emphasis', () => {
+  beforeEach(() => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      setTimeout(() => cb(performance.now() + 1e9), 0)
+      return 1
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      return {
+        left: 0, top: 0, right: 800, bottom: 400,
+        width: 800, height: 400, x: 0, y: 0,
+        toJSON: () => {},
+      }
+    })
+    ctx = mockCanvas()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const flushRender = () => new Promise((r) => setTimeout(r, 40))
+  const drawCalls = () => (ctx.__calls.get('clearRect')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('fillRect')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('fill')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('stroke')?.mock.calls.length ?? 0)
+
+  // 录制式 ctx：方法调用与样式赋值按序记账
+  const recordingCtx = () => {
+    const calls = []
+    const styles = {}
+    const target = { measureText: () => ({ width: 10 }) }
+    const proxy = new Proxy(target, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop]
+        if (prop in styles) return styles[prop]
+        return (...args) => { calls.push([prop, args]) }
+      },
+      set(obj, prop, value) {
+        styles[prop] = value
+        calls.push([`set:${String(prop)}`, value])
+        return true
+      },
+    })
+    return { proxy, calls, styles }
+  }
+  const THEME = { textColor: '#111827', textColorSecondary: '#6b7280', colors: ['#175DFF', '#5AD8A6'] }
+  const ANNOT_OPTIONS = () => ({
+    type: 'line',
+    labels: ['一', '二', '三', '四'],
+    series: [
+      { name: '营收', data: [10, 40, 25, 60] },
+      { name: '成本', data: [5, 20, 15, 30] },
+    ],
+  })
+  const renderAnns = (options, extra = {}) => {
+    const rec = recordingCtx()
+    renderAnnotations(
+      {
+        ctx: rec.proxy,
+        theme: THEME,
+        plotArea: { x: 40, y: 10, width: 400, height: 300 },
+        options,
+        width: 480,
+        height: 320,
+        ...extra,
+      },
+      { min: 0, max: 100 },
+    )
+    return rec
+  }
+  const byName = (calls, name) => calls.filter((c) => c[0] === name)
+
+  it('text：次要色斜体、默认点上方 6px 居中', () => {
+    const rec = renderAnns({ ...ANNOT_OPTIONS(), annotations: [{ type: 'text', x: '二', y: 40, text: '注意' }] })
+    const texts = byName(rec.calls, 'fillText')
+    expect(texts).toHaveLength(1)
+    // y=40 → plotArea.y + h - 40/100*300 = 10+300-120 = 190；默认 offsetY -6
+    // x=索引 1：直角系类目端到端均分 step = 400/3
+    const [t, x, y] = texts[0][1]
+    expect(t).toBe('注意')
+    expect(x).toBeCloseTo(40 + 400 / 3)
+    expect(y).toBe(184)
+    expect(rec.styles.fillStyle).toBe('#6b7280')
+    expect(rec.styles.font).toContain('italic')
+  })
+
+  it('callout：8 向锚点虚线引线 + r2 端点；textColor 承载旁注正文', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'callout', x: '三', y: 25, label: '回落', anchor: 'top-right' }],
+    })
+    const arcs = byName(rec.calls, 'arc')
+    expect(arcs[0][1][2]).toBe(2) // 端点小圆点 r2
+    // y=25 → 10+300-75 = 235；anchor top-right：线到 (px+16-2, py-16+2)，文字再外推 2px
+    const lines = byName(rec.calls, 'lineTo')
+    expect(lines[0][1][1]).toBe(221)
+    expect(lines[0][1][0]).toBeCloseTo(40 + 2 * (400 / 3) + 14)
+    const texts = byName(rec.calls, 'fillText')
+    expect(texts[0][1][0]).toBe('回落')
+    expect(texts[0][1][1]).toBeCloseTo(40 + 2 * (400 / 3) + 18)
+    expect(texts[0][1][2]).toBe(217)
+    expect(rec.styles.fillStyle).toBe('#6b7280')
+  })
+
+  it('point：按系列名取色，r3 实心 + r6 外环', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'point', x: '四', y: 60, series: '成本' }],
+    })
+    const arcs = byName(rec.calls, 'arc')
+    expect(arcs.map((a) => a[1][2])).toEqual([3, 6])
+    expect(rec.styles.fillStyle).toBe('#5AD8A6')
+  })
+
+  it('delta：三角路径 + 涨跌色跟随 K 线约定', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'delta', x: '四', y: 60, direction: 'up', text: '同比 +23%' }],
+    })
+    expect(rec.styles.fillStyle).toBe('#dc2626')
+    const texts = byName(rec.calls, 'fillText')
+    expect(texts[0][1][0]).toBe('同比 +23%')
+    expect(rec.styles.font).toContain('600')
+    const rec2 = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'delta', x: '三', y: 25, direction: 'down', text: '-12%' }],
+    })
+    expect(rec2.styles.fillStyle).toBe('#16a34a')
+  })
+
+  it('region：类目区间带半档扩展填充 + 左上斜体标签', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'region', from: '一', to: '三', label: '观察期' }],
+    })
+    const rects = byName(rec.calls, 'fillRect')
+    expect(rects).toHaveLength(1)
+    const [, , w, h] = rects[0][1]
+    expect(h).toBe(300)
+    expect(w).toBeGreaterThan(0)
+    expect(rec.styles.globalAlpha).toBe(0.06)
+    expect(byName(rec.calls, 'fillText')[0][1][0]).toBe('观察期')
+  })
+
+  it('xPx/yPx 像素定位优先于 data 定位', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'text', x: '二', y: 40, xPx: 123, yPx: 77, text: '像素' }],
+    })
+    expect(byName(rec.calls, 'fillText')[0][1].slice(1)).toEqual([123, 71])
+  })
+
+  it('未知类目与非法类型安全跳过；旧 annotation 字段仍工作', () => {
+    const rec = renderAnns({
+      ...ANNOT_OPTIONS(),
+      annotations: [{ type: 'text', x: '不存在', y: 40, text: 'ghost' }],
+      annotation: { texts: [{ x: '二', y: 40, content: '旧注' }] },
+    })
+    expect(byName(rec.calls, 'fillText').map((t) => t[1][0])).toEqual(['旧注'])
+  })
+
+  it('挂载冒烟：annotations + emphasis 渲染不崩且生效重绘', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          ...ANNOT_OPTIONS(),
+          annotations: [{ type: 'callout', x: '四', y: 60, label: '峰值', anchor: 'top-right' }],
+          emphasis: { series: '营收', dimOthers: true },
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(drawCalls()).toBeGreaterThan(0)
+    await wrapper.setProps({ options: { ...ANNOT_OPTIONS() } })
+    await flushRender()
+    expect(drawCalls()).toBeGreaterThan(0)
     wrapper.unmount()
   })
 })

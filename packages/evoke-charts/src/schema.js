@@ -44,11 +44,10 @@ const annotationSchema = {
   type: "object",
   oneOf: [
     { required: ["type", "x", "y"], properties: { type: { enum: ["text", "callout", "delta", "point"] } } },
-    { required: ["type", "from", "to"], properties: { type: { enum: ["region"] } } },
-    { required: ["type", "at"], properties: { type: { enum: ["refLine"] } } }
+    { required: ["type", "from", "to"], properties: { type: { enum: ["region"] } } }
   ],
   properties: {
-    type: { type: "string", enum: ["text", "callout", "region", "delta", "refLine", "point"] },
+    type: { type: "string", enum: ["text", "callout", "region", "delta", "point"] },
     x: {},
     y: { type: "number" },
     from: {},

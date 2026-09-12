@@ -29,6 +29,8 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'toolbox', desc: '工具按钮：{ show, filename }（导出 PNG / 恢复复位）', type: 'object', default: '—' },
   { name: 'theme', desc: '主题覆盖（colors、textColor 等），暗色模式自动切换', type: 'object', default: '—' },
   { name: 'padding', desc: '绘图区内边距覆写：数字（四边）或 { top, right, bottom, left }（未提供的边回落默认值）；标题、图例、dataZoom 的空间照常叠加。x 轴隐藏（xAxis.show: false）时底部自动收窄；left 未提供时按 y 刻度标签宽度自适应（40–140）', type: 'number | object', default: '—' },
+  { name: 'annotations', desc: '叙述注解（旁白，非数据系列，单图 ≤ 3 处）：text 斜体文字 / callout 旁注+虚线引线 / point 固定高亮点 / delta 涨跌结论（三角+数值，涨跌色同 K 线）/ region 区间强调（primary @6% 填充）。定位 x（类目或索引）+ y（数值），或 xPx/yPx 像素（优先）；offsetX/offsetY 像素微调。直角系图表适用', type: 'array', default: '—' },
+  { name: 'emphasis', desc: '焦点强调：{ series（名称或索引）, dimOthers: true }——焦点系列保持原样，其余降到 22% 透明度（与图例悬浮同一通道）；优先于图例悬浮强调', type: 'object', default: '—' },
   { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
   { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
 ]" />
