@@ -37,20 +37,21 @@
 }
 
 /* ─── v-reveal 滚动入场（轻盈浮现语言，四种入场方向 + 缩放/淡入）─── */
+/* 透明度先落位，位移走长尾强减速曲线，尾部有「沉降感」而不是骤停 */
 .ev-reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity var(--ev-duration-slower) var(--ev-ease-out),
-    transform var(--ev-duration-slower) var(--ev-ease-smooth);
+  transform: translateY(20px);
+  transition: opacity 0.45s var(--ev-ease-out),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
 .ev-reveal[data-ev-reveal='left'] {
-  transform: translateX(-20px);
+  transform: translateX(-24px);
 }
 
 .ev-reveal[data-ev-reveal='right'] {
-  transform: translateX(20px);
+  transform: translateX(24px);
 }
 
 .ev-reveal[data-ev-reveal='zoom'] {

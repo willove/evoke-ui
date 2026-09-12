@@ -73,7 +73,7 @@ easeOutExpo 缓动（起步迅猛、收尾徐缓），自动解析前后缀（`1
 | [EvMarquee](/components/marquee) | 无限滚动横幅；文本模式 = 商场 LED 大字（实心/描边交替） |
 | [EvTabs](/components/tabs) | capsule 分段滑块弹性跟随激活项 |
 | [EvFeatureGrid](/components/feature-grid) | cards 默认交错入场（`reveal` / `stagger` 控制） |
-| [EvHero](/components/hero) | `reveal` 开启后徽章→标题→描述→动作 60ms 错峰入场 |
+| [EvHero](/components/hero) | `reveal` 开启后徽章→标题→描述→动作 90ms 错峰入场 |
 | [EvNavbar](/components/navbar) | `hide-on-scroll` 下滑隐藏上滑浮现；滚动磨砂 |
 | [EvCarousel](/components/carousel) | 平滑位移轮播 + 自动播放 |
 | [EvCard](/components/card) / [EvArticleCard](/components/article-card) | 悬浮轻抬 + 封面缓放 |

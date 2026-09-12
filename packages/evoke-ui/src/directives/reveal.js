@@ -22,7 +22,7 @@ function getObserver() {
       for (const entry of entries) {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-revealed')
-          if (entry.target.dataset.ewRevealOnce !== 'false') {
+          if (entry.target.dataset.evRevealOnce !== 'false') {
             sharedObserver.unobserve(entry.target)
           }
         }
@@ -39,8 +39,8 @@ function getObserver() {
 export function revealElement(el, options = {}) {
   const { type = 'up', delay = 0, once = true } = options
   el.classList.add('ev-reveal')
-  el.dataset.ewReveal = REVEAL_TYPES.includes(type) ? type : 'up'
-  el.dataset.ewRevealOnce = String(once)
+  el.dataset.evReveal = REVEAL_TYPES.includes(type) ? type : 'up'
+  el.dataset.evRevealOnce = String(once)
   if (delay) el.style.transitionDelay = `${delay}ms`
 
   const io = getObserver()

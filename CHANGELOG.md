@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — 首屏入场与滚动浮现动效放软
+
+- **EvHero `reveal` 改纯 CSS 动画实现**：首帧即播、随页面绘制逐层浮现，
+  不再等水合后才由 JS 加类（旧实现会先画出完整内容、瞬间隐藏再入场，观感发硬）；
+  步进从 60ms 放宽到 90ms，位移时长 0.7s、强减速曲线，尾部有沉降感；
+- **v-reveal 滚动入场同套曲线**：位移 0.7s 长尾减速 + 透明度 0.45s 先落位，
+  上浮距离 14px → 20px，`left` / `right` 放宽到 24px；
+- **修复 v-reveal 方向变体失效**：指令写入的 data 属性是遗留的 `data-ew-reveal`，
+  与 CSS 的 `[data-ev-reveal=…]` 选择器对不上，`left` / `right` / `zoom` / `fade`
+  四种类型一直退化成默认上浮，现已统一为 `data-ev-reveal`。
+
 ### @wil-works/evoke-charts — 旭日图标签旋转化 / 层级图聚焦强调
 
 - **标签改 ECharts 形态**：各环（含内环）标签一律沿半径旋转、居中在自己的环带里，

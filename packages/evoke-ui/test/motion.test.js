@@ -46,25 +46,22 @@ describe('EvStatistic 数字滚动', () => {
 })
 
 describe('EvHero 入场动效', () => {
-  it('reveal 开启后各区块带入场类并直接呈现（无 IO 环境）', async () => {
+  it('reveal 开启后根节点挂 is-reveal，由 CSS 动画接管入场', () => {
     const wrapper = mount(EvHero, {
       props: { title: 'T', description: 'D', reveal: true },
       slots: { badge: '<span>b</span>', actions: '<button>a</button>' },
-      attachTo: document.body,
     })
-    await nextTick()
-    const items = wrapper.findAll('[data-ev-hero-item]')
-    expect(items.length).toBeGreaterThanOrEqual(4)
-    for (const el of items) {
-      expect(el.classes()).toContain('ev-reveal')
-      expect(el.classes()).toContain('is-revealed')
+    expect(wrapper.classes()).toContain('is-reveal')
+    // 各区块类名齐全（CSS 按类名分配步进延迟）
+    for (const cls of ['ev-hero__badge', 'ev-hero__title', 'ev-hero__description', 'ev-hero__actions']) {
+      expect(wrapper.find(`.${cls}`).exists()).toBe(true)
     }
     wrapper.unmount()
   })
 
   it('默认不开启动效', () => {
     const wrapper = mount(EvHero, { props: { title: 'T' } })
-    expect(wrapper.find('[data-ev-hero-item]').classes()).not.toContain('ev-reveal')
+    expect(wrapper.classes()).not.toContain('is-reveal')
   })
 })
 

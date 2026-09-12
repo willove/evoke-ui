@@ -113,3 +113,49 @@
   line-height: 1.75;
   color: var(--ev-text-secondary);
 }
+
+/* reveal 错峰入场：backwards 填充让延迟帧停在起点，首帧即播、无水合闪变 */
+@keyframes ev-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ev-hero.is-reveal .ev-hero__badge,
+.ev-hero.is-reveal .ev-hero__title,
+.ev-hero.is-reveal .ev-hero__description,
+.ev-hero.is-reveal .ev-hero__actions,
+.ev-hero.is-reveal .ev-hero__body,
+.ev-hero.is-reveal .ev-hero__aside {
+  animation: ev-hero-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.ev-hero.is-reveal .ev-hero__badge {
+  animation-delay: 0ms;
+}
+.ev-hero.is-reveal .ev-hero__title {
+  animation-delay: 90ms;
+}
+.ev-hero.is-reveal .ev-hero__description {
+  animation-delay: 180ms;
+}
+.ev-hero.is-reveal .ev-hero__actions {
+  animation-delay: 270ms;
+}
+.ev-hero.is-reveal .ev-hero__body {
+  animation-delay: 270ms;
+}
+.ev-hero.is-reveal .ev-hero__aside {
+  animation-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-hero.is-reveal :is(.ev-hero__badge, .ev-hero__title, .ev-hero__description, .ev-hero__actions, .ev-hero__body, .ev-hero__aside) {
+    animation: none;
+  }
+}

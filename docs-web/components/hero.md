@@ -68,7 +68,7 @@
 
 ## 首屏入场动效
 
-<DemoBlock title="reveal 错峰入场" description="reveal 开启后，徽章→标题→描述→动作按 60ms 步进依次浮现；刷新页面即可看到。">
+<DemoBlock title="reveal 错峰入场" description="reveal 开启后，徽章→标题→描述→动作按 90ms 步进依次浮现；刷新页面即可看到。">
 
 <EvHero
   reveal
@@ -102,7 +102,7 @@
 | description | 描述 | string | — |
 | align | 对齐 | `'left' \| 'center'` | `'left'` |
 | tinted | 淡蓝灰光带渐变底 | boolean | `true` |
-| reveal | 错峰入场动效（60ms 步进） | boolean | `false` |
+| reveal | 错峰入场动效（90ms 步进） | boolean | `false` |
 
 ### 插槽
 
