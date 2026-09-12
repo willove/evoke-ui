@@ -121,6 +121,7 @@ body.eb-scroll-locked .bd-header {
   padding: 0 14px;
   font-size: 14px;
   color: var(--bd-text-secondary);
+  white-space: nowrap;
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -145,6 +146,75 @@ body.eb-scroll-locked .bd-header {
   background: var(--bd-primary);
 }
 
+/* 官方库下拉：hover / focus 展开，面板令牌与搜索结果同源 */
+.bd-nav__group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+.bd-nav__trigger {
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.bd-nav__caret {
+  transition: transform 0.2s;
+}
+.bd-nav__group:hover .bd-nav__caret,
+.bd-nav__group:focus-within .bd-nav__caret {
+  transform: rotate(180deg);
+}
+.bd-nav__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 236px;
+  padding: 5px;
+  background: var(--bd-bg);
+  border: 1px solid var(--bd-border);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+.bd-nav__panel::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 0;
+  left: 0;
+  height: 10px;
+}
+.bd-nav__group:hover .bd-nav__panel,
+.bd-nav__group:focus-within .bd-nav__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.bd-nav__panel-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--bd-text-secondary);
+  white-space: nowrap;
+}
+.bd-nav__panel-item:hover {
+  color: var(--bd-text);
+  background: var(--bd-primary-bg);
+}
+.bd-nav__panel-icon {
+  color: var(--bd-text-tertiary);
+  flex-shrink: 0;
+}
+
 .bd-header__right {
   display: flex;
   align-items: center;
@@ -167,8 +237,7 @@ body.eb-scroll-locked .bd-header {
   width: 200px;
   height: 32px;
   padding: 0 12px 0 30px;
-  border: 1px solid var(--bd-border);
-  border-radius: 6px;
+  border: 1px solid var(--bd-border);  border-radius: 6px;
   background: var(--bd-bg-secondary);
   color: var(--bd-text);
   font-size: 13px;
@@ -1783,4 +1852,19 @@ html.dark .ov-card__art {
 /* 顶栏下载入口（锚点形态）：去除链接默认下划线，hover 与按钮一致 */
 a.bd-header__btn {
   text-decoration: none;
+}
+
+/* 窄桌面收一档搜索框宽度与导航内距，给导航与动作区让位（≤1024 已切汉堡菜单）。
+   必须位于基础规则之后，同特异性下靠源码顺序胜出 */
+@media (max-width: 1279px) {
+  .bd-search__input {
+    width: 150px;
+  }
+  .bd-nav__item {
+    padding: 0 10px;
+  }
+  .bd-nav__item.is-active::after {
+    left: 10px;
+    right: 10px;
+  }
 }

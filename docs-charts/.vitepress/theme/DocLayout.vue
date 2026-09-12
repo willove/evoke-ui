@@ -9,18 +9,39 @@
         </a>
 
         <nav class="cd-nav">
-          <a
-            v-for="item in navItems"
-            :key="item.key"
-            :class="['cd-nav__item', { 'is-active': item.active }]"
-            :href="item.external ? item.path : '#'"
-            :target="item.external ? '_blank' : undefined"
-            :rel="item.external ? 'noopener' : undefined"
-            @click="onNavClick(item, $event)"
-          >
-            <Icon :name="item.icon" :size="14" class="cd-nav__icon" />
-            <span>{{ item.label }}</span>
-          </a>
+          <template v-for="item in navItems" :key="item.key">
+            <div v-if="item.children" class="cd-nav__group">
+              <button type="button" class="cd-nav__item cd-nav__trigger">
+                <Icon :name="item.icon" :size="14" class="cd-nav__icon" />
+                <span>{{ item.label }}</span>
+                <Icon name="chevron-down" :size="13" class="cd-nav__caret" />
+              </button>
+              <div class="cd-nav__panel">
+                <a
+                  v-for="c in item.children"
+                  :key="c.path"
+                  class="cd-nav__panel-item"
+                  :href="c.path"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Icon name="external-link" :size="13" class="cd-nav__panel-icon" />
+                  {{ c.label }}
+                </a>
+              </div>
+            </div>
+            <a
+              v-else
+              :class="['cd-nav__item', { 'is-active': item.active }]"
+              :href="item.external ? item.path : '#'"
+              :target="item.external ? '_blank' : undefined"
+              :rel="item.external ? 'noopener' : undefined"
+              @click="onNavClick(item, $event)"
+            >
+              <Icon :name="item.icon" :size="14" class="cd-nav__icon" />
+              <span>{{ item.label }}</span>
+            </a>
+          </template>
         </nav>
 
         <div class="cd-header__right">
@@ -145,8 +166,15 @@ const navItems = computed(() => [
   { key: 'guide', label: '指南', icon: 'book', path: '/guide/install', active: isGuide.value },
   { key: 'charts', label: '图表类型', icon: 'chart', path: '/chart', active: isChart.value },
   { key: 'examples', label: '案例', icon: 'play', path: '/examples/', active: isExamples.value },
-  { key: 'evoke', label: '官网级 UI 框架', icon: 'external-link', path: 'https://evoke-ui.wil-works.com', external: true },
-  { key: 'ebui', label: '中后台 UI 框架', icon: 'external-link', path: 'https://evoke-business-ui.wil-works.com', external: true },
+  {
+    key: 'family',
+    label: '官方库',
+    icon: 'globe',
+    children: [
+      { label: '官网级 UI 框架 · Evoke UI', path: 'https://evoke-ui.wil-works.com' },
+      { label: '中后台 UI 框架 · Business UI', path: 'https://evoke-business-ui.wil-works.com' },
+    ],
+  },
 ])
 
 const results = computed(() => {

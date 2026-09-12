@@ -109,12 +109,8 @@ function goSearch() {
 <EvNavbar logo-text="Evoke UI" :items="[
   { label: '首页', href: '/' },
   { label: '快速开始', href: '/guide/getting-started' },
-  { label: '设计语言', href: '/guide/design' },
   { label: '组件', href: '/components/overview' },
   { label: '案例', href: '/cases/' },
-  { label: '主题定制器', href: '/guide/customizer' },
-  { label: '动效', href: '/guide/motion' },
-  { label: '中后台 UI 框架 ↗', href: 'https://evoke-business-ui.wil-works.com', target: '_blank', rel: 'noopener' },
 ]">
   <template #logo>
     <a href="/" class="home-brand">
@@ -123,6 +119,22 @@ function goSearch() {
     </a>
   </template>
   <template #actions>
+    <div class="home-family">
+      <button type="button" class="ev-navbar__link home-family__trigger">
+        官方库
+        <EvIcon name="chevron-down" :size="14" class="home-family__caret" />
+      </button>
+      <div class="home-family__panel">
+        <a class="home-family__item" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">
+          <span>中后台 UI 框架 · Business UI</span>
+          <EvIcon name="external-link" :size="13" />
+        </a>
+        <a class="home-family__item" href="https://evoke-charts.wil-works.com" target="_blank" rel="noopener">
+          <span>图表库 · Evoke Charts</span>
+          <EvIcon name="external-link" :size="13" />
+        </a>
+      </div>
+    </div>
     <EvThemeToggle />
     <EvIconButton icon="github" aria-label="GitHub" />
     <EvButton
@@ -133,6 +145,10 @@ function goSearch() {
       target="_blank"
       rel="noopener"
     >下载</EvButton>
+  </template>
+  <template #default>
+    <a class="ev-navbar__mobile-link" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">中后台 UI 框架 · Business UI</a>
+    <a class="ev-navbar__mobile-link" href="https://evoke-charts.wil-works.com" target="_blank" rel="noopener">图表库 · Evoke Charts</a>
   </template>
 </EvNavbar>
 
@@ -541,5 +557,69 @@ function goSearch() {
   justify-content: space-around;
   flex-wrap: wrap;
   gap: 32px;
+}
+/* 顶栏「官方库」下拉：hover / focus 展开，面板走卡片令牌（使用方自行叠加的动效） */
+.home-family {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.home-family__trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.home-family__caret {
+  transition: transform var(--ev-duration-base) var(--ev-ease-in-out);
+}
+.home-family:hover .home-family__caret,
+.home-family:focus-within .home-family__caret {
+  transform: rotate(180deg);
+}
+.home-family__panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 60;
+  min-width: 250px;
+  padding: 5px;
+  background: var(--ev-bg-container);
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  box-shadow: var(--ev-shadow-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s var(--ev-ease-in-out), transform 0.18s var(--ev-ease-in-out), visibility 0.18s;
+}
+.home-family__panel::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+.home-family:hover .home-family__panel,
+.home-family:focus-within .home-family__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.home-family__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--ev-radius-sm);
+  font-size: var(--ev-font-size-base);
+  color: var(--ev-text-regular);
+  white-space: nowrap;
+}
+.home-family__item:hover {
+  background: var(--ev-bg-hover);
+  color: var(--ev-text-primary);
 }
 </style>

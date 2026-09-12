@@ -148,6 +148,7 @@ a {
   padding: 0 14px;
   font-size: 14px;
   color: var(--cd-text-secondary);
+  white-space: nowrap;
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -170,6 +171,75 @@ a {
   height: 2px;
   border-radius: 2px 2px 0 0;
   background: var(--cd-primary);
+}
+
+/* 官方库下拉：hover / focus 展开，面板令牌与搜索结果同源 */
+.cd-nav__group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+.cd-nav__trigger {
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.cd-nav__caret {
+  transition: transform 0.2s;
+}
+.cd-nav__group:hover .cd-nav__caret,
+.cd-nav__group:focus-within .cd-nav__caret {
+  transform: rotate(180deg);
+}
+.cd-nav__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 236px;
+  padding: 5px;
+  background: var(--cd-bg);
+  border: 1px solid var(--cd-border);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+.cd-nav__panel::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 0;
+  left: 0;
+  height: 10px;
+}
+.cd-nav__group:hover .cd-nav__panel,
+.cd-nav__group:focus-within .cd-nav__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.cd-nav__panel-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--cd-text-secondary);
+  white-space: nowrap;
+}
+.cd-nav__panel-item:hover {
+  color: var(--cd-text);
+  background: var(--cd-primary-bg);
+}
+.cd-nav__panel-icon {
+  color: var(--cd-text-tertiary);
+  flex-shrink: 0;
 }
 
 .cd-header__right {

@@ -37,17 +37,20 @@ export default defineConfig({
   },
 
   themeConfig: {
-    // 首页 EvNavbar 同款五项 + 首页入口，跨页切换导航内容不变
+    // 首页 EvNavbar 同款四项 + 官方库下拉（姊妹站收进面板），跨页切换导航内容不变
     nav: [
       { text: '首页', link: '/' },
       { text: '快速开始', link: '/guide/getting-started' },
-      { text: '设计语言', link: '/guide/design' },
       { text: '组件', link: '/components/overview' },
       { text: '移动端', link: '/mobile/' },
       { text: '案例', link: '/cases/' },
-      { text: '主题定制器', link: '/guide/customizer' },
-      { text: '动效', link: '/guide/motion' },
-      { text: '中后台 UI 框架 ↗', link: 'https://evoke-business-ui.wil-works.com' },
+      {
+        text: '官方库',
+        items: [
+          { text: '中后台 UI 框架 · Business UI', link: 'https://evoke-business-ui.wil-works.com' },
+          { text: '图表库 · Evoke Charts', link: 'https://evoke-charts.wil-works.com' },
+        ],
+      },
     ],
     // 暗色切换与 GitHub 入口由 Layout 插槽注入（与首页同一套 Ev 组件）
     outline: { label: '本页目录' },
