@@ -74,6 +74,24 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'highlightSeries / clearHighlight', desc: '高亮某系列 / 清除高亮', type: '(name) => void / () => void', default: '—' },
   { name: 'setDataZoomRange / getDataZoomRange', desc: '设置 / 获取缩放范围', type: '(start, end) => void / () => { start, end }', default: '—' },
   { name: 'getDataExtent / getPlotArea', desc: '获取数据极值 / 实际绘图区域', type: '() => object', default: '—' },
-  { name: 'setTheme / getOption', desc: '运行时切换主题 / 获取当前配置', type: '(theme) => void / () => object', default: '—' },
+  { name: 'setTheme / getOption', desc: '运行时切换主题 / 获取当前配置（活引用，直接改动即重绘）', type: '(theme) => void / () => object', default: '—' },
+  { name: 'getSpec / setSpec', desc: '获取当前 Spec 深拷贝（可安全存储 / diff）/ 整体替换 Spec（清掉旧键与交互状态后重绘）', type: '() => object / (spec) => void', default: '—' },
   { name: 'getCanvas / destroy', desc: '获取 canvas 元素 / 销毁实例与监听', type: '() => HTMLCanvasElement / () => void', default: '—' },
 ]" />
+
+## Spec 契约
+
+options 本身就是图表的完整描述：拿到一份 Spec 就能在别处复现同一张图，改 Spec 就是改图表。这个性质让 Spec 成为「AI 生成、人来调」的通用载体——生成的结果可存档、可 diff、可局部修改后回放。
+
+```js
+import { chartOptionsSchema, validateOptions } from '@wil-works/evoke-charts'
+
+// 生成 / 存档前先校验：ok 为 false 时 warnings 给出 path 定位
+const { ok, warnings } = validateOptions(spec)
+
+// 组件实例上往返
+const snapshot = chartRef.value.getSpec()   // 深拷贝，改它不影响图表
+chartRef.value.setSpec({ ...snapshot, type: 'bar' }) // 整体替换并重绘
+```
+
+`update()` 是增量合并（适合局部调数），`setSpec()` 是整体替换（适合换一张图），`getOption()` 返回活引用（改动即重绘，慎用）。函数字段（如 `tooltip.formatter`）按引用保留，会话内可完整往返；跨会话持久化时由宿主自行处理序列化。

@@ -5,6 +5,7 @@ import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
 import { renderYAxis, thinTickValues } from '../src/renderer/axes.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
+import { chartOptionsSchema, validateOptions } from '../src/schema.js'
 
 // Chart 渲染走 canvas 2d + rAF；jsdom 无 2d context，用 Proxy 兜底任意 ctx 方法
 function mockCanvas() {
@@ -384,5 +385,109 @@ describe('applySeriesPalette 配色方案工具', () => {
     expect(applySeriesPalette(null)).toBe(false)
     expect(applySeriesPalette({})).toBe(false)
     expect(document.documentElement.getAttribute('style') ?? '').toBe(before)
+  })
+})
+
+describe('Spec 契约（getSpec / setSpec / validateOptions / exportSVG）', () => {
+  beforeEach(() => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      setTimeout(() => cb(performance.now() + 1e9), 0)
+      return 1
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      return {
+        left: 0, top: 0, right: 800, bottom: 400,
+        width: 800, height: 400, x: 0, y: 0,
+        toJSON: () => {},
+      }
+    })
+    ctx = mockCanvas()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const flushRender = () => new Promise((r) => setTimeout(r, 40))
+  const drawCalls = () => (ctx.__calls.get('clearRect')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('fillRect')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('fill')?.mock.calls.length ?? 0)
+    + (ctx.__calls.get('stroke')?.mock.calls.length ?? 0)
+
+  it('getSpec 返回深拷贝：改副本不反噬图表 options', async () => {
+    const options = { ...LINE_OPTIONS(), title: '基线图' }
+    const wrapper = mount(EvChart, { props: { options }, attachTo: document.body })
+    await nextTick()
+    const spec = wrapper.vm.getSpec()
+    expect(spec.title).toBe('基线图')
+    spec.title = '副本改的'
+    spec.series[0].data[0] = 999
+    expect(options.title).toBe('基线图')
+    expect(options.series[0].data[0]).toBe(10)
+    wrapper.unmount()
+  })
+
+  it('setSpec 整体替换：旧键清除、新键生效并重绘', async () => {
+    const wrapper = mount(EvChart, {
+      props: { options: { ...LINE_OPTIONS(), title: '旧标题' } },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    const before = drawCalls()
+    wrapper.vm.setSpec({ type: 'bar', labels: ['甲', '乙'], series: [{ name: '销量', data: [3, 7] }] })
+    await flushRender()
+    const spec = wrapper.vm.getSpec()
+    expect(spec.title).toBeUndefined()
+    expect(spec.type).toBe('bar')
+    expect(spec.series[0].name).toBe('销量')
+    expect(spec.legend).toBeUndefined()
+    expect(drawCalls()).toBeGreaterThan(before)
+    wrapper.unmount()
+  })
+
+  it('setSpec 重置交互状态：隐藏系列清空、缩放回到配置初值', async () => {
+    const wrapper = mount(EvChart, {
+      props: { options: { ...LINE_OPTIONS(), dataZoom: { enabled: true, start: 20, end: 80 } } },
+      attachTo: document.body,
+    })
+    await nextTick()
+    wrapper.vm.toggleSeries('营收')
+    expect(wrapper.vm.getHiddenSeries()).toEqual(['营收'])
+    wrapper.vm.setDataZoomRange(40, 60)
+    expect(wrapper.vm.getDataZoomRange()).toEqual({ start: 40, end: 60 })
+    wrapper.vm.setSpec({ type: 'line', labels: ['一', '二'], series: [{ name: '新系列', data: [1, 2] }] })
+    expect(wrapper.vm.getHiddenSeries()).toEqual([])
+    // 新 Spec 未启用 dataZoom：缩放随整体替换回到未启用
+    expect(wrapper.vm.getDataZoomRange()).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('validateOptions：合法 Spec 通过，非法给出定位 path', () => {
+    expect(validateOptions(LINE_OPTIONS()).ok).toBe(true)
+    const bad = validateOptions({ type: 'nope', series: [{ data: [1] }] })
+    expect(bad.ok).toBe(false)
+    expect(bad.warnings.some((w) => w.path === 'options.type')).toBe(true)
+    expect(bad.warnings.some((w) => w.path === 'options.series[0].name')).toBe(true)
+  })
+
+  it('chartOptionsSchema 可导出（draft-07，type 必填）', () => {
+    expect(chartOptionsSchema.$schema).toContain('draft-07')
+    expect(chartOptionsSchema.required).toContain('type')
+    expect(chartOptionsSchema.properties.type.enum).toContain('line')
+  })
+
+  it('exportSVG 导出真 SVG（指令重放含文字元素）', async () => {
+    const wrapper = mount(EvChart, { props: { options: LINE_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    const svg = wrapper.vm.exportSVG()
+    expect(svg).toContain('<svg')
+    expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"')
+    expect(svg).toContain('<text')
+    wrapper.unmount()
   })
 })

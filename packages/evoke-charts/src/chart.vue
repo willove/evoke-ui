@@ -100,6 +100,7 @@ import {
 } from "./renderer";
 import { DEFAULT_I18N_ZH } from "./types";
 import { registerConnector, broadcastConnect } from "./connect";
+import { validateOptions } from "./schema";
 // 空态占位图标（折线）— 内联 SVG，保持本库零跨库依赖
 const DataLine = () =>
   h("svg", { viewBox: "0 0 24 24", width: "1em", height: "1em", "aria-hidden": "true" }, [
@@ -1617,6 +1618,28 @@ function cloneOptionsSnapshot(opt) {
     series: (opt.series || []).map((s) => ({ ...s, data: [...s.data] }))
   };
 }
+function cloneSpec(value) {
+  if (value === null || typeof value !== "object") return value;
+  if (Array.isArray(value)) return value.map(cloneSpec);
+  const out = {};
+  Object.keys(value).forEach((k) => {
+    out[k] = cloneSpec(value[k]);
+  });
+  return out;
+}
+// dev 模式下对 options 做轻量校验，非法配置去重告警（不阻断渲染）
+const IS_DEV = typeof import.meta !== "undefined" && !!import.meta.env?.DEV;
+const devWarned = new Set();
+function runDevValidation() {
+  if (!IS_DEV) return;
+  const { warnings } = validateOptions(props.options);
+  warnings.slice(0, 8).forEach((w) => {
+    const key = `${w.path}:${w.message}`;
+    if (devWarned.has(key)) return;
+    devWarned.add(key);
+    console.warn(`[EvChart] ${w.path} ${w.message}`);
+  });
+}
 let prevOptionsSnapshot = null;
 watch(
   () => props.options,
@@ -1624,6 +1647,7 @@ watch(
     cachedDataExtent = null;
     cachedPlotArea = null;
     internalError.value = null;
+    runDevValidation();
     const zoom = getDataZoomConfig(props.options);
     const zoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
     if (zoomKey !== lastZoomKey) {
@@ -1849,6 +1873,28 @@ defineExpose({
   // @since v0.1 — 获取当前 options
   getOption() {
     return props.options;
+  },
+  // 获取当前 Spec 的深拷贝（可安全存储 / diff / 回传 setSpec；函数字段按引用保留）
+  getSpec() {
+    return cloneSpec(props.options);
+  },
+  // 整体替换 Spec：清掉旧键与交互状态后重绘（区别于 update 的增量合并）
+  setSpec(spec) {
+    if (spec === null || typeof spec !== "object") return;
+    const next = cloneSpec(spec);
+    Object.keys(props.options).forEach((k) => delete props.options[k]);
+    Object.assign(props.options, next);
+    hiddenSeries.value = new Set();
+    focusSeries.value = null;
+    brushRect.value = null;
+    hoverIndex = -1;
+    mouseX = -1;
+    mouseY = -1;
+    const zoom = getDataZoomConfig(next);
+    zoomRange.value = { start: zoom?.start ?? 0, end: zoom?.end ?? 100 };
+    lastZoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
+    cachedDataExtent = null;
+    cachedPlotArea = null;
   },
   // @since v0.1 — data zoom 范围
   setDataZoomRange(start, end) {

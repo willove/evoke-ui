@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — Spec 契约：getSpec / setSpec 与 options JSON Schema
+
+- 新增 `getSpec()` / `setSpec(spec)` 组件方法：前者返回当前 Spec 的深拷贝
+  （可安全存储、diff，改副本不反噬图表），后者整体替换 Spec（清掉旧键与
+  图例显隐、缩放等交互状态后重绘）——`update()` 管增量调数，`setSpec()`
+  管换图
+- 新增 `chartOptionsSchema`（options 的 JSON Schema 描述）与
+  `validateOptions(options)` 轻量校验（返回 `ok` 与带 path 定位的
+  `warnings`），均从包根导出，供宿主与生成端在存档 / 回放前自检
+- dev 模式下组件对 options 自动做上述校验，非法配置在控制台去重告警
+  （不阻断渲染，单实例最多提示 8 条）
+
 ### @wil-works/evoke-charts — 容器默认去边框（边框交宿主）
 
 - `.ev-chart` 容器不再自带 1px 描边——是否加框、加多粗由宿主决定，图表只负责
