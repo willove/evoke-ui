@@ -132,5 +132,5 @@ export const ALL_EXAMPLES = EXAMPLES_NAV.flatMap((c) =>
 export const BRAND = {
   name: 'Evoke Charts',
   primary: '#175DFF',
-  version: '0.3.0',
+  version: '0.3.1',
 }

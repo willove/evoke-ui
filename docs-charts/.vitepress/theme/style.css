@@ -16,6 +16,9 @@
   --cd-bg: #ffffff;
   --cd-bg-secondary: #f7f8fa;
   --cd-header-h: 60px;
+  /* 顶部警示横幅（fixed 定高）+ 顶栏的总偏移，替代直接消费 --cd-header-h 的定位场景 */
+  --cd-devwarn-h: 37px;
+  --cd-top: calc(var(--cd-devwarn-h) + var(--cd-header-h));
   --cd-sidebar-w: 240px;
   --cd-radius: 8px;
   --cd-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
@@ -47,6 +50,40 @@ html.dark {
   --cd-sib-biz: #9d90fa;
   --cd-sib-biz-bg: #1d1f33;
   --cd-sib-biz-border: #343766;
+}
+
+/* 顶部开发中警示横幅：fixed 定高叠在顶栏上方，永不滚走 */
+.cd-devwarn {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  height: var(--cd-devwarn-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  color: #8a5a00;
+  background: #fff7e6;
+  border-bottom: 1px solid #f0e2bd;
+}
+.cd-devwarn strong {
+  font-weight: 600;
+}
+html.dark .cd-devwarn {
+  color: #e5b969;
+  background: #2b2414;
+  border-bottom-color: #3f3418;
+}
+@media (max-width: 640px) {
+  .cd-devwarn {
+    padding: 0 12px;
+    font-size: 11.5px;
+  }
 }
 
 /* ══════ 图表令牌契约（--ev-*，evoke-charts 运行时在 documentElement 上读取） ══════
@@ -102,7 +139,7 @@ a {
 /* ══════ 顶栏 ══════ */
 .cd-header {
   position: fixed;
-  top: 0;
+  top: var(--cd-devwarn-h);
   left: 0;
   right: 0;
   z-index: 100;
@@ -361,15 +398,15 @@ a {
   display: flex;
   max-width: 1400px;
   margin: 0 auto;
-  padding-top: var(--cd-header-h);
+  padding-top: var(--cd-top);
 }
 
 .cd-sidebar {
   position: sticky;
-  top: var(--cd-header-h);
+  top: var(--cd-top);
   align-self: flex-start;
   width: var(--cd-sidebar-w);
-  height: calc(100vh - var(--cd-header-h));
+  height: calc(100vh - var(--cd-top));
   overflow-y: auto;
   padding: 20px 12px 40px;
   border-right: 1px solid var(--cd-border-light);
@@ -1003,7 +1040,7 @@ html.dark .api-table__type {
   .cd-sidebar {
     position: fixed;
     left: 0;
-    top: var(--cd-header-h);
+    top: var(--cd-top);
     bottom: 0;
     z-index: 90;
     background: var(--cd-bg);

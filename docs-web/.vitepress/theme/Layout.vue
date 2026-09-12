@@ -1,7 +1,7 @@
 <script setup>
 /**
  * Layout — 在默认主题布局上注入插槽，抹平首页与文档内页的观感差异：
- * 导航栏品牌区（名称 + v0.3.0）与动作区（主题切换 / GitHub / 下载）复刻首页 EvNavbar
+ * 导航栏品牌区（名称 + v0.4.1）与动作区（主题切换 / GitHub / 下载）复刻首页 EvNavbar
  */
 import DefaultTheme from 'vitepress/theme'
 import PlatformCompat from './PlatformCompat.vue'
@@ -11,11 +11,16 @@ const { Layout } = DefaultTheme
 
 <template>
   <Layout>
+    <template #layout-top>
+      <div class="dev-warn-banner">
+        项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。
+      </div>
+    </template>
     <template #doc-before>
       <PlatformCompat />
     </template>
     <template #nav-bar-title-after>
-      <EvTag size="small" style="margin-left: 10px;">v0.4.0</EvTag>
+      <EvTag size="small" style="margin-left: 10px;">v0.4.1</EvTag>
     </template>
     <template #nav-bar-content-after>
       <span class="home-nav-actions">
@@ -40,6 +45,7 @@ const { Layout } = DefaultTheme
 </template>
 
 <style>
+/* 顶部开发中警示横幅样式在 custom.css（首页 layout:false 也复用同一套） */
 .home-nav-actions {
   display: inline-flex;
   align-items: center;

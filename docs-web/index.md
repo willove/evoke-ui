@@ -2,6 +2,10 @@
 layout: false
 ---
 
+<div class="dev-warn-banner">
+  项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。
+</div>
+
 <script setup>
 import { ref } from 'vue'
 import { useThemeConfig } from '../packages/evoke-ui/src/composables/useThemeConfig'
@@ -115,7 +119,7 @@ function goSearch() {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.4.0</EvTag>
+      <EvTag size="small">v0.4.1</EvTag>
     </a>
   </template>
   <template #actions>
@@ -215,7 +219,7 @@ function goSearch() {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.4.0</EvTag>
+        <EvTag tone="primary" size="small">v0.4.1</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>

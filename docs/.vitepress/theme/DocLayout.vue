@@ -10,6 +10,11 @@
 
     <template v-else>
     <!-- 顶栏 -->
+    <!-- 顶部开发中警示横幅：随页面滚动滚走，顶栏保持吸顶 -->
+    <div class="bd-devwarn">
+      项目正在快速迭代中，API 与视觉细节可能随版本调整，<strong>请勿用于生产环境</strong>。
+    </div>
+
     <header class="bd-header">
       <div class="bd-header__inner">
         <a class="bd-logo" href="/" @click.prevent="go('/')">

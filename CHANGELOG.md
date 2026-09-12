@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [0.4.1 / charts 0.3.1] — 2026-09-13
+
+> 本波起，三包 README 头部统一加上「开发迭代中，请勿用于生产环境」警示；
+> 三站文档顶部也加了同样的横幅提示。
+
 ### @wil-works/evoke-ui — 首屏入场与滚动浮现动效放软
 
 - **EvHero `reveal` 改纯 CSS 动画实现**：首帧即播、随页面绘制逐层浮现，
@@ -14,6 +19,10 @@
 - **修复 v-reveal 方向变体失效**：指令写入的 data 属性是遗留的 `data-ew-reveal`，
   与 CSS 的 `[data-ev-reveal=…]` 选择器对不上，`left` / `right` / `zoom` / `fade`
   四种类型一直退化成默认上浮，现已统一为 `data-ev-reveal`。
+
+### @wil-works/evoke-business-ui — README 开发中警示
+
+- README 头部加「开发迭代中，请勿用于生产环境」警示；无代码变化。
 
 ### @wil-works/evoke-charts — 旭日图标签旋转化 / 层级图聚焦强调
 
