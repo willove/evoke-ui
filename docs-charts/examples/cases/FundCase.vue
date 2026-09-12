@@ -27,7 +27,7 @@
             <span :class="f.ytd > 0 ? 'is-up' : 'is-down'">{{ f.ytd > 0 ? '+' : '' }}{{ f.ytd }}%</span>
           </td>
           <td class="is-chart">
-            <EvChart type="sparkline" :options="f.spark" :height="52" />
+            <EvChart type="sparkline" :options="f.spark" :height="64" />
           </td>
         </tr>
       </tbody>
@@ -35,10 +35,10 @@
 
     <div class="case-fund__grid">
       <EvChart :options="ytdRank" :height="280" />
-      <EvChart :options="riskReturn" :height="280" />
+      <EvChart :options="assetMix" :height="280" />
     </div>
 
-    <EvChart :options="assetMix" :height="240" />
+    <EvChart :options="riskReturn" :height="300" />
   </div>
 </template>
 
@@ -145,8 +145,12 @@ const assetMix = {
 .case-fund__table.case-fund__table thead th.is-num {
   text-align: right;
 }
+/* 基金名列收窄，把宽度让给迷你走势区 */
+.case-fund__table .case-fund__name {
+  width: 190px;
+}
 .case-fund__table .is-chart {
-  width: 170px;
+  width: 380px;
 }
 .is-up {
   color: var(--ev-color-danger);
