@@ -9,6 +9,7 @@
     ".": {
       "import": "./dist/index.mjs"
     },
+    "./ai": "./dist/ai.mjs",
     "./styles": "./dist/evoke-charts.css",
     "./package.json": "./package.json"
   },

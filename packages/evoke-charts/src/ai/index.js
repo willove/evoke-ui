@@ -4,3 +4,4 @@ export { generateChartSpec, detectIntent, SPEC_RULES } from "./spec";
 export { SPEC_EXAMPLES, formatExamples } from "./examples";
 export { buildChartPrompt } from "./prompt";
 export { lintChartSpec } from "./lint";
+export { chartOptionsSchema, validateOptions } from "../schema";

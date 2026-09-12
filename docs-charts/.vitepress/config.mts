@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { resolve } from 'node:path'
+import llmstxt from 'vitepress-plugin-llms'
 import { demoSourcePlugin } from './demo-source.mjs'
 
 const chartsRoot = resolve(__dirname, '../../packages/evoke-charts')
@@ -17,6 +18,7 @@ export default defineConfig({
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }]],
 
   vite: {
+    plugins: [llmstxt()],
     resolve: {
       alias: [
         {

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import llmstxt from 'vitepress-plugin-llms'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgRoot = resolve(__dirname, '../../packages/evoke-ui')
@@ -20,6 +21,7 @@ export default defineConfig({
   appearance: false,
 
   vite: {
+    plugins: [llmstxt()],
     resolve: {
       alias: [
         {

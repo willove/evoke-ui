@@ -1,0 +1,1212 @@
+{
+  "generatedAt": "2026-09-12T17:42:54.357Z",
+  "sites": {
+    "ui": {
+      "label": "Evoke UI",
+      "host": "https://evoke-ui.wil-works.com",
+      "desc": "官网级 UI 框架：Clean Navy 设计语言，明暗双主题与运行时换色"
+    },
+    "business": {
+      "label": "Evoke Business UI",
+      "host": "https://evoke-business-ui.wil-works.com",
+      "desc": "中后台 UI 框架：150+ 通用与业务组件，内嵌同一图表引擎"
+    },
+    "charts": {
+      "label": "Evoke Charts",
+      "host": "https://evoke-charts.wil-works.com",
+      "desc": "零依赖 Canvas 自绘图表库：20+ 图表类型，spec 配置式声明"
+    }
+  },
+  "entries": [
+    {
+      "site": "business",
+      "name": "Overview",
+      "title": "组件总览",
+      "category": "总览",
+      "path": "/components/overview"
+    },
+    {
+      "site": "business",
+      "name": "全局配置",
+      "title": "ConfigProvider",
+      "category": "通用",
+      "path": "/components/config-provider"
+    },
+    {
+      "site": "business",
+      "name": "按钮",
+      "title": "Button",
+      "category": "通用",
+      "path": "/components/button"
+    },
+    {
+      "site": "business",
+      "name": "图标",
+      "title": "Icon",
+      "category": "通用",
+      "path": "/components/icon"
+    },
+    {
+      "site": "business",
+      "name": "图标总览",
+      "title": "IconGallery",
+      "category": "通用",
+      "path": "/components/icon-gallery"
+    },
+    {
+      "site": "business",
+      "name": "标签",
+      "title": "Tag",
+      "category": "通用",
+      "path": "/components/tag"
+    },
+    {
+      "site": "business",
+      "name": "文本",
+      "title": "Text",
+      "category": "通用",
+      "path": "/components/text"
+    },
+    {
+      "site": "business",
+      "name": "排版",
+      "title": "Typography",
+      "category": "通用",
+      "path": "/components/typography"
+    },
+    {
+      "site": "business",
+      "name": "链接",
+      "title": "Link",
+      "category": "通用",
+      "path": "/components/link"
+    },
+    {
+      "site": "business",
+      "name": "卡片",
+      "title": "Card",
+      "category": "通用",
+      "path": "/components/card"
+    },
+    {
+      "site": "business",
+      "name": "布局容器",
+      "title": "Container",
+      "category": "布局",
+      "path": "/components/container"
+    },
+    {
+      "site": "business",
+      "name": "栅格行",
+      "title": "Row",
+      "category": "布局",
+      "path": "/components/row"
+    },
+    {
+      "site": "business",
+      "name": "栅格列",
+      "title": "Col",
+      "category": "布局",
+      "path": "/components/col"
+    },
+    {
+      "site": "business",
+      "name": "间距",
+      "title": "Space",
+      "category": "布局",
+      "path": "/components/space"
+    },
+    {
+      "site": "business",
+      "name": "分割线",
+      "title": "Divider",
+      "category": "布局",
+      "path": "/components/divider"
+    },
+    {
+      "site": "business",
+      "name": "输入框",
+      "title": "Input",
+      "category": "数据录入",
+      "path": "/components/input"
+    },
+    {
+      "site": "business",
+      "name": "输入提及",
+      "title": "Mention",
+      "category": "数据录入",
+      "path": "/components/mention"
+    },
+    {
+      "site": "business",
+      "name": "选择器",
+      "title": "Select",
+      "category": "数据录入",
+      "path": "/components/select"
+    },
+    {
+      "site": "business",
+      "name": "数字输入框",
+      "title": "InputNumber",
+      "category": "数据录入",
+      "path": "/components/input-number"
+    },
+    {
+      "site": "business",
+      "name": "单选框",
+      "title": "Radio",
+      "category": "数据录入",
+      "path": "/components/radio"
+    },
+    {
+      "site": "business",
+      "name": "多选框",
+      "title": "Checkbox",
+      "category": "数据录入",
+      "path": "/components/checkbox"
+    },
+    {
+      "site": "business",
+      "name": "开关",
+      "title": "Switch",
+      "category": "数据录入",
+      "path": "/components/switch"
+    },
+    {
+      "site": "business",
+      "name": "日期选择器",
+      "title": "DatePicker",
+      "category": "数据录入",
+      "path": "/components/date-picker"
+    },
+    {
+      "site": "business",
+      "name": "评分",
+      "title": "Rate",
+      "category": "数据录入",
+      "path": "/components/rate"
+    },
+    {
+      "site": "business",
+      "name": "滑块",
+      "title": "Slider",
+      "category": "数据录入",
+      "path": "/components/slider"
+    },
+    {
+      "site": "business",
+      "name": "上传",
+      "title": "Upload",
+      "category": "数据录入",
+      "path": "/components/upload"
+    },
+    {
+      "site": "business",
+      "name": "表单",
+      "title": "Form",
+      "category": "数据录入",
+      "path": "/components/form"
+    },
+    {
+      "site": "business",
+      "name": "统计数值",
+      "title": "Statistic",
+      "category": "数据展示",
+      "path": "/components/statistic"
+    },
+    {
+      "site": "business",
+      "name": "表格",
+      "title": "Table",
+      "category": "数据展示",
+      "path": "/components/table"
+    },
+    {
+      "site": "business",
+      "name": "描述列表",
+      "title": "Descriptions",
+      "category": "数据展示",
+      "path": "/components/descriptions"
+    },
+    {
+      "site": "business",
+      "name": "时间轴",
+      "title": "Timeline",
+      "category": "数据展示",
+      "path": "/components/timeline"
+    },
+    {
+      "site": "business",
+      "name": "步骤条",
+      "title": "Steps",
+      "category": "数据展示",
+      "path": "/components/steps"
+    },
+    {
+      "site": "business",
+      "name": "徽标",
+      "title": "Badge",
+      "category": "数据展示",
+      "path": "/components/badge"
+    },
+    {
+      "site": "business",
+      "name": "头像",
+      "title": "Avatar",
+      "category": "数据展示",
+      "path": "/components/avatar"
+    },
+    {
+      "site": "business",
+      "name": "折叠面板",
+      "title": "Collapse",
+      "category": "数据展示",
+      "path": "/components/collapse"
+    },
+    {
+      "site": "business",
+      "name": "空状态",
+      "title": "Empty",
+      "category": "数据展示",
+      "path": "/components/empty"
+    },
+    {
+      "site": "business",
+      "name": "日历",
+      "title": "Calendar",
+      "category": "数据展示",
+      "path": "/components/calendar"
+    },
+    {
+      "site": "business",
+      "name": "穿梭框",
+      "title": "Transfer",
+      "category": "数据展示",
+      "path": "/components/transfer"
+    },
+    {
+      "site": "business",
+      "name": "走马灯",
+      "title": "Carousel",
+      "category": "数据展示",
+      "path": "/components/carousel"
+    },
+    {
+      "site": "business",
+      "name": "分段控制",
+      "title": "Segmented",
+      "category": "数据展示",
+      "path": "/components/segmented"
+    },
+    {
+      "site": "business",
+      "name": "文字提示",
+      "title": "Tooltip",
+      "category": "数据展示",
+      "path": "/components/tooltip"
+    },
+    {
+      "site": "business",
+      "name": "气泡卡片",
+      "title": "Popover",
+      "category": "数据展示",
+      "path": "/components/popover"
+    },
+    {
+      "site": "business",
+      "name": "气泡确认框",
+      "title": "Popconfirm",
+      "category": "数据展示",
+      "path": "/components/popconfirm"
+    },
+    {
+      "site": "business",
+      "name": "图片",
+      "title": "Image",
+      "category": "数据展示",
+      "path": "/components/image"
+    },
+    {
+      "site": "business",
+      "name": "结果页",
+      "title": "Result",
+      "category": "数据展示",
+      "path": "/components/result"
+    },
+    {
+      "site": "business",
+      "name": "水印",
+      "title": "Watermark",
+      "category": "数据展示",
+      "path": "/components/watermark"
+    },
+    {
+      "site": "business",
+      "name": "级联选择",
+      "title": "Cascader",
+      "category": "数据展示",
+      "path": "/components/cascader"
+    },
+    {
+      "site": "business",
+      "name": "树形控件",
+      "title": "Tree",
+      "category": "数据展示",
+      "path": "/components/tree"
+    },
+    {
+      "site": "business",
+      "name": "全局提示",
+      "title": "Message",
+      "category": "反馈",
+      "path": "/components/message"
+    },
+    {
+      "site": "business",
+      "name": "对话框",
+      "title": "Dialog",
+      "category": "反馈",
+      "path": "/components/dialog"
+    },
+    {
+      "site": "business",
+      "name": "抽屉",
+      "title": "Drawer",
+      "category": "反馈",
+      "path": "/components/drawer"
+    },
+    {
+      "site": "business",
+      "name": "警告提示",
+      "title": "Alert",
+      "category": "反馈",
+      "path": "/components/alert"
+    },
+    {
+      "site": "business",
+      "name": "进度条",
+      "title": "Progress",
+      "category": "反馈",
+      "path": "/components/progress"
+    },
+    {
+      "site": "business",
+      "name": "骨架屏",
+      "title": "Skeleton",
+      "category": "反馈",
+      "path": "/components/skeleton"
+    },
+    {
+      "site": "business",
+      "name": "加载中",
+      "title": "Spin",
+      "category": "反馈",
+      "path": "/components/spin"
+    },
+    {
+      "site": "business",
+      "name": "导航菜单",
+      "title": "Menu",
+      "category": "导航",
+      "path": "/components/menu"
+    },
+    {
+      "site": "business",
+      "name": "标签页",
+      "title": "Tabs",
+      "category": "导航",
+      "path": "/components/tabs"
+    },
+    {
+      "site": "business",
+      "name": "面包屑",
+      "title": "Breadcrumb",
+      "category": "导航",
+      "path": "/components/breadcrumb"
+    },
+    {
+      "site": "business",
+      "name": "分页",
+      "title": "Pagination",
+      "category": "导航",
+      "path": "/components/pagination"
+    },
+    {
+      "site": "business",
+      "name": "下拉菜单",
+      "title": "Dropdown",
+      "category": "导航",
+      "path": "/components/dropdown"
+    },
+    {
+      "site": "business",
+      "name": "返回顶部",
+      "title": "Backtop",
+      "category": "导航",
+      "path": "/components/backtop"
+    },
+    {
+      "site": "business",
+      "name": "图钉",
+      "title": "Affix",
+      "category": "导航",
+      "path": "/components/affix"
+    },
+    {
+      "site": "business",
+      "name": "锚点",
+      "title": "Anchor",
+      "category": "导航",
+      "path": "/components/anchor"
+    },
+    {
+      "site": "business",
+      "name": "虚拟列表",
+      "title": "VirtualList",
+      "category": "能力增强",
+      "path": "/components/virtual-list"
+    },
+    {
+      "site": "business",
+      "name": "列表（已废弃）",
+      "title": "List",
+      "category": "能力增强",
+      "path": "/components/list"
+    },
+    {
+      "site": "business",
+      "name": "输入联想",
+      "title": "AutoComplete",
+      "category": "能力增强",
+      "path": "/components/auto-complete"
+    },
+    {
+      "site": "business",
+      "name": "新手引导",
+      "title": "Tour",
+      "category": "能力增强",
+      "path": "/components/tour"
+    },
+    {
+      "site": "business",
+      "name": "二维码",
+      "title": "QRCode",
+      "category": "能力增强",
+      "path": "/components/qrcode"
+    },
+    {
+      "site": "business",
+      "name": "悬浮按钮",
+      "title": "FloatButton",
+      "category": "能力增强",
+      "path": "/components/float-button"
+    },
+    {
+      "site": "business",
+      "name": "评论",
+      "title": "Comment",
+      "category": "能力增强",
+      "path": "/components/comment"
+    },
+    {
+      "site": "business",
+      "name": "权限",
+      "title": "Auth",
+      "category": "能力增强",
+      "path": "/components/auth"
+    },
+    {
+      "site": "business",
+      "name": "边框流光",
+      "title": "BorderBeam",
+      "category": "能力增强",
+      "path": "/components/border-beam"
+    },
+    {
+      "site": "business",
+      "name": "筛选表单",
+      "title": "SearchFilter",
+      "category": "业务组件",
+      "path": "/components/search-filter"
+    },
+    {
+      "site": "business",
+      "name": "数据表格",
+      "title": "DataTable",
+      "category": "业务组件",
+      "path": "/components/data-table"
+    },
+    {
+      "site": "business",
+      "name": "状态标签",
+      "title": "StatusTag",
+      "category": "业务组件",
+      "path": "/components/status-tag"
+    },
+    {
+      "site": "business",
+      "name": "用量进度",
+      "title": "CreditsProgress",
+      "category": "业务组件",
+      "path": "/components/credits-progress"
+    },
+    {
+      "site": "business",
+      "name": "阶段进度",
+      "title": "GanttProgress",
+      "category": "业务组件",
+      "path": "/components/gantt-progress"
+    },
+    {
+      "site": "business",
+      "name": "双行单元格",
+      "title": "CellStack",
+      "category": "业务组件",
+      "path": "/components/cell-stack"
+    },
+    {
+      "site": "business",
+      "name": "详情描述",
+      "title": "DetailDescriptions",
+      "category": "业务组件",
+      "path": "/components/detail-descriptions"
+    },
+    {
+      "site": "business",
+      "name": "导入导出面板",
+      "title": "ImportExportPanel",
+      "category": "业务组件",
+      "path": "/components/import-export-panel"
+    },
+    {
+      "site": "business",
+      "name": "审计时间线",
+      "title": "AuditTimeline",
+      "category": "业务组件",
+      "path": "/components/audit-timeline"
+    },
+    {
+      "site": "business",
+      "name": "列设置",
+      "title": "ColumnSettings",
+      "category": "业务组件",
+      "path": "/components/column-settings"
+    },
+    {
+      "site": "business",
+      "name": "工具总览",
+      "title": "Overview",
+      "category": "工具",
+      "path": "/utils/"
+    },
+    {
+      "site": "business",
+      "name": "格式化工具",
+      "title": "Format",
+      "category": "工具",
+      "path": "/utils/format"
+    },
+    {
+      "site": "business",
+      "name": "主题与颜色",
+      "title": "Theme & Color",
+      "category": "工具",
+      "path": "/utils/theme-color"
+    },
+    {
+      "site": "business",
+      "name": "组合式函数",
+      "title": "Hooks",
+      "category": "工具",
+      "path": "/utils/hooks"
+    },
+    {
+      "site": "charts",
+      "name": "总览与快速上手",
+      "title": "总览与快速上手",
+      "category": "图表",
+      "path": "/chart"
+    },
+    {
+      "site": "charts",
+      "name": "API 参考",
+      "title": "API 参考",
+      "category": "图表",
+      "path": "/chart/api"
+    },
+    {
+      "site": "charts",
+      "name": "折线图",
+      "title": "折线与面积 · 折线图",
+      "category": "折线与面积",
+      "path": "/chart/line"
+    },
+    {
+      "site": "charts",
+      "name": "面积图",
+      "title": "折线与面积 · 面积图",
+      "category": "折线与面积",
+      "path": "/chart/area"
+    },
+    {
+      "site": "charts",
+      "name": "迷你趋势图",
+      "title": "折线与面积 · 迷你趋势图",
+      "category": "折线与面积",
+      "path": "/chart/sparkline"
+    },
+    {
+      "site": "charts",
+      "name": "柱状图",
+      "title": "柱状与条形 · 柱状图",
+      "category": "柱状与条形",
+      "path": "/chart/bar"
+    },
+    {
+      "site": "charts",
+      "name": "堆叠柱状图",
+      "title": "柱状与条形 · 堆叠柱状图",
+      "category": "柱状与条形",
+      "path": "/chart/stacked-bar"
+    },
+    {
+      "site": "charts",
+      "name": "条形图",
+      "title": "柱状与条形 · 条形图",
+      "category": "柱状与条形",
+      "path": "/chart/horizontal-bar"
+    },
+    {
+      "site": "charts",
+      "name": "瀑布图",
+      "title": "柱状与条形 · 瀑布图",
+      "category": "柱状与条形",
+      "path": "/chart/waterfall"
+    },
+    {
+      "site": "charts",
+      "name": "饼图",
+      "title": "占比与转化 · 饼图",
+      "category": "占比与转化",
+      "path": "/chart/pie"
+    },
+    {
+      "site": "charts",
+      "name": "环形图",
+      "title": "占比与转化 · 环形图",
+      "category": "占比与转化",
+      "path": "/chart/doughnut"
+    },
+    {
+      "site": "charts",
+      "name": "玫瑰图",
+      "title": "占比与转化 · 玫瑰图",
+      "category": "占比与转化",
+      "path": "/chart/rose"
+    },
+    {
+      "site": "charts",
+      "name": "漏斗图",
+      "title": "占比与转化 · 漏斗图",
+      "category": "占比与转化",
+      "path": "/chart/funnel"
+    },
+    {
+      "site": "charts",
+      "name": "仪表盘",
+      "title": "指标与目标 · 仪表盘",
+      "category": "指标与目标",
+      "path": "/chart/gauge"
+    },
+    {
+      "site": "charts",
+      "name": "子弹图",
+      "title": "指标与目标 · 子弹图",
+      "category": "指标与目标",
+      "path": "/chart/bullet"
+    },
+    {
+      "site": "charts",
+      "name": "散点图",
+      "title": "分布与关系 · 散点图",
+      "category": "分布与关系",
+      "path": "/chart/scatter"
+    },
+    {
+      "site": "charts",
+      "name": "直方图",
+      "title": "分布与关系 · 直方图",
+      "category": "分布与关系",
+      "path": "/chart/bin"
+    },
+    {
+      "site": "charts",
+      "name": "热力图",
+      "title": "分布与关系 · 热力图",
+      "category": "分布与关系",
+      "path": "/chart/heatmap"
+    },
+    {
+      "site": "charts",
+      "name": "箱线图",
+      "title": "分布与关系 · 箱线图",
+      "category": "分布与关系",
+      "path": "/chart/boxplot"
+    },
+    {
+      "site": "charts",
+      "name": "K 线图",
+      "title": "分布与关系 · K 线图",
+      "category": "分布与关系",
+      "path": "/chart/candle"
+    },
+    {
+      "site": "charts",
+      "name": "矩形树图",
+      "title": "层级与多维 · 矩形树图",
+      "category": "层级与多维",
+      "path": "/chart/treemap"
+    },
+    {
+      "site": "charts",
+      "name": "旭日图",
+      "title": "层级与多维 · 旭日图",
+      "category": "层级与多维",
+      "path": "/chart/sunburst"
+    },
+    {
+      "site": "charts",
+      "name": "雷达图",
+      "title": "层级与多维 · 雷达图",
+      "category": "层级与多维",
+      "path": "/chart/radar"
+    },
+    {
+      "site": "charts",
+      "name": "混合图",
+      "title": "组合与进阶 · 混合图",
+      "category": "组合与进阶",
+      "path": "/chart/mixed"
+    },
+    {
+      "site": "charts",
+      "name": "交互与联动",
+      "title": "组合与进阶 · 交互与联动",
+      "category": "组合与进阶",
+      "path": "/chart/interaction"
+    },
+    {
+      "site": "ui",
+      "name": "组件总览",
+      "title": "组件总览",
+      "category": "组件",
+      "path": "/components/overview"
+    },
+    {
+      "site": "ui",
+      "name": "PullRefresh",
+      "title": "PullRefresh 下拉刷新",
+      "category": "组件",
+      "path": "/mobile/components/pull-refresh"
+    },
+    {
+      "site": "ui",
+      "name": "LoadMore",
+      "title": "LoadMore 加载更多",
+      "category": "组件",
+      "path": "/mobile/components/load-more"
+    },
+    {
+      "site": "ui",
+      "name": "ActionSheet",
+      "title": "ActionSheet 动作面板",
+      "category": "组件",
+      "path": "/mobile/components/action-sheet"
+    },
+    {
+      "site": "ui",
+      "name": "NavBar",
+      "title": "NavBar 页头",
+      "category": "组件",
+      "path": "/mobile/components/nav-bar"
+    },
+    {
+      "site": "ui",
+      "name": "Tabbar",
+      "title": "Tabbar 底部标签栏",
+      "category": "组件",
+      "path": "/mobile/components/tabbar"
+    },
+    {
+      "site": "ui",
+      "name": "Icon",
+      "title": "Icon 图标",
+      "category": "组件",
+      "path": "/components/icon"
+    },
+    {
+      "site": "ui",
+      "name": "全部图标",
+      "title": "全部图标",
+      "category": "组件",
+      "path": "/components/icons"
+    },
+    {
+      "site": "ui",
+      "name": "Button",
+      "title": "Button 按钮",
+      "category": "组件",
+      "path": "/components/button"
+    },
+    {
+      "site": "ui",
+      "name": "IconButton",
+      "title": "IconButton 图标按钮",
+      "category": "组件",
+      "path": "/components/icon-button"
+    },
+    {
+      "site": "ui",
+      "name": "Tag",
+      "title": "Tag 标签",
+      "category": "组件",
+      "path": "/components/tag"
+    },
+    {
+      "site": "ui",
+      "name": "Badge",
+      "title": "Badge 徽标",
+      "category": "组件",
+      "path": "/components/badge"
+    },
+    {
+      "site": "ui",
+      "name": "Keycap",
+      "title": "Keycap 键帽",
+      "category": "组件",
+      "path": "/components/keycap"
+    },
+    {
+      "site": "ui",
+      "name": "Input",
+      "title": "Input 输入框",
+      "category": "组件",
+      "path": "/components/input"
+    },
+    {
+      "site": "ui",
+      "name": "Textarea",
+      "title": "Textarea 多行输入",
+      "category": "组件",
+      "path": "/components/textarea"
+    },
+    {
+      "site": "ui",
+      "name": "Select",
+      "title": "Select 下拉选择",
+      "category": "组件",
+      "path": "/components/select"
+    },
+    {
+      "site": "ui",
+      "name": "Field",
+      "title": "Field 字段包装",
+      "category": "组件",
+      "path": "/components/field"
+    },
+    {
+      "site": "ui",
+      "name": "Tabs",
+      "title": "Tabs 标签页",
+      "category": "组件",
+      "path": "/components/tabs"
+    },
+    {
+      "site": "ui",
+      "name": "Switch",
+      "title": "Switch 开关",
+      "category": "组件",
+      "path": "/components/switch"
+    },
+    {
+      "site": "ui",
+      "name": "Avatar",
+      "title": "Avatar 头像",
+      "category": "组件",
+      "path": "/components/avatar"
+    },
+    {
+      "site": "ui",
+      "name": "AvatarGroup",
+      "title": "AvatarGroup 头像组",
+      "category": "组件",
+      "path": "/components/avatar-group"
+    },
+    {
+      "site": "ui",
+      "name": "Container",
+      "title": "Container 容器",
+      "category": "组件",
+      "path": "/components/container"
+    },
+    {
+      "site": "ui",
+      "name": "Section",
+      "title": "Section 区块",
+      "category": "组件",
+      "path": "/components/section"
+    },
+    {
+      "site": "ui",
+      "name": "Card",
+      "title": "Card 卡片",
+      "category": "组件",
+      "path": "/components/card"
+    },
+    {
+      "site": "ui",
+      "name": "Hero",
+      "title": "Hero 首屏",
+      "category": "组件",
+      "path": "/components/hero"
+    },
+    {
+      "site": "ui",
+      "name": "Navbar",
+      "title": "Navbar 导航",
+      "category": "组件",
+      "path": "/components/navbar"
+    },
+    {
+      "site": "ui",
+      "name": "Footer",
+      "title": "Footer 页脚",
+      "category": "组件",
+      "path": "/components/footer"
+    },
+    {
+      "site": "ui",
+      "name": "SearchBox",
+      "title": "SearchBox 搜索框",
+      "category": "组件",
+      "path": "/components/search-box"
+    },
+    {
+      "site": "ui",
+      "name": "IconGrid",
+      "title": "IconGrid 图标网格",
+      "category": "组件",
+      "path": "/components/icon-grid"
+    },
+    {
+      "site": "ui",
+      "name": "FeatureGrid",
+      "title": "FeatureGrid 特性",
+      "category": "组件",
+      "path": "/components/feature-grid"
+    },
+    {
+      "site": "ui",
+      "name": "Statistic",
+      "title": "Statistic 指标",
+      "category": "组件",
+      "path": "/components/statistic"
+    },
+    {
+      "site": "ui",
+      "name": "LogoCloud",
+      "title": "LogoCloud 品牌墙",
+      "category": "组件",
+      "path": "/components/logo-cloud"
+    },
+    {
+      "site": "ui",
+      "name": "PricingCard",
+      "title": "PricingCard 定价卡",
+      "category": "组件",
+      "path": "/components/pricing-card"
+    },
+    {
+      "site": "ui",
+      "name": "ComparisonTable",
+      "title": "ComparisonTable 对比表",
+      "category": "组件",
+      "path": "/components/comparison-table"
+    },
+    {
+      "site": "ui",
+      "name": "Faq",
+      "title": "Faq 手风琴",
+      "category": "组件",
+      "path": "/components/faq"
+    },
+    {
+      "site": "ui",
+      "name": "Quote",
+      "title": "Quote 评价",
+      "category": "组件",
+      "path": "/components/quote"
+    },
+    {
+      "site": "ui",
+      "name": "ArticleCard",
+      "title": "ArticleCard 文章卡",
+      "category": "组件",
+      "path": "/components/article-card"
+    },
+    {
+      "site": "ui",
+      "name": "Article",
+      "title": "Article 文章内容",
+      "category": "组件",
+      "path": "/components/article"
+    },
+    {
+      "site": "ui",
+      "name": "ProfileCard",
+      "title": "ProfileCard 个人名片",
+      "category": "组件",
+      "path": "/components/profile-card"
+    },
+    {
+      "site": "ui",
+      "name": "ExecCard",
+      "title": "ExecCard 高管介绍卡",
+      "category": "组件",
+      "path": "/components/exec-card"
+    },
+    {
+      "site": "ui",
+      "name": "Timeline",
+      "title": "Timeline 时间线",
+      "category": "组件",
+      "path": "/components/timeline"
+    },
+    {
+      "site": "ui",
+      "name": "Cta",
+      "title": "Cta 行动召唤",
+      "category": "组件",
+      "path": "/components/cta"
+    },
+    {
+      "site": "ui",
+      "name": "Newsletter",
+      "title": "Newsletter 订阅",
+      "category": "组件",
+      "path": "/components/newsletter"
+    },
+    {
+      "site": "ui",
+      "name": "Alert",
+      "title": "Alert 公告",
+      "category": "组件",
+      "path": "/components/alert"
+    },
+    {
+      "site": "ui",
+      "name": "Video",
+      "title": "Video 视频",
+      "category": "组件",
+      "path": "/components/video"
+    },
+    {
+      "site": "ui",
+      "name": "Audio",
+      "title": "Audio 音频",
+      "category": "组件",
+      "path": "/components/audio"
+    },
+    {
+      "site": "ui",
+      "name": "Carousel",
+      "title": "Carousel 轮播",
+      "category": "组件",
+      "path": "/components/carousel"
+    },
+    {
+      "site": "ui",
+      "name": "ImageWall",
+      "title": "ImageWall 图片墙",
+      "category": "组件",
+      "path": "/components/image-wall"
+    },
+    {
+      "site": "ui",
+      "name": "Waterfall",
+      "title": "Waterfall 瀑布流",
+      "category": "组件",
+      "path": "/components/waterfall"
+    },
+    {
+      "site": "ui",
+      "name": "ImagePreview",
+      "title": "ImagePreview 图片预览",
+      "category": "组件",
+      "path": "/components/image-preview"
+    },
+    {
+      "site": "ui",
+      "name": "Modal",
+      "title": "Modal 弹出层",
+      "category": "组件",
+      "path": "/components/modal"
+    },
+    {
+      "site": "ui",
+      "name": "Marquee",
+      "title": "Marquee 跑马灯",
+      "category": "组件",
+      "path": "/components/marquee"
+    },
+    {
+      "site": "ui",
+      "name": "BorderBeam",
+      "title": "BorderBeam 边框流光",
+      "category": "组件",
+      "path": "/components/border-beam"
+    },
+    {
+      "site": "ui",
+      "name": "ContactForm",
+      "title": "ContactForm 留言表单",
+      "category": "组件",
+      "path": "/components/contact-form"
+    },
+    {
+      "site": "ui",
+      "name": "CodeBlock",
+      "title": "CodeBlock 命令块",
+      "category": "组件",
+      "path": "/components/code-block"
+    },
+    {
+      "site": "ui",
+      "name": "Markdown",
+      "title": "Markdown 渲染",
+      "category": "组件",
+      "path": "/components/markdown"
+    },
+    {
+      "site": "ui",
+      "name": "MarkdownEditor",
+      "title": "MarkdownEditor 编辑器",
+      "category": "组件",
+      "path": "/components/markdown-editor"
+    },
+    {
+      "site": "ui",
+      "name": "ThemeToggle",
+      "title": "ThemeToggle 主题切换",
+      "category": "组件",
+      "path": "/components/theme-toggle"
+    },
+    {
+      "site": "ui",
+      "name": "ConfigProvider",
+      "title": "ConfigProvider 主题配置",
+      "category": "组件",
+      "path": "/components/config-provider"
+    }
+  ]
+}

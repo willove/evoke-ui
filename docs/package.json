@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "highlight.js": "^11.10.0",
-    "vitepress": "^1.6.0"
+    "vitepress": "^1.6.0",
+    "vitepress-plugin-llms": "^1.14.0"
   }
 }

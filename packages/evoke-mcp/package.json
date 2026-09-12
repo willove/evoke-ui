@@ -1,0 +1,32 @@
+{
+  "name": "@wil-works/evoke-mcp",
+  "version": "0.1.0",
+  "description": "Evoke 生态 MCP 服务：组件目录与文档检索、主题令牌、图表 spec 校验与生成——供 AI 编码助手使用",
+  "type": "module",
+  "bin": {
+    "evoke-mcp": "./mcp.mjs"
+  },
+  "files": [
+    "mcp.mjs",
+    "data",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@wil-works/evoke-charts": "workspace:^",
+    "zod": "^3.25.76"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "vue3",
+    "ui-library",
+    "charts",
+    "design-system",
+    "evoke"
+  ],
+  "license": "MIT"
+}
