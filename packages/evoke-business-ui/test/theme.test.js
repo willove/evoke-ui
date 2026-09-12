@@ -8,6 +8,9 @@ import {
   generatePrimaryRamp,
   setPrimaryColor,
   setSemanticColors,
+  setSeriesPalette,
+  clearSeriesPalette,
+  getSeriesPalette,
   resetTheme,
   getPrimaryColor,
   saveThemeConfig,
@@ -76,6 +79,39 @@ describe('theme utils — 主色梯度', () => {
 
   it('setPrimaryColor：非法输入返回 null 且不触碰 DOM', () => {
     expect(setPrimaryColor('not-a-color')).toBeNull()
+  })
+})
+
+describe('theme utils — 图表系列色板', () => {
+  beforeEach(() => {
+    resetTheme()
+  })
+
+  it('setSeriesPalette 逐槽写入 --ev-color-series-N 并派发 ev-theme-change', () => {
+    const spy = vi.fn()
+    document.addEventListener('ev-theme-change', spy)
+    const injected = setSeriesPalette(['#175DFF', '#5AD8A6', '', '#F6BD16'])
+    expect(injected).toEqual({ 1: '#175dff', 2: '#5ad8a6', 4: '#f6bd16' })
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-1')).toBe('#175dff')
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-3')).toBe('')
+    expect(spy).toHaveBeenCalled()
+    document.removeEventListener('ev-theme-change', spy)
+  })
+
+  it('clearSeriesPalette 清空槽位，getSeriesPalette 回到 null', () => {
+    setSeriesPalette(['#175DFF'])
+    expect(getSeriesPalette()).toBeTruthy()
+    clearSeriesPalette()
+    expect(getSeriesPalette()).toBe(null)
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-1')).toBe('')
+  })
+
+  it('resetTheme 一并清除系列色槽位', () => {
+    setSeriesPalette(['#175DFF', '#5AD8A6'])
+    resetTheme()
+    expect(getSeriesPalette()).toBe(null)
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-1')).toBe('')
+    expect(document.documentElement.style.getPropertyValue('--ev-color-series-2')).toBe('')
   })
 })
 

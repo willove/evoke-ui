@@ -83,6 +83,7 @@ export function generatePrimaryRamp(hex, options) {
 // ─── 运行时注入状态（暗色自适应跟随用） ───
 let appliedPrimary = null
 let appliedSemantic = null
+let appliedSeries = null
 let darkObserver = null
 let lastDark = false
 
@@ -178,12 +179,55 @@ export function setSemanticColors(colors, options) {
 }
 
 /**
+ * 图表系列色板（--ev-color-series-1..8）：evoke-charts 按槽读取的专用数据色板，
+ * 与状态语义色解耦。colors 传 ≤8 色数组（逐槽应用，未提供的槽保留默认）；
+ * 空数组 / null 走 clearSeriesPalette。换色后派发 'ev-theme-change'（图表重绘）。
+ * @param {string[]} colors
+ * @param {{ dark?: boolean, target?: HTMLElement }} [options]
+ */
+export function setSeriesPalette(colors, options) {
+  const opts = normalizeOptions(options)
+  const el = opts.target ?? (typeof document !== 'undefined' ? document.documentElement : null)
+  if (!el || !Array.isArray(colors)) return null
+  const injected = {}
+  colors.slice(0, 8).forEach((hex, i) => {
+    const base = normalizeHex(hex)
+    if (!base) return
+    el.style.setProperty(`--ev-color-series-${i + 1}`, base)
+    injected[i + 1] = base
+  })
+  if (Object.keys(injected).length === 0) return null
+  appliedSeries = { ...(appliedSeries || {}), ...injected }
+  const dark = typeof opts.dark === 'boolean' ? opts.dark : isDarkMode()
+  dispatchThemeChange(dark)
+  return injected
+}
+
+/**
+ * 清除图表系列色板，回到 evoke-charts 内置成套色板
+ */
+export function clearSeriesPalette(options) {
+  const opts = normalizeOptions(options)
+  const el = opts.target ?? (typeof document !== 'undefined' ? document.documentElement : null)
+  if (!el || typeof el.style === 'undefined') return
+  for (let i = 1; i <= 8; i++) el.style.removeProperty(`--ev-color-series-${i}`)
+  appliedSeries = null
+  dispatchThemeChange(isDarkMode())
+}
+
+/** 当前运行时图表系列色板（未注入过返回 null） */
+export function getSeriesPalette() {
+  return appliedSeries
+}
+
+/**
  * 重置运行时主题：移除全部注入的内联令牌（主色 + 语义色），回到样式表默认值；
  * 默认保留持久化存档，传 { clearStorage: true } 一并清除
  */
 export function resetTheme(options = {}) {
   appliedPrimary = null
   appliedSemantic = null
+  appliedSeries = null
   stopDarkObserver()
   if (typeof document === 'undefined') return
   const prefixes = ['--eb-color-primary', ...SEMANTIC_KEYS.map((k) => `--eb-color-${k}`)]
@@ -191,6 +235,9 @@ export function resetTheme(options = {}) {
     for (const suffix of RAMP_TOKEN_NAMES) {
       document.documentElement.style.removeProperty(`${prefix}${suffix}`)
     }
+  }
+  for (let i = 1; i <= 8; i++) {
+    document.documentElement.style.removeProperty(`--ev-color-series-${i}`)
   }
   dispatchThemeChange(isDarkMode())
   if (options.clearStorage) clearThemeConfig()

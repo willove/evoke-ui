@@ -166,7 +166,7 @@ const SEMANTIC_SLOTS = ['success', 'warning', 'danger', 'info']
 /** 由配置计算需要写入的 CSS 自定义属性（--ev-*） */
 export function resolveThemeVars(config = {}) {
   const vars = {}
-  const { primary, semantic, radius, space, container } = config
+  const { primary, semantic, series, radius, space, container } = config
 
   if (primary) {
     const ramp = generatePrimaryRamp(primary)
@@ -196,6 +196,13 @@ export function resolveThemeVars(config = {}) {
       vars[`--ev-color-${name}-dark-2`] = ramp.dark2
       vars[`--ev-color-${name}-rgb`] = ramp.rgb
     }
+  }
+
+  // 图表系列色板（--ev-color-series-1..8，evoke-charts 按槽读取）
+  if (Array.isArray(series)) {
+    series.slice(0, 8).forEach((color, i) => {
+      if (color) vars[`--ev-color-series-${i + 1}`] = color
+    })
   }
 
   const radiusPreset = EV_RADIUS_PRESETS[radius]

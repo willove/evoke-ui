@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — 主题配置新增图表系列色板
+
+- `useThemeConfig` / `ConfigProvider` 新增 `series`（≤8 色数组）：
+  `resolveThemeVars` 写入 `--ev-color-series-1..8`，`setSeries()` 应用或清除，
+  配合 evoke-charts 的数据色板解耦，主题工具可整体切换图表配色
+
+### @wil-works/evoke-business-ui — 主题工具新增图表系列色板 API
+
+- `setSeriesPalette(colors)` / `clearSeriesPalette()` / `getSeriesPalette()`：
+  写入或清除 `--ev-color-series-1..8` 并派发 `ev-theme-change`（图表即时重绘）；
+  `resetTheme` 一并清除系列槽位；持久化沿用 `eb-theme-config` 存档通道
+
 ### @wil-works/evoke-charts — y 轴留白自适应与单调平滑曲线
 
 - 左留白按 y 刻度标签实测宽度自适应（夹在 40–140，替代固定 65）——大数量级

@@ -57,6 +57,24 @@ describe('useThemeConfig', () => {
     reset()
   })
 
+  it('resolveThemeVars series 解析出 --ev-color-series-1..8', () => {
+    const vars = resolveThemeVars({ series: ['#175DFF', '#5AD8A6'] })
+    expect(vars['--ev-color-series-1']).toBe('#175DFF')
+    expect(vars['--ev-color-series-2']).toBe('#5AD8A6')
+    expect(vars['--ev-color-series-3']).toBeUndefined()
+  })
+
+  it('setSeries 写入图表系列槽位，null 清除', () => {
+    const { setSeries } = useThemeConfig()
+    setSeries(['#175DFF', '#5AD8A6'])
+    const style = document.documentElement.style
+    expect(style.getPropertyValue('--ev-color-series-1')).toBe('#175DFF')
+    expect(style.getPropertyValue('--ev-color-series-2')).toBe('#5AD8A6')
+    setSeries(null)
+    expect(style.getPropertyValue('--ev-color-series-1')).toBe('')
+    expect(style.getPropertyValue('--ev-color-series-2')).toBe('')
+  })
+
   it('setPrimary 写入文档根令牌，reset 清除', () => {
     const { setPrimary, reset } = useThemeConfig()
     setPrimary('#F04E60')

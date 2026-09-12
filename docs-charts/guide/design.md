@@ -45,6 +45,23 @@ EvChart 的默认视觉遵循一套克制的规范：结构元素（网格、轴
   />
 </DemoBlock>
 
+### 配色方案切换
+
+数据色板整体可切换：写一组槽位令牌（浅色 + 暗色各一份，随暗色自动换挡）并广播 `ev-theme-change`，页面上的全部图表即时跟随。以下预设即此机制的现场效果：
+
+<div class="palette-demo__btns">
+  <button v-for="(p, key) in PALETTES" :key="key" type="button" class="palette-btn" :class="{ 'is-active': current === key }" @click="applyPalette(key)">{{ p.name }}</button>
+</div>
+
+<DemoBlock>
+  <ev-chart
+    :options="paletteDemo"
+    :height="260"
+  />
+</DemoBlock>
+
+接入方实现自己的配色方案切换，按同样的令牌契约写槽位令牌并派发 `ev-theme-change` 即可。
+
 ### 状态语义色边界
 
 `success` / `warning` / `danger` / `info` 是状态语义色，不再默认进入数据色板；只有当数据本身承载该状态含义（如「告警数」）时，才通过 `series[].color` 显式指定。
@@ -95,3 +112,91 @@ EvChart 的默认视觉遵循一套克制的规范：结构元素（网格、轴
 
 - 令牌契约与暗色约定：[主题接入](/guide/theme)
 - 两种组件名的关系：[ev-chart 与 eb-chart](/guide/integration)
+
+## 相关
+
+- 令牌契约与暗色约定：[主题接入](/guide/theme)
+- 两种组件名的关系：[ev-chart 与 eb-chart](/guide/integration)
+
+<script setup>
+import { ref } from 'vue'
+
+const PALETTES = {
+  brand: { name: '品牌蓝' },
+  teal: {
+    name: '青碧',
+    light: ['#12A5A0', '#4d8bff', '#67C23A', '#F6BD16', '#9270CA', '#E8684A', '#6DC8EC', '#5D7092'],
+    dark: ['#2CC5BF', '#7FA8FF', '#85D577', '#F6BD16', '#A585E8', '#F08568', '#8CD4F5', '#8DA3BF'],
+  },
+  warm: {
+    name: '暖阳',
+    light: ['#F0852B', '#E8684A', '#F6BD16', '#D9539B', '#9270CA', '#12A5A0', '#5D7092', '#6DC8EC'],
+    dark: ['#F5A355', '#F08568', '#FBD35C', '#E393C0', '#A585E8', '#2CC5BF', '#8DA3BF', '#8CD4F5'],
+  },
+  mono: {
+    name: '石墨',
+    light: ['#175DFF', '#6C8CFF', '#98B4FF', '#46557A', '#93A5C8', '#2E4470', '#B9C8E8', '#748199'],
+    dark: ['#7FA0FF', '#93B0FF', '#B7CBFF', '#6B7FA8', '#B3C3E2', '#43598C', '#CBD8F2', '#8B9CC4'],
+  },
+}
+const current = ref('brand')
+const paletteDemo = {
+  type: 'line',
+  title: '同一份数据 · 随配色方案换色',
+  labels: ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月'],
+  series: [
+    { name: '系列一', data: [120, 132, 101, 134, 90, 110] },
+    { name: '系列二', data: [80, 92, 91, 94, 70, 88] },
+    { name: '系列三', data: [60, 72, 81, 84, 66, 78] },
+    { name: '系列四', data: [40, 52, 61, 54, 46, 58] },
+  ],
+  legend: { show: true },
+}
+function applyPalette(key) {
+  current.value = key
+  const preset = PALETTES[key]
+  let el = document.getElementById('ec-series-palette')
+  if (!preset?.light) {
+    // 默认方案：移除覆写样式表即回到内置色板
+    el?.remove()
+  } else {
+    if (!el) {
+      el = document.createElement('style')
+      el.id = 'ec-series-palette'
+      document.head.appendChild(el)
+    }
+    const vars = (colors) => colors.map((c, i) => `--ev-color-series-${i + 1}: ${c}`).join(';')
+    el.textContent = `:root { ${vars(preset.light)}; } html.dark { ${vars(preset.dark)}; }`
+  }
+  document.documentElement.dispatchEvent(
+    new CustomEvent('ev-theme-change', { bubbles: true, detail: { dark: document.documentElement.classList.contains('dark') } }),
+  )
+}
+</script>
+
+<style scoped>
+.palette-demo__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 16px;
+}
+.palette-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--ev-border-color, #e2e8f0);
+  border-radius: 999px;
+  background: var(--ev-bg-color-overlay, #fff);
+  color: var(--ev-text-color-secondary, #646a73);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.palette-btn:hover {
+  border-color: var(--ev-color-primary, #175dff);
+}
+.palette-btn.is-active {
+  border-color: var(--ev-color-primary, #175dff);
+  color: var(--ev-color-primary, #175dff);
+  font-weight: 600;
+}
+</style>

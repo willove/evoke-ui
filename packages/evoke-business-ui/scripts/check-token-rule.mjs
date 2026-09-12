@@ -47,6 +47,8 @@ function isChartAdapterExempt(line) {
   if (line.includes('evoke-charts')) return true
   if (line.includes('--ev-') && line.includes('--eb-')) return true
   if (line.includes('EvChart') && line.includes('EbChart')) return true
+  // 图表系列色槽位：主题宿主向 evoke-charts 写入的数据色板契约（DESIGN.md §2.1）
+  if (line.includes('--ev-color-series-')) return true
   return line.includes('ev-theme-change')
 }
 

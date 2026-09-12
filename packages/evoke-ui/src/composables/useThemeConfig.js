@@ -17,6 +17,7 @@ import { resolveThemeVars, EV_STYLE_PRESETS } from '../presets'
 const DEFAULT_CONFIG = {
   primary: '',
   semantic: null,
+  series: null,
   radius: 'default',
   space: 'default',
   container: 'default',
@@ -39,6 +40,7 @@ function clearApplied() {
   const probe = {
     primary: '#000000',
     semantic: { success: '#000000', warning: '#000000', danger: '#000000', info: '#000000' },
+    series: Array.from({ length: 8 }, () => '#000000'),
     radius: 'default', space: 'default', container: 'default',
   }
   for (const name of Object.keys(resolveThemeVars(probe))) {
@@ -79,6 +81,23 @@ export function useThemeConfig() {
           for (const suffix of ['', '-light-3', '-light-5', '-light-7', '-light-8', '-light-9', '-dark-2', '-rgb']) {
             style.removeProperty(`--ev-color-${name}${suffix}`)
           }
+        }
+      }
+      return
+    }
+    apply()
+  }
+
+  /**
+   * 图表系列色板（--ev-color-series-1..8，evoke-charts 按槽读取）
+   * 传入 ≤8 色数组整体应用；传 null 清除、回到内置成套色板
+   */
+  function setSeries(colors) {
+    config.series = Array.isArray(colors) && colors.length ? colors.slice(0, 8) : null
+    if (!config.series) {
+      if (typeof document !== 'undefined') {
+        for (let i = 1; i <= 8; i++) {
+          document.documentElement.style.removeProperty(`--ev-color-series-${i}`)
         }
       }
       return
@@ -146,6 +165,7 @@ export function useThemeConfig() {
     config,
     setPrimary,
     setSemantic,
+    setSeries,
     setGlass,
     setRadius,
     setSpace,
