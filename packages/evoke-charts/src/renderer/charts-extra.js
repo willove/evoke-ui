@@ -210,12 +210,16 @@ function renderSunburstChart(ctx) {
   if (data.length === 0) return;
   const centerX = plotArea.x + plotArea.width / 2;
   const centerY = plotArea.y + plotArea.height / 2;
-  const maxR = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 10);
-  const innerHole = Math.max(0, maxR * 0.18);
+  // 半径为外置叶子标签预留水平 45px / 纵向 24px
+  const maxR = Math.max(40, Math.min((plotArea.width - 90) / 2, (plotArea.height - 48) / 2));
+  const innerHole = Math.max(0, maxR * 0.22);
   const depthCount = computeSunburstDepth(data);
   const ringWidth = (maxR - innerHole) / depthCount;
   const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
   const sweep = -Math.PI / 2 + Math.PI * 2 * progress;
+  const showValues = options.showValues === true;
+  const insideLabels = [];
+  const outerLabels = [];
   canvasCtx.save();
   canvasCtx.beginPath();
   canvasCtx.moveTo(centerX, centerY);
@@ -241,27 +245,106 @@ function renderSunburstChart(ctx) {
       canvasCtx.stroke();
     }
     canvasCtx.restore();
+    if (progress <= 0.9) return;
     const span = seg.endAngle - seg.startAngle;
     const midR = (seg.r0 + seg.r1) / 2;
     const chord = midR * span;
     const name = seg.node.name || "";
-    if (progress > 0.9 && span > 0.12 && chord > estimateTextWidth(name, 11) + 8 && seg.r1 - seg.r0 > 13) {
+    const isLeafRing = depthCount > 1 && seg.depth === depthCount - 1;
+    if (isLeafRing) {
+      // 最外层叶子：标签外置到圆盘外侧，避免往窄环带里塞字
+      if (span > 0.05 && name) {
+        outerLabels.push({ midAngle: seg.midAngle, name, value: seg.value });
+      }
+      return;
+    }
+    if (seg.depth === 0) {
+      // 内环：水平加粗，弦长放得下才画
+      if (span > 0.14 && chord > estimateTextWidth(name, 12) + 10) {
+        const lx = centerX + Math.cos(seg.midAngle) * midR;
+        const ly = centerY + Math.sin(seg.midAngle) * midR;
+        insideLabels.push({
+          x: lx,
+          y: ly - (showValues ? 6 : 0),
+          name,
+          value: showValues && seg.r1 - seg.r0 > 26 ? valueFormatter(seg.value) : null,
+          bold: true,
+          fill: getContrastText(color),
+          radial: false,
+          midAngle: seg.midAngle,
+        });
+      }
+      return;
+    }
+    // 中间环：沿半径方向旋转排布，径向空间即环带厚度，永不相撞
+    if (span > 0.08 && ringWidth > 13 && name && estimateTextWidth(name, 10) <= ringWidth + 12) {
       const lx = centerX + Math.cos(seg.midAngle) * midR;
       const ly = centerY + Math.sin(seg.midAngle) * midR;
-      canvasCtx.save();
-      canvasCtx.fillStyle = getContrastText(color);
-      canvasCtx.font = seg.depth === 0 ? "bold 12px Inter, sans-serif" : "11px Inter, sans-serif";
-      canvasCtx.textAlign = "center";
-      canvasCtx.textBaseline = "middle";
-      canvasCtx.fillText(name, lx, ly - (options.showValues ? 6 : 0));
-      if (options.showValues && seg.r1 - seg.r0 > 26) {
-        canvasCtx.font = "10px Inter, sans-serif";
-        canvasCtx.fillText(valueFormatter(seg.value), lx, ly + 8);
-      }
-      canvasCtx.restore();
+      insideLabels.push({
+        x: lx,
+        y: ly,
+        name,
+        value: null,
+        bold: false,
+        fill: getContrastText(color),
+        radial: true,
+        midAngle: seg.midAngle,
+      });
     }
   });
   canvasCtx.restore();
+  // 段内标签（不受圆盘裁剪影响，本身就在盘内）
+  insideLabels.forEach((l) => {
+    canvasCtx.save();
+    canvasCtx.fillStyle = l.fill;
+    canvasCtx.font = l.radial ? "10px Inter, sans-serif" : l.bold ? "bold 12px Inter, sans-serif" : "11px Inter, sans-serif";
+    canvasCtx.textAlign = "center";
+    canvasCtx.textBaseline = "middle";
+    if (l.radial) {
+      canvasCtx.translate(l.x, l.y);
+      let rot = l.midAngle;
+      if (rot > Math.PI / 2 || rot < -Math.PI / 2) rot += Math.PI;
+      canvasCtx.rotate(rot);
+      canvasCtx.fillText(l.name, 0, 0);
+    } else {
+      canvasCtx.fillText(l.name, l.x, l.y);
+      if (l.value) {
+        canvasCtx.font = "10px Inter, sans-serif";
+        canvasCtx.fillText(l.value, l.x, l.y + 14);
+      }
+    }
+    canvasCtx.restore();
+  });
+  // 外置叶子标签：按角度左右取向，纵向 13px 最小间距防重叠
+  outerLabels.sort((a, b) => a.midAngle - b.midAngle);
+  const placed = [];
+  outerLabels.forEach((l) => {
+    const cos = Math.cos(l.midAngle);
+    const px = centerX + Math.cos(l.midAngle) * (maxR + 6);
+    const py = centerY + Math.sin(l.midAngle) * (maxR + 6);
+    const text = showValues ? `${l.name} ${valueFormatter(l.value)}` : l.name;
+    placed.push({
+      x: px,
+      y: py,
+      align: cos >= 0 ? "left" : "right",
+      text,
+    });
+  });
+  placed.sort((a, b) => a.y - b.y);
+  let lastY = -Infinity;
+  placed.forEach((l) => {
+    if (l.y < lastY + 13) l.y = lastY + 13;
+    lastY = l.y;
+  });
+  placed.forEach((l) => {
+    canvasCtx.save();
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.font = "11px Inter, sans-serif";
+    canvasCtx.textAlign = l.align;
+    canvasCtx.textBaseline = "middle";
+    canvasCtx.fillText(l.text, l.x, l.y);
+    canvasCtx.restore();
+  });
 }
 function renderMixedChart(ctx, leftRange, rightRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;

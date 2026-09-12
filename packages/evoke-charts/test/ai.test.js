@@ -11,7 +11,7 @@ import {
   SPEC_EXAMPLES,
 } from '../src/ai/index.js'
 import { validateOptions } from '../src/schema.js'
-import { layoutSunburst } from '../src/renderer/charts-extra.js'
+import { layoutSunburst, renderSunburstChart } from '../src/renderer/charts-extra.js'
 
 const CSV = `月份,线上商城,线下门店,社群团购
 1月,320,280,120
@@ -310,5 +310,54 @@ describe('旭日图布局：父节点省略 value 由子孙汇总', () => {
     const tops = segments.filter((s) => s.depth === 0)
     expect(tops[0].endAngle - tops[0].startAngle).toBeCloseTo(Math.PI)
     expect(tops[1].endAngle - tops[1].startAngle).toBeCloseTo(Math.PI)
+  })
+})
+
+describe('旭日图渲染：外层叶子标签外置', () => {
+  it('最外层叶子标签画在圆盘外侧，内层标签留在段内', () => {
+    const texts = []
+    const arcs = []
+    const proxy = new Proxy(
+      { measureText: () => ({ width: 10 }) },
+      {
+        get(obj, prop) {
+          return prop in obj ? obj[prop] : (...args) => { texts.push([String(prop), args]) }
+        },
+      },
+    )
+    void arcs
+    renderSunburstChart(
+      {
+        ctx: proxy,
+        theme: {
+          colors: ['#175DFF', '#5AD8A6'],
+          textColorSecondary: '#6b7280',
+          backgroundColor: '#ffffff',
+        },
+        plotArea: { x: 40, y: 10, width: 400, height: 300 },
+        options: {
+          type: 'sunburst',
+          sunburstData: [
+            { name: '自有', children: [{ name: 'App 启动', value: 540 }, { name: '官网', value: 260 }] },
+            { name: '付费', children: [{ name: '信息流', value: 380 }, { name: '搜索', value: 220 }] },
+          ],
+        },
+        width: 480,
+        height: 320,
+        progress: 1,
+        hoverIndex: -1,
+      },
+    )
+    const fills = texts.filter((t) => t[0] === 'fillText').map((t) => t[1])
+    // 外置叶子标签存在（最外层叶子不再塞进环带）
+    const outer = fills.find((f) => f[0] === 'App 启动')
+    expect(outer).toBeTruthy()
+    // 外置标签到圆心的距离大于外环半径 126
+    const dist = Math.hypot(outer[1] - 240, outer[2] - 160)
+    expect(dist).toBeGreaterThan(126)
+    // 深度 0 段内标签仍在环内（距圆心 < 外环半径）
+    const inner = fills.find((f) => f[0] === '自有')
+    expect(inner).toBeTruthy()
+    expect(Math.hypot(inner[1] - 240, inner[2] - 160)).toBeLessThan(126)
   })
 })
