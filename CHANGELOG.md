@@ -12,7 +12,15 @@
   `{ plotArea, theme, options, progress }`，自定义内容跟随主题与布局
 - 新增 `#overlay` 作用域插槽：HTML 内容绝对定位铺满容器，默认
   `pointer-events: none`（子元素可自行开启），层级低于 tooltip；插槽参数
-  `{ plotArea, theme, options }`，富文本旁白 / 自定义标记不再需要hack进 canvas
+  `{ plotArea, theme, options }`，富文本旁白 / 自定义标记不必再硬塞进 canvas
+
+### @wil-works/evoke-charts — 提示词示例库（few-shot）
+
+- `buildChartPrompt` 默认附「## 示例」段：4 条「需求 → Spec」对照（折线 / 饼图
+  / 横向条形 / 散点），由 `SPEC_EXAMPLES` / `formatExamples` 导出复用；
+  `examples: false` 关闭
+- 示例有自一致性测试把关：每条 spec 都通过 schema 校验与 lint 无 error，
+  模型照抄不会抄出不合格配置
 
 ### @wil-works/evoke-charts — AI 生成引擎：数据直生 / 提示词契约 / 渲染自检
 

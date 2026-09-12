@@ -5,10 +5,11 @@
 import { chartOptionsSchema } from "../schema";
 import { parseDataTable } from "./table";
 import { SPEC_RULES } from "./spec";
+import { formatExamples } from "./examples";
 
 const PREVIEW_ROWS = 8;
 
-export function buildChartPrompt({ data, requirement, extraRules = [] } = {}) {
+export function buildChartPrompt({ data, requirement, extraRules = [], examples = true } = {}) {
   const table = parseDataTable(data);
   let digest;
   if (table) {
@@ -25,13 +26,19 @@ export function buildChartPrompt({ data, requirement, extraRules = [] } = {}) {
     digest = "（未提供数据，请基于需求虚构合理示例数据）";
   }
   const rules = [...SPEC_RULES, ...extraRules];
-  return [
+  const sections = [
     "你是图表配置生成器。根据下面的数据与需求，产出 EvChart 的 options JSON（下称 Spec），它将被 <ev-chart :options> 直接渲染。",
     `## Options Schema\n${JSON.stringify(chartOptionsSchema)}`,
     `## 数据预览\n${digest}`,
+  ];
+  if (examples) {
+    sections.push(`## 示例\n${formatExamples()}`);
+  }
+  sections.push(
     requirement
       ? `## 需求\n${requirement}`
       : "## 需求\n根据数据形状自行选择最合适的图表类型，并拟一个不超过 12 字的标题。",
-    `## 硬性规则\n${rules.map((r, i) => `${i + 1}. ${r}`).join("\n")}`,
-  ].join("\n\n");
+  );
+  sections.push(`## 硬性规则\n${rules.map((r, i) => `${i + 1}. ${r}`).join("\n")}`);
+  return sections.join("\n\n");
 }

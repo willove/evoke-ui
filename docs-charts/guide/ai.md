@@ -106,7 +106,7 @@ if (!issues.some((i) => i.level === 'error')) chartRef.value.setSpec(safe)
 <ApiTable title="AI 生成" :rows="[
   { name: 'generateChartSpec', desc: '数据 + 意图 → Spec。返回 { spec, report }：spec 为 null 时 report 说明缘由；report 给出列推断、选型理由与告警。hint 支持意图关键词，narrative: true 自动注入峰值 callout 与末点环比 delta（受三处注解预算约束）', type: '(data, hint?) => { spec, report }', default: '—' },
   { name: 'lintChartSpec', desc: '渲染自检：schema 校验 → 焦点预算（注解 ≤3）→ 扇区数量 → 类目拥挤自动转横向 → 无头渲染文本越界。能修则修，返回 { issues, spec }（修后的副本，原对象不动）', type: '(spec, opts?) => { issues, spec }', default: '—' },
-  { name: 'buildChartPrompt', desc: '提示词契约：Schema + 数据预览 + 需求 + 硬性规则。喂给任意大模型，返回 JSON 经 lintChartSpec 后 setSpec 回放', type: '({ data, requirement, extraRules? }) => string', default: '—' },
+  { name: 'buildChartPrompt', desc: '提示词契约：Schema + 数据预览 + few-shot 示例（SPEC_EXAMPLES，examples: false 关闭）+ 需求 + 硬性规则。喂给任意大模型，返回 JSON 经 lintChartSpec 后 setSpec 回放', type: '({ data, requirement, extraRules?, examples? }) => string', default: '—' },
   { name: 'parseDataTable', desc: 'CSV / TSV 文本、对象数组、二维数组 → { headers, rows }；首行表头自动识别', type: '(input) => table | null', default: '—' },
 ]" />
 

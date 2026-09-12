@@ -8,6 +8,7 @@ import {
   detectIntent,
   buildChartPrompt,
   lintChartSpec,
+  SPEC_EXAMPLES,
 } from '../src/ai/index.js'
 import { validateOptions } from '../src/schema.js'
 
@@ -185,6 +186,23 @@ describe('AI 生成引擎：提示词契约与渲染自检', () => {
   it('buildChartPrompt：无数据时明示虚构', () => {
     const prompt = buildChartPrompt({ requirement: '画个示例' })
     expect(prompt).toContain('虚构合理示例数据')
+  })
+
+  it('示例库自一致：每条示例 spec 都过 schema 校验与 lint 无 error', () => {
+    expect(SPEC_EXAMPLES.length).toBeGreaterThanOrEqual(3)
+    SPEC_EXAMPLES.forEach(({ requirement, spec }) => {
+      expect(validateOptions(spec).ok, `示例不合格：${requirement}`).toBe(true)
+      const { issues } = lintChartSpec(spec)
+      expect(issues.filter((i) => i.level === 'error'), `示例 lint 报错：${requirement}`).toEqual([])
+    })
+  })
+
+  it('buildChartPrompt 默认携带示例，examples: false 可关闭', () => {
+    const withExamples = buildChartPrompt({ data: CSV, requirement: '看走势' })
+    expect(withExamples).toContain('## 示例')
+    expect(withExamples).toContain('需求：看上半年各渠道销售额走势')
+    const without = buildChartPrompt({ data: CSV, requirement: '看走势', examples: false })
+    expect(without).not.toContain('## 示例')
   })
 
   it('lintChartSpec：schema 错误定位 + 注解预算裁剪', () => {
