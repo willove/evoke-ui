@@ -36,6 +36,39 @@ html.dark {
   --cd-bg-secondary: #1b1e23;
 }
 
+/* ══════ 图表令牌契约（--ev-*，evoke-charts 运行时在 documentElement 上读取） ══════
+   本站按 guide/theme 的契约表向图表供令牌，取值与上方 cd-* 站点色板一致；
+   主色与主色 RGB 由 evoke-ui variables.css 提供，此处不重复定义。 */
+:root {
+  --ev-bg-color: #ffffff;
+  --ev-bg-color-overlay: #ffffff;
+  --ev-app-card-border: #e5e7eb;
+  --ev-text-color-primary: #1f2329;
+  --ev-text-color-secondary: #646a73;
+  --ev-text-color-tertiary: #8f959e;
+  --ev-text-color-danger: #dc2626;
+  --ev-border-color: #e5e7eb;
+  --ev-border-color-light: #eff0f1;
+  --ev-border-color-dark: #d8dbe0;
+  --ev-fill-color-light: #f7f8fa;
+  --ev-fill-color-dark: #eceef1;
+}
+
+html.dark {
+  --ev-bg-color: #141619;
+  --ev-bg-color-overlay: #1b1e23;
+  --ev-app-card-border: #33383f;
+  --ev-text-color-primary: #e8eaed;
+  --ev-text-color-secondary: #a8b0bb;
+  --ev-text-color-tertiary: #7d8590;
+  --ev-text-color-danger: #f87171;
+  --ev-border-color: #33383f;
+  --ev-border-color-light: #2a2f36;
+  --ev-border-color-dark: #3d434b;
+  --ev-fill-color-light: #1b1e23;
+  --ev-fill-color-dark: #141619;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -559,15 +592,17 @@ html.dark [class*='language-'] code span {
 }
 
 /* ══════ DemoBlock ══════ */
+/* 不裁剪溢出：演示内的图表 tooltip 需要能浮出演示区（矮容器场景）；
+   圆角由预览区与代码块各自承担 */
 .demo-block {
   margin: 16px 0 24px;
   border: 1px solid var(--cd-border);
   border-radius: var(--cd-radius);
-  overflow: hidden;
 }
 .demo-block__preview {
   padding: 28px 24px;
   background: var(--cd-bg);
+  border-radius: var(--cd-radius) var(--cd-radius) 0 0;
 }
 /* 演示区多控件并排容器：flex wrap + 双向 gap，
    避免 inline-block 控件换行时行盒被控件高度撑满、行与行之间零行距 */

@@ -308,15 +308,25 @@ function updateTooltipPosition(clientX, clientY) {
   const spaceBelow = containerRect.height - relY - gap;
   const spaceAbove = relY - gap - legendBottom;
   let top;
-  if (spaceBelow >= th) {
-    top = relY + gap;
-  } else if (spaceAbove >= th) {
-    top = relY - gap - th;
+  // 容器高度装得下 tooltip：在容器内翻转并钳制；
+  // 装不下（监控长条等矮容器）：允许溢出容器边界，按视口剩余空间选边，杜绝被裁切
+  const fitsInside = th + margin * 2 <= containerRect.height;
+  if (fitsInside) {
+    if (spaceBelow >= th) {
+      top = relY + gap;
+    } else if (spaceAbove >= th) {
+      top = relY - gap - th;
+    } else {
+      top = spaceBelow >= spaceAbove ? containerRect.height - th - margin : legendBottom;
+    }
+    top = Math.max(legendBottom, Math.min(top, containerRect.height - th - margin));
   } else {
-    top = spaceBelow >= spaceAbove ? containerRect.height - th - margin : legendBottom;
+    const pointViewportY = containerRect.top + relY;
+    const belowInViewport = pointViewportY + gap + th <= window.innerHeight - 8;
+    const aboveInViewport = pointViewportY - gap - th >= 8;
+    top = belowInViewport || !aboveInViewport ? relY + gap : relY - gap - th;
   }
   left = Math.max(margin, Math.min(left, containerRect.width - tw - margin));
-  top = Math.max(legendBottom, Math.min(top, containerRect.height - th - margin));
   tooltipPlacement.value = "top";
   tooltipX.value = left;
   tooltipY.value = top;
@@ -1859,7 +1869,9 @@ defineExpose({
 <style scoped>
 .ev-chart {
   position: relative;
-  overflow: hidden;
+  /* 不裁剪溢出：tooltip 需要能浮出矮容器（监控长条等）；
+     圆角裁剪下沉到 canvas 与浮层自身（border-radius: inherit） */
+  overflow: visible;
   border-radius: 8px;
   background: var(--ev-bg-color, #ffffff);
   border: 1px solid var(--ev-app-card-border, #e2e8f0);
@@ -1873,6 +1885,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   display: block;
+  border-radius: inherit;
   /* 触摸：纵向留给页面滚动，横向拖拽由图表接管（dataZoom 平移） */
   touch-action: pan-y;
 }
@@ -1955,6 +1968,7 @@ defineExpose({
 .ev-chart__empty {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1991,6 +2005,7 @@ defineExpose({
 .ev-chart__loading {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2028,6 +2043,7 @@ defineExpose({
 .ev-chart__error {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;

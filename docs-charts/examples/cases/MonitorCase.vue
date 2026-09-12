@@ -3,35 +3,31 @@
     <header class="case-mon__header">
       <div>
         <h3 class="case-mon__title">服务器指标监控</h3>
-        <p class="case-mon__sub">近 60 秒 · 每秒推进一个点，Max / Min / Avg 随窗口同步重算</p>
+        <p class="case-mon__sub">近 60 秒 · 每秒推进一个点 · Max / Min / Avg 为窗口内全部点的统计值</p>
       </div>
       <button class="case-mon__btn" type="button" @click="toggle">{{ running ? '暂停刷新' : '开始刷新' }}</button>
     </header>
 
-    <p class="case-mon__note">注释：Max、Min 和 Avg 数值统计为当前折线图内所有点的最大值、最小值和平均值</p>
-
     <section v-for="g in groups" :key="g.name" class="case-mon__group">
-      <div class="case-mon__group-name">{{ g.name }}</div>
-      <div class="case-mon__rows">
-        <div v-for="m in g.metrics" :key="m.key" class="case-mon__row">
-          <div class="case-mon__name">
-            {{ m.name }}<span class="case-mon__unit">{{ m.unit }}</span>
-          </div>
-          <div class="case-mon__chart">
-            <EvChart type="line" :options="m.options" :height="64" />
-          </div>
-          <div class="case-mon__stat">
-            <span>Max:</span>
-            <strong>{{ m.stats.max }}</strong>
-          </div>
-          <div class="case-mon__stat">
-            <span>Min:</span>
-            <strong>{{ m.stats.min }}</strong>
-          </div>
-          <div class="case-mon__stat">
-            <span>Avg:</span>
-            <strong>{{ m.stats.avg }}</strong>
-          </div>
+      <h4 class="case-mon__group-name">{{ g.name }}</h4>
+      <div v-for="m in g.metrics" :key="m.key" class="case-mon__row">
+        <div class="case-mon__name">
+          {{ m.name }}<span class="case-mon__unit">{{ m.unit }}</span>
+        </div>
+        <div class="case-mon__chart">
+          <EvChart type="line" :options="m.options" :height="64" />
+        </div>
+        <div class="case-mon__stat">
+          <span>Max:</span>
+          <strong>{{ m.stats.max }}</strong>
+        </div>
+        <div class="case-mon__stat">
+          <span>Min:</span>
+          <strong>{{ m.stats.min }}</strong>
+        </div>
+        <div class="case-mon__stat">
+          <span>Avg:</span>
+          <strong>{{ m.stats.avg }}</strong>
         </div>
       </div>
     </section>
@@ -84,13 +80,14 @@ function buildOptions(def) {
     type: 'line',
     labels: store.labels,
     series: [{ name: def.name, data: store.series[def.key], lineWidth: 1.25 }],
-    // 云监控小图定制：无横网格、仅 3 档 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）；
+    // 云监控小图定制：无横网格、3 档 y 刻度（库内按绘图高度自动保密度）、
+    // 整条 x 轴隐藏（行分隔线由容器提供）；left 留白交刻度标签实测自适应，杜绝截断；
     // padding 收紧静态留白，绘图区几乎占满画布高度
     yAxis: { grid: { show: false }, ticks: 3 },
     xAxis: { show: false },
     // 云监控小图定制：无横网格、3 档小字 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）；
     // padding 收紧到贴边，画布几乎全给曲线——长条监控带的观感
-    padding: { top: 6, right: 8, bottom: 6, left: 34 },
+    padding: { top: 6, right: 8, bottom: 6 },
     animation: { enabled: false },
     legend: { show: false },
     tooltip: {
@@ -212,38 +209,29 @@ onUnmounted(stop)
   background: var(--ev-color-primary);
   color: #fff;
   font-size: 12px;
+  white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;
 }
 .case-mon__btn:hover {
   opacity: 0.88;
 }
-.case-mon__note {
-  margin: 0 0 10px;
-  font-size: 12px;
-  color: var(--ev-text-color-tertiary, var(--ev-text-color-secondary));
-}
 .case-mon__group {
-  display: flex;
-  gap: 20px;
-  padding: 12px 0;
+  padding: 14px 0 8px;
   border-top: 1px solid var(--ev-border-color);
 }
+/* 层级：组名为主（加重、主色），行标签为次（常规字重、次级色），单位再次一级 */
 .case-mon__group-name {
-  flex: 0 0 88px;
-  font-size: 14px;
+  margin: 0 0 2px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--ev-text-color-primary);
 }
-.case-mon__rows {
-  flex: 1;
-  min-width: 0;
-}
 .case-mon__row {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr) repeat(3, 72px);
+  grid-template-columns: 132px minmax(0, 1fr) repeat(3, 78px);
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   padding: 5px 0;
 }
 .case-mon__row + .case-mon__row {
@@ -251,11 +239,14 @@ onUnmounted(stop)
 }
 .case-mon__name {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--ev-text-color-primary);
+  font-weight: 400;
+  color: var(--ev-text-color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .case-mon__unit {
-  margin-left: 2px;
+  margin-left: 3px;
   font-weight: 400;
   font-size: 12px;
   color: var(--ev-text-color-tertiary, var(--ev-text-color-secondary));
@@ -286,15 +277,14 @@ onUnmounted(stop)
   color: var(--ev-text-color-primary);
 }
 @media (max-width: 900px) {
-  .case-mon__group {
-    flex-direction: column;
-    gap: 8px;
-  }
   .case-mon__row {
-    grid-template-columns: 120px minmax(0, 1fr);
+    grid-template-columns: 110px minmax(0, 1fr);
   }
   .case-mon__stat {
     grid-column: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
   }
 }
 </style>

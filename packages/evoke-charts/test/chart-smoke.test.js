@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
+import { renderYAxis, thinTickValues } from '../src/renderer/axes.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 
 // Chart 渲染走 canvas 2d + rAF；jsdom 无 2d context，用 Proxy 兜底任意 ctx 方法
@@ -37,8 +38,10 @@ const LINE_OPTIONS = () => ({
   legend: { show: true },
 })
 
+// 渲染管线共享的 ctx 探针（beforeEach 里重建；跨 describe 读取绘制调用）
+let ctx
+
 describe('EvChart（提取冒烟（ev 命名空间））', () => {
-  let ctx
   beforeEach(() => {
     // 异步调度 + 巨大时间戳：一帧内动画到终点，且不与渲染同步递归
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
@@ -199,6 +202,96 @@ describe('getPadding 绘图区空间利用', () => {
   it('sparkline padding 覆写', () => {
     const p = getPadding({ type: 'sparkline', labels: ['一'], series: [{ name: 'x', data: [1] }], padding: 4 }, 800)
     expect(p).toEqual({ top: 4, right: 4, bottom: 4, left: 4 })
+  })
+})
+
+describe('y 轴刻度密度自适应与硬上限', () => {
+  beforeEach(() => {
+    // 与冒烟组同一套 jsdom 垫片：rAF 一帧到终点 + 容器尺寸 + ctx 探针
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      setTimeout(() => cb(performance.now() + 1e9), 0)
+      return 1
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      return { left: 0, top: 0, right: 800, bottom: 400, width: 800, height: 400, x: 0, y: 0, toJSON: () => {} }
+    })
+    ctx = mockCanvas()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+  const THEME = { gridColor: '#eee', textColorSecondary: '#666', borderColor: '#ddd', textColor: '#333' }
+  // 纯 ctx 存根（不经 prototype spy，直接注入 renderYAxis）
+  const stubCtx = () =>
+    new Proxy({ measureText: () => ({ width: 10 }) }, { get(obj, prop) { return prop in obj ? obj[prop] : () => {} } })
+  const AXIS = (ticks) => ({ type: 'line', yAxis: { min: 0, max: 82, ...(ticks !== undefined ? { ticks } : {}) } })
+  // 0..82 的 nice 刻度（按 20 步进）为 5 档：0/20/40/60/80
+  const renderAxis = (height, ticks) =>
+    renderYAxis(
+      {
+        ctx: stubCtx(),
+        theme: THEME,
+        plotArea: { x: 40, y: 6, width: 400, height },
+        options: AXIS(ticks),
+        width: 480,
+      },
+      'left'
+    )
+
+  it('thinTickValues：保首末、整数倍步长抽稀到上限', () => {
+    expect(thinTickValues([0, 20, 40, 60, 80], 3)).toEqual([0, 40, 80])
+    expect(thinTickValues([0, 0.2, 0.4, 0.6], 3)).toEqual([0, 0.6])
+    expect(thinTickValues([0, 1, 2, 3, 4, 5], 3)).toEqual([0, 5])
+    expect(thinTickValues([0, 1, 2], 5)).toEqual([0, 1, 2])
+  })
+
+  it('显式 ticks 为硬上限：ticks:3 不再溢出成 5 档', () => {
+    expect(renderAxis(300, 3).tickValues).toEqual([0, 40, 80])
+  })
+
+  it('矮绘图区自动降密：52px 高只保留 3 档', () => {
+    expect(renderAxis(52).tickValues).toEqual([0, 40, 80])
+  })
+
+  it('常规高度且未显式传 ticks：保持原 nice 结果不抽稀', () => {
+    // yAxis max 改 100：5 档请求产生 0..100 步 20 共 6 档（历史上允许的轻微溢出）
+    const options = { type: 'line', yAxis: { min: 0, max: 100 } }
+    const result = renderYAxis(
+      { ctx: mockCanvas(), theme: THEME, plotArea: { x: 40, y: 6, width: 400, height: 400 }, options, width: 480 },
+      'left'
+    )
+    expect(result.tickValues).toEqual([0, 20, 40, 60, 80, 100])
+  })
+
+  it('端到端：64px 监控条只画 ≤3 档刻度标签', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'line',
+          labels: ['a', 'b', 'c'],
+          series: [{ name: 'CPU', data: [10, 60, 30] }],
+          yAxis: { min: 0, max: 82, ticks: 3, grid: { show: false } },
+          xAxis: { show: false },
+          legend: { show: false },
+          padding: { top: 6, right: 8, bottom: 6 },
+          animation: { enabled: false },
+        },
+        height: 64,
+      },
+      attachTo: document.body,
+    })
+    // 渲染经 16ms 防抖（与上方用例同一节奏）
+    await new Promise((r) => setTimeout(r, 40))
+    const labels = (ctx.__calls.get('fillText')?.mock.calls ?? []).map((c) => String(c[0]))
+    const tickLabels = labels.filter((l) => /^\d+(\.\d+)?$/.test(l))
+    expect(tickLabels.length).toBeGreaterThan(0)
+    expect(tickLabels.length).toBeLessThanOrEqual(3)
+    for (const l of tickLabels) expect(['0', '40', '80']).toContain(l)
+    wrapper.unmount()
   })
 })
 

@@ -18,6 +18,20 @@ function truncateLabel(canvasCtx, label, maxWidth) {
   }
   return label.slice(0, lo) + "\u2026";
 }
+/**
+ * 抽稀刻度：保留首末两端覆盖，步长取整数倍使数量 ≤ maxCount。
+ * nice 算法的 step 候选会让实际刻度数超出请求数（如 ticks:3 得到 5 档），
+ * 显式 ticks 视为硬上限，超出的中间档按均匀步长抽稀（round 值不丢）。
+ */
+function thinTickValues(values, maxCount) {
+  const limit = Math.max(2, maxCount);
+  if (values.length <= limit) return values;
+  let stride = Math.ceil((values.length - 1) / (limit - 1));
+  while (stride < values.length - 1 && (values.length - 1) % stride !== 0) stride += 1;
+  const thinned = [];
+  for (let i = 0; i < values.length; i += stride) thinned.push(values[i]);
+  return thinned;
+}
 function drawAxisLine(canvasCtx, cfg, theme, x1, y1, x2, y2) {
   if (cfg?.axisLine?.show === false) return;
   canvasCtx.save();
@@ -44,7 +58,12 @@ function drawAxisTick(canvasCtx, cfg, theme, x, y, dx, dy) {
 function renderYAxis(ctx, side = "left", dataRange) {
   const { ctx: canvasCtx, theme, plotArea, options, width } = ctx;
   const axisConfig = side === "left" ? options.yAxis || {} : options.yAxisRight || {};
-  const ticks = axisConfig.ticks || 5;
+  // 刻度密度双约束：显式 ticks 视为硬上限；绘图高度不足时按「每档 ≥24px」自适应降密，
+  // 避免矮容器（监控长条等）刻度挤压成糊或标签互相截断
+  const requestedTicks = axisConfig.ticks || 5;
+  const maxByHeight = Math.max(2, Math.floor(plotArea.height / 24) + 1);
+  const tickCap = axisConfig.ticks != null ? Math.min(requestedTicks, maxByHeight) : maxByHeight;
+  const needsThin = axisConfig.ticks != null || maxByHeight < requestedTicks;
   const isLog = side === "left" && axisConfig.type === "log";
   let computedMax;
   let computedMin;
@@ -60,7 +79,8 @@ function renderYAxis(ctx, side = "left", dataRange) {
   }
   const max = axisConfig.max ?? computedMax;
   const min = axisConfig.min ?? computedMin;
-  const { min: actualMin, max: actualMax, tickValues } = resolveTickExtendedRange(min, max, ticks);
+  const { min: actualMin, max: actualMax, tickValues: niceTicks } = resolveTickExtendedRange(min, max, requestedTicks);
+  const tickValues = needsThin ? thinTickValues(niceTicks, tickCap) : niceTicks;
   canvasCtx.save();
   canvasCtx.strokeStyle = theme.gridColor;
   canvasCtx.fillStyle = theme.textColorSecondary;
@@ -525,6 +545,7 @@ export {
   renderMarkLines,
   renderXAxis,
   renderYAxis,
+  thinTickValues,
   timeToX,
   xToCategoryIndex,
   xToTimeIndex
