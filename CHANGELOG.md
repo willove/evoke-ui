@@ -4,6 +4,23 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 内置色系一键应用（options.palette）
+
+- **七套现代色系**：新增 classic 经典 / aurora 极光 / sunset 落日 / morandi 莫兰迪 /
+  forest 林间 / ink 墨蓝 / candy 糖果，各带浅 / 暗两组 8 槽色值与适配场景
+  （科技 SaaS、消费营销、人文报告、健康环保、金融政企、活动大屏）；classic 为
+  当前缺省色板的固化版；
+- **固定语义**：`options.palette` 填色系 id 即整图固定——系列色不再读取
+  `--ev-color-*` 令牌，宿主换主色、换肤都不影响这张图；明暗换挡由色系自带
+  （暗色同色相提亮），结构色（网格 / 轴文字）仍随宿主明暗保证可读；
+- **取色优先级**：`theme.colors`（手工数组）> `palette`（内置色系）> 令牌跟随
+  （默认）；schema 契约、渲染自检、AI 提示词规则同步收编，导出
+  `CHART_PALETTES` / `resolveChartPalette` 供宿主生成换色菜单；
+- 每套色系过 DESIGN.md §2.1 同款验收：取色顺序相邻色相差 ≥ 30°（S < 20% 灰调
+  槽豁免）、暗色同色相提亮，测试把关；
+- 文档站新增「主题配色」页（指南菜单入口）：一键试色演示、色系总览色板条、
+  优先级与固定边界说明。
+
 ### @wil-works/evoke-charts — 双轴升为一等图型：mixed 页真双轴 + AI 面补齐
 
 - **图型页与导航**：「混合图」页更名「混合图 · 双轴」，新增「双轴怎么开」章节

@@ -465,7 +465,7 @@ function render(animate = true, animOverride = null) {
         width: width - overlayPadding.left - overlayPadding.right,
         height: height - overlayPadding.top - overlayPadding.bottom,
       },
-      theme: getTheme(document.documentElement.classList.contains("dark"), effectiveOptions.value.theme),
+      theme: getTheme(document.documentElement.classList.contains("dark"), effectiveOptions.value.theme, effectiveOptions.value.palette),
       options: props.options,
     };
     const animCfg = animOverride || props.options.animation;
@@ -702,7 +702,7 @@ function checkLegendHit(x, y) {
   const canvasX = x - rect.left;
   const canvasY = y - rect.top;
   const isDark = document.documentElement.classList.contains("dark");
-  const theme = getTheme(isDark, props.options.theme);
+  const theme = getTheme(isDark, props.options.theme, props.options.palette);
   const width = rect.width;
   const height = rect.height;
   const padding = getPadding(effectiveOptions.value, width);
@@ -777,7 +777,7 @@ function getHoveredData(x, y) {
     }
   }
   const isDark = document.documentElement.classList.contains("dark");
-  const theme = getTheme(isDark, options.theme);
+  const theme = getTheme(isDark, options.theme, options.palette);
   if (isPieLike) {
     const slices = buildPieSlices(options, hiddenSeries.value);
     if (slices.length === 0) return null;

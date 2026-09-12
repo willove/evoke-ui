@@ -78,7 +78,7 @@ function checkPaletteContrast(spec) {
   const issues = [];
   if (!spec.theme || !Array.isArray(spec.theme.colors)) return issues;
   [false, true].forEach((dark) => {
-    const theme = getTheme(dark, spec.theme);
+    const theme = getTheme(dark, spec.theme, spec.palette);
     spec.theme.colors.forEach((c) => {
       const ratio = contrastRatio(c, theme.backgroundColor);
       if (ratio !== null && ratio < 3) {

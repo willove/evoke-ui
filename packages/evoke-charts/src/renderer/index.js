@@ -88,7 +88,7 @@ function renderChart(canvas, params) {
   const width = canvas.width / dpr;
   const height = canvas.height / dpr;
   const isDark = document.documentElement.classList.contains("dark");
-  const theme = getTheme(isDark, options.theme);
+  const theme = getTheme(isDark, options.theme, options.palette);
   ctx.save();
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, width, height);

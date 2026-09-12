@@ -2,6 +2,8 @@
 // chartOptionsSchema 是 options 的 JSON Schema 描述，供宿主与 AI 生成合法 Spec；
 // validateOptions 是配套的轻量校验（仅覆盖本 Schema 用到的子集），零依赖。
 
+import { CHART_PALETTES } from "./palettes";
+
 const CHART_TYPES = [
   "line", "area", "bar", "stacked-bar", "horizontal-bar",
   "pie", "doughnut", "rose", "radar", "scatter",
@@ -147,6 +149,7 @@ export const chartOptionsSchema = {
       properties: { show: { type: "boolean" }, filename: { type: "string" } }
     },
     theme: { type: "object" },
+    palette: { type: "string", enum: CHART_PALETTES.map((p) => p.id) },
     layers: {
       type: "array",
       items: {

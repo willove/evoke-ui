@@ -113,5 +113,6 @@ function switchType() {
 
 - 安装与引入方式：[安装与引入](/guide/install)
 - 宿主换主题图表即跟随：[主题接入](/guide/theme)
+- 内置色系一键固定配色：[主题配色](/guide/palette)
 - 图例、tooltip、缩放、联动、导出：[交互与联动](/chart/interaction)
 - 完整字段与实例方法：[API 参考](/chart/api)

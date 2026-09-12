@@ -1,6 +1,7 @@
 import EvChart from './chart.vue'
 import { useChart, provideChartContext, injectChartContext } from './useChart'
 import { applySeriesPalette, clearSeriesPalette } from './palette'
+import { CHART_PALETTES, resolveChartPalette } from './palettes'
 import { chartOptionsSchema, validateOptions } from './schema'
 import {
   generateChartSpec,
@@ -32,6 +33,9 @@ export {
   // 配色方案
   applySeriesPalette,
   clearSeriesPalette,
+  // 内置色系（options.palette 一键固定）
+  CHART_PALETTES,
+  resolveChartPalette,
   // Spec 契约
   chartOptionsSchema,
   validateOptions,

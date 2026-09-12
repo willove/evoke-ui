@@ -1,4 +1,5 @@
 import { CHART_COLORS, formatValue, getSeriesColors, readChartToken } from "../types";
+import { resolveChartPalette } from "../palettes";
 function estimateTextWidth(text, fontSize = 12) {
   let width = 0;
   for (const ch of text) {
@@ -396,15 +397,21 @@ const easings = {
   // expo ease-out — 指数缓出，快速到位后精细减速
   easeOutExpo: (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t)
 };
-function getTheme(isDark, customTheme) {
+function getTheme(isDark, customTheme, paletteId) {
   // 颜色优先从 --ev-* 令牌实时读取（跟随主题/暗色/换肤），
-  // 无 DOM（SSR/jsdom）时回落到与令牌对齐的静态值
+  // 无 DOM（SSR/jsdom）时回落到与令牌对齐的静态值；
+  // options.palette 指定内置色系时系列色固定（不再读令牌），
+  // theme.colors 手工数组仍最高优先
+  const paletteColors =
+    paletteId && !(customTheme && customTheme.colors)
+      ? resolveChartPalette(paletteId, isDark)
+      : null;
   const primaryRgb = readChartToken(
     "--ev-color-primary-rgb",
     isDark ? "77, 139, 255" : "23, 93, 255"
   );
   const base = isDark ? {
-    colors: getSeriesColors(CHART_COLORS.dark),
+    colors: paletteColors || getSeriesColors(CHART_COLORS.dark),
     backgroundColor: readChartToken("--ev-bg-color", "#111827"),
     textColor: readChartToken("--ev-text-color-primary", "#f3f4f6"),
     textColorSecondary: readChartToken("--ev-text-color-secondary", "#9ca3af"),
@@ -413,7 +420,7 @@ function getTheme(isDark, customTheme) {
     highlightColor: `rgba(${primaryRgb}, 0.12)`,
     crosshairColor: `rgba(${primaryRgb}, 0.55)`
   } : {
-    colors: getSeriesColors(CHART_COLORS.primary),
+    colors: paletteColors || getSeriesColors(CHART_COLORS.primary),
     backgroundColor: readChartToken("--ev-bg-color", "#ffffff"),
     textColor: readChartToken("--ev-text-color-primary", "#111827"),
     textColorSecondary: readChartToken("--ev-text-color-secondary", "#6b7280"),

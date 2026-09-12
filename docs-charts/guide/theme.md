@@ -43,7 +43,12 @@
 
 宿主在运行时改令牌（品牌换色、预设主题切换）后，图表在下一次绘制时取到新值。与 evoke-business-ui 同用时，其换肤流程会派发 `ev-theme-change` 事件，图表收到事件立即重绘，换肤过程无感跟随。
 
+## 固定配色
+
+不想跟随宿主主题时，`options.palette` 一键应用内置色系——应用后这张图的系列色不再读令牌，换肤、换主色都不影响。七套现代色系与一键试色见[主题配色](/guide/palette)。
+
 ## 相关
 
 - 令牌的完整清单与暗色示例值：evoke-ui 的 [主题与颜色](https://evoke-ui.wil-works.com/utils/theme-color)
 - 组件库内的跟随约定：[内嵌于组件库](/guide/integration)
+- 不想跟随主题：[主题配色](/guide/palette)
