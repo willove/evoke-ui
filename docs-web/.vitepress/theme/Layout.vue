@@ -15,7 +15,7 @@ const { Layout } = DefaultTheme
       <PlatformCompat />
     </template>
     <template #nav-bar-title-after>
-      <EvTag size="small" style="margin-left: 10px;">v0.3.0</EvTag>
+      <EvTag size="small" style="margin-left: 10px;">v0.4.0</EvTag>
     </template>
     <template #nav-bar-content-after>
       <span class="home-nav-actions">

@@ -269,5 +269,5 @@ export const ALL_COMPONENTS = CATEGORIES.flatMap((c) =>
 export const BRAND = {
   name: 'Evoke Business UI',
   primary: '#175DFF',
-  version: '0.3.2',
+  version: '0.4.0',
 }

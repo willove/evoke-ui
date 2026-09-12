@@ -4,64 +4,49 @@
 
 ## [Unreleased]
 
-### @wil-works/evoke-ui — 主题配置新增图表系列色板
+## [0.4.0] — 2026-09-12
+
+### @wil-works/evoke-charts@0.2.0 — 渲染设计升级与配色方案
+
+> 本版含多项**默认值与行为变化**，升级前请核对：
+> 1. `showSymbol` 语义反转——数据点圆点默认不绘制，需要圆点显式传 `showSymbol: true`；
+> 2. 系列色不再读取 `--ev-color-success / -warning / -danger / -info` 语义色令牌——
+>    经语义色改图表配色的宿主请改用 `--ev-color-series-1..8` 槽位（或 `applySeriesPalette`）；
+> 3. 轴类图表默认右留白 40 → 24、标题改为左对齐——对像素级布局有依赖的页面请复查。
+
+- 新增 `applySeriesPalette(palette)` / `clearSeriesPalette()`：把一套数据色板写入
+  `--ev-color-series-1..8` 并派发 `ev-theme-change`（全图重绘）；`palette` 支持数组
+  （明暗共用）或 `{ light, dark }`（随暗色自动换挡）——宿主接入图表配色无需各自
+  实现令牌写入与事件广播
+- 数据系列色板与状态语义色解耦：系列色改读专用令牌 `--ev-color-series-1..8`
+  （逐槽回落成套数据色板，品牌蓝锚定、取材 AntV 经典系；暗色板同色相提亮）；
+  槽 1 回读 `--ev-color-primary`，品牌换肤跟随不变
+- 新增 `options.padding`（数字或 { top, right, bottom, left }）覆写绘图区静态留白，
+  标题 / 图例 / dataZoom / 轴标题等 chrome 空间照常叠加；`xAxis.show: false` 时
+  底部 46px 轴位预留自动收窄为 12px，隐藏轴的批量小图绘图区不再被压扁
+- 左留白按 y 刻度标签实测宽度自适应（夹在 40–140，替代固定 65）——大数量级
+  零截断，小量级不再浪费绘图宽度；尊重 `padding.left` 与 `yAxis.min/max`
+- 新增平滑曲线：`series.smooth` / `options.smooth` 单调三次插值（Fritsch–Carlson
+  限幅），曲线过每个数据点且无过冲；SVG 导出同步支持
+- 折线渲染设计升级（对齐云控制台观感）：数据点圆点默认不绘制（悬浮点仍以空心圆环
+  标注，十字准线与 tooltip 不变）、默认线宽 2 → 1.5、标题左对齐 13px/600、
+  图例改细圆角短横条、y 轴刻度新增「标签 + 短横」对位标记、dataZoom 滑块精修
+  （遮罩裁剪圆角轨道 + 面板底手柄）
+- 错误态字符图标替换为内联 SVG 警示圆环
+
+### @wil-works/evoke-business-ui@0.4.0 — 图表配色与双注册名
+
+- 主题工具新增 `setSeriesPalette(colors)` / `clearSeriesPalette()` / `getSeriesPalette()`：
+  写入或清除 `--ev-color-series-1..8` 并派发 `ev-theme-change`（图表即时重绘）；
+  `resetTheme` 一并清除系列槽位；持久化沿用 `eb-theme-config` 存档通道
+- `EbConfigProvider` 新增 `series` prop（≤8 色数组），支持 `persistTheme` 持久化联动
+- 模板同时支持 `<ev-chart>` / `<eb-chart>` 组件名（同一图表引擎）
+
+### @wil-works/evoke-ui@0.4.0 — 主题配置支持图表系列色板
 
 - `useThemeConfig` / `ConfigProvider` 新增 `series`（≤8 色数组）：
   `resolveThemeVars` 写入 `--ev-color-series-1..8`，`setSeries()` 应用或清除，
   配合 evoke-charts 的数据色板解耦，主题工具可整体切换图表配色
-
-### @wil-works/evoke-business-ui — 主题工具新增图表系列色板 API
-
-- `setSeriesPalette(colors)` / `clearSeriesPalette()` / `getSeriesPalette()`：
-  写入或清除 `--ev-color-series-1..8` 并派发 `ev-theme-change`（图表即时重绘）；
-  `resetTheme` 一并清除系列槽位；持久化沿用 `eb-theme-config` 存档通道
-- 模板同时支持 `<ev-chart>` / `<eb-chart>` 组件名（同一图表引擎）
-
-### @wil-works/evoke-charts — 新增配色方案应用工具
-
-- `applySeriesPalette(palette)` / `clearSeriesPalette()`：把一套数据色板写入
-  `--ev-color-series-1..8` 并派发 `ev-theme-change`（全图重绘）；
-  `palette` 支持数组（明暗共用）或 `{ light, dark }`（随暗色自动换挡）——
-  宿主接入图表配色无需各自实现令牌写入与事件广播
-
-### @wil-works/evoke-charts — y 轴留白自适应与单调平滑曲线
-
-- 左留白按 y 刻度标签实测宽度自适应（夹在 40–140，替代固定 65）——大数量级
-  零截断，小量级不再浪费绘图宽度；尊重 `padding.left` 与 `yAxis.min/max`
-- 新增平滑曲线：`series.smooth` / `options.smooth` 单调三次插值
-  （Fritsch–Carlson 限幅），曲线过每个数据点且无过冲；SVG 导出同步支持
-
-### @wil-works/evoke-charts — 数据系列色板与状态语义色解耦
-
-- 系列色改读专用令牌 `--ev-color-series-1..8`（逐槽回落成套数据色板），不再读取
-  success / warning / danger / info 状态语义色——消除多系列图上"红绿黄"杂耍感；
-  槽 1 回读 `--ev-color-primary`，品牌换肤跟随不变
-- 内置成套色板以品牌蓝锚定、取材 AntV 经典系：蓝 → 青绿 → 金黄 → 天蓝 → 珊瑚 →
-  紫 → 橙 → 石板灰蓝；暗色板同色相提亮
-- 业务侧如需沿用旧观感，在 `--ev-color-series-1..8` 上定义原语义色即可
-
-### @wil-works/evoke-charts — 绘图区空间利用：padding 覆写与隐藏轴回收
-
-- 新增 `options.padding`（数字或 { top, right, bottom, left }）覆写绘图区静态留白；
-  标题、图例、dataZoom、轴标题等 chrome 空间照常叠加，不被挤掉
-- `xAxis.show: false` 时底部 46px 轴位预留自动收窄为 12px——隐藏轴的批量小图
-  （监控列表等）绘图区高度不再被压扁
-- 轴类图表默认右留白 40 → 24：右侧无内容时不再浪费绘图宽度
-
-### @wil-works/evoke-charts — 折线渲染设计升级（对齐云控制台观感）
-
-- **数据点圆点默认不绘制**：折线 / 面积系列 `showSymbol` 语义反转为默认关闭，
-  悬浮点仍以空心圆环标注（见上条）；稀疏图需要强调单点时显式传 `showSymbol: true`
-- 默认线宽 2 → 1.5（`series.lineWidth` 可覆盖），细线更贴近监控/报表场景
-- **标题改为左对齐**：13px / 600 字重，副标题 11px 次要色——替代居中 16px 粗体的旧样式
-- 图例默认样式改为细圆角短横条，文字降为次要色，观感更轻
-- y 轴刻度新增「标签 + 短横」对位标记（参考云监控坐标轴）
-
-### @wil-works/evoke-charts — showSymbol 关闭时保留悬浮点标注
-
-- 折线 / 面积系列 `showSymbol: false`（或 `symbol: 'none'`）时不再绘制常驻数据点，
-  但悬浮点仍以空心圆环标注位置——实时监控等点位密集场景「平时纯线条、悬浮有反馈」
-  两全；十字准线与 tooltip 行为不变
 
 ## [0.3.2] — 2026-09-11
 
