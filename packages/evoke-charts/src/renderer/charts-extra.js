@@ -1,5 +1,6 @@
-import { estimateTextWidth, getContrastText, buildSeriesColorIndex, isMissingValue, focusAlpha } from "./core";
+import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeriesColorIndex, isMissingValue, focusAlpha } from "./core";
 import { renderLineChart } from "./charts-basic";
+import { CALLOUT_RADIAL_LEN, CALLOUT_STUB_LEN, CALLOUT_TEXT_GAP, drawCalloutLabels } from "./calloutLabels";
 function renderWaterfallChart(ctx, yRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hiddenSeries } = ctx;
   const wf = options.waterfall || {};
@@ -173,19 +174,28 @@ function computeSunburstDepth(nodes) {
   });
   return max;
 }
-function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, result) {
-  // 父节点可省略 value（由子孙汇总）；直接读 n.value 会得到 NaN，
-  // 让后续兄弟分支的角度全部失效、只剩第一个分支可见
-  const val = (n) => {
-    if (typeof n.value === "number" && Number.isFinite(n.value)) return n.value;
-    if (n.children && n.children.length > 0) return n.children.reduce((s, c) => s + val(c), 0);
-    return 0;
-  };
-  const total = nodes.reduce((s, n) => s + val(n), 0);
+// 中心留白占半径比例；同色系逐层混合步长与上限（浅色主题向白、深色主题向黑）
+const SUNBURST_HOLE_RATIO = 0.22;
+const SUNBURST_LIGHT_STEP = 0.26;
+const SUNBURST_LIGHT_MAX = 0.6;
+const SUNBURST_DARK_STEP = 0.14;
+const SUNBURST_DARK_MAX = 0.34;
+/** 父节点可省略 value（由子孙汇总）；直接读 n.value 会得到 NaN，
+ *  让后续兄弟分支的角度全部失效、只剩第一个分支可见 */
+function sunburstValue(node) {
+  if (typeof node.value === "number" && Number.isFinite(node.value)) return node.value;
+  if (node.children && node.children.length > 0) return node.children.reduce((s, c) => s + sunburstValue(c), 0);
+  return 0;
+}
+function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, result, sweep = Math.PI * 2) {
+  const total = nodes.reduce((s, n) => s + sunburstValue(n), 0);
   if (total <= 0) return result;
   let a = startAngle;
   nodes.forEach((n, i) => {
-    const span = val(n) / total * Math.PI * 2;
+    // 一级分支各占一个色相槽，子孙继承同一槽——同色系靠深度混合区分
+    const slot = depth === 0 ? (colorOffset + i) % 8 : colorOffset % 8;
+    // 子节点扇区收敛在父扇区内：整圆占比 × 父扇区扫角，同一射线各层边界对齐
+    const span = sweep * sunburstValue(n) / total;
     result.push({
       startAngle: a,
       endAngle: a + span,
@@ -193,46 +203,77 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
       r0,
       r1: r0 + ringWidth,
       node: n,
-      value: val(n),
+      value: sunburstValue(n),
       depth,
-      colorIndex: (colorOffset + i) % 8
+      colorIndex: slot
     });
     if (n.children && n.children.length > 0) {
-      layoutSunburst(n.children, r0 + ringWidth, ringWidth, depth + 1, a, colorOffset + i, result);
+      layoutSunburst(n.children, r0 + ringWidth, ringWidth, depth + 1, a, slot, result, span);
     }
     a += span;
   });
   return result;
 }
-// 向白色混合（比例 0-1）：旭日图分支同色系逐层提亮用
-function mixToWhite(hex, ratio) {
-  const r = Math.min(0.85, Math.max(0, ratio));
-  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return hex;
-  const n = parseInt(hex.slice(1), 16);
-  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v + (255 - v) * r));
-  return `rgb(${ch[0]},${ch[1]},${ch[2]})`;
+/** 环带颜色：同色系按深度向背景方向混合，外圈大面积不刺眼 */
+function sunburstDepthColor(base, depth, theme) {
+  if (depth <= 0) return base;
+  const darker = !isLightColor(theme.backgroundColor);
+  const step = darker ? SUNBURST_DARK_STEP : SUNBURST_LIGHT_STEP;
+  const cap = darker ? SUNBURST_DARK_MAX : SUNBURST_LIGHT_MAX;
+  return mixColor(base, Math.min(cap, depth * step), darker ? "#000000" : "#ffffff");
+}
+function sunburstNodeColor(seg, theme) {
+  const base = seg.node.color || theme.colors[seg.colorIndex % theme.colors.length];
+  // 深层节点上显式指定的颜色视为该段的定色，不再参与逐层混合
+  if (seg.node.color && seg.depth > 0) return seg.node.color;
+  return sunburstDepthColor(base, seg.depth, theme);
+}
+function sunburstLeafLabel(node, showValues, valueFormatter) {
+  const name = node.name || "";
+  return showValues ? `${name} ${valueFormatter(sunburstValue(node))}` : name;
+}
+function collectSunburstLabels(nodes, depthCount, showValues, valueFormatter, depth = 0, out = []) {
+  nodes.forEach((n) => {
+    if (depth === depthCount - 1 || !n.children || n.children.length === 0) {
+      if (n.name) out.push(sunburstLeafLabel(n, showValues, valueFormatter));
+      return;
+    }
+    collectSunburstLabels(n.children, depthCount, showValues, valueFormatter, depth + 1, out);
+  });
+  return out;
+}
+/** 旭日图几何：渲染与悬浮命中共用一份口径（环厚、留白、外置标签让位） */
+function computeSunburstGeometry(plotArea, options, theme, valueFormatter) {
+  const data = options.sunburstData || [];
+  const depthCount = computeSunburstDepth(data);
+  if (data.length === 0 || depthCount === 0) return null;
+  const showValues = options.showValues === true;
+  const labelTexts = collectSunburstLabels(data, depthCount, showValues, valueFormatter);
+  const maxTextWidth = Math.max(40, ...labelTexts.map((t) => estimateTextWidth(t, 12)));
+  // 与饼图同口径：可用半径 = min(短边/2 - 20, 宽/2 - 引线与文本预算)
+  const horizNeed = CALLOUT_RADIAL_LEN + CALLOUT_STUB_LEN + CALLOUT_TEXT_GAP + maxTextWidth + 10;
+  const centerX = plotArea.x + plotArea.width / 2;
+  const centerY = plotArea.y + plotArea.height / 2;
+  const maxR = Math.max(
+    40,
+    Math.min(Math.min(plotArea.width, plotArea.height) / 2 - 20, plotArea.width / 2 - horizNeed)
+  );
+  const innerHole = Math.max(0, maxR * SUNBURST_HOLE_RATIO);
+  const ringWidth = (maxR - innerHole) / depthCount;
+  const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
+  segments.forEach((seg) => {
+    seg.color = sunburstNodeColor(seg, theme);
+  });
+  return { centerX, centerY, maxR, innerHole, ringWidth, depthCount, segments, showValues };
 }
 function renderSunburstChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter } = ctx;
-  const data = options.sunburstData || [];
-  if (data.length === 0) return;
-  const centerX = plotArea.x + plotArea.width / 2;
-  const centerY = plotArea.y + plotArea.height / 2;
-  // 半径为外置叶子标签预留水平 45px / 纵向 24px
-  const maxR = Math.max(40, Math.min((plotArea.width - 90) / 2, (plotArea.height - 48) / 2));
-  const innerHole = Math.max(0, maxR * 0.22);
-  const depthCount = computeSunburstDepth(data);
-  // 层级 ≥ 2 时基础环带只占半径预算 66%，其余留给最外层叶子按数值延伸成花瓣
-  const hasSpread = depthCount >= 2;
-  const ringBudget = hasSpread ? (maxR - innerHole) * 0.66 : maxR - innerHole;
-  const ringWidth = ringBudget / depthCount;
-  const spreadRange = hasSpread ? maxR - innerHole - ringBudget : 0;
-  const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
-  const maxLeaf = segments
-    .filter((s) => s.depth === depthCount - 1)
-    .reduce((m, s) => Math.max(m, s.value), 0);
+  const geo = computeSunburstGeometry(plotArea, options, theme, valueFormatter);
+  if (!geo) return;
+  const { centerX, centerY, maxR, ringWidth, depthCount, segments, showValues } = geo;
   const sweep = -Math.PI / 2 + Math.PI * 2 * progress;
-  const showValues = options.showValues === true;
+  // 入场：角度按 progress 扫开 + 半径轻微生长，终态即静态形态
+  const grow = 0.94 + 0.06 * progress;
   const insideLabels = [];
   const outerLabels = [];
   canvasCtx.save();
@@ -242,60 +283,43 @@ function renderSunburstChart(ctx) {
   canvasCtx.closePath();
   canvasCtx.clip();
   segments.forEach((seg, i) => {
-    const base = seg.node.color || theme.colors[seg.colorIndex % theme.colors.length];
-    const isPetal = hasSpread && seg.depth === depthCount - 1;
-    // 分支同色系：每深一层向白提亮约 26%，高饱和只留在内环
-    const color = mixToWhite(base, isPetal ? Math.min(0.6, (seg.depth - 1) * 0.26 + 0.2) : seg.depth * 0.26);
-    const isHover = i === hoverIndex;
-    const petalR = isPetal ? seg.r1 + spreadRange * (seg.value / (maxLeaf || 1)) : seg.r1;
-    const r1 = Math.min(maxR, petalR * (0.9 + 0.1 * progress));
+    // 悬浮只加深同色一档：不位移、不引入强调色描边
+    const color = i === hoverIndex ? mixColor(seg.color, 0.12, "#000000") : seg.color;
     canvasCtx.save();
     canvasCtx.beginPath();
-    canvasCtx.arc(centerX, centerY, r1, seg.startAngle, seg.endAngle);
-    canvasCtx.arc(centerX, centerY, seg.r0, seg.endAngle, seg.startAngle, true);
+    canvasCtx.arc(centerX, centerY, seg.r1 * grow, seg.startAngle, seg.endAngle);
+    canvasCtx.arc(centerX, centerY, seg.r0 * grow, seg.endAngle, seg.startAngle, true);
     canvasCtx.closePath();
-    if (isPetal) {
-      // 花瓣端部圆角：同色宽描边（round join）+ 填充
-      canvasCtx.lineJoin = "round";
-      canvasCtx.strokeStyle = color;
-      canvasCtx.lineWidth = 8;
-      canvasCtx.stroke();
-    }
     canvasCtx.fillStyle = color;
-    if (isHover) canvasCtx.globalAlpha = 0.8;
     canvasCtx.fill();
     canvasCtx.strokeStyle = theme.backgroundColor;
-    canvasCtx.lineWidth = isPetal ? 1.5 : 2;
+    canvasCtx.lineWidth = 2;
     canvasCtx.stroke();
-    if (isHover) {
-      canvasCtx.strokeStyle = theme.textColor;
-      canvasCtx.lineWidth = 2;
-      canvasCtx.stroke();
-    }
     canvasCtx.restore();
     if (progress <= 0.9) return;
+    const name = seg.node.name || "";
     const span = seg.endAngle - seg.startAngle;
     const midR = (seg.r0 + seg.r1) / 2;
     const chord = midR * span;
-    const name = seg.node.name || "";
-    const isLeafRing = depthCount > 1 && seg.depth === depthCount - 1;
-    if (isLeafRing) {
-      // 最外层叶子：标签外置到花瓣尖端外侧，避免往窄环带里塞字
-      if (span > 0.05 && name) {
-        outerLabels.push({ midAngle: seg.midAngle, r: r1 + 6, name, value: seg.value });
+    if (seg.depth === depthCount - 1) {
+      // 最外层叶子：标签外置到圆盘外侧，外圈边缘保持一条干净的圆
+      if (span > 0.03 && name) {
+        outerLabels.push({
+          angle: seg.midAngle,
+          r: maxR,
+          text: sunburstLeafLabel(seg.node, showValues, valueFormatter),
+        });
       }
       return;
     }
     if (seg.depth === 0) {
       // 内环：水平加粗，弦长放得下才画
       if (span > 0.14 && chord > estimateTextWidth(name, 12) + 10) {
-        const lx = centerX + Math.cos(seg.midAngle) * midR;
-        const ly = centerY + Math.sin(seg.midAngle) * midR;
         insideLabels.push({
-          x: lx,
-          y: ly - (showValues ? 6 : 0),
+          x: centerX + Math.cos(seg.midAngle) * midR,
+          y: centerY + Math.sin(seg.midAngle) * midR - (showValues ? 6 : 0),
           name,
-          value: showValues && seg.r1 - seg.r0 > 26 ? valueFormatter(seg.value) : null,
+          value: showValues && ringWidth > 26 ? valueFormatter(seg.value) : null,
           bold: true,
           fill: getContrastText(color),
           radial: false,
@@ -304,13 +328,11 @@ function renderSunburstChart(ctx) {
       }
       return;
     }
-    // 中间环：沿半径方向旋转排布，径向空间即环带厚度，永不相撞
-    if (span > 0.08 && ringWidth > 13 && name && estimateTextWidth(name, 10) <= ringWidth + 12) {
-      const lx = centerX + Math.cos(seg.midAngle) * midR;
-      const ly = centerY + Math.sin(seg.midAngle) * midR;
+    // 中间环：沿半径方向旋转排布——环带窄，允许文字略超出环带（≤ 环厚 + 20px）
+    if (ringWidth >= 14 && span > 0.06 && chord >= 13 && name && estimateTextWidth(name, 10) <= ringWidth + 20) {
       insideLabels.push({
-        x: lx,
-        y: ly,
+        x: centerX + Math.cos(seg.midAngle) * midR,
+        y: centerY + Math.sin(seg.midAngle) * midR,
         name,
         value: null,
         bold: false,
@@ -343,37 +365,8 @@ function renderSunburstChart(ctx) {
     }
     canvasCtx.restore();
   });
-  // 外置叶子标签：按角度左右取向，纵向 13px 最小间距防重叠
-  outerLabels.sort((a, b) => a.midAngle - b.midAngle);
-  const placed = [];
-  outerLabels.forEach((l) => {
-    const cos = Math.cos(l.midAngle);
-    const px = centerX + Math.cos(l.midAngle) * l.r;
-    const py = centerY + Math.sin(l.midAngle) * l.r;
-    const text = showValues ? `${l.name} ${valueFormatter(l.value)}` : l.name;
-    const align = cos >= 0 ? "left" : "right";
-    placed.push({
-      x: px,
-      y: py,
-      align,
-      text,
-    });
-  });
-  placed.sort((a, b) => a.y - b.y);
-  let lastY = -Infinity;
-  placed.forEach((l) => {
-    if (l.y < lastY + 13) l.y = lastY + 13;
-    lastY = l.y;
-  });
-  placed.forEach((l) => {
-    canvasCtx.save();
-    canvasCtx.fillStyle = theme.textColorSecondary;
-    canvasCtx.font = "11px Inter, sans-serif";
-    canvasCtx.textAlign = l.align;
-    canvasCtx.textBaseline = "middle";
-    canvasCtx.fillText(l.text, l.x, l.y);
-    canvasCtx.restore();
-  });
+  // 外置叶子标签：与饼图共用引线规范（径向 + 折线、左右分列、纵向防重叠）
+  drawCalloutLabels(outerLabels, { canvasCtx, centerX, centerY, plotArea, theme });
 }
 function renderMixedChart(ctx, leftRange, rightRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
@@ -428,9 +421,11 @@ function renderMixedChart(ctx, leftRange, rightRange) {
 }
 export {
   computeSunburstDepth,
+  computeSunburstGeometry,
   layoutSunburst,
   renderBoxplotChart,
   renderMixedChart,
   renderSunburstChart,
-  renderWaterfallChart
+  renderWaterfallChart,
+  sunburstValue
 };

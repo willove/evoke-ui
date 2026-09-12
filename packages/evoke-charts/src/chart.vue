@@ -96,8 +96,8 @@ import {
   getSliderGeometry,
   windowToX,
   xToPercent,
-  layoutSunburst,
-  computeSunburstDepth,
+  computeSunburstGeometry,
+  sunburstValue,
   computePieMaxRadius,
   getToolboxBounds,
   createSvgRecorder,
@@ -874,20 +874,15 @@ function getHoveredData(x, y) {
     };
   }
   if (options.type === "sunburst") {
-    const data = options.sunburstData || [];
-    if (data.length === 0) return null;
-    const centerX = plotArea.x + plotArea.width / 2;
-    const centerY = plotArea.y + plotArea.height / 2;
-    const maxR = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 10);
-    const innerHole = Math.max(0, maxR * 0.18);
-    const depthCount = computeSunburstDepth(data);
-    const ringWidth = (maxR - innerHole) / depthCount;
+    // 命中共用渲染口径的几何（环厚/留白一致），否则外环会点不中
+    const geo = computeSunburstGeometry(plotArea, options, theme, formatTooltipValue);
+    if (!geo) return null;
+    const { centerX, centerY, segments } = geo;
     const dx = canvasX - centerX;
     const dy = canvasY - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     let hoverAngle = Math.atan2(dy, dx);
     if (hoverAngle < -Math.PI / 2) hoverAngle += Math.PI * 2;
-    const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
     for (let i = 0; i < segments.length; i++) {
       const seg = segments[i];
       if (distance >= seg.r0 && distance <= seg.r1 && hoverAngle >= seg.startAngle && hoverAngle < seg.endAngle) {
@@ -896,8 +891,8 @@ function getHoveredData(x, y) {
           params: {
             seriesName: seg.node.name,
             name: seg.node.name,
-            value: seg.node.value,
-            color: seg.node.color || theme.colors[seg.colorIndex % theme.colors.length],
+            value: sunburstValue(seg.node),
+            color: seg.color,
             dataIndex: i,
             seriesIndex: 0
           }

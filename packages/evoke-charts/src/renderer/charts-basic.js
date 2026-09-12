@@ -12,10 +12,12 @@ import {
   layoutLabelsAvoidOverlap
 } from "./core";
 import { categoryToX } from "./axes";
-const PIE_RADIAL_LEN = 14;
-const PIE_STUB_LEN = 12;
-const PIE_TEXT_GAP = 5;
-const PIE_MAX_SHIFT = 10;
+import {
+  CALLOUT_RADIAL_LEN as PIE_RADIAL_LEN,
+  CALLOUT_STUB_LEN as PIE_STUB_LEN,
+  CALLOUT_TEXT_GAP as PIE_TEXT_GAP,
+  drawCalloutLabels
+} from "./calloutLabels";
 function computePieMaxRadius(pieData, options, plotArea) {
   const total = pieData.reduce((sum, d) => sum + d.value, 0);
   if (total <= 0) return 30;
@@ -614,76 +616,16 @@ function renderPieChart(ctx, isDoughnut, isRose = false) {
     if (progress > 0.9) {
       const percentage = (data.value / total * 100).toFixed(1);
       const text = percentMode ? `${percentage}%` : `${data.label || ""} (${percentage}%)`;
-      const r = isRose ? roseRadius : maxRadius;
       labelItems.push({
         angle: midAngle,
-        r,
-        color,
+        r: isRose ? roseRadius : maxRadius,
         text,
-        y: centerY + Math.sin(midAngle) * (r + PIE_RADIAL_LEN),
-        visible: true
       });
     }
     startAngle = endAngle;
   });
   if (labelItems.length > 0 && progress > 0.9) {
-    const minGap = 16;
-    const topLimit = plotArea.y + 4;
-    const bottomLimit = plotArea.y + plotArea.height - 4;
-    const layoutSide = (items, sign) => {
-      const sorted = [...items].sort((a, b) => a.y - b.y);
-      let lastY = -Infinity;
-      sorted.forEach((it) => {
-        let y = it.y;
-        if (y < lastY + minGap) {
-          const shifted = lastY + minGap;
-          if (shifted - it.y <= PIE_MAX_SHIFT && shifted <= bottomLimit) {
-            y = shifted;
-          } else {
-            it.visible = false;
-            return;
-          }
-        }
-        if (y > bottomLimit || y < topLimit) {
-          it.visible = false;
-          return;
-        }
-        it.y = y;
-        lastY = y;
-      });
-      sorted.forEach((it) => {
-        if (!it.visible) return;
-        const dirX = Math.cos(it.angle);
-        const dirY = Math.sin(it.angle);
-        const p1x = centerX + dirX * (it.r + PIE_RADIAL_LEN);
-        const p1y = centerY + dirY * (it.r + PIE_RADIAL_LEN);
-        const p2x = p1x + sign * PIE_STUB_LEN;
-        canvasCtx.save();
-        canvasCtx.strokeStyle = theme.textColorSecondary;
-        canvasCtx.lineWidth = 1;
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(centerX + dirX * it.r, centerY + dirY * it.r);
-        canvasCtx.lineTo(p1x, p1y);
-        canvasCtx.lineTo(p2x, it.y);
-        canvasCtx.stroke();
-        canvasCtx.restore();
-        canvasCtx.save();
-        canvasCtx.fillStyle = theme.textColor;
-        canvasCtx.font = "12px Inter, sans-serif";
-        canvasCtx.textAlign = sign === 1 ? "left" : "right";
-        canvasCtx.textBaseline = "middle";
-        canvasCtx.fillText(it.text, p2x + sign * PIE_TEXT_GAP, it.y);
-        canvasCtx.restore();
-      });
-    };
-    layoutSide(
-      labelItems.filter((it) => Math.cos(it.angle) >= 0),
-      1
-    );
-    layoutSide(
-      labelItems.filter((it) => Math.cos(it.angle) < 0),
-      -1
-    );
+    drawCalloutLabels(labelItems, { canvasCtx, centerX, centerY, plotArea, theme });
   }
   if (isDoughnut && options.gauge?.value !== void 0) {
     canvasCtx.save();

@@ -2,10 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
-import { getPadding } from '../src/renderer/core.js'
+import { getPadding, getTheme } from '../src/renderer/core.js'
 import { renderYAxis, thinTickValues, renderAnnotations } from '../src/renderer/axes.js'
 import { renderChart } from '../src/renderer/index.js'
 import { renderScatterChart } from '../src/renderer/charts-basic.js'
+import { computeSunburstGeometry } from '../src/renderer/charts-extra.js'
 import { computeLegendLayout } from '../src/renderer/legend.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 import { chartOptionsSchema, validateOptions } from '../src/schema.js'
@@ -152,6 +153,40 @@ describe('EvChart（提取冒烟（ev 命名空间））', () => {
     })
     await flushRender()
     expect(wrapper.find('.ev-chart').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('旭日图悬浮命中与绘制同口径：外环切片也能命中', async () => {
+    const sunburstData = [
+      { name: '甲', children: [{ name: '甲一', value: 60 }, { name: '甲二', value: 40 }] },
+      { name: '乙', value: 100 },
+    ]
+    const options = { type: 'sunburst', sunburstData }
+    const wrapper = mount(EvChart, { props: { options }, attachTo: document.body })
+    await flushRender()
+    const padding = getPadding(options, 800)
+    const plotArea = {
+      x: padding.left,
+      y: padding.top,
+      width: 800 - padding.left - padding.right,
+      height: 400 - padding.top - padding.bottom,
+    }
+    const geo = computeSunburstGeometry(plotArea, options, getTheme(false, undefined), (v) => String(v))
+    // 取外环切片中点悬浮：命中若与绘制各自算半径（旧实现），这里会落到别的段
+    const seg = geo.segments.find((s) => s.node.name === '甲一')
+    const radius = (seg.r0 + seg.r1) / 2
+    wrapper.find('canvas').element.dispatchEvent(
+      new MouseEvent('pointermove', {
+        clientX: geo.centerX + Math.cos(seg.midAngle) * radius,
+        clientY: geo.centerY + Math.sin(seg.midAngle) * radius,
+        bubbles: true,
+      }),
+    )
+    await flushRender()
+    const tooltip = wrapper.find('.ev-chart__tooltip')
+    expect(tooltip.exists()).toBe(true)
+    expect(tooltip.text()).toContain('甲一')
+    expect(tooltip.text()).toContain('60')
     wrapper.unmount()
   })
 })

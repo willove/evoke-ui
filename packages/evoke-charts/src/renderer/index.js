@@ -53,7 +53,7 @@ import { xToCategoryIndex, categoryToX, isCategoryCentered, timeToX, xToTimeInde
 import { buildPieSlices, renderScatterTrendline as renderScatterTrendline2, computePieMaxRadius } from "./charts-basic";
 import { getHeatmapCategories } from "./charts-advanced";
 import { computeBins, squarifyTreemap } from "./charts-special";
-import { layoutSunburst, computeSunburstDepth } from "./charts-extra";
+import { layoutSunburst, computeSunburstDepth, computeSunburstGeometry, sunburstValue } from "./charts-extra";
 import { getDataZoomConfig, getSliderGeometry, zoomToSlice, windowToX, xToPercent } from "./dataZoom";
 import { createSvgRecorder } from "./svgRecorder";
 // 图层逃逸口：宿主/AI 的自定义绘制按锚点插入渲染管线（draw(ctx, renderCtx)）
@@ -322,6 +322,7 @@ export {
   computeLegendLayout,
   computePieMaxRadius,
   computeSunburstDepth,
+  computeSunburstGeometry,
   createAnimation,
   createSvgRecorder,
   drawSymbol,
@@ -351,6 +352,7 @@ export {
   resolveStackGroups,
   resolveTickExtendedRange,
   squarifyTreemap,
+  sunburstValue,
   timeToX,
   toLog,
   updateAnimation,

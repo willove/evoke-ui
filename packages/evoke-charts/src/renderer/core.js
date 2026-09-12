@@ -8,20 +8,52 @@ function estimateTextWidth(text, fontSize = 12) {
   }
   return width;
 }
-function getContrastText(bgColor) {
-  const hex = bgColor.replace("#", "");
-  let r = 0, g = 0, b = 0;
-  if (hex.length === 3) {
-    r = parseInt(hex[0] + hex[0], 16);
-    g = parseInt(hex[1] + hex[1], 16);
-    b = parseInt(hex[2] + hex[2], 16);
-  } else if (hex.length >= 6) {
-    r = parseInt(hex.slice(0, 2), 16);
-    g = parseInt(hex.slice(2, 4), 16);
-    b = parseInt(hex.slice(4, 6), 16);
+/** 解析 `#rgb` / `#rrggbb` / `rgb()` / `rgba()` 为通道数组；无法识别返回 null */
+function parseColorChannels(color) {
+  if (typeof color !== "string") return null;
+  const text = color.trim();
+  const hex = text.replace(/^#/, "");
+  if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+    return [0, 1, 2].map((i) => parseInt(hex[i] + hex[i], 16));
   }
-  const yiq = (r * 299 + g * 587 + b * 114) / 1e3;
-  return yiq >= 150 ? "#111827" : "#ffffff";
+  if (/^[0-9a-fA-F]{6}$/.test(hex)) {
+    return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  }
+  const rgbMatch = text.match(/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i);
+  if (rgbMatch) return [1, 2, 3].map((i) => Math.round(parseFloat(rgbMatch[i])));
+  return null;
+}
+/** 浅色底判断（YIQ）：底色可能来自令牌、混合出的 `rgb()` 或自定义主题 */
+function isLightColor(color) {
+  const ch = parseColorChannels(color);
+  if (!ch) return true;
+  return (ch[0] * 299 + ch[1] * 587 + ch[2] * 114) / 1e3 >= 150;
+}
+function relativeLuminance(ch) {
+  const [r, g, b] = ch.map((v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+/** 底色上的文字取反色：白字/深字谁对比度高用谁——中间调底色（如逐层提亮后的蓝）
+ *  用亮度阈值会误判成白字，导致浅底白字看不清 */
+function getContrastText(bgColor) {
+  const ch = parseColorChannels(bgColor);
+  if (!ch) return "#111827";
+  const luminance = relativeLuminance(ch);
+  const againstWhite = 1.05 / (luminance + 0.05);
+  const againstInk = (luminance + 0.05) / (relativeLuminance([17, 24, 39]) + 0.05);
+  return againstInk >= againstWhite ? "#111827" : "#ffffff";
+}
+/** 颜色向 target 混合（ratio 0-1），返回 `#rrggbb`：同色系逐层提亮/压暗用 */
+function mixColor(color, ratio, target) {
+  const from = parseColorChannels(color);
+  const to = parseColorChannels(target);
+  if (!from || !to) return color;
+  const r = Math.max(0, Math.min(1, ratio));
+  const ch = from.map((v, i) => Math.round(v + (to[i] - v) * r));
+  return `#${ch.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
 }
 function isMissingValue(v) {
   return v === null || v === void 0 || Number.isNaN(v);
@@ -652,8 +684,11 @@ export {
   getPadding,
   getTheme,
   groupSeriesByStack,
+  isLightColor,
   isMissingValue,
   layoutLabelsAvoidOverlap,
+  mixColor,
+  parseColorChannels,
   parseTimeLabels,
   resolveConnectNulls,
   resolveLineDash,
