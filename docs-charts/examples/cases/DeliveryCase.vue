@@ -3,7 +3,7 @@
     <header class="case-dev__header">
       <div>
         <h3 class="case-dev__title">交付效能看板 · 2026 年度</h3>
-        <p class="case-dev__sub">5 条产品线 · 12 条流水线 · 数据窗口近 12 个月</p>
+        <div class="case-dev__sub">5 条产品线 · 12 条流水线 · 数据窗口近 12 个月</div>
       </div>
       <div class="case-dev__kpis">
         <div class="case-dev__kpi">

@@ -3,7 +3,7 @@
     <header class="case-mon__header">
       <div>
         <h3 class="case-mon__title">服务器指标监控</h3>
-        <p class="case-mon__sub">近 60 秒 · 每秒推进一个点 · Max / Min / Avg 为窗口内全部点的统计值</p>
+        <div class="case-mon__sub">近 60 秒 · 每秒推进一个点 · Max / Min / Avg 为窗口内全部点的统计值</div>
       </div>
       <button class="case-mon__btn" type="button" @click="toggle">{{ running ? '暂停刷新' : '开始刷新' }}</button>
     </header>

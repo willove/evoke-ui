@@ -3,7 +3,7 @@
     <header class="case-report__header">
       <div>
         <h3 class="case-report__title">季度经营指标 · 报表嵌入</h3>
-        <p class="case-report__sub">近 8 周趋势与目标达成 · 每行一张迷你图</p>
+        <div class="case-report__sub">近 8 周趋势与目标达成 · 每行一张迷你图</div>
       </div>
     </header>
 

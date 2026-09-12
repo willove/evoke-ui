@@ -3,7 +3,7 @@
     <header class="case-slo__header">
       <div>
         <h3 class="case-slo__title">核心交易链路 · SLO 看板</h3>
-        <p class="case-slo__sub">网关 + 订单 + 支付三段链路 · 数据窗口近 30 天</p>
+        <div class="case-slo__sub">网关 + 订单 + 支付三段链路 · 数据窗口近 30 天</div>
       </div>
       <div class="case-slo__kpis">
         <div class="case-slo__kpi">

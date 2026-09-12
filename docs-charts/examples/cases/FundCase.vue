@@ -3,7 +3,7 @@
     <header class="case-fund__header">
       <div>
         <h3 class="case-fund__title">我的持仓 · 体检报告</h3>
-        <p class="case-fund__sub">8 只基金 · 今年以来 · 数据截至最近收盘</p>
+        <div class="case-fund__sub">8 只基金 · 今年以来 · 数据截至最近收盘</div>
       </div>
     </header>
 

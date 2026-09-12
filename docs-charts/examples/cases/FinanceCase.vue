@@ -3,7 +3,7 @@
     <header class="case-fin__header">
       <div>
         <h3 class="case-fin__title">财务月度结算 · 2026-06</h3>
-        <p class="case-fin__sub">单位：万元 · 数据口径与财务系统一致</p>
+        <div class="case-fin__sub">单位：万元 · 数据口径与财务系统一致</div>
       </div>
       <div class="case-fin__kpis">
         <div class="case-fin__kpi">

@@ -3,7 +3,7 @@
     <header class="case-dashboard__header">
       <div>
         <h3 class="case-dashboard__title">运营数据看板</h3>
-        <p class="case-dashboard__sub">2026 年 1–12 月 · 数据每小时汇总</p>
+        <div class="case-dashboard__sub">2026 年 1–12 月 · 数据每小时汇总</div>
       </div>
       <button class="case-btn" type="button" @click="exportPNG">导出趋势图 PNG</button>
     </header>

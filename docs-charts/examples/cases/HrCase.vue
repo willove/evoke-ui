@@ -3,7 +3,7 @@
     <header class="case-hr__header">
       <div>
         <h3 class="case-hr__title">人力资源 · 年度盘点</h3>
-        <p class="case-hr__sub">编制 486 人 · 覆盖招聘 / 薪酬 / 结构 / 人效四个切面</p>
+        <div class="case-hr__sub">编制 486 人 · 覆盖招聘 / 薪酬 / 结构 / 人效四个切面</div>
       </div>
       <div class="case-hr__kpis">
         <div class="case-hr__kpi">
