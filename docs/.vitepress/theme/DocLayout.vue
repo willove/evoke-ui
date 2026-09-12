@@ -102,10 +102,23 @@
 
     <!-- 主体 -->
     <div class="bd-body">
-      <!-- 侧栏（非首页）：组件区显示组件目录，指南区显示指南导航 -->
-      <aside v-if="!isHome" class="bd-sidebar" :class="{ 'is-open': mobileOpen }">
-        <input v-if="!isGuide && !isChart && !isExamples && !isMobileDocs" v-model="filter" class="bd-sidebar__filter" type="text" placeholder="筛选组件" autocomplete="off">
+      <!-- 侧栏：窄屏抽屉承载主导航（首页也要能打开），非首页再追加目录 -->
+      <aside class="bd-sidebar" :class="[{ 'is-open': mobileOpen }, { 'is-home': isHome }]">
+        <input v-if="!isHome && !isGuide && !isChart && !isExamples && !isMobileDocs" v-model="filter" class="bd-sidebar__filter" type="text" placeholder="筛选组件" autocomplete="off">
         <nav class="bd-sidebar__nav">
+          <div class="bd-sidebar__group bd-sidebar__group--nav">
+            <div class="bd-sidebar__group-title">导航</div>
+            <a
+              v-for="item in mobileNavItems"
+              :key="item.path"
+              :class="['bd-sidebar__link', { 'is-active': item.active }]"
+              :href="item.path"
+              :target="item.external ? '_blank' : undefined"
+              :rel="item.external ? 'noopener' : undefined"
+              @click="onMobileNav(item, $event)"
+            >{{ item.label }}</a>
+          </div>
+          <template v-if="!isHome">
           <div v-for="cat in sidebarGroups" :key="cat.key" class="bd-sidebar__group">
             <div class="bd-sidebar__group-title">{{ cat.name }}</div>
             <a
@@ -117,6 +130,7 @@
             >{{ item.label }}<span v-if="item.suffix" class="bd-sidebar__link-en">{{ item.suffix }}</span></a>
           </div>
           <div v-if="!sidebarGroups.length" class="bd-sidebar__empty">{{ isGuide ? '无指南页面' : '无匹配组件' }}</div>
+          </template>
         </nav>
       </aside>
 
@@ -240,6 +254,22 @@ function onNavClick(item, event) {
   if (item.external) return // 外链：放行原生跳转（新窗口打开）
   event.preventDefault()
   go(item.path)
+}
+
+// 抽屉内的扁平主导航：官方库子项拍平为外链
+const mobileNavItems = computed(() =>
+  navItems.value.flatMap((item) =>
+    item.children
+      ? item.children.map((c) => ({ label: c.label, path: c.path, external: true }))
+      : [{ label: item.label, path: item.path, active: item.active }],
+  ),
+)
+
+function onMobileNav(item, event) {
+  if (item.external) return // 外链：放行原生跳转（新窗口打开）
+  event.preventDefault()
+  go(item.path)
+  mobileOpen.value = false
 }
 
 function go(path) {

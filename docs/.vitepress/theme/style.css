@@ -1868,3 +1868,19 @@ a.bd-header__btn {
     right: 10px;
   }
 }
+
+/* 首页没有侧栏目录：桌面隐藏抽屉容器，窄屏保留（汉堡抽屉内是主导航） */
+.bd-sidebar.is-home {
+  display: none;
+}
+@media (max-width: 1024px) {
+  .bd-sidebar.is-home {
+    display: block;
+  }
+}
+/* 主导航分组只服务于窄屏抽屉，桌面侧栏由顶栏承担 */
+@media (min-width: 1025px) {
+  .bd-sidebar__group--nav {
+    display: none;
+  }
+}

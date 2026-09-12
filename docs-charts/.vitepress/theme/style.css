@@ -1187,3 +1187,19 @@ html.dark .api-table__type {
 a.cd-header__btn {
   text-decoration: none;
 }
+
+/* 首页没有侧栏目录：桌面隐藏抽屉容器，窄屏保留（汉堡抽屉内是主导航） */
+.cd-sidebar.is-home {
+  display: none;
+}
+@media (max-width: 1024px) {
+  .cd-sidebar.is-home {
+    display: block;
+  }
+}
+/* 主导航分组只服务于窄屏抽屉，桌面侧栏由顶栏承担 */
+@media (min-width: 1025px) {
+  .cd-sidebar__group--nav {
+    display: none;
+  }
+}

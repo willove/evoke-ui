@@ -93,9 +93,22 @@
 
     <!-- 主体 -->
     <div class="cd-body">
-      <!-- 侧栏（非首页）：按分区显示对应导航 -->
-      <aside v-if="!isHome" class="cd-sidebar" :class="{ 'is-open': mobileOpen }">
+      <!-- 侧栏：窄屏抽屉承载主导航（首页也要能打开），非首页再追加目录 -->
+      <aside class="cd-sidebar" :class="[{ 'is-open': mobileOpen }, { 'is-home': isHome }]">
         <nav class="cd-sidebar__nav">
+          <div class="cd-sidebar__group cd-sidebar__group--nav">
+            <div class="cd-sidebar__group-title">导航</div>
+            <a
+              v-for="item in mobileNavItems"
+              :key="item.path"
+              :class="['cd-sidebar__link', { 'is-active': item.active }]"
+              :href="item.path"
+              :target="item.external ? '_blank' : undefined"
+              :rel="item.external ? 'noopener' : undefined"
+              @click="onMobileNav(item, $event)"
+            >{{ item.label }}</a>
+          </div>
+          <template v-if="!isHome">
           <div v-for="cat in sidebarGroups" :key="cat.key" class="cd-sidebar__group">
             <div class="cd-sidebar__group-title">{{ cat.name }}</div>
             <a
@@ -107,6 +120,7 @@
             >{{ item.label }}<span v-if="item.suffix" class="cd-sidebar__link-en">{{ item.suffix }}</span></a>
           </div>
           <div v-if="!sidebarGroups.length" class="cd-sidebar__empty">无页面</div>
+          </template>
         </nav>
       </aside>
 
@@ -199,6 +213,22 @@ function onNavClick(item, event) {
   if (item.external) return // 外链：放行原生跳转（新窗口打开）
   event.preventDefault()
   go(item.path)
+}
+
+// 抽屉内的扁平主导航：官方库子项拍平为外链
+const mobileNavItems = computed(() =>
+  navItems.value.flatMap((item) =>
+    item.children
+      ? item.children.map((c) => ({ label: c.label, path: c.path, external: true }))
+      : [{ label: item.label, path: item.path, active: item.active }],
+  ),
+)
+
+function onMobileNav(item, event) {
+  if (item.external) return // 外链：放行原生跳转（新窗口打开）
+  event.preventDefault()
+  go(item.path)
+  mobileOpen.value = false
 }
 
 function go(path) {
