@@ -137,6 +137,10 @@ const bulletOptions = {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* 站点表格 th 规则特异性更高，双类名盾牌夺回数值表头的右对齐 */
+.case-report__table.case-report__table thead th.is-num {
+  text-align: right;
+}
 .case-report__table .is-chart {
   width: 180px;
 }
