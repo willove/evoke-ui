@@ -28,6 +28,48 @@
   />
 </DemoBlock>
 
+### 校招招聘漏斗
+
+HR 的年度复盘图：从简历到 Offer 每一层的「漏损率」直接暴露招聘瓶颈在筛简历还是在终面。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'funnel',
+      title: '2026 校招转化',
+      funnelData: [
+        { label: '收到简历', value: 4860 },
+        { label: '笔试通过', value: 1620 },
+        { label: '初面通过', value: 760 },
+        { label: '终面通过', value: 285 },
+        { label: '接受 Offer', value: 212 },
+      ],
+    }"
+    :height="280"
+  />
+</DemoBlock>
+
+### 线索到回款
+
+销售运营的结算口径：市场线索一路走到财务回款，用漏斗对齐市场、销售、财务三个团队的共同语言——每层转化率就是团队的 KPI。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'funnel',
+      title: 'Q3 线索到回款（个）',
+      funnelData: [
+        { label: '市场线索', value: 2400 },
+        { label: '有效商机', value: 980 },
+        { label: '方案报价', value: 460 },
+        { label: '签约', value: 238 },
+        { label: '财务回款', value: 205 },
+      ],
+    }"
+    :height="280"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - `funnelData` 按流程顺序排列，漏斗形状自动生成；

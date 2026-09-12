@@ -35,6 +35,55 @@
   />
 </DemoBlock>
 
+### 年度预算执行率
+
+办公场景：Q4 最重要的数字之一。半盘仪表（`startAngle` / `endAngle` 调成 180°）更省纵向空间，红色预警段压在 95% 以上——超支前一眼可见。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'gauge',
+      title: '年度预算执行率',
+      gauge: {
+        value: 78,
+        min: 0,
+        max: 100,
+        unit: '%',
+        showProgress: true,
+        startAngle: Math.PI,
+        endAngle: 0,
+        color: [
+          { from: 0, to: 80, color: '#16a34a' },
+          { from: 80, to: 95, color: '#d97706' },
+          { from: 95, to: 100, color: '#dc2626' },
+        ],
+      },
+    }"
+    :height="220"
+  />
+</DemoBlock>
+
+### 房贷还款进度
+
+生活场景：三十年贷款还了多少年、多少本金，进度弧本身就是一种安慰——搭配中心数字更有掌控感。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'gauge',
+      title: '房贷还款进度',
+      gauge: {
+        value: 6.5,
+        min: 0,
+        max: 30,
+        unit: '年',
+        color: '#175DFF',
+      },
+    }"
+    :height="260"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - `gauge.startAngle` / `endAngle` 可调整弧的起止角度做半盘仪表；
