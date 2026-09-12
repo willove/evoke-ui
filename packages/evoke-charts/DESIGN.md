@@ -96,8 +96,8 @@
 - 长条监控带推荐：`{ top: 6, right: 8, bottom: 6 }` + `height: 64`（left 交刻度标签
   自适应）；sparkline 默认 6px 贴边。
 - `padding.left` 不得小于 y 刻度标签最大宽 + 12，否则标签截断。
-- **嵌入宿主去双重框**：图表放进卡片/演示容器时建议 `background: transparent; border: none`
-  （容器是唯一边框，靠留白分组）；独立使用保持默认卡片观感。
+- **容器不带边框**：是否加框、加多粗由宿主决定，图表只负责内容。嵌入卡片/演示
+  容器且宿主底色与 `--ev-bg-color` 不同时，可给容器 `background: transparent`。
 
 ## 6. 文字排版
 

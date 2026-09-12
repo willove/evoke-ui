@@ -34,9 +34,9 @@
 .case-card {
   display: block;
   padding: 18px 18px 14px;
-  border: 1px solid var(--ev-app-card-border, var(--ev-border-color));
+  border: 1px solid var(--cd-border);
   border-radius: 10px;
-  background: var(--ev-bg-color-overlay, var(--ev-bg-color));
+  background: var(--cd-bg);
   text-decoration: none;
   transition: border-color 0.15s;
 }

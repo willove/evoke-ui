@@ -129,8 +129,6 @@ function exportPNG() {
 }
 .case-dashboard :deep(.ev-chart) {
   background: transparent;
-  border: none;
-  border-radius: 0;
 }
 .case-dashboard__header {
   display: flex;

@@ -25,7 +25,7 @@
 | 令牌组 | 令牌 | 用途 |
 | --- | --- | --- |
 | 系列色 | `--ev-color-series-1` … `--ev-color-series-8` | 数据系列专用色板（与状态语义色解耦；槽 1 未定义时回读 `--ev-color-primary`） |
-| 表面 | `--ev-bg-color`、`--ev-bg-color-overlay`、`--ev-app-card-border` | 画布底、浮层底、边框 |
+| 表面 | `--ev-bg-color`、`--ev-bg-color-overlay` | 画布底、浮层底 |
 | 文字 | `--ev-text-color-primary` / `-secondary` / `-danger` | 标题、轴标签、图例文字 |
 | 边线 | `--ev-border-color` / `-light` / `-dark` | 轴线、网格线 |
 | 填充 | `--ev-fill-color-light` / `-dark` | 背景 band、悬停带 |

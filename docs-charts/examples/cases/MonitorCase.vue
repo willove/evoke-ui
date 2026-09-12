@@ -252,11 +252,9 @@ onUnmounted(stop)
 .case-mon__chart {
   min-width: 0;
 }
-/* 图表小图的定制外观：去掉自带白底/圆角/描边，直接浮在行底色上 */
+/* 嵌入去底色：行底即页面底，图表不自带面 */
 .case-mon__chart :deep(.ev-chart) {
   background: transparent;
-  border: none;
-  border-radius: 0;
 }
 .case-mon__stat {
   display: flex;

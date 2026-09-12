@@ -93,8 +93,6 @@ const bulletOptions = {
 }
 .case-report :deep(.ev-chart) {
   background: transparent;
-  border: none;
-  border-radius: 0;
 }
 .case-report__header {
   margin-bottom: 12px;

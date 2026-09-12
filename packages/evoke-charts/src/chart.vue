@@ -1869,12 +1869,11 @@ defineExpose({
 <style scoped>
 .ev-chart {
   position: relative;
-  /* 不裁剪溢出：tooltip 需要能浮出矮容器（监控长条等）；
+  /* 容器不带边框：是否加框、加多粗由宿主决定，图表只负责内容；
      圆角裁剪下沉到 canvas 与浮层自身（border-radius: inherit） */
   overflow: visible;
   border-radius: 8px;
   background: var(--ev-bg-color, #ffffff);
-  border: 1px solid var(--ev-app-card-border, #e2e8f0);
 }
 
 /* 关键：canvas 必须能接收鼠标事件 */

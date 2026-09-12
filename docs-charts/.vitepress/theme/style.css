@@ -42,7 +42,6 @@ html.dark {
 :root {
   --ev-bg-color: #ffffff;
   --ev-bg-color-overlay: #ffffff;
-  --ev-app-card-border: #e5e7eb;
   --ev-text-color-primary: #1f2329;
   --ev-text-color-secondary: #646a73;
   --ev-text-color-tertiary: #8f959e;
@@ -57,7 +56,6 @@ html.dark {
 html.dark {
   --ev-bg-color: #141619;
   --ev-bg-color-overlay: #1b1e23;
-  --ev-app-card-border: #33383f;
   --ev-text-color-primary: #e8eaed;
   --ev-text-color-secondary: #a8b0bb;
   --ev-text-color-tertiary: #7d8590;

@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 容器默认去边框（边框交宿主）
+
+- `.ev-chart` 容器不再自带 1px 描边——是否加框、加多粗由宿主决定，图表只负责
+  内容；原依赖默认边框做卡片观感的宿主请自行给容器加 `border`。
+  `--ev-app-card-border` 退出图表令牌契约（容器面只剩 `--ev-bg-color` /
+  `--ev-bg-color-overlay`）
+
 ### @wil-works/evoke-charts — y 轴刻度密度自适应、硬上限与量程余量
 
 - 显式 `yAxis.ticks` 升级为硬上限：nice 步进产生的多余中间档自动抽稀
