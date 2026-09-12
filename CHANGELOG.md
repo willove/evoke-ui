@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 散点图点图例
+
+- `scatterData` 各点的 `label` 自动进入图例（着色与点位一致），图例点选可
+  显隐对应散点；无 `label` 的点不进图例——「每个点是一个类目」的场景
+  （基金风险收益、部门人效等）不再只能靠悬浮辨认
+- 图例交互沿用既有 `toggleSeries` / `legend.interactive` 配置
+
 ### @wil-works/evoke-charts — 雷达图视觉升级
 
 - 填充与面积图对齐同标准：整块平涂改**纵向浅渐变**（`@25% → @3%`），多系列

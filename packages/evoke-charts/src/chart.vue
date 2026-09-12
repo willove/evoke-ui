@@ -674,7 +674,8 @@ const LEGEND_INTERACTIVE_TYPES = [
   "doughnut",
   "rose",
   "radar",
-  "funnel"
+  "funnel",
+  "scatter"
 ];
 function checkLegendHit(x, y) {
   const canvas = canvasRef.value;

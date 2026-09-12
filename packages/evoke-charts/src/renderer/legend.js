@@ -44,6 +44,14 @@ function collectLegendItems(options, theme, hiddenSeries) {
       hidden: hiddenSeries.has(d.label || "")
     }));
   }
+  if (options.type === "scatter") {
+    return (options.scatterData || []).map((d, i) => ({
+      name: d.label || `P${i + 1}`,
+      label: fmt(d.label || `P${i + 1}`),
+      color: d.color || theme.colors[i % theme.colors.length],
+      hidden: hiddenSeries.has(d.label || `P${i + 1}`)
+    }));
+  }
   return (options.series || []).map((s, i) => ({
     name: s.name,
     label: fmt(s.name),

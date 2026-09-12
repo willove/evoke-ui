@@ -5,6 +5,8 @@ import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
 import { renderYAxis, thinTickValues, renderAnnotations } from '../src/renderer/axes.js'
 import { renderChart } from '../src/renderer/index.js'
+import { renderScatterChart } from '../src/renderer/charts-basic.js'
+import { computeLegendLayout } from '../src/renderer/legend.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 import { chartOptionsSchema, validateOptions } from '../src/schema.js'
 
@@ -924,5 +926,63 @@ describe('图层钩子 layers 与 overlay 插槽', () => {
     expect(wrapper.find('.ov-mark').exists()).toBe(true)
     // pointer-events:none 由 .ev-chart__overlay 样式保证；jsdom 不应用 SFC 样式表，浏览器验收覆盖
     wrapper.unmount()
+  })
+})
+
+describe('散点图点图例（scatterData label 识别）', () => {
+  const SCATTER = () => ({
+    type: 'scatter',
+    legend: { show: true },
+    scatterData: [
+      { x: 1, y: 1, label: '甲' },
+      { x: 2, y: 2, label: '乙' },
+      { x: 3, y: 3, label: '丙' },
+    ],
+  })
+  const THEME = {
+    colors: ['#175DFF', '#5AD8A6', '#f5a623'],
+    textColorSecondary: '#6b7280',
+    backgroundColor: '#ffffff',
+    gridColor: '#e5e7eb',
+  }
+
+  it('图例条目来自 scatterData 的 label，hidden 跟随 hiddenSeries', () => {
+    const ctx2d = new Proxy(
+      { measureText: () => ({ width: 10 }) },
+      { get(obj, prop) { return prop in obj ? obj[prop] : () => {} } },
+    )
+    const layout = computeLegendLayout(
+      ctx2d,
+      SCATTER(),
+      { x: 40, y: 10, width: 400, height: 300 },
+      480,
+      320,
+      THEME,
+      new Set(['乙']),
+    )
+    expect(layout.items.map((i) => i.name)).toEqual(['甲', '乙', '丙'])
+    expect(layout.items.map((i) => i.hidden)).toEqual([false, true, false])
+    expect(layout.items[1].color).toBe('#5AD8A6')
+  })
+
+  it('renderScatterChart：隐藏点跳过绘制，其余正常出 arc', () => {
+    const arcs = []
+    const proxy = new Proxy(
+      { measureText: () => ({ width: 10 }) },
+      { get(obj, prop) { return prop in obj ? obj[prop] : () => { arcs.push(prop) } } },
+    )
+    renderScatterChart(
+      {
+        ctx: proxy,
+        theme: THEME,
+        plotArea: { x: 40, y: 10, width: 400, height: 300 },
+        options: SCATTER(),
+        progress: 1,
+        hoverIndex: -1,
+        hiddenSeries: new Set(['乙']),
+      },
+      { min: 0, max: 3 },
+    )
+    expect(arcs.filter((a) => a === 'arc')).toHaveLength(2)
   })
 })

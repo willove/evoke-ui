@@ -727,6 +727,11 @@ function renderScatterChart(ctx, yRange) {
   const points = [];
   const yFactor = Math.min(ctx.progress * 1.2, 1);
   scatterData.forEach((point, i) => {
+    // 图例点选按 label 隐藏；占位 NaN 保持返回点数组与 scatterData 索引对齐（命中测试自动跳过）
+    if (ctx.hiddenSeries.has(point.label || `P${i + 1}`)) {
+      points.push([NaN, NaN]);
+      return;
+    }
     const x = scale.toX(point.x);
     const finalY = scale.toY(point.y);
     const animatedY = plotArea.y + plotArea.height - (plotArea.y + plotArea.height - finalY) * yFactor;

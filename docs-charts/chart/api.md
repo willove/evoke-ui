@@ -41,7 +41,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
 
 <ApiTable title="Options 按类型数据字段" :rows="[
   { name: 'pieData', desc: 'pie / doughnut / rose 数据源', type: '{ name, value }[]', default: '—' },
-  { name: 'scatterData', desc: 'scatter 散点', type: '{ x, y, label?, color? }[]', default: '—' },
+  { name: 'scatterData', desc: 'scatter 散点：label 自动进入图例（点选显隐）', type: '{ x, y, label?, color? }[]', default: '—' },
   { name: 'funnelData', desc: 'funnel 漏斗', type: '{ label, value }[]', default: '—' },
   { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle }', type: 'object', default: '—' },
   { name: 'radarIndicators', desc: 'radar 维度：{ name, max, min? }', type: 'array', default: '—' },
