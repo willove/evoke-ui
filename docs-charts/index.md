@@ -62,12 +62,28 @@ layout: home
 
 <div class="cd-sibling">
   <p class="cd-sibling__eyebrow">ecosystem</p>
-  <h2 class="cd-sibling__title">搭整套中后台界面？</h2>
-  <p class="cd-sibling__desc">同族的 Evoke Business UI 依赖本包并以 <code>&lt;eb-chart&gt;</code> 提供同一图表引擎，主题与暗色自动跟随组件库；做官网与营销页可以看看姊妹库 Evoke UI。</p>
-  <a class="cd-sibling__btn" href="/guide/integration">
-    查看 business 内嵌使用的方式
-    <CdIcon name="arrow-right" :size="14" />
-  </a>
+  <h2 class="cd-sibling__title">姊妹库：图表之外的整套界面</h2>
+  <div class="cd-sibling__grid">
+    <a class="cd-sibcard cd-sibcard--ui" href="https://evoke-ui.wil-works.com" target="_blank" rel="noopener">
+      <div class="cd-sibcard__top">
+        <span class="cd-sibcard__icon"><CdIcon name="globe" :size="15" /></span>
+        <span class="cd-sibcard__tag">官网级 UI 框架</span>
+      </div>
+      <strong class="cd-sibcard__name">Evoke UI</strong>
+      <p class="cd-sibcard__desc">做官网、落地页与营销页：Clean Navy 设计语言，49 个组件，明暗双主题与运行时换色开箱即用。</p>
+      <span class="cd-sibcard__link">访问 Evoke UI 文档 <CdIcon name="arrow-right" :size="13" /></span>
+    </a>
+    <a class="cd-sibcard cd-sibcard--biz" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">
+      <div class="cd-sibcard__top">
+        <span class="cd-sibcard__icon"><CdIcon name="monitor" :size="15" /></span>
+        <span class="cd-sibcard__tag">中后台 UI 框架</span>
+      </div>
+      <strong class="cd-sibcard__name">Evoke Business UI</strong>
+      <p class="cd-sibcard__desc">搭中后台管理界面：150+ 通用与业务组件，内嵌同一图表引擎（&lt;eb-chart&gt;），主题与暗色自动跟随组件库。</p>
+      <span class="cd-sibcard__link">访问 Business UI 文档 <CdIcon name="arrow-right" :size="13" /></span>
+    </a>
+  </div>
+  <p class="cd-sibling__more">Business UI 的图表接入细节见<a href="/guide/integration">内嵌于组件库</a>。</p>
 </div>
 
 <div class="cd-banner">
