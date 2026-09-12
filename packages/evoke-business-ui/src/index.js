@@ -414,7 +414,8 @@ const components = {
   EbTabbar,
   EbTabbarItem,
   EbNavBar,
-  // 图表（evoke-charts 独立包别名）
+  // 图表（evoke-charts 独立包，EvChart / EbChart 双注册名）
+  EvChart: EvChart,
   EbChart: EvChart,
 }
 

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, createApp } from 'vue'
+import EvokeBusinessUI, { components as ebComponents } from '../src/index'
 import EbStatusTag from '../src/components/status-tag/index.vue'
 import EbCellStack from '../src/components/cell-stack/index.vue'
 import EbDetailDescriptions from '../src/components/detail-descriptions/index.vue'
@@ -9,6 +10,21 @@ import EbDataTable from '../src/components/data-table/index.vue'
 import EbImportExportPanel from '../src/components/import-export-panel/index.vue'
 import EbAuditTimeline from '../src/components/audit-timeline/index.vue'
 import EbColumnSettings from '../src/components/column-settings/index.vue'
+
+describe('图表组件双注册名', () => {
+  it('EvChart 与 EbChart 指向同一引擎组件', () => {
+    expect(ebComponents.EbChart).toBeTruthy()
+    expect(ebComponents.EvChart).toBe(ebComponents.EbChart)
+  })
+
+  it('install 后模板可解析 <ev-chart> 与 <eb-chart>', () => {
+    const app = createApp({ template: '<div />' })
+    app.use(EvokeBusinessUI)
+    expect(app.component('EvChart')).toBeTruthy()
+    expect(app.component('EvChart')).toBe(app.component('EbChart'))
+    app.unmount()
+  })
+})
 
 describe('EbStatusTag', () => {
   const STATUSES = [

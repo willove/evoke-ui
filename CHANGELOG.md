@@ -15,6 +15,7 @@
 - `setSeriesPalette(colors)` / `clearSeriesPalette()` / `getSeriesPalette()`：
   写入或清除 `--ev-color-series-1..8` 并派发 `ev-theme-change`（图表即时重绘）；
   `resetTheme` 一并清除系列槽位；持久化沿用 `eb-theme-config` 存档通道
+- 模板同时支持 `<ev-chart>` / `<eb-chart>` 组件名（同一图表引擎）
 
 ### @wil-works/evoke-charts — 新增配色方案应用工具
 

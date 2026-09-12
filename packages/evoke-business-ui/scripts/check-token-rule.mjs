@@ -49,6 +49,8 @@ function isChartAdapterExempt(line) {
   if (line.includes('EvChart') && line.includes('EbChart')) return true
   // 图表系列色槽位：主题宿主向 evoke-charts 写入的数据色板契约（DESIGN.md §2.1）
   if (line.includes('--ev-color-series-')) return true
+  // EvChart 组件名：注册表键（EvChart: EvChart）与组件名查表（app.component('EvChart')）
+  if (/EvChart\s*:/.test(line) || /['"`]EvChart['"`]/.test(line)) return true
   return line.includes('ev-theme-change')
 }
 
