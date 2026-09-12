@@ -18,6 +18,21 @@
     <p class="case-card__desc">图表嵌进表格行：迷你趋势图回答「在涨还是在跌」，子弹图回答「目标完成了没有」。</p>
     <span class="case-card__tags">sparkline · bullet · 令牌取色</span>
   </a>
+  <a class="case-card" href="/examples/finance">
+    <strong class="case-card__title">财务月度结算</strong>
+    <p class="case-card__desc">KPI 行 + 利润桥 + 费用构成 + 部门报销结算，月度经营会一张页面讲完。</p>
+    <span class="case-card__tags">waterfall · pie · stacked-bar</span>
+  </a>
+  <a class="case-card" href="/examples/fund">
+    <strong class="case-card__title">基金持仓体检</strong>
+    <p class="case-card__desc">自选列表、收益排行、风险-收益散点、资产配置环——个人盘面的一次完整体检。</p>
+    <span class="case-card__tags">sparkline · horizontal-bar · scatter · doughnut</span>
+  </a>
+  <a class="case-card" href="/examples/hr">
+    <strong class="case-card__title">人力资源年度盘点</strong>
+    <p class="case-card__desc">招聘漏斗、薪酬五分位、年龄结构、部门人效——年度人才盘点的四个切面。</p>
+    <span class="case-card__tags">funnel · boxplot · bin · scatter</span>
+  </a>
 </div>
 
 ## 挑案例还是挑图？

@@ -102,6 +102,9 @@ export const EXAMPLES_NAV = [
       { name: '运营数据看板', zh: '', path: '/examples/dashboard' },
       { name: '服务器指标监控', zh: '', path: '/examples/monitor' },
       { name: '报表嵌入', zh: '', path: '/examples/report' },
+      { name: '财务月度结算', zh: '', path: '/examples/finance' },
+      { name: '基金持仓体检', zh: '', path: '/examples/fund' },
+      { name: '人力资源年度盘点', zh: '', path: '/examples/hr' },
     ],
   },
 ]
