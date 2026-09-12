@@ -19,6 +19,11 @@
       @pointerleave="handlePointerLeave"
     />
 
+    <!-- HTML 覆盖层：富文本旁白 / 自定义标记（默认不拦截鼠标，内容可自行开启） -->
+    <div v-if="!isEmpty && !props.options.loading && !internalError && $slots.overlay" class="ev-chart__overlay">
+      <slot name="overlay" :plot-area="overlayInfo.plotArea" :theme="overlayInfo.theme" :options="props.options" />
+    </div>
+
     <!-- 空数据占位 -->
     <Transition name="ev-chart-fade">
       <div v-if="isEmpty && !props.options.loading && !internalError" class="ev-chart__empty">
@@ -238,6 +243,12 @@ let suppressClick = false;
 let brushDragged = false;
 // spec 版本号：宿主可能传非响应式普通对象，computed 需要一个可失效的依赖
 const specVersion = ref(0);
+// overlay 作用域插槽的入参（render 时刷新）
+const overlayInfo = ref({
+  plotArea: { x: 0, y: 0, width: 0, height: 0 },
+  theme: getTheme(false, undefined),
+  options: null,
+});
 const effectiveOptions = computed(() => {
   specVersion.value;
   const opt = props.options;
@@ -446,6 +457,17 @@ function render(animate = true, animOverride = null) {
     lastHeight = height;
     canvas.width = width * dpr.value;
     canvas.height = height * dpr.value;
+    const overlayPadding = getPadding(effectiveOptions.value, width);
+    overlayInfo.value = {
+      plotArea: {
+        x: overlayPadding.left,
+        y: overlayPadding.top,
+        width: width - overlayPadding.left - overlayPadding.right,
+        height: height - overlayPadding.top - overlayPadding.bottom,
+      },
+      theme: getTheme(document.documentElement.classList.contains("dark"), effectiveOptions.value.theme),
+      options: props.options,
+    };
     const animCfg = animOverride || props.options.animation;
     const animEnabled = animate && animCfg?.enabled !== false;
     animationState = createAnimation(animCfg);
@@ -2040,6 +2062,16 @@ defineExpose({
   border-radius: inherit;
   /* 触摸：纵向留给页面滚动，横向拖拽由图表接管（dataZoom 平移） */
   touch-action: pan-y;
+}
+
+/* HTML 覆盖层：只在内容层，不与 canvas 抢交互（子元素可自行 pointer-events:auto），
+   也不压过 tooltip（z-index 100） */
+.ev-chart__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .ev-chart__tooltip {

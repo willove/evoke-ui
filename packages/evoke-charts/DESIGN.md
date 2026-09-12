@@ -163,6 +163,18 @@
   其余系列与符号统一降到 22% 透明度——与图例悬浮强调同一通道、同一数值。
 - 显式 `emphasis` 优先于图例悬浮；移除即恢复。
 
+**图层逃逸口（layers 与 overlay 插槽）**
+
+- `layers: [{ at, draw }]`：canvas 自定义绘制的合法出口。锚点 `back`（数据层
+  之下，做背景带/底纹）、`after-series`（系列之后、注解之前，做几何标注底衬）、
+  `front`（注解之上、图例之前，默认）。`draw(ctx, renderCtx)` 拿到与渲染器
+  同一套 plotArea / theme / options / progress，保证自定义内容跟随主题与布局。
+- `#overlay` 作用域插槽：HTML 内容铺满容器，默认 `pointer-events: none`（子元素
+  可自行开启），z-index 低于 tooltip——富文本旁白、自定义标记走这里，不与
+  canvas 抢交互。
+- 使用纪律：能用 annotations 表达的不用 layers；进 layers 的绘制同样遵守
+  焦点预算与虚线引线规矩，主题变化时必须读 renderCtx.theme 而不是写死色值。
+
 ## 10. 动效
 
 - 首渲/数据变更补间：时长 1200ms、easeOut（指数缓出），数值插值而非闪屏重绘。

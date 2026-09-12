@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 图层逃逸口：layers 绘制钩子与 overlay 插槽
+
+- 新增 `layers: [{ at, draw }]`：canvas 自定义绘制按锚点插入渲染管线——
+  `back`（数据层之下）、`after-series`（系列之后、注解之前）、`front`（注解
+  之上、图例之前，默认）；`draw(ctx, renderCtx)` 拿到与渲染器同一套
+  `{ plotArea, theme, options, progress }`，自定义内容跟随主题与布局
+- 新增 `#overlay` 作用域插槽：HTML 内容绝对定位铺满容器，默认
+  `pointer-events: none`（子元素可自行开启），层级低于 tooltip；插槽参数
+  `{ plotArea, theme, options }`，富文本旁白 / 自定义标记不再需要hack进 canvas
+
 ### @wil-works/evoke-charts — AI 生成引擎：数据直生 / 提示词契约 / 渲染自检
 
 - 新增 `generateChartSpec(data, hint)`：CSV / TSV / 对象数组 / 二维数组 →

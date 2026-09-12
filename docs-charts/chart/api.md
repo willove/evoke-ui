@@ -32,6 +32,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'annotations', desc: '叙述注解（旁白，非数据系列，单图 ≤ 3 处）：text 斜体文字 / callout 旁注+虚线引线 / point 固定高亮点 / delta 涨跌结论（三角+数值，涨跌色同 K 线）/ region 区间强调（primary @6% 填充）。定位 x（类目或索引）+ y（数值），或 xPx/yPx 像素（优先）；offsetX/offsetY 像素微调。直角系图表适用', type: 'array', default: '—' },
   { name: 'emphasis', desc: '焦点强调：{ series（名称或索引）, dimOthers: true }——焦点系列保持原样，其余降到 22% 透明度（与图例悬浮同一通道）；优先于图例悬浮强调', type: 'object', default: '—' },
   { name: 'scenes', desc: '编排时间轴：{ autoplay, loop, items }，每幕 { patch, duration, hold }——patch 为该幕 options 浅合并补丁（顶层键替换），duration 为该幕过渡时长 ms（覆盖全局动画），hold 为过渡后额外停留；autoplay 自动推进、loop 到尾幕回卷；初始停在第一幕（index 0）', type: 'object', default: '—' },
+  { name: 'layers', desc: '图层逃逸口：[{ at, draw }]，at 为 back（数据层之下）/ after-series（系列之后、注解之前）/ front（注解之上、图例之前，默认）；draw(ctx, renderCtx) 拿到画布上下文与 { plotArea, theme, options, progress }，可画任意自定义内容', type: 'array', default: '—' },
   { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
   { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
 ]" />
@@ -50,6 +51,12 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'boxData', desc: 'boxplot 箱线', type: '{ label, min, q1, median, q3, max }[]', default: '—' },
   { name: 'treemapData / sunburstData', desc: '矩形树图 / 旭日图的层级数据', type: '{ name, value?, children? }[]', default: '—' },
   { name: 'bulletData', desc: 'bullet 子弹图', type: '{ name, value, target? }[]', default: '—' },
+]" />
+
+## Chart Slots
+
+<ApiTable title="Chart Slots" :rows="[
+  { name: 'overlay', desc: 'HTML 覆盖层（作用域插槽）：绝对定位铺满容器、默认不拦截鼠标（子元素可自行开启 pointer-events），不遮挡 tooltip。插槽参数 { plotArea, theme, options }，适合富文本旁白、自定义标记、嵌入式小组件', type: 'slot', default: '—' },
 ]" />
 
 ## Chart Events

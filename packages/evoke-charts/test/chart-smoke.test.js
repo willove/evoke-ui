@@ -4,6 +4,7 @@ import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
 import { getPadding } from '../src/renderer/core.js'
 import { renderYAxis, thinTickValues, renderAnnotations } from '../src/renderer/axes.js'
+import { renderChart } from '../src/renderer/index.js'
 import { applySeriesPalette, clearSeriesPalette } from '../src/palette.js'
 import { chartOptionsSchema, validateOptions } from '../src/schema.js'
 
@@ -780,6 +781,148 @@ describe('scenes 编排时间轴', () => {
     expect(spec.title).toBeUndefined()
     expect(Object.keys(spec).some((k) => k.startsWith('__'))).toBe(false)
     expect(spec.series).toHaveLength(2)
+    wrapper.unmount()
+  })
+})
+
+describe('图层钩子 layers 与 overlay 插槽', () => {
+  beforeEach(() => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      setTimeout(() => cb(performance.now() + 1e9), 0)
+      return 1
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      return {
+        left: 0, top: 0, right: 800, bottom: 400,
+        width: 800, height: 400, x: 0, y: 0,
+        toJSON: () => {},
+      }
+    })
+    ctx = mockCanvas()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const recordingCtx = () => {
+    const calls = []
+    const styles = {}
+    const target = { measureText: () => ({ width: 10 }) }
+    const proxy = new Proxy(target, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop]
+        if (prop in styles) return styles[prop]
+        return (...args) => { calls.push([prop, args]) }
+      },
+      set(obj, prop, value) {
+        styles[prop] = value
+        calls.push([`set:${String(prop)}`, value])
+        return true
+      },
+    })
+    return { proxy, calls }
+  }
+  // 图层绘制标记：唯一参数组合，便于在调用序列中定位
+  const markerLayer = (at) => ({
+    at,
+    draw: (c) => {
+      c.fillStyle = '#123456'
+      c.fillRect(7, 7, 7, 7)
+    },
+  })
+  const markerIndex = (calls) => calls.findIndex((c) => c[0] === 'fillRect' && c[1][0] === 7 && c[1][1] === 7)
+  const LINE_SPEC = () => ({
+    type: 'line',
+    labels: ['一', '二', '三'],
+    series: [{ name: 'A', data: [1, 5, 3] }],
+  })
+  const renderWith = (layers) => {
+    const rec = recordingCtx()
+    renderChart(
+      { width: 800, height: 400 },
+      { options: { ...LINE_SPEC(), layers }, ctx: rec.proxy, dpr: 1, progress: 1, hoverIndex: -1, mouseX: -1, mouseY: -1 },
+    )
+    return rec
+  }
+
+  it('back 层先于一切路径绘制（含坐标轴与系列）', () => {
+    const rec = renderWith([markerLayer('back')])
+    const layerIdx = markerIndex(rec.calls)
+    const firstMoveTo = rec.calls.findIndex((c) => c[0] === 'moveTo')
+    expect(layerIdx).toBeGreaterThan(-1)
+    expect(firstMoveTo).toBeGreaterThan(-1)
+    expect(layerIdx).toBeLessThan(firstMoveTo)
+  })
+
+  it('front 层晚于系列与注解；省略 at 默认 front', () => {
+    // 注解文字是 front 锚点之后才可能出现的内容分界：after-series 在注解前，front 在注解后
+    const spec = {
+      ...LINE_SPEC(),
+      annotations: [{ type: 'text', x: '二', y: 4, text: '注解标记' }],
+    }
+    const rec = recordingCtx()
+    renderChart(
+      { width: 800, height: 400 },
+      { options: { ...spec, layers: [markerLayer(undefined)] }, ctx: rec.proxy, dpr: 1, progress: 1, hoverIndex: -1, mouseX: -1, mouseY: -1 },
+    )
+    const layerIdx = markerIndex(rec.calls)
+    const firstMoveTo = rec.calls.findIndex((c) => c[0] === 'moveTo')
+    const annText = rec.calls.findIndex((c) => c[0] === 'fillText' && c[1][0] === '注解标记')
+    expect(layerIdx).toBeGreaterThan(-1)
+    expect(firstMoveTo).toBeGreaterThan(-1)
+    expect(annText).toBeGreaterThan(-1)
+    expect(layerIdx).toBeGreaterThan(annText)
+    expect(layerIdx).toBeGreaterThan(firstMoveTo)
+  })
+
+  it('after-series 层在系列之后、图例之前', () => {
+    // 图例绘制含 fillText（系列名 A）；after-series 标记应早于图例文字
+    const rec = renderWith([markerLayer('after-series')])
+    const layerIdx = markerIndex(rec.calls)
+    const firstMoveTo = rec.calls.findIndex((c) => c[0] === 'moveTo')
+    const legendText = rec.calls.findIndex((c) => c[0] === 'fillText' && c[1][0] === 'A')
+    expect(layerIdx).toBeGreaterThan(firstMoveTo)
+    expect(legendText).toBeGreaterThan(-1)
+    expect(layerIdx).toBeLessThan(legendText)
+  })
+
+  it('draw 收到 renderCtx（plotArea / theme / options）', () => {
+    let received = null
+    renderChart(
+      { width: 800, height: 400 },
+      {
+        options: {
+          ...LINE_SPEC(),
+          layers: [{ at: 'front', draw: (c, rc) => { received = rc } }],
+        },
+        ctx: recordingCtx().proxy,
+        dpr: 1,
+        progress: 1,
+        hoverIndex: -1,
+        mouseX: -1,
+        mouseY: -1,
+      },
+    )
+    expect(received).not.toBeNull()
+    expect(received.plotArea.width).toBeGreaterThan(0)
+    expect(Array.isArray(received.theme.colors)).toBe(true)
+    expect(received.options.type).toBe('line')
+  })
+
+  it('overlay 插槽渲染进覆盖层', async () => {
+    const wrapper = mount(EvChart, {
+      props: { options: LINE_OPTIONS() },
+      slots: { overlay: '<div class="ov-mark">旁白</div>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+    expect(wrapper.find('.ev-chart__overlay').exists()).toBe(true)
+    expect(wrapper.find('.ov-mark').exists()).toBe(true)
+    // pointer-events:none 由 .ev-chart__overlay 样式保证；jsdom 不应用 SFC 样式表，浏览器验收覆盖
     wrapper.unmount()
   })
 })

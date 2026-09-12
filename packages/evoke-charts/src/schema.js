@@ -146,6 +146,16 @@ export const chartOptionsSchema = {
       properties: { show: { type: "boolean" }, filename: { type: "string" } }
     },
     theme: { type: "object" },
+    layers: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          at: { type: "string", enum: ["back", "after-series", "front"] },
+          draw: { type: "function" }
+        }
+      }
+    },
     emphasis: {
       type: "object",
       properties: {

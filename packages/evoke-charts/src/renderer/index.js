@@ -56,6 +56,16 @@ import { computeBins, squarifyTreemap } from "./charts-special";
 import { layoutSunburst, computeSunburstDepth } from "./charts-extra";
 import { getDataZoomConfig, getSliderGeometry, zoomToSlice, windowToX, xToPercent } from "./dataZoom";
 import { createSvgRecorder } from "./svgRecorder";
+// 图层逃逸口：宿主/AI 的自定义绘制按锚点插入渲染管线（draw(ctx, renderCtx)）
+function runLayers(renderCtx, at) {
+  const layers = renderCtx.options.layers;
+  if (!Array.isArray(layers)) return;
+  layers.forEach((layer) => {
+    if (layer && typeof layer.draw === "function" && (layer.at || "front") === at) {
+      layer.draw(renderCtx.ctx, renderCtx);
+    }
+  });
+}
 function renderChart(canvas, params) {
   const {
     options: rawOptions,
@@ -111,6 +121,7 @@ function renderChart(canvas, params) {
     focusSeries
   };
   renderTitle(renderCtx, options.subtitle ? 12 : 15);
+  runLayers(renderCtx, "back");
   let points = [];
   let leftRange;
   switch (options.type) {
@@ -263,6 +274,7 @@ function renderChart(canvas, params) {
     default:
       break;
   }
+  runLayers(renderCtx, "after-series");
   if (leftRange && (options.annotation || (options.annotations && options.annotations.length > 0))) {
     renderAnnotations(renderCtx, leftRange);
   }
@@ -289,6 +301,7 @@ function renderChart(canvas, params) {
     ctx.strokeRect(x, y, w, h);
     ctx.restore();
   }
+  runLayers(renderCtx, "front");
   if (options.type !== "sparkline") {
     renderLegend(renderCtx);
   }
