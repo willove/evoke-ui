@@ -232,16 +232,46 @@ describe('AI 生成引擎：提示词契约与渲染自检', () => {
     expect(issues.some((i) => i.rule === 'pie-slices')).toBe(true)
   })
 
+  // 无头渲染需要容忍任意 ctx 方法的 Proxy（普通对象会让 renderChart 抛错、
+  // lint 静默跳过几何检查，导致检查形同虚设）
+  const proxyCtx = () => new Proxy(
+    { measureText: () => ({ width: 10 }), createLinearGradient: () => ({ addColorStop: () => {} }), createRadialGradient: () => ({ addColorStop: () => {} }) },
+    { get(obj, prop) { return prop in obj ? obj[prop] : () => {} } },
+  )
+  const withCtx = () => vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(function () {
+    return proxyCtx()
+  })
+
   it('lintChartSpec：无头渲染跑通并返回 issues 数组', () => {
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(function () {
-      return {
-        measureText: () => ({ width: 10 }),
-        createLinearGradient: () => ({ addColorStop: () => {} }),
-        createRadialGradient: () => ({ addColorStop: () => {} }),
-      }
-    })
+    withCtx()
     const { issues } = lintChartSpec({ type: 'line', labels: ['一', '二'], series: [{ name: 'a', data: [1, 2] }] })
     expect(Array.isArray(issues)).toBe(true)
+    expect(issues.some((i) => i.rule === 'headless-skipped')).toBe(false)
     vi.restoreAllMocks()
+  })
+
+  it('lintChartSpec：同点双注解文本重叠被检出', () => {
+    withCtx()
+    const ann = { type: 'callout', x: '二', y: 2, label: '同点旁注重叠', anchor: 'top-right' }
+    const { issues } = lintChartSpec({
+      type: 'line',
+      labels: ['一', '二', '三'],
+      series: [{ name: 'A', data: [1, 2, 3] }],
+      annotations: [ann, { ...ann }],
+    })
+    expect(issues.some((i) => i.rule === 'text-overlap')).toBe(true)
+    vi.restoreAllMocks()
+  })
+
+  it('lintChartSpec：自定义色板对比度不足被检出（明暗两模式）', () => {
+    const { issues } = lintChartSpec({
+      type: 'line',
+      labels: ['一', '二'],
+      series: [{ name: 'a', data: [1, 2] }],
+      theme: { colors: ['#ffffff', '#f0f0f0'] },
+    })
+    const low = issues.filter((i) => i.rule === 'low-contrast')
+    expect(low.length).toBeGreaterThanOrEqual(2) // 白/浅灰在浅色背景下双双不达标
+    expect(low.some((i) => i.message.includes('浅色'))).toBe(true)
   })
 })

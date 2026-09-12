@@ -3,7 +3,7 @@
 // 能自动修的直接修（返回修后的 spec 副本），修不了的记为 issue。
 
 import { validateOptions } from "../schema";
-import { renderChart, createSvgRecorder, estimateTextWidth } from "../renderer";
+import { renderChart, createSvgRecorder, estimateTextWidth, getTheme } from "../renderer";
 
 const DEFAULT_SIZE = { width: 800, height: 450 };
 
@@ -18,6 +18,78 @@ function checkTextOverflow(svg, width, height) {
   if (count > 0) {
     issues.push({ level: "warn", message: `${count} 处文本超出画布边界（可能被裁剪）`, rule: "text-overflow" });
   }
+  return issues;
+}
+
+// 同一基线带内的两两碰撞（含轴标签拥挤、注解互相遮挡）；重叠超短边 30% 记一次
+function checkTextOverlap(svg) {
+  const issues = [];
+  const texts = [];
+  for (const m of svg.matchAll(/<text x="([-\d.]+)" y="([-\d.]+)" font-size="([\d.]+)"([^>]*)>([^<]*)<\/text>/g)) {
+    const x = parseFloat(m[1]);
+    const y = parseFloat(m[2]);
+    const fs = parseFloat(m[3]);
+    const attrs = m[4];
+    const content = m[5].trim();
+    if (!content) continue;
+    const w = estimateTextWidth(content, fs);
+    let left = x;
+    if (/text-anchor="middle"/.test(attrs)) left = x - w / 2;
+    else if (/text-anchor="end"/.test(attrs)) left = x - w;
+    texts.push({ left, right: left + w, y, fs });
+  }
+  let count = 0;
+  for (let i = 0; i < texts.length; i++) {
+    for (let j = i + 1; j < texts.length; j++) {
+      const a = texts[i];
+      const b = texts[j];
+      if (Math.abs(a.y - b.y) >= Math.max(a.fs, b.fs) * 0.8) continue;
+      const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      if (overlapX > Math.min(a.right - a.left, b.right - b.left) * 0.3) count++;
+    }
+  }
+  if (count > 0) {
+    issues.push({ level: "warn", message: `${count} 处文本相互重叠（标签或注解可能互相遮挡）`, rule: "text-overlap" });
+  }
+  return issues;
+}
+
+// WCAG 相对亮度与对比度（图形阈值 3:1）；非 hex 色值跳过
+function luminance(color) {
+  let s = String(color).trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(s)) s = s.slice(1);
+  else if (/^#[0-9a-fA-F]{3}$/.test(s)) s = s.slice(1).split("").map((c) => c + c).join("");
+  else return null;
+  const n = parseInt(s, 16);
+  const chan = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * chan[0] + 0.7152 * chan[1] + 0.0722 * chan[2];
+}
+function contrastRatio(a, b) {
+  const la = luminance(a);
+  const lb = luminance(b);
+  if (la === null || lb === null) return null;
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+// 默认色板是库级验证过的，只有 spec 自带 theme.colors 才查
+function checkPaletteContrast(spec) {
+  const issues = [];
+  if (!spec.theme || !Array.isArray(spec.theme.colors)) return issues;
+  [false, true].forEach((dark) => {
+    const theme = getTheme(dark, spec.theme);
+    spec.theme.colors.forEach((c) => {
+      const ratio = contrastRatio(c, theme.backgroundColor);
+      if (ratio !== null && ratio < 3) {
+        issues.push({
+          level: "warn",
+          message: `自定义色板${dark ? "暗色" : "浅色"}模式对比度不足 3:1：${c}（${ratio.toFixed(1)}）`,
+          rule: "low-contrast",
+        });
+      }
+    });
+  });
   return issues;
 }
 
@@ -45,6 +117,9 @@ export function lintChartSpec(spec, opts = {}) {
   if ((fixed.type === "pie" || fixed.type === "doughnut") && Array.isArray(fixed.pieData) && fixed.pieData.length > 8) {
     issues.push({ level: "warn", message: `饼图 ${fixed.pieData.length} 个扇区过多（>8），建议改用横向条形图`, rule: "pie-slices" });
   }
+
+  // 3.5 自定义色板对比度：明暗两套背景各自过 WCAG 图形阈值
+  issues.push(...checkPaletteContrast(fixed));
 
   // 4. 柱状类目拥挤：单系列且类目名均宽超出每档空间 → 自动改横向条形
   if (fixed.type === "bar" && Array.isArray(fixed.series) && fixed.series.length === 1 && Array.isArray(fixed.labels)) {
@@ -80,6 +155,7 @@ export function lintChartSpec(spec, opts = {}) {
           showCrosshair: false,
         });
         issues.push(...checkTextOverflow(recorder.toSvg(width, height, "#ffffff"), width, height));
+        issues.push(...checkTextOverlap(recorder.toSvg(width, height, "#ffffff")));
       }
     } catch {
       issues.push({ level: "info", message: "无头渲染自检不可用，已跳过几何检查", rule: "headless-skipped" });

@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — lint 视觉自检加深
+
+- 无头渲染新增**文本重叠碰撞**检查：同一基线带内的两两文字（轴标签拥挤、
+  注解互相遮挡）按估宽计算重叠面积，超短边 30% 记入 `text-overlap`
+- 新增**自定义色板对比度**检查：spec 自带 `theme.colors` 时，明暗两套背景
+  各自过 WCAG 图形阈值 3:1，不达标记入 `low-contrast`（默认色板为库级验证
+  过的，不重复检查）
+- 几何检查依赖 DOM canvas，SSR 环境自动跳过（`headless-skipped` 标记）
+
 ### @wil-works/evoke-charts — 图层逃逸口：layers 绘制钩子与 overlay 插槽
 
 - 新增 `layers: [{ at, draw }]`：canvas 自定义绘制按锚点插入渲染管线——
