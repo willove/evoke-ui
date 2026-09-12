@@ -676,3 +676,95 @@ describe('叙述注解 annotations[] 与 emphasis', () => {
     wrapper.unmount()
   })
 })
+
+describe('scenes 编排时间轴', () => {
+  beforeEach(() => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      setTimeout(() => cb(performance.now() + 1e9), 0)
+      return 1
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(400)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      return {
+        left: 0, top: 0, right: 800, bottom: 400,
+        width: 800, height: 400, x: 0, y: 0,
+        toJSON: () => {},
+      }
+    })
+    ctx = mockCanvas()
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const flushRender = () => new Promise((r) => setTimeout(r, 40))
+  const SCENES_OPTIONS = () => ({
+    type: 'line',
+    labels: ['一', '二', '三'],
+    series: [
+      { name: 'A', data: [1, 2, 3] },
+      { name: 'B', data: [2, 3, 4] },
+    ],
+    scenes: {
+      items: [
+        { patch: { title: '第一幕' }, duration: 500 },
+        { patch: { title: '第二幕', emphasis: { series: 'A', dimOthers: true } }, duration: 500 },
+      ],
+    },
+  })
+
+  it('初始停在第一幕：getEffectiveSpec 含 patch，getSpec 保持基底', async () => {
+    const wrapper = mount(EvChart, { props: { options: SCENES_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    expect(wrapper.vm.getSceneIndex()).toBe(0)
+    expect(wrapper.vm.getEffectiveSpec().title).toBe('第一幕')
+    expect(wrapper.vm.getSpec().title).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('nextScene / gotoScene 推进与夹界，scene-change 载荷正确', async () => {
+    const wrapper = mount(EvChart, { props: { options: SCENES_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    wrapper.vm.nextScene()
+    expect(wrapper.vm.getSceneIndex()).toBe(1)
+    expect(wrapper.vm.getEffectiveSpec().emphasis).toEqual({ series: 'A', dimOthers: true })
+    wrapper.vm.nextScene() // 已在末幕：夹界不动
+    expect(wrapper.vm.getSceneIndex()).toBe(1)
+    wrapper.vm.gotoScene(0)
+    expect(wrapper.vm.getSceneIndex()).toBe(0)
+    expect(wrapper.vm.getEffectiveSpec().emphasis).toBeUndefined()
+    expect(wrapper.vm.getEffectiveSpec().title).toBe('第一幕')
+    await flushRender()
+    const evt = wrapper.emitted('scene-change')
+    expect(evt).toHaveLength(2)
+    expect(evt[0][0]).toEqual({ index: 1, total: 2 })
+    expect(evt[1][0]).toEqual({ index: 0, total: 2 })
+    wrapper.unmount()
+  })
+
+  it('prevScene 在第一幕夹界；setSpec 重置回第一幕', async () => {
+    const wrapper = mount(EvChart, { props: { options: SCENES_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    wrapper.vm.prevScene()
+    expect(wrapper.vm.getSceneIndex()).toBe(0)
+    wrapper.vm.nextScene()
+    expect(wrapper.vm.getSceneIndex()).toBe(1)
+    wrapper.vm.setSpec(SCENES_OPTIONS())
+    expect(wrapper.vm.getSceneIndex()).toBe(0)
+    expect(wrapper.vm.getEffectiveSpec().title).toBe('第一幕')
+    wrapper.unmount()
+  })
+
+  it('无 scenes：getEffectiveSpec 等同基底且剔除 __ 内部键', async () => {
+    const wrapper = mount(EvChart, { props: { options: LINE_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    const spec = wrapper.vm.getEffectiveSpec()
+    expect(spec.title).toBeUndefined()
+    expect(Object.keys(spec).some((k) => k.startsWith('__'))).toBe(false)
+    expect(spec.series).toHaveLength(2)
+    wrapper.unmount()
+  })
+})

@@ -168,6 +168,10 @@
 - 首渲/数据变更补间：时长 1200ms、easeOut（指数缓出），数值插值而非闪屏重绘。
 - **实时流场景必须关闭**：`animation: { enabled: false }`——每秒推进数据点时补间会让整线反复变形。
 - 悬浮反馈（十字准线、圆环、tooltip 显隐）即时响应，不做动画。
+- **分幕编排（scenes）**：每幕一个 options 浅合并补丁；`duration` 为该幕过渡时长
+  （覆盖全局动画），`hold` 为过渡后停留；`autoplay` 自动推进、`loop` 回卷；
+  初始停在第一幕（静态首帧）。手动推进 `nextScene / prevScene / gotoScene`，
+  进度受控即挂 `scene-change`。
 
 ## 11. dataZoom 与工具箱
 
@@ -199,7 +203,7 @@
 | 13 | 配色方案动态切换——组件层 API | ✅ | evoke-ui useThemeConfig / business theme.js 支持 series palette 预设与持久化 |
 | 14 | 内置 `applySeriesPalette` / `clearSeriesPalette` 中性工具 | ✅ | 契约官方实现，宿主零重复；单测覆盖数组/对象/非法输入 |
 | 15 | 叙述注解 `annotations[]`（text / callout / point / delta / region）+ `emphasis` 焦点 | ✅ | 注解 demo 截图对照；旧 `annotation` 字段兼容；STUB 单测覆盖五类型 |
-| 16 | scenes 编排时间轴（reveal / step / loop，静态首帧） | 🔜 | 分步演示：patch 逐幕生效、进度受控可挂滚动 |
+| 16 | scenes 编排时间轴（reveal / step / loop，静态首帧） | ✅ | 分幕演示三幕推进 + 事件载荷单测；`getEffectiveSpec` 可核对生效 Spec |
 
 ## 14. 配色方案动态切换（规划稿）
 

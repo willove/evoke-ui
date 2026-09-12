@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — scenes 编排时间轴：分幕 reveal / step / loop
+
+- 新增 `scenes: { autoplay, loop, items: [{ patch, duration, hold }] }`：每幕一个
+  options 浅合并补丁（顶层键替换），初始停在第一幕；`duration` 为该幕过渡时长
+  （ms，覆盖全局动画），`hold` 为过渡后额外停留；`autoplay` 自动推进、
+  `loop` 到尾幕回卷
+- 组件方法 `nextScene()` / `prevScene()` / `gotoScene(i)`（首末幕夹界）与
+  `getSceneIndex()`；事件 `scene-change`（`{ index, total }`）供宿主做进度指示，
+  受控推进即可挂滚动叙事
+- 新增 `getEffectiveSpec()`：返回当前实际生效的 Spec（含缩放切片与场景补丁，
+  剔除 `__` 内部键），与 `getSpec()`（基底）对照可核对编排状态
+- `setSpec()` 整体替换后场景重置回第一幕
+
 ### @wil-works/evoke-charts — 叙述注解 annotations[] 与焦点 emphasis
 
 - 新增 `annotations[]` 五类型（直角系图表）：`text`（次要色斜体文字）、

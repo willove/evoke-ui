@@ -75,6 +75,46 @@
 - `region` 圈出关注区间，`callout` 旁注配虚线引线指向数据点，`delta` 给涨跌结论（涨跌色与 K 线同一套约定）；
 - 聚焦某一个系列、弱化其余，用 `emphasis`；字段速查见 [API 参考](/chart/api)。
 
+## 分幕编排
+
+同一张图按幕揭示，先看走势、再给旁白、最后聚焦结论——适合汇报与长文里的逐步叙事。每幕是一个 options 补丁，`nextScene()` / `prevScene()` 手动推进，`autoplay: true` 按幕定时自动播。
+
+<script setup>
+import { ref } from 'vue'
+const sceneChart = ref()
+const sceneNo = ref(0)
+</script>
+
+<DemoBlock>
+  <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+    <ev-button @click="sceneChart?.prevScene()">上一幕</ev-button>
+    <ev-button @click="sceneChart?.nextScene()">下一幕</ev-button>
+    <span style="font-size: 12px; color: #94a3b8;">第 {{ sceneNo + 1 }} / 3 幕</span>
+  </div>
+  <ev-chart
+    ref="sceneChart"
+    :options="{
+      type: 'line',
+      title: '线上渠道销售额',
+      labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+      series: [
+        { name: '线上', data: [320, 356, 401, 388, 520, 560] },
+        { name: '线下', data: [280, 302, 346, 331, 352, 428] },
+      ],
+      scenes: {
+        items: [
+          { patch: {}, duration: 600 },
+          { patch: { annotations: [{ type: 'callout', x: '5月', y: 520, label: '618 备货拉动', anchor: 'top-right' }] }, duration: 600 },
+          { patch: { annotations: [{ type: 'callout', x: '5月', y: 520, label: '618 备货拉动', anchor: 'top-right' }, { type: 'delta', x: '6月', y: 560, direction: 'up', text: '环比 +8%' }], emphasis: { series: '线上', dimOthers: true } }, duration: 600 },
+        ],
+      },
+      legend: { show: true },
+    }"
+    :height="280"
+    @scene-change="(e) => (sceneNo = e.index)"
+  />
+</DemoBlock>
+
 ## 配置要点
 
 - 系列颜色可逐项指定：`series` 项传 `color`；

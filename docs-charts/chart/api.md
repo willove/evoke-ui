@@ -31,6 +31,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'padding', desc: '绘图区内边距覆写：数字（四边）或 { top, right, bottom, left }（未提供的边回落默认值）；标题、图例、dataZoom 的空间照常叠加。x 轴隐藏（xAxis.show: false）时底部自动收窄；left 未提供时按 y 刻度标签宽度自适应（40–140）', type: 'number | object', default: '—' },
   { name: 'annotations', desc: '叙述注解（旁白，非数据系列，单图 ≤ 3 处）：text 斜体文字 / callout 旁注+虚线引线 / point 固定高亮点 / delta 涨跌结论（三角+数值，涨跌色同 K 线）/ region 区间强调（primary @6% 填充）。定位 x（类目或索引）+ y（数值），或 xPx/yPx 像素（优先）；offsetX/offsetY 像素微调。直角系图表适用', type: 'array', default: '—' },
   { name: 'emphasis', desc: '焦点强调：{ series（名称或索引）, dimOthers: true }——焦点系列保持原样，其余降到 22% 透明度（与图例悬浮同一通道）；优先于图例悬浮强调', type: 'object', default: '—' },
+  { name: 'scenes', desc: '编排时间轴：{ autoplay, loop, items }，每幕 { patch, duration, hold }——patch 为该幕 options 浅合并补丁（顶层键替换），duration 为该幕过渡时长 ms（覆盖全局动画），hold 为过渡后额外停留；autoplay 自动推进、loop 到尾幕回卷；初始停在第一幕（index 0）', type: 'object', default: '—' },
   { name: 'connectGroup', desc: '联动分组名，同组图表图例与缩放联动', type: 'string', default: '—' },
   { name: 'emptyText / ariaLabel', desc: '空数据文案 / 无障碍标签', type: 'string', default: '暂无数据' },
 ]" />
@@ -58,6 +59,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'click', desc: '点击图形元素（可做钻取）', type: '(e: { seriesName, name, value, color, dataIndex, seriesIndex }) => void', default: '—' },
   { name: 'legend-click', desc: '点击图例切换显隐', type: '(name: string, hidden: boolean) => void', default: '—' },
   { name: 'hover / unhover', desc: '悬浮进入 / 离开图形元素', type: '(e) => void', default: '—' },
+  { name: 'scene-change', desc: '场景切换（scenes 编排）', type: '(e: { index, total }) => void', default: '—' },
   { name: 'animation-end / data-update', desc: '动画结束 / 数据补间更新完成', type: '() => void', default: '—' },
   { name: 'zoom', desc: 'dataZoom 范围变化', type: '(e: { start, end }) => void', default: '—' },
   { name: 'brush-select', desc: '框选完成', type: '(e: { startIndex, endIndex }) => void', default: '—' },
@@ -78,6 +80,8 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'getDataExtent / getPlotArea', desc: '获取数据极值 / 实际绘图区域', type: '() => object', default: '—' },
   { name: 'setTheme / getOption', desc: '运行时切换主题 / 获取当前配置（活引用，直接改动即重绘）', type: '(theme) => void / () => object', default: '—' },
   { name: 'getSpec / setSpec', desc: '获取当前 Spec 深拷贝（可安全存储 / diff）/ 整体替换 Spec（清掉旧键与交互状态后重绘）', type: '() => object / (spec) => void', default: '—' },
+  { name: 'nextScene / prevScene / gotoScene', desc: '场景推进 / 回退 / 跳转（首末幕夹界）', type: '(i?) => void', default: '—' },
+  { name: 'getSceneIndex / getEffectiveSpec', desc: '当前幕序（0 起）/ 当前实际生效 Spec（含缩放切片与场景补丁）', type: '() => number / () => object', default: '—' },
   { name: 'getCanvas / destroy', desc: '获取 canvas 元素 / 销毁实例与监听', type: '() => HTMLCanvasElement / () => void', default: '—' },
 ]" />
 

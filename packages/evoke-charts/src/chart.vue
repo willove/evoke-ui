@@ -128,6 +128,7 @@ const emit = defineEmits([
   "data-update",
   "brush-select",
   "zoom",
+  "scene-change",
 ]);
 const i18n = computed(() => ({
   ...DEFAULT_I18N_ZH,
@@ -237,35 +238,89 @@ let suppressClick = false;
 let brushDragged = false;
 const effectiveOptions = computed(() => {
   const opt = props.options;
-  const zoom = getDataZoomConfig(opt);
-  if (!zoom) return opt;
+  // scenes：当前幕 patch 浅合并（顶层键替换），再走缩放切片
+  const scene = opt.scenes?.items?.[sceneIndex.value];
+  const base = scene?.patch ? { ...opt, ...scene.patch } : opt;
+  const zoom = getDataZoomConfig(base);
+  if (!zoom) return base;
   const range = zoomRange.value;
-  if (range.start <= 0 && range.end >= 100) return opt;
-  const sliced = { ...opt };
-  const n = (opt.labels || []).length;
+  if (range.start <= 0 && range.end >= 100) return base;
+  const sliced = { ...base };
+  const n = (base.labels || []).length;
   if (n > 0) {
     const { startIdx, endIdx } = zoomToSlice(range, n);
-    sliced.labels = (opt.labels || []).slice(startIdx, endIdx);
-    if (opt.series) {
-      sliced.series = opt.series.map((s) => ({ ...s, data: s.data.slice(startIdx, endIdx) }));
+    sliced.labels = (base.labels || []).slice(startIdx, endIdx);
+    if (base.series) {
+      sliced.series = base.series.map((s) => ({ ...s, data: s.data.slice(startIdx, endIdx) }));
     }
-    if (opt.candleData) {
-      sliced.candleData = opt.candleData.slice(startIdx, endIdx);
+    if (base.candleData) {
+      sliced.candleData = base.candleData.slice(startIdx, endIdx);
     }
     ;
     sliced.__sliceStart = startIdx;
-  } else if (opt.scatterData && opt.scatterData.length > 0) {
-    const xs = opt.scatterData.map((d) => d.x);
+  } else if (base.scatterData && base.scatterData.length > 0) {
+    const xs = base.scatterData.map((d) => d.x);
     const xMin = Math.min(...xs);
     const xMax = Math.max(...xs);
     const span = xMax - xMin || 1;
     const lo = xMin + range.start / 100 * span;
     const hi = xMin + range.end / 100 * span;
-    const filtered = opt.scatterData.filter((d) => d.x >= lo && d.x <= hi);
-    sliced.scatterData = filtered.length > 0 ? filtered : opt.scatterData;
+    const filtered = base.scatterData.filter((d) => d.x >= lo && d.x <= hi);
+    sliced.scatterData = filtered.length > 0 ? filtered : base.scatterData;
   }
   return sliced;
 });
+// ─── scenes 编排：分幕 reveal（duration 幕过渡时长 / hold 过渡后停留） ───
+const sceneIndex = ref(0);
+let sceneTimer = null;
+let sceneAnimOverride = null;
+function stopSceneTimer() {
+  if (sceneTimer !== null) {
+    clearTimeout(sceneTimer);
+    sceneTimer = null;
+  }
+}
+function applyScene(i, opts = {}) {
+  const items = props.options.scenes?.items || [];
+  if (items.length === 0) return;
+  const next = Math.max(0, Math.min(i, items.length - 1));
+  if (next === sceneIndex.value && !opts.force) return;
+  sceneIndex.value = next;
+  const item = items[next];
+  sceneAnimOverride = item?.duration
+    ? { ...(props.options.animation || {}), duration: item.duration }
+    : null;
+  emit("scene-change", { index: next, total: items.length });
+  render(true, sceneAnimOverride);
+  scheduleSceneAdvance();
+}
+function scheduleSceneAdvance() {
+  stopSceneTimer();
+  const scenes = props.options.scenes;
+  if (!scenes?.autoplay) return;
+  const item = scenes.items?.[sceneIndex.value];
+  if (!item) return;
+  const wait = Math.max(0, (item.duration ?? 1200) + (item.hold ?? 0));
+  sceneTimer = setTimeout(() => {
+    const total = props.options.scenes?.items?.length ?? 0;
+    if (total === 0) return;
+    if (sceneIndex.value >= total - 1) {
+      if (props.options.scenes?.loop) applyScene(0, { force: true });
+    } else {
+      applyScene(sceneIndex.value + 1);
+    }
+  }, wait);
+}
+function syncScenes() {
+  const total = props.options.scenes?.items?.length ?? 0;
+  if (total === 0) {
+    stopSceneTimer();
+    if (sceneIndex.value !== 0) sceneIndex.value = 0;
+    return;
+  }
+  if (sceneIndex.value >= total) sceneIndex.value = 0;
+  scheduleSceneAdvance();
+}
 function sliceStartOffset() {
   return effectiveOptions.value.__sliceStart || 0;
 }
@@ -344,7 +399,7 @@ function updateTooltipPosition(clientX, clientY) {
 const canvasStyle = computed(() => ({
   cursor: hoverIndex >= 0 ? "pointer" : "default"
 }));
-function render(animate = true) {
+function render(animate = true, animOverride = null) {
   const canvas = canvasRef.value;
   if (!canvas) return;
   const container = containerRef.value;
@@ -388,8 +443,9 @@ function render(animate = true) {
     lastHeight = height;
     canvas.width = width * dpr.value;
     canvas.height = height * dpr.value;
-    const animEnabled = animate && props.options.animation?.enabled !== false;
-    animationState = createAnimation(props.options.animation);
+    const animCfg = animOverride || props.options.animation;
+    const animEnabled = animate && animCfg?.enabled !== false;
+    animationState = createAnimation(animCfg);
     animationState.isAnimating = animEnabled;
     if (animEnabled) {
       isEnterAnimating = true;
@@ -1662,6 +1718,7 @@ watch(
     internalError.value = null;
     runDevValidation();
     focusSeries.value = emphasisSeriesName.value;
+    syncScenes();
     const zoom = getDataZoomConfig(props.options);
     const zoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
     if (zoomKey !== lastZoomKey) {
@@ -1713,6 +1770,7 @@ const connectorSelf = {
 let unregisterConnector = null;
 onMounted(() => {
   render(true);
+  syncScenes();
   setupResizeObserver();
   setupDarkModeObserver();
   window.addEventListener("pointerup", onWindowPointerUp);
@@ -1732,6 +1790,7 @@ onUnmounted(() => {
   stopAnimation();
   stopHoverAnimation();
   stopTweenAnimation();
+  stopSceneTimer();
   if (tooltipRafId !== null) {
     cancelAnimationFrame(tooltipRafId);
     tooltipRafId = null;
@@ -1755,6 +1814,7 @@ defineExpose({
     cleanupDarkModeObserver();
     stopAnimation();
     stopHoverAnimation();
+    stopSceneTimer();
     if (tooltipRafId !== null) {
       cancelAnimationFrame(tooltipRafId);
       tooltipRafId = null;
@@ -1904,11 +1964,35 @@ defineExpose({
     hoverIndex = -1;
     mouseX = -1;
     mouseY = -1;
+    stopSceneTimer();
+    sceneIndex.value = 0;
+    sceneAnimOverride = null;
     const zoom = getDataZoomConfig(next);
     zoomRange.value = { start: zoom?.start ?? 0, end: zoom?.end ?? 100 };
     lastZoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
     cachedDataExtent = null;
     cachedPlotArea = null;
+  },
+  // ─── scenes 编排 ───
+  nextScene() {
+    applyScene(sceneIndex.value + 1);
+  },
+  prevScene() {
+    applyScene(sceneIndex.value - 1);
+  },
+  gotoScene(i) {
+    applyScene(i);
+  },
+  getSceneIndex() {
+    return sceneIndex.value;
+  },
+  // 当前实际生效的 Spec（含缩放切片与场景补丁；剔除 __ 内部键）
+  getEffectiveSpec() {
+    const spec = cloneSpec(effectiveOptions.value);
+    Object.keys(spec).forEach((k) => {
+      if (k.startsWith("__")) delete spec[k];
+    });
+    return spec;
   },
   // @since v0.1 — data zoom 范围
   setDataZoomRange(start, end) {
