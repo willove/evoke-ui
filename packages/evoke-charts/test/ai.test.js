@@ -11,6 +11,7 @@ import {
   SPEC_EXAMPLES,
 } from '../src/ai/index.js'
 import { validateOptions } from '../src/schema.js'
+import { layoutSunburst } from '../src/renderer/charts-extra.js'
 
 const CSV = `月份,线上商城,线下门店,社群团购
 1月,320,280,120
@@ -273,5 +274,41 @@ describe('AI 生成引擎：提示词契约与渲染自检', () => {
     const low = issues.filter((i) => i.rule === 'low-contrast')
     expect(low.length).toBeGreaterThanOrEqual(2) // 白/浅灰在浅色背景下双双不达标
     expect(low.some((i) => i.message.includes('浅色'))).toBe(true)
+  })
+})
+
+describe('旭日图布局：父节点省略 value 由子孙汇总', () => {
+  it('layoutSunburst：无 value 父节点正确聚合，两分支都进布局', () => {
+    const segments = layoutSunburst(
+      [
+        { name: '自有', children: [{ name: 'App', value: 540 }, { name: '官网', value: 260 }] },
+        { name: '付费', children: [{ name: '信息流', value: 380 }, { name: '搜索', value: 220 }] },
+      ],
+      20, 40, 0, -Math.PI / 2, 0, [],
+    )
+    // 2 父 + 4 叶 = 6 段
+    expect(segments).toHaveLength(6)
+    const tops = segments.filter((s) => s.depth === 0)
+    expect(tops.map((s) => s.node.name)).toEqual(['自有', '付费'])
+    // 角度守恒：顶层弧合起来是整圆，且第二分支不再缺失
+    const sweep = tops.reduce((s, t) => s + (t.endAngle - t.startAngle), 0)
+    expect(sweep).toBeCloseTo(Math.PI * 2)
+    expect(tops[0].endAngle - tops[0].startAngle).toBeCloseTo((Math.PI * 2) * (800 / 1400))
+    // 父段 value 为子级汇总，供 showValues 标注
+    expect(tops[0].value).toBe(800)
+    expect(tops[1].value).toBe(600)
+  })
+
+  it('layoutSunburst：显式 value 的父节点行为不变', () => {
+    const segments = layoutSunburst(
+      [
+        { name: '甲', value: 100, children: [{ name: '甲1', value: 60 }, { name: '甲2', value: 40 }] },
+        { name: '乙', value: 100, children: [{ name: '乙1', value: 100 }] },
+      ],
+      20, 40, 0, -Math.PI / 2, 0, [],
+    )
+    const tops = segments.filter((s) => s.depth === 0)
+    expect(tops[0].endAngle - tops[0].startAngle).toBeCloseTo(Math.PI)
+    expect(tops[1].endAngle - tops[1].startAngle).toBeCloseTo(Math.PI)
   })
 })

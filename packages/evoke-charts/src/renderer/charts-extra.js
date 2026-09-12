@@ -174,11 +174,18 @@ function computeSunburstDepth(nodes) {
   return max;
 }
 function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, result) {
-  const total = nodes.reduce((s, n) => s + n.value, 0);
+  // 父节点可省略 value（由子孙汇总）；直接读 n.value 会得到 NaN，
+  // 让后续兄弟分支的角度全部失效、只剩第一个分支可见
+  const val = (n) => {
+    if (typeof n.value === "number" && Number.isFinite(n.value)) return n.value;
+    if (n.children && n.children.length > 0) return n.children.reduce((s, c) => s + val(c), 0);
+    return 0;
+  };
+  const total = nodes.reduce((s, n) => s + val(n), 0);
   if (total <= 0) return result;
   let a = startAngle;
   nodes.forEach((n, i) => {
-    const span = n.value / total * Math.PI * 2;
+    const span = val(n) / total * Math.PI * 2;
     result.push({
       startAngle: a,
       endAngle: a + span,
@@ -186,6 +193,7 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
       r0,
       r1: r0 + ringWidth,
       node: n,
+      value: val(n),
       depth,
       colorIndex: (colorOffset + i) % 8
     });
@@ -248,7 +256,7 @@ function renderSunburstChart(ctx) {
       canvasCtx.fillText(name, lx, ly - (options.showValues ? 6 : 0));
       if (options.showValues && seg.r1 - seg.r0 > 26) {
         canvasCtx.font = "10px Inter, sans-serif";
-        canvasCtx.fillText(valueFormatter(seg.node.value), lx, ly + 8);
+        canvasCtx.fillText(valueFormatter(seg.value), lx, ly + 8);
       }
       canvasCtx.restore();
     }
