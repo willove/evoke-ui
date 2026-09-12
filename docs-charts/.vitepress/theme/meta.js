@@ -8,6 +8,7 @@ export const GUIDE_NAV = [
     components: [
       { name: '安装与引入', zh: '', path: '/guide/install' },
       { name: '主题接入', zh: '', path: '/guide/theme' },
+      { name: 'AI 生成', zh: '', path: '/guide/ai' },
       { name: '设计规范', zh: '', path: '/guide/design' },
       { name: '内嵌于组件库', zh: 'eb-chart', path: '/guide/integration' },
     ],

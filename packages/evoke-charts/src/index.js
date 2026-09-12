@@ -2,6 +2,12 @@ import EvChart from './chart.vue'
 import { useChart, provideChartContext, injectChartContext } from './useChart'
 import { applySeriesPalette, clearSeriesPalette } from './palette'
 import { chartOptionsSchema, validateOptions } from './schema'
+import {
+  generateChartSpec,
+  parseDataTable,
+  buildChartPrompt,
+  lintChartSpec,
+} from './ai/index.js'
 
 const components = {
   EvChart,
@@ -29,6 +35,11 @@ export {
   // Spec 契约
   chartOptionsSchema,
   validateOptions,
+  // AI 生成引擎（数据 → Spec 合成 / 提示词契约 / 渲染自检）
+  generateChartSpec,
+  parseDataTable,
+  buildChartPrompt,
+  lintChartSpec,
   // Install
   install,
   components,

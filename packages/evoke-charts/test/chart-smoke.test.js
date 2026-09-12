@@ -466,6 +466,21 @@ describe('Spec 契约（getSpec / setSpec / validateOptions / exportSVG）', () 
     wrapper.unmount()
   })
 
+  it('setSpec 对非响应式普通 options 同样生效（版本失效 + 显式重绘）', async () => {
+    const plain = { type: 'line', labels: ['一', '二'], series: [{ name: 'a', data: [1, 2] }] }
+    const wrapper = mount(EvChart, { props: { options: plain }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    const before = drawCalls()
+    wrapper.vm.setSpec({ type: 'pie', pieData: [{ name: '甲', value: 3 }, { name: '乙', value: 5 }] })
+    await flushRender()
+    expect(drawCalls()).toBeGreaterThan(before)
+    expect(plain.type).toBe('pie')
+    // 关键断言：effectiveOptions 不得缓存旧 spec（渲染读的是它）
+    expect(wrapper.vm.getEffectiveSpec().type).toBe('pie')
+    wrapper.unmount()
+  })
+
   it('validateOptions：合法 Spec 通过，非法给出定位 path', () => {
     expect(validateOptions(LINE_OPTIONS()).ok).toBe(true)
     const bad = validateOptions({ type: 'nope', series: [{ data: [1] }] })

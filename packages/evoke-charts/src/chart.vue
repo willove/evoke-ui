@@ -236,7 +236,10 @@ let dragStartRange = { start: 0, end: 100 };
 const brushRect = ref(null);
 let suppressClick = false;
 let brushDragged = false;
+// spec 版本号：宿主可能传非响应式普通对象，computed 需要一个可失效的依赖
+const specVersion = ref(0);
 const effectiveOptions = computed(() => {
+  specVersion.value;
   const opt = props.options;
   // scenes：当前幕 patch 浅合并（顶层键替换），再走缩放切片
   const scene = opt.scenes?.items?.[sceneIndex.value];
@@ -1804,6 +1807,7 @@ defineExpose({
   update(newOptions) {
     Object.assign(props.options, newOptions);
     cachedDataExtent = null;
+    specVersion.value++;
     debouncedRender(true);
   },
   toDataURL(type = "image/png", quality = 1) {
@@ -1908,6 +1912,7 @@ defineExpose({
   // @since v0.1 — 运行时切换主题
   setTheme(theme) {
     props.options.theme = { ...props.options.theme, ...theme };
+    specVersion.value++;
     redraw();
   },
   // @since v0.1 — 导出真 SVG（录制渲染指令重放，非 PNG 嵌入）
@@ -1972,6 +1977,10 @@ defineExpose({
     lastZoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
     cachedDataExtent = null;
     cachedPlotArea = null;
+    // options 可能是非响应式普通对象（computed 无依赖会永久缓存旧值）：
+    // 版本号失效 + 显式重绘双兜底
+    specVersion.value++;
+    debouncedRender(true);
   },
   // ─── scenes 编排 ───
   nextScene() {

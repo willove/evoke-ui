@@ -4,6 +4,24 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — AI 生成引擎：数据直生 / 提示词契约 / 渲染自检
+
+- 新增 `generateChartSpec(data, hint)`：CSV / TSV / 对象数组 / 二维数组 →
+  Spec。自动推断列类型（时间 / 数值 / 类目，≥60% 命中率阈值）、按意图或数据
+  形状选型（趋势 / 占比 / 排行 / 堆叠 / 关系 / 对比）、字段映射与图例组装；
+  返回 `{ spec, report }`，report 给出选型理由与告警，数据不可用时报错不抛错
+- `hint.narrative: true` 自动注入叙述注解：全局峰值 callout + 首系列末点环比
+  delta（受单图 3 处注解预算约束）；`hint.hint` / `hint.title` 支持意图关键词
+  （趋势 / 占比 / 排行 / 堆叠 / 关系 / 对比）
+- 新增 `lintChartSpec(spec)`：交付前自检——schema 校验 → 焦点预算（注解 ≤3
+  自动裁剪）→ 饼图扇区数建议 → 类目拥挤的单系列柱状自动转横向 → 无头渲染
+  文本越界检查（依赖 DOM，SSR 自动跳过）；返回 `{ issues, spec }`（修后副本）
+- 新增 `buildChartPrompt({ data, requirement })`：把 options JSON Schema、数据
+  预览与硬性规则打包成提示词，喂给任意大模型后把返回 JSON 过 `lintChartSpec`
+  自检、`setSpec` 回放——模型调用在宿主侧，包内零网络依赖
+- 底层 `parseDataTable` / `parseNumeric` / `inferColumns` / `detectIntent` 一并
+  导出，供宿主复用
+
 ### @wil-works/evoke-charts — scenes 编排时间轴：分幕 reveal / step / loop
 
 - 新增 `scenes: { autoplay, loop, items: [{ patch, duration, hold }] }`：每幕一个
