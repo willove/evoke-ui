@@ -86,7 +86,7 @@ export const CHART_NAV = [
     name: '组合与进阶',
     key: 'chart-advanced',
     components: [
-      { name: '混合图', zh: 'mixed', path: '/chart/mixed' },
+      { name: '混合图 · 双轴', zh: 'mixed', path: '/chart/mixed' },
       { name: '交互与联动', zh: '', path: '/chart/interaction' },
     ],
   },

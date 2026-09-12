@@ -67,7 +67,7 @@ function switchType() {
 | --- | --- |
 | 趋势怎么走？多组趋势对比？ | [折线图](/chart/line) / [面积图](/chart/area) / [迷你趋势图](/chart/sparkline) |
 | 分类之间比大小？构成怎么堆叠？ | [柱状图](/chart/bar) / [堆叠柱状图](/chart/stacked-bar) / [条形图](/chart/horizontal-bar) |
-| 增减瀑布 / 多指标混合坐标？ | [瀑布图](/chart/waterfall) / [混合图](/chart/mixed) |
+| 增减瀑布？两个量纲悬殊的指标同看？ | [瀑布图](/chart/waterfall) / [混合图 · 双轴](/chart/mixed) |
 | 占比构成？部分与整体？ | [饼图](/chart/pie) / [环形图](/chart/doughnut) / [玫瑰图](/chart/rose) / [漏斗图](/chart/funnel) |
 | 单指标完成得怎么样？ | [仪表盘](/chart/gauge) / [子弹图](/chart/bullet) |
 | 两/三个变量有没有关系？密度在哪？ | [散点图](/chart/scatter) / [热力图](/chart/heatmap) |

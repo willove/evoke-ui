@@ -49,6 +49,20 @@ export const SPEC_EXAMPLES = [
       ],
     },
   },
+  {
+    requirement: "营收和增长率一起看",
+    spec: {
+      type: "mixed",
+      title: "营收与增长率",
+      labels: ["1月", "2月", "3月", "4月", "5月", "6月"],
+      series: [
+        { name: "营收（万）", data: [168, 142, 195, 210, 265, 248], chartType: "bar", yAxis: "left" },
+        { name: "增长率（%）", data: [12, 26, -10, 36, 18, 24], chartType: "line", yAxis: "right", smooth: true },
+      ],
+      yAxisRight: { show: true },
+      legend: { show: true },
+    },
+  },
 ];
 
 export function formatExamples(maxCount = SPEC_EXAMPLES.length) {

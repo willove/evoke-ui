@@ -236,6 +236,7 @@ function defaultIntent({ times, numbers, cats, labels }) {
 export const SPEC_RULES = [
   "type 必填，取值必须是 schema enum 中的图表类型",
   "series[].data 长度必须与 labels 一致，缺失值用 null",
+  "双轴：两个量纲或量级悬殊的度量用 type mixed——大量度 series 用 chartType bar 且 yAxis left，小量度 chartType line 且 yAxis right，并置顶层 yAxisRight",
   "叙述注解 annotations 单图不超过 3 处，emphasis 焦点最多 1 个系列",
   "不使用 schema 之外的字段",
   `支持的图表类型：${chartOptionsSchema.properties.type.enum.join(" / ")}`,

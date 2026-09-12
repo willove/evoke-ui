@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 双轴升为一等图型：mixed 页真双轴 + AI 面补齐
+
+- **图型页与导航**：「混合图」页更名「混合图 · 双轴」，新增「双轴怎么开」章节
+  （`series[].chartType` + `series[].yAxis` + 顶层 `yAxisRight` 三字段），三张示例
+  全部改为真双轴渲染——此前页面宣称双轴但示例未开右轴，率线被量纲压扁；页内
+  明确边界：值轴以左、右两根为限，暂不支持更多轴，line / area 同样支持双轴；
+- **AI 面**：提示词契约（SPEC_RULES）新增双轴规则，few-shot 示例库补混合图
+  双轴示例——模型路径照抄即得合法双轴 Spec，与确定性引擎的量级悬殊自动双轴
+  （见上）互为表里；
+- **API 参考**：`series` 字段补 `chartType` / `yAxis` 说明，新增 `yAxisRight` 字段行。
+
 ### @wil-works/evoke-charts — AI 生成引擎：年份维度与双轴混合
 
 - **年份列自动认作时间维度**：`1970` 这类裸年份（含「2024年」写法）不再被当成
