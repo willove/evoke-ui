@@ -204,6 +204,14 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
   });
   return result;
 }
+// 向白色混合（比例 0-1）：旭日图分支同色系逐层提亮用
+function mixToWhite(hex, ratio) {
+  const r = Math.min(0.85, Math.max(0, ratio));
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return hex;
+  const n = parseInt(hex.slice(1), 16);
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v + (255 - v) * r));
+  return `rgb(${ch[0]},${ch[1]},${ch[2]})`;
+}
 function renderSunburstChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter } = ctx;
   const data = options.sunburstData || [];
@@ -214,8 +222,15 @@ function renderSunburstChart(ctx) {
   const maxR = Math.max(40, Math.min((plotArea.width - 90) / 2, (plotArea.height - 48) / 2));
   const innerHole = Math.max(0, maxR * 0.22);
   const depthCount = computeSunburstDepth(data);
-  const ringWidth = (maxR - innerHole) / depthCount;
+  // 层级 ≥ 2 时基础环带只占半径预算 66%，其余留给最外层叶子按数值延伸成花瓣
+  const hasSpread = depthCount >= 2;
+  const ringBudget = hasSpread ? (maxR - innerHole) * 0.66 : maxR - innerHole;
+  const ringWidth = ringBudget / depthCount;
+  const spreadRange = hasSpread ? maxR - innerHole - ringBudget : 0;
   const segments = layoutSunburst(data, innerHole, ringWidth, 0, -Math.PI / 2, 0, []);
+  const maxLeaf = segments
+    .filter((s) => s.depth === depthCount - 1)
+    .reduce((m, s) => Math.max(m, s.value), 0);
   const sweep = -Math.PI / 2 + Math.PI * 2 * progress;
   const showValues = options.showValues === true;
   const insideLabels = [];
@@ -227,17 +242,30 @@ function renderSunburstChart(ctx) {
   canvasCtx.closePath();
   canvasCtx.clip();
   segments.forEach((seg, i) => {
-    const color = seg.node.color || theme.colors[seg.colorIndex % theme.colors.length];
+    const base = seg.node.color || theme.colors[seg.colorIndex % theme.colors.length];
+    const isPetal = hasSpread && seg.depth === depthCount - 1;
+    // 分支同色系：每深一层向白提亮约 26%，高饱和只留在内环
+    const color = mixToWhite(base, isPetal ? Math.min(0.6, (seg.depth - 1) * 0.26 + 0.2) : seg.depth * 0.26);
     const isHover = i === hoverIndex;
+    const petalR = isPetal ? seg.r1 + spreadRange * (seg.value / (maxLeaf || 1)) : seg.r1;
+    const r1 = Math.min(maxR, petalR * (0.9 + 0.1 * progress));
     canvasCtx.save();
     canvasCtx.beginPath();
-    canvasCtx.arc(centerX, centerY, seg.r1, seg.startAngle, seg.endAngle);
+    canvasCtx.arc(centerX, centerY, r1, seg.startAngle, seg.endAngle);
     canvasCtx.arc(centerX, centerY, seg.r0, seg.endAngle, seg.startAngle, true);
     canvasCtx.closePath();
-    canvasCtx.fillStyle = isHover ? color : color + (seg.depth === 0 ? "" : "dd");
+    if (isPetal) {
+      // 花瓣端部圆角：同色宽描边（round join）+ 填充
+      canvasCtx.lineJoin = "round";
+      canvasCtx.strokeStyle = color;
+      canvasCtx.lineWidth = 8;
+      canvasCtx.stroke();
+    }
+    canvasCtx.fillStyle = color;
+    if (isHover) canvasCtx.globalAlpha = 0.8;
     canvasCtx.fill();
     canvasCtx.strokeStyle = theme.backgroundColor;
-    canvasCtx.lineWidth = 2;
+    canvasCtx.lineWidth = isPetal ? 1.5 : 2;
     canvasCtx.stroke();
     if (isHover) {
       canvasCtx.strokeStyle = theme.textColor;
@@ -252,9 +280,9 @@ function renderSunburstChart(ctx) {
     const name = seg.node.name || "";
     const isLeafRing = depthCount > 1 && seg.depth === depthCount - 1;
     if (isLeafRing) {
-      // 最外层叶子：标签外置到圆盘外侧，避免往窄环带里塞字
+      // 最外层叶子：标签外置到花瓣尖端外侧，避免往窄环带里塞字
       if (span > 0.05 && name) {
-        outerLabels.push({ midAngle: seg.midAngle, name, value: seg.value });
+        outerLabels.push({ midAngle: seg.midAngle, r: r1 + 6, name, value: seg.value });
       }
       return;
     }
@@ -320,13 +348,14 @@ function renderSunburstChart(ctx) {
   const placed = [];
   outerLabels.forEach((l) => {
     const cos = Math.cos(l.midAngle);
-    const px = centerX + Math.cos(l.midAngle) * (maxR + 6);
-    const py = centerY + Math.sin(l.midAngle) * (maxR + 6);
+    const px = centerX + Math.cos(l.midAngle) * l.r;
+    const py = centerY + Math.sin(l.midAngle) * l.r;
     const text = showValues ? `${l.name} ${valueFormatter(l.value)}` : l.name;
+    const align = cos >= 0 ? "left" : "right";
     placed.push({
       x: px,
       y: py,
-      align: cos >= 0 ? "left" : "right",
+      align,
       text,
     });
   });
