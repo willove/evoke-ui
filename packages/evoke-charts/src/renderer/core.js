@@ -307,13 +307,16 @@ function getPadding(options, containerWidth = 600) {
     return { top: top2, right: right2, bottom: bottom2, left: left2 };
   }
   // 轴类图表：padding 覆写静态留白（标题/图例/缩放条等 chrome 带照常叠加）；
-  // x 轴整体隐藏时回收底部 46px 的轴位预留
+  // x 轴整体隐藏时回收底部 46px 的轴位预留。
+  // yAxis.width / yAxisRight.width 显式定轴槽宽——列表场景多图统一绘图区起点
   const pad = resolveUserPadding(options);
   const xAxisHidden = options.xAxis?.show === false;
+  const yAxisWidth = options.yAxis?.width;
+  const yAxisRightWidth = options.yAxisRight?.width;
   let top = (pad.top ?? 18) + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
   let bottom = (pad.bottom ?? (xAxisHidden ? 12 : 46)) + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
-  let left = pad.left ?? estimateYAxisLeft(options);
-  let right = pad.right ?? (hasYAxisRight ? 65 : 24);
+  let left = pad.left ?? (typeof yAxisWidth === "number" && yAxisWidth > 0 ? yAxisWidth : estimateYAxisLeft(options));
+  let right = pad.right ?? (typeof yAxisRightWidth === "number" && yAxisRightWidth > 0 ? yAxisRightWidth : hasYAxisRight ? 65 : 24);
   if (legendPosition === "left") left += 80;
   if (legendPosition === "right") right += 80;
   if (hasXAxis && hasXAxisTitle) {

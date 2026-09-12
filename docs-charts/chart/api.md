@@ -24,7 +24,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'tooltip', desc: '提示框：{ show, trigger（hover / click）, showAllSeries, formatter }', type: 'object', default: '—' },
   { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing }', type: 'object', default: '—' },
   { name: 'valueFormat', desc: '数值格式：{ decimals, thousandSeparator, prefix, suffix, abbreviate }（abbreviate 开启后按 万 / 亿 / K 缩写）', type: 'object', default: '—' },
-  { name: 'xAxis / yAxis', desc: '轴配置：{ min, max, ticks, grid: { show, style: dashed } }', type: 'object', default: '—' },
+  { name: 'xAxis / yAxis', desc: '轴配置：{ min, max, ticks, width, grid: { show, style: dashed } }；yAxis.width 显式定 y 轴槽宽（px，横向条形图为分类列宽），列表场景多图传同一值对齐绘图区起点', type: 'object', default: '—' },
   { name: 'dataZoom', desc: '缩放：{ enabled, start, end, position（bottom / top）, height, mouseWheel }', type: 'object', default: '—' },
   { name: 'toolbox', desc: '工具按钮：{ show, filename }（导出 PNG / 恢复复位）', type: 'object', default: '—' },
   { name: 'theme', desc: '主题覆盖（colors、textColor 等），暗色模式自动切换', type: 'object', default: '—' },

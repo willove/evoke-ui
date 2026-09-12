@@ -209,6 +209,14 @@ describe('getPadding 绘图区空间利用', () => {
     expect(p.bottom).toBe(46)
   })
 
+  it('yAxis.width 显式定轴槽宽：列表场景统一绘图区起点', () => {
+    expect(getPadding({ ...LINE, yAxis: { width: 80 } }, 800).left).toBe(80)
+    // padding.left 优先级最高
+    expect(getPadding({ ...LINE, yAxis: { width: 80 }, padding: { left: 56 } }, 800).left).toBe(56)
+    // 非法值回落标签自适应
+    expect(getPadding({ ...LINE, yAxis: { width: -1 } }, 800).left).toBeGreaterThanOrEqual(40)
+  })
+
   it('padding 与顶部图例带叠加（图例空间不被挤掉）', () => {
     const p = getPadding({ ...LINE, padding: { top: 8 }, legend: { show: true, position: 'top' } }, 800)
     expect(p.top).toBe(8 + 26)

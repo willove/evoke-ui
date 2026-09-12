@@ -81,9 +81,9 @@ function buildOptions(def) {
     labels: store.labels,
     series: [{ name: def.name, data: store.series[def.key], lineWidth: 1.25 }],
     // 云监控小图定制：无横网格、3 档 y 刻度（库内按绘图高度自动保密度）、
-    // 整条 x 轴隐藏（行分隔线由容器提供）；left 留白交刻度标签实测自适应，杜绝截断；
-    // padding 收紧静态留白，绘图区几乎占满画布高度
-    yAxis: { grid: { show: false }, ticks: 3 },
+    // 整条 x 轴隐藏（行分隔线由容器提供）；yAxis.width 统一轴槽宽——
+    // 各行标签宽窄不一，固定起点批量观察才整齐
+    yAxis: { grid: { show: false }, ticks: 3, width: 52 },
     xAxis: { show: false },
     // 云监控小图定制：无横网格、3 档小字 y 刻度、整条 x 轴隐藏（行分隔线由容器提供）；
     // padding 收紧到贴边，画布几乎全给曲线——长条监控带的观感

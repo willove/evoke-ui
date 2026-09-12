@@ -93,6 +93,9 @@
 | left | 自适应：y 刻度标签实测宽 + 26，夹在 40–140 | 左图例带另加 80；横向条形图按最宽**分类名**估宽 |
 
 - `options.padding`（数字或四边对象）覆写上表基础值；**标题/图例/dataZoom 的 chrome 空间照常叠加**。
+- **列表对齐**：`yAxis.width`（px）显式定 y 轴槽宽，多图传同一值即统一绘图区起点
+  （批量小图/监控列表不随各图标签宽窄漂移）；横向条形图同字段为分类列宽；
+  `yAxisRight.width` 对称作用于右轴。显式 `padding.left` 优先级最高。
 - 长条监控带推荐：`{ top: 6, right: 8, bottom: 6 }` + `height: 64`（left 交刻度标签
   自适应）；sparkline 默认 6px 贴边。
 - `padding.left` 不得小于 y 刻度标签最大宽 + 12，否则标签截断。
