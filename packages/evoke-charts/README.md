@@ -1,5 +1,7 @@
 # Evoke Charts
 
+> **⚠️ 本包正在开发迭代中，尚未发布正式版：API、图表类型与视觉细节可能随版本调整，请勿用于生产环境。**
+
 `@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
 
 **在线文档**：[evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) — 全部图表类型、完整配置项与在线示例。
