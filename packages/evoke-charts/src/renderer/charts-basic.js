@@ -885,6 +885,23 @@ function renderRadarChart(ctx) {
     canvasCtx.stroke();
   }
   canvasCtx.restore();
+  // 所有维度同 max 时在最上轴旁标环刻度（各维度各自定 max 则省略，避免歧义）
+  const sharedMax = indicators[0].max;
+  const sharedMin = indicators[0].min || 0;
+  const sameScale = sharedMax != null
+    && indicators.every((ind) => (ind.max ?? sharedMax) === sharedMax && (ind.min || 0) === sharedMin);
+  if (sameScale) {
+    canvasCtx.save();
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.font = "10px Inter, sans-serif";
+    canvasCtx.textAlign = "left";
+    canvasCtx.textBaseline = "middle";
+    for (let level = 1; level <= 5; level++) {
+      const v = sharedMin + (sharedMax - sharedMin) * level / 5;
+      canvasCtx.fillText(Number.isInteger(sharedMax) ? String(Math.round(v)) : v.toFixed(1), centerX + 5, centerY - radius * level / 5);
+    }
+    canvasCtx.restore();
+  }
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColorSecondary;
   canvasCtx.font = "12px Inter, sans-serif";
@@ -944,7 +961,16 @@ function renderRadarChart(ctx) {
         else canvasCtx.lineTo(p[0], p[1]);
       });
       canvasCtx.closePath();
-      canvasCtx.fillStyle = color + (hoverIndex >= 0 ? "50" : "30");
+      // 与面积图同标准：纵向渐变 @25% → @3%，多系列叠加不糊
+      if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+        const grad = canvasCtx.createLinearGradient(0, centerY - radius, 0, centerY + radius);
+        grad.addColorStop(0, color + (hoverIndex >= 0 ? "59" : "40"));
+        grad.addColorStop(1, color + "08");
+        canvasCtx.fillStyle = grad;
+      } else {
+        canvasCtx.fillStyle = color;
+        canvasCtx.globalAlpha = alpha * 0.18;
+      }
       canvasCtx.fill();
       canvasCtx.restore();
     }
@@ -957,15 +983,17 @@ function renderRadarChart(ctx) {
     });
     canvasCtx.closePath();
     canvasCtx.strokeStyle = color;
-    canvasCtx.lineWidth = hoverIndex >= 0 ? 2.5 : 2;
+    canvasCtx.lineWidth = hoverIndex >= 0 ? 2.5 : 1.5;
     canvasCtx.stroke();
     canvasCtx.restore();
     canvasCtx.save();
     canvasCtx.globalAlpha = alpha;
+    const showSymbol = s.showSymbol === true;
     points.forEach((p, i) => {
       const isHover = i === hoverIndex;
+      if (!showSymbol && !isHover) return;
       canvasCtx.beginPath();
-      canvasCtx.arc(p[0], p[1], isHover ? 6 : 4, 0, Math.PI * 2);
+      canvasCtx.arc(p[0], p[1], isHover ? 6 : 3, 0, Math.PI * 2);
       canvasCtx.fillStyle = isHover ? theme.backgroundColor : color;
       canvasCtx.fill();
       canvasCtx.strokeStyle = color;

@@ -45,7 +45,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'funnelData', desc: 'funnel 漏斗', type: '{ label, value }[]', default: '—' },
   { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle }', type: 'object', default: '—' },
   { name: 'radarIndicators', desc: 'radar 维度：{ name, max, min? }', type: 'array', default: '—' },
-  { name: 'radarSeries', desc: 'radar 系列：{ name, data, color?, area? }', type: 'array', default: '—' },
+  { name: 'radarSeries', desc: 'radar 系列：{ name, data, color?, area?, showSymbol? }——area 默认开（纵向浅渐变填充），showSymbol: true 画顶点；各维度同 max 时自动标注环刻度', type: 'array', default: '—' },
   { name: 'heatmapData', desc: 'heatmap 热力格', type: '{ x, y, value }[]', default: '—' },
   { name: 'candleData', desc: 'candle K 线', type: '{ label, open, close, high, low }[]', default: '—' },
   { name: 'boxData', desc: 'boxplot 箱线', type: '{ label, min, q1, median, q3, max }[]', default: '—' },

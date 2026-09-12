@@ -12,6 +12,8 @@
 
 `radarIndicators` 声明维度（`name` 维度名、`max` 上限、`min` 可选下限），`radarSeries` 声明系列（`data` 与 indicators 顺序对应，`area: false` 可关闭填充面）。
 
+各维度同 `max` 时，最上轴旁自动标注环刻度数值，每环代表多少一望即知。
+
 <DemoBlock>
   <ev-chart
     :options="{
@@ -33,6 +35,64 @@
     :height="300"
   />
 </DemoBlock>
+
+### 版本能力对比
+
+雷达图最典型的场景：同一套维度比前后两个版本。填充用纵向浅渐变、叠加处不糊；需要强调关键顶点时给系列开 `showSymbol`。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'radar',
+      title: 'v2.4 vs v2.5 能力评分',
+      radarIndicators: [
+        { name: '性能', max: 100 },
+        { name: '易用性', max: 100 },
+        { name: '文档', max: 100 },
+        { name: '生态', max: 100 },
+        { name: '稳定性', max: 100 },
+        { name: '安全', max: 100 },
+      ],
+      radarSeries: [
+        { name: 'v2.4', data: [72, 80, 64, 58, 90, 76], area: false, showSymbol: true },
+        { name: 'v2.5', data: [88, 86, 82, 70, 92, 85] },
+      ],
+      legend: { show: true },
+    }"
+    :height="320"
+  />
+</DemoBlock>
+
+### 轮廓线框版
+
+只比形状不比量值时，关掉填充面就是干净的线框对照——六条边的高低走势一目了然，打印和深浅色背景下都清楚。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'radar',
+      title: '三个候选方案画像',
+      radarIndicators: [
+        { name: '成本', max: 100 },
+        { name: '周期', max: 100 },
+        { name: '风险', max: 100 },
+        { name: '收益', max: 100 },
+        { name: '扩展性', max: 100 },
+      ],
+      radarSeries: [
+        { name: '自建', data: [40, 30, 55, 88, 90], area: false },
+        { name: '采购', data: [85, 90, 30, 60, 45], area: false },
+        { name: '混合', data: [65, 70, 50, 75, 70], area: false },
+      ],
+      legend: { show: true },
+    }"
+    :height="320"
+  />
+</DemoBlock>
+
+### 与条形图怎么选
+
+维度 **≤ 4 个**或读者需要精确读数排序时，[条形图](/chart/horizontal-bar)更诚实——雷达图的角度占用不均、面积随维度数变化，天然不适合精确判读；它的价值在 5–8 个维度时「整体形状」的一眼对比。维度各自量纲差异大且无法归一时，也请回退条形图分面。
 
 ## 配置要点
 
