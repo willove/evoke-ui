@@ -53,7 +53,7 @@ reset()        // 恢复默认（磨砂关闭）
 下面的演示可以直接拖动滑块实时调节——三个滑块分别改写 `--ev-glass-blur`、
 `--ev-glass-bg`（雾面浓度）与 `--ev-glass-saturate`，卡片即时响应：
 
-<DemoBlock title="实时调节磨砂质感" description="拖动滑块观察同一照片上的质感变化；0px 即完全透明无磨砂，浓度越低底色越透。">
+<DemoBlock title="实时调节磨砂质感" description="拖动滑块观察同一照片上的质感变化，示例代码同步显示当前参数；0px 即完全透明无磨砂，浓度越低底色越透。">
 
 <EvConfigProvider glass :global="false">
   <div class="glass-lab" :style="labVars">
@@ -83,30 +83,7 @@ reset()        // 恢复默认（磨砂关闭）
   </div>
 </EvConfigProvider>
 
-```vue
-<script setup>
-import { ref, computed } from 'vue'
-
-const blur = ref(16)
-const tint = ref(72)
-const saturate = ref(1.5)
-
-// 令牌整体覆写：color-mix 的百分比不能走 var()，浓度变化要拼完整值
-const labVars = computed(() => ({
-  '--ev-glass-blur': `${blur.value}px`,
-  '--ev-glass-saturate': String(saturate.value),
-  '--ev-glass-bg': `color-mix(in srgb, var(--ev-bg-container) ${tint.value}%, transparent)`,
-}))
-</script>
-
-<template>
-  <EvConfigProvider glass>
-    <div :style="labVars">
-      <EvCard glass>拖动滑块，质感即时变化</EvCard>
-    </div>
-  </EvConfigProvider>
-</template>
-```
+<div class="glass-lab__code"><pre><code>{{ labCode }}</code></pre></div>
 
 </DemoBlock>
 
@@ -183,6 +160,17 @@ const labVars = computed(() => ({
   '--ev-glass-saturate': String(labSaturate.value),
   '--ev-glass-bg': `color-mix(in srgb, var(--ev-bg-container) ${labTint.value}%, transparent)`,
 }))
+
+// 示例代码随滑块同步：展示的值始终是当前演示的实际参数
+const labCode = computed(() => [
+  '<div :style="{',
+  `  '--ev-glass-blur': '${labBlur.value}px',`,
+  `  '--ev-glass-saturate': '${labSaturate.value}',`,
+  `  '--ev-glass-bg': 'color-mix(in srgb, var(--ev-bg-container) ${labTint.value}%, transparent)',`,
+  '}">',
+  '  <EvCard glass>…</EvCard>',
+  '</div>',
+].join('\n'))
 </script>
 
 <style scoped>
@@ -229,5 +217,22 @@ const labVars = computed(() => ({
   flex: 1;
   margin: 0;
   accent-color: var(--ev-color-primary);
+}
+.glass-lab__code pre {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 10px;
+  overflow-x: auto;
+  background: var(--vp-code-block-bg);
+  color: var(--vp-c-text-1);
+  font-size: 13px;
+  line-height: 1.8;
+}
+/* vp-doc 的行内 code 样式（底色/内边距）不适用于代码块内 */
+.glass-lab__code code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
 }
 </style>
