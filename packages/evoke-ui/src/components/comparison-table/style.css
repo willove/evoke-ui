@@ -1,50 +1,139 @@
-/* EvComparisonTable — 功能对比表 */
+/* EvComparisonTable — 对比表
+   默认现代无边框形态：行分隔线 + 组标题分节，无竖向网格；
+   is-bordered 恢复全网格边框（旧形态，按需选择）。
+   宿主站点（.vp-doc / .bd-doc 等）会给 table/th/td 加边框与底色，
+   这里用双类选择器屏蔽后再建立组件自有规则。 */
 
 .ev-comparison-table {
   overflow-x: auto;
-  border: 1px solid var(--ev-border-color-light);
   border-radius: var(--ev-radius-lg);
+  max-width: 100%;
 }
 
-.ev-comparison-table table {
+.ev-comparison-table.ev-comparison-table table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 560px;
+  text-align: center;
 }
 
-.ev-comparison-table th,
-.ev-comparison-table td {
-  padding: 14px 20px;
-  text-align: center;
+.ev-comparison-table.ev-comparison-table th,
+.ev-comparison-table.ev-comparison-table td {
+  border: none;
+  background-color: transparent;
+  padding: 16px 20px;
   font-size: var(--ev-font-size-sm);
+  line-height: var(--ev-line-height-base);
+  text-align: center;
+  vertical-align: top;
+}
+
+.ev-comparison-table.ev-comparison-table tbody th,
+.ev-comparison-table.ev-comparison-table tbody td {
   border-bottom: 1px solid var(--ev-border-color-light);
 }
 
-.ev-comparison-table tbody tr:last-child th,
-.ev-comparison-table tbody tr:last-child td {
+.ev-comparison-table.ev-comparison-table tbody tr:last-child th,
+.ev-comparison-table.ev-comparison-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.ev-comparison-table thead th {
-  font-weight: var(--ev-font-weight-medium);
+/* ─── 表头：产品列（基础定价档位仅 label/note；compare 形态叠加图/色点/徽标/价格） ─── */
+.ev-comparison-table.ev-comparison-table thead th {
+  font-weight: 400;
   color: var(--ev-text-primary);
-  background-color: var(--ev-bg-muted);
+  vertical-align: bottom;
 }
 
-.ev-comparison-table tbody tr:hover td {
-  background-color: color-mix(in srgb, var(--ev-bg-muted) 55%, transparent);
+.ev-comparison-table__col-label {
+  display: block;
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-semibold);
 }
 
-/* featured 列：淡主色底贯穿 */
-.ev-comparison-table th.is-featured,
-.ev-comparison-table td.is-featured {
-  background-color: var(--ev-color-primary-light-9);
+.ev-comparison-table__col-label a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* 功能名列 */
+.ev-comparison-table__col-label a:hover {
+  color: var(--ev-color-primary);
+}
+
+.ev-comparison-table__col-tagline {
+  display: block;
+  margin: 8px auto 0;
+  max-width: 220px;
+  color: var(--ev-text-secondary);
+}
+
+.ev-comparison-table__col-note {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-regular);
+  color: var(--ev-text-secondary);
+}
+
+.ev-comparison-table__col-image {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 12px;
+  object-fit: contain;
+}
+
+.ev-comparison-table__col-colors {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.ev-comparison-table__col-colors i {
+  width: 11px;
+  height: 11px;
+  border-radius: var(--ev-radius-circle);
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.ev-comparison-table__col-badge {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-color-primary);
+}
+
+.ev-comparison-table__col-price {
+  display: block;
+  margin-top: 10px;
+}
+
+.ev-comparison-table__col-price b {
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
+}
+
+.ev-comparison-table__col-price span {
+  margin-left: 3px;
+  color: var(--ev-text-secondary);
+}
+
+/* ─── 分组标题行 ─── */
+.ev-comparison-table.ev-comparison-table .ev-comparison-table__group {
+  padding: 34px 20px 12px;
+  text-align: left;
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
+}
+
+/* ─── 行：功能名列 ─── */
 .ev-comparison-table__feature-col {
   text-align: left !important;
-  width: 32%;
+  width: 20%;
+  min-width: 108px;
 }
 
 .ev-comparison-table__feature-label {
@@ -60,16 +149,14 @@
   color: var(--ev-text-secondary);
 }
 
-.ev-comparison-table__col-label {
+/* ─── 单元格语义 ─── */
+.ev-comparison-table__text {
   display: block;
+  color: var(--ev-text-regular);
 }
 
-.ev-comparison-table__col-note {
-  display: block;
-  margin-top: 2px;
-  font-size: var(--ev-font-size-xs);
-  font-weight: var(--ev-font-weight-regular);
-  color: var(--ev-text-secondary);
+.ev-comparison-table__text.is-line + .ev-comparison-table__text.is-line {
+  margin-top: 4px;
 }
 
 .ev-comparison-table__check {
@@ -81,6 +168,27 @@
   color: var(--ev-text-disabled);
 }
 
-.ev-comparison-table__text {
-  color: var(--ev-text-regular);
+/* ─── featured 列：淡主色底贯穿 ─── */
+.ev-comparison-table th.is-featured,
+.ev-comparison-table td.is-featured {
+  background-color: var(--ev-color-primary-light-9);
+}
+
+/* ─── bordered：全网格边框（旧形态按需选择） ─── */
+.ev-comparison-table.is-bordered {
+  border: 1px solid var(--ev-border-color);
+}
+
+.ev-comparison-table.is-bordered.ev-comparison-table th,
+.ev-comparison-table.is-bordered.ev-comparison-table td {
+  border: 1px solid var(--ev-border-color-light);
+}
+
+.ev-comparison-table.is-bordered table {
+  min-width: 0 !important;
+}
+
+/* ─── 悬浮：行内轻提示（无边框形态才有，网格形态信息已够密） ─── */
+.ev-comparison-table:not(.is-bordered) tbody tr:hover td {
+  background-color: color-mix(in srgb, var(--ev-bg-muted) 45%, transparent);
 }

@@ -57,7 +57,6 @@ import EvSelect from '../../../packages/evoke-ui/src/components/select/index.vue
 import EvField from '../../../packages/evoke-ui/src/components/field/index.vue'
 import EvSlider from '../../../packages/evoke-ui/src/components/slider/index.vue'
 import EvScrollScene from '../../../packages/evoke-ui/src/components/scroll-scene/index.vue'
-import EvCompare from '../../../packages/evoke-ui/src/components/compare/index.vue'
 import EvBento from '../../../packages/evoke-ui/src/components/bento/index.vue'
 import EvPullRefresh from '../../../packages/evoke-ui/src/components/pull-refresh/index.vue'
 import EvLoadMore from '../../../packages/evoke-ui/src/components/load-more/index.vue'
@@ -90,7 +89,7 @@ export default {
       EvTimeline, EvComparisonTable, EvCta, EvNewsletter, EvLogoCloud,
       EvVideo, EvAudio, EvContactForm, EvCarousel, EvArticleCard, EvProfileCard,
       EvBorderBeam, EvExecCard, EvArticle, EvImageWall, EvImagePreview, EvWaterfall, EvModal,
-      EvMarquee, EvInput, EvTextarea, EvSelect, EvField, EvSlider, EvScrollScene, EvCompare, EvBento,
+      EvMarquee, EvInput, EvTextarea, EvSelect, EvField, EvSlider, EvScrollScene, EvBento,
       EvPullRefresh, EvLoadMore, EvActionSheet, EvTabbar, EvTabbarItem, EvNavBar,
       DemoBlock, MobileStage,
     }

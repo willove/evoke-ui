@@ -14,19 +14,66 @@
 
 ## [Unreleased]
 
-### @wil-works/evoke-ui — 新增 EvCompare 方案对比与 EvBento 图文组合分区
+### @wil-works/evoke-charts — 关系与流动图族 + 散点/箱线/K线/仪表盘/雷达批量增强
 
-- **新增 `EvCompare` 方案对比表**：产品列 × 特性分组矩阵——列头带产品图、配色点、
-  徽标、名称、一句话与价格；`groups` 按组陈列特性，单元格 true 勾 / false 破折号 /
-  字符串直出 / **字符串数组多行**（一格讲多层信息）；默认无边框（组间细分隔线），
-  `bordered` 切换网格边框；窄屏自动横向滚动、列宽按产品数撑最小宽；
+- **新增桑基图 `type: 'sankey'`**：`sankeyData { nodes, links }`，节点按拓扑深度分列、
+  高度即 max(入流, 出流)（缺省自动按链接汇总），流带宽度即流量、颜色继承源节点色；
+  悬浮流带强调自身与同源同宿、其余淡出；图例点选节点隐去相连流带、剩余重新等比；
+- **新增韦恩图 `type: 'venn'`**：`vennData` 单集合 + 交集行（`sets` + `value`），半径按
+  √值等面积映射、圆距按交集面积二分反解（三集合三角形约束近似）；`vennHollow: true`
+  空心形态；悬浮交集区两圆同时强调；
+- **新增弦图 `type: 'chord'` 与弧长连接图 `type: 'arc'`**：`chordData` / `arcData`
+  与桑基同构，连接带宽度即关系值、颜色继承源节点色；弦图节点弧默认均布
+  （`chordByValue` 按值占比），弧长图为上半椭圆弧、线宽 1.5–6px 线性映射；
+  悬浮连接带强调自身淡化其余，悬浮节点点亮相连全部关系；
+- **新增甘特图 `type: 'gantt'`**：`ganttData { name, start, end, progress, milestone,
+  dependsOn, color }`——行带任务条、进度左实右淡、里程碑菱形、依赖正交箭头、
+  `ganttToday` 今日线；左侧任务名列实测自适应（80–180 夹取），底部时间轴自动抽稀；
+  悬浮整行高亮 + 起止进度 tooltip；
+- **散点图批量增强**：`pointLabels` 点标注（重叠自动让位）、`quadrant` 四象限
+  （十字参考线 + 四角标签，中线缺省取均值）、`group` 颜色通道分组（图例按组聚合、
+  点选整组显隐）、回归线自动标注 R²（`trendlinePerGroup` 按组各画一条）、`jitter`
+  确定性抖动防同值重叠（0–20px，同数据同偏移）、`facet: true` 分面小倍数网格
+  （每格独立量程）、`type: 'scatter-matrix'` 散点矩阵（n×n 变量相关性，对角格
+  字段名）；散点点位渲染与命中测试收敛到同一口径（`scatterPointPositions`）；
+- **K 线 + 成交量**：`volumeData` 开启副图（下部 24%，`volumeHeight` 0.15–0.4 可调），
+  量柱颜色跟随当日涨跌、价格轴只量价格区；图例「成交量」点选隐去量带、K 线回铺全高；
+  tooltip params 附带 `volume`；
+- **仪表盘指针与深度定制**：`gauge.pointer { show, color, width, length }` 箭针随进度
+  动画扫动、进度环默认淡化（`progressDim: false` 保持原样）；`axisWidth` / `tickCount` /
+  `showTicks` / `tickMarks` / `valueFontSize` / `cornerRadius` 外观定制面，默认值维持
+  既有形态；
+- **箱线图扩展**：`group` 分组箱线（同类目并排、图例按组聚合）、`boxHorizontal` 横向
+  形态、`showOutliers: false` 隐藏异常点；几何抽成 `computeBoxplotGeometry`（渲染、
+  悬浮命中共用）；
+- **雷达图交互增强**：`radarRingFill: true` 环带交替铺极淡底色；悬浮维度标签或轴顶点
+  点亮该轴（轴线升主文字色、标签加粗、各系列顶点画实心点），进出 220ms 缓动；
+  图例悬浮焦点系列线宽升至 2.5px；
+- **x 轴拥挤三步策略**：`interval` 未显式指定时按标签实测宽自动抽稀（步距 ≥ 标签宽
+  + 12、首末必留），全量展示时单标签超步距省略号截断；旋转时按旋转后占宽估算，
+  不自动旋转（排版决策归使用方）；
+- schema 注册 6 个新类型与配套数据字段；DESIGN.md 定稿 §3.5–3.11 视觉标准与 §4
+  拥挤策略；新增 6 个测试文件（桑基/甘特/韦恩/弦弧/散点增强/批量增强），
+  全仓 77 文件 1222 项全绿；文档站新增 sankey / gantt / venn / chord 四页，
+  scatter / candle / gauge / boxplot / radar / api / 总览同步。
+
+### @wil-works/evoke-ui — ComparisonTable 升级为双形态对比表 + 新增 EvBento 图文组合分区
+
+- **ComparisonTable 吸收 compare 能力，不再有独立对比组件**：`columns` 列头扩展
+  `image` / `colors`（配色点）/ `badge` / `tagline` / `href` / `price`+`priceNote`，
+  基础定价档位照旧只用 label/note；新增 `groups` 按特性分组陈列（组标题行跨全表）；
+  单元格新增**字符串数组多行**（一格讲多层信息）；`bordered` 选择网格边框——
+  **默认改为现代无边框形态**（行分隔线 + 组标题分节，去掉旧全网格与外框），
+  并加宿主样式屏蔽（文档站表格排版不再渗入成老式全边框表）；
+  表格随产品数撑最小宽、窄容器横向滚动，不再出现挤压折叠；
 - **新增 `EvBento` 图文组合分区**：Bento 卡片栅格，`span` 跨列（超出列数自动回落
   整行）/ `rows` 跨行 / `dense` 回填空隙；卡片图文上下结构，`imagePos: 'fill'`
   整卡铺图文字叠上；`tone` 提供 soft / primary / dark 卡面，`href` 整卡可点；
-  `bordered` 加边框，窄屏自动全部整行；
-- 文档新增 compare.md / bento.md（演示内容为虚构品牌与通用规格，不含真实品牌信息），
-  侧栏与组件总览收录，组件数口径 59→61；两组件各补单测（compare 4 项 / bento 4 项），
-  全量 71 文件 1154 项全绿。
+  `bordered` 加边框，内嵌图给高度上限防膨胀；**布局断点跟随父容器宽度（容器查询）**
+  而非视口，嵌在窄栏里也正确回落，媒体查询仅作不支持时的兜底；
+- 文档：comparison-table.md 重写为双形态说明，新增 bento.md（演示为虚构品牌与
+  通用规格），侧栏与组件总览同步，组件数口径 59→60（compare 并入不再单计）；
+  ComparisonTable 用例扩至 5 项、EvBento 4 项，全量 71 文件 1154 项全绿。
 
 ### @wil-works/evoke-charts — 漏斗图视觉整改（同色系递浅 / 末端不收针尖）
 

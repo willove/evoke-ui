@@ -124,6 +124,56 @@ describe('EvComparisonTable', () => {
     expect(wrapper.find('.ev-comparison-table__text').text()).toBe('2 GB')
     expect(wrapper.find('th.is-featured').exists()).toBe(true)
   })
+
+  it('compare 列头：图/色点/徽标/标语/价格/链接', () => {
+    const wrapper = mount(EvComparisonTable, {
+      props: {
+        columns: [
+          { label: 'Air 13', price: '¥6,999', priceNote: '起', colors: ['#d8dde6', '#2c3b55'] },
+          { label: 'Pro 14', tagline: '主力之选', badge: '新款', href: '#pro' },
+        ],
+        rows: [{ label: '尺寸', values: ['13.6 英寸', '14.2 英寸'] }],
+      },
+    })
+    expect(wrapper.find('.ev-comparison-table__col-image').exists()).toBe(false)
+    expect(wrapper.find('.ev-comparison-table__col-colors i').attributes('style')).toContain('#d8dde6')
+    expect(wrapper.find('.ev-comparison-table__col-badge').text()).toBe('新款')
+    expect(wrapper.find('.ev-comparison-table__col-tagline').text()).toBe('主力之选')
+    expect(wrapper.find('.ev-comparison-table__col-price b').text()).toBe('¥6,999')
+    expect(wrapper.find('.ev-comparison-table__col-label a').attributes('href')).toBe('#pro')
+  })
+
+  it('groups 分组陈列，标题行跨全表', () => {
+    const wrapper = mount(EvComparisonTable, {
+      props: {
+        columns: [{ label: 'A' }, { label: 'B' }],
+        groups: [
+          { title: '显示屏', rows: [{ label: '尺寸', values: ['13 英寸', '14 英寸'] }] },
+          { title: '续航', rows: [{ label: '视频播放', values: [true, true] }] },
+        ],
+      },
+    })
+    const titles = wrapper.findAll('.ev-comparison-table__group')
+    expect(titles.map((g) => g.text())).toEqual(['显示屏', '续航'])
+    expect(titles[0].attributes('colspan')).toBe('3')
+  })
+
+  it('数组值渲染多行文本；bordered 切网格边框；空值破折号', () => {
+    const wrapper = mount(EvComparisonTable, {
+      props: {
+        columns: [{ label: 'A' }, { label: 'B' }],
+        bordered: true,
+        rows: [
+          { label: '视频播放', values: [['15 小时', '节能模式 18 小时'], '17 小时'] },
+          { label: '离线模式', values: [false, true] },
+        ],
+      },
+    })
+    expect(wrapper.classes()).toContain('is-bordered')
+    const lines = wrapper.findAll('.ev-comparison-table__text.is-line')
+    expect(lines).toHaveLength(2)
+    expect(wrapper.findAll('.ev-comparison-table__dash')).toHaveLength(1)
+  })
 })
 
 describe('EvCta / EvNewsletter / EvLogoCloud / EvContainer', () => {

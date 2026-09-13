@@ -4,6 +4,8 @@
   display: grid;
   grid-template-columns: repeat(var(--ev-bento-columns, 3), 1fr);
   gap: var(--ev-bento-gap, 16px);
+  /* 以父容器宽度（而非视口）决定断点：嵌在窄栏里也能正确回落 */
+  container-type: inline-size;
 }
 
 .ev-bento.is-dense {
@@ -94,6 +96,8 @@
   width: 100%;
   border-radius: 12px;
   object-fit: cover;
+  /* 内嵌图给高度上限：宽卡上图片不会无限膨胀，卡面比例保持 Bento 感 */
+  max-height: 300px;
 }
 
 .ev-bento__card.is-top {
@@ -123,8 +127,9 @@
   height: 100%;
 }
 
-/* ─── 受宽回落：span 超出列数时整行；窄屏全部整行 ─── */
-@media (max-width: 760px) {
+/* ─── 受宽回落：随父容器宽度（容器查询）自动降列；span/rows 一并重置。
+   容器查询不可用时的视口媒体查询兜底 ─── */
+@container (max-width: 560px) {
   .ev-bento {
     grid-template-columns: 1fr;
   }
@@ -132,6 +137,19 @@
   .ev-bento__card {
     grid-column: auto;
     grid-row: auto;
+  }
+}
+
+@supports not (width: 1cqw) {
+  @media (max-width: 760px) {
+    .ev-bento {
+      grid-template-columns: 1fr;
+    }
+
+    .ev-bento__card {
+      grid-column: auto;
+      grid-row: auto;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 # 组件总览
 
-Evoke UI 共内置 **61 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
+Evoke UI 共内置 **60 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
 反馈与主题、移动端专属。每个组件卡片右上角带**平台兼容标识**：
 
 <span class="ov-legend"><ev-icon name="desktop" :size="13" /><ev-icon name="smartphone" :size="13" /> 双端兼容</span>
@@ -54,7 +54,6 @@ const groups = [
       { name: 'LogoCloud', cn: '品牌墙', desc: '弱化字标的信任背书位', path: '/components/logo-cloud', platform: 'desktop' },
       { name: 'PricingCard', cn: '定价卡', desc: '完整定价要素的转化卡', path: '/components/pricing-card', platform: 'desktop' },
       { name: 'ComparisonTable', cn: '对比表', desc: '多档位功能差异对照', path: '/components/comparison-table', platform: 'desktop' },
-      { name: 'Compare', cn: '方案对比', desc: '产品列 × 特性分组的 compare 页语言', path: '/components/compare', platform: 'desktop' },
       { name: 'Faq', cn: '手风琴', desc: '平滑展开的常见问题', path: '/components/faq', platform: 'desktop' },
       { name: 'Quote', cn: '评价', desc: '引号装饰的用户评价', path: '/components/quote', platform: 'both' },
       { name: 'ArticleCard', cn: '文章卡', desc: '封面 + 摘要的博客条目', path: '/components/article-card', platform: 'desktop' },

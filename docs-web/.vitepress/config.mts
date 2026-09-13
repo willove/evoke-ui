@@ -172,7 +172,6 @@ export default defineConfig({
             { text: 'LogoCloud 品牌墙', link: '/components/logo-cloud' },
             { text: 'PricingCard 定价卡', link: '/components/pricing-card' },
             { text: 'ComparisonTable 对比表', link: '/components/comparison-table' },
-            { text: 'Compare 方案对比', link: '/components/compare' },
             { text: 'Faq 手风琴', link: '/components/faq' },
             { text: 'Quote 评价', link: '/components/quote' },
             { text: 'ArticleCard 文章卡', link: '/components/article-card' },

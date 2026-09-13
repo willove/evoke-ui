@@ -29,6 +29,16 @@ const features = [
 
 const clients = ['栖云智造', '白泽数据', '拾贝科技', '南杉资本', '临港工场', '远山出行', '青梧网络', 'DeepRoot']
 
+// 产品能力改用 EvBento 图文组合分区：一大四小 + 色调穿插，比等宽栅格更有产品页的节奏
+const featureCards = [
+  { title: features[0].title, desc: features[0].description, tone: 'primary', span: 2 },
+  { title: features[1].title, desc: features[1].description, tone: 'dark' },
+  { title: features[2].title, desc: features[2].description },
+  { title: features[3].title, desc: features[3].description, tone: 'soft' },
+  { title: features[4].title, desc: features[4].description, span: 2 },
+  { title: features[5].title, desc: features[5].description },
+]
+
 // 滚动场景缓动：区段归一 + easeOutCubic
 const kpis = [
   { value: '12ms', label: '平均查询延迟' },
@@ -174,7 +184,7 @@ function submitDemo() {
     </EvSection>
 
     <EvSection id="features" eyebrow="产品能力" title="从数据源到决策，一条线打通" description="六个模块覆盖数据团队 80% 的日常工作，剩下的 20% 交给开放 API。">
-      <EvFeatureGrid variant="cards" :columns="3" :items="features" />
+      <EvBento :columns="3" dense :items="featureCards" />
     </EvSection>
 
     <EvScrollScene :duration="220" :top="37">
