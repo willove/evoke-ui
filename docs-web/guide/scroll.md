@@ -9,6 +9,10 @@ Evoke UI 把它拆成两个形态，与 [v-reveal](/guide/motion) 的触发型�
 - **触发型**（v-reveal）：元素进视口 → 播一次。适合入场点缀；
 - **进度驱动型**（本页）：元素在视口里的穿越程度 = 动画进度，双向可逆。适合产品叙事。
 
+本站就在实战使用：首页的「[三步，搭出一个官网](/)」滚动带、[企业官网案例](/cases/corporate)
+的「数据链路」折线（`stroke-dashoffset` 随滚动画出折线），都是 `EvScrollScene` 做的，
+源码就在页面里。
+
 ## EvScrollScene 场景
 
 `EvScrollScene` 外层按 `duration` 拉出滚动长度，内层 sticky 钉在视口里；

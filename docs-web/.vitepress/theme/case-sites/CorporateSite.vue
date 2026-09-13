@@ -159,6 +159,37 @@ function submitDemo() {
       <EvFeatureGrid variant="cards" :columns="3" :items="features" />
     </EvSection>
 
+    <EvScrollScene :duration="220" :top="37">
+      <template #default>
+        <div class="cs-story">
+          <div class="cs-story__copy">
+            <p class="cs-story__kicker">数据链路</p>
+            <p class="cs-story__headline">查询延迟，随滚动一步步压下来</p>
+            <p class="cs-story__desc">接入数据源、命中缓存、切换新引擎——这条折线随你的滚动逐段画出来，向上滚动原样回溯。</p>
+          </div>
+          <div class="cs-story__window">
+            <div class="cs-story__chrome"><i></i><i></i><i></i></div>
+            <div class="cs-story__body">
+              <svg class="cs-story__chart" viewBox="0 0 320 140" fill="none" aria-hidden="true">
+                <line v-for="i in 3" :key="i" x1="16" :y1="i * 36" x2="304" :y2="i * 36" class="cs-story__grid" />
+                <path
+                  class="cs-story__line"
+                  d="M16 118 C 60 112, 84 96, 116 88 S 176 78, 208 56 S 276 28, 304 22"
+                  pathLength="1"
+                />
+                <circle class="cs-story__dot" cx="304" cy="22" r="4" />
+              </svg>
+              <div class="cs-story__kpis">
+                <div class="cs-story__kpi"><b>12ms</b><span>平均查询延迟</span></div>
+                <div class="cs-story__kpi"><b>99.99%</b><span>服务可用性</span></div>
+                <div class="cs-story__kpi"><b>40+</b><span>地域节点</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </EvScrollScene>
+
     <div class="case-band">
       <div class="ev-container cs-stats">
         <EvStatistic value="99.99%" label="服务可用性" align="center" animated />
@@ -323,5 +354,116 @@ function submitDemo() {
   gap: 20px;
   max-width: 920px;
   margin-inline: auto;
+}
+
+/* ─── 数据链路滚动场景：折线随滚动画出（EvScrollScene 实战）─── */
+.cs-story {
+  max-width: 880px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: 44px;
+  align-items: center;
+  padding: 0 24px;
+}
+.cs-story__kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: var(--ev-font-weight-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ev-color-primary);
+}
+.cs-story__headline {
+  margin: 10px 0 0;
+  font-size: 26px;
+  font-weight: var(--ev-display-weight-strong, 600);
+  line-height: 1.35;
+  color: var(--ev-text-primary);
+}
+.cs-story__desc {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ev-text-secondary);
+}
+.cs-story__window {
+  border: 1px solid var(--ev-border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ev-bg-container);
+  box-shadow: var(--ev-shadow-3);
+  opacity: clamp(0, var(--ev-scene-progress) * 4, 1);
+  transform: translateY(calc((1 - min(var(--ev-scene-progress) * 3, 1)) * 28px));
+}
+.cs-story__chrome {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--ev-fill-1);
+}
+.cs-story__chrome i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ev-border-color-dark);
+}
+.cs-story__body {
+  padding: 20px 22px 22px;
+}
+.cs-story__chart {
+  display: block;
+  width: 100%;
+}
+.cs-story__grid {
+  stroke: var(--ev-border-color-light);
+  stroke-width: 1;
+}
+/* pathLength=1 归一化：dashoffset 从 1 → 0，折线随滚动逐段画出 */
+.cs-story__line {
+  stroke: var(--ev-color-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--ev-scene-progress) * 1.06);
+}
+.cs-story__dot {
+  fill: var(--ev-color-primary);
+  opacity: clamp(0, (var(--ev-scene-progress) - 0.82) * 6, 1);
+}
+.cs-story__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.cs-story__kpi {
+  padding: 12px 14px;
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: 10px;
+}
+.cs-story__kpi:nth-child(1) {
+  opacity: clamp(0, (var(--ev-scene-progress) - 0.42) * 5, 1);
+}
+.cs-story__kpi:nth-child(2) {
+  opacity: clamp(0, (var(--ev-scene-progress) - 0.52) * 5, 1);
+}
+.cs-story__kpi:nth-child(3) {
+  opacity: clamp(0, (var(--ev-scene-progress) - 0.62) * 5, 1);
+}
+.cs-story__kpi b {
+  display: block;
+  font-size: 18px;
+  color: var(--ev-text-primary);
+}
+.cs-story__kpi span {
+  font-size: 11px;
+  color: var(--ev-text-secondary);
+}
+@media (max-width: 760px) {
+  .cs-story {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 </style>

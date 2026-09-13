@@ -277,6 +277,43 @@ function goSearch() {
     </div>
   </EvSection>
 
+  <EvSection eyebrow="scroll story" title="三步，搭出一个官网" description="不用点任何按钮——向下滚动，这个浏览器窗口会经历首屏、填充版块、切换暗色三幕；向上滚动，整个过程原样回溯。这就是 EvScrollScene：滚动条就是时间轴。" align="center">
+    <EvScrollScene :duration="240" :top="37">
+      <template #default="{ progress }">
+        <div class="home-story">
+          <div class="home-story__browser">
+            <div class="home-story__chrome"><i></i><i></i><i></i></div>
+            <div class="home-story__viewport">
+              <div class="home-story__nav">
+                <span class="home-story__logo">Aurora</span>
+                <span class="home-story__links"><i>产品</i><i>定价</i><i>博客</i></span>
+                <span class="home-story__navbtn">开始使用</span>
+              </div>
+              <div class="home-story__hero">
+                <p class="home-story__headline">把官网交给组件</p>
+                <p class="home-story__tagline">安静优雅的 Vue 3 官网组件库</p>
+                <span class="home-story__cta">免费开始</span>
+              </div>
+              <div class="home-story__cards">
+                <div class="home-story__card"><b>响应式</b><span>窄屏自动降列</span></div>
+                <div class="home-story__card"><b>定价卡</b><span>转化一次配齐</span></div>
+                <div class="home-story__card"><b>暗色主题</b><span>一行开关</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="home-story__captions">
+            <span :class="{ 'is-active': progress < 0.33 }">① 首屏立住气质</span>
+            <span :class="{ 'is-active': progress >= 0.33 && progress < 0.66 }">② 版块填充内容</span>
+            <span :class="{ 'is-active': progress >= 0.66 }">③ 一键切到暗色</span>
+          </div>
+        </div>
+      </template>
+    </EvScrollScene>
+    <div class="home-links">
+      <EvButton variant="outline" icon-right="arrow-right" href="/guide/scroll">滚动叙事怎么做</EvButton>
+    </div>
+  </EvSection>
+
   <EvSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center">
     <div class="home-cases">
       <a class="home-case" href="/cases/corporate">
@@ -340,6 +377,137 @@ function goSearch() {
 />
 
 <style>
+/* ─── 滚动叙事：三步搭官网（EvScrollScene 实战）─── */
+.home-story {
+  --p: var(--ev-scene-progress);
+  --d: clamp(0, (var(--p) - 0.66) * 3, 1);
+  max-width: 680px;
+  margin: 0 auto;
+}
+.home-story__browser {
+  border: 1px solid var(--ev-border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--ev-shadow-3);
+  /* 第一幕：窗口随滚上浮进场 */
+  opacity: calc(var(--p) * 4);
+  transform: translateY(calc((1 - min(var(--p) * 3, 1)) * 28px));
+}
+.home-story__chrome {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, #eef1f6 calc((1 - var(--d)) * 100%), #1a2334 calc(var(--d) * 100%));
+}
+.home-story__chrome i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #c8d0dd;
+}
+.home-story__viewport {
+  padding: 22px 26px 26px;
+  text-align: left;
+  background-color: color-mix(in srgb, #f8fafc calc((1 - var(--d)) * 100%), #0e1420 calc(var(--d) * 100%));
+}
+.home-story__nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+}
+.home-story__logo {
+  font-weight: 700;
+  font-size: 13px;
+  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
+}
+.home-story__links {
+  display: flex;
+  gap: 12px;
+  color: color-mix(in srgb, #66748c calc((1 - var(--d)) * 100%), #9db4d8 calc(var(--d) * 100%));
+}
+.home-story__links i {
+  font-style: normal;
+}
+.home-story__navbtn {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ev-color-primary);
+  color: #fff;
+  font-size: 11px;
+}
+.home-story__headline {
+  margin: 34px 0 0;
+  font-size: 30px;
+  font-weight: 200;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
+}
+.home-story__tagline {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: color-mix(in srgb, #66748c calc((1 - var(--d)) * 100%), #9db4d8 calc(var(--d) * 100%));
+}
+.home-story__cta {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--ev-color-primary);
+  color: #fff;
+  font-size: 12px;
+}
+.home-story__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 30px;
+}
+.home-story__card {
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--ev-border-color) calc((1 - var(--d)) * 100%), #243247 calc(var(--d) * 100%));
+  border-radius: 10px;
+  /* 第二幕：三张卡随滚动错拍浮入 */
+  opacity: clamp(0, (var(--p) - 0.38) * 5, 1);
+  transform: translateY(clamp(-16px, (0.38 - var(--p)) * 120px, 0px));
+  background: color-mix(in srgb, #ffffff calc((1 - var(--d)) * 100%), #16233a calc(var(--d) * 100%));
+}
+.home-story__card:nth-child(2) {
+  opacity: clamp(0, (var(--p) - 0.45) * 5, 1);
+  transform: translateY(clamp(-16px, (0.45 - var(--p)) * 120px, 0px));
+}
+.home-story__card:nth-child(3) {
+  opacity: clamp(0, (var(--p) - 0.52) * 5, 1);
+  transform: translateY(clamp(-16px, (0.52 - var(--p)) * 120px, 0px));
+}
+.home-story__card b {
+  display: block;
+  font-size: 13px;
+  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
+}
+.home-story__card span {
+  font-size: 11px;
+  color: color-mix(in srgb, #8a96a9 calc((1 - var(--d)) * 100%), #7d92b5 calc(var(--d) * 100%));
+}
+.home-story__captions {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--ev-text-secondary);
+}
+.home-story__captions span {
+  opacity: 0.45;
+  transition: opacity var(--ev-duration-base) var(--ev-ease-in-out), color var(--ev-duration-base) var(--ev-ease-in-out);
+}
+.home-story__captions span.is-active {
+  opacity: 1;
+  color: var(--ev-color-primary);
+  font-weight: 600;
+}
+
 .home-brand {
   display: inline-flex;
   align-items: center;
