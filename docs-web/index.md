@@ -126,6 +126,9 @@ function storyCard(p, i) {
   const e = easeOut(seg(p, 0.34 + i * 0.08, 0.34 + i * 0.08 + 0.28))
   return { opacity: e, transform: `translateY(${((1 - e) * 18).toFixed(2)}px)` }
 }
+function storyFade(p, a, b) {
+  return { opacity: easeOut(seg(p, a, b)) }
+}
 </script>
 
 <EvNavbar class="home-navbar" logo-text="Evoke UI" :items="[
@@ -311,10 +314,22 @@ function storyCard(p, i) {
                 <p class="home-story__tagline">安静优雅的 Vue 3 官网组件库</p>
                 <span class="home-story__cta">免费开始</span>
               </div>
+              <div class="home-story__logos" :style="storyFade(progress, 0.3, 0.52)">
+                <span v-for="l in ['Lumen', 'Northwind', 'Vela', 'Kite', 'Onyx']" :key="l">{{ l }}</span>
+              </div>
               <div class="home-story__cards">
                 <div v-for="(c, i) in [{ b: '响应式', s: '窄屏自动降列' }, { b: '定价卡', s: '转化一次配齐' }, { b: '暗色主题', s: '一行开关' }]" :key="c.b" class="home-story__card" :style="storyCard(progress, i)">
                   <b>{{ c.b }}</b><span>{{ c.s }}</span>
                 </div>
+              </div>
+              <div class="home-story__stats" :style="storyFade(progress, 0.55, 0.8)">
+                <div><b>99.9%</b><span>构建可用性</span></div>
+                <div><b>12ms</b><span>平均响应</span></div>
+                <div><b>40+</b><span>开箱组件</span></div>
+              </div>
+              <div class="home-story__foot" :style="storyFade(progress, 0.62, 0.88)">
+                <span>© 2026 Aurora Inc.</span>
+                <span>用 Evoke UI 搭建</span>
               </div>
             </div>
           </div>
@@ -324,10 +339,14 @@ function storyCard(p, i) {
             <span :class="{ 'is-active': progress >= 0.66 }">③ 一键切到暗色</span>
           </div>
         </div>
+        <div class="home-story__hint" :style="{ opacity: 1 - seg(progress, 0, 0.18) }">
+          <span class="home-story__mouse"><i></i></span>
+          <span>向下滚动，看官网搭起来</span>
+        </div>
       </template>
     </EvScrollScene>
     <div class="home-links">
-      <EvButton variant="outline" icon-right="arrow-right" href="/guide/scroll">滚动叙事怎么做</EvButton>
+      <EvButton variant="outline" icon-right="arrow-right" href="/guide/scroll">了解滚动效果的实现？点击这里</EvButton>
     </div>
   </EvSection>
 
@@ -422,7 +441,7 @@ function storyCard(p, i) {
   background: #c8d0dd;
 }
 .home-story__viewport {
-  min-height: 520px;
+  min-height: 560px;
   padding: 30px 40px 40px;
   text-align: left;
   display: flex;
@@ -504,6 +523,92 @@ function storyCard(p, i) {
 .home-story__card span {
   font-size: 12px;
   color: color-mix(in srgb, #8a96a9 calc((1 - var(--d)) * 100%), #7d92b5 calc(var(--d) * 100%));
+}
+.home-story__logos {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--ev-border-color) calc((1 - var(--d)) * 100%), #243247 calc(var(--d) * 100%));
+}
+.home-story__logos span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, #a4b0c2 calc((1 - var(--d)) * 100%), #5d7194 calc(var(--d) * 100%));
+}
+.home-story__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.home-story__stats > div {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: color-mix(in srgb, #f1f4f9 calc((1 - var(--d)) * 100%), #1b2a44 calc(var(--d) * 100%));
+}
+.home-story__stats b {
+  display: block;
+  font-size: 16px;
+  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
+}
+.home-story__stats span {
+  font-size: 11px;
+  color: color-mix(in srgb, #8a96a9 calc((1 - var(--d)) * 100%), #7d92b5 calc(var(--d) * 100%));
+}
+.home-story__foot {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px -40px -40px;
+  padding: 14px 40px;
+  font-size: 11px;
+  color: #8a96a9;
+  background: color-mix(in srgb, #eef1f6 calc((1 - var(--d)) * 100%), #1a2334 calc(var(--d) * 100%));
+}
+/* 悬浮鼠标提示：首幕可见，开滚即淡出 */
+.home-story__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--ev-text-secondary);
+  pointer-events: none;
+}
+.home-story__mouse {
+  width: 22px;
+  height: 34px;
+  border: 2px solid var(--ev-text-secondary);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+  box-sizing: border-box;
+}
+.home-story__mouse i {
+  width: 3px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--ev-color-primary);
+  animation: home-mouse-wheel 1.6s var(--ev-ease-in-out) infinite;
+}
+@keyframes home-mouse-wheel {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(10px); opacity: 0; }
+  71% { transform: translateY(0); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-story__mouse i {
+    animation: none;
+  }
 }
 .home-story__captions {
   display: flex;
