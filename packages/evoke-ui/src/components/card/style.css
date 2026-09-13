@@ -60,11 +60,15 @@
 }
 
 /* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop；
-   backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
+   backdrop-filter 不可用时整条不生效，自动回落实底。
+   配方 = 半透明底 + blur/saturate + 发丝描边 + 顶缘 1px 高光（--ev-glass-edge）；
+   粉彩 tone / sticker / featured 是刻意的不透明风格，全局与显式玻璃态都跳过 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ev-card.is-glass,
-  html[data-ev-glass='on'] .ev-card:not(.no-glass) {
+  .ev-card.is-glass:not(.is-featured):not(.is-sticker):not(.is-soft):not(.is-cream):not(.is-blue):not(.is-mint):not(.is-pink):not(.is-lime),
+  html[data-ev-glass='on'] .ev-card:not(.no-glass):not(.is-featured):not(.is-sticker):not(.is-soft):not(.is-cream):not(.is-blue):not(.is-mint):not(.is-pink):not(.is-lime) {
     background-color: var(--ev-glass-bg);
+    background-image: linear-gradient(180deg, var(--ev-glass-edge) 0px, transparent 1px);
+    border-color: var(--ev-glass-border);
     -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
     backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }

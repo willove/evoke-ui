@@ -3,7 +3,8 @@
     <Transition name="ev-image-preview">
       <div
         v-if="visible"
-        class="ev-image-preview"
+        :class="['ev-image-preview', { 'is-glass': glass === true, 'no-glass': glass === false }]"
+        :style="glassVars"
         role="dialog"
         aria-modal="true"
         :aria-label="`图片预览（${index + 1} / ${count}）`"
@@ -66,6 +67,11 @@ const props = defineProps({
   index: { type: Number, default: 0 },
   /** Esc 关闭 */
   escClose: { type: Boolean, default: true },
+  /** 磨砂预览背景：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass）；
+    开启后遮罩减淡 + 全幅磨砂，关闭/箭头按钮同步玻璃化 */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits(['update:modelValue', 'update:index', 'open', 'close', 'change'])
@@ -79,6 +85,12 @@ const normalized = computed(() =>
 )
 
 const current = computed(() => normalized.value[props.index])
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 
 function close() {
   emit('update:modelValue', false)

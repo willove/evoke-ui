@@ -128,6 +128,8 @@ function onCancel() {}
 | append-to-body | boolean | true | Teleport 到 body；嵌套滚动容器/演示壳内置 false |
 | lock-scroll | boolean | true | 打开期间锁定页面滚动 |
 | before-close | (done) => void | — | 关闭前拦截，不调用 done 则阻止 |
+| glass | boolean | — | 磨砂玻璃面板；缺省跟随全局（ConfigProvider glass） |
+| blur | number / string | — | 磨砂强度（px），内联覆盖 `--ev-glass-blur` |
 
 ### 事件
 

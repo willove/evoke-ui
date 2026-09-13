@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :class="['ev-article-card', { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]" :href="tag === 'a' ? href : undefined">
+  <component :is="tag" :class="['ev-article-card', { 'is-hoverable': hoverable, 'is-glass': glass === true, 'no-glass': glass === false }]" :style="glassVars" :href="tag === 'a' ? href : undefined">
     <div class="ev-article-card__cover" :style="coverStyle">
       <img v-if="cover" :src="cover" :alt="title" loading="lazy" />
       <EvIcon v-else-if="icon" :name="icon" :size="28" class="ev-article-card__cover-icon" />
@@ -30,6 +30,8 @@ import EvIcon from '../icon/index.vue'
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
   title: { type: String, default: '' },
   excerpt: { type: String, default: '' },
   cover: { type: String, default: '' },
@@ -46,6 +48,12 @@ const props = defineProps({
 const coverStyle = computed(() =>
   props.cover ? undefined : { background: 'linear-gradient(135deg, var(--ev-fill-1), var(--ev-bg-soft))' }
 )
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 </script>
 
 <style src="./style.css"></style>

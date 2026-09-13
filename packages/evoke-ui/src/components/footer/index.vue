@@ -1,5 +1,5 @@
 <template>
-  <footer :class="['ev-footer', { 'is-soft': soft, 'is-glass': glass === true, 'no-glass': glass === false }]">
+  <footer :class="['ev-footer', { 'is-soft': soft, 'is-glass': glass === true, 'no-glass': glass === false }]" :style="glassVars">
     <div class="ev-container">
       <div v-if="columns.length || $slots.default" class="ev-footer__main">
         <div class="ev-footer__brand">
@@ -43,9 +43,13 @@
  * EvFooter — 站点页脚
  * columns [{ title, links: [{ label, href, target }] }] 多栏链接 + 品牌区 + 底部版权条
  */
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
   /** 链接栏 [{ title, links: [{ label, href, target }] }] */
   columns: { type: Array, default: () => [] },
   /** 品牌名（logo 槽缺省渲染） */
@@ -56,6 +60,12 @@ defineProps({
   copyright: { type: String, default: '' },
   /** 淡灰底形态 */
   soft: { type: Boolean, default: false },
+})
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
 })
 </script>
 

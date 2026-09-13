@@ -111,6 +111,8 @@ const tabContent = {
 | placeholder | boolean | true | fixed 时渲染等高占位 |
 | border | boolean | true | 顶部分隔线 |
 | safe-area-inset-bottom | boolean | true | 适配全面屏底部安全区 |
+| glass | boolean | — | 磨砂玻璃标签栏；缺省跟随全局（ConfigProvider glass） |
+| blur | number / string | — | 磨砂强度（px），内联覆盖 `--ev-glass-blur` |
 
 ### EvTabbarItem
 

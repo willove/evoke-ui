@@ -61,6 +61,8 @@
 | avatar | 头像图片地址 | string | — |
 | avatar-size | 头像尺寸（px 或 EvAvatar 预设） | number / string | `72` |
 | plain | 朴素形态（无卡面） | boolean | `false` |
+| glass | 磨砂玻璃质感（plain 形态不参与）；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 插槽
 

@@ -52,6 +52,7 @@
 | image | 人物半身图（建议透明背景 PNG） | string | `''` |
 | portrait-height | 人物舞台高度（px） | number | `190` |
 | glass | 磨砂玻璃质感；缺省跟随全局 | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 插槽
 

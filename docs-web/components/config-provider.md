@@ -29,9 +29,14 @@
 
 ## 全局磨砂
 
-`glass` 打开后，容器类组件（Card / Section / Footer / Navbar / ArticleCard / PricingCard / ProfileCard）
-默认呈现玻璃质感：半透明底色 + `backdrop-filter` 模糊，上下叠加时透出下层内容；
-组件级 `glass` prop 可单独强制开或关（三态）。浏览器不支持 `backdrop-filter` 时自动回落实底。
+`glass` 打开后，容器与浮层类组件默认呈现玻璃质感：半透明底色 + `backdrop-filter` 模糊，
+配发丝描边与顶缘高光，上下叠加时透出下层内容。覆盖：
+Card / Section / Footer / Navbar / ArticleCard / PricingCard / ProfileCard / ExecCard /
+Modal（面板）/ ImagePreview（预览背景）/ ActionSheet / Tabbar / NavBar / Select（下拉面板）。
+
+组件级 `glass` prop 可单独强制开或关（三态）；`blur` prop 可单独调磨砂强度（px）。
+浏览器不支持 `backdrop-filter` 时自动回落实底。Card 的粉彩 tone / sticker / featured
+是刻意的不透明风格，不受全局磨砂影响。
 
 <DemoBlock title="全局磨砂 + 叠层" description="开关写入 html 属性全站生效，离开页面自动还原；渐变底上的玻璃卡透出彼此的边缘。">
 

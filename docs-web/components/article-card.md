@@ -60,6 +60,8 @@
 | href | 链接地址（tag 为 `'a'` 时生效） | string | — |
 | tag | 渲染标签 | string | `'article'` |
 | hoverable | 悬浮上浮 + 封面缩放 | boolean | `true` |
+| glass | 磨砂玻璃质感；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 插槽
 

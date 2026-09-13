@@ -69,5 +69,6 @@ export { default as EvLoadMore } from '../src/components/load-more/index.vue'
 export { default as EvActionSheet } from '../src/components/action-sheet/index.vue'
 export { default as EvTabbar } from '../src/components/tabbar/index.vue'
 export { default as EvTabbarItem } from '../src/components/tabbar/item.vue'
+export { default as EvNavBar } from '../src/components/nav-bar/index.vue'
 
 export { registerIcons, getIconByName, getIconNames, hasIcon } from '../src/components/icon/iconRegistry'

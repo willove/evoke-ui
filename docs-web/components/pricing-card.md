@@ -85,6 +85,8 @@
 | featured | 深色主推形态 | boolean | `false` |
 | action-text | 动作按钮文案 | string | — |
 | pill | 动作按钮胶囊形态 | boolean | `true` |
+| glass | 磨砂玻璃质感（featured 主推卡不参与）；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 插槽
 

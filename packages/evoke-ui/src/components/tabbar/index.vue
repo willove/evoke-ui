@@ -2,7 +2,11 @@
   <div>
     <!-- fixed 模式下的占位，避免标签栏脱离文档流后遮挡内容尾部 -->
     <div v-if="fixed && placeholder" class="ev-tabbar__placeholder" :style="{ height: `${barHeight}px` }" />
-    <div :class="['ev-tabbar', { 'is-fixed': fixed, 'is-border': border, 'is-safe': safeAreaInsetBottom }]">
+    <div
+      ref="barRef"
+      :class="['ev-tabbar', { 'is-fixed': fixed, 'is-border': border, 'is-safe': safeAreaInsetBottom, 'is-glass': glass === true, 'no-glass': glass === false }]"
+      :style="glassVars"
+    >
       <slot />
     </div>
   </div>
@@ -28,6 +32,10 @@ const props = defineProps({
   border: { type: Boolean, default: true },
   /** 适配全面屏底部安全区 */
   safeAreaInsetBottom: { type: Boolean, default: true },
+  /** 磨砂玻璃标签栏：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -37,6 +45,12 @@ const barHeight = ref(50)
 let resizeObserver = null
 
 const current = computed(() => props.modelValue)
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 
 const items = ref([])
 

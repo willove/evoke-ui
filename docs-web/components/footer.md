@@ -46,6 +46,8 @@
 | slogan | 品牌语 | string | — |
 | copyright | 版权文案 | string | — |
 | soft | 淡雾底形态 | boolean | `false` |
+| glass | 磨砂玻璃质感；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 插槽
 

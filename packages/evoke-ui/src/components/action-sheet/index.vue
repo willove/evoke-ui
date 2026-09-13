@@ -9,7 +9,8 @@
       >
         <div
           ref="panelRef"
-          :class="['ev-action-sheet', { 'is-round': round }]"
+          :class="['ev-action-sheet', { 'is-round': round, 'is-glass': glass === true, 'no-glass': glass === false }]"
+          :style="glassVars"
           role="dialog"
           aria-modal="true"
           :aria-label="title || 'action sheet'"
@@ -71,6 +72,10 @@ const props = defineProps({
   lockScroll: { type: Boolean, default: true },
   /** 关闭前拦截：不调用入参 done 则阻止本次关闭 */
   beforeClose: { type: Function, default: undefined },
+  /** 磨砂玻璃面板：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits([
@@ -88,6 +93,12 @@ let zSeed = 0
 const zIndex = computed(() => 2000 + zSeed)
 
 const visible = computed(() => props.modelValue)
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 
 // SSR 安全：构建期无 window/document，watch immediate 的关闭分支不能触碰 DOM
 const hasDom = typeof window !== 'undefined'

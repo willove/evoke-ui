@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['ev-exec-card', { 'is-glass': glass === true, 'no-glass': glass === false }]"
-    :style="{ '--ev-exec-portrait-h': `${portraitHeight}px` }"
+    :style="[{ '--ev-exec-portrait-h': `${portraitHeight}px` }, glassVars]"
   >
     <div class="ev-exec-card__stage">
       <img
@@ -51,9 +51,13 @@
  * 未传 image 时渲染内置人物剪影占位。展示型 title 用强字距展示体。
  * props：name / role / description / image / portraitHeight（舞台高度，px）
  */
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
   name: { type: String, default: '' },
   /** 职务/头衔（展示型小标签排版） */
   role: { type: String, default: '' },
@@ -62,6 +66,12 @@ defineProps({
   image: { type: String, default: '' },
   /** 人物舞台高度（px） */
   portraitHeight: { type: Number, default: 190 },
+})
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
 })
 </script>
 

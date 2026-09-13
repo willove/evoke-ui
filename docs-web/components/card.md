@@ -88,7 +88,8 @@
 | featured | 深色精选形态 | boolean | `false` |
 | hoverable | 悬浮轻抬 | boolean | `false` |
 | flat | 去边框与阴影（嵌入场景） | boolean | `false` |
-| glass | 磨砂玻璃质感；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| glass | 磨砂玻璃质感（粉彩 tone / sticker / featured 不参与）；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 | tag | 渲染标签（可传 `'a'`） | string | `'div'` |
 | custom-bg | 自定义底色（覆盖 tone） | string | — |
 

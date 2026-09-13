@@ -1,5 +1,8 @@
 <template>
-  <div :class="['ev-nav-bar', { 'is-bordered': bordered }]">
+  <div
+    :class="['ev-nav-bar', { 'is-bordered': bordered, 'is-glass': glass === true, 'no-glass': glass === false }]"
+    :style="glassVars"
+  >
     <div v-if="fixed && placeholder" class="ev-nav-bar__placeholder" aria-hidden="true" />
     <header
       :class="['ev-nav-bar__inner', { 'is-fixed': fixed }]"
@@ -31,11 +34,12 @@
  * 配 placeholder 生成等高占位避免内容顶到头下。区别于桌面站点的 EvNavbar。
  * 前台库零外部依赖：无滚动锁定与层级计数，固定层级默认压在弹层之下。
  */
+import { computed } from 'vue'
 import EvIcon from '../icon/index.vue'
 
 defineOptions({ name: 'EvNavBar' })
 
-defineProps({
+const props = defineProps({
   /** 标题文本（title 插槽可替换） */
   title: { type: String, default: '' },
   /** 左区文案（常配「返回」），left 插槽可替换 */
@@ -52,9 +56,19 @@ defineProps({
   bordered: { type: Boolean, default: true },
   /** fixed 时的层级（默认压在弹层之下） */
   zIndex: { type: Number, default: 900 },
+  /** 磨砂玻璃页头：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits(['click-left', 'click-right'])
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 </script>
 
 <style src="./style.css"></style>

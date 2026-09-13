@@ -3,6 +3,7 @@
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
 ## [Unreleased]
+
 ### @wil-works/evoke-charts — 统一交互规范（DESIGN.md §13）落地
 
 - **规范成文**：DESIGN.md 新增「交互规范」章节——三条总纲（悬浮即时无动画 /
@@ -20,6 +21,25 @@
 - 键盘导航（容器聚焦 / 方向键索引）与触屏捏合缩放列为路线图后续期次；
 - 文档站「交互与联动」页新增「统一手势约定」章节并对齐事件表。
 
+### @wil-works/evoke-ui — 磨砂全家桶：浮层/预览/导航接入 + 玻璃配方现代化 + blur 强度 prop
+
+- **新接入七个组件**：Modal（面板）、ImagePreview（磨砂预览背景——遮罩减淡整幅雾化，
+  关闭/箭头按钮同步玻璃化）、ActionSheet（标题/列表/取消栏连片统一取景，块间缝隙
+  透出磨砂而非生页面）、Tabbar、NavBar（移动端页头）、Select（下拉面板）；
+  ExecCard 此前有 `glass` prop 但样式缺失，本轮补齐落地；
+- **玻璃配方升级**：新增 `--ev-glass-edge`（顶缘 1px 高光，液态玻璃质感）与
+  `--ev-glass-border`（发丝描边替代实底描边）两组令牌，明暗各一档；Card 家族
+  （card / article-card / pricing-card / profile-card / exec-card）统一换新配方；
+- **刻制不透明风格豁免**：Card 的粉彩 tone / sticker / featured 不再被全局磨砂
+  冲刷（沿用 pricing featured / profile plain 的既有先例）；
+- **blur 强度 prop 对齐 business-ui**：全部 14 个玻璃组件支持 `blur`（number/string，
+  px），内联覆盖 `--ev-glass-blur` 实现单组件独立调强度，缺省跟随令牌；
+  Navbar 的 `blur`（滚动后磨砂开关，boolean）保持原语义不变；
+- **顺手修复**：Tabbar 的 `barRef` 从未绑定到模板，占位高度测量（measure /
+  ResizeObserver）一直空转，固定 50px 兜底；本轮接通；
+- 测试扩至 18 项（弹层/预览/导航家族三态 + blur 内联覆盖 + 0 值显式生效），
+  文档同步 config-provider 磨砂章节与各组件 API 行（Modal / ImagePreview 新增
+  磨砂演示）。
 
 ### @wil-works/evoke-charts — 内置色系一键应用（options.palette）
 

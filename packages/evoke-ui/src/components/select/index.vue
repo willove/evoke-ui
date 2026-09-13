@@ -1,7 +1,8 @@
 <template>
   <div
     ref="rootRef"
-    :class="['ev-select', `is-${size}`, { 'is-bare': bare, 'is-open': open, 'is-disabled': disabled, 'is-error': error }]"
+    :class="['ev-select', `is-${size}`, { 'is-bare': bare, 'is-open': open, 'is-disabled': disabled, 'is-error': error, 'is-glass': glass === true, 'no-glass': glass === false }]"
+    :style="glassVars"
     @keydown.esc.stop="close"
   >
     <button
@@ -70,6 +71,10 @@ const props = defineProps({
     default: 'default',
     validator: (v) => ['small', 'default', 'large'].includes(v),
   },
+  /** 下拉面板磨砂：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits(['update:modelValue', 'change', 'visible-change'])
@@ -84,6 +89,12 @@ const caretSize = computed(() => (props.size === 'small' ? 13 : 15))
 const selected = computed(() => props.options.find((o) => o.value === current.value))
 const selectedLabel = computed(() => selected.value?.label || '')
 const selectedIcon = computed(() => selected.value?.icon || '')
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 
 function onDocClick(e) {
   if (rootRef.value && !rootRef.value.contains(e.target)) close()

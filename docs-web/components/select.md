@@ -82,6 +82,8 @@ const city = ref('sh')
 | placement | 菜单方向 | `'bottom' \| 'top'` | `'bottom'` |
 | disabled / error | 状态 | boolean | `false` |
 | size | 尺寸 | `'small' \| 'default' \| 'large'` | `'default'` |
+| glass | 下拉面板磨砂；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 事件
 

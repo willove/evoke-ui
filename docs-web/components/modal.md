@@ -4,6 +4,7 @@
 import { ref } from 'vue'
 const basicVisible = ref(false)
 const mailVisible = ref(false)
+const glassVisible = ref(false)
 const email = ref('')
 const code = ref('')
 const sent = ref(false)
@@ -83,6 +84,29 @@ const sent = ref(false)
 
 </DemoBlock>
 
+## 磨砂玻璃面板
+
+<DemoBlock title="glass 磨砂面板" description="玻璃态下面板变半透明雾面，底层页面透出模糊色彩；blur 可单独调强度。">
+
+<div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px;">
+  <EvButton @click="glassVisible = true">打开磨砂弹出层</EvButton>
+</div>
+
+<EvModal v-model="glassVisible" glass title="磨砂面板" width="420px">
+  <p style="margin:0;">面板呈半透明雾面，背后的渐变被模糊成柔和色块。</p>
+  <template #footer>
+    <EvButton size="small" @click="glassVisible = false">关闭</EvButton>
+  </template>
+</EvModal>
+
+```vue
+<EvModal v-model="visible" glass title="磨砂面板">
+  <p>面板呈半透明雾面…</p>
+</EvModal>
+```
+
+</DemoBlock>
+
 ## API
 
 ### Props
@@ -96,6 +120,8 @@ const sent = ref(false)
 | esc-close | Esc 关闭 | boolean | `true` |
 | lock-scroll | 打开期间锁定页面滚动 | boolean | `true` |
 | show-close | 右上角关闭按钮 | boolean | `true` |
+| glass | 磨砂玻璃面板；缺省跟随全局（ConfigProvider glass） | boolean | — |
+| blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 
 ### 事件
 

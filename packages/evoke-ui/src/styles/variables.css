@@ -260,11 +260,22 @@ html.dark {
   --ev-focus-ring: 0 0 0 2px rgba(var(--ev-color-primary-rgb), 0.45);
 }
 
-/* ═══ 磨砂（glass）配方令牌：容器 is-glass 态取值，明暗共用；
-   全局开关 = ConfigProvider glass / useThemeConfig.setGlass（html[data-ev-glass]） ═══ */
+/* ═══ 磨砂（glass）配方令牌：容器 is-glass 态取值；
+   全局开关 = ConfigProvider glass / useThemeConfig.setGlass（html[data-ev-glass]）；
+   blur/saturate/bg 明暗共用（bg 引用 --ev-bg-container 随暗色自动换算），
+   顶缘高光与描边按明暗各给一档 ═══ */
 :root {
   --ev-glass-blur: 16px;
   --ev-glass-saturate: 1.5;
   /* 磨砂底色一次配好：color-mix 的百分比不能走 var()，必须整体出令牌 */
   --ev-glass-bg: color-mix(in srgb, var(--ev-bg-container) 72%, transparent);
+  /* 玻璃态顶缘高光：is-glass 态以 1px 渐变线打亮上缘（液态玻璃质感） */
+  --ev-glass-edge: rgba(255, 255, 255, 0.42);
+  /* 玻璃态描边：实底描边在磨砂下显生硬，换半透明发丝线 */
+  --ev-glass-border: color-mix(in srgb, var(--ev-border-color) 45%, transparent);
+}
+
+html.dark {
+  --ev-glass-edge: rgba(255, 255, 255, 0.16);
+  --ev-glass-border: color-mix(in srgb, var(--ev-border-color) 60%, transparent);
 }

@@ -8,11 +8,11 @@
       >
         <div
           ref="panelRef"
-          class="ev-modal__panel"
+          :class="['ev-modal__panel', { 'is-glass': glass === true, 'no-glass': glass === false }]"
           role="dialog"
           aria-modal="true"
           :aria-label="title || '对话框'"
-          :style="panelStyle"
+          :style="[panelStyle, glassVars]"
           tabindex="-1"
         >
           <header v-if="title || $slots.header || showClose" class="ev-modal__header">
@@ -69,6 +69,10 @@ const props = defineProps({
   lockScroll: { type: Boolean, default: true },
   /** 右上角关闭按钮 */
   showClose: { type: Boolean, default: true },
+  /** 磨砂玻璃面板：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
+  glass: { type: Boolean, default: undefined },
+  /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
+  blur: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits([
@@ -83,6 +87,12 @@ const visible = computed(() => props.modelValue)
 const panelStyle = computed(() => ({
   width: typeof props.width === 'number' ? `${props.width}px` : props.width,
 }))
+
+// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
+const glassVars = computed(() => {
+  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
+  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
+})
 
 function close() {
   emit('update:modelValue', false)
