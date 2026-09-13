@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — EbNotify 堆叠偏移的元素定位加固
+
+- **同列堆叠重排改为按类名定位通知本体**：`updateColumn` 原先取
+  `container.firstElementChild` 直写 `top`——CI（node 22）环境下 @vue/test-utils
+  的全局 `transformVNodeArgs` 会把 Transition 替换成 `<transition-stub>` 包装元素
+  （仓库 vitest 配置 `isolate: false`，该状态跨测试文件持久化），命令式偏移落到
+  包装层上、真实通知元素收不到，`EbNotify 同角堆叠` 用例稳定 NaN 失败；现改在
+  容器内按 `.eb-notification` 类名定位，对包装层/桩/模板结构变化免疫，业务行为
+  无任何变化；
+- evoke-ui glass 测试的 teleport 查询 helper 同步加前置清扫（先移除历史残留节点
+  再断言），隔离共享 jsdom 下其它文件残留对断言的干扰——与上述同属
+  `isolate: false` 跨文件残留一类问题。
+
 ## [ui 0.5.0 / charts 0.4.0] — 2026-09-13
 
 ### @wil-works/evoke-charts — 统一交互规范（DESIGN.md §13）落地
