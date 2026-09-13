@@ -117,7 +117,7 @@
    配方 = 半透明底 + blur/saturate + 发丝描边 + 顶缘 1px 高光（--ev-glass-edge） ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .ev-exec-card.is-glass,
-  html[data-ev-glass='on'] .ev-exec-card:not(.no-glass) {
+  [data-ev-glass='on'] .ev-exec-card:not(.no-glass) {
     background-color: var(--ev-glass-bg);
     background-image: linear-gradient(180deg, var(--ev-glass-edge) 0px, transparent 1px);
     border-color: var(--ev-glass-border);

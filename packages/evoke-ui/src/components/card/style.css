@@ -65,7 +65,7 @@
    粉彩 tone / sticker / featured 是刻意的不透明风格，全局与显式玻璃态都跳过 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .ev-card.is-glass:not(.is-featured):not(.is-sticker):not(.is-soft):not(.is-cream):not(.is-blue):not(.is-mint):not(.is-pink):not(.is-lime),
-  html[data-ev-glass='on'] .ev-card:not(.no-glass):not(.is-featured):not(.is-sticker):not(.is-soft):not(.is-cream):not(.is-blue):not(.is-mint):not(.is-pink):not(.is-lime) {
+  [data-ev-glass='on'] .ev-card:not(.no-glass):not(.is-featured):not(.is-sticker):not(.is-soft):not(.is-cream):not(.is-blue):not(.is-mint):not(.is-pink):not(.is-lime) {
     background-color: var(--ev-glass-bg);
     background-image: linear-gradient(180deg, var(--ev-glass-edge) 0px, transparent 1px);
     border-color: var(--ev-glass-border);

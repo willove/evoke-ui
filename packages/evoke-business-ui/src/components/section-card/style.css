@@ -49,7 +49,7 @@
    backdrop-filter 不可用时整条不生效，自动回落实底 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .eb-section-card.is-glass,
-  html[data-eb-glass='on'] .eb-section-card:not(.no-glass) {
+  [data-eb-glass='on'] .eb-section-card:not(.no-glass) {
     background-color: var(--eb-glass-bg);
     -webkit-backdrop-filter: blur(var(--eb-glass-blur)) saturate(var(--eb-glass-saturate));
     backdrop-filter: blur(var(--eb-glass-blur)) saturate(var(--eb-glass-saturate));

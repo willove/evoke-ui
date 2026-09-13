@@ -9,7 +9,7 @@
 
 ## 全局开关
 
-<DemoBlock title="玻璃卡叠在照片上" description="开关写入 html 属性全站生效，离开页面自动还原；错位叠放的两张卡透出彼此的边缘。">
+<DemoBlock title="玻璃卡叠在照片上" description="glass 配 global: false 时作用域限定在包裹元素内，互不污染页面其余部分；整站开启直接 glass 即可。">
 
 <EvConfigProvider glass :global="false">
   <div class="glass-scene glass-scene--forest">

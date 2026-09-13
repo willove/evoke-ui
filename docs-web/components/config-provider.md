@@ -66,7 +66,7 @@ reset()               // 恢复默认
 | space | 间距档 | `'compact' \| 'default' \| 'loose'` | `'default'` |
 | container | 容器宽档 | `'narrow' \| 'default' \| 'wide' \| 'full'` | `'default'` |
 | global | 写入 `:root` 全局生效；false 时作用于包裹元素 | boolean | `true` |
-| glass | 全局磨砂，作用于 `html[data-ev-glass]`；容器组件级 glass prop 可单独覆盖 | boolean | `false` |
+| glass | 磨砂开关：global 时写 `html[data-ev-glass]` 全站生效（Teleport 弹层命中）；global:false 时写在包裹元素上作局部作用域（Teleport 弹层不覆盖，请用组件级 glass prop） | boolean | `false` |
 
 ### 插槽
 

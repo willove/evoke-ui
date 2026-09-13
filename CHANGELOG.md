@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — ConfigProvider 磨砂作用域做实（global:false 真局部化）
+
+- **`glass` 此前无视 `global` 一律写 `html[data-ev-glass]`**，多个局部演示会互相拔开关；
+  现在 `global: false` 时玻璃开关写在包裹元素上，作用域限定子树，互不污染页面其余部分；
+- 玻璃配方的属性选择器去 `html` 前缀（`[data-ev-glass='on'] .x`），html 与包裹元素两种
+  宿主通配， specificity 仍高于组件基底样式；business-ui 四组件同形对齐；
+- 边界：局部作用域不覆盖 Teleport 到 body 的弹层（脱离包裹树），弹层请用组件级
+  `glass` prop；`global` 默认路径行为不变，卸载仍还原 html 属性；
+- 文档同步 config-provider API 行与磨砂专题页描述；测试补局部作用域三例。
+
 ### @wil-works/evoke-ui / @wil-works/evoke-business-ui — 弹层滚动锁定防抖动升级
 
 - **锁定期间优先上 `scrollbar-gutter: stable`**（html 内联，支持性探测）：滚动条消失但

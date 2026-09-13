@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!global" class="ev-config-provider" :style="scopedStyle">
+  <div v-if="!global" class="ev-config-provider" :style="scopedStyle" :data-ev-glass="glass ? 'on' : undefined">
     <slot />
   </div>
   <slot v-else />
@@ -68,12 +68,14 @@ watch(
   { immediate: true }
 )
 
-// 全局磨砂开关：写在 documentElement 上，弹层（Teleport 到 body）同样命中；
-// 卸载时还原，避免局部演示污染站点其余页面
+// 磨砂开关：global 时写在 documentElement 上（Teleport 到 body 的弹层同样命中）；
+// global:false 时写在包裹元素上（真局部作用域——玻璃配方的属性选择器两种宿主通配，
+// 但 Teleport 弹层脱离包裹树盖不到，局部场景请用组件级 glass prop）；
+// 全局路径卸载时还原，避免演示污染站点其余页面
 watch(
   () => props.glass,
   (on) => {
-    if (typeof document === 'undefined') return
+    if (typeof document === 'undefined' || !props.global) return
     if (on) document.documentElement.setAttribute('data-ev-glass', 'on')
     else document.documentElement.removeAttribute('data-ev-glass')
   },
@@ -81,7 +83,7 @@ watch(
 )
 
 onUnmounted(() => {
-  if (typeof document === 'undefined') return
+  if (typeof document === 'undefined' || !props.global) return
   document.documentElement.removeAttribute('data-ev-glass')
 })
 </script>

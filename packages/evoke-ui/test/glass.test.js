@@ -55,6 +55,26 @@ describe('全局磨砂开关', () => {
     wrapper.unmount()
     expect(document.documentElement.hasAttribute('data-ev-glass')).toBe(false)
   })
+
+  it('global:false 时玻璃作用域写在包裹元素上，不碰 html', () => {
+    const wrapper = mount(EvConfigProvider, {
+      props: { glass: true, global: false },
+      slots: { default: 'x' },
+    })
+    expect(document.documentElement.hasAttribute('data-ev-glass')).toBe(false)
+    expect(wrapper.element.getAttribute('data-ev-glass')).toBe('on')
+    wrapper.unmount()
+    expect(document.documentElement.hasAttribute('data-ev-glass')).toBe(false)
+  })
+
+  it('global:false 且未开玻璃时包裹元素不产出属性', () => {
+    const wrapper = mount(EvConfigProvider, {
+      props: { glass: false, global: false },
+      slots: { default: 'x' },
+    })
+    expect(wrapper.element.hasAttribute('data-ev-glass')).toBe(false)
+    wrapper.unmount()
+  })
 })
 
 describe('弹层/预览/导航家族三态', () => {

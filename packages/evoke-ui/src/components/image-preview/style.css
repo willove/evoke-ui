@@ -97,7 +97,7 @@
    关闭时维持原来的深色实底 + 轻模糊。backdrop-filter 不可用时整条不生效 ─── */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .ev-image-preview.is-glass,
-  html[data-ev-glass='on'] .ev-image-preview:not(.no-glass) {
+  [data-ev-glass='on'] .ev-image-preview:not(.no-glass) {
     background: rgba(10, 14, 24, 0.55);
     -webkit-backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
     backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
@@ -105,8 +105,8 @@
 
   .ev-image-preview.is-glass .ev-image-preview__close,
   .ev-image-preview.is-glass .ev-image-preview__arrow,
-  html[data-ev-glass='on'] .ev-image-preview:not(.no-glass) .ev-image-preview__close,
-  html[data-ev-glass='on'] .ev-image-preview:not(.no-glass) .ev-image-preview__arrow {
+  [data-ev-glass='on'] .ev-image-preview:not(.no-glass) .ev-image-preview__close,
+  [data-ev-glass='on'] .ev-image-preview:not(.no-glass) .ev-image-preview__arrow {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(calc(var(--ev-glass-blur) * 0.6)) saturate(1.4);
     backdrop-filter: blur(calc(var(--ev-glass-blur) * 0.6)) saturate(1.4);
