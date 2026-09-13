@@ -50,7 +50,7 @@
         max: 100,
         unit: '%',
         showProgress: true,
-        startAngle: Math.PI,
+        startAngle: 180,
         endAngle: 0,
         color: [
           { from: 0, to: 80, color: '#16a34a' },
@@ -84,11 +84,42 @@
   />
 </DemoBlock>
 
+### 指针形态与深度定制
+
+`gauge.pointer: { show: true }` 切指针形态：箭针随进度动画同步扫动，进度环自动淡化让针读数优先。外观全部可调：`axisWidth` 环厚、`tickCount` 刻度数、`valueFontSize` 数值字号、`pointer.color` 针色、`progressDim: false` 关闭淡化——按业务需求组合外观。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'gauge',
+      title: '车间设备负载',
+      gauge: {
+        value: 72,
+        min: 0,
+        max: 120,
+        unit: 'kW',
+        axisWidth: 14,
+        tickCount: 6,
+        valueFontSize: 40,
+        color: [
+          { from: 0, to: 80, color: '#16a34a' },
+          { from: 80, to: 105, color: '#d97706' },
+          { from: 105, to: 120, color: '#dc2626' },
+        ],
+        pointer: { show: true, color: '#111827' },
+      },
+    }"
+    :height="240"
+  />
+</DemoBlock>
+
 ## 配置要点
 
-- `gauge.startAngle` / `endAngle` 可调整弧的起止角度做半盘仪表；
+- `gauge.startAngle` / `endAngle` 可调整弧的起止角度（单位：度，默认 220 → -40）做半盘仪表；
 - `showProgress: false` 关闭进度弧只留指针与刻度；
-- 数据更新时进度弧自动补间过渡；
+- `pointer: { show, color, width, length }` 切指针形态并定制针身；
+- `axisWidth` / `tickCount` / `valueFontSize` / `tickMarks` / `progressDim` 深度定制外观，默认值维持基础形态不变；
+- 数据更新时进度弧与指针自动补间过渡；
 - 多 KPI 带目标线的场景改用[子弹图](/chart/bullet)。
 
 ## 相关

@@ -165,22 +165,39 @@ function renderXAxis(ctx, centerAlign = false) {
   canvasCtx.textBaseline = "top";
   const step = centerAlign ? plotArea.width / labels.length : plotArea.width / (labels.length - 1 || 1);
   const rotate = xAxisConfig.rotate || 0;
-  const interval = xAxisConfig.interval === "auto" ? Math.ceil(labels.length / 12) : xAxisConfig.interval || 1;
+  // 拥挤三步策略（DESIGN §4）：显式 interval 是硬步长；否则按标签实测宽抽稀
+  // （步距 ≥ 标签宽 + 12，首末必留），全量展示时单标签超步距再省略号截断；
+  // 旋转时按旋转后占宽估抽稀，不自动旋转（排版决策归使用方）。
+  const slot = centerAlign ? plotArea.width / (labels.length || 1) : plotArea.width / (labels.length - 1 || 1);
+  let interval;
+  if (typeof xAxisConfig.interval === "number") {
+    interval = Math.max(1, Math.round(xAxisConfig.interval));
+  } else {
+    const maxW = labels.reduce((m, label) => {
+      const text = xAxisConfig.formatter ? xAxisConfig.formatter(label) : label;
+      return Math.max(m, canvasCtx.measureText(String(text)).width);
+    }, 12);
+    const usable = rotate !== 0 ? maxW * Math.sin(Math.min(60, Math.abs(rotate)) * Math.PI / 180) : maxW;
+    interval = Math.max(1, Math.ceil((usable + 12) / slot));
+    interval = Math.min(interval, Math.max(1, labels.length - 1));
+  }
+  const canTruncate = interval === 1 && rotate === 0 && typeof xAxisConfig.interval !== "number";
   labels.forEach((label, i) => {
     if (i % interval !== 0 && i !== labels.length - 1) return;
     const x = centerAlign ? plotArea.x + (i + 0.5) * step : plotArea.x + i * step;
     drawAxisTick(canvasCtx, xAxisConfig, theme, x, plotArea.y + plotArea.height, 0, 1);
     const formattedLabel = xAxisConfig.formatter ? xAxisConfig.formatter(label) : label;
+    const displayLabel = canTruncate ? truncateLabel(canvasCtx, String(formattedLabel), slot - 8) : String(formattedLabel);
     if (rotate !== 0) {
       canvasCtx.save();
       canvasCtx.translate(x, plotArea.y + plotArea.height + 12);
       canvasCtx.rotate(-rotate * Math.PI / 180);
       canvasCtx.textAlign = "right";
       canvasCtx.textBaseline = "middle";
-      canvasCtx.fillText(formattedLabel, 0, 0);
+      canvasCtx.fillText(displayLabel, 0, 0);
       canvasCtx.restore();
     } else {
-      canvasCtx.fillText(formattedLabel, x, plotArea.y + plotArea.height + 10);
+      canvasCtx.fillText(displayLabel, x, plotArea.y + plotArea.height + 10);
     }
   });
   drawAxisLine(

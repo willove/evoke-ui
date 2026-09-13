@@ -17,7 +17,16 @@ import {
   renderPieChart,
   renderScatterChart,
   renderRadarChart,
-  renderScatterTrendline
+  renderScatterTrendline,
+  renderScatterFacetChart,
+  renderScatterMatrixChart,
+  computeFacetGrids,
+  computeMatrixCells,
+  matrixFieldExtent,
+  createScatterScale,
+  scatterPointPositions,
+  scatterGroupColors,
+  linearFit
 } from "./charts-basic";
 import {
   renderFunnelChart,
@@ -25,10 +34,13 @@ import {
   renderHeatmapChart,
   renderCandleChart,
   computeFunnelGeometry,
-  funnelStepColor
+  funnelStepColor,
+  candleVolumeLayout
 } from "./charts-advanced";
 import { renderBinChart, renderBulletChart, renderTreemapChart, renderSparklineChart } from "./charts-special";
-import { renderWaterfallChart, renderBoxplotChart, renderSunburstChart, renderMixedChart } from "./charts-extra";
+import { renderWaterfallChart, renderBoxplotChart, renderSunburstChart, renderMixedChart, computeBoxplotGeometry, boxplotHitTest } from "./charts-extra";
+import { renderSankeyChart, renderVennChart, renderChordChart, renderArcChart, sankeyHitTest, vennHitTest, chordHitTest, arcHitTest, computeSankeyLayout, computeVennLayout, computeChordLayout, computeArcLayout } from "./charts-relation";
+import { renderGanttChart, computeGanttLayout, ganttHitTest } from "./charts-gantt";
 import { renderDataZoomSlider } from "./dataZoom";
 import { calculateRange } from "./core";
 import { easings, getTheme as getTheme2, createAnimation, updateAnimation, getPadding as getPadding2 } from "./core";
@@ -145,6 +157,12 @@ function renderChart(canvas, params) {
     case "scatter": {
       const scatterData = options.scatterData || [];
       if (scatterData.length > 0) {
+        const facetMode = options.facet === true;
+        if (facetMode) {
+          // 分面：全局轴退场，每格自带迷你刻度
+          points = renderScatterFacetChart(renderCtx, { min: 0, max: 1 });
+          break;
+        }
         const yValues = scatterData.map((d) => d.y);
         const yRange = renderYAxis(renderCtx, "left", {
           min: Math.min(...yValues),
@@ -169,13 +187,40 @@ function renderChart(canvas, params) {
       const candleData = options.candleData || [];
       if (candleData.length > 0) {
         const allValues = candleData.flatMap((d) => [d.high, d.low]);
-        const yRange = renderYAxis(renderCtx, "left", {
+        // 量带开启时价格轴只量价格区（口径与 renderCandleChart 共用）
+        const vol = candleVolumeLayout(plotArea, options, hiddenSeries);
+        const axisArea = vol.on ? vol.priceArea : plotArea;
+        const yRange = renderYAxis({ ...renderCtx, plotArea: axisArea }, "left", {
           min: Math.min(...allValues),
           max: Math.max(...allValues)
         });
         renderXAxis(renderCtx);
         renderCandleChart(renderCtx, yRange);
       }
+      break;
+    }
+    case "sankey": {
+      renderSankeyChart(renderCtx);
+      break;
+    }
+    case "venn": {
+      renderVennChart(renderCtx);
+      break;
+    }
+    case "chord": {
+      renderChordChart(renderCtx);
+      break;
+    }
+    case "arc": {
+      renderArcChart(renderCtx);
+      break;
+    }
+    case "gantt": {
+      renderGanttChart(renderCtx);
+      break;
+    }
+    case "scatter-matrix": {
+      renderScatterMatrixChart(renderCtx);
       break;
     }
     case "horizontal-bar": {
@@ -211,16 +256,27 @@ function renderChart(canvas, params) {
       break;
     }
     case "boxplot": {
-      const boxData = options.boxData || [];
-      if (boxData.length > 0) {
-        const allValues = boxData.flatMap((b) => [b.min, b.max, ...b.outliers || []]);
-        const yRange = renderYAxis(renderCtx, "left", {
-          min: Math.min(...allValues),
-          max: Math.max(...allValues)
-        });
-        leftRange = yRange;
-        renderBoxplotChart(renderCtx, yRange);
-        renderMarkLines(renderCtx, yRange);
+      const boxDataAll = options.boxData || [];
+      if (boxDataAll.length > 0) {
+        const horizontal = options.boxHorizontal === true;
+        const showOutliers = options.showOutliers !== false;
+        const boxData = boxDataAll.filter(
+          (b) => !(b.group && hiddenSeries.has(b.group)) && !hiddenSeries.has(b.label)
+        );
+        const allValues = boxData.flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])]);
+        let range;
+        if (horizontal) {
+          // 横向：数值轴在底部（竖向网格线），类目走纵轴
+          range = renderHorizontalAxis(renderCtx, { min: Math.min(...allValues), max: Math.max(...allValues) });
+        } else {
+          range = renderYAxis(renderCtx, "left", {
+            min: Math.min(...allValues),
+            max: Math.max(...allValues)
+          });
+        }
+        leftRange = range;
+        renderBoxplotChart(renderCtx, range);
+        renderMarkLines(renderCtx, range);
       }
       break;
     }
@@ -320,18 +376,31 @@ function renderChart(canvas, params) {
 }
 export {
   applyLogTransform2 as applyLogTransform,
+  boxplotHitTest,
   buildPieSlices,
   calculateRange2 as calculateRange,
   calculateTicks,
   calculateTimeTicks,
+  candleVolumeLayout,
   categoryToX,
+  chordHitTest,
+  arcHitTest,
+  computeArcLayout,
   computeBins,
+  computeBoxplotGeometry,
+  computeChordLayout,
+  computeFacetGrids,
   computeFunnelGeometry,
+  computeGanttLayout,
   computeLegendLayout,
+  computeMatrixCells,
   computePieMaxRadius,
+  computeSankeyLayout,
   computeSunburstDepth,
   computeSunburstGeometry,
+  computeVennLayout,
   createAnimation,
+  createScatterScale,
   createSvgRecorder,
   drawSymbol,
   easings,
@@ -340,6 +409,7 @@ export {
   formatLogTick,
   formatTimeTick,
   funnelStepColor,
+  ganttHitTest,
   getContrastText,
   getDataZoomConfig,
   getHeatmapCategories,
@@ -353,6 +423,8 @@ export {
   isMissingValue,
   layoutLabelsAvoidOverlap,
   layoutSunburst,
+  linearFit,
+  matrixFieldExtent,
   parseTimeLabels,
   renderChart,
   renderScatterTrendline2 as renderScatterTrendline,
@@ -360,11 +432,15 @@ export {
   resolveLineDash,
   resolveStackGroups,
   resolveTickExtendedRange,
+  sankeyHitTest,
+  scatterGroupColors,
+  scatterPointPositions,
   squarifyTreemap,
   sunburstValue,
   timeToX,
   toLog,
   updateAnimation,
+  vennHitTest,
   windowToX,
   xToCategoryIndex,
   xToPercent,

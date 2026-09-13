@@ -70,9 +70,11 @@ function switchType() {
 | 增减瀑布？两个量纲悬殊的指标同看？ | [瀑布图](/chart/waterfall) / [混合图 · 双轴](/chart/mixed) |
 | 占比构成？部分与整体？ | [饼图](/chart/pie) / [环形图](/chart/doughnut) / [玫瑰图](/chart/rose) / [漏斗图](/chart/funnel) |
 | 单指标完成得怎么样？ | [仪表盘](/chart/gauge) / [子弹图](/chart/bullet) |
-| 两/三个变量有没有关系？密度在哪？ | [散点图](/chart/scatter) / [热力图](/chart/heatmap) |
-| 数据分布、离群值？金融波动？ | [直方图](/chart/bin) / [箱线图](/chart/boxplot) / [K 线图](/chart/candle) |
+| 两/三个变量有没有关系？密度在哪？ | [散点图](/chart/scatter)（四象限 / 回归线 / 分面 / 矩阵） / [热力图](/chart/heatmap) |
+| 数据分布、离群值？金融波动？ | [直方图](/chart/bin) / [箱线图](/chart/boxplot) / [K 线图](/chart/candle)（含量价联动） |
 | 层级构成怎么拆？多维能力对比？ | [矩形树图](/chart/treemap) / [旭日图](/chart/sunburst) / [雷达图](/chart/radar) |
+| 流量从哪来到哪去？集合重叠多少？ | [桑基图](/chart/sankey) / [韦恩图](/chart/venn) |
+| 两两关系谁最强？任务排期怎么走？ | [弦图](/chart/chord) / [弧长连接图](/chart/arc) / [甘特图](/chart/gantt) |
 
 每个类型都有独立的说明页（何时使用、示例、配置要点），从左侧导航或上表直达。
 

@@ -55,6 +55,33 @@
   />
 </DemoBlock>
 
+### K 线 + 成交量
+
+`volumeData`（与 `candleData` 等长的数值数组）开启副图：绘图区下部 24% 变为成交量带，量柱颜色跟随当日涨跌，价格轴只量价格区。图例出现「成交量」项，点选即隐去量带、K 线回铺全高——价量关系的标准读法。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'candle',
+      title: '600519 贵州茅台 · 价量联动',
+      candleData: [
+        { label: '09-01', open: 1680, close: 1702, high: 1715, low: 1668 },
+        { label: '09-02', open: 1702, close: 1695, high: 1728, low: 1688 },
+        { label: '09-03', open: 1695, close: 1721, high: 1730, low: 1690 },
+        { label: '09-04', open: 1721, close: 1710, high: 1742, low: 1702 },
+        { label: '09-05', open: 1710, close: 1738, high: 1745, low: 1705 },
+        { label: '09-08', open: 1738, close: 1752, high: 1768, low: 1732 },
+        { label: '09-09', open: 1752, close: 1746, high: 1770, low: 1738 },
+        { label: '09-10', open: 1746, close: 1768, high: 1782, low: 1740 },
+        { label: '09-11', open: 1768, close: 1755, high: 1775, low: 1748 },
+        { label: '09-12', open: 1755, close: 1786, high: 1798, low: 1750 },
+      ],
+      volumeData: [32000, 28000, 41000, 26000, 35000, 52000, 30000, 44000, 27000, 61000],
+    }"
+    :height="360"
+  />
+</DemoBlock>
+
 ### 场景提示
 
 - **股票 / 期货 / 加密货币行情**：日 K / 周 K / 分时四价；
@@ -64,7 +91,8 @@
 ## 配置要点
 
 - 字段语义固定：`open` 开、`close` 收、`high` 高、`low` 低；
-- 悬浮 tooltip 展示四价明细；
+- `volumeData` 开启成交量副图，`volumeHeight`（0.15–0.4）调量带占比，默认 0.24；
+- 悬浮 tooltip 展示四价明细，params 里带 `volume` 供自定义 formatter 使用；
 - 长周期序列配合 `dataZoom` 缩放浏览，见[交互与联动](/chart/interaction)。
 
 ## 相关

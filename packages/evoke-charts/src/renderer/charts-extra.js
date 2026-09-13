@@ -87,82 +87,271 @@ function renderWaterfallChart(ctx, yRange) {
     prevExitY = yFor(cumulative);
   });
 }
+/**
+ * 箱型几何（DESIGN：渲染与命中共用一份口径）：支持竖向（默认）/横向
+ * （boxHorizontal）/ 分组（boxData[].group 出现即启用，同类目内并排），
+ * showOutliers: false 隐藏异常点。
+ */
+function computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, valueRange) {
+  const horizontal = options.boxHorizontal === true;
+  const showOutliers = options.showOutliers !== false;
+  const raw = options.boxData || [];
+  if (raw.length === 0) return null;
+  const hidden = hiddenSeries || /* @__PURE__ */ new Set();
+  const visible = raw.filter((b) => !(b.group && hidden.has(b.group)) && !hidden.has(b.label));
+  if (visible.length === 0) return null;
+  const groupedMode = raw.some((b) => b.group);
+  const groupNames = [];
+  raw.forEach((b) => {
+    if (b.group && !groupNames.includes(b.group)) groupNames.push(b.group);
+  });
+  const categories = [];
+  visible.forEach((b) => {
+    if (!categories.includes(b.label)) categories.push(b.label);
+  });
+  const groupCount = groupedMode ? Math.max(1, groupNames.length) : 1;
+  const yFor = (v) => plotArea.y + plotArea.height - (v - valueRange.min) / (valueRange.max - valueRange.min) * plotArea.height;
+  const xFor = (v) => plotArea.x + (v - valueRange.min) / (valueRange.max - valueRange.min) * plotArea.width;
+  const boxes = [];
+  const categoryBand = horizontal ? plotArea.height / categories.length : plotArea.width / categories.length;
+  const slotW = groupedMode ? categoryBand * 0.7 / groupCount : categoryBand;
+  const thicknessBase = groupedMode ? slotW : categoryBand * 0.5;
+  const thickness = Math.min(thicknessBase, 44);
+  const capWidth = thickness * 0.55;
+  visible.forEach((b) => {
+    const catIndex = categories.indexOf(b.label);
+    const gi = groupedMode ? Math.max(0, groupNames.indexOf(b.group)) : 0;
+    const offset = (gi - (groupCount - 1) / 2) * slotW;
+    const boxCenterBand = horizontal
+      ? plotArea.y + plotArea.height - (catIndex + 0.5) * categoryBand
+      : plotArea.x + (catIndex + 0.5) * categoryBand;
+    const center = boxCenterBand + offset;
+    const grow = (v) => b.median + (v - b.median) * 1; // 静态几何（动画在渲染层）
+    if (horizontal) {
+      boxes.push({
+        b,
+        index: boxes.length,
+        catIndex,
+        color: b.color || (groupedMode ? theme.colors[(groupNames.indexOf(b.group) || 0) % theme.colors.length] : theme.colors[boxes.length % theme.colors.length]),
+        cy: center,
+        cx: (xFor(grow(b.q1)) + xFor(grow(b.q3))) / 2,
+        thickness,
+        capWidth,
+        wLo: xFor(grow(b.min)),
+        wHi: xFor(grow(b.max)),
+        qLo: xFor(grow(b.q1)),
+        qHi: xFor(grow(b.q3)),
+        med: xFor(grow(b.median)),
+        outliers: showOutliers ? (b.outliers || []).map((o) => xFor(grow(o))) : [],
+      });
+    } else {
+      boxes.push({
+        b,
+        index: boxes.length,
+        catIndex,
+        color: b.color || (groupedMode ? theme.colors[(groupNames.indexOf(b.group) || 0) % theme.colors.length] : theme.colors[boxes.length % theme.colors.length]),
+        cx: center,
+        cy: (yFor(grow(b.q1)) + yFor(grow(b.q3))) / 2,
+        thickness,
+        capWidth,
+        wLo: yFor(grow(b.max)),
+        wHi: yFor(grow(b.min)),
+        qLo: yFor(grow(b.q3)),
+        qHi: yFor(grow(b.q1)),
+        med: yFor(grow(b.median)),
+        outliers: showOutliers ? (b.outliers || []).map((o) => yFor(grow(o))) : [],
+      });
+    }
+  });
+  return { boxes, categories, groupNames, groupedMode, horizontal, thickness, categoryWidth: categoryBand };
+}
+
 function renderBoxplotChart(ctx, yRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
-  const boxData = options.boxData || [];
-  if (boxData.length === 0) return;
-  const categoryWidth = plotArea.width / boxData.length;
-  const boxWidth = Math.min(categoryWidth * 0.5, 44);
-  const capWidth = boxWidth * 0.55;
-  const yFor = (v) => plotArea.y + plotArea.height - (v - yRange.min) / (yRange.max - yRange.min) * plotArea.height;
-  boxData.forEach((b, i) => {
-    const cx = plotArea.x + (i + 0.5) * categoryWidth;
-    const color = b.color || theme.colors[i % theme.colors.length];
-    const isHover = i === hoverIndex;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const geo = computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, yRange);
+  if (!geo) return;
+  const { boxes, horizontal } = geo;
+  boxes.forEach((box) => {
+    const b = box.b;
+    const isHover = box.index === hoverIndex;
+    const color = box.color;
+    const lineWidth = isHover ? 2 : 1.5;
+    // 生长动画：min/max/q1/q3 从 median 向外展开
     const grow = (v) => b.median + (v - b.median) * progress;
-    const yMin = yFor(grow(b.min));
-    const yQ1 = yFor(grow(b.q1));
-    const yMed = yFor(b.median);
-    const yQ3 = yFor(grow(b.q3));
-    const yMax = yFor(grow(b.max));
     canvasCtx.save();
     canvasCtx.strokeStyle = color;
     canvasCtx.fillStyle = color;
-    canvasCtx.lineWidth = isHover ? 2 : 1.5;
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(cx, yMin);
-    canvasCtx.lineTo(cx, yQ1);
-    canvasCtx.moveTo(cx, yQ3);
-    canvasCtx.lineTo(cx, yMax);
-    canvasCtx.stroke();
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(cx - capWidth / 2, yMin);
-    canvasCtx.lineTo(cx + capWidth / 2, yMin);
-    canvasCtx.moveTo(cx - capWidth / 2, yMax);
-    canvasCtx.lineTo(cx + capWidth / 2, yMax);
-    canvasCtx.stroke();
-    canvasCtx.fillStyle = color + (isHover ? "55" : "33");
-    canvasCtx.fillRect(cx - boxWidth / 2, yQ3, boxWidth, Math.max(1, yQ1 - yQ3));
-    canvasCtx.strokeRect(cx - boxWidth / 2, yQ3, boxWidth, Math.max(1, yQ1 - yQ3));
-    canvasCtx.lineWidth = isHover ? 2.5 : 2;
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(cx - boxWidth / 2, yMed);
-    canvasCtx.lineTo(cx + boxWidth / 2, yMed);
-    canvasCtx.stroke();
-    b.outliers?.forEach((o) => {
-      const oy = yFor(grow(o));
+    canvasCtx.lineWidth = lineWidth;
+    if (horizontal) {
+      const yLo = box.cy - box.thickness / 2;
+      const yMed = box.cy;
+      const wLo = box.cx + (box.wLo - box.cx) * progress;
+      const wHi = box.cx + (box.wHi - box.cx) * progress;
+      const qLo = box.cx + (box.qLo - box.cx) * progress;
+      const qHi = box.cx + (box.qHi - box.cx) * progress;
       canvasCtx.beginPath();
-      canvasCtx.arc(cx, oy, isHover ? 3.5 : 2.5, 0, Math.PI * 2);
-      canvasCtx.fillStyle = color;
-      canvasCtx.fill();
-    });
-    if (isHover) {
-      canvasCtx.strokeStyle = theme.textColor;
-      canvasCtx.lineWidth = 1;
-      canvasCtx.setLineDash([3, 3]);
-      canvasCtx.strokeRect(cx - boxWidth / 2 - 6, yMax - 6, boxWidth + 12, yMin - yMax + 12);
-      canvasCtx.setLineDash([]);
+      canvasCtx.moveTo(wLo, yMed);
+      canvasCtx.lineTo(qLo, yMed);
+      canvasCtx.moveTo(qHi, yMed);
+      canvasCtx.lineTo(wHi, yMed);
+      const cap = box.capWidth;
+      canvasCtx.moveTo(wLo, yMed - cap / 2);
+      canvasCtx.lineTo(wLo, yMed + cap / 2);
+      canvasCtx.moveTo(wHi, yMed - cap / 2);
+      canvasCtx.lineTo(wHi, yMed + cap / 2);
+      canvasCtx.stroke();
+      canvasCtx.fillStyle = color + (isHover ? "55" : "33");
+      canvasCtx.fillRect(qLo, yLo, Math.max(1, qHi - qLo), box.thickness);
+      canvasCtx.strokeRect(qLo, yLo, Math.max(1, qHi - qLo), box.thickness);
+      canvasCtx.lineWidth = isHover ? 2.5 : 2;
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(box.cx + (box.med - box.cx) * progress, yLo);
+      canvasCtx.lineTo(box.cx + (box.med - box.cx) * progress, yLo + box.thickness);
+      canvasCtx.stroke();
+      box.outliers.forEach((o) => {
+        const ox = box.cx + (o - box.cx) * progress;
+        canvasCtx.beginPath();
+        canvasCtx.arc(ox, yMed, isHover ? 3.5 : 2.5, 0, Math.PI * 2);
+        canvasCtx.fillStyle = color;
+        canvasCtx.fill();
+      });
+      if (isHover) {
+        canvasCtx.strokeStyle = theme.textColor;
+        canvasCtx.lineWidth = 1;
+        canvasCtx.setLineDash([3, 3]);
+        canvasCtx.strokeRect(qLo - 6, yLo - 6, Math.max(1, qHi - qLo) + 12, box.thickness + 12);
+        canvasCtx.setLineDash([]);
+      }
+    } else {
+      const xLo = box.cx - box.thickness / 2;
+      const yMin = box.cy + (box.wLo - box.cy) * progress;
+      const yQ1 = box.cy + (box.qLo - box.cy) * progress;
+      const yMed = box.cy + (box.med - box.cy) * progress;
+      const yQ3 = box.cy + (box.qHi - box.cy) * progress;
+      const yMax = box.cy + (box.wHi - box.cy) * progress;
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(box.cx, yMin);
+      canvasCtx.lineTo(box.cx, yQ1);
+      canvasCtx.moveTo(box.cx, yQ3);
+      canvasCtx.lineTo(box.cx, yMax);
+      canvasCtx.stroke();
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(box.cx - box.capWidth / 2, yMin);
+      canvasCtx.lineTo(box.cx + box.capWidth / 2, yMin);
+      canvasCtx.moveTo(box.cx - box.capWidth / 2, yMax);
+      canvasCtx.lineTo(box.cx + box.capWidth / 2, yMax);
+      canvasCtx.stroke();
+      canvasCtx.fillStyle = color + (isHover ? "55" : "33");
+      canvasCtx.fillRect(xLo, yQ3, box.thickness, Math.max(1, yQ1 - yQ3));
+      canvasCtx.strokeRect(xLo, yQ3, box.thickness, Math.max(1, yQ1 - yQ3));
+      canvasCtx.lineWidth = isHover ? 2.5 : 2;
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(xLo, yMed);
+      canvasCtx.lineTo(xLo + box.thickness, yMed);
+      canvasCtx.stroke();
+      box.outliers.forEach((o) => {
+        const oy = box.cy + (o - box.cy) * progress;
+        canvasCtx.beginPath();
+        canvasCtx.arc(box.cx, oy, isHover ? 3.5 : 2.5, 0, Math.PI * 2);
+        canvasCtx.fillStyle = color;
+        canvasCtx.fill();
+      });
+      if (isHover) {
+        canvasCtx.strokeStyle = theme.textColor;
+        canvasCtx.lineWidth = 1;
+        canvasCtx.setLineDash([3, 3]);
+        canvasCtx.strokeRect(xLo - 6, yMin - 6, box.thickness + 12, yMax - yMin + 12);
+        canvasCtx.setLineDash([]);
+      }
     }
     canvasCtx.restore();
+    // 类目标签：竖向在下方居中，横向在左列右对齐（渲染层处理）
+  });
+  if (!horizontal) {
     canvasCtx.save();
     canvasCtx.fillStyle = theme.textColorSecondary;
     canvasCtx.font = "12px Inter, sans-serif";
     canvasCtx.textAlign = "center";
     canvasCtx.textBaseline = "top";
-    let label = b.label;
-    const maxWidth = categoryWidth - 8;
-    if (canvasCtx.measureText(label).width > maxWidth) {
-      let lo = 0, hi = label.length;
-      while (lo < hi) {
-        const mid = Math.ceil((lo + hi) / 2);
-        if (canvasCtx.measureText(label.slice(0, mid) + "\u2026").width > maxWidth) hi = mid - 1;
-        else lo = mid;
+    const seen = /* @__PURE__ */ new Set();
+    boxes.forEach((box) => {
+      if (seen.has(box.catIndex)) return;
+      seen.add(box.catIndex);
+      let label = box.b.label;
+      const maxWidth = geo.categoryWidth - 8;
+      if (canvasCtx.measureText(label).width > maxWidth) {
+        let lo = 0, hi = label.length;
+        while (lo < hi) {
+          const mid = Math.ceil((lo + hi) / 2);
+          if (canvasCtx.measureText(label.slice(0, mid) + "\u2026").width > maxWidth) hi = mid - 1;
+          else lo = mid;
+        }
+        label = label.slice(0, lo) + "\u2026";
       }
-      label = label.slice(0, lo) + "\u2026";
-    }
-    canvasCtx.fillText(label, cx, plotArea.y + plotArea.height + 8);
+      const cx = plotArea.x + (box.catIndex + 0.5) * geo.categoryWidth;
+      canvasCtx.fillText(label, cx, plotArea.y + plotArea.height + 8);
+    });
     canvasCtx.restore();
-  });
+  } else {
+    canvasCtx.save();
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.font = "12px Inter, sans-serif";
+    canvasCtx.textAlign = "right";
+    canvasCtx.textBaseline = "middle";
+    const seen = /* @__PURE__ */ new Set();
+    boxes.forEach((box) => {
+      if (seen.has(box.catIndex)) return;
+      seen.add(box.catIndex);
+      let label = box.b.label;
+      const maxWidth = plotArea.x - 12;
+      if (canvasCtx.measureText(label).width > maxWidth) {
+        let lo = 0, hi = label.length;
+        while (lo < hi) {
+          const mid = Math.ceil((lo + hi) / 2);
+          if (canvasCtx.measureText(label.slice(0, mid) + "\u2026").width > maxWidth) hi = mid - 1;
+          else lo = mid;
+        }
+        label = label.slice(0, lo) + "\u2026";
+      }
+      const cy = plotArea.y + plotArea.height - (box.catIndex + 0.5) * geo.categoryWidth;
+      canvasCtx.fillText(label, plotArea.x - 10, cy);
+    });
+    canvasCtx.restore();
+  }
+}
+
+function boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries, valueRange) {
+  const geo = computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, valueRange);
+  if (!geo) return null;
+  const { boxes, horizontal, categoryWidth, thickness } = geo;
+  for (const box of boxes) {
+    if (horizontal) {
+      const half = Math.max(categoryWidth / 2, thickness / 2 + 6);
+      if (Math.abs(canvasY - box.cy) <= half) {
+        return boxHit(box);
+      }
+    } else {
+      const half = Math.max(categoryWidth / 2, thickness / 2 + 6);
+      if (Math.abs(canvasX - box.cx) <= half) {
+        return boxHit(box);
+      }
+    }
+  }
+  return null;
+  function boxHit(box) {
+    const b = box.b;
+    return {
+      index: box.index,
+      params: {
+        seriesName: geo.groupedMode ? `${b.label} · ${b.group}` : b.label,
+        name: `${geo.groupedMode ? `${b.label} · ${b.group}` : b.label}（中位数 ${b.median}）`,
+        value: [b.min, b.q1, b.median, b.q3, b.max],
+        color: box.color,
+        dataIndex: box.index,
+        seriesIndex: 0
+      }
+    };
+  }
 }
 function computeSunburstDepth(nodes) {
   if (nodes.length === 0) return 0;
@@ -396,6 +585,8 @@ function renderMixedChart(ctx, leftRange, rightRange) {
 }
 export {
   SUNBURST_DIM_ALPHA,
+  boxplotHitTest,
+  computeBoxplotGeometry,
   computeSunburstDepth,
   computeSunburstGeometry,
   isSunburstDescendant,

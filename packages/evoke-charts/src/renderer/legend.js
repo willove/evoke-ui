@@ -47,12 +47,54 @@ function collectLegendItems(options, theme, hiddenSeries) {
     }));
   }
   if (options.type === "scatter") {
-    return (options.scatterData || []).map((d, i) => ({
+    // 点带 group 时图例按组聚合（一组一项，颜色即组色）；否则逐点
+    const points = options.scatterData || [];
+    if (points.some((d) => d.group)) {
+      const seen = [];
+      points.forEach((d) => {
+        if (!d.group || seen.some((s) => s.name === d.group)) return;
+        seen.push({
+          name: d.group,
+          label: fmt(d.group),
+          color: d.color || theme.colors[seen.length % theme.colors.length],
+          hidden: hiddenSeries.has(d.group)
+        });
+      });
+      return seen;
+    }
+    return points.map((d, i) => ({
       name: d.label || `P${i + 1}`,
       label: fmt(d.label || `P${i + 1}`),
       color: d.color || theme.colors[i % theme.colors.length],
       hidden: hiddenSeries.has(d.label || `P${i + 1}`)
     }));
+  }
+  if (options.type === "sankey" || options.type === "chord" || options.type === "arc") {
+    return (((options.sankeyData || options.chordData || options.arcData || {}).nodes) || []).map((n, i) => ({
+      name: n.name,
+      label: fmt(n.name),
+      color: n.color || theme.colors[i % theme.colors.length],
+      hidden: hiddenSeries.has(n.name)
+    }));
+  }
+  if (options.type === "venn") {
+    return (options.vennData || [])
+      .filter((d) => !d.sets || d.sets.length <= 1)
+      .map((d, i) => ({
+        name: d.name,
+        label: fmt(d.name),
+        color: d.color || theme.colors[i % theme.colors.length],
+        hidden: hiddenSeries.has(d.name)
+      }));
+  }
+  if (options.type === "candle") {
+    if ((options.volumeData || []).length === 0) return [];
+    return [{
+      name: "成交量",
+      label: fmt("成交量"),
+      color: theme.textColorSecondary,
+      hidden: hiddenSeries.has("成交量")
+    }];
   }
   return (options.series || []).map((s, i) => ({
     name: s.name,

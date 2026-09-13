@@ -73,6 +73,7 @@ export const CHART_NAV = [
       { name: '热力图', zh: 'heatmap', path: '/chart/heatmap' },
       { name: '箱线图', zh: 'boxplot', path: '/chart/boxplot' },
       { name: 'K 线图', zh: 'candle', path: '/chart/candle' },
+      { name: '韦恩图', zh: 'venn', path: '/chart/venn' },
     ],
   },
   {
@@ -85,10 +86,20 @@ export const CHART_NAV = [
     ],
   },
   {
+    name: '关系与流动',
+    key: 'chart-relation',
+    components: [
+      { name: '桑基图', zh: 'sankey', path: '/chart/sankey' },
+      { name: '弦图', zh: 'chord', path: '/chart/chord' },
+      { name: '弧长连接图', zh: 'arc', path: '/chart/arc' },
+    ],
+  },
+  {
     name: '组合与进阶',
     key: 'chart-advanced',
     components: [
       { name: '混合图 · 双轴', zh: 'mixed', path: '/chart/mixed' },
+      { name: '甘特图', zh: 'gantt', path: '/chart/gantt' },
       { name: '交互与联动', zh: '', path: '/chart/interaction' },
     ],
   },

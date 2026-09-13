@@ -16,7 +16,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
 所有类型共用；数据字段按图表类型二选一（见下一节）。
 
 <ApiTable title="Options 通用字段" :rows="[
-  { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed', type: 'string', default: '—' },
+  { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / scatter-matrix / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed / sankey / venn / chord / arc / gantt', type: 'string', default: '—' },
   { name: 'title / subtitle', desc: '主标题 / 副标题', type: 'string', default: '—' },
   { name: 'labels', desc: 'x 轴类目数组，直角系与 sparkline / waterfall / mixed 的数据基线', type: 'array', default: '[]' },
   { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth?, smooth?, chartType?, yAxis? }，data 与 labels 对齐；数据点圆点默认不绘制（showSymbol: true 显示）；smooth: true 单调插值平滑；chartType 取 bar / line 定 mixed 系列柱线形态（缺省 line）；yAxis 取 left / right 定双轴归侧（缺省 left，需配 yAxisRight）', type: 'array', default: '[]' },
@@ -42,16 +42,25 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
 
 <ApiTable title="Options 按类型数据字段" :rows="[
   { name: 'pieData', desc: 'pie / doughnut / rose 数据源', type: '{ name, value }[]', default: '—' },
-  { name: 'scatterData', desc: 'scatter 散点：label 自动进入图例（点选显隐）', type: '{ x, y, label?, color? }[]', default: '—' },
+  { name: 'scatterData', desc: 'scatter 散点：label 进入图例与点标注，group 进入颜色通道分组（图例按组聚合），color / size 可覆写点样式', type: '{ x, y, label?, color?, group?, size? }[]', default: '—' },
+  { name: 'pointLabels / jitter', desc: 'scatter 增强：pointLabels 显示每点 label 文本（重叠自动让位）；jitter（0–20px）确定性抖动防同值重叠，同数据同偏移', type: 'boolean / number', default: 'false / 0' },
+  { name: 'quadrant', desc: 'scatter 四象限：{ xMid?, yMid?, labels? } 以均值或显式中线画十字参考线，labels 顺序为左上 / 右上 / 左下 / 右下', type: 'object', default: '—' },
+  { name: 'scatterTrendline / trendlinePerGroup', desc: '回归线：linear / poly / exp，线性自动标注 R²；trendlinePerGroup 配合 group 每组各画一条', type: 'string / boolean', default: '—' },
+  { name: 'facet', desc: 'scatter 分面：true + scatterData[].group 按组切小倍数网格，每格独立量程、自带迷你刻度与格标题', type: 'boolean', default: 'false' },
+  { name: 'matrixFields / matrixData', desc: 'scatter-matrix 散点矩阵：字段名数组 × 记录数组，生成 n×n 小倍数（对角格为字段名，非对角格为两字段散点）', type: 'string[] / record[]', default: '—' },
   { name: 'funnelData', desc: 'funnel 漏斗；配 `funnelMinRatio`（0–0.5）定尾层最小宽度占比——极差悬殊时压缩尾段保可读，0 = 严格等比', type: '{ label, value }[]', default: '—' },
-  { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle }', type: 'object', default: '—' },
+  { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle, pointer: { show, color, width, length }, axisWidth, tickCount, showTicks, tickMarks, valueFontSize, progressDim, cornerRadius }——pointer.show 切指针形态，进度环默认淡化（progressDim: false 保持原样）', type: 'object', default: '—' },
   { name: 'radarIndicators', desc: 'radar 维度：{ name, max, min? }', type: 'array', default: '—' },
-  { name: 'radarSeries', desc: 'radar 系列：{ name, data, color?, area?, showSymbol? }——area 默认开（纵向浅渐变填充），showSymbol: true 画顶点；各维度同 max 时自动标注环刻度', type: 'array', default: '—' },
+  { name: 'radarSeries / radarRingFill', desc: 'radar 系列：{ name, data, color?, area?, showSymbol? }——area 默认开（纵向浅渐变填充）；radarRingFill: true 环带交替铺极淡底色；悬浮维度标签 / 轴顶点点亮该轴并强调各系列顶点，悬浮图例走焦点淡化', type: 'array / boolean', default: '—' },
   { name: 'heatmapData', desc: 'heatmap 热力格', type: '{ x, y, value }[]', default: '—' },
-  { name: 'candleData', desc: 'candle K 线', type: '{ label, open, close, high, low }[]', default: '—' },
-  { name: 'boxData', desc: 'boxplot 箱线', type: '{ label, min, q1, median, q3, max }[]', default: '—' },
+  { name: 'candleData / volumeData', desc: 'candle K 线 + 成交量副图：volumeData 与 candleData 等长时绘图区下部 24%（volumeHeight 0.15–0.4 可调）为量带，量柱颜色跟随当日涨跌；图例「成交量」点选隐去量带', type: '{ label, open, close, high, low }[] / number[]', default: '—' },
+  { name: 'boxData', desc: 'boxplot 箱线：outliers 为异常点数组（不参与分位计算）；带 group 字段启用分组箱线（同类目并排、图例按组聚合）；boxHorizontal: true 翻转为横向；showOutliers: false 隐藏异常点', type: '{ label, min, q1, median, q3, max, outliers?, group? }[]', default: '—' },
   { name: 'treemapData / sunburstData', desc: '矩形树图 / 旭日图的层级数据', type: '{ name, value?, children? }[]', default: '—' },
   { name: 'bulletData', desc: 'bullet 子弹图', type: '{ name, value, target? }[]', default: '—' },
+  { name: 'sankeyData', desc: 'sankey 桑基：nodes 与 links（source / target / value）；节点 value 缺省按链接自动汇总，流带颜色继承源节点色；图例点选节点隐去相连流带', type: '{ nodes, links }', default: '—' },
+  { name: 'vennData', desc: 'venn 韦恩：单集合 { name, value } + 交集 { sets: [A, B], value }；半径等面积映射、圆距按交集反解；vennHollow: true 切空心形态', type: 'array', default: '—' },
+  { name: 'chordData / arcData', desc: 'chord 弦图（环形）/ arc 弧长连接图（线性）：{ nodes, links } 与桑基同构；连接带宽度即关系值，颜色继承源节点色；chordByValue: true 时弦图节点弧长按值占比', type: '{ nodes, links }', default: '—' },
+  { name: 'ganttData / ganttToday', desc: 'gantt 甘特：{ name, start, end, progress?, milestone?, dependsOn?, color? }；ganttToday（日期）画今日线；悬浮行高亮并在 tooltip 给出起止与进度', type: 'array / string', default: '—' },
 ]" />
 
 ## Chart Slots

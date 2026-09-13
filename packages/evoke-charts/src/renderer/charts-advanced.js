@@ -160,10 +160,15 @@ function renderFunnelChart(ctx) {
     canvasCtx.restore();
   });
 }
+/**
+ * 仪表盘（DESIGN §3.11）：指针 opt-in（gauge.pointer.show），外观定制面
+ * axisWidth / tickCount / showTicks / valueFontSize / progressDim；默认值
+ * 维持既有形态。指针开启时进度环默认淡化 @60%，中心数值下移避让针根。
+ */
 function renderGaugeChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
   const gauge = options.gauge;
-  if (!gauge) return;
+  if (!gauge || typeof gauge !== "object") return;
   const min = gauge.min || 0;
   const max = gauge.max || 100;
   const value = Math.max(min, Math.min(max, gauge.value));
@@ -175,12 +180,17 @@ function renderGaugeChart(ctx) {
   const centerY = plotArea.y + plotArea.height / 2 + 20;
   const radius = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 20);
   const isHover = hoverIndex === 0;
+  const pointer = gauge.pointer;
+  const pointerOn = !!(pointer && pointer.show);
+  const axisWidth = Math.max(4, Math.min(60, gauge.axisWidth ?? 20));
+  // 指针开启时进度环默认淡化 @60%，progressDim: false 保持原样（DESIGN §3.11）
+  const progressDim = pointerOn && gauge.progressDim !== false ? 0.6 : 1;
   canvasCtx.save();
   canvasCtx.beginPath();
   canvasCtx.arc(centerX, centerY, radius, startAngle, normalizedEnd, true);
   canvasCtx.strokeStyle = theme.gridColor;
-  canvasCtx.lineWidth = isHover ? 22 : 20;
-  canvasCtx.lineCap = "round";
+  canvasCtx.lineWidth = axisWidth;
+  canvasCtx.lineCap = gauge.cornerRadius === "butt" ? "butt" : "round";
   canvasCtx.stroke();
   canvasCtx.restore();
   const valueRatio = (value - min) / (max - min);
@@ -199,11 +209,12 @@ function renderGaugeChart(ctx) {
   }
   if (gauge.showProgress !== false && animatedRatio > 0) {
     canvasCtx.save();
+    canvasCtx.globalAlpha = progressDim;
     canvasCtx.beginPath();
     canvasCtx.arc(centerX, centerY, radius, startAngle, valueAngle, true);
     canvasCtx.strokeStyle = progressColor;
-    canvasCtx.lineWidth = isHover ? 22 : 20;
-    canvasCtx.lineCap = "round";
+    canvasCtx.lineWidth = axisWidth;
+    canvasCtx.lineCap = gauge.cornerRadius === "butt" ? "butt" : "round";
     canvasCtx.stroke();
     if (isHover) {
       canvasCtx.shadowColor = progressColor;
@@ -212,12 +223,42 @@ function renderGaugeChart(ctx) {
     }
     canvasCtx.restore();
   }
+  // 数字刻度沿用既有形态（showTicks: false 可关）；短刻度线伴随指针出现
+  if (gauge.showTicks !== false) {
+    drawGaugeTickNumbers(canvasCtx, gauge, theme, centerX, centerY, radius, startAngle, normalizedEnd, min, max);
+  }
+  if (pointerOn || gauge.tickMarks === true) {
+    drawGaugeTickMarks(canvasCtx, gauge, theme, centerX, centerY, radius, startAngle, normalizedEnd);
+  }
+  if (pointerOn) {
+    drawGaugePointer(canvasCtx, gauge, theme, progressColor, centerX, centerY, radius, axisWidth, valueAngle, progress);
+  }
+  const valueFont = Math.max(12, Math.min(72, gauge.valueFontSize ?? 32));
+  canvasCtx.save();
+  canvasCtx.fillStyle = isHover ? progressColor : theme.textColor;
+  canvasCtx.font = `bold ${isHover ? valueFont + 4 : valueFont}px Inter, sans-serif`;
+  canvasCtx.textAlign = "center";
+  canvasCtx.textBaseline = "middle";
+  const animatedValue = min + (value - min) * progress;
+  // 指针开启时数值下移到盘心下方空档（随半径走），避让针根与针身
+  const valueY = pointerOn ? centerY + Math.max(26, radius * 0.45) : centerY - 5;
+  canvasCtx.fillText(Math.round(animatedValue).toString(), centerX, valueY);
+  if (gauge.unit) {
+    canvasCtx.font = "14px Inter, sans-serif";
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.fillText(gauge.unit, centerX, valueY + Math.max(27, valueFont * 0.75));
+  }
+  canvasCtx.restore();
+}
+
+/** 刻度数字（指针模式下刻度线照画、数字照标） */
+function drawGaugeTickNumbers(canvasCtx, gauge, theme, centerX, centerY, radius, startAngle, normalizedEnd, min, max) {
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColorSecondary;
   canvasCtx.font = "11px Inter, sans-serif";
   canvasCtx.textAlign = "center";
   canvasCtx.textBaseline = "middle";
-  const ticks = 5;
+  const ticks = gauge.tickCount ?? 5;
   for (let i = 0; i <= ticks; i++) {
     const ratio = i / ticks;
     const angle = startAngle - (startAngle - normalizedEnd) * ratio;
@@ -229,19 +270,57 @@ function renderGaugeChart(ctx) {
     canvasCtx.fillText(display, x, y);
   }
   canvasCtx.restore();
+}
+
+/** 短刻度线：主刻度 + 半程小刻度（指针模式下伴生，tickMarks: true 可单独开启） */
+function drawGaugeTickMarks(canvasCtx, gauge, theme, centerX, centerY, radius, startAngle, normalizedEnd) {
   canvasCtx.save();
-  canvasCtx.fillStyle = isHover ? progressColor : theme.textColor;
-  canvasCtx.font = `bold ${isHover ? 36 : 32}px Inter, sans-serif`;
-  canvasCtx.textAlign = "center";
-  canvasCtx.textBaseline = "middle";
-  const animatedValue = min + (value - min) * progress;
-  canvasCtx.fillText(Math.round(animatedValue).toString(), centerX, centerY - 5);
-  if (gauge.unit) {
-    canvasCtx.font = "14px Inter, sans-serif";
-    canvasCtx.fillStyle = theme.textColorSecondary;
-    canvasCtx.fillText(gauge.unit, centerX, centerY + 22);
+  canvasCtx.strokeStyle = theme.textColorSecondary;
+  canvasCtx.lineWidth = 1;
+  const ticks = gauge.tickCount ?? 5;
+  const tickLen = Math.min(8, radius * 0.08);
+  for (let i = 0; i <= ticks * 2; i++) {
+    const ratio = i / (ticks * 2);
+    const angle = startAngle - (startAngle - normalizedEnd) * ratio;
+    const inner = radius - 4;
+    const outer = radius - 4 - (i % 2 === 0 ? tickLen : tickLen * 0.5);
+    canvasCtx.globalAlpha = i % 2 === 0 ? 0.8 : 0.4;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(centerX + Math.cos(angle) * inner, centerY + Math.sin(angle) * inner);
+    canvasCtx.lineTo(centerX + Math.cos(angle) * outer, centerY + Math.sin(angle) * outer);
+    canvasCtx.stroke();
   }
   canvasCtx.restore();
+}
+
+/** 指针：针身三角形（根宽 8）+ 针尾圆帽 r5；随进度动画同步扫动 */
+function drawGaugePointer(canvasCtx, gauge, theme, progressColor, centerX, centerY, radius, axisWidth, valueAngle, progress) {
+  const pointer = gauge.pointer || {};
+  const color = pointer.color || progressColor;
+  const length = Math.min(pointer.length ?? radius - axisWidth / 2 - 14, radius - axisWidth / 2 - 6);
+  const baseHalf = Math.max(2, Math.min(10, pointer.width ? pointer.width / 2 : 4));
+  const tipX = centerX + Math.cos(valueAngle) * length;
+  const tipY = centerY + Math.sin(valueAngle) * length;
+  const perpX = Math.cos(valueAngle + Math.PI / 2);
+  const perpY = Math.sin(valueAngle + Math.PI / 2);
+  canvasCtx.save();
+  canvasCtx.fillStyle = color;
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(tipX, tipY);
+  canvasCtx.lineTo(centerX + perpX * baseHalf, centerY + perpY * baseHalf);
+  canvasCtx.lineTo(centerX - perpX * baseHalf, centerY - perpY * baseHalf);
+  canvasCtx.closePath();
+  canvasCtx.fill();
+  // 针尾圆帽：底色填充 + 针色描边
+  canvasCtx.beginPath();
+  canvasCtx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+  canvasCtx.fillStyle = theme.backgroundColor;
+  canvasCtx.fill();
+  canvasCtx.strokeStyle = color;
+  canvasCtx.lineWidth = 2;
+  canvasCtx.stroke();
+  canvasCtx.restore();
+  void progress;
 }
 function getHeatmapCategories(options) {
   const heatmapData = options.heatmapData || [];
@@ -347,21 +426,46 @@ function renderHeatmapChart(ctx) {
     return heatmapConfig.formatter ? heatmapConfig.formatter(v) : Number.isInteger(v) ? v.toString() : parseFloat(v.toFixed(2)).toString();
   }
 }
+/** K线+成交量布局口径：渲染与 y 轴绘制共用（价格区上、量带下） */
+function candleVolumeLayout(plotArea, options, hiddenSeries) {
+  const candleData = options.candleData || [];
+  const volumeData = options.volumeData || [];
+  const on = candleData.length > 0
+    && volumeData.length === candleData.length
+    && !(hiddenSeries && hiddenSeries.has("成交量"));
+  const ratio = Math.max(0.15, Math.min(0.4, options.volumeHeight ?? 0.24));
+  const priceArea = on
+    ? { x: plotArea.x, y: plotArea.y, width: plotArea.width, height: plotArea.height * (1 - ratio) }
+    : { x: plotArea.x, y: plotArea.y, width: plotArea.width, height: plotArea.height };
+  const bandTop = on ? plotArea.y + priceArea.height + 1 : null;
+  return { on, ratio, priceArea, bandTop };
+}
+
+/**
+ * K 线 + 成交量（DESIGN §3.10）：volumeData 与 candleData 等长时开启副图，
+ * 绘图区下部 24% 为量带，K 线压缩到上部；量柱颜色跟随当日涨跌 @55%，
+ * 带不画轴（量纲从属）。图例「成交量」点选后量带隐去、K 线回铺全高。
+ */
 function renderCandleChart(ctx, yRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
   const candleData = options.candleData || [];
   if (candleData.length === 0) return;
   const upColor = options.candleUpColor || "#dc2626";
   const downColor = options.candleDownColor || "#16a34a";
+  const volumeData = options.volumeData || [];
+  const vol = candleVolumeLayout(plotArea, options, hiddenSeries);
+  const volumeOn = vol.on;
+  const priceArea = vol.priceArea;
   const categoryWidth = plotArea.width / candleData.length;
-  const candleWidth = categoryWidth * 0.6;
+  const candleWidth = Math.min(categoryWidth * 0.6, 24);
+  const yFor = (v) => priceArea.y + priceArea.height - (v - yRange.min) / (yRange.max - yRange.min) * priceArea.height * progress;
   candleData.forEach((candle, i) => {
     const x = plotArea.x + (i + 0.5) * categoryWidth;
     const isHover = i === hoverIndex;
     const isUp = candle.close >= candle.open;
     const color = isUp ? upColor : downColor;
-    const highY = plotArea.y + plotArea.height - (candle.high - yRange.min) / (yRange.max - yRange.min) * plotArea.height * progress;
-    const lowY = plotArea.y + plotArea.height - (candle.low - yRange.min) / (yRange.max - yRange.min) * plotArea.height * progress;
+    const highY = yFor(candle.high);
+    const lowY = yFor(candle.low);
     canvasCtx.save();
     canvasCtx.strokeStyle = color;
     canvasCtx.lineWidth = 1;
@@ -369,8 +473,8 @@ function renderCandleChart(ctx, yRange) {
     canvasCtx.moveTo(x, highY);
     canvasCtx.lineTo(x, lowY);
     canvasCtx.stroke();
-    const openY = plotArea.y + plotArea.height - (candle.open - yRange.min) / (yRange.max - yRange.min) * plotArea.height * progress;
-    const closeY = plotArea.y + plotArea.height - (candle.close - yRange.min) / (yRange.max - yRange.min) * plotArea.height * progress;
+    const openY = yFor(candle.open);
+    const closeY = yFor(candle.close);
     const bodyTop = Math.min(openY, closeY);
     const bodyHeight = Math.max(1, Math.abs(closeY - openY));
     canvasCtx.fillStyle = isHover ? color + "dd" : color;
@@ -382,6 +486,41 @@ function renderCandleChart(ctx, yRange) {
     }
     canvasCtx.restore();
   });
+  // 量带：颜色跟随涨跌 @55%，不画轴；最高量柱顶标 max（10px 次要色）
+  if (volumeOn) {
+    const volMax = Math.max(...volumeData, 1);
+    const bandTop = vol.bandTop;
+    const bandHeight = plotArea.y + plotArea.height - bandTop - 1;
+    volumeData.forEach((vol, i) => {
+      if (!Number.isFinite(vol)) return;
+      const candle = candleData[i];
+      const isUp = candle.close >= candle.open;
+      const color = isUp ? upColor : downColor;
+      const h = Math.max(1, vol / volMax * bandHeight * 0.92 * progress);
+      const x = plotArea.x + (i + 0.5) * categoryWidth;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = i === hoverIndex ? 0.85 : 0.55;
+      canvasCtx.fillStyle = color;
+      canvasCtx.fillRect(x - candleWidth / 2, plotArea.y + plotArea.height - 1 - h, candleWidth, h);
+      canvasCtx.restore();
+    });
+    canvasCtx.save();
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.font = "10px Inter, sans-serif";
+    canvasCtx.textAlign = "right";
+    canvasCtx.textBaseline = "bottom";
+    canvasCtx.fillText(formatCompact(volMax), plotArea.x + plotArea.width - 2, bandTop + 12);
+    canvasCtx.restore();
+    // 价格/量带分界线
+    canvasCtx.save();
+    canvasCtx.strokeStyle = theme.gridColor;
+    canvasCtx.lineWidth = 1;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(plotArea.x, bandTop);
+    canvasCtx.lineTo(plotArea.x + plotArea.width, bandTop);
+    canvasCtx.stroke();
+    canvasCtx.restore();
+  }
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColorSecondary;
   canvasCtx.font = "11px Inter, sans-serif";
@@ -395,7 +534,16 @@ function renderCandleChart(ctx, yRange) {
   });
   canvasCtx.restore();
 }
+
+/** 量纲紧凑读法：1.2万 / 3.4亿 式（量带 max 标注用） */
+function formatCompact(v) {
+  if (v >= 1e8) return `${parseFloat((v / 1e8).toFixed(1))}亿`;
+  if (v >= 1e4) return `${parseFloat((v / 1e4).toFixed(1))}万`;
+  return Number.isInteger(v) ? String(v) : parseFloat(v.toFixed(2)).toString();
+}
 export {
+  candleVolumeLayout,
+  formatCompact,
   getHeatmapCategories,
   renderCandleChart,
   renderFunnelChart,

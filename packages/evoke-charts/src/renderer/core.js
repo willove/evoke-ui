@@ -177,6 +177,10 @@ function estimateLegendRows(options, availableWidth) {
     names = (options.radarSeries || []).map((s) => s.name);
   } else if (options.type === "funnel") {
     names = (options.funnelData || []).map((d) => d.label || "");
+  } else if (options.type === "sankey" || options.type === "chord" || options.type === "arc") {
+    names = ((options.sankeyData || options.chordData || options.arcData || {}).nodes || []).map((n) => n.name);
+  } else if (options.type === "venn") {
+    names = (options.vennData || []).filter((d) => !d.sets || d.sets.length <= 1).map((d) => d.name);
   } else {
     names = (options.series || []).map((s) => s.name);
   }
@@ -208,6 +212,15 @@ function hasLegendContent(options) {
   if (options.type === "funnel") {
     return (options.funnelData || []).length > 0;
   }
+  if (options.type === "sankey" || options.type === "chord" || options.type === "arc") {
+    return ((options.sankeyData || options.chordData || options.arcData || {}).nodes || []).length > 0;
+  }
+  if (options.type === "venn") {
+    return (options.vennData || []).length > 0;
+  }
+  if (options.type === "candle") {
+    return (options.volumeData || []).length > 0;
+  }
   return (options.series || []).length > 0;
 }
 /** 标题+副标题在画布顶部占用的纵向空间 */
@@ -230,10 +243,13 @@ function estimateYAxisLeft(options) {
   const axisConfig = options.yAxis || {};
   if (axisConfig.type === "log") return 65;
   try {
-    // 横向条形图左列是分类标签（非数值刻度），按最宽分类名估宽，同一 [40, 140] 契约
-    if (options.type === "horizontal-bar") {
+    // 横向条形图 / 横向箱线的左列是分类标签（非数值刻度），按最宽分类名估宽，同一 [40, 140] 契约
+    if (options.type === "horizontal-bar" || (options.type === "boxplot" && options.boxHorizontal === true)) {
+      const names = options.type === "horizontal-bar"
+        ? options.labels || []
+        : [...new Set((options.boxData || []).map((b) => b.label))];
       const formatter = axisConfig.formatter;
-      const maxW = (options.labels || []).reduce((m, l) => {
+      const maxW = names.reduce((m, l) => {
         const label = formatter ? String(formatter(l)) : String(l);
         return Math.max(m, estimateTextWidth(label, 12));
       }, 0);
@@ -302,14 +318,41 @@ function getPadding(options, containerWidth = 600) {
     "treemap",
     "bullet",
     "bin",
-    "sunburst"
+    "sunburst",
+    "sankey",
+    "venn",
+    "chord",
+    "arc",
+    "scatter-matrix"
   ];
+  if (options.type === "gantt") {
+    // 甘特：左侧任务名列按最宽任务名实测（夹 80–180），底部时间轴 46
+    const pad2 = resolveUserPadding(options);
+    const names2 = (options.ganttData || []).map((t) => t.name || "");
+    const labelW = names2.length
+      ? Math.max(80, Math.min(180, Math.round(Math.max(...names2.map((n) => estimateTextWidth(n, 12))) + 16)))
+      : 100;
+    const top2 = (pad2.top ?? 18) + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
+    const bottom2 = (pad2.bottom ?? 46) + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
+    const left2 = pad2.left ?? labelW;
+    const right2 = pad2.right ?? 24;
+    return {
+      top: top2,
+      right: right2,
+      bottom: bottom2,
+      left: legendPosition === "left" ? left2 + 80 : left2
+    };
+  }
   if (noAxisTypes.includes(options.type)) {
     const pad = resolveUserPadding(options);
     let top2 = (pad.top ?? 18) + titleBlockHeight(options);
     let bottom2 = pad.bottom ?? 18;
     let left2 = pad.left ?? 20;
     let right2 = pad.right ?? 20;
+    // 关系图族节点标签贴近绘图区下缘，图例带压字：底部默认余量加大
+    if (options.type === "sankey" || options.type === "chord" || options.type === "arc" || options.type === "venn") {
+      bottom2 = pad.bottom ?? 34;
+    }
     if (options.type === "heatmap") {
       const yCats = Array.from(new Set((options.heatmapData || []).map((d) => d.y)));
       const maxYLabel = yCats.reduce((m, s) => Math.max(m, estimateTextWidth(s, 11)), 0);
@@ -518,6 +561,7 @@ function calculateRange(options, hiddenSeries, useRightAxis) {
   } else if (options.type === "boxplot") {
     const boxData = options.boxData || [];
     boxData.forEach((b) => {
+      if (b.group && hiddenSeries.has(b.group)) return;
       if (b.max > max) max = b.max;
       if (b.min < min) min = b.min;
       b.outliers?.forEach((o) => {

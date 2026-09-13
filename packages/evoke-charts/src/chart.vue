@@ -103,7 +103,19 @@ import {
   computePieMaxRadius,
   getToolboxBounds,
   createSvgRecorder,
-  isMissingValue
+  isMissingValue,
+  sankeyHitTest,
+  vennHitTest,
+  chordHitTest,
+  arcHitTest,
+  ganttHitTest,
+  boxplotHitTest,
+  computeBoxplotGeometry,
+  computeFacetGrids,
+  computeMatrixCells,
+  matrixFieldExtent,
+  scatterPointPositions,
+  scatterGroupColors
 } from "./renderer";
 import { DEFAULT_I18N_ZH } from "./types";
 import { registerConnector, broadcastConnect } from "./connect";
@@ -182,6 +194,16 @@ const isEmpty = computed(() => {
       return !opt.series || opt.series.length === 0 || !opt.series[0]?.data?.length;
     case "radar":
       return !opt.radarIndicators?.length || !opt.radarSeries?.length;
+    case "sankey":
+    case "chord":
+    case "arc":
+      return !((opt.sankeyData || opt.chordData || opt.arcData)?.nodes?.length);
+    case "venn":
+      return !opt.vennData || opt.vennData.length === 0;
+    case "gantt":
+      return !opt.ganttData || opt.ganttData.length === 0;
+    case "scatter-matrix":
+      return !opt.matrixFields?.length || !opt.matrixData?.length;
     default:
       return !opt.labels?.length || !opt.series?.length;
   }
@@ -635,17 +657,22 @@ function stopHoverAnimation() {
     hoverAnimFrameId = null;
   }
 }
-// 饼/环/玫瑰是「抽出」动画，旭日图与矩形树图是「聚焦子树」淡化——都要缓动
+// 饼/环/玫瑰是「抽出」动画，旭日图与矩形树图是「聚焦子树」淡化，雷达是
+// 「轴线点亮」——都要缓动（DESIGN §13：动画只属于数据与焦点过渡）
 function usesHoverAnimation() {
   const t = props.options.type;
-  return t === "pie" || t === "doughnut" || t === "rose" || t === "sunburst" || t === "treemap";
+  return t === "pie" || t === "doughnut" || t === "rose" || t === "sunburst" || t === "treemap" || t === "radar";
 }
-// 清空悬浮焦点：饼类收回动画，层级图直接回到原色（焦点一没就没有淡化对象）
+// 进出带渐变动画的类型（饼类抽出 + 雷达轴线点亮 + 韦恩整圆强调）；层级图切焦不重播
+function animatesHoverEnter() {
+  const t = props.options.type;
+  return t === "pie" || t === "doughnut" || t === "rose" || t === "radar" || t === "venn";
+}
+// 清空悬浮焦点：饼类/雷达收回动画，层级图直接回到原色（焦点一没就没有淡化对象）
 function clearHover() {
   if (hoverIndex === -1) return false;
   hoverIndex = -1;
-  const t = props.options.type;
-  if (t === "pie" || t === "doughnut" || t === "rose") {
+  if (animatesHoverEnter()) {
     startHoverAnimation(-1);
   } else {
     stopHoverAnimation();
@@ -655,7 +682,7 @@ function clearHover() {
   return true;
 }
 function startHoverAnimation(dir) {
-  if (!usesHoverAnimation()) {
+  if (!animatesHoverEnter()) {
     return;
   }
   if (props.options.animation?.enabled === false) {
@@ -702,7 +729,12 @@ const LEGEND_INTERACTIVE_TYPES = [
   "rose",
   "radar",
   "funnel",
-  "scatter"
+  "scatter",
+  "sankey",
+  "chord",
+  "arc",
+  "venn",
+  "candle"
 ];
 function checkLegendHit(x, y) {
   const canvas = canvasRef.value;
@@ -881,21 +913,71 @@ function getHoveredData(x, y) {
     };
   }
   if (options.type === "boxplot") {
-    const boxData = options.boxData || [];
-    if (boxData.length === 0) return null;
-    const categoryWidth = plotArea.width / boxData.length;
-    const i = Math.floor((canvasX - plotArea.x) / categoryWidth);
-    if (i < 0 || i >= boxData.length) return null;
-    const b = boxData[i];
-    const color = b.color || theme.colors[i % theme.colors.length];
+    const visible = (options.boxData || []).filter(
+      (b) => !(b.group && hiddenSeries.value.has(b.group)) && !hiddenSeries.value.has(b.label)
+    );
+    if (visible.length === 0) return null;
+    const showOutliers = options.showOutliers !== false;
+    const allValues = visible.flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])]);
+    const axisCfg = options.boxHorizontal ? options.xAxis || {} : options.yAxis || {};
+    const ext = resolveTickExtendedRange(
+      axisCfg.min ?? Math.min(...allValues),
+      axisCfg.max ?? Math.max(...allValues),
+      axisCfg.ticks || 5
+    );
+    return boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, { min: ext.min, max: ext.max });
+  }
+  if (options.type === "sankey") {
+    return sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+  }
+  if (options.type === "venn") {
+    return vennHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+  }
+  if (options.type === "chord") {
+    return chordHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+  }
+  if (options.type === "arc") {
+    return arcHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+  }
+  if (options.type === "gantt") {
+    return ganttHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+  }
+  if (options.type === "scatter-matrix") {
+    const fields = options.matrixFields || [];
+    const records = options.matrixData || [];
+    if (fields.length === 0 || records.length === 0) return null;
+    const cells = computeMatrixCells(plotArea, fields);
+    const cell = cells.find(
+      (c) => canvasX >= c.x && canvasX <= c.x + c.width && canvasY >= c.y && canvasY <= c.y + c.height
+    );
+    if (!cell || cell.row === cell.col) return null;
+    const extX = matrixFieldExtent(records, cell.xField);
+    const extY = matrixFieldExtent(records, cell.yField);
+    const px = (v) => cell.x + 5 + (v - extX.min) / (extX.max - extX.min) * (cell.width - 10);
+    const py = (v) => cell.y + cell.height - 5 - (v - extY.min) / (extY.max - extY.min) * (cell.height - 10);
+    let nearest = -1;
+    let minDist = Infinity;
+    records.forEach((record, ri) => {
+      const xv = record[cell.xField];
+      const yv = record[cell.yField];
+      if (typeof xv !== "number" || typeof yv !== "number") return;
+      const dist = Math.sqrt((canvasX - px(xv)) ** 2 + (canvasY - py(yv)) ** 2);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = ri;
+      }
+    });
+    if (nearest < 0 || minDist > 18) return null;
+    const record = records[nearest];
+    const cellIndex = cells.indexOf(cell);
     return {
-      index: i,
+      index: cellIndex,
       params: {
-        seriesName: b.label,
-        name: `${b.label}\uFF08\u4E2D\u4F4D\u6570 ${b.median}\uFF09`,
-        value: [b.min, b.q1, b.median, b.q3, b.max],
-        color,
-        dataIndex: i + sliceStartOffset(),
+        seriesName: record.label || `${cell.yField} × ${cell.xField}`,
+        name: `${cell.xField}=${record[cell.xField]}, ${cell.yField}=${record[cell.yField]}`,
+        value: record[cell.yField],
+        color: record.color || theme.colors[0],
+        dataIndex: cellIndex,
         seriesIndex: 0
       }
     };
@@ -970,23 +1052,55 @@ function getHoveredData(x, y) {
   if (options.type === "scatter") {
     const scatterData = options.scatterData || [];
     if (scatterData.length === 0) return null;
-    const xValues = scatterData.map((d) => d.x);
-    const xMin = Math.min(...xValues);
-    const xMax = Math.max(...xValues);
-    const xRange = xMax - xMin || 1;
-    const xPadding = xRange * 0.05;
+    // 分面：先定位所在格，再在格内找最近点
+    if (options.facet === true) {
+      const grid = computeFacetGrids(scatterData, plotArea, options);
+      if (!grid) return null;
+      for (const facet of grid.facets) {
+        const a = facet.area;
+        if (canvasX < a.x || canvasX > a.x + a.width || canvasY < a.y || canvasY > a.y + a.height) continue;
+        let nearestLocal = -1;
+        let minDistance = Infinity;
+        facet.data.forEach((point, i) => {
+          const ppx = facet.toX(point.x);
+          const ppy = facet.toY(point.y);
+          const dist = Math.sqrt((canvasX - ppx) ** 2 + (canvasY - ppy) ** 2);
+          if (dist < minDistance) {
+            minDistance = dist;
+            nearestLocal = i;
+          }
+        });
+        if (nearestLocal < 0 || minDistance > 24) return null;
+        const point = facet.data[nearestLocal];
+        const globalIdx = scatterData.indexOf(point);
+        const color = point.color || theme.colors[globalIdx % theme.colors.length];
+        return {
+          index: globalIdx,
+          params: {
+            seriesName: point.group || point.label || `Point ${globalIdx + 1}`,
+            name: `(${point.x}, ${point.y})`,
+            value: point.y,
+            color,
+            dataIndex: globalIdx,
+            seriesIndex: 0
+          }
+        };
+      }
+      return null;
+    }
     const yValues = scatterData.map((d) => d.y);
     const axisConfig = options.yAxis || {};
     const rawMin = axisConfig.min ?? Math.min(...yValues);
     const rawMax = axisConfig.max ?? Math.max(...yValues);
     const yExt = resolveTickExtendedRange(rawMin, rawMax, axisConfig.ticks || 5);
-    const yPadding = (yExt.max - yExt.min) * 0.05;
+    // 点位与渲染同一口径（含抖动），看到的和命中的是同一批坐标
+    const positions = scatterPointPositions(scatterData, { min: yExt.min, max: yExt.max }, plotArea, options);
+    const groupColors = scatterGroupColors(scatterData, theme);
     let nearestIndex = -1;
     let minDistance = Infinity;
     scatterData.forEach((point, i) => {
-      const px = plotArea.x + (point.x - xMin + xPadding) / (xRange + xPadding * 2) * plotArea.width;
-      const normalizedY = (point.y - yExt.min + yPadding) / (yExt.max - yExt.min + yPadding * 2);
-      const py = plotArea.y + plotArea.height - normalizedY * plotArea.height;
+      if (hiddenSeries.value.has(point.label || `P${i + 1}`) || (point.group && hiddenSeries.value.has(point.group))) return;
+      const [px, py] = positions[i];
       const dist = Math.sqrt((canvasX - px) ** 2 + (canvasY - py) ** 2);
       if (dist < minDistance) {
         minDistance = dist;
@@ -995,11 +1109,12 @@ function getHoveredData(x, y) {
     });
     if (nearestIndex >= 0 && minDistance < 30) {
       const point = scatterData[nearestIndex];
-      const color = point.color || theme.colors[nearestIndex % theme.colors.length];
+      const color = point.color
+        || (point.group && groupColors.has(point.group) ? groupColors.get(point.group) : theme.colors[nearestIndex % theme.colors.length]);
       return {
         index: nearestIndex,
         params: {
-          seriesName: point.label || `Point ${nearestIndex + 1}`,
+          seriesName: point.label || point.group || `Point ${nearestIndex + 1}`,
           name: `(${point.x}, ${point.y})`,
           value: point.y,
           color,
@@ -1025,6 +1140,7 @@ function getHoveredData(x, y) {
         seriesName: candle.label,
         name: candle.label,
         value: [candle.open, candle.close, candle.high, candle.low],
+        volume: (options.volumeData || [])[i],
         color,
         dataIndex: i,
         seriesIndex: 0
@@ -1142,6 +1258,19 @@ function getHoveredData(x, y) {
     const centerY = plotArea.y + plotArea.height / 2;
     const radius = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 30);
     const angleStep = Math.PI * 2 / indicators.length;
+    // 维度标签命中：悬到标签上同样激活该轴（DESIGN §3.1 轴线悬浮高亮）
+    const labelOffset = options.radarLabelOffset ?? 12;
+    let labelHit = -1;
+    indicators.forEach((indicator, i) => {
+      if (labelHit >= 0) return;
+      const angle = i * angleStep - Math.PI / 2;
+      const lx = centerX + Math.cos(angle) * (radius + labelOffset);
+      const ly = centerY + Math.sin(angle) * (radius + labelOffset);
+      if (Math.sqrt((canvasX - lx) ** 2 + (canvasY - ly) ** 2) <= 18) labelHit = i;
+    });
+    if (labelHit >= 0) {
+      return radarAxisHover(labelHit, indicators, series, options, theme);
+    }
     let nearestIndex = -1;
     let minDist = Infinity;
     indicators.forEach((_, i) => {
@@ -1158,15 +1287,7 @@ function getHoveredData(x, y) {
       }
     });
     if (nearestIndex < 0 || minDist > 30) return null;
-    const params = series.map((s, sIdx) => ({
-      seriesName: s.name,
-      name: indicators[nearestIndex].name,
-      value: s.data[nearestIndex],
-      color: s.color || theme.colors[options.series.indexOf(s) % theme.colors.length],
-      dataIndex: nearestIndex,
-      seriesIndex: sIdx
-    }));
-    return { index: nearestIndex, params };
+    return radarAxisHover(nearestIndex, indicators, series, options, theme);
   }
   const labels = options.labels || [];
   if (labels.length === 0) return null;
@@ -1202,6 +1323,18 @@ function getHoveredData(x, y) {
       }
     };
   }
+}
+/** 雷达轴悬浮：返回该维度上全部可见系列的 tooltip 行 */
+function radarAxisHover(axisIndex, indicators, series, options, theme) {
+  const params = series.map((s, sIdx) => ({
+    seriesName: s.name,
+    name: indicators[axisIndex].name,
+    value: s.data[axisIndex],
+    color: s.color || theme.colors[(options.radarSeries || []).indexOf(s) % theme.colors.length],
+    dataIndex: axisIndex,
+    seriesIndex: sIdx
+  }));
+  return { index: axisIndex, params };
 }
 function setZoomRange(next) {
   const minSpan = INTERACTION.zoom.minSpan;
@@ -1523,13 +1656,13 @@ function handlePointerMove(e) {
   }
   if (e.pointerType === "touch") return;
   const result = getHoveredData(e.clientX, e.clientY);
-  const isPieLike = props.options.type === "pie" || props.options.type === "doughnut" || props.options.type === "rose";
+  const enterAnimated = animatesHoverEnter();
   if (result && props.options.tooltip?.show !== false) {
     const newIndex = result.index;
     if (newIndex !== hoverIndex) {
       const prevIndex = hoverIndex;
       hoverIndex = newIndex;
-      if (isPieLike) {
+      if (enterAnimated) {
         if (prevIndex === -1) {
           startHoverAnimation(1);
         } else {

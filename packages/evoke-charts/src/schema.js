@@ -6,9 +6,10 @@ import { CHART_PALETTES } from "./palettes";
 
 const CHART_TYPES = [
   "line", "area", "bar", "stacked-bar", "horizontal-bar",
-  "pie", "doughnut", "rose", "radar", "scatter",
+  "pie", "doughnut", "rose", "radar", "scatter", "scatter-matrix",
   "funnel", "gauge", "heatmap", "candle", "bin", "bullet",
-  "treemap", "sparkline", "waterfall", "boxplot", "sunburst", "mixed"
+  "treemap", "sparkline", "waterfall", "boxplot", "sunburst", "mixed",
+  "sankey", "venn", "chord", "arc", "gantt"
 ];
 
 const seriesSchema = {
@@ -201,8 +202,34 @@ export const chartOptionsSchema = {
     gauge: { oneOf: [{ type: "number" }, { type: "object" }] },
     heatmapData: { type: "array" },
     candleData: { type: "array" },
+    volumeData: { type: "array" },
     bulletData: { type: "array" },
     boxData: { type: "array" },
+    sankeyData: {
+      type: "object",
+      properties: {
+        nodes: { type: "array" },
+        links: { type: "array" }
+      }
+    },
+    chordData: {
+      type: "object",
+      properties: {
+        nodes: { type: "array" },
+        links: { type: "array" }
+      }
+    },
+    arcData: {
+      type: "object",
+      properties: {
+        nodes: { type: "array" },
+        links: { type: "array" }
+      }
+    },
+    vennData: { type: "array" },
+    ganttData: { type: "array" },
+    matrixFields: { type: "array" },
+    matrixData: { type: "array" },
     // 行为与辅助
     loading: { type: "boolean" },
     emptyText: { type: "string" },
