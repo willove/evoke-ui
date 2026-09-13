@@ -34,11 +34,11 @@
  * 配 placeholder 生成等高占位避免内容顶到头下。区别于桌面站点的 EvNavbar。
  * 前台库零外部依赖：无滚动锁定与层级计数，固定层级默认压在弹层之下。
  */
-import { computed } from 'vue'
 import EvIcon from '../icon/index.vue'
 
 defineOptions({ name: 'EvNavBar' })
 
+import { useGlassVars } from '../../composables/useGlassVars'
 const props = defineProps({
   /** 标题文本（title 插槽可替换） */
   title: { type: String, default: '' },
@@ -60,15 +60,15 @@ const props = defineProps({
   glass: { type: Boolean, default: undefined },
   /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
   blur: { type: [Number, String], default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --ev-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --ev-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits(['click-left', 'click-right'])
 
-// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
-const glassVars = computed(() => {
-  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
-  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
-})
+const glassVars = useGlassVars(props)
 </script>
 
 <style src="./style.css"></style>

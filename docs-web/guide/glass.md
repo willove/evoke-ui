@@ -49,16 +49,15 @@ reset()        // 恢复默认（磨砂关闭）
 
 ## 磨砂强度 blur
 
-`blur` 接收 px 数字（或带单位字符串），内联覆盖该组件的默认模糊，互不影响。
-下面的演示可以直接拖动滑块实时调节——三个滑块分别改写 `--ev-glass-blur`、
-`--ev-glass-bg`（雾面浓度）与 `--ev-glass-saturate`，卡片即时响应：
+`blur` 接收 px 数字（或带单位字符串），内联覆盖该组件的默认模糊；配套 `saturate`
+（饱和度倍数）与 `tint`（底色浓度 %）同理，三者都是独立参数，只用其一即可：
 
 <DemoBlock title="实时调节磨砂质感" description="拖动滑块观察同一照片上的质感变化，示例代码同步显示当前参数；0px 即完全透明无磨砂，浓度越低底色越透。">
 
 <EvConfigProvider glass :global="false">
-  <div class="glass-lab" :style="labVars">
+  <div class="glass-lab">
     <div class="glass-scene glass-scene--ridge">
-      <EvCard glass style="flex:1;">
+      <EvCard glass :blur="labBlur" :saturate="labSaturate" :tint="labTint" style="flex:1;">
         <p style="font-weight:600;">实时预览</p>
         <p style="font-size:13px;">拖动下方滑块，磨砂质感即时变化。</p>
       </EvCard>
@@ -151,26 +150,15 @@ reset()        // 恢复默认（磨砂关闭）
 import { ref, computed } from 'vue'
 const sceneModal = ref(false)
 
-// 实时调节演示：滑块 → 令牌覆写 → 玻璃配方即时响应
+// 实时调节演示：滑块 → 组件参数 → 玻璃配方即时响应
 const labBlur = ref(16)
 const labTint = ref(72)
 const labSaturate = ref(1.5)
-const labVars = computed(() => ({
-  '--ev-glass-blur': `${labBlur.value}px`,
-  '--ev-glass-saturate': String(labSaturate.value),
-  '--ev-glass-bg': `color-mix(in srgb, var(--ev-bg-container) ${labTint.value}%, transparent)`,
-}))
 
 // 示例代码随滑块同步：展示的值始终是当前演示的实际参数
-const labCode = computed(() => [
-  '<div :style="{',
-  `  '--ev-glass-blur': '${labBlur.value}px',`,
-  `  '--ev-glass-saturate': '${labSaturate.value}',`,
-  `  '--ev-glass-bg': 'color-mix(in srgb, var(--ev-bg-container) ${labTint.value}%, transparent)',`,
-  '}">',
-  '  <EvCard glass>…</EvCard>',
-  '</div>',
-].join('\n'))
+const labCode = computed(() =>
+  `<EvCard glass :blur="${labBlur.value}" :saturate="${labSaturate.value}" :tint="${labTint.value}">…</EvCard>`
+)
 </script>
 
 <style scoped>

@@ -93,6 +93,8 @@
 | flat | 去边框与阴影（嵌入场景） | boolean | `false` |
 | glass | 磨砂玻璃质感（粉彩 tone / sticker / featured 不参与）；缺省跟随全局（ConfigProvider glass） | boolean | — |
 | blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
+| saturate | 磨砂饱和度（倍数），内联覆盖 `--ev-glass-saturate` | string / number | — |
+| tint | 磨砂底色浓度（%），内联覆盖 `--ev-glass-bg` | string / number | — |
 | tag | 渲染标签（可传 `'a'`） | string | `'div'` |
 | custom-bg | 自定义底色（覆盖 tone） | string | — |
 

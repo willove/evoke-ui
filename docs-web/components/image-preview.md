@@ -64,6 +64,8 @@ Esc / 点击遮罩关闭、打开期间锁定页面滚动，多图时右下角�
 | esc-close | Esc 关闭 | boolean | `true` |
 | glass | 磨砂预览背景；缺省跟随全局（ConfigProvider glass） | boolean | — |
 | blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
+| saturate | 磨砂饱和度（倍数），内联覆盖 `--ev-glass-saturate` | string / number | — |
+| tint | 磨砂底色浓度（%），内联覆盖 `--ev-glass-bg` | string / number | — |
 
 ### 事件
 

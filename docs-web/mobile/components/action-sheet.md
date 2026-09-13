@@ -130,6 +130,8 @@ function onCancel() {}
 | before-close | (done) => void | — | 关闭前拦截，不调用 done 则阻止 |
 | glass | boolean | — | 磨砂玻璃面板；缺省跟随全局（ConfigProvider glass） |
 | blur | number / string | — | 磨砂强度（px），内联覆盖 `--ev-glass-blur` |
+| saturate | number / string | — | 磨砂饱和度（倍数），内联覆盖 `--ev-glass-saturate` |
+| tint | number / string | — | 磨砂底色浓度（%），内联覆盖 `--ev-glass-bg` |
 
 ### 事件
 

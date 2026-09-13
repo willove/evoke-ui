@@ -27,11 +27,16 @@
 import { computed } from 'vue'
 import EvIcon from '../icon/index.vue'
 
+import { useGlassVars } from '../../composables/useGlassVars'
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
   /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
   blur: { type: [Number, String], default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --ev-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --ev-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
   title: { type: String, default: '' },
   excerpt: { type: String, default: '' },
   cover: { type: String, default: '' },
@@ -49,11 +54,7 @@ const coverStyle = computed(() =>
   props.cover ? undefined : { background: 'linear-gradient(135deg, var(--ev-fill-1), var(--ev-bg-soft))' }
 )
 
-// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
-const glassVars = computed(() => {
-  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
-  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
-})
+const glassVars = useGlassVars(props)
 </script>
 
 <style src="./style.css"></style>

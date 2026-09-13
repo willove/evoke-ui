@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui / @wil-works/evoke-business-ui — 磨砂参数化：saturate / tint 组件级参数
+
+- 新增 `useGlassVars` 共用 composable，磨砂参数收敛为三个组件 prop（与既有 `blur`
+  对齐，全部内联覆盖对应令牌、缺省跟随令牌、`0` 显式生效）：
+  **`saturate`**（饱和度倍数 → `--x-glass-saturate`）、**`tint`**（底色浓度 % →
+  `--x-glass-bg`，数字拼完整 color-mix、字符串透传可直接给颜色值）；
+- 覆盖全部玻璃组件（evoke 14 / business 4），此前手写的 blur-only `glassVars`
+  computed 全部替换为共用实现；Navbar 的滚动磨砂 `blur`（Boolean）语义不变，
+  另获 saturate/tint 参数；
+- 用法从此免写令牌：`<EvCard glass :blur="28" :saturate="1.8" :tint="60">` ；
+  铁律脚本抓出 business 底色令牌名误写（--eb-bg-container 不存在，实为
+  --eb-bg-color）——隔离检查再立一功；
+- 文档 13 个组件页 API 表补 `saturate` / `tint` 行；磨砂专题页实验室改为
+  `<EvCard glass :blur :saturate :tint>` 参数化演示，示例代码随滑块同步；
+  两库各补 useGlassVars 单测（10 项），全量 1119 全绿，双包构建通过。
+
 ### @wil-works/evoke-ui — ConfigProvider 磨砂作用域做实（global:false 真局部化）
 
 - **`glass` 此前无视 `global` 一律写 `html[data-ev-glass]`**，多个局部演示会互相拔开关；

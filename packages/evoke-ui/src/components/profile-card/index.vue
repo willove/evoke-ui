@@ -24,14 +24,18 @@
  * EvProfileCard — 个人名片（团队页/关于页/个人站）
  * 头像 + 姓名 + 角色 + 简介 + 可选数据行与社交链接行
  */
-import { computed } from 'vue'
 import EvAvatar from '../avatar/index.vue'
 
+import { useGlassVars } from '../../composables/useGlassVars'
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
   /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
   blur: { type: [Number, String], default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --ev-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --ev-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
   name: { type: String, default: '' },
   role: { type: String, default: '' },
   bio: { type: String, default: '' },
@@ -42,11 +46,7 @@ const props = defineProps({
   plain: { type: Boolean, default: false },
 })
 
-// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
-const glassVars = computed(() => {
-  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
-  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
-})
+const glassVars = useGlassVars(props)
 </script>
 
 <style src="./style.css"></style>

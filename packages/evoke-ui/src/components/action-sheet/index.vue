@@ -55,6 +55,7 @@ import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLoc
 
 defineOptions({ name: 'EvActionSheet' })
 
+import { useGlassVars } from '../../composables/useGlassVars'
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
   /** 动作列表：{ name, subname?, color?, disabled? } */
@@ -76,6 +77,10 @@ const props = defineProps({
   glass: { type: Boolean, default: undefined },
   /** 磨砂强度（px），内联覆盖 --ev-glass-blur；缺省跟随令牌 */
   blur: { type: [Number, String], default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --ev-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --ev-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
 })
 
 const emit = defineEmits([
@@ -94,11 +99,7 @@ const zIndex = computed(() => 2000 + zSeed)
 
 const visible = computed(() => props.modelValue)
 
-// 组件级磨砂强度：内联覆盖 --ev-glass-blur，缺省不产出内联样式（跟随令牌）
-const glassVars = computed(() => {
-  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
-  return { '--ev-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
-})
+const glassVars = useGlassVars(props)
 
 // SSR 安全：构建期无 window/document，watch immediate 的关闭分支不能触碰 DOM
 const hasDom = typeof window !== 'undefined'

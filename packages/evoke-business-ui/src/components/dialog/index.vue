@@ -120,11 +120,16 @@ import { useZIndex } from '../../composables/useZIndex'
 
 defineOptions({ name: 'EbDialog' })
 
+import { useGlassVars } from '../../composables/useGlassVars'
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（EbConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
   /** 磨砂模糊半径（px）：内联覆盖 --eb-glass-blur 令牌，仅磨砂生效时应用；缺省跟随令牌（14px） */
   blur: { type: [Number, String], default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --eb-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --eb-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '' },
   width: { type: [String, Number], default: '520px' },
@@ -159,11 +164,7 @@ const { lock, unlock } = useLockScroll()
 
 const visible = computed(() => props.modelValue)
 
-// 组件级磨砂强度：内联覆盖 --eb-glass-blur，缺省不产出内联样式（跟随令牌）
-const glassVars = computed(() => {
-  if (props.blur === undefined || props.blur === null || props.blur === '') return undefined
-  return { '--eb-glass-blur': typeof props.blur === 'number' ? `${props.blur}px` : props.blur }
-})
+const glassVars = useGlassVars(props)
 
 const sizeClass = computed(() => (props.center ? 'is-center' : ''))
 

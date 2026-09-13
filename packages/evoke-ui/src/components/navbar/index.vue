@@ -12,6 +12,7 @@
         'no-glass': glass === false,
       },
     ]"
+    :style="glassVars"
   >
     <div class="ev-navbar__inner ev-container">
       <div class="ev-navbar__left">
@@ -84,12 +85,17 @@
  * items [{ label, href, target }]；插槽 logo / start / center / actions / default(移动端)
  */
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useGlassVars } from '../../composables/useGlassVars'
 import EvIcon from '../icon/index.vue'
 import EvIconButton from '../icon-button/index.vue'
 
 const props = defineProps({
   /** 磨砂玻璃质感：true 强制开 / false 强制关 / 缺省跟随全局（ConfigProvider 的 glass） */
   glass: { type: Boolean, default: undefined },
+  /** 磨砂饱和度（倍数），内联覆盖 --ev-glass-saturate；缺省跟随令牌 */
+  saturate: { type: [Number, String], default: undefined },
+  /** 磨砂底色浓度（%），内联覆盖 --ev-glass-bg；缺省跟随令牌 */
+  tint: { type: [Number, String], default: undefined },
   /** 吸顶 */
   sticky: { type: Boolean, default: true },
   /** 滚动后背景磨砂 */
@@ -111,6 +117,8 @@ const isScrolled = ref(false)
 const menuOpen = ref(false)
 const hidden = ref(false)
 let lastY = 0
+
+const glassVars = useGlassVars(props)
 
 function isActive(item) {
   if (item.active != null) return !!item.active
