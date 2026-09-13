@@ -2,7 +2,7 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased]
+## [charts 0.5.0] — 2026-09-14
 
 ### @wil-works/evoke-charts — 关系图族体验回访：弧向/动效/比例修正 + 弧形环状 + 日历热力
 
