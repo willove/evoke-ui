@@ -259,7 +259,7 @@
 
 ## 10. 动效
 
-- 首渲/数据变更补间：时长 1200ms、easeOut（指数缓出），数值插值而非闪屏重绘。
+- 首渲/数据变更补间：时长 1200ms、easeOut（五次缓出），数值插值而非闪屏重绘。
 - **实时流场景必须关闭**：`animation: { enabled: false }`——每秒推进数据点时补间会让整线反复变形。
 - 悬浮反馈（十字准线、圆环、tooltip 显隐）即时响应，不做动画。
 - **分幕编排（scenes）**：每幕一个 options 浅合并补丁；`duration` 为该幕过渡时长
@@ -278,7 +278,94 @@
 - 画布 `role="img"` + `aria-label`（`ariaLabel` 或自动生成）。
 - 悬浮信息 `aria-live` 播报；空态文案走 i18n。
 
-## 13. 落实路线图
+## 13. 交互规范
+
+三条总纲，与全库设计纪律一脉相承：
+
+1. **悬浮即时**：悬浮反馈（准线、圆环、tooltip 显隐、柱体高亮）零动画；
+   动画只属于数据（首渲 / 变更补间）；
+2. **反馈走既有通道**：焦点淡化只有一档（22%），图例悬浮与 `emphasis` 共用同一
+   通道同一数值；不因新交互发明新视觉语言；
+3. **克制**：图表不弹层、不抢焦点、不替使用方做动效。
+
+所有交互常量以 `src/interactions.js` 为单一事实源，本节数值实现必须引用它；
+改本节先于改码（与「改视觉先改标准」同一纪律）。
+
+### 13.1 指针与光标
+
+| 区域 | cursor |
+| --- | --- |
+| 绘图区（直角系 / 极坐标 / 层级） | crosshair |
+| 图例 / 工具箱 | pointer |
+| 缩放滑块 | grab（拖拽中 grabbing） |
+| 其余（标题、留白、tooltip 本体） | default |
+
+### 13.2 hover 行为矩阵
+
+| 图型 | 悬浮反馈 |
+| --- | --- |
+| line / area / mixed | 竖向准线 + 数据点空心圆环（底色填充 + 系列色描边）+ tooltip |
+| scatter | 命中点半径外扩一档（+2）转实心 + 外圈光环 + tooltip |
+| bar / stacked-bar / horizontal-bar / waterfall | 柱体高亮（轻度蒙灰 + 顶部高光条）+ tooltip |
+| sunburst / treemap | 聚焦子树：本枝原色、其余段与标签淡至 25%（220ms 缓动），被悬浮节点加深一档 |
+| radar / heatmap / funnel / gauge / candle / 饼类 | 命中元素强调 + tooltip |
+
+hover 离开绘图区或按 Esc，全部瞬时清除（零动画离场）。
+
+### 13.3 点选与焦点
+
+- 图例点选显隐，隐去残影图标 0.4 / 文字 0.6；`legend.interactive: false` 关闭点选；
+- 焦点单一通道：图例悬浮与 `emphasis` 同档 22%，显式 `emphasis` 优先，移除即恢复；
+- 数据点单击派发 `click`；`tooltip.trigger: 'click'` 时单击兼作 tooltip 出牌；
+- 双击：重置缩放窗口到 0–100%；未启用 dataZoom 时双击无操作（安静原则）；
+- **Esc：清除悬浮 / tooltip / 框选拖拽**。
+
+### 13.4 缩放与框选
+
+- 滚轮缩放：以光标为锚点，步进系数 1.15，窗口下限 2%；仅绘图区内生效、
+  `mouseWheel: false` 可关；
+- 双击复位（同上）；滑块窗口拖拽与手柄见 §11；
+- 框选（brush）：按下拖拽出选区，抬起派发 `brush-select`（起止索引），Esc 中止并清除；
+- 触屏（🔜 路线图）：单指已等同悬浮 / 点按；双指捏合缩放与长按框选为后续项。
+
+### 13.5 tooltip 内容细则
+
+- 默认 `trigger: 'hover'` 悬浮跟随，`'click'` 点按出牌；
+- 多系列默认全显（`showAllSeries: true`），关闭时仅当前系列；
+- 行序 = 可见系列的声明序；**空值行不渲染**，全空不弹；
+- 位置、形态与翻转规则见 §8。
+
+### 13.6 交互态生命周期
+
+- `setSpec()` 整体替换：图例显隐、缩放窗口、悬浮态全部重置（换图即换态）；
+- 数据增量更新（同结构 labels + series）：保留图例显隐与缩放窗口，悬浮即时跟随新数据；
+- 主题 / 暗色 / 色系切换：交互态全部保留，仅重绘。
+
+### 13.7 键盘与触屏路线图
+
+| 期 | 项 | 状态 |
+| --- | --- | --- |
+| 0 | role="img" + aria-label；aria-live 播报悬浮值；Esc 清态 | ✅ |
+| 1 | 容器可聚焦（tabindex + 可见焦点环按组件屏蔽约定处理） | 🔜 |
+| 2 | 方向键移动数据索引（aria-live 同步播报），Home / End 跳首尾 | 🔜 |
+| 3 | Enter 触发数据点 click；触屏双指捏合缩放、长按框选 | 🔜 |
+
+### 13.8 事件契约
+
+| 事件 | 载荷 | 触发 |
+| --- | --- | --- |
+| ready | — | 首次渲染完成 |
+| hover | { seriesName, dataIndex, value, x, y, color } | 进入数据命中 |
+| unhover | — | 离开数据命中 / Esc 清态 |
+| click | 数据点 params | 单击数据点 |
+| legend-click | (name, hidden) | 图例点选 |
+| zoom | { start, end } | 缩放窗口变化（含联动） |
+| brush-select | { startIndex, endIndex } | 框选抬起 |
+| data-update | { from, to } | 数据补间更新 |
+| animation-end | — | 补间结束 |
+| scene-change | { index, total } | scenes 幕推进 |
+
+## 14. 落实路线图
 
 | # | 项 | 状态 | 验收标准 |
 | --- | --- | --- | --- |
@@ -299,7 +386,10 @@
 | 15 | 叙述注解 `annotations[]`（text / callout / point / delta / region）+ `emphasis` 焦点 | ✅ | 注解 demo 截图对照；旧 `annotation` 字段兼容；STUB 单测覆盖五类型 |
 | 16 | scenes 编排时间轴（reveal / step / loop，静态首帧） | ✅ | 分幕演示三幕推进 + 事件载荷单测；`getEffectiveSpec` 可核对生效 Spec |
 
-## 14. 配色方案动态切换（规划稿）
+## 15. 配色方案动态切换
+
+站点级预设切换与组件层 API 均已落地（路线图 12–14）；图表层一键固定见 §2.1.1
+内置色系（`options.palette`）。
 
 图表数据色板走专用槽位令牌（§2.1），因此「切换配色方案」= 切换 8 个槽位令牌的值，
 图表侧无需任何新 API——写入令牌后派发既有 `ev-theme-change` 即触发全量重绘。

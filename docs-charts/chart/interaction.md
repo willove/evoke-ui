@@ -1,6 +1,12 @@
 # 交互与联动
 
-EvChart 的交互能力开箱即用：图例点选、tooltip、dataZoom 缩放、框选、多图联动、工具导出。绝大多数能力只在 `options` 里开字段，进阶控制走实例方法与事件。
+EvChart 的交互能力开箱即用：图例点选、tooltip、dataZoom 缩放、框选、多图联动、工具导出。绝大多数能力只在 `options` 里开字段，进阶控制走实例方法与事件。全部交互行为遵循一套统一规范（悬浮即时无动画、焦点淡化单一档位、光标语义分级），条款见[设计规范](/guide/design#交互规范)。
+
+## 统一手势约定
+
+- **Esc**：随时清除悬浮、tooltip 与框选拖拽（随之派发 `unhover`）；
+- **双击**：重置缩放窗口到全量（未开启 dataZoom 时无操作）；
+- **光标**：绘图区十字（crosshair）、图例与工具箱手型（pointer）、缩放滑块抓取（grab / 拖拽中 grabbing）。
 
 ## 图例：点选显隐与悬浮强调
 
@@ -38,7 +44,7 @@ options.tooltip = {
 
 ## dataZoom：大数据量缩放
 
-类目多、曲线密时开启 `dataZoom`：`position` 支持 `bottom` / `top`，`start` / `end` 设初始窗口（百分比），`mouseWheel` 开启滚轮缩放。拖动窗口或滚轮即可聚焦数据段。
+类目多、曲线密时开启 `dataZoom`：`position` 支持 `bottom` / `top`，`start` / `end` 设初始窗口（百分比），`mouseWheel` 开启滚轮缩放（以光标为锚点，双击复位）。拖动窗口或滚轮即可聚焦数据段。
 
 <DemoBlock>
   <ev-chart
@@ -113,6 +119,7 @@ options.tooltip = {
 | `zoom` | dataZoom 范围变化 | `{ start, end }` |
 | `brush-select` | 框选完成 | `{ startIndex, endIndex }` |
 | `animation-end` / `data-update` | 动画结束 / 数据补间更新完成 | — |
+| `scene-change` | scenes 分幕推进 | `{ index, total }` |
 
 点击事件可以做钻取：点击柱子跳转到对应明细页，是中后台图表最常见的进阶用法。
 

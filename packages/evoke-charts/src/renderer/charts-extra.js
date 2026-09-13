@@ -1,4 +1,5 @@
 import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeriesColorIndex, isMissingValue, focusAlpha } from "./core";
+import { INTERACTION } from "../interactions";
 import { renderLineChart } from "./charts-basic";
 function renderWaterfallChart(ctx, yRange) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hiddenSeries } = ctx;
@@ -215,8 +216,8 @@ function layoutSunburst(nodes, r0, ringWidth, depth, startAngle, colorOffset, re
   });
   return result;
 }
-// 悬浮聚焦：自身与子孙保持原色，其余段与标签淡出
-const SUNBURST_DIM_ALPHA = 0.25;
+// 悬浮聚焦：自身与子孙保持原色，其余段与标签淡出（档位见 interactions.js）
+const SUNBURST_DIM_ALPHA = INTERACTION.hierarchyDimAlpha;
 function isSunburstDescendant(segments, index, ancestorIndex) {
   let cursor = index;
   while (cursor >= 0) {

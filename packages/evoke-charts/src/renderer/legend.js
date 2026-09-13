@@ -1,4 +1,5 @@
 import { roundRect } from "./core";
+import { INTERACTION } from "../interactions";
 const LEGEND_ROW_HEIGHT = 20;
 const LEGEND_GAP = 12;
 function renderTitle(ctx, paddingTop) {
@@ -141,7 +142,7 @@ function renderLegend(ctx) {
     const isHidden = item.hidden;
     const icon = legendConfig.icon || "roundRect";
     canvasCtx.save();
-    canvasCtx.globalAlpha = isHidden ? 0.4 : 1;
+    canvasCtx.globalAlpha = isHidden ? INTERACTION.legendHiddenAlpha.icon : 1;
     canvasCtx.fillStyle = item.color;
     if (icon === "line") {
       canvasCtx.fillRect(bound.x, bound.y + 9, 14, 3);
@@ -159,7 +160,7 @@ function renderLegend(ctx) {
     canvasCtx.restore();
     canvasCtx.save();
     canvasCtx.fillStyle = theme.textColorSecondary;
-    canvasCtx.globalAlpha = isHidden ? 0.6 : 1;
+    canvasCtx.globalAlpha = isHidden ? INTERACTION.legendHiddenAlpha.text : 1;
     canvasCtx.textAlign = "left";
     canvasCtx.textBaseline = "middle";
     canvasCtx.fillText(item.label, bound.x + 18, bound.y + 12);

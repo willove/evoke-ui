@@ -7,6 +7,7 @@ import {
   buildSeriesColorIndex,
   isMissingValue
 } from "./core";
+import { INTERACTION } from "../interactions";
 function sturgesBinCount(n) {
   return Math.max(3, Math.ceil(Math.log2(n) + 1));
 }
@@ -247,8 +248,8 @@ function squarifyTreemap(nodes, x, y, w, h, depth, result) {
   });
   return result;
 }
-// 与旭日图同一套层级强调：悬浮时自身与子孙原色、其余淡出
-const TREEMAP_DIM_ALPHA = 0.25;
+// 与旭日图同一套层级强调：悬浮时自身与子孙原色、其余淡出（档位见 interactions.js）
+const TREEMAP_DIM_ALPHA = INTERACTION.hierarchyDimAlpha;
 function isRectWithinFocus(rect, focus) {
   return (
     rect.depth >= focus.depth &&

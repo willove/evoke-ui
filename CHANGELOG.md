@@ -3,6 +3,23 @@
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
 ## [Unreleased]
+### @wil-works/evoke-charts — 统一交互规范（DESIGN.md §13）落地
+
+- **规范成文**：DESIGN.md 新增「交互规范」章节——三条总纲（悬浮即时无动画 /
+  反馈走既有通道 / 克制）、光标语义分级、hover 行为矩阵（逐图型）、点选与焦点、
+  缩放与框选、tooltip 内容细则、交互态生命周期、键盘与触屏路线图、事件契约表；
+  并修正 §10 动效曲线描述（easeOut 为五次缓出，非指数缓出）；
+- **常量单一事实源**：新增 `src/interactions.js`——焦点淡化 0.22、图例残影
+  0.4/0.6、层级聚焦淡化 0.25、滚轮缩放系数 1.15 与窗口下限 2%、tooltip 间距与
+  过渡曲线、补间默认 1200ms/easeOut 全部收口，渲染器与组件统一引用，测试对
+  数值做快照把关防漂移；滚轮缩放抽为纯函数 `applyWheelZoom`；
+- **新交互行为**：**Esc 清态**（清除悬浮 / tooltip / 框选拖拽，随之派发
+  `unhover`）；**光标语义分级**（绘图区 crosshair、图例与工具箱 pointer、缩放
+  滑块 grab / 拖拽中 grabbing）；**tooltip 空值行不渲染**（多系列全空不弹，
+  K 线 / 箱线数组值不受影响）；
+- 键盘导航（容器聚焦 / 方向键索引）与触屏捏合缩放列为路线图后续期次；
+- 文档站「交互与联动」页新增「统一手势约定」章节并对齐事件表。
+
 
 ### @wil-works/evoke-charts — 内置色系一键应用（options.palette）
 

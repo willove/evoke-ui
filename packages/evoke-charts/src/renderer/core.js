@@ -1,5 +1,6 @@
 import { CHART_COLORS, formatValue, getSeriesColors, readChartToken } from "../types";
 import { resolveChartPalette } from "../palettes";
+import { INTERACTION } from "../interactions";
 function estimateTextWidth(text, fontSize = 12) {
   let width = 0;
   for (const ch of text) {
@@ -64,7 +65,7 @@ function resolveConnectNulls(options, series) {
 }
 function focusAlpha(ctx, seriesName) {
   if (!ctx.focusSeries || ctx.focusSeries === seriesName) return 1;
-  return 0.22;
+  return INTERACTION.focusDimAlpha;
 }
 function drawSymbol(canvasCtx, symbol, x, y, r) {
   canvasCtx.beginPath();
@@ -652,8 +653,8 @@ function resolveTickExtendedRange(min, max, ticks = 5) {
 function createAnimation(config) {
   return {
     startTime: 0,
-    duration: config?.duration || 1200,
-    easing: config?.easing || "easeOut",
+    duration: config?.duration || INTERACTION.animation.duration,
+    easing: config?.easing || INTERACTION.animation.easing,
     progress: 0,
     isAnimating: config?.enabled !== false
   };

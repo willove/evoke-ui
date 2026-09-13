@@ -2,7 +2,7 @@
   <div
     ref="containerRef"
     class="ev-chart"
-    :style="containerStyle"
+    :style="[containerStyle, { cursor: cursorStyle }]"
     role="img"
     :aria-label="props.options.ariaLabel || ariaLabelText"
   >
@@ -78,6 +78,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, h } from "vue";
+import { INTERACTION, applyWheelZoom, resolveCursor, pickTooltipRows } from "./interactions";
 import {
   renderChart,
   createAnimation,
@@ -351,8 +352,15 @@ const containerStyle = computed(() => {
   } else {
     height = props.height;
   }
-  return { width, height };
+  return {
+    width,
+    height,
+    // 交互常量经 CSS 变量下发（DESIGN 交互规范：单一事实源 interactions.js）
+    "--ev-tooltip-pos-transition": INTERACTION.tooltip.posTransition,
+    "--ev-tooltip-fade-transition": INTERACTION.tooltip.fadeTransition,
+  };
 });
+const cursorStyle = ref("default");
 const dpr = computed(() => props.devicePixelRatio || window.devicePixelRatio || 1);
 const tooltipStyle = computed(() => ({
   left: `${tooltipX.value}px`,
@@ -1195,7 +1203,7 @@ function getHoveredData(x, y) {
   }
 }
 function setZoomRange(next) {
-  const minSpan = 2;
+  const minSpan = INTERACTION.zoom.minSpan;
   let { start, end } = next;
   if (end - start < minSpan) {
     end = start + minSpan;
@@ -1444,15 +1452,7 @@ function handleWheel(e) {
   if (x < plotArea.x || x > plotArea.x + plotArea.width || y < plotArea.y || y > plotArea.y + plotArea.height) return;
   e.preventDefault();
   const anchor = (x - plotArea.x) / plotArea.width * 100;
-  const current = zoomRange.value;
-  const factor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
-  const span = current.end - current.start;
-  const newSpan = Math.max(2, Math.min(100, span * factor));
-  const anchorRatio = span > 0 ? (anchor - current.start) / span : 0.5;
-  let start = anchor - newSpan * anchorRatio;
-  if (start < 0) start = 0;
-  if (start + newSpan > 100) start = 100 - newSpan;
-  setZoomRange({ start, end: start + newSpan });
+  setZoomRange(applyWheelZoom(zoomRange.value, anchor, e.deltaY));
 }
 function showTooltipAt(clientX, clientY) {
   tooltipVisible.value = false;
@@ -1479,6 +1479,7 @@ function handlePointerMove(e) {
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
   }
+  updateCursor(e);
   if (touchPanning && e.pointerType === "touch" && isZoomEnabled()) {
     const geo = getSliderGeo();
     if (geo) {
@@ -1615,7 +1616,8 @@ function applyTooltipContent(params) {
   }
   if (Array.isArray(params)) {
     const title = params[0]?.name || "";
-    const rows = params.map(
+    // 空值行不渲染（DESIGN 交互规范 13.5）
+    const rows = pickTooltipRows(params).map(
       (p) => `
       <div class="ev-chart__tooltip-item">
         <span class="ev-chart__tooltip-dot" style="background: ${p.color}"></span>
@@ -1640,7 +1642,40 @@ function applyTooltipContent(params) {
     `;
   }
 }
-function handlePointerLeave() {
+// 光标语义（DESIGN 交互规范 13.1）：绘图区 crosshair、图例/工具箱 pointer、滑块 grab
+function updateCursor(e) {
+  const canvas = canvasRef.value;
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  let zone = "other";
+  if (dragMode === "handle-left" || dragMode === "handle-right" || dragMode === "window") {
+    zone = "slider";
+  } else if (dragMode === "brush") {
+    zone = "plot";
+  } else if (checkToolboxHit(e.clientX, e.clientY)) {
+    zone = "toolbox";
+  } else if (checkLegendHit(e.clientX, e.clientY)) {
+    zone = "legend";
+  } else {
+    const padding = getPadding(effectiveOptions.value, rect.width);
+    const inPlot =
+      x >= padding.left && x <= rect.width - padding.right &&
+      y >= padding.top && y <= rect.height - padding.bottom;
+    if (inPlot) {
+      zone = "plot";
+    } else {
+      const slider = getSliderGeo();
+      if (slider && y >= slider.y && y <= slider.y + slider.height && x >= slider.x && x <= slider.x + slider.width) {
+        zone = "slider";
+      }
+    }
+  }
+  const next = resolveCursor(zone, zone === "slider" && dragMode !== "none");
+  if (next !== cursorStyle.value) cursorStyle.value = next;
+}
+function clearTransientState() {
   if (tooltipRafId !== null) {
     cancelAnimationFrame(tooltipRafId);
     tooltipRafId = null;
@@ -1655,7 +1690,19 @@ function handlePointerLeave() {
     redraw();
   }
   dragMode = "none";
-  if (clearHover()) {
+  cursorStyle.value = "default";
+  return clearHover();
+}
+function handlePointerLeave() {
+  if (clearTransientState()) {
+    emit("unhover");
+    ariaLiveText.value = "";
+  }
+}
+// Esc 清态（DESIGN 交互规范 13.3）：清除悬浮 / tooltip / 框选拖拽
+function handleEscapeKey(e) {
+  if (e.key !== "Escape") return;
+  if (clearTransientState()) {
     emit("unhover");
     ariaLiveText.value = "";
   }
@@ -1797,6 +1844,7 @@ onMounted(() => {
   setupResizeObserver();
   setupDarkModeObserver();
   window.addEventListener("pointerup", onWindowPointerUp);
+  window.addEventListener("keydown", handleEscapeKey);
   containerRef.value?.addEventListener("wheel", handleWheel, { passive: false });
   const group = props.options.connectGroup;
   if (group) unregisterConnector = registerConnector(group, connectorSelf);
@@ -1805,6 +1853,7 @@ onUnmounted(() => {
   cleanupResizeObserver();
   cleanupDarkModeObserver();
   window.removeEventListener("pointerup", onWindowPointerUp);
+  window.removeEventListener("keydown", handleEscapeKey);
   containerRef.value?.removeEventListener("wheel", handleWheel);
   if (unregisterConnector) {
     unregisterConnector();
@@ -2085,23 +2134,22 @@ defineExpose({
   line-height: 1.6;
   white-space: nowrap;
   /* 定位由 left/top 精确计算（含水平 clamp 与垂直翻转） */
-  /* 位置变化平滑过渡：鼠标停下后 tooltip 滑过去，而非实时紧跟 */
-  transition:
-    left 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  /* 位置变化平滑过渡：鼠标停下后 tooltip 滑过去，而非实时紧跟（时长曲线见 interactions.js） */
+  cursor: default;
+  transition: var(--ev-tooltip-pos-transition);
   will-change: left, top;
 }
 
 /* tooltip 淡入淡出（仅 opacity，位置由 left/top transition 负责） */
 .ev-chart-tooltip-enter-active,
 .ev-chart-tooltip-leave-active {
-  transition: opacity 0.18s ease;
+  transition: var(--ev-tooltip-fade-transition);
 }
 
 /* 进入期间禁用位置 transition，避免首次出现时从旧位置滑入 */
 .ev-chart-tooltip-enter-active {
   transition:
-    opacity 0.18s ease,
+    var(--ev-tooltip-fade-transition),
     left 0s,
     top 0s;
 }
