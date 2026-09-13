@@ -118,12 +118,12 @@ function easeOut(t) {
   return 1 - Math.pow(1 - t, 3)
 }
 function storyEntrance(p) {
-  const e = easeOut(seg(p, 0, 0.22))
+  const e = easeOut(seg(p, 0, 0.16))
   // 0.3 下限：接近场景（未钉住）时先看到淡影预览，钉住后缓动到实色
   return { opacity: 0.3 + Math.min(e * 1.5, 1) * 0.7, transform: `translateY(${((1 - e) * 28).toFixed(2)}px)` }
 }
 function storyCard(p, i) {
-  const e = easeOut(seg(p, 0.34 + i * 0.08, 0.34 + i * 0.08 + 0.28))
+  const e = easeOut(seg(p, 0.44 + i * 0.06, 0.44 + i * 0.06 + 0.22))
   return { opacity: e, transform: `translateY(${((1 - e) * 18).toFixed(2)}px)` }
 }
 function storyFade(p, a, b) {
@@ -298,12 +298,12 @@ function storyFade(p, a, b) {
   </EvSection>
 
   <EvSection eyebrow="scroll story" title="三步，搭出一个官网" description="不用点任何按钮——向下滚动，这个浏览器窗口会经历首屏、填充版块、切换暗色三幕；向上滚动，整个过程原样回溯。这就是 EvScrollScene：滚动条就是时间轴。" align="center">
-    <EvScrollScene :duration="240" :top="37">
+    <EvScrollScene :duration="300" :top="37">
       <template #default="{ progress }">
         <div class="home-story">
           <div class="home-story__browser" :style="storyEntrance(progress)">
             <div class="home-story__chrome"><i></i><i></i><i></i></div>
-            <div class="home-story__viewport" :style="{ '--d': easeOut(seg(progress, 0.66, 0.94)) }">
+            <div class="home-story__viewport" :style="{ '--d': easeOut(seg(progress, 0.84, 1)) }">
               <div class="home-story__nav">
                 <span class="home-story__logo">Aurora</span>
                 <span class="home-story__links"><i>产品</i><i>定价</i><i>博客</i></span>
@@ -314,7 +314,7 @@ function storyFade(p, a, b) {
                 <p class="home-story__tagline">安静优雅的 Vue 3 官网组件库</p>
                 <span class="home-story__cta">免费开始</span>
               </div>
-              <div class="home-story__logos" :style="storyFade(progress, 0.3, 0.52)">
+              <div class="home-story__logos" :style="storyFade(progress, 0.22, 0.44)">
                 <span v-for="l in ['Lumen', 'Northwind', 'Vela', 'Kite', 'Onyx']" :key="l">{{ l }}</span>
               </div>
               <div class="home-story__cards">
@@ -322,24 +322,26 @@ function storyFade(p, a, b) {
                   <b>{{ c.b }}</b><span>{{ c.s }}</span>
                 </div>
               </div>
-              <div class="home-story__stats" :style="storyFade(progress, 0.55, 0.8)">
+              <div class="home-story__stats" :style="storyFade(progress, 0.64, 0.82)">
                 <div><b>99.9%</b><span>构建可用性</span></div>
                 <div><b>12ms</b><span>平均响应</span></div>
                 <div><b>40+</b><span>开箱组件</span></div>
               </div>
-              <div class="home-story__foot" :style="storyFade(progress, 0.62, 0.88)">
+              <div class="home-story__foot" :style="storyFade(progress, 0.7, 0.88)">
                 <span>© 2026 Aurora Inc.</span>
                 <span>用 Evoke UI 搭建</span>
               </div>
             </div>
           </div>
           <div class="home-story__captions">
-            <span :class="{ 'is-active': progress < 0.33 }">① 首屏立住气质</span>
-            <span :class="{ 'is-active': progress >= 0.33 && progress < 0.66 }">② 版块填充内容</span>
-            <span :class="{ 'is-active': progress >= 0.66 }">③ 一键切到暗色</span>
+            <span :class="{ 'is-active': progress < 0.22 }">① 首屏立住气质</span>
+            <span :class="{ 'is-active': progress >= 0.22 && progress < 0.43 }">② 品牌墙添信任</span>
+            <span :class="{ 'is-active': progress >= 0.43 && progress < 0.63 }">③ 版块填充内容</span>
+            <span :class="{ 'is-active': progress >= 0.63 && progress < 0.84 }">④ 数据给足底气</span>
+            <span :class="{ 'is-active': progress >= 0.84 }">⑤ 一键切到暗色</span>
           </div>
         </div>
-        <div class="home-story__hint" :style="{ opacity: 1 - seg(progress, 0.92, 1) }">
+        <div class="home-story__hint" :style="{ opacity: 1 - seg(progress, 0.94, 1) }">
           <span class="home-story__mouse"><i></i></span>
           <span class="home-story__hint-text">向下滚动</span>
         </div>
@@ -567,12 +569,13 @@ function storyFade(p, a, b) {
   color: #8a96a9;
   background: color-mix(in srgb, #eef1f6 calc((1 - var(--d)) * 100%), #1a2334 calc(var(--d) * 100%));
 }
-/* 悬浮鼠标提示：悬浮在页面容器右侧空白区，竖排文字；整个场景的滚动效果
-   全部完成后才退出（进度 0.92 → 1 淡出）；窄屏没有右侧留白，整体隐藏 */
+/* 悬浮鼠标提示：悬浮在页面容器右侧的页边留白里（贴视口一侧，与窗口拉开间隔），
+   竖排文字；整个场景的滚动效果全部完成后才退出；窄屏没有留白，整体隐藏。
+   right 公式：页边留白 = 50vw − 容器 1152px 的一半，提示再往回收 54px（自身宽 + 安全距） */
 .home-story__hint {
   position: absolute;
   top: 50%;
-  right: clamp(20px, 4vw, 96px);
+  right: clamp(-340px, calc(634px - 50vw), -8px);
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
