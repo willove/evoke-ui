@@ -41,7 +41,9 @@ function updateColumn(position) {
   const isTop = position.startsWith('top')
   let offset = INITIAL_OFFSET
   for (const instance of list) {
-    const el = instance.container.firstElementChild
+    // 按类名定位通知本体，不能取 container.firstElementChild——
+    // 测试环境（@vue/test-utils 全局 transformVNodeArgs）或任何包装层都可能让首子元素不是通知元素
+    const el = instance.container.querySelector('.eb-notification')
     if (el) {
       if (isTop) {
         el.style.top = `${offset}px`

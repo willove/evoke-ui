@@ -58,8 +58,10 @@ describe('全局磨砂开关', () => {
 })
 
 describe('弹层/预览/导航家族三态', () => {
-  // Teleport 到 body 的弹层：wrapper 内找不到，改查 document.body；断言后卸载防串扰
+  // Teleport 到 body 的弹层：wrapper 内找不到，改查 document.body；断言后卸载防串扰。
+  // isolate:false 下 body 跨文件共享，先清掉历史残留，保证查到的必然是本用例挂载的节点
   function teleportedHasClass(component, props, selector, cls) {
+    document.querySelectorAll(selector).forEach((el) => el.remove())
     const wrapper = mount(component, { props })
     const has = document.body.querySelector(selector)?.classList.contains(cls) ?? false
     wrapper.unmount()
@@ -122,6 +124,7 @@ describe('blur 磨砂强度 prop', () => {
 
   it('弹层家族同样支持 blur', () => {
     function teleportedVar(component, props, selector) {
+      document.querySelectorAll(selector).forEach((el) => el.remove())
       const wrapper = mount(component, { props })
       const v = document.body.querySelector(selector)?.style.getPropertyValue('--ev-glass-blur')
       wrapper.unmount()
