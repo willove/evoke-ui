@@ -57,12 +57,15 @@
 
 ## 磨砂玻璃
 
-<DemoBlock title="glass 叠层" description="渐变底上的两张玻璃卡；glass 三态：true 强制开 / false 强制关 / 缺省跟随全局。">
+玻璃质感的完整介绍（全局开关 / 强度调节 / 覆盖组件 / 令牌）见[磨砂玻璃](/guide/glass)一章。
+这里演示卡片在照片底上的叠层效果——照片细节越多，雾面质感越明显：
 
-<div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px; display:grid; gap:14px;">
+<DemoBlock title="glass 叠层" description="照片底上的两张玻璃卡；glass 三态：true 强制开 / false 强制关 / 缺省跟随全局。">
+
+<div style="background:url(/images/glass-forest.jpg) center/cover; border-radius:14px; padding:24px; display:grid; gap:14px;">
   <EvCard glass>
     <p style="font-weight:600;">玻璃卡 A</p>
-    <p style="font-size:13px;">半透明底 + 背景模糊，透出渐变底色。</p>
+    <p style="font-size:13px;">半透明底 + 背景模糊，山林柔化成雾面。</p>
   </EvCard>
   <EvCard glass style="margin-left:36px;">
     <p style="font-weight:600;">玻璃卡 B（错位叠放）</p>

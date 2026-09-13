@@ -29,37 +29,12 @@
 
 ## 全局磨砂
 
-`glass` 打开后，容器与浮层类组件默认呈现玻璃质感：半透明底色 + `backdrop-filter` 模糊，
-配发丝描边与顶缘高光，上下叠加时透出下层内容。覆盖：
-Card / Section / Footer / Navbar / ArticleCard / PricingCard / ProfileCard / ExecCard /
-Modal（面板）/ ImagePreview（预览背景）/ ActionSheet / Tabbar / NavBar / Select（下拉面板）。
+`glass` 打开后，容器与浮层类组件默认呈现玻璃质感：半透明底 + `backdrop-filter` 模糊，
+配发丝描边与顶缘高光，上下叠加时透出下层内容。运行时切换用
+[useThemeConfig](#与组合式-api-配合) 的 `setGlass`。
 
-组件级 `glass` prop 可单独强制开或关（三态）；`blur` prop 可单独调磨砂强度（px）。
-浏览器不支持 `backdrop-filter` 时自动回落实底。Card 的粉彩 tone / sticker / featured
-是刻意的不透明风格，不受全局磨砂影响。
-
-<DemoBlock title="全局磨砂 + 叠层" description="开关写入 html 属性全站生效，离开页面自动还原；渐变底上的玻璃卡透出彼此的边缘。">
-
-<EvConfigProvider glass :global="false">
-  <div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px; display:grid; gap:14px;">
-    <EvCard>
-      <p style="font-weight:600;">玻璃卡 A</p>
-      <p style="font-size:13px;">跟随全局 glass，半透明底 + 背景模糊。</p>
-    </EvCard>
-    <EvCard style="margin-left:36px;">
-      <p style="font-weight:600;">玻璃卡 B（错位叠放）</p>
-      <p style="font-size:13px;">单张卡传 :glass="false" 可退回实底。</p>
-    </EvCard>
-  </div>
-</EvConfigProvider>
-
-```vue
-<EvConfigProvider glass>
-  <SiteHome />
-</EvConfigProvider>
-```
-
-</DemoBlock>
+组件级三态 `glass`、`blur` 强度调节、覆盖组件清单与磨砂令牌，见
+**[磨砂玻璃](/guide/glass)** 一章。
 
 ## 与组合式 API 配合
 

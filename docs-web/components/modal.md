@@ -88,7 +88,7 @@ const sent = ref(false)
 
 <DemoBlock title="glass 磨砂面板" description="玻璃态下面板变半透明雾面，底层页面透出模糊色彩；blur 可单独调强度。">
 
-<div style="background:linear-gradient(135deg, #6fb1ff, #a678ff 55%, #ff9ac3); border-radius:14px; padding:24px;">
+<div style="background:url(/images/glass-ridge.jpg) center/cover; border-radius:14px; padding:24px; text-align:center;">
   <EvButton @click="glassVisible = true">打开磨砂弹出层</EvButton>
 </div>
 

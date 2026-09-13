@@ -39,7 +39,11 @@
   ResizeObserver）一直空转，固定 50px 兜底；本轮接通；
 - 测试扩至 18 项（弹层/预览/导航家族三态 + blur 内联覆盖 + 0 值显式生效），
   文档同步 config-provider 磨砂章节与各组件 API 行（Modal / ImagePreview 新增
-  磨砂演示）。
+  磨砂演示）；
+- **磨砂单独成章**：docs-web 指南新增「磨砂玻璃」页——全局开关 / 三态 / 强度对比 /
+  弹层与预览 / 覆盖组件 / 磨砂令牌 / 降级与豁免，config-provider 磨砂章节收敛为
+  指引；各处演示背景弃用渐变换照片底（glass-forest / glass-ridge 两张入
+  docs-web/public/images）——照片细节多，雾面质感对比才明显。
 
 ### @wil-works/evoke-charts — 内置色系一键应用（options.palette）
 
