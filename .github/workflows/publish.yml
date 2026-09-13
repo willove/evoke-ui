@@ -28,9 +28,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - { name: business-ui, pkg: "@wil-works/evoke-business-ui" }
-          - { name: ui, pkg: "@wil-works/evoke-ui" }
-          - { name: charts, pkg: "@wil-works/evoke-charts" }
+          - { name: business-ui, pkg: "@wil-works/evoke-business-ui", dir: packages/evoke-business-ui }
+          - { name: ui, pkg: "@wil-works/evoke-ui", dir: packages/evoke-ui }
+          - { name: charts, pkg: "@wil-works/evoke-charts", dir: packages/evoke-charts }
       # 手动选择单个包时跳过另一个
       max-parallel: 1
     steps:
@@ -48,8 +48,21 @@ jobs:
       - uses: actions/checkout@v6
         if: steps.gate.outputs.skip == 'false'
 
-      - uses: pnpm/setup@v1
+      - name: Skip when version already published
+        id: published
         if: steps.gate.outputs.skip == 'false'
+        run: |
+          LOCAL="$(node -p "require('./${{ matrix.dir }}/package.json').version")"
+          REMOTE="$(npm view "${{ matrix.pkg }}@$LOCAL" version 2>/dev/null || true)"
+          if [ "$REMOTE" = "$LOCAL" ]; then
+            echo "::notice::${{ matrix.pkg }}@$LOCAL 已在 npm 上，跳过"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: pnpm/setup@v1
+        if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         with:
           version: 11
           runtime: node@22
@@ -57,21 +70,21 @@ jobs:
           install: false
 
       - name: Install dependencies
-        if: steps.gate.outputs.skip == 'false'
+        if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        if: steps.gate.outputs.skip == 'false'
+        if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         run: pnpm --filter ${{ matrix.pkg }} build
 
       - name: Configure npm auth
-        if: steps.gate.outputs.skip == 'false'
+        if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         run: echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" >> ~/.npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
-        if: steps.gate.outputs.skip == 'false'
+        if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         run: pnpm --filter ${{ matrix.pkg }} publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

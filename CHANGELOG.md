@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [ui 0.5.0 / charts 0.4.0] — 2026-09-13
+
 ### @wil-works/evoke-charts — 统一交互规范（DESIGN.md §13）落地
 
 - **规范成文**：DESIGN.md 新增「交互规范」章节——三条总纲（悬浮即时无动画 /
