@@ -32,7 +32,7 @@
 
       <EvChart :options="board.options" :height="250" />
 
-      <p class="case-cls__read"><span class="case-cls__read-tag">读图</span>{{ board.read }}</p>
+      <div class="case-cls__read"><span class="case-cls__read-tag">读图</span>{{ board.read }}</div>
     </section>
 
     <section class="case-cls__board">
@@ -40,7 +40,7 @@
         <span class="case-cls__unit">课堂追问</span>
         <span class="case-cls__chart-name">同一张表，换个问法换张图</span>
       </div>
-      <p class="case-cls__lead">还是第一张表，数字一个没改，只换问法——用什么图，由问题决定。</p>
+      <div class="case-cls__lead">还是第一张表，数字一个没改，只换问法——用什么图，由问题决定。</div>
       <div class="case-cls__tabs" role="group" aria-label="换一种问法">
         <button
           v-for="q in questions"
@@ -310,7 +310,7 @@ const activeOptions = computed(() => questions.find((q) => q.id === activeQuesti
   text-align: left;
 }
 .case-cls__read {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   font-size: 13px;
   line-height: 1.8;
   color: var(--ev-text-color-secondary);
@@ -332,7 +332,7 @@ const activeOptions = computed(() => questions.find((q) => q.id === activeQuesti
 .case-cls__tabs {
   display: inline-flex;
   gap: 2px;
-  margin-bottom: 12px;
+  margin-bottom: 22px;
   padding: 3px;
   border-radius: 8px;
   background: var(--ev-fill-color-light);
