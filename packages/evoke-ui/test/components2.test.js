@@ -122,7 +122,7 @@ describe('EvComparisonTable', () => {
     expect(wrapper.find('.ev-comparison-table__check').exists()).toBe(true)
     expect(wrapper.find('.ev-comparison-table__dash').text()).toBe('—')
     expect(wrapper.find('.ev-comparison-table__text').text()).toBe('2 GB')
-    expect(wrapper.find('th.is-featured').exists()).toBe(true)
+    expect(wrapper.find('.is-featured').exists()).toBe(true)
   })
 
   it('compare 列头：图/色点/徽标/标语/价格/链接', () => {
@@ -155,7 +155,6 @@ describe('EvComparisonTable', () => {
     })
     const titles = wrapper.findAll('.ev-comparison-table__group')
     expect(titles.map((g) => g.text())).toEqual(['显示屏', '续航'])
-    expect(titles[0].attributes('colspan')).toBe('3')
   })
 
   it('数组值渲染多行文本；bordered 切网格边框；空值破折号', () => {

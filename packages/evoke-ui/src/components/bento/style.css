@@ -20,7 +20,8 @@
   gap: 12px;
   padding: 28px;
   border-radius: 18px;
-  background-color: var(--ev-bg-container);
+  /* plain 卡给一层淡底：白页上留白区域也有结构感，不再与页面背景融成一片 */
+  background-color: color-mix(in srgb, var(--ev-fill-1) 55%, transparent);
   text-decoration: none;
   overflow: hidden;
   grid-column: span var(--bento-span, 1);
@@ -28,6 +29,7 @@
 
 .ev-bento.is-bordered .ev-bento__card {
   border: 1px solid var(--ev-border-color);
+  background-color: var(--ev-bg-container);
 }
 
 .ev-bento__card:not(.is-fill) {
