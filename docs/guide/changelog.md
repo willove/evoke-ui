@@ -1,0 +1,100 @@
+# 更新记录
+
+evoke-business-ui 的版本演进，最新在上。完整的变更明细（含行为变化与升级注意事项）
+见仓库根目录 CHANGELOG，或 [GitHub Releases](https://github.com/willove/evoke-ui/releases)。
+
+<EbTimeline>
+  <EbTimelineItem
+    v-for="r in releases"
+    :key="r.version"
+    :timestamp="r.date"
+    :type="r.latest ? 'primary' : undefined"
+  >
+    <h4 class="cl-title">{{ r.version }} · {{ r.title }}</h4>
+    <ul class="cl-list">
+      <li v-for="b in r.bullets" :key="b">{{ b }}</li>
+    </ul>
+  </EbTimelineItem>
+</EbTimeline>
+
+<script setup>
+const releases = [
+  {
+    version: 'v0.5.0',
+    date: '2026-09-13',
+    title: '磨砂参数化与稳定性',
+    latest: true,
+    bullets: [
+      '磨砂组件新增 saturate / tint 参数，与 blur 一致按组件独立调节质感',
+      '磨砂开关支持 global:false 局部作用域，多个局部演示互不干扰',
+      '弹层滚动锁定升级：经典滚动条环境下，弹层打开时固定顶栏与横幅不再横跳',
+      '修复通知（EbNotify）同列堆叠在特定渲染场景下偏移失效的问题',
+    ],
+  },
+  {
+    version: 'v0.4.1',
+    date: '2026-09-13',
+    title: 'README 开发中警示',
+    bullets: ['README 头部加「开发迭代中，请勿用于生产环境」警示，无代码变化'],
+  },
+  {
+    version: 'v0.4.0',
+    date: '2026-09-12',
+    title: '图表配色接入主题体系',
+    bullets: [
+      '主题工具新增 setSeriesPalette / clearSeriesPalette：整体切换图表数据系列配色，图表即时重绘',
+      'EbConfigProvider 新增 series prop（≤8 色数组），支持持久化联动',
+      '图表模板同时支持 <ev-chart> / <eb-chart> 双注册名',
+    ],
+  },
+  {
+    version: 'v0.3.2',
+    date: '2026-09-11',
+    title: '交互细节修复',
+    bullets: [
+      '修复 Tooltip 箭头亚像素渲染下的菱形残角，与暗色模式气泡白底白字不可读的问题',
+      'card / dialog / drawer / section-card 新增 blur 磨砂强度 prop',
+      'Card 悬浮反馈降噪：边框不再用强调色、移除位移动效',
+    ],
+  },
+  {
+    version: 'v0.3.1',
+    date: '2026-09-11',
+    title: 'README 更名同步',
+    bullets: ['随 0.3.0 更名的 README 修正（仅文档，无代码变化）'],
+  },
+  {
+    version: 'v0.3.0',
+    date: '2026-09-11',
+    title: '全线更名 eb-*（破坏性）',
+    bullets: [
+      '组件名、类名、令牌、事件与持久化键整体 Ev* → Eb* / ev-* → eb-*',
+      '图表改为依赖独立包 @wil-works/evoke-charts，对外以 EbChart 提供，与业务主题、暗色、运行时换肤自动联动',
+      '主题切换移至顶栏；输入涟漪升级为实体色层',
+    ],
+  },
+  {
+    version: 'v0.2.0',
+    date: '2026-09-11',
+    title: '主题动态配置体系',
+    bullets: ['主题动态配置、预设与持久化，暗色感知梯度与语义色'],
+  },
+]
+</script>
+
+<style scoped>
+.cl-title {
+  margin: 0 0 4px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.cl-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  color: var(--eb-text-color-regular);
+}
+.cl-list li {
+  margin: 3px 0;
+}
+</style>

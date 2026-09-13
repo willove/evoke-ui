@@ -9,9 +9,9 @@
       <h4 class="ev-timeline__title">
         <slot name="title" :item="item" :index="i">{{ item.title }}</slot>
       </h4>
-      <p v-if="item.description" class="ev-timeline__description">
+      <div v-if="item.description || slots.description" class="ev-timeline__description">
         <slot name="description" :item="item" :index="i">{{ item.description }}</slot>
-      </p>
+      </div>
     </div>
   </div>
 </template>
@@ -19,8 +19,10 @@
 <script setup>
 /**
  * EvTimeline — 时间线/更新日志
- * items：[{ date?, tag?, tagTone?, title, description? }]，最新一条默认高亮圆点
+ * items：[{ date?, tag?, tagTone?, title, description? }]，最新一条默认高亮圆点；
+ * description 支持 #description 插槽定制（列表等块级内容，此时无需传 description 字段）
  */
+import { useSlots } from 'vue'
 import EvTag from '../tag/index.vue'
 
 defineProps({
@@ -28,6 +30,8 @@ defineProps({
   /** 最新条目圆点着主色 */
   highlightLatest: { type: Boolean, default: true },
 })
+
+const slots = useSlots()
 </script>
 
 <style src="./style.css"></style>

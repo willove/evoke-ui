@@ -164,9 +164,9 @@ function goSearch() {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.4.0 发布：主题配置支持图表系列色板</span>
+      <span>v0.6.0 发布：新增 Slider 滑块，磨砂质感支持按组件调参数</span>
       <template #action>
-        <a href="/guide/customizer" style="display:inline-flex; align-items:center; gap:2px;">查看<EvIcon name="arrow-right" :size="14" /></a>
+        <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
     </EvAlert>
   </template>

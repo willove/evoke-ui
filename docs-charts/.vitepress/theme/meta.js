@@ -12,6 +12,7 @@ export const GUIDE_NAV = [
       { name: 'AI 生成', zh: '', path: '/guide/ai' },
       { name: '设计规范', zh: '', path: '/guide/design' },
       { name: '内嵌于组件库', zh: 'eb-chart', path: '/guide/integration' },
+      { name: '更新记录', zh: '', path: '/guide/changelog' },
     ],
   },
 ]

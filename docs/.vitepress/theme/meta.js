@@ -161,6 +161,7 @@ export const GUIDE_NAV = [
       { name: '主题定制器', zh: '', path: '/guide/customizer' },
       { name: '主题与暗色模式', zh: '', path: '/guide/theming' },
       { name: '企业级能力', zh: '', path: '/guide/enterprise' },
+      { name: '更新记录', zh: '', path: '/guide/changelog' },
     ],
   },
 ]

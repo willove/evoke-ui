@@ -89,6 +89,23 @@ describe('EvTimeline', () => {
     expect(list[0].find('.ev-timeline__title').text()).toBe('团队空间上线')
     expect(wrapper.find('.ev-timeline__date').text()).toBe('2026-09-01')
   })
+
+  it('description 插槽渲染块级内容（无需 description 字段）', () => {
+    const wrapper = mount(EvTimeline, {
+      props: {
+        items: [
+          { tag: 'v1.0', title: '版本一', bullets: ['A', 'B'] },
+          { tag: 'v0.9', title: '版本零', description: '普通文本。' },
+        ],
+      },
+      slots: {
+        description: `<template #description="{ item }"><ul class="cl"><li v-for="b in item.bullets" :key="b">{{ b }}</li></ul></template>`,
+      },
+    })
+    expect(wrapper.findAll('.cl li')).toHaveLength(2)
+    // 插槽提供后对所有条目生效（按 item 数据自行分支），description 容器都在
+    expect(wrapper.findAll('.ev-timeline__item')[1].find('.ev-timeline__description').exists()).toBe(true)
+  })
 })
 
 describe('EvComparisonTable', () => {

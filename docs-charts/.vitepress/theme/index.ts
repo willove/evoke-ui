@@ -4,6 +4,7 @@ import DocExample from './DocExample.vue'
 import ApiTable from './ApiTable.vue'
 import Icon from './Icon.vue'
 import EvButton from '../../../packages/evoke-ui/src/components/button/index.vue'
+import EvTimeline from '../../../packages/evoke-ui/src/components/timeline/index.vue'
 import { EvokeCharts } from '@wil-works/evoke-charts'
 import '../../../packages/evoke-ui/src/styles/variables.css'
 import './style.css'
@@ -23,5 +24,6 @@ export default {
     app.component('ApiTable', ApiTable)
     app.component('CdIcon', Icon)
     app.component('EvButton', EvButton)
+    app.component('EvTimeline', EvTimeline)
   },
 }

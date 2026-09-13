@@ -116,6 +116,7 @@ export default defineConfig({
             { text: '主题定制器', link: '/guide/customizer' },
             { text: '磨砂玻璃', link: '/guide/glass' },
             { text: '动效', link: '/guide/motion' },
+            { text: '更新记录', link: '/guide/changelog' },
           ],
         },
       ],
