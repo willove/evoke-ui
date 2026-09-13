@@ -2,6 +2,16 @@
 
 .ev-scroll-scene {
   position: relative;
+  /* 场景高度 = 舞台高（100vh）+ 钉住时长（--ev-scene-scroll）。
+     手机浏览器的 vh 会随地址栏收放而变化，高度用 vh 直写会随滚动反复变化
+     造成抖动——支持 svh 的环境改用小视口单位（不随地址栏变化），旧环境回退 vh */
+  height: calc(100vh + var(--ev-scene-scroll, 0px));
+}
+
+@supports (height: 1svh) {
+  .ev-scroll-scene {
+    height: calc(100svh + var(--ev-scene-scroll-s, var(--ev-scene-scroll, 0px)));
+  }
 }
 
 .ev-scroll-scene__stage {
@@ -10,6 +20,12 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@supports (height: 1svh) {
+  .ev-scroll-scene__stage {
+    min-height: 100svh;
+  }
 }
 
 /* 禁用态：退化为普通容器（高度自适应、不吸附） */

@@ -492,8 +492,9 @@ function goSearch() {
 }
 .home-story__captions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 26px;
+  gap: 10px 26px;
   margin-top: 22px;
   font-size: 13px;
   color: var(--ev-text-secondary);
@@ -794,5 +795,17 @@ function goSearch() {
 .home-family__item:hover {
   background: var(--ev-bg-hover);
   color: var(--ev-text-primary);
+}
+
+/* ─── 窄屏收纳：actions 区（官方库下拉 + GitHub）在手机上放不下会横向撑破页面，
+   隐藏之，保留主题切换与下载；组件自带的导航折叠（burger）不受影响 ─── */
+@media (max-width: 768px) {
+  .home-navbar .home-family,
+  .home-navbar .ev-icon-button {
+    display: none;
+  }
+  .home-navbar .ev-navbar__inner {
+    gap: var(--ev-space-4);
+  }
 }
 </style>

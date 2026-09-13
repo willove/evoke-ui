@@ -41,11 +41,18 @@ const { progress: rawProgress, reduced } = useScrollProgress(sceneRef, {
 const progress = computed(() => (props.disabled ? 0 : rawProgress.value))
 
 const sceneStyle = computed(() => {
-  // 变量恒输出：禁用态给 0，消费端 calc(var(--ev-scene-progress) * …) 不至于整条失效
+  // 变量恒输出：禁用态给 0，消费端 calc(var(--ev-scene-progress) * …) 不至于失效；
+  // 场景高度走 style.css（100vh + var，svh 支持时用小视口单位）——
+  // 手机上地址栏伸缩会改变 vh 语义，高度用 vh 直写会随滚动反复变化造成抖动
   const style = { '--ev-scene-progress': progress.value }
   if (!props.disabled) {
-    const duration = typeof props.duration === 'number' ? `${props.duration}vh` : props.duration
-    style.height = `calc(100vh + ${duration})`
+    if (typeof props.duration === 'number') {
+      style['--ev-scene-scroll'] = `${props.duration}vh`
+      style['--ev-scene-scroll-s'] = `${props.duration}svh`
+    } else {
+      style['--ev-scene-scroll'] = props.duration
+      style['--ev-scene-scroll-s'] = props.duration
+    }
   }
   return style
 })
