@@ -142,6 +142,7 @@ export default defineConfig({
             { text: 'Field 字段包装', link: '/components/field' },
             { text: 'Tabs 标签页', link: '/components/tabs' },
             { text: 'Switch 开关', link: '/components/switch' },
+            { text: 'Slider 滑块', link: '/components/slider' },
             { text: 'Avatar 头像', link: '/components/avatar' },
             { text: 'AvatarGroup 头像组', link: '/components/avatar-group' },
           ],

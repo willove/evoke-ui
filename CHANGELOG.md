@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — 新增 Slider 滑块组件
+
+- 新增 `EvSlider`：原生 range 之上的受控封装，键盘方向键可调（原生无障碍免费），
+  导轨「已走过」部分着主色（`--ev-slider-fill` 渐变断点，Firefox 走原生
+  `-moz-range-progress`）；焦点指示落在滑块圆钮上（全局 `:focus-visible`
+  整框环按组件屏蔽）；
+- v-model / `default-value` 非受控双模式（复用 `useUncontrolled`），拖动持续派发
+  `update:modelValue` 与 `change`；`min` / `max` / `step` / `disabled` /
+  `size`（small/default/large）齐备，`aria-label` 等原生属性透传到内部 input；
+- 磨砂专题页「实时调节」实验室换装 EvSlider（原为裸 `<input type="range">`），
+  三参数调节视觉与全站表单控件统一；文档新增 components/slider.md（基础用法 /
+  尺寸与禁用 / API），侧栏与组件总览收录，组件数口径 57→58；新增单测 6 项，
+  全量 67 文件 1125 项全绿。
+
 ### @wil-works/evoke-ui / @wil-works/evoke-business-ui — 磨砂参数化：saturate / tint 组件级参数
 
 - 新增 `useGlassVars` 共用 composable，磨砂参数收敛为三个组件 prop（与既有 `blur`

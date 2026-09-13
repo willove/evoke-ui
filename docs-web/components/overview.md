@@ -1,6 +1,6 @@
 # 组件总览
 
-Evoke UI 共内置 **57 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
+Evoke UI 共内置 **58 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
 反馈与主题、移动端专属。每个组件卡片右上角带**平台兼容标识**：
 
 <span class="ov-legend"><ev-icon name="desktop" :size="13" /><ev-icon name="smartphone" :size="13" /> 双端兼容</span>
@@ -26,6 +26,7 @@ const groups = [
       { name: 'Field', cn: '字段包装', desc: '标签 + 控件 + 提示的表单外壳', path: '/components/field', platform: 'both' },
       { name: 'Tabs', cn: '标签页', desc: '分段胶囊与下划线两种页签，窄屏可横滚', path: '/components/tabs', platform: 'both' },
       { name: 'Switch', cn: '开关', desc: '二元状态开关，spring 滑块', path: '/components/switch', platform: 'both' },
+      { name: 'Slider', cn: '滑块', desc: '连续数值选取，导轨已走过部分着主色', path: '/components/slider', platform: 'both' },
       { name: 'Avatar', cn: '头像', desc: '缺图时自动回退姓名首字', path: '/components/avatar', platform: 'both' },
       { name: 'AvatarGroup', cn: '头像组', desc: '头像层叠与 +N 折叠', path: '/components/avatar-group', platform: 'both' },
     ],

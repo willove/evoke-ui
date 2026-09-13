@@ -95,6 +95,7 @@ import EvInput from './components/input/index.vue'
 import EvTextarea from './components/textarea/index.vue'
 import EvSelect from './components/select/index.vue'
 import EvField from './components/field/index.vue'
+import EvSlider from './components/slider/index.vue'
 // Components — 移动组件
 import EvPullRefresh from './components/pull-refresh/index.vue'
 import EvLoadMore from './components/load-more/index.vue'
@@ -156,6 +157,7 @@ const components = {
   EvTextarea,
   EvSelect,
   EvField,
+  EvSlider,
   EvPullRefresh,
   EvLoadMore,
   EvActionSheet,
@@ -227,6 +229,7 @@ export {
   EvTextarea,
   EvSelect,
   EvField,
+  EvSlider,
   EvPullRefresh,
   EvLoadMore,
   EvActionSheet,

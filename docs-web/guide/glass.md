@@ -65,17 +65,17 @@ reset()        // 恢复默认（磨砂关闭）
     <div class="glass-lab__controls">
       <label class="glass-lab__row">
         <span class="glass-lab__name">模糊</span>
-        <input v-model.number="labBlur" type="range" min="0" max="40" step="1" class="glass-lab__range" />
+        <EvSlider v-model="labBlur" :min="0" :max="40" :step="1" style="flex:1;" aria-label="磨砂模糊半径" />
         <EvTag size="small" tone="primary">{{ labBlur }}px</EvTag>
       </label>
       <label class="glass-lab__row">
         <span class="glass-lab__name">雾面浓度</span>
-        <input v-model.number="labTint" type="range" min="30" max="95" step="5" class="glass-lab__range" />
+        <EvSlider v-model="labTint" :min="30" :max="95" :step="5" style="flex:1;" aria-label="磨砂底色浓度" />
         <EvTag size="small">{{ labTint }}%</EvTag>
       </label>
       <label class="glass-lab__row">
         <span class="glass-lab__name">饱和度</span>
-        <input v-model.number="labSaturate" type="range" min="1" max="2" step="0.1" class="glass-lab__range" />
+        <EvSlider v-model="labSaturate" :min="1" :max="2" :step="0.1" style="flex:1;" aria-label="磨砂饱和度" />
         <EvTag size="small">×{{ labSaturate.toFixed(1) }}</EvTag>
       </label>
     </div>
@@ -200,11 +200,6 @@ const labCode = computed(() =>
   width: 60px;
   font-size: 13px;
   color: var(--ev-text-secondary);
-}
-.glass-lab__range {
-  flex: 1;
-  margin: 0;
-  accent-color: var(--ev-color-primary);
 }
 .glass-lab__code pre {
   margin: 0;

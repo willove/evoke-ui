@@ -1,0 +1,136 @@
+/* EvSlider — 滑块 */
+
+.ev-slider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.ev-slider__input {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 20px; /* 命中区高度，视觉导轨见伪元素 */
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ─── WebKit：导轨与滑块 ───
+   填充比例走 --ev-slider-fill（JS 计算的渐变断点） */
+.ev-slider__input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--ev-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--ev-color-primary) var(--ev-slider-fill, 0%),
+    var(--ev-fill-3) var(--ev-slider-fill, 0%)
+  );
+}
+
+.ev-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px; /* (导轨 4px − 滑块 16px) / 2 */
+  border: none;
+  border-radius: var(--ev-radius-circle);
+  background-color: #ffffff;
+  box-shadow: var(--ev-shadow-1), 0 0 0 1px var(--ev-border-color);
+  transition: box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
+}
+
+.ev-slider__input:hover::-webkit-slider-thumb,
+.ev-slider__input:active::-webkit-slider-thumb {
+  box-shadow: var(--ev-shadow-1), 0 0 0 1px var(--ev-border-color-dark);
+}
+
+/* 焦点指示落在滑块上：全局 :focus-visible 的整框环不贴合导轨形态，按组件屏蔽 */
+.ev-slider__input:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+
+.ev-slider__input:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--ev-shadow-1), var(--ev-focus-ring);
+}
+
+/* ─── Firefox：导轨原生 progress 着色 ─── */
+.ev-slider__input::-moz-range-track {
+  height: 4px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-fill-3);
+}
+
+.ev-slider__input::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--ev-radius-full);
+  background-color: var(--ev-color-primary);
+}
+
+.ev-slider__input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: var(--ev-radius-circle);
+  background-color: #ffffff;
+  box-shadow: var(--ev-shadow-1), 0 0 0 1px var(--ev-border-color);
+  transition: box-shadow var(--ev-duration-base) var(--ev-ease-in-out);
+}
+
+.ev-slider__input:hover::-moz-range-thumb,
+.ev-slider__input:active::-moz-range-thumb {
+  box-shadow: var(--ev-shadow-1), 0 0 0 1px var(--ev-border-color-dark);
+}
+
+.ev-slider__input:focus-visible::-moz-range-thumb {
+  box-shadow: var(--ev-shadow-1), var(--ev-focus-ring);
+}
+
+/* ─── 尺寸 ─── */
+.ev-slider--small .ev-slider__input {
+  height: 16px;
+}
+.ev-slider--small .ev-slider__input::-webkit-slider-runnable-track {
+  height: 3px;
+}
+.ev-slider--small .ev-slider__input::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  margin-top: -4.5px;
+}
+.ev-slider--small .ev-slider__input::-moz-range-track,
+.ev-slider--small .ev-slider__input::-moz-range-progress {
+  height: 3px;
+}
+.ev-slider--small .ev-slider__input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+}
+
+.ev-slider--large .ev-slider__input {
+  height: 24px;
+}
+.ev-slider--large .ev-slider__input::-webkit-slider-runnable-track {
+  height: 6px;
+}
+.ev-slider--large .ev-slider__input::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+}
+.ev-slider--large .ev-slider__input::-moz-range-track,
+.ev-slider--large .ev-slider__input::-moz-range-progress {
+  height: 6px;
+}
+.ev-slider--large .ev-slider__input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+}
+
+/* ─── 禁用 ─── */
+.ev-slider.is-disabled .ev-slider__input {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
