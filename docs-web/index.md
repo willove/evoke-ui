@@ -297,7 +297,7 @@ function storyFade(p, a, b) {
     </div>
   </EvSection>
 
-  <EvSection eyebrow="scroll story" title="五步，搭出一个官网" description="不用点任何按钮——向下滚动，这个浏览器窗口会经历首屏、品牌墙、版块、数据、暗色五幕；向上滚动，整个过程原样回溯。这就是 EvScrollScene：滚动条就是时间轴。" align="center">
+  <EvSection eyebrow="scroll story" title="一个官网的诞生" description="不用点任何按钮——向下滚动，浏览器窗口里首屏立住、品牌墙添信任、版块与数据依次就位，最后一键切到暗色收尾；向上滚动，全过程原样回溯。这就是 EvScrollScene：滚动条就是时间轴。" align="center">
     <EvScrollScene :duration="300" :top="37">
       <template #default="{ progress }">
         <div class="home-story">
@@ -415,7 +415,7 @@ function storyFade(p, a, b) {
 />
 
 <style>
-/* ─── 滚动叙事：五步搭官网（EvScrollScene 实战）───
+/* ─── 滚动叙事：一个官网的诞生（EvScrollScene 实战）───
    进出场/错拍/暗色切换的缓动在模板里对 progress 做 easeOutCubic 区段映射（:style 绑定） */
 .home-story {
   --p: var(--ev-scene-progress);
