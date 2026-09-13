@@ -113,9 +113,35 @@
   />
 </DemoBlock>
 
-### 分时图：折线 + 量副图
+### 分时图：分钟 K 线 + 量副图
 
-`volumeData` 不只属于 K 线：`type: 'line'` 配等长量数组即得分时图——价格线上区、量柱下区，量柱颜色按价格较前一刻涨跌着色，图例「成交量」同样可点选显隐。
+日内高频视角：`candleData` 换成 5 分钟粒度的四价，量副图照常联动——日内每段拉升都有量柱对应，价量同读。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'candle',
+      title: '日内 5 分钟 K 线',
+      candleData: [
+        { label: '09:30', open: 24.10, close: 24.18, high: 24.22, low: 24.05 },
+        { label: '09:35', open: 24.18, close: 24.32, high: 24.35, low: 24.15 },
+        { label: '09:40', open: 24.32, close: 24.26, high: 24.36, low: 24.20 },
+        { label: '09:45', open: 24.26, close: 24.40, high: 24.44, low: 24.22 },
+        { label: '09:50', open: 24.40, close: 24.36, high: 24.45, low: 24.30 },
+        { label: '09:55', open: 24.36, close: 24.52, high: 24.56, low: 24.33 },
+        { label: '10:00', open: 24.52, close: 24.46, high: 24.58, low: 24.40 },
+        { label: '10:05', open: 24.46, close: 24.60, high: 24.64, low: 24.42 },
+        { label: '10:10', open: 24.60, close: 24.55, high: 24.65, low: 24.48 },
+        { label: '10:15', open: 24.55, close: 24.68, high: 24.72, low: 24.52 },
+      ],
+      volumeData: [4200, 6800, 3900, 7200, 5100, 8600, 4800, 7400, 4300, 9200],
+      volumeHeight: 0.28,
+    }"
+    :height="360"
+  />
+</DemoBlock>
+
+偏好折线形态时用 `type: 'area'` 配 `volumeData`（价格线上区、量柱下区，量柱按价格较前一刻涨跌着色），图例「成交量」同样可点选显隐。
 
 <DemoBlock>
   <ev-chart
@@ -128,7 +154,7 @@
       volumeData: [8200, 6400, 5100, 7300, 9200, 6800, 5900, 7600, 11800],
       yAxis: { min: 24 },
     }"
-    :height="320"
+    :height="300"
   />
 </DemoBlock>
 

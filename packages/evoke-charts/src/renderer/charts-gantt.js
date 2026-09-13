@@ -94,7 +94,7 @@ function computeGanttLayout(plotArea, options, theme, hiddenSeries, valueFormatt
 }
 
 function renderGanttChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
   const layout = computeGanttLayout(plotArea, options, theme, hiddenSeries);
   if (!layout) return;
   const { rows, deps, chartX, chartW, rowH, barH } = layout;
@@ -109,7 +109,9 @@ function renderGanttChart(ctx) {
     }
   });
   if (hoverIndex >= 0 && hoverIndex < rows.length) {
+    // 行悬浮高亮随 hoverAnimProgress 缓动淡入
     canvasCtx.save();
+    canvasCtx.globalAlpha = hoverAnimProgress;
     canvasCtx.fillStyle = theme.highlightColor;
     canvasCtx.fillRect(chartX, plotArea.y + hoverIndex * rowH, chartW, rowH);
     canvasCtx.restore();

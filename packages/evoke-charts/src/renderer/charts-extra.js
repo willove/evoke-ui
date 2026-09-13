@@ -2,7 +2,8 @@ import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeries
 import { INTERACTION } from "../interactions";
 import { renderLineChart } from "./charts-basic";
 function renderWaterfallChart(ctx, yRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, valueFormatter, hiddenSeries } = ctx;
+  const hovT = hoverAnimProgress;
   const wf = options.waterfall || {};
   const labels = options.labels || [];
   const deltas = (options.series || []).filter((s) => !hiddenSeries.has(s.name))[0]?.data || [];
@@ -66,12 +67,14 @@ function renderWaterfallChart(ctx, yRange) {
       canvasCtx.quadraticCurveTo(x + barWidth, top, x + barWidth, top + r);
       canvasCtx.lineTo(x + barWidth, top + height);
       canvasCtx.closePath();
-      canvasCtx.fillStyle = isHover ? color + "dd" : color;
+      // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档，不位移）
+      canvasCtx.fillStyle = isHover ? mixColor(color, 0.12 * hovT, "#000000") : color;
       canvasCtx.fill();
-    }
-    if (isHover && height > 0.5) {
-      canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
-      canvasCtx.fillRect(x, top, barWidth, Math.min(6, height));
+      if (isHover && hovT > 0.01) {
+        canvasCtx.globalAlpha = 0.3 * hovT;
+        canvasCtx.fillStyle = "#ffffff";
+        canvasCtx.fillRect(x, top, barWidth, Math.min(6, height));
+      }
     }
     canvasCtx.restore();
     if (options.showValues && progress > 0.9 && height > 0.5) {
@@ -167,7 +170,8 @@ function computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, valueRan
 }
 
 function renderBoxplotChart(ctx, yRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
+  const hovT = hoverAnimProgress;
   const geo = computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, yRange);
   if (!geo) return;
   const { boxes, horizontal } = geo;
@@ -175,7 +179,10 @@ function renderBoxplotChart(ctx, yRange) {
     const b = box.b;
     const isHover = box.index === hoverIndex;
     const color = box.color;
-    const lineWidth = isHover ? 2 : 1.5;
+    // 悬浮强调随 hoverAnimProgress 缓动：线宽/填充透明度插值（不位移）
+    const lineWidth = 1.5 + 0.5 * (isHover ? hovT : 0);
+    const fillAlpha = 0.2 + 0.13 * (isHover ? hovT : 0);
+    const fillHex = Math.round(fillAlpha * 255).toString(16).padStart(2, "0");
     // 生长动画：min/max/q1/q3 从 median 向外展开
     const grow = (v) => b.median + (v - b.median) * progress;
     canvasCtx.save();
@@ -200,10 +207,10 @@ function renderBoxplotChart(ctx, yRange) {
       canvasCtx.moveTo(wHi, yMed - cap / 2);
       canvasCtx.lineTo(wHi, yMed + cap / 2);
       canvasCtx.stroke();
-      canvasCtx.fillStyle = color + (isHover ? "55" : "33");
+      canvasCtx.fillStyle = color + fillHex;
       canvasCtx.fillRect(qLo, yLo, Math.max(1, qHi - qLo), box.thickness);
       canvasCtx.strokeRect(qLo, yLo, Math.max(1, qHi - qLo), box.thickness);
-      canvasCtx.lineWidth = isHover ? 2.5 : 2;
+      canvasCtx.lineWidth = 2 + 0.5 * (isHover ? hovT : 0);
       canvasCtx.beginPath();
       canvasCtx.moveTo(box.cx + (box.med - box.cx) * progress, yLo);
       canvasCtx.lineTo(box.cx + (box.med - box.cx) * progress, yLo + box.thickness);
@@ -211,7 +218,7 @@ function renderBoxplotChart(ctx, yRange) {
       box.outliers.forEach((o) => {
         const ox = box.cx + (o - box.cx) * progress;
         canvasCtx.beginPath();
-        canvasCtx.arc(ox, yMed, isHover ? 3.5 : 2.5, 0, Math.PI * 2);
+        canvasCtx.arc(ox, yMed, 2.5 + (isHover ? hovT : 0), 0, Math.PI * 2);
         canvasCtx.fillStyle = color;
         canvasCtx.fill();
       });
@@ -241,10 +248,10 @@ function renderBoxplotChart(ctx, yRange) {
       canvasCtx.moveTo(box.cx - box.capWidth / 2, yMax);
       canvasCtx.lineTo(box.cx + box.capWidth / 2, yMax);
       canvasCtx.stroke();
-      canvasCtx.fillStyle = color + (isHover ? "55" : "33");
+      canvasCtx.fillStyle = color + fillHex;
       canvasCtx.fillRect(xLo, yQ3, box.thickness, Math.max(1, yQ1 - yQ3));
       canvasCtx.strokeRect(xLo, yQ3, box.thickness, Math.max(1, yQ1 - yQ3));
-      canvasCtx.lineWidth = isHover ? 2.5 : 2;
+      canvasCtx.lineWidth = 2 + 0.5 * (isHover ? hovT : 0);
       canvasCtx.beginPath();
       canvasCtx.moveTo(xLo, yMed);
       canvasCtx.lineTo(xLo + box.thickness, yMed);
@@ -252,7 +259,7 @@ function renderBoxplotChart(ctx, yRange) {
       box.outliers.forEach((o) => {
         const oy = box.cy + (o - box.cy) * progress;
         canvasCtx.beginPath();
-        canvasCtx.arc(box.cx, oy, isHover ? 3.5 : 2.5, 0, Math.PI * 2);
+        canvasCtx.arc(box.cx, oy, 2.5 + (isHover ? hovT : 0), 0, Math.PI * 2);
         canvasCtx.fillStyle = color;
         canvasCtx.fill();
       });
@@ -453,6 +460,11 @@ function computeSunburstGeometry(plotArea, options, theme, valueFormatter) {
     valueFormatter
   };
 }
+/** 能用正文色（浅色主题近黑）就用正文色，底色深到不可读才反白（用户定则） */
+function sunburstLabelColor(bg, theme) {
+  return isLightColor(bg) ? theme.textColor : getContrastText(bg);
+}
+
 function renderSunburstChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, valueFormatter, hoverAnimProgress = 1 } = ctx;
   const geo = computeSunburstGeometry(plotArea, options, theme, valueFormatter);
@@ -505,7 +517,7 @@ function renderSunburstChart(ctx) {
       name,
       value,
       bold: seg.depth === 0,
-      fill: getContrastText(color),
+      fill: sunburstLabelColor(color, theme),
       alpha: alphaAt(i),
     });
   });
@@ -531,7 +543,8 @@ function renderSunburstChart(ctx) {
   });
 }
 function renderMixedChart(ctx, leftRange, rightRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
+  const hovT = hoverAnimProgress;
   const labels = options.labels || [];
   const visibleSeries = (options.series || []).filter((s) => !hiddenSeries.has(s.name));
   const barSeries = visibleSeries.filter((s) => (s.chartType || "line") === "bar");
@@ -568,7 +581,8 @@ function renderMixedChart(ctx, leftRange, rightRange) {
           canvasCtx.quadraticCurveTo(x + barWidth, barTop, x + barWidth, barTop + r);
           canvasCtx.lineTo(x + barWidth, barTop + barHeight);
           canvasCtx.closePath();
-          canvasCtx.fillStyle = isHover ? color + "dd" : color + "cc";
+          // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档，不位移）
+          canvasCtx.fillStyle = isHover ? mixColor(color, 0.12 * hovT, "#000000") + "cc" : color + "cc";
           canvasCtx.fill();
           canvasCtx.restore();
         }

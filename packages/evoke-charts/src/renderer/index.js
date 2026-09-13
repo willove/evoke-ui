@@ -222,7 +222,15 @@ function renderChart(canvas, params) {
       break;
     }
     case "arc": {
-      renderArcChart(renderCtx);
+      // arcCircular: true 复用弦图的弧形环状渲染（节点圆点 + 过圆心弧线），数据走 arcData
+      if (options.arcCircular === true) {
+        renderChordChart({
+          ...renderCtx,
+          options: { ...options, chordData: options.arcData, chordMode: "curve" }
+        });
+      } else {
+        renderArcChart(renderCtx);
+      }
       break;
     }
     case "gantt": {

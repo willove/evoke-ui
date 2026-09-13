@@ -72,41 +72,11 @@
   />
 </DemoBlock>
 
-### 弧形环状形态
-
-`chordMode: 'curve'` 切弧形环状图：节点从弧段变成圆点、连接从色带变成弧线（线宽即关系值）。适合节点多、关系稀疏的闭合网络——不强调节点流量占比，只看「谁连着谁、哪条线最粗」。
-
-<DemoBlock>
-  <ev-chart
-    :options="{
-      type: 'chord',
-      title: '服务间调用拓扑（弧形环状）',
-      chordMode: 'curve',
-      chordData: {
-        nodes: [
-          { name: '网关' }, { name: '用户服务' }, { name: '订单服务' },
-          { name: '支付服务' }, { name: '库存服务' }, { name: '消息中心' },
-        ],
-        links: [
-          { source: '网关', target: '用户服务', value: 52 },
-          { source: '网关', target: '订单服务', value: 46 },
-          { source: '订单服务', target: '支付服务', value: 38 },
-          { source: '订单服务', target: '库存服务', value: 30 },
-          { source: '支付服务', target: '消息中心', value: 22 },
-          { source: '库存服务', target: '消息中心', value: 14 },
-          { source: '用户服务', target: '消息中心', value: 10 },
-        ],
-      },
-    }"
-    :height="400"
-  />
-</DemoBlock>
-
 ## 配置要点
 
-- `links[].value` 决定带宽 / 线宽，建议先归一或截断极端值；
+- `links[].value` 决定带宽，建议先归一或截断极端值；
 - `chordByValue: true` 时节点弧长按值占比（默认均布）；
-- `chordMode: 'curve'` 切弧形环状形态（节点圆点 + 弧线连接）；
+- 节点圆点 + 弧线连接的**环形弧长形态**在 [弧长连接图](/chart/arc#环形弧长连接图)（`arcCircular: true`）；
 - 图例点选节点即隐去该节点与全部相连关系，剩余重新布局；
 - 节点名沿圆周外侧排布，按角度自动对齐左右；完整关系值在 tooltip。
 

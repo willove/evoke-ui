@@ -298,8 +298,22 @@ const effectiveOptions = computed(() => {
     if (base.candleData) {
       sliced.candleData = base.candleData.slice(startIdx, endIdx);
     }
+    if (base.volumeData) {
+      sliced.volumeData = base.volumeData.slice(startIdx, endIdx);
+    }
     ;
     sliced.__sliceStart = startIdx;
+  } else if (base.candleData) {
+    // K 线无 labels 基线：按 candleData 长度切片，volumeData 同步（长度不等长时量带会静默关闭）
+    const cn = base.candleData.length;
+    if (cn > 0) {
+      const { startIdx, endIdx } = zoomToSlice(range, cn);
+      sliced.candleData = base.candleData.slice(startIdx, endIdx);
+      if (base.volumeData) {
+        sliced.volumeData = base.volumeData.slice(startIdx, endIdx);
+      }
+      sliced.__sliceStart = startIdx;
+    }
   } else if (base.scatterData && base.scatterData.length > 0) {
     const xs = base.scatterData.map((d) => d.x);
     const xMin = Math.min(...xs);
@@ -704,12 +718,15 @@ function usesHoverAnimation() {
   const t = props.options.type;
   return t === "pie" || t === "doughnut" || t === "rose" || t === "sunburst" || t === "treemap" || t === "radar";
 }
-// 进出带渐变动画的类型（饼类抽出 + 雷达轴线点亮 + 韦恩/桑基/弦/弧的透明度聚焦）；
-// 层级图切焦不重播
+// 进出带渐变动画的类型：饼类抽出、雷达轴线点亮、韦恩/桑基/弦/弧透明度聚焦、
+// 柱族/箱线/K线/漏斗/热力/甘特的强调加深——全图型强调缓动（用户定则），仅准线/tooltip 即时
 function animatesHoverEnter() {
   const t = props.options.type;
-  return t === "pie" || t === "doughnut" || t === "rose" || t === "radar" || t === "venn"
-    || t === "sankey" || t === "chord" || t === "arc";
+  return [
+    "pie", "doughnut", "rose", "radar", "venn", "sankey", "chord", "arc",
+    "bar", "stacked-bar", "horizontal-bar", "waterfall", "mixed",
+    "boxplot", "candle", "heatmap", "calendar-heatmap", "funnel", "gantt",
+  ].includes(t);
 }
 // 清空悬浮焦点：缓动类型保留 hoverIndex 播完出场动画再清索引（透明度随 progress 回落），
 // 其余直接回原色（焦点一没就没有淡化对象）
@@ -992,6 +1009,13 @@ function getHoveredData(x, y) {
     return chordHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
   }
   if (options.type === "arc") {
+    if (options.arcCircular === true) {
+      return chordHitTest(
+        canvasX, canvasY, plotArea,
+        { ...options, chordData: options.arcData, chordMode: "curve" },
+        theme, hiddenSeries.value
+      );
+    }
     return arcHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
   }
   if (options.type === "gantt") {

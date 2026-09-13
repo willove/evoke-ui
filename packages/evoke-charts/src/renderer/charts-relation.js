@@ -1,4 +1,4 @@
-import { estimateTextWidth, getContrastText, mixColor } from "./core";
+import { estimateTextWidth, getContrastText, isLightColor, mixColor } from "./core";
 
 // ─── 关系图族（桑基 / 韦恩 / 弦图 / 弧长连接图）───
 // 共同纪律（DESIGN §3.5–3.7）：连接色按「源节点」槽位继承；悬浮走焦点单一通道
@@ -282,8 +282,13 @@ function computeVennLayout(plotArea, options, theme) {
   const interRows = rows.filter((d) => d.sets && d.sets.length === 2);
   const valueMax = Math.max(...circles.map((d) => d.value || 0));
   if (!(valueMax > 0)) return null;
-  // 半径预算放宽到短边 38%：韦恩的读图主体就是圆与交叠区，展示区域尽量大
-  const R = Math.min(plotArea.width, plotArea.height) * 0.38;
+  // 主体放大（用户定则）：半径预算按集合数分档——1–2 集合圆占高度近半，
+  // 3 集合留三角形展开余量；宽度只做溢出保护
+  const setCount = circles.length;
+  const R = Math.min(
+    plotArea.height * (setCount >= 3 ? 0.3 : 0.46),
+    plotArea.width * (setCount >= 3 ? 0.2 : 0.24)
+  );
   const k = (R * R) / valueMax; // 面积比例因子：π r² = k·v
   const radiusOf = (v) => Math.sqrt((v || 0) * k / Math.PI);
   circles.forEach((c, i) => {
@@ -391,12 +396,13 @@ function renderVennChart(ctx) {
     }
     canvasCtx.restore();
   });
-  // 集合标签：圆心上方 r×0.4
+  // 集合标签：圆心上方 r×0.4；能用正文色（近黑）就用正文色，深底才反白
   visible.forEach((c) => {
     if (progress < 0.9) return;
     canvasCtx.save();
     canvasCtx.font = "600 12px Inter, sans-serif";
-    canvasCtx.fillStyle = layout.hollow ? theme.textColor : getContrastText(c.color);
+    const labelColor = isLightColor(c.color) ? theme.textColor : getContrastText(c.color);
+    canvasCtx.fillStyle = layout.hollow ? theme.textColor : labelColor;
     canvasCtx.textAlign = "center";
     canvasCtx.textBaseline = "middle";
     canvasCtx.fillText(c.name, c.x, c.y - c.r * 0.4);
@@ -518,8 +524,9 @@ function computeChordLayout(plotArea, options, theme, hiddenSeries) {
     const src = arcByName.get(link.source);
     const tgt = arcByName.get(link.target);
     const angularW = (link.value / valueMax) * (R * 0.14) / R;
-    const s0 = src.startAngle + (outOffset.get(src.name) || 0);
-    const t0 = tgt.startAngle + (outOffset.get(tgt.name) || 0);
+    // curve 形态连线锚在节点圆点上（midAngle）；band 形态锚在弧段内按序偏移
+    const s0 = mode === "curve" ? src.midAngle : src.startAngle + (outOffset.get(src.name) || 0);
+    const t0 = mode === "curve" ? tgt.midAngle : tgt.startAngle + (outOffset.get(tgt.name) || 0);
     outOffset.set(src.name, (outOffset.get(src.name) || 0) + angularW);
     outOffset.set(tgt.name, (outOffset.get(tgt.name) || 0) + angularW);
     const [ax, ay] = polar(s0, R);

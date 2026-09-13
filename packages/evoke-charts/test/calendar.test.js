@@ -81,6 +81,21 @@ describe('日历热力布局（列=周 / 行=星期 / 月标签 / 今日）', ()
     expect(labels).toContain('8月')
   })
 
+  it('格子横向铺满：宽高独立自适应（宽画布上格子为横向矩形）', () => {
+    const geo = computeCalendarLayout(PLOT, OPTS(), THEME)
+    expect(geo.cellW).toBeGreaterThan(geo.cellH)
+    // 全部格子宽度和 + 间隙 ≈ 可用宽度（起点固定在左列标签带之后）
+    const gridRight = Math.max(...geo.cells.map((c) => c.x + c.w))
+    expect(gridRight).toBeGreaterThan(PLOT.x + PLOT.width * 0.9)
+    // 周粒度：单行聚合（求和口径）
+    const week = computeCalendarLayout(PLOT, OPTS({ granularity: 'week' }), THEME)
+    expect(week.rows).toBe(1)
+    expect(week.cells.length).toBe(week.cols)
+    expect(week.cells[0].value).toBeGreaterThan(30)
+    const month = computeCalendarLayout(PLOT, OPTS({ granularity: 'month' }), THEME)
+    expect(month.cols).toBe(3)
+  })
+
   it('星期标签默认只标一/三/五（weekStart=1 → row 0/2/4）', () => {
     const geo = computeCalendarLayout(PLOT, OPTS(), THEME)
     expect(geo.showRows.map((r) => r.name)).toEqual(['一', '三', '五'])
@@ -93,7 +108,7 @@ describe('日历热力渲染与命中同口径', () => {
   it('命中格子返回日期 + 数值；格间空隙不命中', () => {
     const geo = computeCalendarLayout(PLOT, OPTS(), THEME)
     const c = geo.cells[10]
-    const hit = calendarHitTest(c.x + c.size / 2, c.y + c.size / 2, PLOT, OPTS(), THEME)
+    const hit = calendarHitTest(c.x + c.w / 2, c.y + c.h / 2, PLOT, OPTS(), THEME)
     expect(hit.params.name).toBe(c.label)
     expect(hit.params.value).toBe(c.value)
     const miss = calendarHitTest(c.x - Math.max(2, geo.gap / 2) - 1, c.y + 1, PLOT, OPTS(), THEME)

@@ -232,6 +232,8 @@ export const chartOptionsSchema = {
     },
     vennData: { type: "array" },
     ganttData: { type: "array" },
+    // arc 环形弧长形态：复用弦图弧形环状渲染（节点圆点 + 过圆心弧线），数据仍走 arcData
+    arcCircular: { type: "boolean" },
     matrixFields: { type: "array" },
     matrixData: { type: "array" },
     // 行为与辅助

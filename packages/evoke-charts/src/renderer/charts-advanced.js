@@ -67,7 +67,7 @@ function funnelPercent(value, maxValue) {
 }
 
 function renderFunnelChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
   const allData = options.funnelData || [];
   const funnelData = allData.filter((d) => !hiddenSeries.has(d.label || ""));
   if (funnelData.length === 0) return;
@@ -88,8 +88,8 @@ function renderFunnelChart(ctx) {
     canvasCtx.lineTo(centerX + bottomW / 2, y + stepHeight);
     canvasCtx.lineTo(centerX - bottomW / 2, y + stepHeight);
     canvasCtx.closePath();
-    // 悬浮加深一档（同色向黑 8%）：不位移、不引强调色
-    canvasCtx.fillStyle = i === hoverIndex ? mixColor(step.color, 0.08, "#000000") : step.color;
+    // 悬浮加深一档随 hoverAnimProgress 缓动（同色向黑 8%）：不位移、不引强调色
+    canvasCtx.fillStyle = i === hoverIndex ? mixColor(step.color, 0.08 * hoverAnimProgress, "#000000") : step.color;
     canvasCtx.fill();
     canvasCtx.strokeStyle = theme.backgroundColor;
     canvasCtx.lineWidth = 2;
@@ -342,7 +342,9 @@ function calendarPad(n) {
 
 /**
  * 日历热力布局：start/end 缺省取数据极值并对齐周边界（weekStart 默认周一）；
- * 数值等宽分 4 档色阶（0/缺测为空档）；cellSize 按可用空间自适应。
+ * 数值等宽分 4 档色阶（0/缺测为空档）；granularity: 'day'（列=周 行=星期，
+ * 默认）/ 'week' / 'month'（聚合为单行周合计 / 月合计，求和口径）；
+ * 格子为矩形，横向铺满绘图区（宽高独立自适应）。
  */
 function computeCalendarLayout(plotArea, options, theme) {
   const data = options.calendarData || [];
@@ -353,6 +355,8 @@ function computeCalendarLayout(plotArea, options, theme) {
     const t = Date.parse(v);
     return Number.isNaN(t) ? null : calendarNoon(t);
   };
+  const gran = cal.granularity === "week" || cal.granularity === "month" ? cal.granularity : "day";
+  const weekStart = cal.weekStart ?? 1;
   const valueMap = /* @__PURE__ */ new Map();
   let minTs = Infinity;
   let maxTs = -Infinity;
@@ -367,73 +371,137 @@ function computeCalendarLayout(plotArea, options, theme) {
   let startTs = toTs(cal.start) ?? minTs;
   let endTs = toTs(cal.end) ?? maxTs;
   if (endTs < startTs) [startTs, endTs] = [endTs, startTs];
-  const weekStart = cal.weekStart ?? 1;
-  const shift = (new Date(startTs).getDay() - weekStart + 7) % 7;
-  const firstWeek = startTs - shift * CALENDAR_DAY;
-  const tailShift = (new Date(endTs).getDay() - weekStart + 7) % 7;
-  const lastWeek = endTs + (6 - tailShift) * CALENDAR_DAY;
-  const cols = Math.round((lastWeek - firstWeek) / CALENDAR_DAY / 7);
-  if (cols <= 0) return null;
   const ramps = cal.colors || (!isLightColor(theme.backgroundColor) ? CALENDAR_RAMP_DARK : CALENDAR_RAMP_LIGHT);
+  const todayTs = calendarNoon(cal.today !== undefined ? (toTs(cal.today) ?? Date.now()) : Date.now());
+  // 聚合桶：day = 每天一格（列=周）；week = 每周一格求和；month = 每月一格求和
+  const buckets = [];
+  const pushBucket = (label, tsList, col, row) => {
+    let value = null;
+    for (const ts of tsList) {
+      if (valueMap.has(ts)) {
+        const v = valueMap.get(ts);
+        value = typeof value === "number" ? value + v : v;
+      }
+    }
+    buckets.push({ label, col, row, value: typeof value === "number" ? value : null, today: tsList.includes(todayTs) });
+  };
+  if (gran === "day") {
+    const shift = (new Date(startTs).getDay() - weekStart + 7) % 7;
+    const firstWeek = startTs - shift * CALENDAR_DAY;
+    const tailShift = (new Date(endTs).getDay() - weekStart + 7) % 7;
+    const lastWeek = endTs + (6 - tailShift) * CALENDAR_DAY;
+    const cols = Math.round((lastWeek - firstWeek) / CALENDAR_DAY / 7);
+    if (cols <= 0) return null;
+    let prevMonth = -1;
+    const monthLabels = [];
+    for (let col = 0; col < cols; col++) {
+      const firstDay = new Date(firstWeek + col * 7 * CALENDAR_DAY);
+      if (firstDay.getMonth() !== prevMonth) {
+        if (col > 0 || firstDay.getDate() <= 7) monthLabels.push({ label: `${firstDay.getMonth() + 1}月`, col });
+        prevMonth = firstDay.getMonth();
+      }
+      for (let row = 0; row < 7; row++) {
+        const ts = firstWeek + (col * 7 + row) * CALENDAR_DAY;
+        if (ts < startTs || ts > endTs) continue;
+        const d = new Date(ts);
+        pushBucket(`${d.getFullYear()}-${calendarPad(d.getMonth() + 1)}-${calendarPad(d.getDate())}`, [ts], col, row);
+      }
+    }
+    var bucketLabels = monthLabels;
+    var rows = 7;
+  } else {
+    // 周 / 月桶：顺序扫描日期区间，按桶键求和
+    const order = [];
+    const sums = /* @__PURE__ */ new Map();
+    for (let ts = startTs; ts <= endTs; ts += CALENDAR_DAY) {
+      const d = new Date(ts);
+      let key;
+      let label;
+      if (gran === "week") {
+        const shift2 = (d.getDay() - weekStart + 7) % 7;
+        const weekTs = ts - shift2 * CALENDAR_DAY;
+        key = `w${weekTs}`;
+        const wd = new Date(weekTs);
+        label = `${wd.getMonth() + 1}月${wd.getDate()}日周`;
+      } else {
+        key = `m${d.getFullYear()}-${d.getMonth()}`;
+        label = `${d.getFullYear()}-${calendarPad(d.getMonth() + 1)}`;
+      }
+      if (!sums.has(key)) {
+        sums.set(key, null);
+        order.push({ key, label });
+      }
+      const v = valueMap.get(ts);
+      if (v !== undefined) {
+        const prev = sums.get(key);
+        sums.set(key, typeof prev === "number" ? prev + v : v);
+      }
+    }
+    order.forEach((b, i) => {
+      const value = sums.get(b.key);
+      buckets.push({ label: b.label, col: i, row: 0, value: typeof value === "number" ? value : null, today: false });
+    });
+    bucketLabels = gran === "month"
+      ? order.map((b, i) => ({ label: b.label, col: i }))
+      : order
+          .map((b, i) => ({ label: b.label, col: i, month: parseInt(b.label, 10) }))
+          .filter((b, i, arr) => i === 0 || b.month !== arr[i - 1].month);
+    rows = 1;
+  }
   let vMax = 0;
-  valueMap.forEach((v) => {
-    if (typeof v === "number" && v > vMax) vMax = v;
+  buckets.forEach((b) => {
+    if (typeof b.value === "number" && b.value > vMax) vMax = b.value;
   });
   const levelOf = (v) => {
     if (typeof v !== "number" || !(v > 0) || !(vMax > 0)) return 0;
     return Math.max(1, Math.min(4, Math.ceil(v / (vMax / 4))));
   };
   const labelTop = 18;
-  const leftBand = 28;
+  const leftBand = gran === "day" ? 28 : 6;
   const gap = Math.max(1, Math.min(8, cal.cellGap ?? 3));
   const scaleH = cal.showScale === false ? 0 : 22;
+  const cols = Math.max(1, ...buckets.map((b) => b.col + 1));
   const availW = plotArea.width - leftBand;
   const availH = plotArea.height - labelTop - scaleH;
-  const cell = Math.max(5, Math.min((availH - gap * 6) / 7, (availW - gap * (cols - 1)) / cols));
-  const gridW = cols * cell + (cols - 1) * gap;
-  const originX = plotArea.x + leftBand + Math.max(0, (availW - gridW) / 2);
+  // 矩形格子：宽高独立铺满可用空间（横向不再留白）
+  const cellW = Math.max(6, (availW - gap * (cols - 1)) / cols);
+  const cellH = Math.max(6, (availH - gap * (rows - 1)) / rows);
+  const originX = plotArea.x + leftBand;
   const originY = plotArea.y + labelTop;
-  const todayTs = calendarNoon(cal.today !== undefined ? (toTs(cal.today) ?? Date.now()) : Date.now());
-  const cells = [];
-  const monthLabels = [];
-  let prevMonth = -1;
-  for (let col = 0; col < cols; col++) {
-    const x = originX + col * (cell + gap);
-    const firstDay = new Date(firstWeek + col * 7 * CALENDAR_DAY);
-    if (firstDay.getMonth() !== prevMonth) {
-      if (col > 0 || firstDay.getDate() <= 7) monthLabels.push({ label: `${firstDay.getMonth() + 1}月`, x });
-      prevMonth = firstDay.getMonth();
-    }
-    for (let row = 0; row < 7; row++) {
-      const ts = firstWeek + (col * 7 + row) * CALENDAR_DAY;
-      if (ts < startTs || ts > endTs) continue;
-      const value = valueMap.get(ts);
-      const level = levelOf(value);
-      const d = new Date(ts);
-      cells.push({
-        ts,
-        col,
-        row,
-        x,
-        y: originY + row * (cell + gap),
-        size: cell,
-        value: typeof value === "number" ? value : null,
-        color: ramps[level],
-        today: ts === todayTs,
-        label: `${d.getFullYear()}-${calendarPad(d.getMonth() + 1)}-${calendarPad(d.getDate())}`,
-        index: cells.length,
-      });
-    }
-  }
+  const cells = buckets.map((b, i) => ({
+    ...b,
+    x: originX + b.col * (cellW + gap),
+    y: originY + b.row * (cellH + gap),
+    w: cellW,
+    h: cellH,
+    color: ramps[levelOf(b.value)],
+    index: i,
+  }));
   const weekdayLabels = cal.weekdayLabels || ["日", "一", "二", "三", "四", "五", "六"];
   const showRows = [];
-  for (let row = 0; row < 7; row++) {
-    const name = weekdayLabels[(weekStart + row) % 7];
-    if (name === "一" || name === "三" || name === "五" || cal.showAllWeekdays === true) {
-      showRows.push({ row, name, y: originY + row * (cell + gap) + cell / 2 });
+  if (gran === "day") {
+    for (let row = 0; row < 7; row++) {
+      const name = weekdayLabels[(weekStart + row) % 7];
+      if (name === "一" || name === "三" || name === "五" || cal.showAllWeekdays === true) {
+        showRows.push({ row, name, y: originY + row * (cellH + gap) + cellH / 2 });
+      }
     }
   }
-  return { cells, cols, cell, gap, monthLabels, showRows, ramps, originX, originY, scaleH };
+  return {
+    cells,
+    cols,
+    rows,
+    cellW,
+    cellH,
+    gap,
+    granularity: gran,
+    monthLabels: bucketLabels.map((m) => ({ label: m.label, x: originX + m.col * (cellW + gap) })),
+    showRows,
+    ramps,
+    originX,
+    originY,
+    scaleH,
+  };
 }
 
 function renderCalendarHeatmapChart(ctx) {
@@ -444,22 +512,22 @@ function renderCalendarHeatmapChart(ctx) {
   // 入场：格子按列序缩放弹出
   layout.cells.forEach((c, i) => {
     const colT = Math.max(0, Math.min(1, progress * 1.8 - (c.col / Math.max(1, layout.cols)) * 0.8));
-    const size = c.size * colT;
-    const offset = (c.size - size) / 2;
+    const w = c.w * colT;
+    const h = c.h * colT;
     const isHover = i === hoverIndex;
     canvasCtx.save();
-    roundRect(canvasCtx, c.x + offset, c.y + offset, size, size, Math.min(3, size / 4));
-    canvasCtx.fillStyle = isHover ? mixColor(c.color, 0.18, "#000000") : c.color;
+    roundRect(canvasCtx, c.x + (c.w - w) / 2, c.y + (c.h - h) / 2, w, h, Math.min(3, w / 4, h / 4));
+    canvasCtx.fillStyle = isHover ? mixColor(c.color, 0.18 * hoverAnimProgressOf(ctx), "#000000") : c.color;
     canvasCtx.fill();
     if (c.today) {
       canvasCtx.strokeStyle = theme.colors[0];
       canvasCtx.lineWidth = 1.5;
-      roundRect(canvasCtx, c.x - 1.5, c.y - 1.5, c.size + 3, c.size + 3, 4);
+      roundRect(canvasCtx, c.x - 1.5, c.y - 1.5, c.w + 3, c.h + 3, 4);
       canvasCtx.stroke();
     }
     canvasCtx.restore();
   });
-  // 月份标签（顶部）与星期标签（贴网格左缘，随网格居中）
+  // 月份标签（顶部）与星期标签（贴网格左缘，随网格起点）
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColorSecondary;
   canvasCtx.font = "11px Inter, sans-serif";
@@ -492,11 +560,15 @@ function renderCalendarHeatmapChart(ctx) {
   }
 }
 
+function hoverAnimProgressOf(ctx) {
+  return ctx.hoverAnimProgress === undefined ? 1 : ctx.hoverAnimProgress;
+}
+
 function calendarHitTest(canvasX, canvasY, plotArea, options, theme) {
   const layout = computeCalendarLayout(plotArea, options, theme);
   if (!layout) return null;
   for (const c of layout.cells) {
-    if (canvasX >= c.x && canvasX <= c.x + c.size && canvasY >= c.y && canvasY <= c.y + c.size) {
+    if (canvasX >= c.x && canvasX <= c.x + c.w && canvasY >= c.y && canvasY <= c.y + c.h) {
       return {
         index: c.index,
         params: {
@@ -529,7 +601,8 @@ function getHeatmapCategories(options) {
   return { xCategories, yCategories };
 }
 function renderHeatmapChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1 } = ctx;
+  const hovT = hoverAnimProgress;
   const heatmapData = options.heatmapData || [];
   if (heatmapData.length === 0) return;
   const heatmapConfig = options.heatmap || {};
@@ -560,7 +633,8 @@ function renderHeatmapChart(ctx) {
     const padding = 1;
     roundRect(canvasCtx, x + padding, y + padding, cellWidth - padding * 2, cellHeight - padding * 2, 3);
     canvasCtx.fill();
-    if (isHover) {
+    if (isHover && hovT > 0.01) {
+      canvasCtx.globalAlpha = hovT;
       canvasCtx.strokeStyle = theme.textColor;
       canvasCtx.lineWidth = 2;
       canvasCtx.stroke();
@@ -676,7 +750,8 @@ function renderVolumeBand(ctx, volumeData, flags, baseY, bandTop, barWidth, slot
  * 带不画轴（量纲从属）。图例「成交量」点选后量带隐去、K 线回铺全高。
  */
 function renderCandleChart(ctx, yRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
+  const hovT = hoverAnimProgress;
   const candleData = options.candleData || [];
   if (candleData.length === 0) return;
   const upColor = options.candleUpColor || "#dc2626";
@@ -706,9 +781,11 @@ function renderCandleChart(ctx, yRange) {
     const closeY = yFor(candle.close);
     const bodyTop = Math.min(openY, closeY);
     const bodyHeight = Math.max(1, Math.abs(closeY - openY));
-    canvasCtx.fillStyle = isHover ? color + "dd" : color;
+    // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档 + 描边淡入，不位移）
+    canvasCtx.fillStyle = isHover ? mixColor(color, 0.12 * hovT, "#000000") : color;
     canvasCtx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
-    if (isHover) {
+    if (isHover && hovT > 0.01) {
+      canvasCtx.globalAlpha = hovT;
       canvasCtx.strokeStyle = theme.textColor;
       canvasCtx.lineWidth = 1.5;
       canvasCtx.strokeRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);

@@ -2,6 +2,7 @@ import { CHART_COLORS, getSeriesColors } from "../types";
 import {
   drawLabelWithBg,
   estimateTextWidth,
+  mixColor,
   resolveStackGroups,
   buildSeriesColorIndex,
   isMissingValue,
@@ -269,7 +270,8 @@ function renderLineChart(ctx, yRange, side = "left") {
   return allPoints;
 }
 function renderBarChart(ctx, yRange, stacked = false) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries, valueFormatter } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries, valueFormatter } = ctx;
+  const hovT = hoverAnimProgress;
   const visibleSeries = (options.series || []).filter((s) => !hiddenSeries.has(s.name));
   if (visibleSeries.length === 0) return;
   const labels = options.labels || [];
@@ -335,10 +337,12 @@ function renderBarChart(ctx, yRange, stacked = false) {
             canvasCtx.beginPath();
             canvasCtx.rect(barX, seg.y, barWidth, seg.height);
           }
-          canvasCtx.fillStyle = isHover ? seg.color + "dd" : seg.color;
+          // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档，不位移）
+          canvasCtx.fillStyle = isHover ? mixColor(seg.color, 0.12 * hovT, "#000000") : seg.color;
           canvasCtx.fill();
-          if (isHover && (seg.isTopPositive || seg.isBottomNegative)) {
-            canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+          if (isHover && hovT > 0.01 && (seg.isTopPositive || seg.isBottomNegative)) {
+            canvasCtx.globalAlpha = seg.alpha * 0.3 * hovT;
+            canvasCtx.fillStyle = "#ffffff";
             const stripY = seg.value >= 0 ? seg.y : seg.y + seg.height - Math.min(6, seg.height);
             canvasCtx.fillRect(barX, stripY, barWidth, Math.min(6, seg.height));
           }
@@ -380,10 +384,12 @@ function renderBarChart(ctx, yRange, stacked = false) {
         canvasCtx.globalAlpha = alpha;
         if (barHeight > 0.5) {
           drawRoundedBarEnd(canvasCtx, x, barTop, barWidth, barHeight, borderRadius, value >= 0 ? "top" : "bottom");
-          canvasCtx.fillStyle = isHover ? color + "dd" : color;
+          // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档，不位移）
+          canvasCtx.fillStyle = isHover ? mixColor(color, 0.12 * hovT, "#000000") : color;
           canvasCtx.fill();
-          if (isHover) {
-            canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+          if (isHover && hovT > 0.01) {
+            canvasCtx.globalAlpha = 0.3 * hovT;
+            canvasCtx.fillStyle = "#ffffff";
             const stripY = value >= 0 ? barTop : barTop + barHeight - Math.min(10, barHeight);
             canvasCtx.fillRect(x, stripY, barWidth, Math.min(10, barHeight));
           }
@@ -438,7 +444,8 @@ function drawRoundedBarEnd(canvasCtx, x, y, width, height, radius, end) {
   canvasCtx.closePath();
 }
 function renderHorizontalBarChart(ctx, xRange) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries, valueFormatter } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries, valueFormatter } = ctx;
+  const hovT = hoverAnimProgress;
   const visibleSeries = (options.series || []).filter((s) => !hiddenSeries.has(s.name));
   if (visibleSeries.length === 0) return;
   const seriesCount = visibleSeries.length;
@@ -484,10 +491,12 @@ function renderHorizontalBarChart(ctx, xRange) {
           canvasCtx.lineTo(barLeft + barWidth, y + barHeight);
         }
         canvasCtx.closePath();
-        canvasCtx.fillStyle = isHover ? color + "dd" : color;
+        // 悬浮强调随 hoverAnimProgress 缓动（同色加深一档，不位移）
+        canvasCtx.fillStyle = isHover ? mixColor(color, 0.12 * hovT, "#000000") : color;
         canvasCtx.fill();
-        if (isHover) {
-          canvasCtx.fillStyle = "rgba(255, 255, 255, 0.3)";
+        if (isHover && hovT > 0.01) {
+          canvasCtx.globalAlpha = 0.3 * hovT;
+          canvasCtx.fillStyle = "#ffffff";
           const stripX = value >= 0 ? barLeft + barWidth - Math.min(10, barWidth) : barLeft;
           canvasCtx.fillRect(stripX, y, Math.min(10, barWidth), barHeight);
         }
@@ -1173,30 +1182,15 @@ function renderRadarChart(ctx) {
   const centerY = plotArea.y + plotArea.height / 2;
   const radius = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 30);
   const angleStep = Math.PI * 2 / indicators.length;
-  // 环底色（DESIGN §3.1）：自内向外交替铺极淡底带，增强「由内到外递进」读感
+  // 环底色（DESIGN §3.1）：同心圆环带交替浓淡（参考 AntV 雷达示例），由外向内叠画
   if (options.radarRingFill === true) {
     canvasCtx.save();
     canvasCtx.fillStyle = theme.gridColor;
-    canvasCtx.globalAlpha = 0.45;
-    for (let level = 1; level <= 5; level += 2) {
-      const outer = radius * level / 5;
-      const inner = radius * (level - 1) / 5;
+    for (let level = 5; level >= 1; level--) {
+      canvasCtx.globalAlpha = level % 2 === 1 ? 0.5 : 0.22;
       canvasCtx.beginPath();
-      for (let i = 0; i <= indicators.length; i++) {
-        const angle = i * angleStep - Math.PI / 2;
-        const x = centerX + Math.cos(angle) * outer;
-        const y = centerY + Math.sin(angle) * outer;
-        if (i === 0) canvasCtx.moveTo(x, y);
-        else canvasCtx.lineTo(x, y);
-      }
-      canvasCtx.closePath();
-      canvasCtx.moveTo(centerX + inner, centerY);
-      for (let i = indicators.length; i >= 0; i--) {
-        const angle = i * angleStep - Math.PI / 2;
-        canvasCtx.lineTo(centerX + Math.cos(angle) * inner, centerY + Math.sin(angle) * inner);
-      }
-      canvasCtx.closePath();
-      canvasCtx.fill("evenodd");
+      canvasCtx.arc(centerX, centerY, radius * level / 5, 0, Math.PI * 2);
+      canvasCtx.fill();
     }
     canvasCtx.restore();
   }

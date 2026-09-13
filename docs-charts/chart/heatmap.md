@@ -73,9 +73,11 @@
 
 `type: 'calendar-heatmap'` 是热力图的时间轴特化（GitHub 活动热力同款）：列 = 周、行 = 星期，一天一格，回答「**哪段时间活跃、活跃了多少天**」。数据字段 `calendarData`（`{ date, value }`），`calendar.start` / `end` 缺省取数据极值并对齐周边界。
 
-工作日密、周末疏的节律，月份标签一压，三个月的投入节奏直接可读；今日格主色描边，右下「少 — 多」色阶随明暗主题换挡。
+工作日密、周末疏的节律，月份标签一压，三个月的投入节奏直接可读；今日格主色描边，右下「少 — 多」色阶随明暗主题换挡。格子横向铺满绘图区（宽高独立自适应），`calendar.granularity` 支持 `day` / `week` / `month` 三档视角切换（周/月为求和聚合）。
 
 <script setup>
+import { ref, computed } from 'vue'
+
 // 生成近三个月的模拟活跃数据（工作日密、周末疏）
 const calData = []
 let seed = 11
@@ -86,16 +88,22 @@ for (let ts = Date.parse('2026-06-15'); ts <= Date.parse('2026-09-14'); ts += 86
   const v = dow === 0 || dow === 6 ? Math.round(r * 6) : Math.round(r * 30 + 4)
   calData.push({ date: new Date(ts).toISOString().slice(0, 10), value: v })
 }
-const calendarOptions = {
+const calGran = ref('day')
+const calendarOptions = computed(() => ({
   type: 'calendar-heatmap',
-  title: 'Token 活动（每日）',
+  title: 'Token 活动（' + { day: '每日', week: '每周', month: '累计' }[calGran.value] + '）',
   calendarData: calData,
-  calendar: { start: '2026-06-15', end: '2026-09-14', today: '2026-09-14' },
-}
+  calendar: { start: '2026-06-15', end: '2026-09-14', today: '2026-09-14', granularity: calGran.value },
+}))
 </script>
 
 <DemoBlock>
-<ev-chart :options="calendarOptions" :height="200" />
+<div style="margin-bottom:12px;">
+  <ev-button size="small" :type="calGran === 'day' ? 'primary' : 'default'" @click="calGran = 'day'">每日</ev-button>
+  <ev-button size="small" :type="calGran === 'week' ? 'primary' : 'default'" style="margin-left:8px;" @click="calGran = 'week'">每周</ev-button>
+  <ev-button size="small" :type="calGran === 'month' ? 'primary' : 'default'" style="margin-left:8px;" @click="calGran = 'month'">累计</ev-button>
+</div>
+<ev-chart :options="calendarOptions" :height="180" />
 </DemoBlock>
 
 悬浮任意格子读取日期与数值；`calendar.weekdayLabels` / `showAllWeekdays` 控制左列星期标签，`calendar.colors` 可整列替换色阶（5 色，第 1 位为空档色）。
