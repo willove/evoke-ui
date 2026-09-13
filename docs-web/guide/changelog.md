@@ -32,7 +32,7 @@ const releases = [
       '进度经插槽 { progress, reduced } 与 CSS 变量 --ev-scene-progress 双通道暴露，纯 CSS calc() 或 JS 刷帧均可消费',
       '新增 useScrollProgress 进度原语；EvSection 新增 snap 滚动吸附（proximity 温和轻吸，拒绝滚轮劫持）',
       'Slider 修复：初始值不在步长格点上时圆钮与导轨填充错位的问题',
-      '本站首页「三步，搭出一个官网」与企业官网案例的「数据链路」即本版能力的实战',
+      '本站首页「五步，搭出一个官网」与企业官网案例的「数据链路」即本版能力的实战',
     ],
   },
   {
