@@ -2,6 +2,16 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [ui 0.7.1] — 2026-09-13
+
+### @wil-works/evoke-ui — Alert 溢出保护：胶囊单行省略
+
+- **胶囊（pill）形态单行语义**：超长文案省略号截断，不再换行撑破胶囊——title 与
+  message 各自 nowrap + ellipsis，overflow:hidden 使 flex 收缩对内容生效；
+- 常规形态加溢出保护：根元素 max-width 100%、消息位 overflow-wrap anywhere——超长词
+  与 URL 就地断行，不再把宿主容器撑出横向滚动；
+- 文档站滚动叙事指南清理「苹果式」表述，改「高端产品页」。
+
 ## [Unreleased]
 
 ### @wil-works/evoke-charts — 漏斗图视觉整改（同色系递浅 / 末端不收针尖）
@@ -30,7 +40,7 @@
 ### @wil-works/evoke-ui — 滚动叙事：EvScrollScene 场景组件 + useScrollProgress 进度原语
 
 - **新增 `EvScrollScene` 滚动场景**：外层按 `duration` 拉出滚动长度、内层 sticky 钉在
-  视口——滚动条就是时间轴，下滚前进、上滚回溯（苹果式产品页的笔记本开合、分幕功能
+  视口——滚动条就是时间轴，下滚前进、上滚回溯（高端产品页的笔记本开合、分幕功能
   介绍这类叙事的地基）；进度经作用域插槽 `{ progress, reduced }` 与 CSS 变量
   `--ev-scene-progress`（0..1）双通道暴露，纯 CSS 用 `calc()` 消费（如
   `rotateX(calc(-92deg + var(--ev-scene-progress) * 92deg))`），canvas 刷帧 /

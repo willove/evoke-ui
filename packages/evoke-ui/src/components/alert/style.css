@@ -8,6 +8,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--ev-space-3);
+  max-width: 100%;
   padding: var(--ev-space-4) var(--ev-space-5);
   border: 1px solid color-mix(in srgb, var(--alert-tone) 22%, transparent);
   border-radius: var(--ev-radius-lg);
@@ -91,6 +92,20 @@ html.dark .ev-alert.is-pill .ev-alert__icon {
 .ev-alert__title {
   margin-right: var(--ev-space-1);
   font-weight: var(--ev-font-weight-semibold);
+}
+
+/* 溢出保护：超长文本/长词不撑破容器，受宽时在消息位截断换行 */
+.ev-alert__message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── 胶囊形态单行语义：超长文案省略号截断，不换行撑破胶囊 ─── */
+.ev-alert.is-pill .ev-alert__title,
+.ev-alert.is-pill .ev-alert__message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ─── 动作位 ─── */
