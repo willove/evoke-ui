@@ -1,5 +1,5 @@
 <template>
-  <section :class="['ev-section', `is-${align}`, { 'is-glass': glass === true, 'no-glass': glass === false }]" :style="[sectionStyle, glassVars]">
+  <section :class="['ev-section', `is-${align}`, { 'is-snap': snap, 'is-glass': glass === true, 'no-glass': glass === false }]" :style="[sectionStyle, glassVars]">
     <div v-if="eyebrow || $slots.eyebrow" class="ev-section__eyebrow">
       <slot name="eyebrow">{{ eyebrow }}</slot>
     </div>
@@ -43,6 +43,8 @@ const props = defineProps({
   },
   /** 底部留白（px），用于区块间距节奏 */
   gap: { type: [String, Number], default: undefined },
+  /** 滚动吸附：滚到该区块附近时轻吸到视口顶（proximity，可打断；需页面上有至少一个吸附区块才启用） */
+  snap: { type: Boolean, default: false },
 })
 
 const sectionStyle = computed(() => {

@@ -19,6 +19,7 @@ import './styles/index.css'
 import { useTheme, initTheme } from './composables/useTheme'
 import { useCopy } from './composables/useCopy'
 import { useThemeConfig } from './composables/useThemeConfig'
+import { useScrollProgress } from './composables/useScrollProgress'
 import { useSafeArea, ensureViewportFit } from './composables/useSafeArea'
 
 // ─── Presets ───
@@ -65,7 +66,9 @@ import EvConfigProvider from './components/config-provider/index.vue'
 // Components — 第二批功能组件
 import EvTabs from './components/tabs/index.vue'
 import EvSwitch from './components/switch-comp/index.vue'
+// Components — 布局
 import EvContainer from './components/container/index.vue'
+import EvScrollScene from './components/scroll-scene/index.vue'
 import EvAvatar from './components/avatar/index.vue'
 import EvAvatarGroup from './components/avatar/group.vue'
 import EvTimeline from './components/timeline/index.vue'
@@ -132,6 +135,7 @@ const components = {
   EvTabs,
   EvSwitch,
   EvContainer,
+  EvScrollScene,
   EvAvatar,
   EvAvatarGroup,
   EvTimeline,
@@ -204,6 +208,7 @@ export {
   EvTabs,
   EvSwitch,
   EvContainer,
+  EvScrollScene,
   EvAvatar,
   EvAvatarGroup,
   EvTimeline,
@@ -252,6 +257,7 @@ export {
   useSafeArea,
   ensureViewportFit,
   useThemeConfig,
+  useScrollProgress,
   // Install
   install,
 }

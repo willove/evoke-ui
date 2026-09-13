@@ -92,3 +92,15 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ─── 滚动吸附（容器级）───
+   内部滚动容器（overflow-y: auto）分步展示用：容器加 .ev-snap-y、
+   子项加 .ev-snap-start；页面级吸附直接用 EvSection 的 snap prop */
+.ev-snap-y {
+  scroll-snap-type: y proximity;
+}
+
+.ev-snap-start {
+  scroll-snap-align: start;
+}
+

@@ -1,0 +1,23 @@
+/* EvScrollScene — 滚动场景 */
+
+.ev-scroll-scene {
+  position: relative;
+}
+
+.ev-scroll-scene__stage {
+  position: sticky;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 禁用态：退化为普通容器（高度自适应、不吸附） */
+.ev-scroll-scene.is-disabled {
+  height: auto !important;
+}
+
+.ev-scroll-scene.is-disabled .ev-scroll-scene__stage {
+  position: static;
+  min-height: 0;
+}

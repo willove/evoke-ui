@@ -4,6 +4,29 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — 滚动叙事：EvScrollScene 场景组件 + useScrollProgress 进度原语
+
+- **新增 `EvScrollScene` 滚动场景**：外层按 `duration` 拉出滚动长度、内层 sticky 钉在
+  视口——滚动条就是时间轴，下滚前进、上滚回溯（苹果式产品页的笔记本开合、分幕功能
+  介绍这类叙事的地基）；进度经作用域插槽 `{ progress, reduced }` 与 CSS 变量
+  `--ev-scene-progress`（0..1）双通道暴露，纯 CSS 用 `calc()` 消费（如
+  `rotateX(calc(-92deg + var(--ev-scene-progress) * 92deg))`），canvas 刷帧 /
+  `video.currentTime` 等 JS 消费走插槽值；
+- `prefers-reduced-motion` 下进度钉在终态 1，页面静态呈现最终样子，宿主零判断；
+  `disabled` 用于窄屏/打印降级——不拉高度不吸附、进度恒 0（变量仍输出，消费端
+  calc 不至于失效）；`top` 给悬浮导航让位，吸附点推迟且进度几何自动跟随；
+- **新增 `useScrollProgress(target, { offset })` 进度原语**（包根导出）：把元素穿越
+  视口的程度折算成 0..1，rAF 节流的 passive 监听、SSR 安全；视差层、多元素错拍等
+  自定义场景直接组装，几何语义与组件一致；
+- **EvSection 新增 `snap` prop**：滚近时轻吸到视口顶（原生 scroll-snap proximity，
+  温和可打断，不做滚轮劫持）；任一区块声明即经 `html:has()` 启用页面吸附，不支持
+  `:has` 的环境优雅降级为普通滚动；内部滚动容器的分步展示新增 `ev-snap-y` /
+  `ev-snap-start` 工具类；
+- 文档：指南新章「滚动叙事」（随滚动开合的笔记本、分步功能区、自定义场景），
+  动效页与 v-reveal 划清触发型/进度驱动型分工；组件新增 scroll-scene.md，
+  组件数口径 58→59；场景测试 5 项（进度映射/双向回溯/吸附偏移/禁用/reduced-motion），
+  全量 68 文件 1132 项全绿。
+
 ### @wil-works/evoke-ui — Slider 非格点初值的填充错位修复
 
 - **修复「填充冒出圆钮」**：初始值不在 `min + k·step` 格点上时（磨砂实验室的

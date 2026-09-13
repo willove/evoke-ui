@@ -82,3 +82,15 @@
     backdrop-filter: blur(var(--ev-glass-blur)) saturate(var(--ev-glass-saturate));
   }
 }
+
+/* ─── 滚动吸附（snap）：区块轻吸到视口顶。
+   任一区块声明 snap 即在页面滚动容器启用 proximity 吸附——温和、可打断；
+   :has 不支持的环境优雅降级为普通滚动。顶栏悬浮的站点用
+   scroll-margin-top 让出横幅/导航高度 ─── */
+.ev-section.is-snap {
+  scroll-snap-align: start;
+}
+
+html:has(.ev-section.is-snap) {
+  scroll-snap-type: y proximity;
+}

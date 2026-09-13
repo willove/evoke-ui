@@ -116,6 +116,7 @@ export default defineConfig({
             { text: '主题定制器', link: '/guide/customizer' },
             { text: '磨砂玻璃', link: '/guide/glass' },
             { text: '动效', link: '/guide/motion' },
+            { text: '滚动叙事', link: '/guide/scroll' },
             { text: '更新记录', link: '/guide/changelog' },
           ],
         },
@@ -153,6 +154,7 @@ export default defineConfig({
           items: [
             { text: 'Container 容器', link: '/components/container' },
             { text: 'Section 区块', link: '/components/section' },
+            { text: 'ScrollScene 滚动场景', link: '/components/scroll-scene' },
             { text: 'Card 卡片', link: '/components/card' },
             { text: 'Hero 首屏', link: '/components/hero' },
             { text: 'Navbar 导航', link: '/components/navbar' },

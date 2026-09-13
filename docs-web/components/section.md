@@ -51,6 +51,7 @@
 | blur | 磨砂强度（px），内联覆盖 `--ev-glass-blur` | string / number | — |
 | saturate | 磨砂饱和度（倍数），内联覆盖 `--ev-glass-saturate` | string / number | — |
 | tint | 磨砂底色浓度（%），内联覆盖 `--ev-glass-bg` | string / number | — |
+| snap | 滚动吸附：滚近时轻吸到视口顶（proximity，可打断）；页面有吸附区块即自动启用 | boolean | `false` |
 
 ### 插槽
 
