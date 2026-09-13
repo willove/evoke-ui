@@ -2,16 +2,6 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [ui 0.7.1] — 2026-09-13
-
-### @wil-works/evoke-ui — Alert 溢出保护：胶囊单行省略
-
-- **胶囊（pill）形态单行语义**：超长文案省略号截断，不再换行撑破胶囊——title 与
-  message 各自 nowrap + ellipsis，overflow:hidden 使 flex 收缩对内容生效；
-- 常规形态加溢出保护：根元素 max-width 100%、消息位 overflow-wrap anywhere——超长词
-  与 URL 就地断行，不再把宿主容器撑出横向滚动；
-- 文档站滚动叙事指南清理「苹果式」表述，改「高端产品页」。
-
 ## [Unreleased]
 
 ### @wil-works/evoke-charts — 关系与流动图族 + 散点/箱线/K线/仪表盘/雷达批量增强
@@ -57,24 +47,6 @@
   全仓 77 文件 1222 项全绿；文档站新增 sankey / gantt / venn / chord 四页，
   scatter / candle / gauge / boxplot / radar / api / 总览同步。
 
-### @wil-works/evoke-ui — ComparisonTable 升级为双形态对比表 + 新增 EvBento 图文组合分区
-
-- **ComparisonTable 吸收 compare 能力，不再有独立对比组件**：`columns` 列头扩展
-  `image` / `colors`（配色点）/ `badge` / `tagline` / `href` / `price`+`priceNote`，
-  基础定价档位照旧只用 label/note；新增 `groups` 按特性分组陈列（组标题行跨全表）；
-  单元格新增**字符串数组多行**（一格讲多层信息）；`bordered` 选择网格边框——
-  **默认改为现代无边框形态**（行分隔线 + 组标题分节，去掉旧全网格与外框），
-  并加宿主样式屏蔽（文档站表格排版不再渗入成老式全边框表）；
-  表格随产品数撑最小宽、窄容器横向滚动，不再出现挤压折叠；
-- **新增 `EvBento` 图文组合分区**：Bento 卡片栅格，`span` 跨列（超出列数自动回落
-  整行）/ `rows` 跨行 / `dense` 回填空隙；卡片图文上下结构，`imagePos: 'fill'`
-  整卡铺图文字叠上；`tone` 提供 soft / primary / dark 卡面，`href` 整卡可点；
-  `bordered` 加边框，内嵌图给高度上限防膨胀；**布局断点跟随父容器宽度（容器查询）**
-  而非视口，嵌在窄栏里也正确回落，媒体查询仅作不支持时的兜底；
-- 文档：comparison-table.md 重写为双形态说明，新增 bento.md（演示为虚构品牌与
-  通用规格），侧栏与组件总览同步，组件数口径 59→60（compare 并入不再单计）；
-  ComparisonTable 用例扩至 5 项、EvBento 4 项，全量 71 文件 1154 项全绿。
-
 ### @wil-works/evoke-charts — 漏斗图视觉整改（同色系递浅 / 末端不收针尖）
 
 - **段色改同色系递浅**：原先逐层取多色相（蓝/绿/黄/浅蓝/橘红），五层读起来像五个并列
@@ -95,6 +67,36 @@
 - 几何抽成 `computeFunnelGeometry`（渲染、图例、悬浮命中共用），新增 14 项漏斗
   单测（宽度口径 / 末端平边 / 明暗递浅 / 显式定色 / 压缩尾段 / 金字塔 / 标签对比色），
   全量 69 文件 1145 项全绿。
+
+## [ui 0.8.0] — 2026-09-14
+
+### @wil-works/evoke-ui — ComparisonTable 升级为双形态对比表 + 新增 EvBento 图文组合分区
+
+- **ComparisonTable 吸收 compare 能力，不再有独立对比组件**：`columns` 列头扩展
+  `image` / `colors`（配色点）/ `badge` / `tagline` / `href` / `price`+`priceNote`，
+  基础定价档位照旧只用 label/note；新增 `groups` 按特性分组陈列（组标题行跨全表）；
+  单元格新增**字符串数组多行**（一格讲多层信息）；`bordered` 选择网格边框——
+  **默认改为现代无边框形态**（行分隔线 + 组标题分节，去掉旧全网格与外框），
+  并加宿主样式屏蔽（文档站表格排版不再渗入成老式全边框表）；
+  表格随产品数撑最小宽、窄容器横向滚动，不再出现挤压折叠；
+- **新增 `EvBento` 图文组合分区**：Bento 卡片栅格，`span` 跨列（超出列数自动回落
+  整行）/ `rows` 跨行 / `dense` 回填空隙；卡片图文上下结构，`imagePos: 'fill'`
+  整卡铺图文字叠上；`tone` 提供 soft / primary / dark 卡面，`href` 整卡可点；
+  `bordered` 加边框，内嵌图给高度上限防膨胀；**布局断点跟随父容器宽度（容器查询）**
+  而非视口，嵌在窄栏里也正确回落，媒体查询仅作不支持时的兜底；
+- 文档：comparison-table.md 重写为双形态说明，新增 bento.md（演示为虚构品牌与
+  通用规格），侧栏与组件总览同步，组件数口径 59→60（compare 并入不再单计）；
+  ComparisonTable 用例扩至 5 项、EvBento 4 项，全量 71 文件 1154 项全绿。
+
+## [ui 0.7.1] — 2026-09-13
+
+### @wil-works/evoke-ui — Alert 溢出保护：胶囊单行省略
+
+- **胶囊（pill）形态单行语义**：超长文案省略号截断，不再换行撑破胶囊——title 与
+  message 各自 nowrap + ellipsis，overflow:hidden 使 flex 收缩对内容生效；
+- 常规形态加溢出保护：根元素 max-width 100%、消息位 overflow-wrap anywhere——超长词
+  与 URL 就地断行，不再把宿主容器撑出横向滚动；
+- 文档站滚动叙事指南清理「苹果式」表述，改「高端产品页」。
 
 ## [ui 0.7.0] — 2026-09-13
 

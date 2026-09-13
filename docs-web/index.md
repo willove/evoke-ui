@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.7.1</EvTag>
+      <EvTag size="small">v0.8.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.7.1 发布：Alert 胶囊形态支持超长文本省略截断</span>
+      <span>v0.8.0 发布：EvBento 图文组合分区 + ComparisonTable 双形态对比，产品页的图版与对比一屏讲完</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.7.1</EvTag>
+        <EvTag tone="primary" size="small">v0.8.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>

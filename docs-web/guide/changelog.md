@@ -14,6 +14,16 @@ evoke-ui 的版本演进，最新在上。完整的变更明细（含行为变�
 <script setup>
 const releases = [
   {
+    tag: 'v0.8.0',
+    date: '2026-09-14',
+    title: 'EvBento 图文组合分区 + ComparisonTable 双形态',
+    bullets: [
+      '新增 EvBento 图文组合分区：span 跨列 / rows 跨行 / dense 回填，tone 卡面与整卡链接，布局断点跟随父容器宽度',
+      'ComparisonTable 升级为双形态：列头支持产品图、配色点、徽标、一句话与价格，groups 分组陈列，单元格支持多行文本',
+      '默认改为无边框现代形态（无斑马纹、无悬浮变色，高亮列始终清晰），bordered 保留网格边框可选',
+    ],
+  },
+  {
     tag: 'v0.7.1',
     date: '2026-09-13',
     title: 'Alert 溢出保护：胶囊单行省略',
