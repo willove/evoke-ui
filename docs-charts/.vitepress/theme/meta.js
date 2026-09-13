@@ -109,6 +109,7 @@ export const EXAMPLES_NAV = [
       { name: '人力资源年度盘点', zh: '', path: '/examples/hr' },
       { name: '交付效能看板', zh: '', path: '/examples/delivery' },
       { name: '核心链路 SLO 看板', zh: '', path: '/examples/slo' },
+      { name: '小学数学 · 统计表转统计图', zh: '', path: '/examples/classroom' },
     ],
   },
 ]

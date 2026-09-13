@@ -43,6 +43,11 @@
     <p class="case-card__desc">请求量与 P95 延迟同轴、网关延迟直方、四条 SLO 子弹图——错误预算烧没烧完一眼可见。</p>
     <span class="case-card__tags">mixed · bin · bullet · 令牌取色</span>
   </a>
+  <a class="case-card" href="/examples/classroom">
+    <strong class="case-card__title">小学数学 · 统计表转统计图</strong>
+    <p class="case-card__desc">四到六年级四个单元：条形比多少、折线看变化、扇形看占比——每张图都由它上面那张统计表得来。</p>
+    <span class="case-card__tags">bar · 多系列 · line · pie · 注解</span>
+  </a>
 </div>
 
 ## 挑案例还是挑图？
