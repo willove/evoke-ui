@@ -69,11 +69,43 @@
   />
 </DemoBlock>
 
+## 日历热力：年月日周激活热度
+
+`type: 'calendar-heatmap'` 是热力图的时间轴特化（GitHub 活动热力同款）：列 = 周、行 = 星期，一天一格，回答「**哪段时间活跃、活跃了多少天**」。数据字段 `calendarData`（`{ date, value }`），`calendar.start` / `end` 缺省取数据极值并对齐周边界。
+
+工作日密、周末疏的节律，月份标签一压，三个月的投入节奏直接可读；今日格主色描边，右下「少 — 多」色阶随明暗主题换挡。
+
+<script setup>
+// 生成近三个月的模拟活跃数据（工作日密、周末疏）
+const calData = []
+let seed = 11
+for (let ts = Date.parse('2026-06-15'); ts <= Date.parse('2026-09-14'); ts += 864e5) {
+  seed = (seed * 9301 + 49297) % 233280
+  const r = seed / 233280
+  const dow = new Date(ts).getDay()
+  const v = dow === 0 || dow === 6 ? Math.round(r * 6) : Math.round(r * 30 + 4)
+  calData.push({ date: new Date(ts).toISOString().slice(0, 10), value: v })
+}
+const calendarOptions = {
+  type: 'calendar-heatmap',
+  title: 'Token 活动（每日）',
+  calendarData: calData,
+  calendar: { start: '2026-06-15', end: '2026-09-14', today: '2026-09-14' },
+}
+</script>
+
+<DemoBlock>
+<ev-chart :options="calendarOptions" :height="200" />
+</DemoBlock>
+
+悬浮任意格子读取日期与数值；`calendar.weekdayLabels` / `showAllWeekdays` 控制左列星期标签，`calendar.colors` 可整列替换色阶（5 色，第 1 位为空档色）。
+
 ## 配置要点
 
 - 只传出现的组合即可，网格自动补齐坐标轴类目；
 - 悬浮读取格子坐标与数值；
-- 想看点与点的相关关系而非密度时改用[散点图](/chart/scatter)。
+- 想看点与点的相关关系而非密度时改用[散点图](/chart/scatter)；
+- 按天粒度的时间热度用日历热力图（本页上节），交叉维度对比用 `heatmapData`。
 
 ## 相关
 

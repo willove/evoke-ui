@@ -88,20 +88,44 @@ function collectLegendItems(options, theme, hiddenSeries) {
       }));
   }
   if (options.type === "candle") {
-    if ((options.volumeData || []).length === 0) return [];
-    return [{
-      name: "成交量",
-      label: fmt("成交量"),
-      color: theme.textColorSecondary,
-      hidden: hiddenSeries.has("成交量")
-    }];
+    const items = [];
+    if ((options.volumeData || []).length > 0) {
+      items.push({
+        name: "成交量",
+        label: fmt("成交量"),
+        color: theme.textColorSecondary,
+        hidden: hiddenSeries.has("成交量")
+      });
+    }
+    if (Array.isArray(options.candleMa)) {
+      options.candleMa.forEach((days, i) => {
+        const name = `MA${days}`;
+        items.push({
+          name,
+          label: fmt(name),
+          color: (options.candleMaColors && options.candleMaColors[i]) || theme.colors[i % theme.colors.length],
+          hidden: hiddenSeries.has(name)
+        });
+      });
+    }
+    return items;
   }
-  return (options.series || []).map((s, i) => ({
+  const items = (options.series || []).map((s, i) => ({
     name: s.name,
     label: fmt(s.name),
     color: s.color || theme.colors[i % theme.colors.length],
     hidden: hiddenSeries.has(s.name)
   }));
+  // 折线/面积 + 量副图（分时图）：追加「成交量」图例项
+  if ((options.type === "line" || options.type === "area") && (options.volumeData || []).length > 0) {
+    items.push({
+      name: "成交量",
+      label: fmt("成交量"),
+      color: theme.textColorSecondary,
+      hidden: hiddenSeries.has("成交量")
+    });
+  }
+  return items;
 }
 function computeLegendLayout(ctx, options, plotArea, containerWidth, containerHeight, theme, hiddenSeries) {
   const legendConfig = options.legend || {};
@@ -144,9 +168,13 @@ function computeLegendLayout(ctx, options, plotArea, containerWidth, containerHe
     if (align === "end") return plotArea.x + plotArea.width - w;
     return plotArea.x + (plotArea.width - w) / 2;
   });
-  // 顶部图例必须排在标题/副标题之下，否则与 renderTitle 的文字重叠
+  // 顶部图例必须排在标题/副标题之下，否则与 renderTitle 的文字重叠；
+  // 底部图例遇 dataZoom 滑块时上移滑块高度，避免压在滑块上
   const titleBlock = (options.title ? 26 : 0) + (options.subtitle ? 18 : 0);
-  const baseY = position === "top" ? 10 + titleBlock : containerHeight - 24 - (rowIndices.length - 1) * LEGEND_ROW_HEIGHT;
+  const zoomH = options.dataZoom?.enabled && (position === "bottom") ? (options.dataZoom.height || 40) + 14 : 0;
+  const baseY = position === "top"
+    ? 10 + titleBlock
+    : containerHeight - 24 - (rowIndices.length - 1) * LEGEND_ROW_HEIGHT - zoomH;
   const bounds = [];
   rowIndices.forEach((idxs, rowIdx) => {
     let x = rowStartX[rowIdx];

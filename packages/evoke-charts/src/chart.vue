@@ -115,7 +115,8 @@ import {
   computeMatrixCells,
   matrixFieldExtent,
   scatterPointPositions,
-  scatterGroupColors
+  scatterGroupColors,
+  calendarHitTest
 } from "./renderer";
 import { DEFAULT_I18N_ZH } from "./types";
 import { registerConnector, broadcastConnect } from "./connect";
@@ -175,6 +176,8 @@ const isEmpty = computed(() => {
       return !opt.gauge;
     case "heatmap":
       return !opt.heatmapData || opt.heatmapData.length === 0;
+    case "calendar-heatmap":
+      return !opt.calendarData || opt.calendarData.length === 0;
     case "candle":
       return !opt.candleData || opt.candleData.length === 0;
     case "bullet":
@@ -228,6 +231,7 @@ let animationFrameId = null;
 let hoverIndex = -1;
 let hoverAnimProgress = 0;
 let hoverAnimFrameId = null;
+let hoverAnimDone = null;
 const hiddenSeries = ref(/* @__PURE__ */ new Set());
 const focusSeries = ref(null);
 // 显式 emphasis 焦点（系列名或索引）：优先于图例悬浮强调
@@ -531,11 +535,47 @@ function buildRenderParams(progress, optionsOverride) {
     mouseY,
     showCrosshair: hoverIndex >= 0,
     hoverAnimProgress,
+    focusAnimProgress,
     zoomRange: isZoomEnabled() ? zoomRange.value : void 0,
     brushRect: brushRect.value,
     focusSeries: focusSeries.value,
     hoveredToolbox: hoveredToolbox.value
   };
+}
+// ─── 焦点淡化缓动：图例悬浮 / emphasis 的 22% 淡化随 180ms 缓入（DESIGN §13.2）───
+let focusAnimProgress = 1;
+let focusAnimFrameId = null;
+function animateFocusProgress() {
+  if (focusAnimFrameId !== null) {
+    cancelAnimationFrame(focusAnimFrameId);
+    focusAnimFrameId = null;
+  }
+  const target = focusSeries.value ? 1 : 0;
+  if (props.options.animation?.enabled === false || target === focusAnimProgress) {
+    focusAnimProgress = target;
+    redraw();
+    return;
+  }
+  const start = focusAnimProgress;
+  const startTime = performance.now();
+  const duration = 180;
+  function frame(now) {
+    const tRaw = Math.min((now - startTime) / duration, 1);
+    focusAnimProgress = start + (target - start) * (1 - Math.pow(1 - tRaw, 3));
+    redraw();
+    if (tRaw < 1) {
+      focusAnimFrameId = requestAnimationFrame(frame);
+    } else {
+      focusAnimFrameId = null;
+    }
+  }
+  focusAnimFrameId = requestAnimationFrame(frame);
+}
+function stopFocusAnimation() {
+  if (focusAnimFrameId !== null) {
+    cancelAnimationFrame(focusAnimFrameId);
+    focusAnimFrameId = null;
+  }
 }
 function snapshotSeriesData(opt) {
   const map = /* @__PURE__ */ new Map();
@@ -656,6 +696,7 @@ function stopHoverAnimation() {
     cancelAnimationFrame(hoverAnimFrameId);
     hoverAnimFrameId = null;
   }
+  hoverAnimDone = null;
 }
 // 饼/环/玫瑰是「抽出」动画，旭日图与矩形树图是「聚焦子树」淡化，雷达是
 // 「轴线点亮」——都要缓动（DESIGN §13：动画只属于数据与焦点过渡）
@@ -663,34 +704,42 @@ function usesHoverAnimation() {
   const t = props.options.type;
   return t === "pie" || t === "doughnut" || t === "rose" || t === "sunburst" || t === "treemap" || t === "radar";
 }
-// 进出带渐变动画的类型（饼类抽出 + 雷达轴线点亮 + 韦恩整圆强调）；层级图切焦不重播
+// 进出带渐变动画的类型（饼类抽出 + 雷达轴线点亮 + 韦恩/桑基/弦/弧的透明度聚焦）；
+// 层级图切焦不重播
 function animatesHoverEnter() {
   const t = props.options.type;
-  return t === "pie" || t === "doughnut" || t === "rose" || t === "radar" || t === "venn";
+  return t === "pie" || t === "doughnut" || t === "rose" || t === "radar" || t === "venn"
+    || t === "sankey" || t === "chord" || t === "arc";
 }
-// 清空悬浮焦点：饼类/雷达收回动画，层级图直接回到原色（焦点一没就没有淡化对象）
+// 清空悬浮焦点：缓动类型保留 hoverIndex 播完出场动画再清索引（透明度随 progress 回落），
+// 其余直接回原色（焦点一没就没有淡化对象）
 function clearHover() {
   if (hoverIndex === -1) return false;
-  hoverIndex = -1;
   if (animatesHoverEnter()) {
-    startHoverAnimation(-1);
+    startHoverAnimation(-1, () => {
+      hoverIndex = -1;
+      redraw();
+    });
   } else {
+    hoverIndex = -1;
     stopHoverAnimation();
     hoverAnimProgress = 0;
     redraw();
   }
   return true;
 }
-function startHoverAnimation(dir) {
+function startHoverAnimation(dir, onDone) {
   if (!animatesHoverEnter()) {
     return;
   }
   if (props.options.animation?.enabled === false) {
     hoverAnimProgress = dir > 0 ? 1 : 0;
     redraw();
+    if (onDone) onDone();
     return;
   }
   stopHoverAnimation();
+  hoverAnimDone = onDone || null;
   const duration = 220;
   const startTime = performance.now();
   const startProgress = hoverAnimProgress;
@@ -709,6 +758,9 @@ function startHoverAnimation(dir) {
       hoverAnimFrameId = requestAnimationFrame(frame);
     } else {
       hoverAnimFrameId = null;
+      const done = hoverAnimDone;
+      hoverAnimDone = null;
+      if (done) done();
     }
   }
   hoverAnimFrameId = requestAnimationFrame(frame);
@@ -926,6 +978,9 @@ function getHoveredData(x, y) {
       axisCfg.ticks || 5
     );
     return boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, { min: ext.min, max: ext.max });
+  }
+  if (options.type === "calendar-heatmap") {
+    return calendarHitTest(canvasX, canvasY, plotArea, options, theme);
   }
   if (options.type === "sankey") {
     return sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
@@ -1295,6 +1350,7 @@ function getHoveredData(x, y) {
   if (dataIndex < 0 || dataIndex >= labels.length) return null;
   const visibleSeries = (options.series || []).filter((s) => !hiddenSeries.value.has(s.name));
   if (visibleSeries.length === 0) return null;
+  const volume = (options.volumeData || [])[dataIndex];
   const showAllSeries = props.options.tooltip?.showAllSeries !== false;
   if (showAllSeries && visibleSeries.length > 1) {
     if (visibleSeries.every((s) => isMissingValue(s.data[dataIndex]))) return null;
@@ -1302,6 +1358,7 @@ function getHoveredData(x, y) {
       seriesName: s.name,
       name: labels[dataIndex],
       value: s.data[dataIndex],
+      volume,
       color: s.color || theme.colors[options.series.indexOf(s) % theme.colors.length],
       dataIndex: dataIndex + sliceStartOffset(),
       seriesIndex: sIdx
@@ -1317,6 +1374,7 @@ function getHoveredData(x, y) {
         seriesName: series.name,
         name: labels[dataIndex],
         value: series.data[dataIndex],
+        volume,
         color,
         dataIndex: dataIndex + sliceStartOffset(),
         seriesIndex: 0
@@ -1646,7 +1704,7 @@ function handlePointerMove(e) {
     const nextFocus = hoverEmphasis && legendName ? legendName : null;
     if (nextFocus !== focusSeries.value) {
       focusSeries.value = nextFocus;
-      redraw();
+      animateFocusProgress();
     }
   }
   if (legendName) {
@@ -1690,6 +1748,9 @@ function handlePointerMove(e) {
         });
         ariaLiveText.value = `${emitParams.seriesName}: ${formatTooltipValue(emitParams.value)}`;
       }
+    } else if (enterAnimated && hoverAnimProgress < 1) {
+      // 出场动画进行中指针又回到了同一元素：掉头播入场
+      startHoverAnimation(1);
     }
     applyTooltipContent(result.params);
     if (props.options.tooltip?.trigger === "click") return;
@@ -1997,6 +2058,7 @@ onUnmounted(() => {
   stopHoverAnimation();
   stopTweenAnimation();
   stopSceneTimer();
+  stopFocusAnimation();
   if (tooltipRafId !== null) {
     cancelAnimationFrame(tooltipRafId);
     tooltipRafId = null;

@@ -163,7 +163,7 @@ function computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, valueRan
       });
     }
   });
-  return { boxes, categories, groupNames, groupedMode, horizontal, thickness, categoryWidth: categoryBand };
+  return { boxes, categories, groupNames, groupedMode, horizontal, thickness, categoryWidth: categoryBand, slotW };
 }
 
 function renderBoxplotChart(ctx, yRange) {
@@ -323,35 +323,33 @@ function renderBoxplotChart(ctx, yRange) {
 function boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries, valueRange) {
   const geo = computeBoxplotGeometry(plotArea, options, theme, hiddenSeries, valueRange);
   if (!geo) return null;
-  const { boxes, horizontal, categoryWidth, thickness } = geo;
+  const { boxes, horizontal } = geo;
+  // 分组箱体并排时顺序扫描会让先声明的箱吃掉邻箱的命中带——按类目轴取最近箱
+  let nearest = null;
+  let nearestDist = Infinity;
   for (const box of boxes) {
-    if (horizontal) {
-      const half = Math.max(categoryWidth / 2, thickness / 2 + 6);
-      if (Math.abs(canvasY - box.cy) <= half) {
-        return boxHit(box);
-      }
-    } else {
-      const half = Math.max(categoryWidth / 2, thickness / 2 + 6);
-      if (Math.abs(canvasX - box.cx) <= half) {
-        return boxHit(box);
-      }
+    const d = horizontal ? Math.abs(canvasY - box.cy) : Math.abs(canvasX - box.cx);
+    if (d < nearestDist) {
+      nearestDist = d;
+      nearest = box;
     }
   }
-  return null;
-  function boxHit(box) {
-    const b = box.b;
-    return {
-      index: box.index,
-      params: {
-        seriesName: geo.groupedMode ? `${b.label} · ${b.group}` : b.label,
-        name: `${geo.groupedMode ? `${b.label} · ${b.group}` : b.label}（中位数 ${b.median}）`,
-        value: [b.min, b.q1, b.median, b.q3, b.max],
-        color: box.color,
-        dataIndex: box.index,
-        seriesIndex: 0
-      }
-    };
-  }
+  if (!nearest) return null;
+  // 命中带：分组时按并排槽位计（邻箱领地不侵占），非分组整类目带
+  const half = geo.groupedMode ? Math.max(geo.slotW / 2 + 3, geo.thickness / 2) : geo.categoryWidth / 2;
+  if (nearestDist > half) return null;
+  const b = nearest.b;
+  return {
+    index: nearest.index,
+    params: {
+      seriesName: geo.groupedMode ? `${b.label} · ${b.group}` : b.label,
+      name: `${geo.groupedMode ? `${b.label} · ${b.group}` : b.label}（中位数 ${b.median}）`,
+      value: [b.min, b.q1, b.median, b.q3, b.max],
+      color: nearest.color,
+      dataIndex: nearest.index,
+      seriesIndex: 0
+    }
+  };
 }
 function computeSunburstDepth(nodes) {
   if (nodes.length === 0) return 0;

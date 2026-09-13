@@ -200,14 +200,20 @@
 ### 3.7 弦图与弧长连接图
 
 - **环形弦图**（`type: 'chord'`）：节点均匀分布在圆周（弧长按节点值占比时
-  `chordByValue: true`），节点弧 14° 圆角、半径 = min(宽,高)/2 − 40；
-  连接带为三次贝塞尔闭带（控制点取圆心），宽度 = 关系值 / 最大值 × 最大带宽，
-  颜色取**源节点**槽位色 @30%（同桑基「按源继承」），悬浮升至 0.7、其余降至 0.1；
+  `chordByValue: true`），节点弧 14° 圆角、半径 = min(宽,高)/2 − 30（外侧仅留
+  标签带，主体尽量大）；连接带为三次贝塞尔闭带（控制点取圆心），宽度 = 关系值 /
+  最大值 × 最大带宽，颜色取**源节点**槽位色 @30%（同桑基「按源继承」），悬浮升至
+  0.7、其余降至 0.1；
+- **弧形环状形态**（`chordMode: 'curve'`）：节点为圆点（r6，悬浮 r7.5）均匀
+  排圆周，关系为过圆心的三次弧线（描边非色带），线宽 1.5–6px 按关系值线性映射，
+  颜色同取源节点色——适合节点多、关系稀疏的闭合网络（不强调节点流量占比）；
 - **线性弧长图**（`type: 'arc'`）：节点沿水平轴均布为圆点（r6），连接为上半
   椭圆弧（ry = 水平距 × 0.42），弧色同源节点 @35%、粗 1.5–6px 按关系值线性映射；
-  弧不压节点标签：标签在轴下方 14px，竖直短刻度对位；
+  **弧顶距绘图区顶 ≥ 12px**（峰值钳制，不压标题），节点行 + 标签带在可用空间
+  内大致居中；标签在轴下方 14px，竖直短刻度对位；
 - 两形态共用「源色继承 + 悬浮聚焦」纪律：悬浮某条连接，强调自身、淡化其余；
-  悬浮节点，强调与该节点相连的全部连接 + tooltip 汇总出入度。
+  悬浮节点，强调与该节点相连的全部连接 + tooltip 汇总出入度；进出均随
+  220ms 缓动（见 §13.2）。
 
 ### 3.8 甘特图
 
@@ -252,16 +258,35 @@
 
 ### 3.11 仪表盘指针与外观定制
 
+- **弧向语义**：`startAngle` / `endAngle` 为数学角约定（0° 在右、逆时针为正，
+  同 ECharts），默认 220 → -40 呈经典形态——**进度弧走上方、开口朝下**；
+  半盘仪表传 `startAngle: 180, endAngle: 0`（禁传弧度）；
 - **指针**（`gauge.pointer: { show: true }`）：从圆心到当前值角的箭针——
   针身三角形（根部宽 8px、长 = 环内缘 − 14px），针尾小圆帽 r5（底色填充 +
   针色描边 2px）；针色默认取进度色，`pointer.color` 可覆写；
-  指针随进度动画同步扫动；开启指针时中心数值下移避让（环心留白 ≥ 针长）；
+  指针随进度动画同步扫动；开启指针时中心数值下移避让（盘心下方空档，
+  随半径走 max(26, R×0.45)）；
 - **外观定制面**：`gauge.axisWidth`（环厚，默认 20）、`gauge.tickCount`
-  （刻度数，默认 5）、`gauge.tickSuffix`、`gauge.valueFontSize`、
-  `gauge.showTicks: false`、`gauge.cornerRadius`（线帽 round/butt）——
-  全部可选，默认值维持既有形态不变；
+  （刻度数，默认 5）、`gauge.valueFontSize`、`gauge.showTicks: false`、
+  `gauge.tickMarks`（短刻度线，指针模式伴生）、`gauge.cornerRadius`（线帽
+  round/butt）——全部可选，默认值维持既有形态不变；
 - 指针是数据焦点，开启后进度环默认淡化 @60% 让针读数优先（`progressDim`
   可关）。
+
+### 3.12 日历热力图
+
+- **布局**：列 = 周、行 = 星期（`weekStart` 默认周一）；start/end 缺省取数据
+  极值并对齐周边界；格子尺寸按可用空间自适应（方形，圆角 2，间隙默认 3）；
+- **色阶**：数值等宽分 4 档 + 空档（0/缺测画空色）——浅色主题用 GitHub 绿阶
+  （#ebedf0→#216e39），暗色同构提亮；`calendar.colors` 可整列覆写（5 色）；
+- **chrome**：顶部月份标签（11px 次要色，月份变化处标注）、左列星期标签
+  （默认只标一/三/五，`showAllWeekdays` 全显）、右下「少 — 多」色阶
+  （`showScale: false` 关）；**今日**用主色描边格（`calendar.today` 覆写，
+  缺省取当天且在范围内才画）；
+- 入场按列序弹出；悬浮格子加深一档 + tooltip（日期 + 数值）；
+- 数据字段 `calendarData: [{ date, value }]`，`calendar: { start, end,
+  weekStart, colors, cellGap, today, weekdayLabels, showScale,
+  showAllWeekdays }`。
 
 ## 4. 坐标轴与网格
 
@@ -428,9 +453,12 @@
 | scatter | 命中点半径外扩一档（+2）转实心 + 外圈光环 + tooltip |
 | bar / stacked-bar / horizontal-bar / waterfall | 柱体高亮（轻度蒙灰 + 顶部高光条）+ tooltip |
 | sunburst / treemap | 聚焦子树：本枝原色、其余段与标签淡至 25%（220ms 缓动），被悬浮节点加深一档 |
-| radar / heatmap / funnel / gauge / candle / 饼类 | 命中元素强调 + tooltip |
+| sankey / chord / arc / venn / radar | **聚焦缓动族**：强调自身 / 相连、淡化其余的透明度档位随 220ms 缓动进出（进：基准→目标；出场：保留命中索引播完回落再清） |
+| gantt / boxplot / candle / heatmap / calendar-heatmap | 命中元素即时强调（零动画）+ tooltip |
+| 饼类 | 命中扇区抽出 +12px（220ms 缓动进出） |
 
-hover 离开绘图区或按 Esc，全部瞬时清除（零动画离场）。
+图例悬浮 / `emphasis` 的焦点淡化（22%）全局随 180ms 缓动（`focusAnimProgress`
+单一通道）。hover 离开绘图区或按 Esc，透明度档缓动回落，其余即时清除。
 
 ### 13.3 点选与焦点
 

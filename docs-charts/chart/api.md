@@ -16,7 +16,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
 所有类型共用；数据字段按图表类型二选一（见下一节）。
 
 <ApiTable title="Options 通用字段" :rows="[
-  { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / scatter-matrix / funnel / gauge / radar / heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed / sankey / venn / chord / arc / gantt', type: 'string', default: '—' },
+  { name: 'type', desc: '图表类型：line / bar / area / stacked-bar / horizontal-bar / pie / doughnut / rose / scatter / scatter-matrix / funnel / gauge / radar / heatmap / calendar-heatmap / candle / bullet / treemap / sunburst / boxplot / waterfall / bin / sparkline / mixed / sankey / venn / chord / arc / gantt', type: 'string', default: '—' },
   { name: 'title / subtitle', desc: '主标题 / 副标题', type: 'string', default: '—' },
   { name: 'labels', desc: 'x 轴类目数组，直角系与 sparkline / waterfall / mixed 的数据基线', type: 'array', default: '[]' },
   { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth?, smooth?, chartType?, yAxis? }，data 与 labels 对齐；数据点圆点默认不绘制（showSymbol: true 显示）；smooth: true 单调插值平滑；chartType 取 bar / line 定 mixed 系列柱线形态（缺省 line）；yAxis 取 left / right 定双轴归侧（缺省 left，需配 yAxisRight）', type: 'array', default: '[]' },
@@ -49,11 +49,14 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'facet', desc: 'scatter 分面：true + scatterData[].group 按组切小倍数网格，每格独立量程、自带迷你刻度与格标题', type: 'boolean', default: 'false' },
   { name: 'matrixFields / matrixData', desc: 'scatter-matrix 散点矩阵：字段名数组 × 记录数组，生成 n×n 小倍数（对角格为字段名，非对角格为两字段散点）', type: 'string[] / record[]', default: '—' },
   { name: 'funnelData', desc: 'funnel 漏斗；配 `funnelMinRatio`（0–0.5）定尾层最小宽度占比——极差悬殊时压缩尾段保可读，0 = 严格等比', type: '{ label, value }[]', default: '—' },
-  { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle, pointer: { show, color, width, length }, axisWidth, tickCount, showTicks, tickMarks, valueFontSize, progressDim, cornerRadius }——pointer.show 切指针形态，进度环默认淡化（progressDim: false 保持原样）', type: 'object', default: '—' },
+  { name: 'gauge', desc: 'gauge 仪表盘：{ value, min, max, unit, color, showProgress, startAngle, endAngle（数学角约定：0° 在右、逆时针为正、单位度，默认 220→-40 即弧走上/开口朝下）, pointer: { show, color, width, length }, axisWidth, tickCount, showTicks, tickMarks, valueFontSize, progressDim, cornerRadius }——pointer.show 切指针形态，进度环默认淡化（progressDim: false 保持原样）', type: 'object', default: '—' },
   { name: 'radarIndicators', desc: 'radar 维度：{ name, max, min? }', type: 'array', default: '—' },
   { name: 'radarSeries / radarRingFill', desc: 'radar 系列：{ name, data, color?, area?, showSymbol? }——area 默认开（纵向浅渐变填充）；radarRingFill: true 环带交替铺极淡底色；悬浮维度标签 / 轴顶点点亮该轴并强调各系列顶点，悬浮图例走焦点淡化', type: 'array / boolean', default: '—' },
   { name: 'heatmapData', desc: 'heatmap 热力格', type: '{ x, y, value }[]', default: '—' },
-  { name: 'candleData / volumeData', desc: 'candle K 线 + 成交量副图：volumeData 与 candleData 等长时绘图区下部 24%（volumeHeight 0.15–0.4 可调）为量带，量柱颜色跟随当日涨跌；图例「成交量」点选隐去量带', type: '{ label, open, close, high, low }[] / number[]', default: '—' },
+  { name: 'candleData / volumeData', desc: 'candle K 线 + 成交量副图：volumeData 与 candleData 等长时绘图区下部 24%（volumeHeight 0.15–0.4 可调）为量带，量柱颜色跟随当日涨跌；volumeData 也可配 line / area（分时图），量柱按价格较前一刻涨跌着色；图例「成交量」点选隐去量带', type: '{ label, open, close, high, low }[] / number[]', default: '—' },
+  { name: 'candleMa / candleMaColors', desc: 'K 线叠加均线：周期数组（如 [5, 10]）按收盘价画简单移动平均，颜色取系列色板（candleMaColors 可覆写），图例 MA5/MA10 点选显隐', type: 'number[] / string[]', default: '—' },
+  { name: 'calendarData / calendar', desc: 'calendar-heatmap 日历热力：{ date, value } 按天一格（列=周、行=星期）；calendar: { start, end, weekStart（默认 1 周一）, colors（5 色阶）, cellGap, today（缺省当天）, weekdayLabels, showScale, showAllWeekdays }；今日格主色描边，右下「少—多」色阶', type: 'array / object', default: '—' },
+  { name: 'chordMode', desc: 'chord 弦图形态：默认色带（节点为弧段 + 过圆心连接带）；curve 切弧形环状（节点圆点 + 弧线连接，线宽 1.5–6 按关系值）', type: 'string', default: 'band' },
   { name: 'boxData', desc: 'boxplot 箱线：outliers 为异常点数组（不参与分位计算）；带 group 字段启用分组箱线（同类目并排、图例按组聚合）；boxHorizontal: true 翻转为横向；showOutliers: false 隐藏异常点', type: '{ label, min, q1, median, q3, max, outliers?, group? }[]', default: '—' },
   { name: 'treemapData / sunburstData', desc: '矩形树图 / 旭日图的层级数据', type: '{ name, value?, children? }[]', default: '—' },
   { name: 'bulletData', desc: 'bullet 子弹图', type: '{ name, value, target? }[]', default: '—' },

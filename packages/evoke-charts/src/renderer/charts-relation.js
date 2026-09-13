@@ -134,17 +134,32 @@ function computeSankeyLayout(plotArea, options, theme, hiddenSeries) {
 }
 
 function renderSankeyChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
   const layout = computeSankeyLayout(plotArea, options, theme, hiddenSeries);
   if (!layout) return;
   const { nodes, ribbons } = layout;
   // hoverIndex ≥ nodes.length 时命中的是流带（index = nodes.length + ribbonIndex）
   const hoverNode = hoverIndex >= 0 && hoverIndex < nodes.length ? nodes[hoverIndex] : null;
   const hoverRibbon = hoverIndex >= nodes.length ? ribbons[hoverIndex - nodes.length] : null;
+  // 悬浮/出场统一按 hoverAnimProgress 在基准透明度与目标档之间缓动（DESIGN §13.2）
+  const t = hoverAnimProgress;
+  const lerp = (base, target) => base + (target - base) * t;
   const ribbonAlphaAt = (r) => {
-    if (hoverRibbon) return r === hoverRibbon || r.source === hoverRibbon.source || r.target === hoverRibbon.target ? SANKEY_LINK_HOVER : SANKEY_LINK_DIM;
-    if (hoverNode) return r.source === hoverNode || r.target === hoverNode ? SANKEY_LINK_HOVER : SANKEY_LINK_DIM;
+    if (hoverRibbon) {
+      const emphasized = r === hoverRibbon || r.source === hoverRibbon.source || r.target === hoverRibbon.target;
+      return lerp(SANKEY_LINK_ALPHA, emphasized ? SANKEY_LINK_HOVER : SANKEY_LINK_DIM);
+    }
+    if (hoverNode) {
+      const connected = r.source === hoverNode || r.target === hoverNode;
+      return lerp(SANKEY_LINK_ALPHA, connected ? SANKEY_LINK_HOVER : SANKEY_LINK_DIM);
+    }
     return SANKEY_LINK_ALPHA;
+  };
+  const nodeAlphaAt = (n) => {
+    if (!hoverNode) return 1;
+    const isHover = n === hoverNode;
+    const connected = ribbons.some((r) => (r.source === hoverNode || r.target === hoverNode) && (r.source === n || r.target === n));
+    return lerp(1, isHover || connected ? 1 : 0.55);
   };
   // 流带：水平三次贝塞尔带，宽度随 progress 展开
   const grow = progress;
@@ -164,12 +179,11 @@ function renderSankeyChart(ctx) {
     canvasCtx.restore();
   });
   // 节点：圆角短柱 + 标签（首列右侧对齐节点右缘、末列左侧对齐、中间列居中节点上方）
-  nodes.forEach((n, i) => {
+  nodes.forEach((n) => {
     const h = n.height * grow;
     const isHover = n === hoverNode;
-    const connected = hoverNode && ribbons.some((r) => (r.source === hoverNode || r.target === hoverNode) && (r.source === n || r.target === n));
     canvasCtx.save();
-    canvasCtx.globalAlpha = hoverNode && !isHover && !connected ? 0.55 : 1;
+    canvasCtx.globalAlpha = nodeAlphaAt(n);
     canvasCtx.beginPath();
     const r = Math.min(NODE_RADIUS, NODE_WIDTH / 2, h / 2);
     canvasCtx.moveTo(n.x, n.y);
@@ -268,7 +282,8 @@ function computeVennLayout(plotArea, options, theme) {
   const interRows = rows.filter((d) => d.sets && d.sets.length === 2);
   const valueMax = Math.max(...circles.map((d) => d.value || 0));
   if (!(valueMax > 0)) return null;
-  const R = Math.min(plotArea.width, plotArea.height) * 0.35;
+  // 半径预算放宽到短边 38%：韦恩的读图主体就是圆与交叠区，展示区域尽量大
+  const R = Math.min(plotArea.width, plotArea.height) * 0.38;
   const k = (R * R) / valueMax; // 面积比例因子：π r² = k·v
   const radiusOf = (v) => Math.sqrt((v || 0) * k / Math.PI);
   circles.forEach((c, i) => {
@@ -456,13 +471,16 @@ function normalizeRelation(data, hiddenSeries) {
 /**
  * 弦图布局：节点弧长默认均布（chordByValue 时按值占比），连接带过圆心；
  * 带宽 = 关系值 / 最大值 × R×0.14；采样折线随布局预计算供命中测试。
+ * chordMode: 'curve' 切弧形环状形态——节点为圆点、关系为过圆心弧线（描边）。
  */
 function computeChordLayout(plotArea, options, theme, hiddenSeries) {
   const { nodes, links } = normalizeRelation(options.chordData, hiddenSeries);
   if (nodes.length === 0) return null;
   const cx = plotArea.x + plotArea.width / 2;
   const cy = plotArea.y + plotArea.height / 2;
-  const R = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 40);
+  // 半径预算：外侧仅留标签带（18px 文字 + 12px 余量），主体尽量大
+  const R = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 30);
+  const mode = options.chordMode === "curve" ? "curve" : "band";
   const valueMax = Math.max(1, ...links.map((l) => l.value));
   const byValue = options.chordByValue === true;
   const nodeValue = (n) => {
@@ -527,59 +545,102 @@ function computeChordLayout(plotArea, options, theme, hiddenSeries) {
       target: tgt,
       color: src.color,
       halfWidth: (link.value / valueMax) * (R * 0.14) / 2,
+      // curve 形态的描边宽（1.5–6 线性映射，同弧长连接图）
+      lineWidth: 1.5 + (link.value / valueMax) * 4.5,
       samples,
       ax, ay, bx, by,
       s0, s1, t0, t1,
     };
   });
-  return { cx, cy, R, nodeArcs, ribbons };
+  return { cx, cy, R, nodeArcs, ribbons, mode };
 }
 
 function renderChordChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
   const layout = computeChordLayout(plotArea, options, theme, hiddenSeries);
   if (!layout) return;
-  const { cx, cy, R, nodeArcs, ribbons } = layout;
+  const { cx, cy, R, nodeArcs, ribbons, mode } = layout;
   const hoverRibbon = hoverIndex >= nodeArcs.length ? ribbons[hoverIndex - nodeArcs.length] : null;
   const hoverNode = hoverIndex >= 0 && hoverIndex < nodeArcs.length ? nodeArcs[hoverIndex] : null;
   const sweep = Math.PI * 2 * progress;
+  // 悬浮/出场按 hoverAnimProgress 缓动（DESIGN §13.2 关系图族统一）
+  const t = hoverAnimProgress;
+  const lerp = (base, target) => base + (target - base) * t;
   const ribbonAlphaAt = (r) => {
-    if (hoverRibbon) return r === hoverRibbon ? CHORD_RIBBON_HOVER : CHORD_RIBBON_DIM;
-    if (hoverNode) return r.source === hoverNode || r.target === hoverNode ? CHORD_RIBBON_HOVER : CHORD_RIBBON_DIM;
+    if (hoverRibbon) return lerp(CHORD_RIBBON_ALPHA, r === hoverRibbon ? CHORD_RIBBON_HOVER : CHORD_RIBBON_DIM);
+    if (hoverNode) return lerp(CHORD_RIBBON_ALPHA, r.source === hoverNode || r.target === hoverNode ? CHORD_RIBBON_HOVER : CHORD_RIBBON_DIM);
     return CHORD_RIBBON_ALPHA;
   };
-  ribbons.forEach((r) => {
-    if (r.s0 > sweep && r.t0 > sweep) return;
-    canvasCtx.save();
-    canvasCtx.globalAlpha = ribbonAlphaAt(r);
-    canvasCtx.beginPath();
-    const [p0x, p0y] = [cx + Math.cos(r.s0) * R, cy + Math.sin(r.s0) * R];
-    const [p1x, p1y] = [cx + Math.cos(r.t0) * R, cy + Math.sin(r.t0) * R];
-    const [p2x, p2y] = [cx + Math.cos(r.t1) * R, cy + Math.sin(r.t1) * R];
-    const [p3x, p3y] = [cx + Math.cos(r.s1) * R, cy + Math.sin(r.s1) * R];
-    canvasCtx.moveTo(p0x, p0y);
-    canvasCtx.bezierCurveTo(cx, cy, cx, cy, p1x, p1y);
-    canvasCtx.lineTo(p2x, p2y);
-    canvasCtx.bezierCurveTo(cx, cy, cx, cy, p3x, p3y);
-    canvasCtx.closePath();
-    canvasCtx.fillStyle = r.color;
-    canvasCtx.fill();
-    canvasCtx.restore();
-  });
-  nodeArcs.forEach((n, i) => {
-    if (n.startAngle > sweep) return;
-    const end = Math.min(n.endAngle, -Math.PI / 2 + sweep);
-    const isHover = n === hoverNode;
-    const connected = hoverNode && ribbons.some((r) => (r.source === hoverNode || r.target === hoverNode) && (r.source === n || r.target === n));
-    canvasCtx.save();
-    canvasCtx.globalAlpha = hoverNode && !isHover && !connected ? 0.35 : 1;
-    canvasCtx.beginPath();
-    canvasCtx.arc(cx, cy, R, n.startAngle, end);
-    canvasCtx.strokeStyle = isHover ? mixColor(n.color, 0.1, "#000000") : n.color;
-    canvasCtx.lineWidth = 10;
-    canvasCtx.lineCap = "round";
-    canvasCtx.stroke();
-    canvasCtx.restore();
+  const nodeAlphaAt = (n) => {
+    if (!hoverNode) return 1;
+    const connected = ribbons.some((r) => (r.source === hoverNode || r.target === hoverNode) && (r.source === n || r.target === n));
+    return lerp(1, n === hoverNode || connected ? 1 : 0.35);
+  };
+  if (mode === "curve") {
+    // 弧形环状：节点圆点 + 过圆心弧线（描边，宽按关系值）
+    ribbons.forEach((r) => {
+      if (r.s0 > sweep && r.t0 > sweep) return;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = ribbonAlphaAt(r);
+      canvasCtx.strokeStyle = r.color;
+      canvasCtx.lineWidth = r.lineWidth * progress;
+      canvasCtx.lineCap = "round";
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(r.samples[0][0], r.samples[0][1]);
+      for (let k = 1; k < r.samples.length; k++) canvasCtx.lineTo(r.samples[k][0], r.samples[k][1]);
+      canvasCtx.stroke();
+      canvasCtx.restore();
+    });
+    nodeArcs.forEach((n) => {
+      if (n.startAngle > sweep) return;
+      const [x, y] = [cx + Math.cos(n.midAngle) * R, cy + Math.sin(n.midAngle) * R];
+      const isHover = n === hoverNode;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = nodeAlphaAt(n);
+      canvasCtx.beginPath();
+      canvasCtx.arc(x, y, isHover ? 7.5 : 6, 0, Math.PI * 2);
+      canvasCtx.fillStyle = isHover ? mixColor(n.color, 0.1, "#000000") : n.color;
+      canvasCtx.fill();
+      canvasCtx.strokeStyle = theme.backgroundColor;
+      canvasCtx.lineWidth = 2;
+      canvasCtx.stroke();
+      canvasCtx.restore();
+    });
+  } else {
+    ribbons.forEach((r) => {
+      if (r.s0 > sweep && r.t0 > sweep) return;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = ribbonAlphaAt(r);
+      canvasCtx.beginPath();
+      const [p0x, p0y] = [cx + Math.cos(r.s0) * R, cy + Math.sin(r.s0) * R];
+      const [p1x, p1y] = [cx + Math.cos(r.t0) * R, cy + Math.sin(r.t0) * R];
+      const [p2x, p2y] = [cx + Math.cos(r.t1) * R, cy + Math.sin(r.t1) * R];
+      const [p3x, p3y] = [cx + Math.cos(r.s1) * R, cy + Math.sin(r.s1) * R];
+      canvasCtx.moveTo(p0x, p0y);
+      canvasCtx.bezierCurveTo(cx, cy, cx, cy, p1x, p1y);
+      canvasCtx.lineTo(p2x, p2y);
+      canvasCtx.bezierCurveTo(cx, cy, cx, cy, p3x, p3y);
+      canvasCtx.closePath();
+      canvasCtx.fillStyle = r.color;
+      canvasCtx.fill();
+      canvasCtx.restore();
+    });
+    nodeArcs.forEach((n) => {
+      if (n.startAngle > sweep) return;
+      const end = Math.min(n.endAngle, -Math.PI / 2 + sweep);
+      const isHover = n === hoverNode;
+      canvasCtx.save();
+      canvasCtx.globalAlpha = nodeAlphaAt(n);
+      canvasCtx.beginPath();
+      canvasCtx.arc(cx, cy, R, n.startAngle, end);
+      canvasCtx.strokeStyle = isHover ? mixColor(n.color, 0.1, "#000000") : n.color;
+      canvasCtx.lineWidth = 10;
+      canvasCtx.lineCap = "round";
+      canvasCtx.stroke();
+      canvasCtx.restore();
+    });
+  }
+  nodeArcs.forEach((n) => {
     if (progress < 0.9) return;
     const [lx, ly] = [cx + Math.cos(n.midAngle) * (R + 18), cy + Math.sin(n.midAngle) * (R + 18)];
     canvasCtx.save();
@@ -669,7 +730,8 @@ function computeArcLayout(plotArea, options, theme, hiddenSeries) {
     const dist = Math.abs(b.x - a.x);
     const left = a.x <= b.x ? a : b;
     const right = a.x <= b.x ? b : a;
-    const cy = Math.min(dist * 0.45, (axisY - plotArea.y + 8) / 0.75);
+    // 弧顶裁剪：峰值 = axisY - 0.75·cy，钳制后峰值距绘图区顶 ≥ 12px（不压标题）
+    const cy = Math.min(dist * 0.45, (axisY - plotArea.y - 12) / 0.75);
     const width = 1.5 + (link.value / valueMax) * 4.5;
     const samples = [];
     const x1 = left.x;
@@ -689,6 +751,7 @@ function computeArcLayout(plotArea, options, theme, hiddenSeries) {
       target: b,
       color: a.color,
       width,
+      cy,
       samples,
       x1, x2,
     };
@@ -697,15 +760,18 @@ function computeArcLayout(plotArea, options, theme, hiddenSeries) {
 }
 
 function renderArcChart(ctx) {
-  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hoverAnimProgress = 1, hiddenSeries } = ctx;
   const layout = computeArcLayout(plotArea, options, theme, hiddenSeries);
   if (!layout) return;
   const { nodes, arcs, axisY } = layout;
   const hoverArc = hoverIndex >= nodes.length ? arcs[hoverIndex - nodes.length] : null;
   const hoverNode = hoverIndex >= 0 && hoverIndex < nodes.length ? nodes[hoverIndex] : null;
+  // 悬浮/出场按 hoverAnimProgress 缓动（DESIGN §13.2 关系图族统一）
+  const t = hoverAnimProgress;
+  const lerp = (base, target) => base + (target - base) * t;
   const alphaAt = (a) => {
-    if (hoverArc) return a === hoverArc ? ARC_LINK_HOVER : ARC_LINK_DIM;
-    if (hoverNode) return a.source === hoverNode || a.target === hoverNode ? ARC_LINK_HOVER : ARC_LINK_DIM;
+    if (hoverArc) return lerp(ARC_LINK_ALPHA, a === hoverArc ? ARC_LINK_HOVER : ARC_LINK_DIM);
+    if (hoverNode) return lerp(ARC_LINK_ALPHA, a.source === hoverNode || a.target === hoverNode ? ARC_LINK_HOVER : ARC_LINK_DIM);
     return ARC_LINK_ALPHA;
   };
   arcs.forEach((a) => {
@@ -716,17 +782,17 @@ function renderArcChart(ctx) {
     canvasCtx.lineCap = "round";
     canvasCtx.beginPath();
     canvasCtx.moveTo(a.x1, axisY);
-    const cy = Math.min(Math.abs(a.x2 - a.x1) * 0.45, (axisY - plotArea.y + 8) / 0.75);
-    canvasCtx.bezierCurveTo(a.x1, axisY - cy, a.x2, axisY - cy, a.x2, axisY);
+    canvasCtx.bezierCurveTo(a.x1, axisY - a.cy, a.x2, axisY - a.cy, a.x2, axisY);
     canvasCtx.stroke();
     canvasCtx.restore();
   });
   // 节点圆点 + 竖刻度 + 名称
-  nodes.forEach((n, i) => {
+  nodes.forEach((n) => {
     const isHover = n === hoverNode;
     const connected = hoverNode && arcs.some((a) => (a.source === hoverNode || a.target === hoverNode) && (a.source === n || a.target === n));
+    const nodeTarget = isHover || connected ? 1 : 0.35;
     canvasCtx.save();
-    canvasCtx.globalAlpha = hoverNode && !isHover && !connected ? 0.35 : 1;
+    canvasCtx.globalAlpha = hoverNode ? lerp(1, nodeTarget) : 1;
     canvasCtx.beginPath();
     canvasCtx.arc(n.x, axisY, isHover ? 7.5 : 6, 0, Math.PI * 2);
     canvasCtx.fillStyle = n.color;
@@ -759,7 +825,6 @@ function renderArcChart(ctx) {
       canvasCtx.fillText(label, n.x, axisY + 20);
     }
     canvasCtx.restore();
-    void i;
   });
 }
 

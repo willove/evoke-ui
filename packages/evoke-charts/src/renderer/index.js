@@ -33,9 +33,13 @@ import {
   renderGaugeChart,
   renderHeatmapChart,
   renderCandleChart,
+  renderCalendarHeatmapChart,
+  calendarHitTest,
+  computeCalendarLayout,
+  candleVolumeLayout,
+  renderVolumeBand,
   computeFunnelGeometry,
-  funnelStepColor,
-  candleVolumeLayout
+  funnelStepColor
 } from "./charts-advanced";
 import { renderBinChart, renderBulletChart, renderTreemapChart, renderSparklineChart } from "./charts-special";
 import { renderWaterfallChart, renderBoxplotChart, renderSunburstChart, renderMixedChart, computeBoxplotGeometry, boxplotHitTest } from "./charts-extra";
@@ -92,11 +96,12 @@ function renderChart(canvas, params) {
     dpr = window.devicePixelRatio || 1,
     progress = 1,
     hoverIndex = -1,
+    hoverAnimProgress = 1,
+    focusAnimProgress = 1,
     hiddenSeries = /* @__PURE__ */ new Set(),
     mouseX = -1,
     mouseY = -1,
     showCrosshair = false,
-    hoverAnimProgress = 1,
     zoomRange,
     brushRect,
     focusSeries = null,
@@ -132,6 +137,7 @@ function renderChart(canvas, params) {
     progress,
     hoverIndex,
     hoverAnimProgress,
+    focusAnimProgress,
     hiddenSeries,
     valueFormatter,
     mouseX,
@@ -183,6 +189,10 @@ function renderChart(canvas, params) {
     case "heatmap":
       renderHeatmapChart(renderCtx);
       break;
+    case "calendar-heatmap": {
+      renderCalendarHeatmapChart(renderCtx);
+      break;
+    }
     case "candle": {
       const candleData = options.candleData || [];
       if (candleData.length > 0) {
@@ -319,19 +329,38 @@ function renderChart(canvas, params) {
     case "line":
     case "area": {
       const hasRightAxis = !!options.yAxisRight && (options.series || []).some((s) => s.yAxis === "right");
-      leftRange = renderYAxis(renderCtx, "left");
+      // 量副图（分时图）：价格/折线量上区，量带下区，轴与网格只量价格区
+      const volLayout = candleVolumeLayout(plotArea, options, hiddenSeries);
+      const priceCtx = volLayout.on ? { ...renderCtx, plotArea: volLayout.priceArea } : renderCtx;
+      leftRange = renderYAxis(priceCtx, "left");
       let rightRange;
       if (hasRightAxis) {
-        rightRange = renderYAxis(renderCtx, "right");
+        rightRange = renderYAxis(priceCtx, "right");
       }
       renderXAxis(renderCtx);
-      renderMarkAreas(renderCtx);
-      points = renderLineChart(renderCtx, leftRange, "left");
+      renderMarkAreas(priceCtx);
+      points = renderLineChart(priceCtx, leftRange, "left");
       if (hasRightAxis && rightRange) {
-        const rightPoints = renderLineChart(renderCtx, rightRange, "right");
+        const rightPoints = renderLineChart(priceCtx, rightRange, "right");
         points = points.concat(rightPoints);
       }
-      renderMarkLines(renderCtx, leftRange);
+      if (volLayout.on) {
+        const slot = plotArea.width / (options.labels?.length || 1);
+        const series0 = (options.series || []).filter((s) => !hiddenSeries.has(s.name))[0];
+        const flags = (options.volumeData || []).map((_, i) => {
+          const prev = series0?.data[i - 1];
+          const curr = series0?.data[i];
+          if (!Number.isFinite(prev) || !Number.isFinite(curr)) return true;
+          return curr >= prev;
+        });
+        renderVolumeBand(
+          renderCtx, options.volumeData || [], flags,
+          plotArea.y + plotArea.height, volLayout.bandTop,
+          Math.min(slot * 0.6, 24), slot, plotArea.width, plotArea.x,
+          theme, progress, hoverIndex
+        );
+      }
+      renderMarkLines(priceCtx, leftRange);
       break;
     }
     default:
@@ -378,6 +407,7 @@ export {
   applyLogTransform2 as applyLogTransform,
   boxplotHitTest,
   buildPieSlices,
+  calendarHitTest,
   calculateRange2 as calculateRange,
   calculateTicks,
   calculateTimeTicks,
@@ -388,6 +418,7 @@ export {
   computeArcLayout,
   computeBins,
   computeBoxplotGeometry,
+  computeCalendarLayout,
   computeChordLayout,
   computeFacetGrids,
   computeFunnelGeometry,

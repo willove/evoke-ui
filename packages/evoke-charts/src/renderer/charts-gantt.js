@@ -1,4 +1,4 @@
-import { estimateTextWidth, mixColor, calculateTimeTicks, formatTimeTick } from "./core";
+import { estimateTextWidth, mixColor, getContrastText, drawLabelWithBg, calculateTimeTicks, formatTimeTick } from "./core";
 
 // ─── 甘特图（DESIGN §3.8）───
 // 行带 + 时间轴：条高 = 行高 × 0.52 圆角 4；进度实心、剩余 @25%；里程碑菱形；
@@ -226,15 +226,20 @@ function renderGanttChart(ctx) {
       canvasCtx.restore();
     }
     canvasCtx.restore();
-    // 行内进度标签（行高够时）
+    // 行内进度标签：宽条内嵌（按条底色取对比色），窄条/里程碑外挂底色胶囊，不与线条打架
     if (r.progress > 0 && rowH >= 22 && progress > 0.9) {
-      canvasCtx.save();
-      canvasCtx.font = "10px Inter, sans-serif";
-      canvasCtx.textAlign = "left";
-      canvasCtx.textBaseline = "middle";
-      canvasCtx.fillStyle = r.progress >= 1 ? r.color : theme.textColorSecondary;
-      canvasCtx.fillText(`${Math.round(r.progress * 100)}%`, r.x + w + 6, r.cy);
-      canvasCtx.restore();
+      const text = `${Math.round(r.progress * 100)}%`;
+      if (!r.isMilestone && r.w * grow >= 46) {
+        canvasCtx.save();
+        canvasCtx.font = "600 10px Inter, sans-serif";
+        canvasCtx.textAlign = "right";
+        canvasCtx.textBaseline = "middle";
+        canvasCtx.fillStyle = getContrastText(r.color);
+        canvasCtx.fillText(text, r.x + w - 7, r.cy);
+        canvasCtx.restore();
+      } else {
+        drawLabelWithBg(canvasCtx, text, r.x + w + 22, r.cy + 8, theme, "center");
+      }
     }
   });
   // 左侧任务名

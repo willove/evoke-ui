@@ -903,6 +903,8 @@ function renderScatterFacetChart(ctx, yRange) {
     });
     canvasCtx.restore();
   });
+  // renderChart 会读返回的 points 数组做准线命中，分面必须回空数组（漏返回曾致整页报错）
+  return [];
 }
 
 function formatTickShort(v) {

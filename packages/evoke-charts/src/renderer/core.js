@@ -65,7 +65,9 @@ function resolveConnectNulls(options, series) {
 }
 function focusAlpha(ctx, seriesName) {
   if (!ctx.focusSeries || ctx.focusSeries === seriesName) return 1;
-  return INTERACTION.focusDimAlpha;
+  // 焦点淡化随 focusAnimProgress 缓入（图例悬浮 180ms；缺省 1 = 即时，兼容无壳渲染）
+  const t = ctx.focusAnimProgress === undefined ? 1 : ctx.focusAnimProgress;
+  return 1 - (1 - INTERACTION.focusDimAlpha) * t;
 }
 function drawSymbol(canvasCtx, symbol, x, y, r) {
   canvasCtx.beginPath();
@@ -219,7 +221,7 @@ function hasLegendContent(options) {
     return (options.vennData || []).length > 0;
   }
   if (options.type === "candle") {
-    return (options.volumeData || []).length > 0;
+    return (options.volumeData || []).length > 0 || Array.isArray(options.candleMa);
   }
   return (options.series || []).length > 0;
 }
@@ -325,6 +327,16 @@ function getPadding(options, containerWidth = 600) {
     "arc",
     "scatter-matrix"
   ];
+  if (options.type === "calendar-heatmap") {
+    // 日历热力：左列星期标签带 + 顶部月份带 + 右下色阶行
+    const pad2 = resolveUserPadding(options);
+    return {
+      top: (pad2.top ?? 12) + titleBlockHeight(options),
+      right: pad2.right ?? 18,
+      bottom: pad2.bottom ?? 44,
+      left: pad2.left ?? 36
+    };
+  }
   if (options.type === "gantt") {
     // 甘特：左侧任务名列按最宽任务名实测（夹 80–180），底部时间轴 46
     const pad2 = resolveUserPadding(options);

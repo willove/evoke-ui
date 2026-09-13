@@ -164,6 +164,8 @@ function renderFunnelChart(ctx) {
  * 仪表盘（DESIGN §3.11）：指针 opt-in（gauge.pointer.show），外观定制面
  * axisWidth / tickCount / showTicks / valueFontSize / progressDim；默认值
  * 维持既有形态。指针开启时进度环默认淡化 @60%，中心数值下移避让针根。
+ * 角度为数学角约定（同 ECharts，0° 在右、逆时针为正）：220→-40 呈经典
+ * 「进度弧走上方、开口朝下」形态——canvas y 轴朝下，取负号换算。
  */
 function renderGaugeChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
@@ -172,10 +174,10 @@ function renderGaugeChart(ctx) {
   const min = gauge.min || 0;
   const max = gauge.max || 100;
   const value = Math.max(min, Math.min(max, gauge.value));
-  const startAngle = (gauge.startAngle ?? 220) * Math.PI / 180;
-  const endAngle = (gauge.endAngle ?? -40) * Math.PI / 180;
-  let normalizedEnd = endAngle;
-  while (normalizedEnd > startAngle) normalizedEnd -= Math.PI * 2;
+  const toRad = (deg) => -deg * Math.PI / 180;
+  const startAngle = toRad(gauge.startAngle ?? 220);
+  let normalizedEnd = toRad(gauge.endAngle ?? -40);
+  while (normalizedEnd <= startAngle) normalizedEnd += Math.PI * 2;
   const centerX = plotArea.x + plotArea.width / 2;
   const centerY = plotArea.y + plotArea.height / 2 + 20;
   const radius = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 20);
@@ -187,7 +189,7 @@ function renderGaugeChart(ctx) {
   const progressDim = pointerOn && gauge.progressDim !== false ? 0.6 : 1;
   canvasCtx.save();
   canvasCtx.beginPath();
-  canvasCtx.arc(centerX, centerY, radius, startAngle, normalizedEnd, true);
+  canvasCtx.arc(centerX, centerY, radius, startAngle, normalizedEnd, false);
   canvasCtx.strokeStyle = theme.gridColor;
   canvasCtx.lineWidth = axisWidth;
   canvasCtx.lineCap = gauge.cornerRadius === "butt" ? "butt" : "round";
@@ -195,7 +197,7 @@ function renderGaugeChart(ctx) {
   canvasCtx.restore();
   const valueRatio = (value - min) / (max - min);
   const animatedRatio = valueRatio * progress;
-  const valueAngle = startAngle - (startAngle - normalizedEnd) * animatedRatio;
+  const valueAngle = startAngle + (normalizedEnd - startAngle) * animatedRatio;
   let progressColor = theme.colors[0];
   if (Array.isArray(gauge.color)) {
     for (const seg of gauge.color) {
@@ -211,7 +213,7 @@ function renderGaugeChart(ctx) {
     canvasCtx.save();
     canvasCtx.globalAlpha = progressDim;
     canvasCtx.beginPath();
-    canvasCtx.arc(centerX, centerY, radius, startAngle, valueAngle, true);
+    canvasCtx.arc(centerX, centerY, radius, startAngle, valueAngle, false);
     canvasCtx.strokeStyle = progressColor;
     canvasCtx.lineWidth = axisWidth;
     canvasCtx.lineCap = gauge.cornerRadius === "butt" ? "butt" : "round";
@@ -261,7 +263,7 @@ function drawGaugeTickNumbers(canvasCtx, gauge, theme, centerX, centerY, radius,
   const ticks = gauge.tickCount ?? 5;
   for (let i = 0; i <= ticks; i++) {
     const ratio = i / ticks;
-    const angle = startAngle - (startAngle - normalizedEnd) * ratio;
+    const angle = startAngle + (normalizedEnd - startAngle) * ratio;
     const tickValue = min + (max - min) * ratio;
     const labelRadius = radius + 20;
     const x = centerX + Math.cos(angle) * labelRadius;
@@ -281,7 +283,7 @@ function drawGaugeTickMarks(canvasCtx, gauge, theme, centerX, centerY, radius, s
   const tickLen = Math.min(8, radius * 0.08);
   for (let i = 0; i <= ticks * 2; i++) {
     const ratio = i / (ticks * 2);
-    const angle = startAngle - (startAngle - normalizedEnd) * ratio;
+    const angle = startAngle + (normalizedEnd - startAngle) * ratio;
     const inner = radius - 4;
     const outer = radius - 4 - (i % 2 === 0 ? tickLen : tickLen * 0.5);
     canvasCtx.globalAlpha = i % 2 === 0 ? 0.8 : 0.4;
@@ -322,6 +324,195 @@ function drawGaugePointer(canvasCtx, gauge, theme, progressColor, centerX, cente
   canvasCtx.restore();
   void progress;
 }
+// ─── 日历热力图（DESIGN §3.12）：GitHub 活动热力同款——列=周、行=星期，
+// 顶部月份标签、左侧星期标签、今日主色描边、右下「少—多」色阶。───
+const CALENDAR_RAMP_LIGHT = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
+const CALENDAR_RAMP_DARK = ["#1f2937", "#0e4429", "#006d32", "#26a641", "#39d353"];
+const CALENDAR_DAY = 864e5;
+
+function calendarNoon(ts) {
+  const d = new Date(ts);
+  d.setHours(12, 0, 0, 0);
+  return d.getTime();
+}
+
+function calendarPad(n) {
+  return n.toString().padStart(2, "0");
+}
+
+/**
+ * 日历热力布局：start/end 缺省取数据极值并对齐周边界（weekStart 默认周一）；
+ * 数值等宽分 4 档色阶（0/缺测为空档）；cellSize 按可用空间自适应。
+ */
+function computeCalendarLayout(plotArea, options, theme) {
+  const data = options.calendarData || [];
+  if (data.length === 0) return null;
+  const cal = options.calendar || {};
+  const toTs = (v) => {
+    if (v instanceof Date) return calendarNoon(v.getTime());
+    const t = Date.parse(v);
+    return Number.isNaN(t) ? null : calendarNoon(t);
+  };
+  const valueMap = /* @__PURE__ */ new Map();
+  let minTs = Infinity;
+  let maxTs = -Infinity;
+  data.forEach((d) => {
+    const ts = toTs(d.date);
+    if (ts === null) return;
+    valueMap.set(ts, d.value);
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  });
+  if (valueMap.size === 0) return null;
+  let startTs = toTs(cal.start) ?? minTs;
+  let endTs = toTs(cal.end) ?? maxTs;
+  if (endTs < startTs) [startTs, endTs] = [endTs, startTs];
+  const weekStart = cal.weekStart ?? 1;
+  const shift = (new Date(startTs).getDay() - weekStart + 7) % 7;
+  const firstWeek = startTs - shift * CALENDAR_DAY;
+  const tailShift = (new Date(endTs).getDay() - weekStart + 7) % 7;
+  const lastWeek = endTs + (6 - tailShift) * CALENDAR_DAY;
+  const cols = Math.round((lastWeek - firstWeek) / CALENDAR_DAY / 7);
+  if (cols <= 0) return null;
+  const ramps = cal.colors || (!isLightColor(theme.backgroundColor) ? CALENDAR_RAMP_DARK : CALENDAR_RAMP_LIGHT);
+  let vMax = 0;
+  valueMap.forEach((v) => {
+    if (typeof v === "number" && v > vMax) vMax = v;
+  });
+  const levelOf = (v) => {
+    if (typeof v !== "number" || !(v > 0) || !(vMax > 0)) return 0;
+    return Math.max(1, Math.min(4, Math.ceil(v / (vMax / 4))));
+  };
+  const labelTop = 18;
+  const leftBand = 28;
+  const gap = Math.max(1, Math.min(8, cal.cellGap ?? 3));
+  const scaleH = cal.showScale === false ? 0 : 22;
+  const availW = plotArea.width - leftBand;
+  const availH = plotArea.height - labelTop - scaleH;
+  const cell = Math.max(5, Math.min((availH - gap * 6) / 7, (availW - gap * (cols - 1)) / cols));
+  const gridW = cols * cell + (cols - 1) * gap;
+  const originX = plotArea.x + leftBand + Math.max(0, (availW - gridW) / 2);
+  const originY = plotArea.y + labelTop;
+  const todayTs = calendarNoon(cal.today !== undefined ? (toTs(cal.today) ?? Date.now()) : Date.now());
+  const cells = [];
+  const monthLabels = [];
+  let prevMonth = -1;
+  for (let col = 0; col < cols; col++) {
+    const x = originX + col * (cell + gap);
+    const firstDay = new Date(firstWeek + col * 7 * CALENDAR_DAY);
+    if (firstDay.getMonth() !== prevMonth) {
+      if (col > 0 || firstDay.getDate() <= 7) monthLabels.push({ label: `${firstDay.getMonth() + 1}月`, x });
+      prevMonth = firstDay.getMonth();
+    }
+    for (let row = 0; row < 7; row++) {
+      const ts = firstWeek + (col * 7 + row) * CALENDAR_DAY;
+      if (ts < startTs || ts > endTs) continue;
+      const value = valueMap.get(ts);
+      const level = levelOf(value);
+      const d = new Date(ts);
+      cells.push({
+        ts,
+        col,
+        row,
+        x,
+        y: originY + row * (cell + gap),
+        size: cell,
+        value: typeof value === "number" ? value : null,
+        color: ramps[level],
+        today: ts === todayTs,
+        label: `${d.getFullYear()}-${calendarPad(d.getMonth() + 1)}-${calendarPad(d.getDate())}`,
+        index: cells.length,
+      });
+    }
+  }
+  const weekdayLabels = cal.weekdayLabels || ["日", "一", "二", "三", "四", "五", "六"];
+  const showRows = [];
+  for (let row = 0; row < 7; row++) {
+    const name = weekdayLabels[(weekStart + row) % 7];
+    if (name === "一" || name === "三" || name === "五" || cal.showAllWeekdays === true) {
+      showRows.push({ row, name, y: originY + row * (cell + gap) + cell / 2 });
+    }
+  }
+  return { cells, cols, cell, gap, monthLabels, showRows, ramps, originX, originY, scaleH };
+}
+
+function renderCalendarHeatmapChart(ctx) {
+  const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
+  const layout = computeCalendarLayout(plotArea, options, theme);
+  if (!layout) return;
+  const cal = options.calendar || {};
+  // 入场：格子按列序缩放弹出
+  layout.cells.forEach((c, i) => {
+    const colT = Math.max(0, Math.min(1, progress * 1.8 - (c.col / Math.max(1, layout.cols)) * 0.8));
+    const size = c.size * colT;
+    const offset = (c.size - size) / 2;
+    const isHover = i === hoverIndex;
+    canvasCtx.save();
+    roundRect(canvasCtx, c.x + offset, c.y + offset, size, size, Math.min(3, size / 4));
+    canvasCtx.fillStyle = isHover ? mixColor(c.color, 0.18, "#000000") : c.color;
+    canvasCtx.fill();
+    if (c.today) {
+      canvasCtx.strokeStyle = theme.colors[0];
+      canvasCtx.lineWidth = 1.5;
+      roundRect(canvasCtx, c.x - 1.5, c.y - 1.5, c.size + 3, c.size + 3, 4);
+      canvasCtx.stroke();
+    }
+    canvasCtx.restore();
+  });
+  // 月份标签（顶部）与星期标签（贴网格左缘，随网格居中）
+  canvasCtx.save();
+  canvasCtx.fillStyle = theme.textColorSecondary;
+  canvasCtx.font = "11px Inter, sans-serif";
+  canvasCtx.textAlign = "left";
+  canvasCtx.textBaseline = "bottom";
+  layout.monthLabels.forEach((m) => canvasCtx.fillText(m.label, m.x, plotArea.y + 15));
+  canvasCtx.textAlign = "right";
+  canvasCtx.textBaseline = "middle";
+  layout.showRows.forEach((r) => canvasCtx.fillText(r.name, layout.originX - 6, r.y));
+  canvasCtx.restore();
+  // 右下「少 — 多」色阶
+  if (cal.showScale !== false && progress > 0.9) {
+    canvasCtx.save();
+    canvasCtx.font = "10px Inter, sans-serif";
+    canvasCtx.fillStyle = theme.textColorSecondary;
+    canvasCtx.textBaseline = "middle";
+    const swatch = 10;
+    let x = plotArea.x + plotArea.width - (swatch + 4) * 5 - 30;
+    canvasCtx.textAlign = "right";
+    canvasCtx.fillText("少", x - 6, plotArea.y + plotArea.height - 8);
+    layout.ramps.forEach((color) => {
+      roundRect(canvasCtx, x, plotArea.y + plotArea.height - 13, swatch, swatch, 2);
+      canvasCtx.fillStyle = color;
+      canvasCtx.fill();
+      x += swatch + 4;
+    });
+    canvasCtx.textAlign = "left";
+    canvasCtx.fillText("多", x + 2, plotArea.y + plotArea.height - 8);
+    canvasCtx.restore();
+  }
+}
+
+function calendarHitTest(canvasX, canvasY, plotArea, options, theme) {
+  const layout = computeCalendarLayout(plotArea, options, theme);
+  if (!layout) return null;
+  for (const c of layout.cells) {
+    if (canvasX >= c.x && canvasX <= c.x + c.size && canvasY >= c.y && canvasY <= c.y + c.size) {
+      return {
+        index: c.index,
+        params: {
+          seriesName: c.label,
+          name: c.label,
+          value: c.value,
+          color: c.color,
+          dataIndex: c.index,
+          seriesIndex: 0
+        }
+      };
+    }
+  }
+  return null;
+}
+
 function getHeatmapCategories(options) {
   const heatmapData = options.heatmapData || [];
   let xCategories = Array.from(new Set(heatmapData.map((d) => d.x)));
@@ -442,6 +633,44 @@ function candleVolumeLayout(plotArea, options, hiddenSeries) {
 }
 
 /**
+ * 量带绘制（K 线 / 折线分时共用）：flags 为每根的涨跌布尔（决定颜色），
+ * baseY 为量带底、bandTop 为量带顶；不画轴（量纲从属），最高柱顶标 compact max。
+ */
+function renderVolumeBand(ctx, volumeData, flags, baseY, bandTop, barWidth, slotWidth, plotWidth, plotX, theme, progress, hoverIndex, upColor = "#dc2626", downColor = "#16a34a") {
+  const { ctx: canvasCtx, hiddenSeries } = ctx;
+  if (hiddenSeries && hiddenSeries.has("成交量")) return;
+  const volMax = Math.max(...volumeData.filter((v) => Number.isFinite(v)), 1);
+  const bandHeight = Math.max(4, baseY - bandTop);
+  volumeData.forEach((vol, i) => {
+    if (!Number.isFinite(vol)) return;
+    const color = flags[i] ? upColor : downColor;
+    const h = Math.max(1, vol / volMax * bandHeight * 0.92 * progress);
+    const x = plotX + (i + 0.5) * slotWidth;
+    canvasCtx.save();
+    canvasCtx.globalAlpha = i === hoverIndex ? 0.85 : 0.55;
+    canvasCtx.fillStyle = color;
+    canvasCtx.fillRect(x - barWidth / 2, baseY - 1 - h, barWidth, h);
+    canvasCtx.restore();
+  });
+  canvasCtx.save();
+  canvasCtx.fillStyle = theme.textColorSecondary;
+  canvasCtx.font = "10px Inter, sans-serif";
+  canvasCtx.textAlign = "right";
+  canvasCtx.textBaseline = "bottom";
+  canvasCtx.fillText(formatCompact(volMax), plotX + plotWidth - 2, bandTop + 12);
+  canvasCtx.restore();
+  // 价格/量带分界线
+  canvasCtx.save();
+  canvasCtx.strokeStyle = theme.gridColor;
+  canvasCtx.lineWidth = 1;
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(plotX, bandTop);
+  canvasCtx.lineTo(plotX + plotWidth, bandTop);
+  canvasCtx.stroke();
+  canvasCtx.restore();
+}
+
+/**
  * K 线 + 成交量（DESIGN §3.10）：volumeData 与 candleData 等长时开启副图，
  * 绘图区下部 24% 为量带，K 线压缩到上部；量柱颜色跟随当日涨跌 @55%，
  * 带不画轴（量纲从属）。图例「成交量」点选后量带隐去、K 线回铺全高。
@@ -488,39 +717,16 @@ function renderCandleChart(ctx, yRange) {
   });
   // 量带：颜色跟随涨跌 @55%，不画轴；最高量柱顶标 max（10px 次要色）
   if (volumeOn) {
-    const volMax = Math.max(...volumeData, 1);
-    const bandTop = vol.bandTop;
-    const bandHeight = plotArea.y + plotArea.height - bandTop - 1;
-    volumeData.forEach((vol, i) => {
-      if (!Number.isFinite(vol)) return;
-      const candle = candleData[i];
-      const isUp = candle.close >= candle.open;
-      const color = isUp ? upColor : downColor;
-      const h = Math.max(1, vol / volMax * bandHeight * 0.92 * progress);
-      const x = plotArea.x + (i + 0.5) * categoryWidth;
-      canvasCtx.save();
-      canvasCtx.globalAlpha = i === hoverIndex ? 0.85 : 0.55;
-      canvasCtx.fillStyle = color;
-      canvasCtx.fillRect(x - candleWidth / 2, plotArea.y + plotArea.height - 1 - h, candleWidth, h);
-      canvasCtx.restore();
-    });
-    canvasCtx.save();
-    canvasCtx.fillStyle = theme.textColorSecondary;
-    canvasCtx.font = "10px Inter, sans-serif";
-    canvasCtx.textAlign = "right";
-    canvasCtx.textBaseline = "bottom";
-    canvasCtx.fillText(formatCompact(volMax), plotArea.x + plotArea.width - 2, bandTop + 12);
-    canvasCtx.restore();
-    // 价格/量带分界线
-    canvasCtx.save();
-    canvasCtx.strokeStyle = theme.gridColor;
-    canvasCtx.lineWidth = 1;
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(plotArea.x, bandTop);
-    canvasCtx.lineTo(plotArea.x + plotArea.width, bandTop);
-    canvasCtx.stroke();
-    canvasCtx.restore();
+    renderVolumeBand(
+      ctx, volumeData,
+      candleData.map((c) => c.close >= c.open),
+      plotArea.y + plotArea.height, vol.bandTop,
+      candleWidth, categoryWidth, plotArea.width, plotArea.x,
+      theme, progress, hoverIndex, upColor, downColor
+    );
   }
+  // MA 均线（candleMa: [5, 10, …] 收盘价简单移动平均），图例可点选显隐
+  drawCandleMaLines(ctx, candleData, yRange, priceArea, categoryWidth, progress);
   canvasCtx.save();
   canvasCtx.fillStyle = theme.textColorSecondary;
   canvasCtx.font = "11px Inter, sans-serif";
@@ -535,6 +741,44 @@ function renderCandleChart(ctx, yRange) {
   canvasCtx.restore();
 }
 
+/**
+ * MA 均线：candleMa 配置周期数组（如 [5, 10]），按收盘价画简单移动平均；
+ * 颜色取系列色板顺序，图例项 MA5/MA10 走 hiddenSeries 点选显隐。
+ */
+function drawCandleMaLines(ctx, candleData, yRange, priceArea, categoryWidth, progress) {
+  const { ctx: canvasCtx, theme, options, hiddenSeries } = ctx;
+  const periods = Array.isArray(options.candleMa) ? options.candleMa : [];
+  if (periods.length === 0 || candleData.length === 0) return;
+  const closes = candleData.map((c) => c.close);
+  const yFor = (v) => priceArea.y + priceArea.height - (v - yRange.min) / (yRange.max - yRange.min) * priceArea.height * progress;
+  periods.forEach((days, pi) => {
+    const name = `MA${days}`;
+    if (hiddenSeries.has(name)) return;
+    if (!(days >= 2) || closes.length < days) return;
+    const color = options.candleMaColors?.[pi] || theme.colors[pi % theme.colors.length];
+    canvasCtx.save();
+    canvasCtx.strokeStyle = color;
+    canvasCtx.lineWidth = 1.25;
+    canvasCtx.globalAlpha = 0.9;
+    canvasCtx.beginPath();
+    let started = false;
+    for (let i = days - 1; i < closes.length; i++) {
+      let sum = 0;
+      for (let k = i - days + 1; k <= i; k++) sum += closes[k];
+      const x = priceArea.x + (i + 0.5) * categoryWidth;
+      const y = yFor(sum / days);
+      if (!started) {
+        canvasCtx.moveTo(x, y);
+        started = true;
+      } else {
+        canvasCtx.lineTo(x, y);
+      }
+    }
+    canvasCtx.stroke();
+    canvasCtx.restore();
+  });
+}
+
 /** 量纲紧凑读法：1.2万 / 3.4亿 式（量带 max 标注用） */
 function formatCompact(v) {
   if (v >= 1e8) return `${parseFloat((v / 1e8).toFixed(1))}亿`;
@@ -542,11 +786,18 @@ function formatCompact(v) {
   return Number.isInteger(v) ? String(v) : parseFloat(v.toFixed(2)).toString();
 }
 export {
+  CALENDAR_RAMP_DARK,
+  CALENDAR_RAMP_LIGHT,
+  calendarHitTest,
   candleVolumeLayout,
+  computeCalendarLayout,
+  drawCandleMaLines,
   formatCompact,
   getHeatmapCategories,
+  renderCalendarHeatmapChart,
   renderCandleChart,
   renderFunnelChart,
   renderGaugeChart,
-  renderHeatmapChart
+  renderHeatmapChart,
+  renderVolumeBand
 };

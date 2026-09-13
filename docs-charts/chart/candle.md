@@ -82,6 +82,56 @@
   />
 </DemoBlock>
 
+### 价量 + 均线 + 区间选择
+
+三件套组合：`volumeData` 量副图 + `candleMa` 均线（如 `[5, 10]`，按收盘价画简单移动平均，图例 MA5/MA10/成交量 都可点选显隐）+ `dataZoom` 数据区间选择（拖滑块/滚轮在长周期里缩放浏览）。趋势判断的标准工作台。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'candle',
+      title: '600519 贵州茅台 · 均线与区间',
+      candleMa: [3, 5],
+      dataZoom: { enabled: true, start: 20, end: 100 },
+      candleData: [
+        { label: '08-01', open: 1650, close: 1668, high: 1675, low: 1642 },
+        { label: '08-02', open: 1668, close: 1655, high: 1678, low: 1648 },
+        { label: '08-03', open: 1655, close: 1672, high: 1680, low: 1650 },
+        { label: '08-04', open: 1672, close: 1688, high: 1695, low: 1666 },
+        { label: '08-05', open: 1688, close: 1675, high: 1694, low: 1668 },
+        { label: '08-08', open: 1675, close: 1695, high: 1702, low: 1670 },
+        { label: '08-09', open: 1695, close: 1710, high: 1718, low: 1688 },
+        { label: '08-10', open: 1710, close: 1698, high: 1716, low: 1690 },
+        { label: '08-11', open: 1698, close: 1715, high: 1722, low: 1692 },
+        { label: '08-12', open: 1715, close: 1732, high: 1740, low: 1708 },
+        { label: '08-13', open: 1732, close: 1720, high: 1738, low: 1712 },
+        { label: '08-14', open: 1720, close: 1745, high: 1752, low: 1715 },
+      ],
+      volumeData: [31000, 26000, 29000, 38000, 25000, 42000, 51000, 28000, 36000, 55000, 30000, 62000],
+    }"
+    :height="400"
+  />
+</DemoBlock>
+
+### 分时图：折线 + 量副图
+
+`volumeData` 不只属于 K 线：`type: 'line'` 配等长量数组即得分时图——价格线上区、量柱下区，量柱颜色按价格较前一刻涨跌着色，图例「成交量」同样可点选显隐。
+
+<DemoBlock>
+  <ev-chart
+    :options="{
+      type: 'area',
+      title: '日内分时 · 均价与成交量',
+      smooth: true,
+      labels: ['09:30', '10:00', '10:30', '11:00', '11:30', '13:30', '14:00', '14:30', '15:00'],
+      series: [{ name: '均价', data: [24.1, 24.35, 24.28, 24.52, 24.6, 24.48, 24.66, 24.72, 24.9] }],
+      volumeData: [8200, 6400, 5100, 7300, 9200, 6800, 5900, 7600, 11800],
+      yAxis: { min: 24 },
+    }"
+    :height="320"
+  />
+</DemoBlock>
+
 ### 场景提示
 
 - **股票 / 期货 / 加密货币行情**：日 K / 周 K / 分时四价；
@@ -91,7 +141,8 @@
 ## 配置要点
 
 - 字段语义固定：`open` 开、`close` 收、`high` 高、`low` 低；
-- `volumeData` 开启成交量副图，`volumeHeight`（0.15–0.4）调量带占比，默认 0.24；
+- `volumeData` 开启成交量副图（K 线 / 折线 / 面积通用），`volumeHeight`（0.15–0.4）调量带占比，默认 0.24；
+- `candleMa: [5, 10, 20]` 叠加 MA 均线（收盘价简单移动平均），`candleMaColors` 可覆写线色，图例点选显隐；
 - 悬浮 tooltip 展示四价明细，params 里带 `volume` 供自定义 formatter 使用；
 - 长周期序列配合 `dataZoom` 缩放浏览，见[交互与联动](/chart/interaction)。
 

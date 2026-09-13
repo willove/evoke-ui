@@ -7,7 +7,7 @@ import { CHART_PALETTES } from "./palettes";
 const CHART_TYPES = [
   "line", "area", "bar", "stacked-bar", "horizontal-bar",
   "pie", "doughnut", "rose", "radar", "scatter", "scatter-matrix",
-  "funnel", "gauge", "heatmap", "candle", "bin", "bullet",
+  "funnel", "gauge", "heatmap", "calendar-heatmap", "candle", "bin", "bullet",
   "treemap", "sparkline", "waterfall", "boxplot", "sunburst", "mixed",
   "sankey", "venn", "chord", "arc", "gantt"
 ];
@@ -203,6 +203,10 @@ export const chartOptionsSchema = {
     heatmapData: { type: "array" },
     candleData: { type: "array" },
     volumeData: { type: "array" },
+    // K 线 MA 均线周期数组（如 [5, 10]），按收盘价简单移动平均
+    candleMa: { type: "array" },
+    calendarData: { type: "array" },
+    calendar: { type: "object" },
     bulletData: { type: "array" },
     boxData: { type: "array" },
     sankeyData: {
