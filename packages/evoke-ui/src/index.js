@@ -69,6 +69,8 @@ import EvSwitch from './components/switch-comp/index.vue'
 // Components — 布局
 import EvContainer from './components/container/index.vue'
 import EvScrollScene from './components/scroll-scene/index.vue'
+import EvCompare from './components/compare/index.vue'
+import EvBento from './components/bento/index.vue'
 import EvAvatar from './components/avatar/index.vue'
 import EvAvatarGroup from './components/avatar/group.vue'
 import EvTimeline from './components/timeline/index.vue'
@@ -136,6 +138,8 @@ const components = {
   EvSwitch,
   EvContainer,
   EvScrollScene,
+  EvCompare,
+  EvBento,
   EvAvatar,
   EvAvatarGroup,
   EvTimeline,
@@ -209,6 +213,8 @@ export {
   EvSwitch,
   EvContainer,
   EvScrollScene,
+  EvCompare,
+  EvBento,
   EvAvatar,
   EvAvatarGroup,
   EvTimeline,

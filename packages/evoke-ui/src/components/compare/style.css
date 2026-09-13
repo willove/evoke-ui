@@ -1,0 +1,176 @@
+/* EvCompare — 方案对比表 */
+
+.ev-compare {
+  max-width: 100%;
+}
+
+.ev-compare__scroll {
+  overflow-x: auto;
+}
+
+.ev-compare__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ev-font-size-sm);
+  line-height: var(--ev-line-height-base);
+}
+
+/* ─── 表头：产品列 ─── */
+.ev-compare__lead {
+  width: 18%;
+  min-width: 96px;
+}
+
+.ev-compare__product {
+  min-width: 176px;
+  padding: 20px 16px 24px;
+  text-align: center;
+  vertical-align: bottom;
+  font-weight: 400;
+}
+
+.ev-compare__image {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 12px;
+  object-fit: contain;
+}
+
+.ev-compare__colors {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.ev-compare__colors i {
+  width: 11px;
+  height: 11px;
+  border-radius: var(--ev-radius-circle);
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.ev-compare__badge {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
+  color: var(--ev-color-primary);
+}
+
+.ev-compare__name {
+  display: block;
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
+}
+
+.ev-compare__name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ev-compare__name a:hover {
+  color: var(--ev-color-primary);
+}
+
+.ev-compare__tagline {
+  display: block;
+  margin: 8px auto 0;
+  max-width: 220px;
+  color: var(--ev-text-secondary);
+}
+
+.ev-compare__price {
+  display: block;
+  margin-top: 12px;
+}
+
+.ev-compare__price-num {
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
+}
+
+.ev-compare__price-note {
+  margin-left: 3px;
+  color: var(--ev-text-secondary);
+}
+
+/* ─── 行：标签列 + 单元格 ─── */
+.ev-compare__label {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 400;
+  color: var(--ev-text-primary);
+  width: 18%;
+  min-width: 96px;
+}
+
+.ev-compare__label-text {
+  display: block;
+}
+
+.ev-compare__label-note {
+  display: block;
+  margin-top: 3px;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-secondary);
+}
+
+.ev-compare__cell {
+  padding: 14px 16px;
+  text-align: center;
+  vertical-align: top;
+  color: var(--ev-text-primary);
+}
+
+.ev-compare__text {
+  display: block;
+}
+
+.ev-compare__text + .ev-compare__text {
+  margin-top: 4px;
+}
+
+.ev-compare__check {
+  color: var(--ev-color-primary);
+}
+
+.ev-compare__dash {
+  color: var(--ev-text-secondary);
+  opacity: 0.6;
+}
+
+/* ─── 分组标题行 ─── */
+.ev-compare__group {
+  padding: 34px 16px 12px;
+  text-align: left;
+  font-size: var(--ev-font-size-lg);
+  font-weight: var(--ev-font-weight-semibold);
+  color: var(--ev-text-primary);
+}
+
+/* ─── 无边框（默认）：组间 + 表头细分隔线 ─── */
+.ev-compare tbody .ev-compare__group-row .ev-compare__group,
+.ev-compare thead .ev-compare__product,
+.ev-compare thead .ev-compare__lead {
+  border-bottom: 1px solid var(--ev-border-color);
+}
+
+.ev-compare thead .ev-compare__product,
+.ev-compare thead .ev-compare__lead {
+  border-bottom-width: 1px;
+}
+
+/* ─── 带边框：全网格细边框 ─── */
+.ev-compare.is-bordered .ev-compare__table :is(td, th) {
+  border: 1px solid var(--ev-border-color);
+}
+
+/* 宿主环境屏蔽：markdown/文档站排版不渗入单元格 */
+.ev-compare .ev-compare__text,
+.ev-compare .ev-compare__label-text {
+  margin: 0;
+}

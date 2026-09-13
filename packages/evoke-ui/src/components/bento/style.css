@@ -1,0 +1,146 @@
+/* EvBento — 图文组合分区 */
+
+.ev-bento {
+  display: grid;
+  grid-template-columns: repeat(var(--ev-bento-columns, 3), 1fr);
+  gap: var(--ev-bento-gap, 16px);
+}
+
+.ev-bento.is-dense {
+  grid-auto-flow: dense;
+}
+
+/* ─── 卡片 ─── */
+.ev-bento__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+  border-radius: 18px;
+  background-color: var(--ev-bg-container);
+  text-decoration: none;
+  overflow: hidden;
+  grid-column: span var(--bento-span, 1);
+}
+
+.ev-bento.is-bordered .ev-bento__card {
+  border: 1px solid var(--ev-border-color);
+}
+
+.ev-bento__card:not(.is-fill) {
+  justify-content: space-between;
+}
+
+/* ─── 卡面色调 ─── */
+.ev-bento__card.is-soft {
+  background-color: var(--ev-fill-1);
+}
+
+.ev-bento__card.is-primary {
+  background-color: var(--ev-color-primary-light-9);
+}
+
+.ev-bento__card.is-primary .ev-bento__title {
+  color: var(--ev-color-primary);
+}
+
+.ev-bento__card.is-dark {
+  background-color: var(--ev-color-ink);
+}
+
+.ev-bento__card.is-dark .ev-bento__title {
+  color: #f2f6ff;
+}
+
+.ev-bento__card.is-dark .ev-bento__desc,
+.ev-bento__card.is-dark .ev-bento__eyebrow {
+  color: rgb(255 255 255 / 62%);
+}
+
+/* ─── 文字 ─── */
+.ev-bento__text {
+  position: relative;
+  z-index: 1;
+}
+
+.ev-bento__eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: var(--ev-font-size-xs);
+  font-weight: var(--ev-font-weight-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ev-text-secondary);
+}
+
+.ev-bento__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: var(--ev-font-weight-semibold);
+  line-height: 1.3;
+  color: var(--ev-text-primary);
+}
+
+.ev-bento__desc {
+  margin: 8px 0 0;
+  font-size: var(--ev-font-size-sm);
+  line-height: 1.7;
+  color: var(--ev-text-secondary);
+}
+
+/* ─── 图：bottom / top 常规内嵌；fill 整卡铺图文字叠上 ─── */
+.ev-bento__image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.ev-bento__card.is-top {
+  flex-direction: column-reverse;
+}
+
+.ev-bento__card.is-fill .ev-bento__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.ev-bento__card.is-fill .ev-bento__text {
+  flex: 1;
+}
+
+/* ─── 跨行 ─── */
+.ev-bento__card.is-rows-2 { grid-row: span 2; }
+.ev-bento__card.is-rows-3 { grid-row: span 3; }
+.ev-bento__card.is-rows-4 { grid-row: span 4; }
+
+.ev-bento__card.is-rows-2.is-fill .ev-bento__image,
+.ev-bento__card.is-rows-3.is-fill .ev-bento__image,
+.ev-bento__card.is-rows-4.is-fill .ev-bento__image {
+  height: 100%;
+}
+
+/* ─── 受宽回落：span 超出列数时整行；窄屏全部整行 ─── */
+@media (max-width: 760px) {
+  .ev-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .ev-bento__card {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+/* 宿主环境屏蔽 */
+.ev-bento .ev-bento__title,
+.ev-bento .ev-bento__desc {
+  margin: 0;
+}
+
+.ev-bento .ev-bento__desc {
+  margin-top: 8px;
+}
