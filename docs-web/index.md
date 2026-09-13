@@ -339,9 +339,9 @@ function storyFade(p, a, b) {
             <span :class="{ 'is-active': progress >= 0.66 }">③ 一键切到暗色</span>
           </div>
         </div>
-        <div class="home-story__hint" :style="{ opacity: 1 - seg(progress, 0, 0.18) }">
+        <div class="home-story__hint" :style="{ opacity: 1 - seg(progress, 0.92, 1) }">
           <span class="home-story__mouse"><i></i></span>
-          <span>向下滚动，看官网搭起来</span>
+          <span class="home-story__hint-text">向下滚动</span>
         </div>
       </template>
     </EvScrollScene>
@@ -567,20 +567,24 @@ function storyFade(p, a, b) {
   color: #8a96a9;
   background: color-mix(in srgb, #eef1f6 calc((1 - var(--d)) * 100%), #1a2334 calc(var(--d) * 100%));
 }
-/* 悬浮鼠标提示：首幕可见，开滚即淡出 */
+/* 悬浮鼠标提示：悬浮在页面容器右侧空白区，竖排文字；整个场景的滚动效果
+   全部完成后才退出（进度 0.92 → 1 淡出）；窄屏没有右侧留白，整体隐藏 */
 .home-story__hint {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 26px;
+  top: 50%;
+  right: clamp(20px, 4vw, 96px);
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  gap: 14px;
   color: var(--ev-text-secondary);
   pointer-events: none;
+}
+.home-story__hint-text {
+  writing-mode: vertical-rl;
+  letter-spacing: 0.3em;
+  font-size: 12px;
 }
 .home-story__mouse {
   width: 22px;
@@ -610,12 +614,17 @@ function storyFade(p, a, b) {
     animation: none;
   }
 }
+@media (max-width: 1279px) {
+  .home-story__hint {
+    display: none;
+  }
+}
 .home-story__captions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px 26px;
-  margin-top: 22px;
+  margin-top: 44px;
   font-size: 13px;
   color: var(--ev-text-secondary);
 }
