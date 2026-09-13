@@ -9,7 +9,7 @@
 
 ## 全局开关
 
-<DemoBlock title="玻璃卡叠在照片上" description="开关作用于 html 属性全站生效（演示区经 global: false 局部化）；错位叠放的两张卡透出彼此的边缘。">
+<DemoBlock title="玻璃卡叠在照片上" description="开关写入 html 属性全站生效，离开页面自动还原；错位叠放的两张卡透出彼此的边缘。">
 
 <EvConfigProvider glass :global="false">
   <div class="glass-scene glass-scene--forest">
@@ -49,28 +49,63 @@ reset()        // 恢复默认（磨砂关闭）
 
 ## 磨砂强度 blur
 
-`blur` 接收 px 数字（或带单位字符串），内联覆盖该组件的默认模糊，互不影响：
+`blur` 接收 px 数字（或带单位字符串），内联覆盖该组件的默认模糊，互不影响。
+下面的演示可以直接拖动滑块实时调节——三个滑块分别改写 `--ev-glass-blur`、
+`--ev-glass-bg`（雾面浓度）与 `--ev-glass-saturate`，卡片即时响应：
 
-<DemoBlock title="同一张照片，两档强度" description="左 4px 轻雾、右 28px 重磨——背景细节保留程度一目了然，文字可读性都由半透明底兜住。">
+<DemoBlock title="实时调节磨砂质感" description="拖动滑块观察同一照片上的质感变化；0px 即完全透明无磨砂，浓度越低底色越透。">
 
 <EvConfigProvider glass :global="false">
-  <div class="glass-scene glass-scene--ridge">
-    <EvCard :blur="4" style="flex:1;">
-      <p style="font-weight:600;">blur = 4</p>
-      <p style="font-size:13px;">轻雾：山脊线隐约可辨。</p>
-    </EvCard>
-    <EvCard :blur="28" style="flex:1;">
-      <p style="font-weight:600;">blur = 28</p>
-      <p style="font-size:13px;">重磨：背景化开成柔和色块。</p>
-    </EvCard>
+  <div class="glass-lab" :style="labVars">
+    <div class="glass-scene glass-scene--ridge">
+      <EvCard glass style="flex:1;">
+        <p style="font-weight:600;">实时预览</p>
+        <p style="font-size:13px;">拖动下方滑块，磨砂质感即时变化。</p>
+      </EvCard>
+    </div>
+    <div class="glass-lab__controls">
+      <label class="glass-lab__row">
+        <span class="glass-lab__name">模糊</span>
+        <input v-model.number="labBlur" type="range" min="0" max="40" step="1" class="glass-lab__range" />
+        <EvTag size="small" tone="primary">{{ labBlur }}px</EvTag>
+      </label>
+      <label class="glass-lab__row">
+        <span class="glass-lab__name">雾面浓度</span>
+        <input v-model.number="labTint" type="range" min="30" max="95" step="5" class="glass-lab__range" />
+        <EvTag size="small">{{ labTint }}%</EvTag>
+      </label>
+      <label class="glass-lab__row">
+        <span class="glass-lab__name">饱和度</span>
+        <input v-model.number="labSaturate" type="range" min="1" max="2" step="0.1" class="glass-lab__range" />
+        <EvTag size="small">×{{ labSaturate.toFixed(1) }}</EvTag>
+      </label>
+    </div>
   </div>
 </EvConfigProvider>
 
 ```vue
-<EvConfigProvider glass>
-  <EvCard :blur="4">轻雾</EvCard>
-  <EvCard :blur="28">重磨</EvCard>
-</EvConfigProvider>
+<script setup>
+import { ref, computed } from 'vue'
+
+const blur = ref(16)
+const tint = ref(72)
+const saturate = ref(1.5)
+
+// 令牌整体覆写：color-mix 的百分比不能走 var()，浓度变化要拼完整值
+const labVars = computed(() => ({
+  '--ev-glass-blur': `${blur.value}px`,
+  '--ev-glass-saturate': String(saturate.value),
+  '--ev-glass-bg': `color-mix(in srgb, var(--ev-bg-container) ${tint.value}%, transparent)`,
+}))
+</script>
+
+<template>
+  <EvConfigProvider glass>
+    <div :style="labVars">
+      <EvCard glass>拖动滑块，质感即时变化</EvCard>
+    </div>
+  </EvConfigProvider>
+</template>
 ```
 
 </DemoBlock>
@@ -136,8 +171,18 @@ reset()        // 恢复默认（磨砂关闭）
   无关；它的常驻磨砂由 `glass` 控制。
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 const sceneModal = ref(false)
+
+// 实时调节演示：滑块 → 令牌覆写 → 玻璃配方即时响应
+const labBlur = ref(16)
+const labTint = ref(72)
+const labSaturate = ref(1.5)
+const labVars = computed(() => ({
+  '--ev-glass-blur': `${labBlur.value}px`,
+  '--ev-glass-saturate': String(labSaturate.value),
+  '--ev-glass-bg': `color-mix(in srgb, var(--ev-bg-container) ${labTint.value}%, transparent)`,
+}))
 </script>
 
 <style scoped>
@@ -159,5 +204,30 @@ const sceneModal = ref(false)
   align-items: stretch;
   gap: 16px;
   background-image: url(/images/glass-ridge.jpg);
+}
+.glass-lab {
+  display: grid;
+  gap: 14px;
+}
+.glass-lab__controls {
+  display: grid;
+  gap: 12px;
+  padding: 4px 2px;
+}
+.glass-lab__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.glass-lab__name {
+  flex: none;
+  width: 60px;
+  font-size: 13px;
+  color: var(--ev-text-secondary);
+}
+.glass-lab__range {
+  flex: 1;
+  margin: 0;
+  accent-color: var(--ev-color-primary);
 }
 </style>
