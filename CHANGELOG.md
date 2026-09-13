@@ -2,7 +2,7 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased]
+## [ui 0.6.0 / business-ui 0.5.0] — 2026-09-13
 
 ### @wil-works/evoke-ui — 新增 Slider 滑块组件
 

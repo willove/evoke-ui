@@ -120,7 +120,7 @@ function goSearch() {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.5.0</EvTag>
+      <EvTag size="small">v0.6.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -220,7 +220,7 @@ function goSearch() {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.5.0</EvTag>
+        <EvTag tone="primary" size="small">v0.6.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
