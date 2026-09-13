@@ -25,6 +25,8 @@ export default defineConfig({
       },
     },
     threads: false,
-    isolate: false,
+    // 逐文件隔离（vitest 默认）：isolate:false 曾让 VTU 全局 transformVNodeArgs、
+    // 图标注册表、localStorage 等模块/DOM 状态跨文件泄漏，埋下顺序敏感的偶发挂
+    isolate: true,
   },
 })
