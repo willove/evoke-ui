@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui / @wil-works/evoke-business-ui — 弹层滚动锁定防抖动升级
+
+- **锁定期间优先上 `scrollbar-gutter: stable`**（html 内联，支持性探测）：滚动条消失但
+  视口布局宽度不变，文档流内容与 `position: fixed` 元素（固定顶栏、警示横幅等）
+  都不再位移——原 padding 补偿只能稳住文档流，fixed 元素在经典滚动条环境
+  （Windows、系统"始终显示滚动条"）下仍会横跳；
+- 不支持 gutter 的浏览器回退原 padding-right 补偿方案；evoke-ui 侧对齐 business
+  补出 `--ev-scrollbar-width` 变量供消费方补偿 fixed 元素；
+- 语义化感知：macOS 覆盖式滚动条下 gutter 不占位，行为与之前一致；
+- 两库滚动锁测试各补 gutter 路径 / 回退路径用例（`CSS.supports` 桩定），共 11 项。
+
 ### @wil-works/evoke-business-ui — EbNotify 堆叠偏移的元素定位加固
 
 - **同列堆叠重排改为按类名定位通知本体**：`updateColumn` 原先取
