@@ -78,6 +78,9 @@ const volume = ref(30)
 
 `aria-label` 等原生属性会透传到内部 input 上（单独使用时建议补一个可读名称）。
 
+初始值不必落在步长格点上：不在 `min + k·step` 上的值会就近吸附显示（如 `min=30`、
+`step=5` 的 `72` 显示为 `70`），圆钮与导轨填充始终一致；拖动派发的一律是格点值。
+
 <script setup>
 import { ref } from 'vue'
 const volume = ref(30)

@@ -7,7 +7,7 @@
       :min="min"
       :max="max"
       :step="step"
-      :value="value"
+      :value="snapped"
       :disabled="disabled"
       :style="{ '--ev-slider-fill': fill }"
       @input="onInput"
@@ -46,11 +46,22 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 const { value, set } = useUncontrolled(props, { defaultValue: props.defaultValue })
 
+// 步长格点对齐：宿主传入的值可能不在 min + k·step 格点上（如 min=30、step=5 的 72），
+// 原生圆钮会被浏览器就近吸附显示（70），填充比例必须与可见圆钮同值——
+// 否则刷新后（初始值非格点）会出现「填充冒出圆钮」的错位
+const snapped = computed(() => {
+  const { min, step } = props
+  if (!(step > 0)) return value.value
+  const onLattice = min + Math.round((value.value - min) / step) * step
+  const decimals = (String(step).split('.')[1] || '').length
+  return Math.min(Math.max(Number(onLattice.toFixed(decimals)), props.min), props.max)
+})
+
 // 导轨填充比例：驱动「已走过」部分着主色（渐变断点在 CSS 里读这个变量）
 const fill = computed(() => {
   const range = props.max - props.min
   if (!(range > 0)) return '0%'
-  const current = Math.min(Math.max(value.value, props.min), props.max)
+  const current = Math.min(Math.max(snapped.value, props.min), props.max)
   return `${((current - props.min) / range) * 100}%`
 })
 

@@ -36,6 +36,18 @@ describe('EvSlider', () => {
     expect(wrapper.find('input').attributes('style')).toContain('100%')
   })
 
+  it('非格点初始值吸附到最近步长（圆钮与填充一致）', () => {
+    // min=30、step=5 的 72：圆钮与填充都按吸附后的 70 呈现
+    const wrapper = mount(EvSlider, { props: { modelValue: 72, min: 30, max: 95, step: 5 } })
+    const input = wrapper.find('input[type="range"]')
+    expect(input.element.value).toBe('70')
+    expect(input.attributes('style')).toContain('61.53')
+    // 浮点步长不产生精度噪点
+    const half = mount(EvSlider, { props: { modelValue: 1.5, min: 1, max: 2, step: 0.1 } })
+    expect(half.find('input').element.value).toBe('1.5')
+    expect(half.find('input').attributes('style')).toContain('50%')
+  })
+
   it('尺寸 class', () => {
     expect(mount(EvSlider, { props: { size: 'small' } }).classes()).toContain('is-small')
     expect(mount(EvSlider, { props: { size: 'large' } }).classes()).toContain('is-large')

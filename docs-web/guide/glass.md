@@ -152,7 +152,7 @@ const sceneModal = ref(false)
 
 // 实时调节演示：滑块 → 组件参数 → 玻璃配方即时响应
 const labBlur = ref(16)
-const labTint = ref(72)
+const labTint = ref(70)
 const labSaturate = ref(1.5)
 
 // 示例代码随滑块同步：展示的值始终是当前演示的实际参数
