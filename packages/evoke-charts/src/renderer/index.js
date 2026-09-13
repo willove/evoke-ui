@@ -19,7 +19,14 @@ import {
   renderRadarChart,
   renderScatterTrendline
 } from "./charts-basic";
-import { renderFunnelChart, renderGaugeChart, renderHeatmapChart, renderCandleChart } from "./charts-advanced";
+import {
+  renderFunnelChart,
+  renderGaugeChart,
+  renderHeatmapChart,
+  renderCandleChart,
+  computeFunnelGeometry,
+  funnelStepColor
+} from "./charts-advanced";
 import { renderBinChart, renderBulletChart, renderTreemapChart, renderSparklineChart } from "./charts-special";
 import { renderWaterfallChart, renderBoxplotChart, renderSunburstChart, renderMixedChart } from "./charts-extra";
 import { renderDataZoomSlider } from "./dataZoom";
@@ -319,6 +326,7 @@ export {
   calculateTimeTicks,
   categoryToX,
   computeBins,
+  computeFunnelGeometry,
   computeLegendLayout,
   computePieMaxRadius,
   computeSunburstDepth,
@@ -331,6 +339,7 @@ export {
   focusAlpha,
   formatLogTick,
   formatTimeTick,
+  funnelStepColor,
   getContrastText,
   getDataZoomConfig,
   getHeatmapCategories,

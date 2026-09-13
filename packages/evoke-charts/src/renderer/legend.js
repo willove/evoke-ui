@@ -1,4 +1,5 @@
 import { roundRect } from "./core";
+import { funnelStepColor } from "./charts-advanced";
 import { INTERACTION } from "../interactions";
 const LEGEND_ROW_HEIGHT = 20;
 const LEGEND_GAP = 12;
@@ -41,7 +42,7 @@ function collectLegendItems(options, theme, hiddenSeries) {
     return (options.funnelData || []).map((d, i) => ({
       name: d.label || "",
       label: fmt(d.label || ""),
-      color: d.color || theme.colors[i % theme.colors.length],
+      color: funnelStepColor(d, i, theme),
       hidden: hiddenSeries.has(d.label || "")
     }));
   }

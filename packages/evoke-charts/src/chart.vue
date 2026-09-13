@@ -99,6 +99,7 @@ import {
   xToPercent,
   computeSunburstGeometry,
   sunburstValue,
+  funnelStepColor,
   computePieMaxRadius,
   getToolboxBounds,
   createSvgRecorder,
@@ -837,7 +838,7 @@ function getHoveredData(x, y) {
     const i = Math.floor(relativeY / stepHeight);
     if (i < 0 || i >= drawData.length) return null;
     const data = drawData[i];
-    const color = data.color || theme.colors[allFunnel.indexOf(data) % theme.colors.length];
+    const color = funnelStepColor(data, allFunnel.indexOf(data) < 0 ? i : allFunnel.indexOf(data), theme);
     return {
       index: i,
       params: {

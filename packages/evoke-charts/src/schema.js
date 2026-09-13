@@ -196,6 +196,8 @@ export const chartOptionsSchema = {
     radarIndicators: { type: "array" },
     scatterData: { type: "array" },
     funnelData: { type: "array" },
+    // 漏斗尾段最小宽度占比（0–0.5，0 = 严格等比）：极差悬殊时压缩尾段保可读
+    funnelMinRatio: { type: "number" },
     gauge: { oneOf: [{ type: "number" }, { type: "object" }] },
     heatmapData: { type: "array" },
     candleData: { type: "array" },

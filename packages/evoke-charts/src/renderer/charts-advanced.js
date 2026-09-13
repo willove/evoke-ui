@@ -1,59 +1,115 @@
 import { CHART_COLORS } from "../types";
-import { roundRect, getContrastText } from "./core";
+import { roundRect, getContrastText, isLightColor, mixColor } from "./core";
+
+// 漏斗是同一个流程的逐层收窄（不是并列类目）：段色按层序向背景方向混合，
+// 与旭日图「分支同色系」同一机制（旭日按深度、漏斗按层序）
+const FUNNEL_LIGHT_STEP = 0.15;
+const FUNNEL_LIGHT_MAX = 0.6;
+const FUNNEL_DARK_STEP = 0.12;
+const FUNNEL_DARK_MAX = 0.45;
+
+/** 段色：显式 color 即定色，否则主题首色按层序向背景方向混合 */
+export function funnelStepColor(data, index, theme) {
+  if (data?.color) return data.color;
+  const base = theme.colors?.[0] || CHART_COLORS[0];
+  if (index <= 0) return base;
+  const darker = !isLightColor(theme.backgroundColor);
+  const step = darker ? FUNNEL_DARK_STEP : FUNNEL_LIGHT_STEP;
+  const cap = darker ? FUNNEL_DARK_MAX : FUNNEL_LIGHT_MAX;
+  return mixColor(base, Math.min(cap, index * step), darker ? "#000000" : "#ffffff");
+}
+
+/**
+ * 漏斗几何：渲染、图例与悬浮命中共用一份口径。
+ * 宽度即数值（末层下宽取自身宽度，底部收成平边而不是针尖）；
+ * funnelMinRatio 压缩尾段（0 = 严格等比，单调性不变）。
+ */
+export function computeFunnelGeometry(plotArea, options, theme) {
+  const all = options.funnelData || [];
+  const drawn = options.pyramid === true ? [...all].reverse() : all;
+  const maxValue = drawn.length ? Math.max(...drawn.map((d) => d.value)) : 0;
+  const maxWidth = plotArea.width * 0.8;
+  const centerX = plotArea.x + plotArea.width / 2;
+  const topY = plotArea.y + 8;
+  const totalHeight = plotArea.height - 16;
+  const stepHeight = drawn.length ? totalHeight / drawn.length : 0;
+  const rawMin = Number(options.funnelMinRatio);
+  const minRatio = Number.isFinite(rawMin) ? Math.max(0, Math.min(0.5, rawMin)) : 0;
+  const widthOf = (value) => {
+    if (!maxValue) return maxWidth;
+    return maxWidth * (minRatio + (1 - minRatio) * (value / maxValue));
+  };
+  const steps = drawn.map((data, slot) => {
+    const found = all.indexOf(data);
+    const index = found < 0 ? slot : found;
+    const next = drawn[slot + 1];
+    const topWidth = widthOf(data.value);
+    const bottomWidth = next ? widthOf(next.value) : topWidth;
+    return {
+      data,
+      index,
+      slot,
+      color: funnelStepColor(data, index, theme),
+      y: topY + slot * stepHeight,
+      height: stepHeight,
+      topWidth,
+      bottomWidth,
+      bandWidth: (topWidth + bottomWidth) / 2,
+    };
+  });
+  return { steps, maxValue, maxWidth, centerX, topY, totalHeight, stepHeight };
+}
+
+/** 占比文本：按最大值（漏斗首层）折算，整数不补小数位 */
+function funnelPercent(value, maxValue) {
+  if (!maxValue) return "0%";
+  return `${Math.round((value / maxValue) * 1000) / 10}%`;
+}
+
 function renderFunnelChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex, hiddenSeries } = ctx;
   const allData = options.funnelData || [];
   const funnelData = allData.filter((d) => !hiddenSeries.has(d.label || ""));
   if (funnelData.length === 0) return;
-  const maxWidth = plotArea.width * 0.8;
-  const centerX = plotArea.x + plotArea.width / 2;
-  const topY = plotArea.y + 8;
-  const bottomY = plotArea.y + plotArea.height - 8;
-  const totalHeight = bottomY - topY;
-  const stepHeight = totalHeight / funnelData.length;
-  const maxValue = Math.max(...funnelData.map((d) => d.value));
-  const drawData = options.pyramid === true ? [...funnelData].reverse() : funnelData;
+  const geo = computeFunnelGeometry(plotArea, { ...options, funnelData }, theme);
+  const { centerX, stepHeight } = geo;
   // 标签在进度后段平滑淡入，不硬蹦
   const labelAlpha = Math.min(1, Math.max(0, (progress - 0.72) / 0.28));
+  const easedWidth = 1 - Math.pow(1 - progress, 3);
   const outsideLabels = [];
-  drawData.forEach((data, i) => {
-    const color = data.color || theme.colors[funnelData.indexOf(data) % theme.colors.length];
-    const isHover = i === hoverIndex;
-    const easedWidth = 1 - Math.pow(1 - progress, 3);
-    const currentWidth = data.value / maxValue * maxWidth * easedWidth;
-    const nextValue = drawData[i + 1]?.value ?? data.value * 0.5;
-    const nextWidth = nextValue / maxValue * maxWidth * easedWidth;
-    const y = topY + i * stepHeight;
-    const yOffset = isHover ? -3 : 0;
+  geo.steps.forEach((step, i) => {
+    const topW = step.topWidth * easedWidth;
+    const bottomW = step.bottomWidth * easedWidth;
+    const y = step.y;
     canvasCtx.save();
     canvasCtx.beginPath();
-    canvasCtx.moveTo(centerX - currentWidth / 2, y + yOffset);
-    canvasCtx.lineTo(centerX + currentWidth / 2, y + yOffset);
-    canvasCtx.lineTo(centerX + nextWidth / 2, y + stepHeight + yOffset);
-    canvasCtx.lineTo(centerX - nextWidth / 2, y + stepHeight + yOffset);
+    canvasCtx.moveTo(centerX - topW / 2, y);
+    canvasCtx.lineTo(centerX + topW / 2, y);
+    canvasCtx.lineTo(centerX + bottomW / 2, y + stepHeight);
+    canvasCtx.lineTo(centerX - bottomW / 2, y + stepHeight);
     canvasCtx.closePath();
-    canvasCtx.fillStyle = isHover ? color + "dd" : color;
+    // 悬浮加深一档（同色向黑 8%）：不位移、不引强调色
+    canvasCtx.fillStyle = i === hoverIndex ? mixColor(step.color, 0.08, "#000000") : step.color;
     canvasCtx.fill();
     canvasCtx.strokeStyle = theme.backgroundColor;
     canvasCtx.lineWidth = 2;
     canvasCtx.stroke();
     canvasCtx.restore();
     if (labelAlpha <= 0) return;
-    const labelY = y + stepHeight / 2 + yOffset;
-    const percentage = (data.value / drawData[0].value * 100).toFixed(1);
-    const label = `${data.label}`;
-    const valueText = `${data.value} (${percentage}%)`;
+    const labelY = y + stepHeight / 2;
+    const label = `${step.data.label}`;
+    const valueText = `${step.data.value} (${funnelPercent(step.data.value, geo.maxValue)})`;
     canvasCtx.save();
     canvasCtx.font = "bold 13px Inter, sans-serif";
     const labelWidth = canvasCtx.measureText(label).width;
     canvasCtx.font = "11px Inter, sans-serif";
     const valueWidth = canvasCtx.measureText(valueText).width;
     const minTextWidth = Math.max(labelWidth, valueWidth) + 28;
-    const trapezoidWidth = (currentWidth + nextWidth) / 2;
     // 段内两行：名称与数值行距 18px；梯形放不下（两侧各留 14px）或层高不足时转外侧引线
-    if (trapezoidWidth >= minTextWidth && stepHeight >= 36) {
+    if (step.bandWidth >= minTextWidth && stepHeight >= 36) {
+      // 逐层提亮后中间调底色上白字会糊，按段底色取对比度更高的一方
       canvasCtx.globalAlpha = labelAlpha;
-      canvasCtx.fillStyle = theme.backgroundColor;
+      canvasCtx.fillStyle = getContrastText(step.color);
       canvasCtx.font = "bold 13px Inter, sans-serif";
       canvasCtx.textAlign = "center";
       canvasCtx.textBaseline = "middle";
@@ -63,7 +119,7 @@ function renderFunnelChart(ctx) {
     } else {
       outsideLabels.push({
         labelY,
-        lineEndX: centerX + currentWidth / 2,
+        lineEndX: centerX + topW / 2,
         label,
         valueText,
         labelTextWidth: Math.max(labelWidth, valueWidth),
@@ -71,7 +127,7 @@ function renderFunnelChart(ctx) {
     }
     canvasCtx.restore();
   });
-  // 外侧引线标签：右对齐两行，纵向最小间距 34px 防重叠
+  // 外侧引线标签：右对齐两行，纵向最小间距 36px 防重叠
   outsideLabels.sort((a, b) => a.labelY - b.labelY);
   const textX = plotArea.x + plotArea.width - 4;
   let lastBottom = -Infinity;
