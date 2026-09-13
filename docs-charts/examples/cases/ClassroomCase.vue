@@ -13,20 +13,22 @@
       </div>
 
       <div class="case-cls__caption">{{ board.table.caption }}</div>
-      <table class="case-cls__table">
-        <thead>
-          <tr>
-            <th class="case-cls__corner">{{ board.table.corner }}</th>
-            <th v-for="col in board.table.columns" :key="col">{{ col }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in board.table.rows" :key="row.label">
-            <th scope="row">{{ row.label }}</th>
-            <td v-for="(v, index) in row.values" :key="index">{{ v }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="case-cls__table-wrap">
+        <table class="case-cls__table">
+          <thead>
+            <tr>
+              <th class="case-cls__corner">{{ board.table.corner }}</th>
+              <th v-for="col in board.table.columns" :key="col">{{ col }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in board.table.rows" :key="row.label">
+              <th scope="row">{{ row.label }}</th>
+              <td v-for="(v, index) in row.values" :key="index">{{ v }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <EvChart :options="board.options" :height="250" />
 
@@ -39,15 +41,17 @@
         <span class="case-cls__chart-name">同一张表，换个问法换张图</span>
       </div>
       <p class="case-cls__lead">还是第一张表，数字一个没改，只换问法——用什么图，由问题决定。</p>
-      <div class="case-cls__tabs">
-        <EvButton
+      <div class="case-cls__tabs" role="group" aria-label="换一种问法">
+        <button
           v-for="q in questions"
           :key="q.id"
-          :variant="q.id === activeQuestion ? 'primary' : 'soft'"
+          type="button"
+          :class="{ 'is-on': q.id === activeQuestion }"
+          :aria-pressed="q.id === activeQuestion"
           @click="activeQuestion = q.id"
         >
           {{ q.label }}
-        </EvButton>
+        </button>
       </div>
       <EvChart :options="activeOptions" :height="260" />
     </section>
@@ -260,10 +264,15 @@ const activeOptions = computed(() => questions.find((q) => q.id === activeQuesti
   color: var(--ev-text-color-secondary);
 }
 /* 站点表格规则特异性高（.cd-doc table:not([class*=…])），双类名 + 祖先类夺回写法 */
+.case-cls__table-wrap {
+  max-width: 620px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
 .case-cls .case-cls__table.case-cls__table {
   width: 100%;
-  max-width: 620px;
-  margin: 0 0 14px;
+  min-width: max-content;
+  margin: 0;
   border-collapse: collapse;
   border: 1px solid var(--ev-border-color);
   font-size: 13px;
@@ -321,9 +330,46 @@ const activeOptions = computed(() => questions.find((q) => q.id === activeQuesti
   color: var(--ev-text-color-secondary);
 }
 .case-cls__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  display: inline-flex;
+  gap: 2px;
+  margin-bottom: 12px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--ev-fill-color-light);
+}
+.case-cls__tabs button {
+  height: 30px;
+  padding: 0 13px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ev-text-color-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+.case-cls__tabs button:hover {
+  color: var(--ev-text-color-primary);
+}
+.case-cls__tabs button.is-on {
+  border-color: var(--ev-border-color);
+  background: var(--ev-bg-color);
+  color: var(--ev-color-primary);
+  font-weight: 500;
+}
+/* 暗色下轨道已比页面底色浅，选中段改为提亮，与亮色「浮起」的表意一致 */
+html.dark .case-cls__tabs button.is-on {
+  background: rgba(255, 255, 255, 0.07);
+}
+/* 窄屏三个问法放不下一行时允许换行成两段，不做横向滚动 */
+@media (max-width: 560px) {
+  .case-cls__tabs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .case-cls__tabs button {
+    flex: 1 1 auto;
+  }
 }
 </style>
