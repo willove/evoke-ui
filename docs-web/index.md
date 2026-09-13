@@ -210,7 +210,7 @@ function goSearch() {
         </div>
       </EvCard>
       <EvCard tone="blue" sticker class="home-collage__card is-b">
-        <EvStatistic value="49" label="个组件" animated />
+        <EvStatistic value="57" label="个组件" animated />
         <div class="home-collage__meta">内置 960+ 图标 · MIT 开源</div>
       </EvCard>
       <EvCard tone="mint" sticker class="home-collage__card is-c">
@@ -312,7 +312,7 @@ function goSearch() {
 
 <div class="home-stats-band">
   <div class="ev-container home-stats">
-    <EvStatistic value="49" label="组件" align="center" animated />
+    <EvStatistic value="57" label="组件" align="center" animated />
     <EvStatistic value="960+" label="内置图标" align="center" animated />
     <EvStatistic value="4" label="主题维度" align="center" animated />
     <EvStatistic value="2" label="明暗主题" align="center" animated />

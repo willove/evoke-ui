@@ -70,7 +70,7 @@ layout: home
         <span class="cd-sibcard__tag">官网级 UI 框架</span>
       </div>
       <strong class="cd-sibcard__name">Evoke UI</strong>
-      <p class="cd-sibcard__desc">做官网、落地页与营销页：Clean Navy 设计语言，49 个组件，明暗双主题与运行时换色开箱即用。</p>
+      <p class="cd-sibcard__desc">做官网、落地页与营销页：Clean Navy 设计语言，57 个组件，明暗双主题与运行时换色开箱即用。</p>
       <span class="cd-sibcard__link">访问 Evoke UI 文档 <CdIcon name="arrow-right" :size="13" /></span>
     </a>
     <a class="cd-sibcard cd-sibcard--biz" href="https://evoke-business-ui.wil-works.com" target="_blank" rel="noopener">
