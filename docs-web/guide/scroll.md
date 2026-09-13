@@ -73,6 +73,17 @@ Evoke UI 把它拆成两个形态，与 [v-reveal](/guide/motion) 的触发型�
 - JS 消费（canvas 图片序列刷帧、`video.currentTime = progress × 时长`）走插槽值，
   与 CSS 变量同源同值。
 
+进度本身是线性的。想要「缓动」的呼吸感，在消费端对进度做一次曲线映射即可——把区段
+归一后过 easeOutCubic，再绑回样式（本站首页「三步，搭出一个官网」与企业官网案例的
+「数据链路」就是这个做法，源码即参考）：
+
+```js
+// 区段 [a, b] 归一到 0..1，再过 easeOutCubic
+const seg = (p, a, b) => Math.min(Math.max((p - a) / (b - a), 0), 1)
+const easeOut = (t) => 1 - Math.pow(1 - t, 3)
+// opacity: easeOut(seg(progress, 0.34, 0.62))
+```
+
 ## 分步功能区
 
 「滚一下进入下一个功能模块」用原生 **scroll-snap** 实现：吸附是浏览器原生行为，

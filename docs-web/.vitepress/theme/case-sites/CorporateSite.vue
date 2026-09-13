@@ -29,6 +29,24 @@ const features = [
 
 const clients = ['栖云智造', '白泽数据', '拾贝科技', '南杉资本', '临港工场', '远山出行', '青梧网络', 'DeepRoot']
 
+// 滚动场景缓动：区段归一 + easeOutCubic
+const kpis = [
+  { value: '12ms', label: '平均查询延迟' },
+  { value: '99.99%', label: '服务可用性' },
+  { value: '40+', label: '地域节点' },
+]
+function seg(p, a, b) {
+  return Math.min(Math.max((p - a) / (b - a), 0), 1)
+}
+function easeOut(t) {
+  return 1 - Math.pow(1 - t, 3)
+}
+function storyEntrance(p) {
+  const e = easeOut(seg(p, 0, 0.22))
+  // 0.3 下限：接近场景（未钉住）时先看到淡影预览，钉住后缓动到实色
+  return { opacity: 0.3 + Math.min(e * 1.5, 1) * 0.7, transform: `translateY(${((1 - e) * 28).toFixed(2)}px)` }
+}
+
 const bars = [42, 66, 51, 78, 60, 92, 74, 84]
 
 const plans = [
@@ -160,14 +178,14 @@ function submitDemo() {
     </EvSection>
 
     <EvScrollScene :duration="220" :top="37">
-      <template #default>
+      <template #default="{ progress }">
         <div class="cs-story">
           <div class="cs-story__copy">
             <p class="cs-story__kicker">数据链路</p>
             <p class="cs-story__headline">查询延迟，随滚动一步步压下来</p>
             <p class="cs-story__desc">接入数据源、命中缓存、切换新引擎——这条折线随你的滚动逐段画出来，向上滚动原样回溯。</p>
           </div>
-          <div class="cs-story__window">
+          <div class="cs-story__window" :style="storyEntrance(progress)">
             <div class="cs-story__chrome"><i></i><i></i><i></i></div>
             <div class="cs-story__body">
               <svg class="cs-story__chart" viewBox="0 0 320 140" fill="none" aria-hidden="true">
@@ -176,13 +194,14 @@ function submitDemo() {
                   class="cs-story__line"
                   d="M16 118 C 60 112, 84 96, 116 88 S 176 78, 208 56 S 276 28, 304 22"
                   pathLength="1"
+                  :style="{ strokeDashoffset: 1 - easeOut(seg(progress, 0.04, 0.86)) }"
                 />
-                <circle class="cs-story__dot" cx="304" cy="22" r="4" />
+                <circle class="cs-story__dot" cx="304" cy="22" r="4" :style="{ opacity: seg(progress, 0.8, 0.95) }" />
               </svg>
               <div class="cs-story__kpis">
-                <div class="cs-story__kpi"><b>12ms</b><span>平均查询延迟</span></div>
-                <div class="cs-story__kpi"><b>99.99%</b><span>服务可用性</span></div>
-                <div class="cs-story__kpi"><b>40+</b><span>地域节点</span></div>
+                <div v-for="(k, i) in kpis" :key="k.label" class="cs-story__kpi" :style="{ opacity: easeOut(seg(progress, 0.42 + i * 0.1, 0.42 + i * 0.1 + 0.3)) }">
+                  <b>{{ k.value }}</b><span>{{ k.label }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -356,13 +375,14 @@ function submitDemo() {
   margin-inline: auto;
 }
 
-/* ─── 数据链路滚动场景：折线随滚动画出（EvScrollScene 实战）─── */
+/* ─── 数据链路滚动场景：折线随滚动画出（EvScrollScene 实战）───
+   进场/画线/亮点的缓动在模板里对 progress 做 easeOutCubic 区段映射（:style 绑定） */
 .cs-story {
-  max-width: 880px;
+  max-width: 1040px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(240px, 320px) 1fr;
-  gap: 44px;
+  grid-template-columns: minmax(280px, 400px) 1fr;
+  gap: 56px;
   align-items: center;
   padding: 0 24px;
 }
@@ -376,7 +396,7 @@ function submitDemo() {
 }
 .cs-story__headline {
   margin: 10px 0 0;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: var(--ev-display-weight-strong, 600);
   line-height: 1.35;
   color: var(--ev-text-primary);
@@ -393,8 +413,6 @@ function submitDemo() {
   overflow: hidden;
   background: var(--ev-bg-container);
   box-shadow: var(--ev-shadow-3);
-  opacity: clamp(0, var(--ev-scene-progress) * 4, 1);
-  transform: translateY(calc((1 - min(var(--ev-scene-progress) * 3, 1)) * 28px));
 }
 .cs-story__chrome {
   display: flex;
@@ -419,17 +437,15 @@ function submitDemo() {
   stroke: var(--ev-border-color-light);
   stroke-width: 1;
 }
-/* pathLength=1 归一化：dashoffset 从 1 → 0，折线随滚动逐段画出 */
+/* pathLength=1 归一化：dashoffset 由模板按缓动进度驱动，1 → 0 折线逐段画出 */
 .cs-story__line {
   stroke: var(--ev-color-primary);
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--ev-scene-progress) * 1.06);
 }
 .cs-story__dot {
   fill: var(--ev-color-primary);
-  opacity: clamp(0, (var(--ev-scene-progress) - 0.82) * 6, 1);
 }
 .cs-story__kpis {
   display: grid;
@@ -441,15 +457,6 @@ function submitDemo() {
   padding: 12px 14px;
   border: 1px solid var(--ev-border-color-light);
   border-radius: 10px;
-}
-.cs-story__kpi:nth-child(1) {
-  opacity: clamp(0, (var(--ev-scene-progress) - 0.42) * 5, 1);
-}
-.cs-story__kpi:nth-child(2) {
-  opacity: clamp(0, (var(--ev-scene-progress) - 0.52) * 5, 1);
-}
-.cs-story__kpi:nth-child(3) {
-  opacity: clamp(0, (var(--ev-scene-progress) - 0.62) * 5, 1);
 }
 .cs-story__kpi b {
   display: block;

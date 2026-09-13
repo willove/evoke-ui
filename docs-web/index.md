@@ -109,6 +109,23 @@ function goSearch() {
     .sort((a, b) => b.score - a.score)
   window.location.href = hits[0]?.it.path ?? '/components/overview'
 }
+
+// ─── 滚动叙事缓动：区段归一 + easeOutCubic，滚动驱动的位移带加速→减速的呼吸感 ───
+function seg(p, a, b) {
+  return Math.min(Math.max((p - a) / (b - a), 0), 1)
+}
+function easeOut(t) {
+  return 1 - Math.pow(1 - t, 3)
+}
+function storyEntrance(p) {
+  const e = easeOut(seg(p, 0, 0.22))
+  // 0.3 下限：接近场景（未钉住）时先看到淡影预览，钉住后缓动到实色
+  return { opacity: 0.3 + Math.min(e * 1.5, 1) * 0.7, transform: `translateY(${((1 - e) * 28).toFixed(2)}px)` }
+}
+function storyCard(p, i) {
+  const e = easeOut(seg(p, 0.34 + i * 0.08, 0.34 + i * 0.08 + 0.28))
+  return { opacity: e, transform: `translateY(${((1 - e) * 18).toFixed(2)}px)` }
+}
 </script>
 
 <EvNavbar class="home-navbar" logo-text="Evoke UI" :items="[
@@ -281,9 +298,9 @@ function goSearch() {
     <EvScrollScene :duration="240" :top="37">
       <template #default="{ progress }">
         <div class="home-story">
-          <div class="home-story__browser">
+          <div class="home-story__browser" :style="storyEntrance(progress)">
             <div class="home-story__chrome"><i></i><i></i><i></i></div>
-            <div class="home-story__viewport">
+            <div class="home-story__viewport" :style="{ '--d': easeOut(seg(progress, 0.66, 0.94)) }">
               <div class="home-story__nav">
                 <span class="home-story__logo">Aurora</span>
                 <span class="home-story__links"><i>产品</i><i>定价</i><i>博客</i></span>
@@ -295,9 +312,9 @@ function goSearch() {
                 <span class="home-story__cta">免费开始</span>
               </div>
               <div class="home-story__cards">
-                <div class="home-story__card"><b>响应式</b><span>窄屏自动降列</span></div>
-                <div class="home-story__card"><b>定价卡</b><span>转化一次配齐</span></div>
-                <div class="home-story__card"><b>暗色主题</b><span>一行开关</span></div>
+                <div v-for="(c, i) in [{ b: '响应式', s: '窄屏自动降列' }, { b: '定价卡', s: '转化一次配齐' }, { b: '暗色主题', s: '一行开关' }]" :key="c.b" class="home-story__card" :style="storyCard(progress, i)">
+                  <b>{{ c.b }}</b><span>{{ c.s }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -377,53 +394,55 @@ function goSearch() {
 />
 
 <style>
-/* ─── 滚动叙事：三步搭官网（EvScrollScene 实战）─── */
+/* ─── 滚动叙事：三步搭官网（EvScrollScene 实战）───
+   进出场/错拍/暗色切换的缓动在模板里对 progress 做 easeOutCubic 区段映射（:style 绑定） */
 .home-story {
   --p: var(--ev-scene-progress);
-  --d: clamp(0, (var(--p) - 0.66) * 3, 1);
-  max-width: 680px;
+  --d: 0;
+  width: 100%;
+  max-width: 960px;
   margin: 0 auto;
 }
 .home-story__browser {
   border: 1px solid var(--ev-border-color);
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: var(--ev-shadow-3);
-  /* 第一幕：窗口随滚上浮进场 */
-  opacity: calc(var(--p) * 4);
-  transform: translateY(calc((1 - min(var(--p) * 3, 1)) * 28px));
 }
 .home-story__chrome {
   display: flex;
-  gap: 6px;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 14px 18px;
   background: color-mix(in srgb, #eef1f6 calc((1 - var(--d)) * 100%), #1a2334 calc(var(--d) * 100%));
 }
 .home-story__chrome i {
-  width: 9px;
-  height: 9px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: #c8d0dd;
 }
 .home-story__viewport {
-  padding: 22px 26px 26px;
+  min-height: 520px;
+  padding: 30px 40px 40px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
   background-color: color-mix(in srgb, #f8fafc calc((1 - var(--d)) * 100%), #0e1420 calc(var(--d) * 100%));
 }
 .home-story__nav {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 12px;
+  gap: 20px;
+  font-size: 13px;
 }
 .home-story__logo {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 16px;
   color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
 }
 .home-story__links {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   color: color-mix(in srgb, #66748c calc((1 - var(--d)) * 100%), #9db4d8 calc(var(--d) * 100%));
 }
 .home-story__links i {
@@ -431,63 +450,59 @@ function goSearch() {
 }
 .home-story__navbtn {
   margin-left: auto;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--ev-color-primary);
-  color: #fff;
-  font-size: 11px;
-}
-.home-story__headline {
-  margin: 34px 0 0;
-  font-size: 30px;
-  font-weight: 200;
-  letter-spacing: 0.02em;
-  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
-}
-.home-story__tagline {
-  margin: 8px 0 0;
-  font-size: 13px;
-  color: color-mix(in srgb, #66748c calc((1 - var(--d)) * 100%), #9db4d8 calc(var(--d) * 100%));
-}
-.home-story__cta {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 6px 16px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: var(--ev-color-primary);
   color: #fff;
   font-size: 12px;
 }
+.home-story__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px 0;
+}
+.home-story__headline {
+  margin: 0;
+  font-size: clamp(30px, 4.2vw, 52px);
+  font-weight: 200;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
+}
+.home-story__tagline {
+  margin: 12px 0 0;
+  font-size: 15px;
+  color: color-mix(in srgb, #66748c calc((1 - var(--d)) * 100%), #9db4d8 calc(var(--d) * 100%));
+}
+.home-story__cta {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: var(--ev-color-primary);
+  color: #fff;
+  font-size: 13px;
+}
 .home-story__cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 30px;
+  gap: 16px;
+  margin-top: 26px;
 }
 .home-story__card {
-  padding: 14px 16px;
+  padding: 18px 20px;
   border: 1px solid color-mix(in srgb, var(--ev-border-color) calc((1 - var(--d)) * 100%), #243247 calc(var(--d) * 100%));
-  border-radius: 10px;
-  /* 第二幕：三张卡随滚动错拍浮入 */
-  opacity: clamp(0, (var(--p) - 0.38) * 5, 1);
-  transform: translateY(clamp(-16px, (0.38 - var(--p)) * 120px, 0px));
+  border-radius: 12px;
   background: color-mix(in srgb, #ffffff calc((1 - var(--d)) * 100%), #16233a calc(var(--d) * 100%));
-}
-.home-story__card:nth-child(2) {
-  opacity: clamp(0, (var(--p) - 0.45) * 5, 1);
-  transform: translateY(clamp(-16px, (0.45 - var(--p)) * 120px, 0px));
-}
-.home-story__card:nth-child(3) {
-  opacity: clamp(0, (var(--p) - 0.52) * 5, 1);
-  transform: translateY(clamp(-16px, (0.52 - var(--p)) * 120px, 0px));
 }
 .home-story__card b {
   display: block;
-  font-size: 13px;
+  font-size: 15px;
   color: color-mix(in srgb, #16233c calc((1 - var(--d)) * 100%), #eef4ff calc(var(--d) * 100%));
 }
 .home-story__card span {
-  font-size: 11px;
+  font-size: 12px;
   color: color-mix(in srgb, #8a96a9 calc((1 - var(--d)) * 100%), #7d92b5 calc(var(--d) * 100%));
 }
 .home-story__captions {
