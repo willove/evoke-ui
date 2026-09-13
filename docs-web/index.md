@@ -183,8 +183,8 @@ function storyFade(p, a, b) {
   description="一套为官网与营销页而生的 Vue3 组件库：排版疏朗、动效轻盈，明暗双主题与运行时换色开箱即用。"
 >
   <template #badge>
-    <EvAlert pill>
-      <span>v0.7.0 发布：EvScrollScene 滚动叙事——苹果式随滚动展开的产品故事，首页这面浏览器窗口就是它搭的</span>
+    <EvAlert pill class="home-alert">
+      <span>v0.7.0 发布：EvScrollScene 滚动叙事，随滚动展开产品故事</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -415,6 +415,24 @@ function storyFade(p, a, b) {
 />
 
 <style>
+/* ─── 首页 hero 发布横幅：超长文案溢出截断省略，不再换行撑破胶囊 ─── */
+.home-alert {
+  max-width: 100%;
+}
+.home-alert .ev-alert__content {
+  min-width: 0;
+}
+.home-alert .ev-alert__message {
+  min-width: 0;
+  overflow: hidden;
+}
+.home-alert .ev-alert__message span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ─── 滚动叙事：三步搭官网（EvScrollScene 实战）───
    进出场/错拍/暗色切换的缓动在模板里对 progress 做 easeOutCubic 区段映射（:style 绑定） */
 .home-story {
