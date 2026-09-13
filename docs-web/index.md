@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.6.0</EvTag>
+      <EvTag size="small">v0.7.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.6.0 发布：新增 Slider 滑块，磨砂质感支持按组件调参数</span>
+      <span>v0.7.0 发布：EvScrollScene 滚动叙事——苹果式随滚动展开的产品故事，首页这面浏览器窗口就是它搭的</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.6.0</EvTag>
+        <EvTag tone="primary" size="small">v0.7.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>

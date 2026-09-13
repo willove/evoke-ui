@@ -25,6 +25,8 @@
   单测（宽度口径 / 末端平边 / 明暗递浅 / 显式定色 / 压缩尾段 / 金字塔 / 标签对比色），
   全量 69 文件 1145 项全绿。
 
+## [ui 0.7.0] — 2026-09-13
+
 ### @wil-works/evoke-ui — 滚动叙事：EvScrollScene 场景组件 + useScrollProgress 进度原语
 
 - **新增 `EvScrollScene` 滚动场景**：外层按 `duration` 拉出滚动长度、内层 sticky 钉在
