@@ -11,7 +11,8 @@ import {
   drawSymbol,
   resolveLineDash,
   layoutLabelsAvoidOverlap,
-  truncateLabel
+  truncateLabel,
+  minMaxDecimatePoints
 } from "./core";
 import { categoryToX } from "./axes";
 import { maxOf, minOf } from "../extent";
@@ -96,14 +97,23 @@ function renderLineChart(ctx, yRange, side = "left") {
       points.push([x, y]);
     });
     allPoints.push(points.map((p) => p || [NaN, NaN]));
+    // 大数据抽稀（DESIGN §16）：点数超像素列 2 倍才启用；命中 / 悬浮 / tooltip 仍走全量数据
+    let drawPoints = points;
+    let drawIdxs = points.map((_, i) => i);
+    const columnBudget = Math.max(2, Math.floor(plotArea.width));
+    if (points.length > columnBudget * 2) {
+      const decimated = minMaxDecimatePoints(points, columnBudget);
+      drawPoints = decimated.map((e) => e.p);
+      drawIdxs = decimated.map((e) => e.i);
+    }
     const connect = resolveConnectNulls(options, series);
     const segments = [];
     let currentPts = [];
     let currentIdxs = [];
-    points.forEach((p, i) => {
+    drawPoints.forEach((p, k) => {
       if (p) {
         currentPts.push(p);
-        currentIdxs.push(i);
+        currentIdxs.push(drawIdxs[k]);
       } else if (currentPts.length > 0 && !connect) {
         segments.push({ pts: currentPts, idxs: currentIdxs });
         currentPts = [];
@@ -211,9 +221,9 @@ function renderLineChart(ctx, yRange, side = "left") {
     // 数据点圆点默认不绘制（大平台折线惯例：平时纯线条，hover 才有反馈），showSymbol: true 显式打开
     if (series.showSymbol === true && series.symbol !== "none") {
       const baseR = series.symbolSize ?? 4;
-      points.forEach((p, i) => {
+      drawPoints.forEach((p, k) => {
         if (!p) return;
-        const isHover = i === hoverIndex;
+        const isHover = drawIdxs[k] === hoverIndex;
         const radius = isHover ? baseR + 2 : baseR;
         canvasCtx.beginPath();
         drawSymbol(canvasCtx, series.symbol, p[0], p[1], radius);
@@ -250,20 +260,20 @@ function renderLineChart(ctx, yRange, side = "left") {
       canvasCtx.textBaseline = "bottom";
       const rects = [];
       const texts = [];
-      points.forEach((p, i) => {
+      drawPoints.forEach((p, k) => {
         if (!p) {
           rects.push({ x: 0, y: 0, width: 0, height: 0 });
           texts.push("");
           return;
         }
-        const text = valueFormatter(series.data[i]);
+        const text = valueFormatter(series.data[drawIdxs[k]]);
         const w = canvasCtx.measureText(text).width;
         rects.push({ x: p[0] - w / 2 - 2, y: p[1] - 20, width: w + 4, height: 13 });
         texts.push(text);
       });
       const visible = layoutLabelsAvoidOverlap(rects);
-      points.forEach((p, i) => {
-        if (p && visible[i]) canvasCtx.fillText(texts[i], p[0], p[1] - 8);
+      drawPoints.forEach((p, k) => {
+        if (p && visible[k]) canvasCtx.fillText(texts[k], p[0], p[1] - 8);
       });
       canvasCtx.restore();
     }

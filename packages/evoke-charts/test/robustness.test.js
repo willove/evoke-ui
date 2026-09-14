@@ -5,7 +5,7 @@ import EvChart from '../src/chart.vue'
 import { minOf, maxOf } from '../src/extent.js'
 import { createAnimation, updateAnimation } from '../src/renderer/index.js'
 import { computeSankeyLayout } from '../src/renderer/charts-relation.js'
-import { waterfallSteps } from '../src/renderer/core.js'
+import { waterfallSteps, minMaxDecimatePoints } from '../src/renderer/core.js'
 
 // 本文件是健壮性回访回归：tooltip 转义、缺 data 系列、大数组极值、
 // destroy 清理、gauge 边界、easing 回落、sankey nodeAlign。
@@ -232,8 +232,7 @@ describe('sankey nodeAlign（DESIGN §3.5）', () => {
   })
 })
 
-describe('waterfallSteps 共享口径', () => {
-  it('增量累计、合计列重置、缺失值标记三处消费同一份', () => {
+describe('waterfallSteps 共享口径', () => {  it('增量累计、合计列重置、缺失值标记三处消费同一份', () => {
     const steps = waterfallSteps([10, -4, null, 20], [3])
     expect(steps[0]).toEqual({ value: 10, from: 0, to: 10, isTotal: false, missing: false })
     expect(steps[1]).toEqual({ value: -4, from: 10, to: 6, isTotal: false, missing: false })
@@ -241,6 +240,74 @@ describe('waterfallSteps 共享口径', () => {
     expect(steps[2].from).toBe(6)
     expect(steps[2].to).toBe(6)
     expect(steps[3]).toEqual({ value: 20, from: 0, to: 20, isTotal: true, missing: false })
+  })
+})
+
+describe('minMaxDecimatePoints（DESIGN §16）', () => {
+  const px = (x, y) => [x, y]
+
+  it('列内保首/末/最小/最大，输出 x 单调且索引映射保留', () => {
+    // 一列内：首 5、谷 1、峰 9、末 3 —— 四个代表点都要在
+    const points = [px(0, 5), px(1, 4), px(2, 1), px(3, 9), px(4, 3)]
+    const out = minMaxDecimatePoints(points, 1)
+    expect(out.map((e) => e.i)).toEqual([0, 2, 3, 4])
+    expect(out.map((e) => e.p[1])).toEqual([5, 1, 9, 3])
+  })
+
+  it('整列缺失保留段断标记，不跨缺口连线', () => {
+    const points = [px(0, 1), px(1, 2), null, null, px(4, 5), px(5, 1)]
+    const out = minMaxDecimatePoints(points, 3)
+    // 中列全缺：第一段与第二段之间必须有 null 断段标记
+    const gapIdx = out.findIndex((e) => e.p === null)
+    expect(gapIdx).toBeGreaterThan(-1)
+    expect(out[0].i).toBe(0)
+    expect(out[out.length - 1].i).toBe(5)
+    // 除断段标记外 x 单调递增
+    const coords = out.filter((e) => e.p).map((e) => e.p[0])
+    expect(coords).toEqual([...coords].sort((a, b) => a - b))
+  })
+
+  it('峰谷保留：正弦数据抽稀后极值仍在输出中', () => {
+    const n = 6000
+    const points = Array.from({ length: n }, (_, i) => px(i, 100 + 80 * Math.sin(i / 25)))
+    const out = minMaxDecimatePoints(points, 700)
+    expect(out.length).toBeLessThan(700 * 4 + 10)
+    const ys = out.map((e) => e.p[1])
+    expect(Math.min(...ys)).toBeLessThanOrEqual(100 + 80 * Math.sin(25 * Math.PI * 0) + 1)
+    // 全局最小值点必须保留
+    let minI = 0
+    for (let i = 1; i < n; i++) if (points[i][1] < points[minI][1]) minI = i
+    expect(out.some((e) => e.i === minI)).toBe(true)
+    // 全局最大值点必须保留
+    let maxI = 0
+    for (let i = 1; i < n; i++) if (points[i][1] > points[maxI][1]) maxI = i
+    expect(out.some((e) => e.i === maxI)).toBe(true)
+  })
+})
+
+describe('大数据折线渲染（抽稀生效）', () => {
+  it('6000 点折线绘制调用被压到像素列量级，且不进错误态', async () => {
+    const points = Array.from({ length: 6000 }, (_, i) => 50 + 40 * Math.sin(i / 30))
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'line',
+          animation: { enabled: false },
+          labels: points.map((_, i) => String(i)),
+          series: [{ name: '高频', data: points }],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart__error').exists()).toBe(false)
+    expect(wrapper.find('canvas.ev-chart__canvas').exists()).toBe(true)
+    const lineTo = ctx.__calls.get('lineTo')?.mock.calls.length ?? 0
+    // 未抽稀时约 6000+ lineTo；抽稀后 ≤ 4×像素列（约 730 列）
+    expect(lineTo).toBeGreaterThan(0)
+    expect(lineTo).toBeLessThan(4000)
+    wrapper.unmount()
   })
 })
 

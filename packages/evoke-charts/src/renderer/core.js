@@ -92,6 +92,42 @@ function waterfallSteps(deltas, totalIndices) {
   });
   return steps;
 }
+// 折线大数据抽稀（DESIGN §16）：像素点数显著超绘图区像素列时按列做 min-max
+// 抽稀——每列保首/末/最小/最大四个代表点，峰谷与断段像素级不丢，绘制调用从
+// O(点数) 降到 O(宽度)。返回 [{p, i}]：p 为像素坐标（整列缺失时以 null 作段
+// 标记），i 为原始数据索引——命中 / 悬浮 / 标签映射不受抽稀影响。
+function minMaxDecimatePoints(points, columns) {
+  const out = [];
+  const per = points.length / columns;
+  let pendingGap = false;
+  for (let b = 0; b < columns; b++) {
+    const start = Math.floor(b * per);
+    const end = Math.min(points.length, Math.max(start + 1, Math.floor((b + 1) * per)));
+    let first = -1;
+    let last = -1;
+    let minI = -1;
+    let maxI = -1;
+    for (let i = start; i < end; i++) {
+      const p = points[i];
+      if (!p) continue;
+      if (first < 0) first = i;
+      last = i;
+      if (minI < 0 || p[1] < points[minI][1]) minI = i;
+      if (maxI < 0 || p[1] > points[maxI][1]) maxI = i;
+    }
+    if (first < 0) {
+      if (out.length > 0) pendingGap = true;
+      continue;
+    }
+    if (pendingGap) {
+      out.push({ p: null, i: first });
+      pendingGap = false;
+    }
+    const picks = [...new Set([first, minI, maxI, last])].sort((a, b) => a - b);
+    for (const idx of picks) out.push({ p: points[idx], i: idx });
+  }
+  return out;
+}
 function resolveConnectNulls(options, series) {
   return series?.connectNulls ?? options.connectNulls ?? false;
 }
@@ -778,6 +814,7 @@ export {
   isMissingValue,
   layoutLabelsAvoidOverlap,
   mixColor,
+  minMaxDecimatePoints,
   parseColorChannels,
   parseTimeLabels,
   resolveConnectNulls,

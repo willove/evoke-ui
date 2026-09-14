@@ -723,7 +723,21 @@ function stopHoverAnimation() {
     cancelAnimationFrame(hoverAnimFrameId);
     hoverAnimFrameId = null;
   }
+  if (hoverRedrawFrameId !== null) {
+    cancelAnimationFrame(hoverRedrawFrameId);
+    hoverRedrawFrameId = null;
+  }
   hoverAnimDone = null;
+}
+// 悬浮重绘合帧：指针高速扫过时一帧至多一次全绘（DESIGN §13.2），
+// 动画帧本身已是 rAF 驱动，这里只兜住「改索引即同步重绘」的分支
+let hoverRedrawFrameId = null;
+function scheduleHoverRedraw() {
+  if (hoverRedrawFrameId !== null) return;
+  hoverRedrawFrameId = requestAnimationFrame(() => {
+    hoverRedrawFrameId = null;
+    redraw();
+  });
 }
 // 饼/环/玫瑰是「抽出」动画，旭日图与矩形树图是「聚焦子树」淡化，雷达是
 // 「轴线点亮」——都要缓动（DESIGN §13：动画只属于数据与焦点过渡）
@@ -1765,9 +1779,9 @@ function handlePointerMove(e) {
         // 层级图切换焦段不重播淡化：直接停在终值，避免每次移动都闪一下
         stopHoverAnimation();
         hoverAnimProgress = 1;
-        redraw();
+        scheduleHoverRedraw();
       } else {
-        redraw();
+        scheduleHoverRedraw();
       }
       if (prevIndex === -1) {
         const emitParams = Array.isArray(result.params) ? result.params[0] : result.params;
