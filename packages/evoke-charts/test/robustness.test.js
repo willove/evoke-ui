@@ -4,7 +4,9 @@ import { nextTick } from 'vue'
 import EvChart from '../src/chart.vue'
 import { minOf, maxOf } from '../src/extent.js'
 import { createAnimation, updateAnimation } from '../src/renderer/index.js'
+import { createSvgRecorder } from '../src/renderer/index.js'
 import { computeSankeyLayout } from '../src/renderer/charts-relation.js'
+import { ganttHitTest } from '../src/renderer/charts-gantt.js'
 import { waterfallSteps, minMaxDecimatePoints } from '../src/renderer/core.js'
 
 // 本文件是健壮性回访回归：tooltip 转义、缺 data 系列、大数组极值、
@@ -429,5 +431,62 @@ describe('键盘巡历（DESIGN §13.7 期 1–2）', () => {
     await flushRender()
     expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(false)
     wrapper.unmount()
+  })
+
+  it('Enter 在巡历落点触发 click（与指针同一事件载荷）', async () => {
+    const wrapper = mount(EvChart, { props: { options: BAR_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    press(wrapper, 'Enter')
+    await flushRender()
+    const clicks = wrapper.emitted('click')
+    expect(clicks).toBeTruthy()
+    const payload = clicks[0][0]
+    expect(payload.dataIndex).toBe(0)
+    expect(payload.name).toBe('一')
+    expect(payload.seriesName).toBe('销量')
+    // 未巡历时 Enter 不触发
+    const wrapper2 = mount(EvChart, { props: { options: BAR_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    press(wrapper2, 'Enter')
+    expect(wrapper2.emitted('click')).toBeFalsy()
+    wrapper.unmount()
+    wrapper2.unmount()
+  })
+})
+
+describe('exportSVG 旋转文本保真', () => {
+  it('旋转上下文的 text 带 transform 矩阵，无旋转的不带', () => {
+    const real = { measureText: () => ({ width: 10 }) }
+    const recorder = createSvgRecorder(real)
+    recorder.ctx.translate(100, 50)
+    recorder.ctx.rotate(-Math.PI / 2)
+    recorder.ctx.fillText('维度', 0, 0)
+    const svg = recorder.toSvg(800, 400, '#ffffff')
+    expect(svg).toContain('维度')
+    expect(svg).toContain('transform="matrix(')
+
+    const plain = createSvgRecorder({ measureText: () => ({ width: 10 }) })
+    plain.ctx.fillText('横排', 10, 10)
+    const svg2 = plain.toSvg(800, 400, '#ffffff')
+    expect(svg2).toContain('横排')
+    expect(svg2).not.toContain('transform=')
+  })
+})
+
+describe('ganttHitTest 预计算布局契约', () => {
+  it('传入布局直接命中，不再内部重算', () => {
+    const layout = {
+      rows: [{ name: '任务A', color: '#000', start: '2026-01-01', end: '2026-01-05', progress: 0.5, isMilestone: false }],
+      rowH: 40,
+    }
+    const plot = { x: 0, y: 0, width: 800, height: 400 }
+    const hit = ganttHitTest(10, 10, plot, {}, { colors: [] }, new Set(), layout)
+    expect(hit.index).toBe(0)
+    expect(hit.params.name).toBe('任务A')
+    expect(hit.params.extra.progress).toBe(0.5)
   })
 })

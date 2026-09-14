@@ -850,7 +850,7 @@ function checkLegendHit(x, y) {
     height: height - padding.top - padding.bottom
   };
   const ctx2d = canvas.getContext("2d");
-  const bounds = getLegendBounds(ctx2d, effectiveOptions.value, plotArea, width, height, theme, hiddenSeries.value);
+  const bounds = legendBoundsFor(ctx2d, effectiveOptions.value, plotArea, width, height, theme, hiddenSeries.value, isDark);
   for (const bound of bounds) {
     if (canvasX >= bound.x && canvasX <= bound.x + bound.width && canvasY >= bound.y && canvasY <= bound.y + bound.height) {
       return bound.name;
@@ -1023,7 +1023,7 @@ function getHoveredData(x, y) {
     return calendarHitTest(canvasX, canvasY, plotArea, options, theme);
   }
   if (options.type === "sankey") {
-    return sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+    return sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, sankeyLayoutFor(plotArea, options, theme, hiddenSeries.value, isDark));
   }
   if (options.type === "venn") {
     return vennHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
@@ -1042,7 +1042,7 @@ function getHoveredData(x, y) {
     return arcHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
   }
   if (options.type === "gantt") {
-    return ganttHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value);
+    return ganttHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, ganttLayoutFor(plotArea, options, theme, hiddenSeries.value, isDark));
   }
   if (options.type === "scatter-matrix") {
     const fields = options.matrixFields || [];
@@ -1958,12 +1958,26 @@ function handleEscapeKey(e) {
 // 步进悬浮（横向图 ↑/↓，其余 ←/→），Home / End 跳首末；合成坐标直接走指针
 // 悬浮同一管线——准线、tooltip、aria-live 播报与 hover 事件全通道一致
 const KEYNAV_TYPES = /* @__PURE__ */ new Set(["line", "area", "bar", "stacked-bar", "waterfall", "mixed", "horizontal-bar"]);
+// 键盘巡历的合成坐标（供 Enter / Space 触发 click 时复用同一次命中）
+let keyboardClientX = -1;
+let keyboardClientY = -1;
 function handleChartKeydown(e) {
   const options = props.options;
   if (!KEYNAV_TYPES.has(options.type)) return;
   const labels = options.labels || [];
   const count = labels.length;
   if (count === 0) return;
+  // Enter / Space：在键盘巡历落点上触发数据点 click（§13.7 期 3）
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    if (hoverIndex < 0 || keyboardClientX < 0) return;
+    const result = getHoveredData(keyboardClientX, keyboardClientY);
+    if (result) {
+      const params = Array.isArray(result.params) ? result.params[0] : result.params;
+      emit("click", params);
+    }
+    return;
+  }
   const horizontal = options.type === "horizontal-bar";
   // 横向条形图第一个类目在最下方：↑ 即索引 +1（视觉向上）；其余 ←/→ 增减
   let i = hoverIndex;
@@ -1988,6 +2002,8 @@ function handleChartKeydown(e) {
   const clientY = horizontal
     ? rect.top + padding.top + plotHeight - (i + 0.5) * (plotHeight / count)
     : rect.top + padding.top + plotHeight / 2;
+  keyboardClientX = clientX;
+  keyboardClientY = clientY;
   mouseX = clientX - rect.left;
   mouseY = clientY - rect.top;
   handlePointerMove({ clientX, clientY, pointerType: "mouse" });
@@ -2079,6 +2095,9 @@ watch(
     cachedPlotArea = null;
     cachedPadding = null;
     scatterHitCache = null;
+    legendBoundsCache = null;
+    ganttLayoutCache = null;
+    sankeyLayoutCache = null;
     internalError.value = null;
     runDevValidation();
     // 运行中通过 options 增删 emphasis 时补播淡化缓动（无变化不重绘）
@@ -2205,6 +2224,53 @@ function scatterPositionsFor(scatterData, yRange, plotArea, options) {
   };
   return positions;
 }
+// 图例 bounds 缓存：checkLegendHit 每次 move 全量 measureText 重排；键同 paddingFor
+let legendBoundsCache = null;
+function legendBoundsFor(ctx2d, options, plotArea, width, height, theme, hiddenSeries, isDark) {
+  const c = legendBoundsCache;
+  if (
+    c && c.options === options && c.width === width && c.height === height && c.dark === isDark &&
+    c.hidden === hiddenSeries &&
+    c.px === plotArea.x && c.py === plotArea.y && c.pw === plotArea.width && c.ph === plotArea.height
+  ) {
+    return c.bounds;
+  }
+  const bounds = getLegendBounds(ctx2d, options, plotArea, width, height, theme, hiddenSeries);
+  legendBoundsCache = {
+    options, width, height, dark: isDark, hidden: hiddenSeries,
+    px: plotArea.x, py: plotArea.y, pw: plotArea.width, ph: plotArea.height,
+    bounds
+  };
+  return bounds;
+}
+// 甘特 / 桑基命中布局缓存：布局含逐任务 Date.parse / 拓扑松弛迭代，
+// 悬浮期间按输入键控复用（渲染路径的自算布局不受影响）
+let ganttLayoutCache = null;
+function ganttLayoutFor(plotArea, options, theme, hiddenSeries, isDark) {
+  const c = ganttLayoutCache;
+  if (
+    c && c.options === options && c.dark === isDark && c.hidden === hiddenSeries &&
+    c.px === plotArea.x && c.py === plotArea.y && c.pw === plotArea.width && c.ph === plotArea.height
+  ) {
+    return c.layout;
+  }
+  const layout = computeGanttLayout(plotArea, options, theme, hiddenSeries);
+  ganttLayoutCache = { options, dark: isDark, hidden: hiddenSeries, px: plotArea.x, py: plotArea.y, pw: plotArea.width, ph: plotArea.height, layout };
+  return layout;
+}
+let sankeyLayoutCache = null;
+function sankeyLayoutFor(plotArea, options, theme, hiddenSeries, isDark) {
+  const c = sankeyLayoutCache;
+  if (
+    c && c.options === options && c.dark === isDark && c.hidden === hiddenSeries &&
+    c.px === plotArea.x && c.py === plotArea.y && c.pw === plotArea.width && c.ph === plotArea.height
+  ) {
+    return c.layout;
+  }
+  const layout = computeSankeyLayout(plotArea, options, theme, hiddenSeries);
+  sankeyLayoutCache = { options, dark: isDark, hidden: hiddenSeries, px: plotArea.x, py: plotArea.y, pw: plotArea.width, ph: plotArea.height, layout };
+  return layout;
+}
 defineExpose({
   refresh: () => render(true),
   update(newOptions) {
@@ -2212,6 +2278,9 @@ defineExpose({
     cachedDataExtent = null;
     cachedPadding = null;
     scatterHitCache = null;
+    legendBoundsCache = null;
+    ganttLayoutCache = null;
+    sankeyLayoutCache = null;
     specVersion.value++;
     debouncedRender(true);
   },

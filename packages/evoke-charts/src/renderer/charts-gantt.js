@@ -261,8 +261,7 @@ function renderGanttChart(ctx) {
   });
 }
 
-function ganttHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries) {
-  const layout = computeGanttLayout(plotArea, options, theme, hiddenSeries);
+function ganttHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries, layout = computeGanttLayout(plotArea, options, theme, hiddenSeries)) {
   if (!layout) return null;
   const { rows } = layout;
   const relY = canvasY - plotArea.y;

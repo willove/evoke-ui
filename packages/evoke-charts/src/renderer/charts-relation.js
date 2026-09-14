@@ -239,8 +239,7 @@ function renderSankeyChart(ctx) {
 }
 
 /** 桑基命中：先节点矩形、后流带（平滑步进插值带内即命中） */
-function sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries) {
-  const layout = computeSankeyLayout(plotArea, options, theme, hiddenSeries);
+function sankeyHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries, layout = computeSankeyLayout(plotArea, options, theme, hiddenSeries)) {
   if (!layout) return null;
   const { nodes, ribbons } = layout;
   for (let i = 0; i < nodes.length; i++) {

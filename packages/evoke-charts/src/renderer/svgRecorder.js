@@ -181,6 +181,13 @@ function createSvgRecorder(real) {
         "font-family": font.family,
         "fill": typeof style.fillStyle === "string" ? style.fillStyle : "#000"
       };
+      // 旋转/切变上下文：x/y 回填本地坐标、整体变换走 transform 矩阵，
+      // 否则导出的 SVG 里旋转文本（雷达维度标签等）会横排
+      if (matrix[1] !== 0 || matrix[2] !== 0) {
+        attrs.x = x.toFixed(2);
+        attrs.y = y.toFixed(2);
+        attrs.transform = `matrix(${matrix.map((v) => +v.toFixed(4)).join(" ")})`;
+      }
       if (style.textAlign === "center") attrs["text-anchor"] = "middle";
       else if (style.textAlign === "right" || style.textAlign === "end") attrs["text-anchor"] = "end";
       if (style.textBaseline === "middle") attrs["dominant-baseline"] = "central";
