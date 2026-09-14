@@ -1,4 +1,4 @@
-import { estimateTextWidth, getContrastText, isLightColor, mixColor } from "./core";
+import { estimateTextWidth, getContrastText, isLightColor, mixColor, truncateLabel } from "./core";
 import { maxOf } from "../extent";
 
 // ─── 关系图族（桑基 / 韦恩 / 弦图 / 弧长连接图）───
@@ -829,18 +829,9 @@ function renderArcChart(ctx) {
     canvasCtx.lineTo(n.x, axisY + 16);
     canvasCtx.stroke();
     if (progress >= 0.9) {
-      let label = n.name;
       canvasCtx.font = "12px Inter, sans-serif";
       const maxW = (plotArea.width / nodes.length) - 6;
-      if (canvasCtx.measureText(label).width > maxW) {
-        let lo = 0, hi = label.length;
-        while (lo < hi) {
-          const mid = Math.ceil((lo + hi) / 2);
-          if (canvasCtx.measureText(label.slice(0, mid) + "…").width > maxW) hi = mid - 1;
-          else lo = mid;
-        }
-        label = label.slice(0, lo) + "…";
-      }
+      const label = truncateLabel(canvasCtx, n.name, maxW);
       canvasCtx.fillStyle = theme.textColorSecondary;
       canvasCtx.textAlign = "center";
       canvasCtx.textBaseline = "top";

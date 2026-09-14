@@ -10,7 +10,8 @@ import {
   focusAlpha,
   drawSymbol,
   resolveLineDash,
-  layoutLabelsAvoidOverlap
+  layoutLabelsAvoidOverlap,
+  truncateLabel
 } from "./core";
 import { categoryToX } from "./axes";
 import { maxOf, minOf } from "../extent";
@@ -526,15 +527,7 @@ function renderHorizontalBarChart(ctx, xRange) {
   labels.forEach((label, i) => {
     const y = plotArea.y + plotArea.height - (i + 0.5) * categoryWidth;
     let formattedLabel = options.yAxis?.formatter ? options.yAxis.formatter(label) : label;
-    if (canvasCtx.measureText(formattedLabel).width > maxCatWidth) {
-      let lo = 0, hi = formattedLabel.length;
-      while (lo < hi) {
-        const mid = Math.ceil((lo + hi) / 2);
-        if (canvasCtx.measureText(formattedLabel.slice(0, mid) + "\u2026").width > maxCatWidth) hi = mid - 1;
-        else lo = mid;
-      }
-      formattedLabel = formattedLabel.slice(0, lo) + "\u2026";
-    }
+    formattedLabel = truncateLabel(canvasCtx, formattedLabel, maxCatWidth);
     canvasCtx.fillText(formattedLabel, plotArea.x - 10, y);
   });
   canvasCtx.restore();
@@ -581,7 +574,7 @@ function renderPieChart(ctx, isDoughnut, isRose = false) {
   const centerX = plotArea.x + plotArea.width / 2;
   const centerY = plotArea.y + plotArea.height / 2;
   const maxRadius = computePieMaxRadius(pieData, options, plotArea);
-  const innerRadius = isDoughnut ? Math.max(0, Math.min(maxRadius - 5, maxRadius * (options.innerRadius || 0.6))) : 0;
+  const innerRadius = isDoughnut ? doughnutInnerRadius(maxRadius, options) : 0;
   let startAngle = -Math.PI / 2;
   const labelItems = [];
   pieData.forEach((data, index) => {
@@ -652,10 +645,15 @@ function renderPieChart(ctx, isDoughnut, isRose = false) {
     canvasCtx.restore();
   }
 }
+// 环形内半径口径（渲染与命中测试共用）：innerRadius 占比，缺省 0.6，顶到外缘留 5px
+function doughnutInnerRadius(maxRadius, options) {
+  return Math.max(0, Math.min(maxRadius - 5, maxRadius * (options.innerRadius || 0.6)));
+}
 function createScatterScale(scatterData, yRange, plotArea) {
-  const xValues = scatterData.map((d) => d.x);
-  const xMin = minOf(xValues);
-  const xMax = maxOf(xValues);
+  // 非有限 x/y 不参与量程（NaN 会让轴刻度全 NaN、整图静默空白）
+  const xValues = scatterData.map((d) => d.x).filter((v) => typeof v === "number" && Number.isFinite(v));
+  const xMin = xValues.length ? minOf(xValues) : 0;
+  const xMax = xValues.length ? maxOf(xValues) : 1;
   const xRange = xMax - xMin || 1;
   const xPadding = xRange * 0.05;
   const yPadding = (yRange.max - yRange.min) * 0.05;
@@ -839,12 +837,12 @@ function computeFacetGrids(scatterData, plotArea, options) {
     const col = i % cols;
     const row = Math.floor(i / cols);
     const data = grouped.get(name);
-    const xs = data.map((d) => d.x);
-    const ys = data.map((d) => d.y);
-    const xMin = minOf(xs);
-    const xMax = maxOf(xs);
-    const yMin = minOf(ys);
-    const yMax = maxOf(ys);
+    const xs = data.map((d) => d.x).filter((v) => typeof v === "number" && Number.isFinite(v));
+    const ys = data.map((d) => d.y).filter((v) => typeof v === "number" && Number.isFinite(v));
+    const xMin = xs.length ? minOf(xs) : 0;
+    const xMax = xs.length ? maxOf(xs) : 1;
+    const yMin = ys.length ? minOf(ys) : 0;
+    const yMax = ys.length ? maxOf(ys) : 1;
     const xPad = (xMax - xMin || 1) * 0.08;
     const yPad = (yMax - yMin || 1) * 0.08;
     const outer = { x: plotArea.x + col * cellW, y: plotArea.y + row * cellH, width: cellW, height: cellH };
@@ -1404,6 +1402,7 @@ export {
   computeMatrixCells,
   computePieMaxRadius,
   createScatterScale,
+  doughnutInnerRadius,
   linearFit,
   matrixFieldExtent,
   renderBarChart,

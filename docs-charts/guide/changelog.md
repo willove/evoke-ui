@@ -16,8 +16,12 @@ const releases = [
   {
     tag: 'Unreleased',
     date: '即将发版',
-    title: '七项回访 · 安全与健壮性加固 · AI / MCP 面补齐',
+    title: '键盘巡历 · hover 链路缓存 · 去重复与边界回访',
     bullets: [
+      '键盘巡历落地（DESIGN §13.7 期 1–2）：容器可聚焦 + 贴内缘焦点环；直角系类目图 ←/→（横向图 ↑/↓）步进悬浮、Home/End 跳首末，准线 / tooltip / 读屏播报与指针同通道',
+      'hover 链路缓存：getPadding（每次 mousemove 2–3 次全量扫数据）与散点命中点位按引用键控缓存，悬浮期间零重算',
+      '静默边界改空态占位：饼族全 0 / 负值、韦恩超 3 集合不再留白画布；散点量程过滤 NaN 不再静默空白',
+      '实现收敛（行为不变）：涨跌色默认值单一出处、标签截断 6 份副本合一、瀑布累计口径 3 处合一（渲染 / 轴量程 / 命中共用 waterfallSteps）、环形内半径公式合一',
       'K 线 dataZoom 区间选择修复：纯 candleData 图纳入切片、volumeData 同步（此前滑块动了图不变、量带静默消失）',
       '日历热力格子矩形横向铺满；新增 calendar.granularity 周 / 月求和聚合视角（每日 / 每周 / 累计切换）',
       '弧形环状连接图归位弧长连接图：type arc + arcCircular: true，连线锚到节点圆点；文档章节迁移至弧长连接图页',

@@ -61,6 +61,37 @@ function mixColor(color, ratio, target) {
 function isMissingValue(v) {
   return v === null || v === void 0 || Number.isNaN(v);
 }
+// 标签超宽截断（二分找最长可容纳前缀 + 省略号）：轴标签 / 图例 / 关系图族共用一份
+function truncateLabel(canvasCtx, label, maxWidth) {
+  if (canvasCtx.measureText(label).width <= maxWidth) return label;
+  let lo = 0, hi = label.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    const truncated = label.slice(0, mid) + "\u2026";
+    if (canvasCtx.measureText(truncated).width > maxWidth) hi = mid - 1;
+    else lo = mid;
+  }
+  return label.slice(0, lo) + "\u2026";
+}
+// 瀑布图累计口径（渲染 / 轴量程 / tooltip 命中共用这一份）：
+// totalIndices 列画全高（from 0 → v 并重置累计），其余从当前累计增减
+function waterfallSteps(deltas, totalIndices) {
+  const totalIdx = new Set(totalIndices || []);
+  const steps = [];
+  let cumulative = 0;
+  (deltas || []).forEach((raw, i) => {
+    const missing = isMissingValue(raw);
+    const v = missing ? 0 : raw;
+    if (totalIdx.has(i)) {
+      steps.push({ value: v, from: 0, to: v, isTotal: true, missing });
+      cumulative = v;
+    } else {
+      steps.push({ value: v, from: cumulative, to: cumulative + v, isTotal: false, missing });
+      cumulative += v;
+    }
+  });
+  return steps;
+}
 function resolveConnectNulls(options, series) {
   return series?.connectNulls ?? options.connectNulls ?? false;
 }
@@ -555,22 +586,15 @@ function calculateRange(options, hiddenSeries, useRightAxis) {
   );
   if (options.type === "waterfall") {
     const wf = options.waterfall || {};
-    const totalIdx = new Set(wf.totalIndices || []);
     const deltas = (options.series || []).filter((s) => !hiddenSeries.has(s.name))[0]?.data || [];
-    let cumulative = 0;
-    deltas.forEach((rawV, i) => {
-      const v = isMissingValue(rawV) ? 0 : rawV;
-      if (totalIdx.has(i)) {
-        if (v > max) max = v;
-        if (v < min) min = v;
-        cumulative = v;
-      } else {
-        const from = cumulative;
-        cumulative = cumulative + v;
-        if (Math.max(from, cumulative) > max) max = Math.max(from, cumulative);
-        if (Math.min(from, cumulative) < min) min = Math.min(from, cumulative);
+    for (const step of waterfallSteps(deltas, wf.totalIndices)) {
+      // 合计列只计列高本身，增量列计两端
+      const points = step.isTotal ? [step.to] : [step.from, step.to];
+      for (const p of points) {
+        if (p > max) max = p;
+        if (p < min) min = p;
       }
-    });
+    }
   } else if (options.type === "boxplot") {
     const boxData = options.boxData || [];
     boxData.forEach((b) => {
@@ -762,5 +786,7 @@ export {
   resolveTickExtendedRange,
   roundRect,
   toLog,
-  updateAnimation
+  truncateLabel,
+  updateAnimation,
+  waterfallSteps
 };

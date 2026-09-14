@@ -1,4 +1,5 @@
-import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeriesColorIndex, isMissingValue, focusAlpha } from "./core";
+import { estimateTextWidth, getContrastText, isLightColor, mixColor, buildSeriesColorIndex, isMissingValue, focusAlpha, truncateLabel, waterfallSteps } from "./core";
+import { UP_COLOR, DOWN_COLOR } from "../types";
 import { INTERACTION } from "../interactions";
 import { renderLineChart } from "./charts-basic";
 function renderWaterfallChart(ctx, yRange) {
@@ -9,34 +10,20 @@ function renderWaterfallChart(ctx, yRange) {
   const deltas = (options.series || []).filter((s) => !hiddenSeries.has(s.name))[0]?.data || [];
   if (labels.length === 0 || deltas.length === 0) return;
   const totalIdx = new Set(wf.totalIndices || []);
-  const increaseColor = wf.increaseColor || "#dc2626";
-  const decreaseColor = wf.decreaseColor || "#16a34a";
+  const increaseColor = wf.increaseColor || UP_COLOR;
+  const decreaseColor = wf.decreaseColor || DOWN_COLOR;
   const totalColor = wf.totalColor || theme.colors[0];
   const categoryWidth = plotArea.width / labels.length;
   const barWidth = Math.min(categoryWidth * 0.6, 64);
   const yFor = (v) => plotArea.y + plotArea.height - (v - yRange.min) / (yRange.max - yRange.min) * plotArea.height;
-  let cumulative = 0;
+  const steps = waterfallSteps(deltas, wf.totalIndices);
   let prevEdgeX = null;
   let prevExitY = null;
   labels.forEach((_, i) => {
-    const raw = deltas[i];
-    if (isMissingValue(raw)) return;
-    const v = raw;
-    const isTotal = totalIdx.has(i);
-    let from;
-    let to;
-    let color;
-    if (isTotal) {
-      from = 0;
-      to = v;
-      cumulative = v;
-      color = totalColor;
-    } else {
-      from = cumulative;
-      to = cumulative + v;
-      cumulative = to;
-      color = v >= 0 ? increaseColor : decreaseColor;
-    }
+    const step = steps[i];
+    if (!step || step.missing) return;
+    const { from, to, isTotal } = step;
+    const color = isTotal ? totalColor : step.value >= 0 ? increaseColor : decreaseColor;
     const cx = plotArea.x + (i + 0.5) * categoryWidth;
     const x = cx - barWidth / 2;
     const isHover = i === hoverIndex;
@@ -83,11 +70,11 @@ function renderWaterfallChart(ctx, yRange) {
       canvasCtx.font = "11px Inter, sans-serif";
       canvasCtx.textAlign = "center";
       canvasCtx.textBaseline = "bottom";
-      canvasCtx.fillText(valueFormatter(v), cx, top - 4);
+      canvasCtx.fillText(valueFormatter(step.value), cx, top - 4);
       canvasCtx.restore();
     }
     prevEdgeX = x + barWidth;
-    prevExitY = yFor(cumulative);
+    prevExitY = yFor(step.to);
   });
 }
 /**
@@ -286,15 +273,7 @@ function renderBoxplotChart(ctx, yRange) {
       seen.add(box.catIndex);
       let label = box.b.label;
       const maxWidth = geo.categoryWidth - 8;
-      if (canvasCtx.measureText(label).width > maxWidth) {
-        let lo = 0, hi = label.length;
-        while (lo < hi) {
-          const mid = Math.ceil((lo + hi) / 2);
-          if (canvasCtx.measureText(label.slice(0, mid) + "\u2026").width > maxWidth) hi = mid - 1;
-          else lo = mid;
-        }
-        label = label.slice(0, lo) + "\u2026";
-      }
+      label = truncateLabel(canvasCtx, label, maxWidth);
       const cx = plotArea.x + (box.catIndex + 0.5) * geo.categoryWidth;
       canvasCtx.fillText(label, cx, plotArea.y + plotArea.height + 8);
     });
@@ -311,15 +290,7 @@ function renderBoxplotChart(ctx, yRange) {
       seen.add(box.catIndex);
       let label = box.b.label;
       const maxWidth = plotArea.x - 12;
-      if (canvasCtx.measureText(label).width > maxWidth) {
-        let lo = 0, hi = label.length;
-        while (lo < hi) {
-          const mid = Math.ceil((lo + hi) / 2);
-          if (canvasCtx.measureText(label.slice(0, mid) + "\u2026").width > maxWidth) hi = mid - 1;
-          else lo = mid;
-        }
-        label = label.slice(0, lo) + "\u2026";
-      }
+      label = truncateLabel(canvasCtx, label, maxWidth);
       const cy = plotArea.y + plotArea.height - (box.catIndex + 0.5) * geo.categoryWidth;
       canvasCtx.fillText(label, plotArea.x - 10, cy);
     });

@@ -25,6 +25,7 @@ import {
   computeMatrixCells,
   matrixFieldExtent,
   createScatterScale,
+  doughnutInnerRadius,
   scatterPointPositions,
   scatterGroupColors,
   linearFit
@@ -174,10 +175,10 @@ function renderChart(canvas, params) {
           points = renderScatterFacetChart(renderCtx, { min: 0, max: 1 });
           break;
         }
-        const yValues = scatterData.map((d) => d.y);
+        const yValues = scatterData.map((d) => d.y).filter((v) => typeof v === "number" && Number.isFinite(v));
         const yRange = renderYAxis(renderCtx, "left", {
-          min: minOf(yValues),
-          max: maxOf(yValues)
+          min: yValues.length ? minOf(yValues) : 0,
+          max: yValues.length ? maxOf(yValues) : 1
         });
         renderXAxis(renderCtx);
         points = renderScatterChart(renderCtx, yRange);
@@ -446,6 +447,7 @@ export {
   createAnimation,
   createScatterScale,
   createSvgRecorder,
+  doughnutInnerRadius,
   drawSymbol,
   easings,
   estimateTextWidth,

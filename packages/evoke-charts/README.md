@@ -16,7 +16,7 @@
 - **叙述与编排**：`annotations[]` 图内旁白（峰值标注 / 区间强调 / 涨跌结论）、`emphasis` 焦点弱化、`scenes` 分幕 reveal / 自动播报
 - **AI 生成**：`generateChartSpec` 数据直生（CSV / 表格 → Spec，列推断与选型全自动）、`buildChartPrompt` 提示词契约（喂给任意大模型）、`lintChartSpec` 渲染自检；Spec 即 `options`，`getSpec / setSpec` 往返
 - **导出**：`toDataURL`（PNG）、`exportSVG`（真矢量，渲染指令录制重放）
-- **无障碍**：`role="img"` + aria-label、hover 信息 aria-live 播报
+- **无障碍**：`role="img"` + aria-label、hover 信息 aria-live 播报、容器可聚焦后方向键巡历类目（准线 / tooltip / 播报与指针同通道）
 
 ## 安装
 

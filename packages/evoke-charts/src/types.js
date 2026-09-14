@@ -1,3 +1,10 @@
+// 涨跌语义色：K 线 / 量带 / 瀑布 / 涨跌结论共用默认值，
+// 可被 candleUpColor / candleDownColor、waterfall.increaseColor 等配置覆写
+const UP_COLOR = "#dc2626";
+const DOWN_COLOR = "#16a34a";
+// K 线量副图在图例中的系列名（点选该名隐去量带的隐藏键，渲染与图例共用）
+const VOLUME_SERIES_NAME = "\u6210\u4EA4\u91CF";
+
 const DEFAULT_I18N_ZH = {
   tooltip: {
     open: "\u5F00",
@@ -214,6 +221,9 @@ function formatValue(value, options) {
 export {
   CHART_COLORS,
   SERIES_COLOR_SLOTS,
+  UP_COLOR,
+  DOWN_COLOR,
+  VOLUME_SERIES_NAME,
   getSeriesColors,
   readChartToken,
   DEFAULT_I18N_EN,

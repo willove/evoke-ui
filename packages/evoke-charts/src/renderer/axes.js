@@ -5,20 +5,12 @@ import {
   formatLogTick,
   parseTimeLabels,
   calculateTimeTicks,
-  formatTimeTick
+  formatTimeTick,
+  truncateLabel
 } from "./core";
 import { maxOf, minOf } from "../extent";
-function truncateLabel(canvasCtx, label, maxWidth) {
-  if (canvasCtx.measureText(label).width <= maxWidth) return label;
-  let lo = 0, hi = label.length;
-  while (lo < hi) {
-    const mid = Math.ceil((lo + hi) / 2);
-    const truncated = label.slice(0, mid) + "\u2026";
-    if (canvasCtx.measureText(truncated).width > maxWidth) hi = mid - 1;
-    else lo = mid;
-  }
-  return label.slice(0, lo) + "\u2026";
-}
+import { UP_COLOR, DOWN_COLOR } from "../types";
+
 /**
  * 抽稀刻度：保留首末两端覆盖，步长取整数倍使数量 ≤ maxCount。
  * nice 算法的 step 候选会让实际刻度数超出请求数（如 ticks:3 得到 5 档），
@@ -521,7 +513,7 @@ function renderNarrativeAnnotations(ctx, yRange) {
     }
     if (a.type === "delta") {
       const up = a.direction !== "down";
-      const deltaColor = a.color || (up ? options.candleUpColor || "#dc2626" : options.candleDownColor || "#16a34a");
+      const deltaColor = a.color || (up ? options.candleUpColor || UP_COLOR : options.candleDownColor || DOWN_COLOR);
       const text = a.text || a.label || "";
       canvasCtx.fillStyle = deltaColor;
       canvasCtx.beginPath();

@@ -4,7 +4,10 @@
     class="ev-chart"
     :style="[containerStyle, { cursor: cursorStyle }]"
     role="img"
+    :tabindex="isEmpty || internalError ? -1 : 0"
     :aria-label="props.options.ariaLabel || ariaLabelText"
+    @keydown="handleChartKeydown"
+    @focusout="handleFocusOut"
   >
     <canvas
       v-if="!isEmpty && !internalError"
@@ -102,6 +105,7 @@ import {
   sunburstValue,
   funnelStepColor,
   computePieMaxRadius,
+  doughnutInnerRadius,
   getToolboxBounds,
   createSvgRecorder,
   isMissingValue,
@@ -119,7 +123,8 @@ import {
   scatterGroupColors,
   calendarHitTest
 } from "./renderer";
-import { DEFAULT_I18N_ZH } from "./types";
+import { DEFAULT_I18N_ZH, UP_COLOR, DOWN_COLOR } from "./types";
+import { waterfallSteps } from "./renderer/core";
 import { registerConnector, broadcastConnect } from "./connect";
 import { validateOptions } from "./schema";
 // 空态占位图标（折线）— 内联 SVG，保持本库零跨库依赖
@@ -168,7 +173,8 @@ const isEmpty = computed(() => {
     case "pie":
     case "doughnut":
     case "rose":
-      return !opt.pieData || opt.pieData.length === 0;
+      // 无非正值（全 0 / 负值）画不出扇区，直接走空态占位而不是留白画布
+      return !opt.pieData || opt.pieData.length === 0 || opt.pieData.every((d) => !(d.value > 0));
     case "scatter":
       return !opt.scatterData || opt.scatterData.length === 0;
     case "funnel":
@@ -203,7 +209,12 @@ const isEmpty = computed(() => {
     case "arc":
       return !((opt.sankeyData || opt.chordData || opt.arcData)?.nodes?.length);
     case "venn":
-      return !opt.vennData || opt.vennData.length === 0;
+      // 韦恩布局只支持 1–3 个单集合（超出无闭合解），与 computeVennLayout 同一口径
+      if (!opt.vennData || opt.vennData.length === 0) return true;
+      {
+        const circles = opt.vennData.filter((d) => !d.sets || d.sets.length === 1);
+        return circles.length === 0 || circles.length > 3;
+      }
     case "gantt":
       return !opt.ganttData || opt.ganttData.length === 0;
     case "scatter-matrix":
@@ -417,12 +428,12 @@ function updateTooltipPosition(clientX, clientY) {
   const el = tooltipRef.value;
   const tw = el?.offsetWidth || 120;
   const th = el?.offsetHeight || 40;
-  const gap = 12;
+  const gap = INTERACTION.tooltip.cursorGap;
   const margin = 2;
   let legendBottom = margin;
   const legend = props.options.legend || {};
   if (legend.show !== false && (legend.position || "bottom") === "top") {
-    legendBottom = getPadding(props.options, containerRect.width).top;
+    legendBottom = paddingFor(props.options, containerRect.width).top;
   }
   const spaceRight = containerRect.width - relX - gap;
   const spaceLeft = relX - gap;
@@ -507,7 +518,7 @@ function render(animate = true, animOverride = null) {
     lastHeight = height;
     canvas.width = width * dpr.value;
     canvas.height = height * dpr.value;
-    const overlayPadding = getPadding(effectiveOptions.value, width);
+    const overlayPadding = paddingFor(effectiveOptions.value, width);
     overlayInfo.value = {
       plotArea: {
         x: overlayPadding.left,
@@ -817,7 +828,7 @@ function checkLegendHit(x, y) {
   const theme = getTheme(isDark, props.options.theme, props.options.palette);
   const width = rect.width;
   const height = rect.height;
-  const padding = getPadding(effectiveOptions.value, width);
+  const padding = paddingFor(effectiveOptions.value, width);
   const plotArea = {
     x: padding.left,
     y: padding.top,
@@ -875,7 +886,7 @@ function getHoveredData(x, y) {
   const options = effectiveOptions.value;
   const width = rect.width;
   const height = rect.height;
-  const padding = getPadding(options, width);
+  const padding = paddingFor(options, width);
   const plotArea = {
     x: padding.left,
     y: padding.top,
@@ -899,7 +910,7 @@ function getHoveredData(x, y) {
     const dx = canvasX - centerX;
     const dy = canvasY - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    const innerRadius = options.type === "doughnut" ? Math.max(0, Math.min(baseRadius - 5, baseRadius * (options.innerRadius || 0.6))) : 0;
+    const innerRadius = options.type === "doughnut" ? doughnutInnerRadius(baseRadius, options) : 0;
     let angle = Math.atan2(dy, dx) + Math.PI / 2;
     if (angle < 0) angle += Math.PI * 2;
     const total = slices.reduce((sum, d) => sum + d.value, 0);
@@ -962,15 +973,11 @@ function getHoveredData(x, y) {
     const i = Math.floor((canvasX - plotArea.x) / categoryWidth);
     if (i < 0 || i >= labels2.length) return null;
     const wf = options.waterfall || {};
-    const totalIdx = new Set(wf.totalIndices || []);
-    const v = deltas[i] || 0;
-    let cumulative = 0;
-    for (let k = 0; k <= i; k++) {
-      const vk = deltas[k] || 0;
-      cumulative = totalIdx.has(k) ? vk : cumulative + vk;
-    }
-    const isTotal = totalIdx.has(i);
-    const color = isTotal ? wf.totalColor || theme.colors[0] : v >= 0 ? wf.increaseColor || "#dc2626" : wf.decreaseColor || "#16a34a";
+    const step = waterfallSteps(deltas, wf.totalIndices)[i];
+    const v = step.value;
+    const cumulative = step.to;
+    const isTotal = step.isTotal;
+    const color = isTotal ? wf.totalColor || theme.colors[0] : v >= 0 ? wf.increaseColor || UP_COLOR : wf.decreaseColor || DOWN_COLOR;
     return {
       index: i,
       params: {
@@ -1169,13 +1176,13 @@ function getHoveredData(x, y) {
       }
       return null;
     }
-    const yValues = scatterData.map((d) => d.y);
+    const yValues = scatterData.map((d) => d.y).filter((v) => typeof v === "number" && Number.isFinite(v));
     const axisConfig = options.yAxis || {};
-    const rawMin = axisConfig.min ?? minOf(yValues);
-    const rawMax = axisConfig.max ?? maxOf(yValues);
+    const rawMin = axisConfig.min ?? (yValues.length ? minOf(yValues) : 0);
+    const rawMax = axisConfig.max ?? (yValues.length ? maxOf(yValues) : 1);
     const yExt = resolveTickExtendedRange(rawMin, rawMax, axisConfig.ticks || 5);
-    // 点位与渲染同一口径（含抖动），看到的和命中的是同一批坐标
-    const positions = scatterPointPositions(scatterData, { min: yExt.min, max: yExt.max }, plotArea, options);
+    // 点位与渲染同一口径（含抖动），看到的和命中的是同一批坐标（悬浮期走缓存）
+    const positions = scatterPositionsFor(scatterData, { min: yExt.min, max: yExt.max }, plotArea, options);
     const groupColors = scatterGroupColors(scatterData, theme);
     let nearestIndex = -1;
     let minDistance = Infinity;
@@ -1214,7 +1221,7 @@ function getHoveredData(x, y) {
     if (i < 0 || i >= candleData.length) return null;
     const candle = candleData[i];
     const isUp = candle.close >= candle.open;
-    const color = isUp ? props.options.candleUpColor || "#dc2626" : props.options.candleDownColor || "#16a34a";
+    const color = isUp ? props.options.candleUpColor || UP_COLOR : props.options.candleDownColor || DOWN_COLOR;
     return {
       index: i,
       params: {
@@ -1443,7 +1450,7 @@ function getSliderGeo() {
   const canvas = canvasRef.value;
   if (!canvas) return null;
   const rect = canvas.getBoundingClientRect();
-  const padding = getPadding(effectiveOptions.value, rect.width);
+  const padding = paddingFor(effectiveOptions.value, rect.width);
   const plotArea = {
     x: padding.left,
     y: padding.top,
@@ -1511,7 +1518,7 @@ function handlePointerDown(e) {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const padding = getPadding(effectiveOptions.value, rect.width);
+      const padding = paddingFor(effectiveOptions.value, rect.width);
       const inPlot = x >= padding.left && x <= padding.left + (rect.width - padding.left - padding.right) && y >= padding.top && y <= padding.top + (rect.height - padding.top - padding.bottom);
       if (inPlot) {
         touchPanning = true;
@@ -1537,7 +1544,7 @@ function handleZoomMouseDown(e) {
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   if (props.options.brush?.enabled === true) {
-    const padding = getPadding(effectiveOptions.value, rect.width);
+    const padding = paddingFor(effectiveOptions.value, rect.width);
     const plotArea = {
       x: padding.left,
       y: padding.top,
@@ -1620,7 +1627,7 @@ function handlePointerUp(e) {
       const labels = options.labels || [];
       if (canvas && labels.length > 0) {
         const rect = canvas.getBoundingClientRect();
-        const padding = getPadding(options, rect.width);
+        const padding = paddingFor(options, rect.width);
         const plotArea = {
           x: padding.left,
           y: padding.top,
@@ -1660,7 +1667,7 @@ function handleWheel(e) {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
-  const padding = getPadding(effectiveOptions.value, rect.width);
+  const padding = paddingFor(effectiveOptions.value, rect.width);
   const plotArea = {
     x: padding.left,
     y: padding.top,
@@ -1885,7 +1892,7 @@ function updateCursor(e) {
   } else if (checkLegendHit(e.clientX, e.clientY)) {
     zone = "legend";
   } else {
-    const padding = getPadding(effectiveOptions.value, rect.width);
+    const padding = paddingFor(effectiveOptions.value, rect.width);
     const inPlot =
       x >= padding.left && x <= rect.width - padding.right &&
       y >= padding.top && y <= rect.height - padding.bottom;
@@ -1928,6 +1935,51 @@ function handlePointerLeave() {
 // Esc 清态（DESIGN 交互规范 13.3）：清除悬浮 / tooltip / 框选拖拽
 function handleEscapeKey(e) {
   if (e.key !== "Escape") return;
+  if (clearTransientState()) {
+    emit("unhover");
+    ariaLiveText.value = "";
+  }
+}
+// 键盘巡历（DESIGN §13.7 期 1–2）：容器聚焦后，直角系类目图用方向键在类目间
+// 步进悬浮（横向图 ↑/↓，其余 ←/→），Home / End 跳首末；合成坐标直接走指针
+// 悬浮同一管线——准线、tooltip、aria-live 播报与 hover 事件全通道一致
+const KEYNAV_TYPES = /* @__PURE__ */ new Set(["line", "area", "bar", "stacked-bar", "waterfall", "mixed", "horizontal-bar"]);
+function handleChartKeydown(e) {
+  const options = props.options;
+  if (!KEYNAV_TYPES.has(options.type)) return;
+  const labels = options.labels || [];
+  const count = labels.length;
+  if (count === 0) return;
+  const horizontal = options.type === "horizontal-bar";
+  // 横向条形图第一个类目在最下方：↑ 即索引 +1（视觉向上）；其余 ←/→ 增减
+  let i = hoverIndex;
+  if (e.key === "Home") i = 0;
+  else if (e.key === "End") i = count - 1;
+  else if (horizontal && e.key === "ArrowUp") i = hoverIndex < 0 ? 0 : Math.min(count - 1, hoverIndex + 1);
+  else if (horizontal && e.key === "ArrowDown") i = hoverIndex < 0 ? 0 : Math.max(0, hoverIndex - 1);
+  else if (!horizontal && e.key === "ArrowRight") i = hoverIndex < 0 ? 0 : Math.min(count - 1, hoverIndex + 1);
+  else if (!horizontal && e.key === "ArrowLeft") i = hoverIndex < 0 ? 0 : Math.max(0, hoverIndex - 1);
+  else return;
+  e.preventDefault();
+  if (i === hoverIndex) return;
+  const canvas = canvasRef.value;
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const padding = paddingFor(effectiveOptions.value, rect.width);
+  const plotWidth = rect.width - padding.left - padding.right;
+  const plotHeight = rect.height - padding.top - padding.bottom;
+  const clientX = horizontal
+    ? rect.left + padding.left + plotWidth / 2
+    : rect.left + padding.left + (i + 0.5) * (plotWidth / count);
+  const clientY = horizontal
+    ? rect.top + padding.top + plotHeight - (i + 0.5) * (plotHeight / count)
+    : rect.top + padding.top + plotHeight / 2;
+  mouseX = clientX - rect.left;
+  mouseY = clientY - rect.top;
+  handlePointerMove({ clientX, clientY, pointerType: "mouse" });
+}
+// 焦点离开即清态：不留键盘悬浮残留（与指针离开画布同一出口）
+function handleFocusOut() {
   if (clearTransientState()) {
     emit("unhover");
     ariaLiveText.value = "";
@@ -2011,6 +2063,8 @@ watch(
   (next) => {
     cachedDataExtent = null;
     cachedPlotArea = null;
+    cachedPadding = null;
+    scatterHitCache = null;
     internalError.value = null;
     runDevValidation();
     // 运行中通过 options 增删 emphasis 时补播淡化缓动（无变化不重绘）
@@ -2104,11 +2158,46 @@ onUnmounted(() => {
 });
 let cachedDataExtent = null;
 let cachedPlotArea = null;
+// getPadding 按帧缓存：hover 链路一次 move 会对同一 (options, width) 求 3 次 padding，
+// 每次都经 estimateYAxisLeft → calculateRange 全量扫数据；键为引用，computed/切片
+// 引用变化即自然失效，就地 mutation 由 deep watch（2016 行）与 update() 显式清空
+let cachedPadding = null;
+function paddingFor(options, width) {
+  if (cachedPadding && cachedPadding.options === options && cachedPadding.width === width) {
+    return cachedPadding.value;
+  }
+  const value = getPadding(options, width);
+  cachedPadding = { options, width, value };
+  return value;
+}
+// 散点命中点位缓存：positions 含抖动偏移，一次 move 全点重算 + 全点距离扫描，
+// 以 (数据引用, 量程, 绘图区, options 引用) 为键，悬浮期间零重算
+let scatterHitCache = null;
+function scatterPositionsFor(scatterData, yRange, plotArea, options) {
+  const c = scatterHitCache;
+  if (
+    c && c.scatterData === scatterData && c.options === options &&
+    c.yMin === yRange.min && c.yMax === yRange.max &&
+    c.px === plotArea.x && c.py === plotArea.y && c.pw === plotArea.width && c.ph === plotArea.height
+  ) {
+    return c.positions;
+  }
+  const positions = scatterPointPositions(scatterData, yRange, plotArea, options);
+  scatterHitCache = {
+    scatterData, options,
+    yMin: yRange.min, yMax: yRange.max,
+    px: plotArea.x, py: plotArea.y, pw: plotArea.width, ph: plotArea.height,
+    positions
+  };
+  return positions;
+}
 defineExpose({
   refresh: () => render(true),
   update(newOptions) {
     Object.assign(props.options, newOptions);
     cachedDataExtent = null;
+    cachedPadding = null;
+    scatterHitCache = null;
     specVersion.value++;
     debouncedRender(true);
   },
@@ -2212,7 +2301,7 @@ defineExpose({
     if (!canvas) return { x: 0, y: 0, width: 0, height: 0 };
     const width = canvas.width / dpr.value;
     const height = canvas.height / dpr.value;
-    const padding = getPadding(effectiveOptions.value, width);
+    const padding = paddingFor(effectiveOptions.value, width);
     cachedPlotArea = {
       x: padding.left,
       y: padding.top,
@@ -2339,6 +2428,12 @@ defineExpose({
   overflow: visible;
   border-radius: 8px;
   background: var(--ev-bg-color, #ffffff);
+}
+
+/* 键盘可达（DESIGN §13.7 期 1）：容器可聚焦，焦点环贴内缘不裁切 */
+.ev-chart:focus-visible {
+  outline: 2px solid var(--ev-color-primary, #175dff);
+  outline-offset: -2px;
 }
 
 /* 关键：canvas 必须能接收鼠标事件 */

@@ -1,4 +1,4 @@
-import { estimateTextWidth, mixColor, getContrastText, drawLabelWithBg, calculateTimeTicks, formatTimeTick } from "./core";
+import { estimateTextWidth, mixColor, getContrastText, drawLabelWithBg, calculateTimeTicks, formatTimeTick, truncateLabel } from "./core";
 import { maxOf, minOf } from "../extent";
 
 // ─── 甘特图（DESIGN §3.8）───
@@ -255,15 +255,7 @@ function renderGanttChart(ctx) {
     canvasCtx.textBaseline = "middle";
     let label = r.name || "";
     const maxW = layout.labelW - 16;
-    if (canvasCtx.measureText(label).width > maxW) {
-      let lo = 0, hi = label.length;
-      while (lo < hi) {
-        const mid = Math.ceil((lo + hi) / 2);
-        if (canvasCtx.measureText(label.slice(0, mid) + "…").width > maxW) hi = mid - 1;
-        else lo = mid;
-      }
-      label = label.slice(0, lo) + "…";
-    }
+    label = truncateLabel(canvasCtx, label, maxW);
     canvasCtx.fillText(label, chartX - 10, plotArea.y + i * rowH + rowH / 2);
     canvasCtx.restore();
   });

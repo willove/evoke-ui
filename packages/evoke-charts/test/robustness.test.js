@@ -5,6 +5,7 @@ import EvChart from '../src/chart.vue'
 import { minOf, maxOf } from '../src/extent.js'
 import { createAnimation, updateAnimation } from '../src/renderer/index.js'
 import { computeSankeyLayout } from '../src/renderer/charts-relation.js'
+import { waterfallSteps } from '../src/renderer/core.js'
 
 // 本文件是健壮性回访回归：tooltip 转义、缺 data 系列、大数组极值、
 // destroy 清理、gauge 边界、easing 回落、sankey nodeAlign。
@@ -228,5 +229,138 @@ describe('sankey nodeAlign（DESIGN §3.5）', () => {
     const data = DATA()
     computeSankeyLayout(PLOT, { sankeyData: data }, THEME, new Set())
     expect(data.nodes.every((n) => n.value === undefined)).toBe(true)
+  })
+})
+
+describe('waterfallSteps 共享口径', () => {
+  it('增量累计、合计列重置、缺失值标记三处消费同一份', () => {
+    const steps = waterfallSteps([10, -4, null, 20], [3])
+    expect(steps[0]).toEqual({ value: 10, from: 0, to: 10, isTotal: false, missing: false })
+    expect(steps[1]).toEqual({ value: -4, from: 10, to: 6, isTotal: false, missing: false })
+    expect(steps[2].missing).toBe(true)
+    expect(steps[2].from).toBe(6)
+    expect(steps[2].to).toBe(6)
+    expect(steps[3]).toEqual({ value: 20, from: 0, to: 20, isTotal: true, missing: false })
+  })
+})
+
+describe('静默边界改空态占位', () => {
+  it('饼图全 0 不再留白画布，进空态', async () => {
+    const wrapper = mount(EvChart, {
+      props: { options: { type: 'pie', animation: { enabled: false }, pieData: [{ name: '甲', value: 0 }, { name: '乙', value: 0 }] } },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart__empty').exists()).toBe(true)
+    expect(wrapper.find('canvas').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('韦恩超 3 集合（无闭合解）进空态', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'venn',
+          animation: { enabled: false },
+          vennData: [
+            { name: '甲', value: 10 }, { name: '乙', value: 10 },
+            { name: '丙', value: 10 }, { name: '丁', value: 10 },
+          ],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart__empty').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('散点含 NaN 值仍正常渲染（量程过滤非有限值）', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'scatter',
+          animation: { enabled: false },
+          scatterData: [{ x: 1, y: NaN }, { x: 2, y: 5 }, { x: 3, y: 8 }],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart__error').exists()).toBe(false)
+    expect(wrapper.find('canvas.ev-chart__canvas').exists()).toBe(true)
+    expect(drawCount()).toBeGreaterThan(0)
+    wrapper.unmount()
+  })
+})
+
+describe('键盘巡历（DESIGN §13.7 期 1–2）', () => {
+  const BAR_OPTIONS = () => ({
+    type: 'bar',
+    animation: { enabled: false },
+    labels: ['一', '二', '三', '四'],
+    series: [{ name: '销量', data: [10, 40, 25, 60] }],
+  })
+  const press = (wrapper, key) => {
+    wrapper.find('.ev-chart').element.dispatchEvent(
+      new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
+    )
+  }
+
+  it('容器可聚焦（空态不可聚焦），方向键步进悬浮且 tooltip / 播报跟随', async () => {
+    const wrapper = mount(EvChart, { props: { options: BAR_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart').attributes('tabindex')).toBe('0')
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    const tip = wrapper.find('.ev-chart__tooltip')
+    expect(tip.exists()).toBe(true)
+    expect(tip.find('.ev-chart__tooltip-title').text()).toBe('一')
+    expect(wrapper.find('.ev-chart__sr-only').text()).toContain('销量')
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('二')
+    press(wrapper, 'End')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('四')
+    press(wrapper, 'Home')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('一')
+    wrapper.unmount()
+  })
+
+  it('横向条形图 ↑/↓ 步进', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: { ...BAR_OPTIONS(), type: 'horizontal-bar' },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    press(wrapper, 'ArrowUp')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('一')
+    press(wrapper, 'ArrowUp')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('二')
+    wrapper.unmount()
+  })
+
+  it('焦点离开清空悬浮态', async () => {
+    const wrapper = mount(EvChart, { props: { options: BAR_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(true)
+    wrapper.find('.ev-chart').element.dispatchEvent(new Event('focusout', { bubbles: false }))
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(false)
+    wrapper.unmount()
   })
 })

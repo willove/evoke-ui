@@ -1,4 +1,4 @@
-import { CHART_COLORS } from "../types";
+import { CHART_COLORS, UP_COLOR, DOWN_COLOR, VOLUME_SERIES_NAME } from "../types";
 import { roundRect, getContrastText, isLightColor, mixColor } from "./core";
 import { maxOf, minOf } from "../extent";
 
@@ -703,7 +703,7 @@ function candleVolumeLayout(plotArea, options, hiddenSeries) {
   const volumeData = options.volumeData || [];
   const on = candleData.length > 0
     && volumeData.length === candleData.length
-    && !(hiddenSeries && hiddenSeries.has("成交量"));
+    && !(hiddenSeries && hiddenSeries.has(VOLUME_SERIES_NAME));
   const ratio = Math.max(0.15, Math.min(0.4, options.volumeHeight ?? 0.24));
   const priceArea = on
     ? { x: plotArea.x, y: plotArea.y, width: plotArea.width, height: plotArea.height * (1 - ratio) }
@@ -716,9 +716,9 @@ function candleVolumeLayout(plotArea, options, hiddenSeries) {
  * 量带绘制（K 线 / 折线分时共用）：flags 为每根的涨跌布尔（决定颜色），
  * baseY 为量带底、bandTop 为量带顶；不画轴（量纲从属），最高柱顶标 compact max。
  */
-function renderVolumeBand(ctx, volumeData, flags, baseY, bandTop, barWidth, slotWidth, plotWidth, plotX, theme, progress, hoverIndex, upColor = "#dc2626", downColor = "#16a34a") {
+function renderVolumeBand(ctx, volumeData, flags, baseY, bandTop, barWidth, slotWidth, plotWidth, plotX, theme, progress, hoverIndex, upColor = UP_COLOR, downColor = DOWN_COLOR) {
   const { ctx: canvasCtx, hiddenSeries } = ctx;
-  if (hiddenSeries && hiddenSeries.has("成交量")) return;
+  if (hiddenSeries && hiddenSeries.has(VOLUME_SERIES_NAME)) return;
   const volMax = maxOf(volumeData.filter((v) => Number.isFinite(v)), 1);
   const bandHeight = Math.max(4, baseY - bandTop);
   volumeData.forEach((vol, i) => {
@@ -760,8 +760,8 @@ function renderCandleChart(ctx, yRange) {
   const hovT = hoverAnimProgress;
   const candleData = options.candleData || [];
   if (candleData.length === 0) return;
-  const upColor = options.candleUpColor || "#dc2626";
-  const downColor = options.candleDownColor || "#16a34a";
+  const upColor = options.candleUpColor || UP_COLOR;
+  const downColor = options.candleDownColor || DOWN_COLOR;
   const volumeData = options.volumeData || [];
   const vol = candleVolumeLayout(plotArea, options, hiddenSeries);
   const volumeOn = vol.on;

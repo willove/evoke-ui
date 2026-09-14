@@ -1,4 +1,5 @@
-import { roundRect } from "./core";
+import { roundRect, estimateTextWidth } from "./core";
+import { VOLUME_SERIES_NAME } from "../types";
 import { funnelStepColor } from "./charts-advanced";
 import { INTERACTION } from "../interactions";
 const LEGEND_ROW_HEIGHT = 20;
@@ -91,10 +92,10 @@ function collectLegendItems(options, theme, hiddenSeries) {
     const items = [];
     if ((options.volumeData || []).length > 0) {
       items.push({
-        name: "成交量",
-        label: fmt("成交量"),
+        name: VOLUME_SERIES_NAME,
+        label: fmt(VOLUME_SERIES_NAME),
         color: theme.textColorSecondary,
-        hidden: hiddenSeries.has("成交量")
+        hidden: hiddenSeries.has(VOLUME_SERIES_NAME)
       });
     }
     if (Array.isArray(options.candleMa)) {
@@ -119,10 +120,10 @@ function collectLegendItems(options, theme, hiddenSeries) {
   // 折线/面积 + 量副图（分时图）：追加「成交量」图例项
   if ((options.type === "line" || options.type === "area") && (options.volumeData || []).length > 0) {
     items.push({
-      name: "成交量",
-      label: fmt("成交量"),
+      name: VOLUME_SERIES_NAME,
+      label: fmt(VOLUME_SERIES_NAME),
       color: theme.textColorSecondary,
-      hidden: hiddenSeries.has("成交量")
+      hidden: hiddenSeries.has(VOLUME_SERIES_NAME)
     });
   }
   return items;
@@ -192,13 +193,7 @@ function computeLegendLayout(ctx, options, plotArea, containerWidth, containerHe
   return { items, bounds, rows: rowIndices.length };
 }
 function estimateWidth(text) {
-  let width = 0;
-  for (const ch of text) {
-    const code = ch.codePointAt(0) || 0;
-    const isFullWidth = code >= 11904 && code <= 40959 || code >= 63744 && code <= 64255 || code >= 65280 && code <= 65376 || code >= 12288 && code <= 12351;
-    width += isFullWidth ? 12 : 12 * 0.62;
-  }
-  return width;
+  return estimateTextWidth(text, 12);
 }
 function renderLegend(ctx) {
   const { ctx: canvasCtx, theme, options, hiddenSeries, width, height, plotArea } = ctx;
