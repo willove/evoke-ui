@@ -718,8 +718,11 @@ function chordHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries) 
 function computeArcLayout(plotArea, options, theme, hiddenSeries) {
   const { nodes, links } = normalizeRelation(options.arcData, hiddenSeries);
   if (nodes.length === 0) return null;
-  // 节点行 + 下方标签带在可用空间内大致居中
-  const axisY = plotArea.y + Math.max(30, (plotArea.height - 40) * 0.52);
+  // 构图（用户回访定则）：节点行 + 标签带贴绘图区底部，中部全高让给弧区，
+  // 弧顶距绘图区顶 ≥ 24px（不压标题）——不再上浮居中留出大片底部死空间
+  const labelBand = 30;
+  const topGap = 24;
+  const axisY = plotArea.y + Math.max(40, plotArea.height - labelBand);
   const step = plotArea.width / nodes.length;
   const valueMax = Math.max(1, ...links.map((l) => l.value));
   const nodePts = nodes.map((n, i) => ({
@@ -737,8 +740,8 @@ function computeArcLayout(plotArea, options, theme, hiddenSeries) {
     const dist = Math.abs(b.x - a.x);
     const left = a.x <= b.x ? a : b;
     const right = a.x <= b.x ? b : a;
-    // 弧顶裁剪：峰值 = axisY - 0.75·cy，钳制后峰值距绘图区顶 ≥ 12px（不压标题）
-    const cy = Math.min(dist * 0.45, (axisY - plotArea.y - 12) / 0.75);
+    // 弧顶 = axisY - 0.75·cy，钳制后峰值距绘图区顶 ≥ topGap
+    const cy = Math.min(dist * 0.45, (axisY - plotArea.y - topGap) / 0.75);
     const width = 1.5 + (link.value / valueMax) * 4.5;
     const samples = [];
     const x1 = left.x;
