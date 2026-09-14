@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T15:52:16.593Z",
+  "generatedAt": "2026-09-14T17:03:44.907Z",
   "sites": {
     "ui": {
       "label": "Evoke UI",
@@ -878,6 +878,76 @@
       "title": "更新记录",
       "category": "指南",
       "path": "/guide/changelog"
+    },
+    {
+      "site": "charts",
+      "name": "案例总览",
+      "title": "案例总览",
+      "category": "案例",
+      "path": "/examples/"
+    },
+    {
+      "site": "charts",
+      "name": "运营数据看板",
+      "title": "运营数据看板",
+      "category": "案例",
+      "path": "/examples/dashboard"
+    },
+    {
+      "site": "charts",
+      "name": "服务器指标监控",
+      "title": "服务器指标监控",
+      "category": "案例",
+      "path": "/examples/monitor"
+    },
+    {
+      "site": "charts",
+      "name": "报表嵌入",
+      "title": "报表嵌入",
+      "category": "案例",
+      "path": "/examples/report"
+    },
+    {
+      "site": "charts",
+      "name": "财务月度结算",
+      "title": "财务月度结算",
+      "category": "案例",
+      "path": "/examples/finance"
+    },
+    {
+      "site": "charts",
+      "name": "基金持仓体检",
+      "title": "基金持仓体检",
+      "category": "案例",
+      "path": "/examples/fund"
+    },
+    {
+      "site": "charts",
+      "name": "人力资源年度盘点",
+      "title": "人力资源年度盘点",
+      "category": "案例",
+      "path": "/examples/hr"
+    },
+    {
+      "site": "charts",
+      "name": "交付效能看板",
+      "title": "交付效能看板",
+      "category": "案例",
+      "path": "/examples/delivery"
+    },
+    {
+      "site": "charts",
+      "name": "核心链路 SLO 看板",
+      "title": "核心链路 SLO 看板",
+      "category": "案例",
+      "path": "/examples/slo"
+    },
+    {
+      "site": "charts",
+      "name": "小学数学 · 统计表转统计图",
+      "title": "小学数学 · 统计表转统计图",
+      "category": "案例",
+      "path": "/examples/classroom"
     },
     {
       "site": "ui",

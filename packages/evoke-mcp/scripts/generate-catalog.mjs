@@ -52,6 +52,19 @@ for (const cat of chartsMeta.GUIDE_NAV) {
   }
 }
 
+// charts 案例页（完整场景组合示例）：AI 可检索真实用法
+for (const cat of chartsMeta.EXAMPLES_NAV) {
+  for (const comp of cat.components) {
+    entries.push({
+      site: 'charts',
+      name: comp.name,
+      title: comp.name,
+      category: cat.name,
+      path: comp.path,
+    })
+  }
+}
+
 // UI 站目录在 config.mts 侧栏里，提取 /components/ 与 /mobile/components 下的条目
 const uiConfig = await (async () => {
   const text = await import('node:fs').then((fs) => fs.readFileSync(resolve(repo, 'docs-web/.vitepress/config.mts'), 'utf8'))

@@ -92,6 +92,22 @@ export const SPEC_EXAMPLES = [
       },
     },
   },
+  {
+    requirement: "各渠道投放费用和转化效果的关系，看分界和走向",
+    spec: {
+      type: "scatter",
+      title: "投放-转化四象限",
+      scatterData: [
+        { x: 120, y: 32, label: "搜索" },
+        { x: 260, y: 58, label: "信息流" },
+        { x: 90, y: 18, label: "社群" },
+        { x: 340, y: 71, label: "直播" },
+      ],
+      quadrant: { labels: ["低投高转", "高投高转", "低投低转", "高投低转"] },
+      scatterTrendline: "linear",
+      pointLabels: true,
+    },
+  },
 ];
 
 export function formatExamples(maxCount = SPEC_EXAMPLES.length) {

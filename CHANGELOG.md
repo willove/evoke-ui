@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — AI 生成面五层收口：SPEC_RULES 能力规则词全量补齐 + 案例页入 MCP 目录
+
+- **SPEC_RULES 清单式补齐**：散点增强（quadrant / scatterTrendline / jitter /
+  pointLabels / facet）、雷达（radarRingFill / radarStacked）、K 线（candleMa /
+  candleMaColors / candleUpColor / volumeData）、桑基 nodeAlign、箱线 / 直方 /
+  热力（boxHorizontal / binConfig / heatmapSortBy）、折线增强（stackAreas /
+  step / connectNulls / showValues / markLines / markAreas）、瀑布 / 漏斗 /
+  环形的快捷口径——此前这些字段只在 schema 里可查、没有使用时机规则词，
+  模型按「不用 schema 之外的字段」的约束不会主动使用；few-shot 新增散点
+  四象限 + 趋势线示例（自一致测试把关）；
+- **MCP 目录收录案例页**：generate-catalog 接入 EXAMPLES_NAV，10 个完整场景
+  案例页（看板 / 监控 / 报表 / 教学等）可被 list / search 检索，AI 能直接引用
+  真实组合用法。
+
 ### @wil-works/evoke-charts — 命中链路收口：图例/甘特/桑基缓存 + Enter 触发 click + SVG 旋转文本保真
 
 - **hover 命中链路最后两处重算清零**：图例 bounds（每次 move 全量 measureText
