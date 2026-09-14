@@ -14,8 +14,8 @@ evoke-charts 的版本演进，最新在上。完整的变更明细（含行为�
 <script setup>
 const releases = [
   {
-    tag: 'Unreleased',
-    date: '即将发版',
+    tag: 'v0.6.0',
+    date: '2026-09-15',
     title: 'AI 面五层收口 · 命中链路收口 · 大数据抽稀 · 键盘巡历',
     bullets: [
       'AI 生成面五层收口：SPEC_RULES 补齐散点 / 雷达 / K 线 / 桑基 / 箱线 / 折线增强等能力规则词（模型不再「看得见字段但不会用」），few-shot 新增散点四象限 + 趋势线示例，MCP 目录收录 10 个案例页',

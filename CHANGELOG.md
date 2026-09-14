@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [charts 0.6.0] — 2026-09-15
+
 ### @wil-works/evoke-charts — AI 生成面五层收口：SPEC_RULES 能力规则词全量补齐 + 案例页入 MCP 目录
 
 - **SPEC_RULES 清单式补齐**：散点增强（quadrant / scatterTrendline / jitter /
