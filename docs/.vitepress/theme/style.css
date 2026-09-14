@@ -16,7 +16,8 @@
   --bd-bg: #ffffff;
   --bd-bg-secondary: #f7f8fa;
   --bd-header-h: 60px;
-  /* 顶部警示横幅（fixed 定高）+ 顶栏的总偏移，替代直接消费 --bd-header-h 的定位场景 */
+  /* 顶部警示横幅高度（37px 仅为单行初始值，实际高度由 DocLayout 按横幅实测回写）
+     + 顶栏的总偏移，替代直接消费 --bd-header-h 的定位场景 */
   --bd-devwarn-h: 37px;
   --bd-top: calc(var(--bd-devwarn-h) + var(--bd-header-h));
   --bd-sidebar-w: 240px;
@@ -39,18 +40,19 @@ html.dark {
   --bd-bg-secondary: #1b1e23;
 }
 
-/* 顶部开发中警示横幅：fixed 定高叠在顶栏上方，永不滚走 */
+/* 顶部开发中警示横幅：fixed 永驻吸顶，高度随内容自适应（窄屏换行不截断） */
 .bd-devwarn {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 101;
-  height: var(--bd-devwarn-h);
+  height: auto;
+  min-height: 37px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  padding: 6px 16px;
   font-size: 13px;
   line-height: 1.4;
   text-align: center;
@@ -68,7 +70,7 @@ html.dark .bd-devwarn {
 }
 @media (max-width: 640px) {
   .bd-devwarn {
-    padding: 0 12px;
+    padding: 5px 12px;
     font-size: 11.5px;
   }
 }

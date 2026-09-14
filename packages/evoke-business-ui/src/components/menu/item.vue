@@ -1,9 +1,9 @@
 <template>
   <li
-    class="eb-menu-item eb-menu-item"
+    class="eb-menu-item"
     :class="{ 'is-active': isActive, 'is-disabled': disabled }"
     role="menuitem"
-    :tabindex="disabled ? -1 : -1"
+    :tabindex="disabled ? -1 : 0"
     :aria-disabled="disabled || undefined"
     @click="handleClick"
   >

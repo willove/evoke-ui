@@ -66,8 +66,9 @@
  * action 返回 false 阻止关闭；打开时锁定 body 滚动。
  * 动效以 CSS 过渡（eb-cp）实现。
  */
-import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import EbIcon from '../icon/index.vue'
+import { useLockScroll } from '../../composables/useLockScroll'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -81,6 +82,8 @@ const query = ref('')
 const activeIndex = ref(0)
 const inputRef = ref(null)
 const listRef = ref(null)
+// 计数式滚动锁：与 dialog 等叠加时不提前解锁
+const { lock, unlock } = useLockScroll()
 
 // 过滤：label + keywords + group 不区分大小写包含匹配
 const flat = computed(() => {
@@ -121,16 +124,12 @@ watch(
       activeIndex.value = 0
       await nextTick()
       inputRef.value?.focus()
-      document.body.style.overflow = 'hidden'
+      lock()
     } else {
-      document.body.style.overflow = ''
+      unlock()
     }
   },
 )
-
-onBeforeUnmount(() => {
-  document.body.style.overflow = ''
-})
 
 function close() {
   emit('update:modelValue', false)

@@ -37,6 +37,18 @@ const mountMenu = (props = {}) =>
   )
 
 describe('EbMenu 家族', () => {
+  it('键盘可达性：非禁用 menuitem tabindex=0、禁用 -1（回归：曾恒为 -1 整树不可聚焦）', () => {
+    const wrapper = mountMenu()
+    const items = wrapper.findAll('.eb-menu-item')
+    expect(items).toHaveLength(4)
+    const disabled = items.filter((w) => w.classes().includes('is-disabled'))
+    expect(disabled).toHaveLength(1)
+    for (const w of items) {
+      expect(w.attributes('tabindex')).toBe(w.classes().includes('is-disabled') ? '-1' : '0')
+    }
+    wrapper.unmount()
+  })
+
   it('双 class + mode 修饰类 + 结构', () => {
     const wrapper = mountMenu()
     const menu = wrapper.find('.eb-menu')

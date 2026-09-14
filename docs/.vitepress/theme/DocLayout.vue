@@ -153,7 +153,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter, Content } from 'vitepress'
 import Icon from './Icon.vue'
 import ExampleLiveBar from './ExampleLiveBar.vue'
@@ -302,17 +302,37 @@ function onSearchBlur() {
   }, 150)
 }
 
+// 警示横幅高度回写：37px 仅为单行初始值，窄屏换行/字号缩放时按实测高度更新
+// --bd-devwarn-h，顶栏（.bd-header）与 --bd-top 随之偏移，不被定高截断
+let devwarnResize = null
+function syncDevwarnHeight() {
+  devwarnResize?.disconnect()
+  devwarnResize = null
+  const banner = document.querySelector('.bd-devwarn')
+  if (!banner || typeof ResizeObserver === 'undefined') return
+  const apply = () => {
+    document.documentElement.style.setProperty('--bd-devwarn-h', `${banner.offsetHeight}px`)
+  }
+  apply()
+  devwarnResize = new ResizeObserver(apply)
+  devwarnResize.observe(banner)
+}
+
 onMounted(() => {
   try {
     applyDark(localStorage.getItem('bd-dark') === '1')
   } catch {
     applyDark(false)
   }
+  syncDevwarnHeight()
+  // 示例子站点（/examples/live/*）无横幅，路由切回文档页时重新挂接测量
+  watch(isExampleLive, () => nextTick(syncDevwarnHeight))
   // 代码块复制（自定义主题无默认主题的 copy 处理器，事件委托覆盖所有路由）
   document.addEventListener('click', onDelegatedClick)
 })
 
 onBeforeUnmount(() => {
+  devwarnResize?.disconnect()
   document.removeEventListener('click', onDelegatedClick)
 })
 

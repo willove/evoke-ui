@@ -6,11 +6,13 @@
  *   1. 全部组件以 Eb* 命名（EbListy 为 EbVirtualList 的注册别名，放行）
  *   2. 图表组件以 EbChart 存在（来自 @wil-works/evoke-charts 的 EvChart 别名）
  *   3. 无兄弟库命名残留（Ev* / Ew*）
+ *   4. 导出完整性：src/components 真实组件目录 ↔ src/index.js 导入交叉校验
+ *      （新组件漏导出时此前构建全绿、用户却装不到）
  *
  * 用法: node scripts/compat-check.mjs （挂入 build，build 后运行）
  */
-import { readFileSync, existsSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
+import { resolve, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -61,6 +63,25 @@ async function main() {
   const nonEb = [...names].filter((n) => !/^Eb[A-Z]/.test(n))
   for (const n of nonEb) {
     if (!ALIAS_OK.has(n)) violations.push(`注册表出现非 Eb* 命名: ${n}`)
+  }
+
+  // 4. 导出完整性：src/components 真实组件目录必须全部进入 src/index.js 导入
+  //    （目录索引导入 loading/message/msgbox/notify 与逐文件导入同口径覆盖）
+  const compRoot = resolve(__dirname, '../src/components')
+  const indexSrc = readFileSync(resolve(__dirname, '../src/index.js'), 'utf-8')
+  const importedDirs = new Set(
+    [...indexSrc.matchAll(/\/components\/([a-z0-9-]+)(?=\/|['"])/g)].map((m) => m[1]),
+  )
+  const missing = []
+  for (const name of readdirSync(compRoot)) {
+    const dir = join(compRoot, name)
+    if (!statSync(dir).isDirectory()) continue
+    // 空壳目录（仅工具缓存、无源码）不视为组件
+    if (!readdirSync(dir).some((f) => f.endsWith('.vue') || f.endsWith('.js'))) continue
+    if (!importedDirs.has(name)) missing.push(name)
+  }
+  if (missing.length) {
+    violations.push(`src/components 未进 src/index.js 导入（用户装不到）: ${missing.join(', ')}`)
   }
 
   console.log(`evoke-business-ui 注册组件: ${names.size}`)

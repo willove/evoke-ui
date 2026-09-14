@@ -34,5 +34,5 @@ app.use(EvokeBusinessUI)
 - 浏览[组件总览](/components/search-filter)查看全部组件的 API 与示例
 
 ::: tip 姊妹库推荐
-做官网、落地页或营销页？推荐同族的 [Evoke UI](https://evoke-ui.wil-works.com) —— Clean Navy 设计语言的 Vue3 官网组件库，49 个组件、明暗双主题与运行时换色，包名 [`@wil-works/evoke-ui`](https://www.npmjs.com/package/@wil-works/evoke-ui)。
+做官网、落地页或营销页？推荐同族的 [Evoke UI](https://evoke-ui.wil-works.com) —— Clean Navy 设计语言的 Vue3 官网组件库，60 个组件、明暗双主题与运行时换色，包名 [`@wil-works/evoke-ui`](https://www.npmjs.com/package/@wil-works/evoke-ui)。
 :::

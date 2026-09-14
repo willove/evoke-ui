@@ -128,19 +128,40 @@ describe('EbCommandPalette', () => {
     wrapper.unmount()
   })
 
-  it('打开时重置查询并聚焦 + 锁 body 滚动', async () => {
+  it('打开时重置查询并聚焦 + 计数式锁 body 滚动', async () => {
     const wrapper = mountPalette({ modelValue: false })
     wrapper.vm.open()
     await wrapper.setProps({ modelValue: true })
     await nextTick()
     await nextTick()
     expect(document.body.style.overflow).toBe('hidden')
+    expect(document.body.classList.contains('eb-scroll-locked')).toBe(true)
     // 稳健断言：活动元素是面板输入框（不比较具体节点实例）
     expect(document.activeElement?.classList?.contains('eb-command-palette__input')).toBe(true)
     wrapper.vm.close()
     await wrapper.setProps({ modelValue: false })
     expect(document.body.style.overflow).toBe('')
+    expect(document.body.classList.contains('eb-scroll-locked')).toBe(false)
     wrapper.unmount()
+  })
+
+  it('滚动锁引用计数：叠两层面板，关第一层不提前解锁', async () => {
+    const a = mountPalette({ modelValue: false })
+    const b = mountPalette({ modelValue: false })
+    a.vm.open()
+    await a.setProps({ modelValue: true })
+    b.vm.open()
+    await b.setProps({ modelValue: true })
+    await nextTick()
+    expect(document.body.style.overflow).toBe('hidden')
+    a.vm.close()
+    await a.setProps({ modelValue: false })
+    expect(document.body.style.overflow).toBe('hidden')
+    b.vm.close()
+    await b.setProps({ modelValue: false })
+    expect(document.body.style.overflow).toBe('')
+    a.unmount()
+    b.unmount()
   })
 
   it('hotkey/hint/图标渲染', () => {
