@@ -300,7 +300,7 @@ function createSvgRecorder(real) {
   }
   function toSvg(width, height, backgroundColor) {
     const body = elements.map((el) => {
-      const attrs = Object.entries(el.attrs).map(([k, v]) => `${k}="${v}"`).join(" ");
+      const attrs = Object.entries(el.attrs).map(([k, v]) => `${k}="${escapeXml(String(v))}"`).join(" ");
       if (el.tag === "text") {
         return `<text ${attrs}>${escapeXml(el.text || "")}</text>`;
       }

@@ -7,6 +7,7 @@ import {
   calculateTimeTicks,
   formatTimeTick
 } from "./core";
+import { maxOf, minOf } from "../extent";
 function truncateLabel(canvasCtx, label, maxWidth) {
   if (canvasCtx.measureText(label).width <= maxWidth) return label;
   let lo = 0, hi = label.length;
@@ -223,8 +224,8 @@ function renderTimeXAxis(ctx) {
   const timestamps = parseTimeLabels(labels);
   const valid = timestamps.filter((t) => !Number.isNaN(t));
   if (valid.length === 0) return;
-  const min = xAxisConfig.min ?? Math.min(...valid);
-  const max = xAxisConfig.max ?? Math.max(...valid);
+  const min = xAxisConfig.min ?? minOf(valid);
+  const max = xAxisConfig.max ?? maxOf(valid);
   const span = max - min || 1;
   const { values: tickTs, unit } = calculateTimeTicks(
     min,
@@ -280,8 +281,8 @@ function timeToX(options, plotArea, index) {
   const timestamps = parseTimeLabels(options.labels || []);
   const valid = timestamps.filter((t) => !Number.isNaN(t));
   if (valid.length === 0) return plotArea.x;
-  const min = options.xAxis?.min ?? Math.min(...valid);
-  const max = options.xAxis?.max ?? Math.max(...valid);
+  const min = options.xAxis?.min ?? minOf(valid);
+  const max = options.xAxis?.max ?? maxOf(valid);
   const span = max - min || 1;
   const ts = timestamps[index];
   if (Number.isNaN(ts)) return plotArea.x + index / ((options.labels?.length || 1) - 1 || 1) * plotArea.width;

@@ -14,7 +14,7 @@ const uiRoot = resolve(__dirname, '../../packages/evoke-ui')
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Evoke Charts',
-  description: '零依赖 Canvas 自绘图表库（Vue 3）：20+ 图表类型，主题与暗色跟随宿主，交互与导出内建',
+  description: '零依赖 Canvas 自绘图表库（Vue 3）：29 种图表类型，主题与暗色跟随宿主，交互与导出内建',
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }]],
 
   vite: {

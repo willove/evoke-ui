@@ -1,4 +1,5 @@
 import { estimateTextWidth, getContrastText, isLightColor, mixColor } from "./core";
+import { maxOf } from "../extent";
 
 // ─── 关系图族（桑基 / 韦恩 / 弦图 / 弧长连接图）───
 // 共同纪律（DESIGN §3.5–3.7）：连接色按「源节点」槽位继承；悬浮走焦点单一通道
@@ -40,17 +41,20 @@ function computeSankeyLayout(plotArea, options, theme, hiddenSeries) {
     (l) => nameSet.has(l.source) && nameSet.has(l.target) && Number.isFinite(l.value) && l.value > 0
   );
   if (allNodes.length === 0) return null;
-  // 节点值缺省时由链接汇总：max(入流, 出流)，源/汇退到单侧
+  // 节点值缺省时由链接汇总：max(入流, 出流)，源/汇退到单侧。
+  // 汇总结果进局部 Map，不回写用户传入的 sankeyData（props 只读纪律）
   const inSum = /* @__PURE__ */ new Map();
   const outSum = /* @__PURE__ */ new Map();
   links.forEach((l) => {
     outSum.set(l.source, (outSum.get(l.source) || 0) + l.value);
     inSum.set(l.target, (inSum.get(l.target) || 0) + l.value);
   });
-  allNodes.forEach((n) => {
-    if (typeof n.value === "number" && n.value > 0) return;
-    n.value = Math.max(inSum.get(n.name) || 0, outSum.get(n.name) || 0);
-  });
+  const nodeValues = new Map(
+    allNodes.map((n) => [
+      n.name,
+      typeof n.value === "number" && n.value > 0 ? n.value : Math.max(inSum.get(n.name) || 0, outSum.get(n.name) || 0)
+    ])
+  );
   // 拓扑深度（最长路）：迭代松弛，循环图天然收敛（深度封顶节点数）
   const depth = new Map(allNodes.map((n) => [n.name, 0]));
   for (let round = 0; round < allNodes.length; round++) {
@@ -64,8 +68,16 @@ function computeSankeyLayout(plotArea, options, theme, hiddenSeries) {
     });
     if (!changed) break;
   }
-  const maxDepth = Math.max(...depth.values());
-  const valueMax = Math.max(1, ...allNodes.map((n) => n.value || 0), ...links.map((l) => l.value));
+  const maxDepth = maxOf([...depth.values()]);
+  // nodeAlign（DESIGN §3.5）：justify 末端节点（无出流）右移到末列贴右缘；
+  // left 保持原始拓扑深度（深者靠右、汇点不强制对齐）
+  if ((options.sankey?.nodeAlign ?? "justify") === "justify") {
+    const hasOut = new Set(links.map((l) => l.source));
+    allNodes.forEach((n) => {
+      if (!hasOut.has(n.name)) depth.set(n.name, maxDepth);
+    });
+  }
+  const valueMax = Math.max(1, maxOf([...nodeValues.values()]), maxOf(links.map((l) => l.value)));
   const columnCount = maxDepth + 1;
   const scale = (plotArea.height * 0.82 - NODE_GAP * Math.max(0, columnCount - 1)) / valueMax;
   const xOfColumn = (col) =>
@@ -76,8 +88,8 @@ function computeSankeyLayout(plotArea, options, theme, hiddenSeries) {
     color: n.color || theme.colors[i % theme.colors.length],
     col: depth.get(n.name) || 0,
     x: xOfColumn(depth.get(n.name) || 0),
-    value: n.value || 0,
-    height: Math.max(2, (n.value || 0) * scale),
+    value: nodeValues.get(n.name) || 0,
+    height: Math.max(2, (nodeValues.get(n.name) || 0) * scale),
   }));
   // 列内布局：总高 + 间隙居中
   const byCol = new Map();
@@ -280,7 +292,7 @@ function computeVennLayout(plotArea, options, theme) {
     .filter((d) => d.sets.length === 1);
   if (circles.length === 0 || circles.length > 3) return null;
   const interRows = rows.filter((d) => d.sets && d.sets.length === 2);
-  const valueMax = Math.max(...circles.map((d) => d.value || 0));
+  const valueMax = maxOf(circles.map((d) => d.value || 0));
   if (!(valueMax > 0)) return null;
   // 主体放大（用户定则）：半径预算按集合数分档——1–2 集合圆占高度近半，
   // 3 集合留三角形展开余量；宽度只做溢出保护
@@ -487,7 +499,7 @@ function computeChordLayout(plotArea, options, theme, hiddenSeries) {
   // 半径预算：外侧仅留标签带（18px 文字 + 12px 余量），主体尽量大
   const R = Math.max(40, Math.min(plotArea.width, plotArea.height) / 2 - 30);
   const mode = options.chordMode === "curve" ? "curve" : "band";
-  const valueMax = Math.max(1, ...links.map((l) => l.value));
+  const valueMax = Math.max(1, maxOf(links.map((l) => l.value)));
   const byValue = options.chordByValue === true;
   const nodeValue = (n) => {
     if (byValue) {
@@ -724,7 +736,7 @@ function computeArcLayout(plotArea, options, theme, hiddenSeries) {
   const topGap = 24;
   const axisY = plotArea.y + Math.max(40, plotArea.height - labelBand);
   const step = plotArea.width / nodes.length;
-  const valueMax = Math.max(1, ...links.map((l) => l.value));
+  const valueMax = Math.max(1, maxOf(links.map((l) => l.value)));
   const nodePts = nodes.map((n, i) => ({
     node: n,
     name: n.name,

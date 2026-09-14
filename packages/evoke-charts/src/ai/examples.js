@@ -63,6 +63,35 @@ export const SPEC_EXAMPLES = [
       legend: { show: true },
     },
   },
+  {
+    requirement: "按周汇总看打卡活跃度",
+    spec: {
+      type: "calendar-heatmap",
+      title: "打卡活跃度（按周聚合）",
+      calendarData: [
+        { date: "2026-06-01", value: 3 },
+        { date: "2026-06-02", value: 5 },
+        { date: "2026-06-05", value: 8 },
+      ],
+      calendar: { start: "2026-06-01", end: "2026-08-31", granularity: "week" },
+    },
+  },
+  {
+    requirement: "服务间调用关系，环形布局更好看出闭环",
+    spec: {
+      type: "arc",
+      title: "服务间调用拓扑",
+      arcCircular: true,
+      arcData: {
+        nodes: [{ name: "网关" }, { name: "订单服务" }, { name: "支付服务" }, { name: "消息中心" }],
+        links: [
+          { source: "网关", target: "订单服务", value: 46 },
+          { source: "订单服务", target: "支付服务", value: 38 },
+          { source: "支付服务", target: "消息中心", value: 22 },
+        ],
+      },
+    },
+  },
 ];
 
 export function formatExamples(maxCount = SPEC_EXAMPLES.length) {

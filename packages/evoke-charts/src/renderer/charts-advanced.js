@@ -1,5 +1,6 @@
 import { CHART_COLORS } from "../types";
 import { roundRect, getContrastText, isLightColor, mixColor } from "./core";
+import { maxOf, minOf } from "../extent";
 
 // 漏斗是同一个流程的逐层收窄（不是并列类目）：段色按层序向背景方向混合，
 // 与旭日图「分支同色系」同一机制（旭日按深度、漏斗按层序）
@@ -27,7 +28,7 @@ export function funnelStepColor(data, index, theme) {
 export function computeFunnelGeometry(plotArea, options, theme) {
   const all = options.funnelData || [];
   const drawn = options.pyramid === true ? [...all].reverse() : all;
-  const maxValue = drawn.length ? Math.max(...drawn.map((d) => d.value)) : 0;
+  const maxValue = drawn.length ? maxOf(drawn.map((d) => d.value)) : 0;
   const maxWidth = plotArea.width * 0.8;
   const centerX = plotArea.x + plotArea.width / 2;
   const topY = plotArea.y + 8;
@@ -169,11 +170,15 @@ function renderFunnelChart(ctx) {
  */
 function renderGaugeChart(ctx) {
   const { ctx: canvasCtx, theme, plotArea, options, progress, hoverIndex } = ctx;
-  const gauge = options.gauge;
+  const rawGauge = options.gauge;
+  // schema 允许 number 简写（gauge: 75 即值为 75 的默认表盘）
+  const gauge = typeof rawGauge === "number" ? { value: rawGauge } : rawGauge;
   if (!gauge || typeof gauge !== "object") return;
-  const min = gauge.min || 0;
-  const max = gauge.max || 100;
-  const value = Math.max(min, Math.min(max, gauge.value));
+  const min = gauge.min ?? 0;
+  const max = gauge.max ?? 100;
+  const value = typeof gauge.value === "number" && Number.isFinite(gauge.value)
+    ? Math.max(min, Math.min(max, gauge.value))
+    : min;
   const toRad = (deg) => -deg * Math.PI / 180;
   const startAngle = toRad(gauge.startAngle ?? 220);
   let normalizedEnd = toRad(gauge.endAngle ?? -40);
@@ -195,7 +200,8 @@ function renderGaugeChart(ctx) {
   canvasCtx.lineCap = gauge.cornerRadius === "butt" ? "butt" : "round";
   canvasCtx.stroke();
   canvasCtx.restore();
-  const valueRatio = (value - min) / (max - min);
+  // min === max（区间为零）时量程退化，进度按 0 处理避免除零
+  const valueRatio = max - min !== 0 ? (value - min) / (max - min) : 0;
   const animatedRatio = valueRatio * progress;
   const valueAngle = startAngle + (normalizedEnd - startAngle) * animatedRatio;
   let progressColor = theme.colors[0];
@@ -460,7 +466,7 @@ function computeCalendarLayout(plotArea, options, theme) {
   const leftBand = gran === "day" ? 28 : 6;
   const gap = Math.max(1, Math.min(8, cal.cellGap ?? 3));
   const scaleH = cal.showScale === false ? 0 : 22;
-  const cols = Math.max(1, ...buckets.map((b) => b.col + 1));
+  const cols = Math.max(1, maxOf(buckets.map((b) => b.col + 1)));
   const availW = plotArea.width - leftBand;
   const availH = plotArea.height - labelTop - scaleH;
   // 矩形格子：宽高独立铺满可用空间（横向不再留白）
@@ -609,8 +615,8 @@ function renderHeatmapChart(ctx) {
   const colorScale = heatmapConfig.colorScale || [...CHART_COLORS.heatmapScale];
   const { xCategories, yCategories } = getHeatmapCategories(options);
   const values = heatmapData.map((d) => d.value);
-  const minValue = Math.min(...values);
-  const maxValue = Math.max(...values);
+  const minValue = minOf(values);
+  const maxValue = maxOf(values);
   const valueRange = maxValue - minValue || 1;
   const cellWidth = plotArea.width / xCategories.length;
   const cellHeight = plotArea.height / yCategories.length;
@@ -713,7 +719,7 @@ function candleVolumeLayout(plotArea, options, hiddenSeries) {
 function renderVolumeBand(ctx, volumeData, flags, baseY, bandTop, barWidth, slotWidth, plotWidth, plotX, theme, progress, hoverIndex, upColor = "#dc2626", downColor = "#16a34a") {
   const { ctx: canvasCtx, hiddenSeries } = ctx;
   if (hiddenSeries && hiddenSeries.has("成交量")) return;
-  const volMax = Math.max(...volumeData.filter((v) => Number.isFinite(v)), 1);
+  const volMax = maxOf(volumeData.filter((v) => Number.isFinite(v)), 1);
   const bandHeight = Math.max(4, baseY - bandTop);
   volumeData.forEach((vol, i) => {
     if (!Number.isFinite(vol)) return;

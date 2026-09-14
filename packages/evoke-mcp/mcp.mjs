@@ -202,7 +202,8 @@ server.registerTool(
     },
   },
   async ({ data, requirement }) => {
-    const spec = generateChartSpec(data, { requirement })
+    // generateChartSpec 第二参是 hint 对象（intent/title/hint/narrative），requirement 映射到 hint.hint 参与意图识别
+    const spec = generateChartSpec(data, requirement ? { hint: requirement } : {})
     return { content: [{ type: 'text', text: JSON.stringify(spec, null, 2) }] }
   },
 )

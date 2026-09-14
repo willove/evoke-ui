@@ -16,13 +16,16 @@ const releases = [
   {
     tag: 'Unreleased',
     date: '即将发版',
-    title: '七项回访：区间切片 · 日历铺满与粒度 · 弧形环状归位 · 动效全面化',
+    title: '七项回访 · 安全与健壮性加固 · AI / MCP 面补齐',
     bullets: [
       'K 线 dataZoom 区间选择修复：纯 candleData 图纳入切片、volumeData 同步（此前滑块动了图不变、量带静默消失）',
       '日历热力格子矩形横向铺满；新增 calendar.granularity 周 / 月求和聚合视角（每日 / 每周 / 累计切换）',
       '弧形环状连接图归位弧长连接图：type arc + arcCircular: true，连线锚到节点圆点；文档章节迁移至弧长连接图页',
       '雷达环底色改同心圆环带（AntV 示例同款）；韦恩图主体按集合数分档放大；旭日图标签正文色优先（能用黑就用黑）',
       '悬浮强调全面缓动化：柱族 / 箱线 / K 线 / 漏斗 / 热力 / 日历 / 甘特随 220ms 缓动淡入淡出，仅准线与 tooltip 即时',
+      '安全与健壮性：tooltip 默认模板转义（labels 带富文本不再可注入）、10 万点以上大数据不再栈溢出、缺 data 系列按空系列渲染不卡更新、实例 destroy() 清理补齐、emphasis 挂载即生效且运行中可切换、桑基图不再回写用户数据、gauge 数字简写与边界修正、sankey.nodeAlign 落地',
+      'AI / MCP 面：generate_chart_spec 的 requirement 参数生效；schema 补齐已实现字段（radarRingFill / candleMaColors / quadrant / facet / valueFormat / calendar 系列等）；MCP 目录收录指南页与 0.5.0 新图型页',
+      '文档口径对齐：设计页缓动 / 刻度密度 / 监控带与 DESIGN 一致，api 表补 palette 行与 legend 左右位，README 补 0.5.0 图型与 scene-change',
     ],
   },
   {
@@ -31,7 +34,7 @@ const releases = [
     title: '关系与流动图族 · 日历热力 · 体验回访',
     bullets: [
       '四个新图型：桑基图（能源流动 / 用户旅程）、韦恩图（群体重叠，基础+空心）、弦图与弧长连接图（两两关系强弱）、甘特图（排期进度 / 里程碑 / 依赖 / 今日线）',
-      '新增日历热力图 calendar-heatmap：年月日周激活热度（GitHub 活动热力同款，今日描边 + 少多色阶）；弦图新增弧形环状形态（chordMode: curve）',
+      '新增日历热力图 calendar-heatmap：年月日周激活热度（GitHub 活动热力同款，今日描边 + 少多色阶）；弦图新增弧形环状形态（该形态现归位为弧长连接图的 arcCircular，见 Unreleased）',
       '散点图大版本：四象限参考线、点标注、group 颜色通道分组、回归线 R²、防重叠抖动、分面小倍数、散点矩阵看多变量相关性',
       'K 线量副图 + MA 均线（candleMa）+ dataZoom 区间选择；量副图扩展到折线/面积（分时图）；仪表盘指针形态与外观定制面；箱线图分组 / 横向 / 隐藏异常点',
       '雷达图环底色、轴线悬浮点亮；悬浮聚焦与图例焦点淡化全面缓动化；仪表盘弧向修正为经典形态；x 轴拥挤自动抽稀与截断',

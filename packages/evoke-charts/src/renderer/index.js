@@ -1,4 +1,5 @@
 import { getTheme, createValueFormatter, getPadding, applyLogTransform } from "./core";
+import { maxOf, minOf } from "../extent";
 import {
   renderYAxis,
   renderXAxis,
@@ -107,7 +108,11 @@ function renderChart(canvas, params) {
     focusSeries = null,
     hoveredToolbox = null
   } = params;
-  const options = applyLogTransform(rawOptions);
+  const logApplied = applyLogTransform(rawOptions);
+  // 缺 data 的系列按空系列渲染（不改用户对象），不让渲染管线直接抛进错误态
+  const options = (logApplied.series || []).some((s) => !s.data)
+    ? { ...logApplied, series: logApplied.series.map((s) => s.data ? s : { ...s, data: [] }) }
+    : logApplied;
   const ctx = externalCtx || canvas.getContext("2d");
   const width = canvas.width / dpr;
   const height = canvas.height / dpr;
@@ -171,8 +176,8 @@ function renderChart(canvas, params) {
         }
         const yValues = scatterData.map((d) => d.y);
         const yRange = renderYAxis(renderCtx, "left", {
-          min: Math.min(...yValues),
-          max: Math.max(...yValues)
+          min: minOf(yValues),
+          max: maxOf(yValues)
         });
         renderXAxis(renderCtx);
         points = renderScatterChart(renderCtx, yRange);
@@ -201,8 +206,8 @@ function renderChart(canvas, params) {
         const vol = candleVolumeLayout(plotArea, options, hiddenSeries);
         const axisArea = vol.on ? vol.priceArea : plotArea;
         const yRange = renderYAxis({ ...renderCtx, plotArea: axisArea }, "left", {
-          min: Math.min(...allValues),
-          max: Math.max(...allValues)
+          min: minOf(allValues),
+          max: maxOf(allValues)
         });
         renderXAxis(renderCtx);
         renderCandleChart(renderCtx, yRange);
@@ -285,11 +290,11 @@ function renderChart(canvas, params) {
         let range;
         if (horizontal) {
           // 横向：数值轴在底部（竖向网格线），类目走纵轴
-          range = renderHorizontalAxis(renderCtx, { min: Math.min(...allValues), max: Math.max(...allValues) });
+          range = renderHorizontalAxis(renderCtx, { min: minOf(allValues), max: maxOf(allValues) });
         } else {
           range = renderYAxis(renderCtx, "left", {
-            min: Math.min(...allValues),
-            max: Math.max(...allValues)
+            min: minOf(allValues),
+            max: maxOf(allValues)
           });
         }
         leftRange = range;

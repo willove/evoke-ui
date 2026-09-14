@@ -4,6 +4,44 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-charts — 安全与健壮性回访：tooltip 转义 / 大数据量 / 生命周期与 AI 面补齐
+
+- **tooltip 默认模板转义**：类目名 / 系列名 / 数值等用户数据进 HTML 前统一
+  转义（含颜色 style 注入面），labels 携带富文本标签不再能注入脚本；
+  `tooltip.formatter` 仍为约定的 HTML 出口，行为不变；`exportSVG` 属性同步
+  转义；
+- **大数据量不再栈溢出**：全库 `Math.min / Math.max(...数组)` 展开改循环归约
+  （`extent` 工具，NaN 传播语义一致）——约 10 万点以上散点 / 直方图此前直接
+  RangeError，散点命中测试更是每次 mousemove 都在展开；
+- **更新链路防卡死**：系列缺 `data` 字段不再让 watch 回调抛错卡死后续更新，
+  渲染按空系列处理（此前渲染直接抛进错误态，watch 链路永久失效）；
+- **实例 destroy() 清理补齐**：与组件卸载同面——window 监听移除、联动组
+  注销、焦点 / 补间动画回收（此前 destroy 后全局监听与联动组泄漏）；
+- **emphasis 挂载即生效、运行中可切换**：`options.emphasis` 首帧即生效；
+  运行中增删自动补播 180ms 淡化缓动（此前运行中开启淡化不可见）；
+- **桑基图只读用户数据**：节点 value 自动汇总进局部布局，不再回写
+  `sankeyData`（此前污染调用方数据并多触发一次动画重绘）；DESIGN §3.5
+  记载的 `sankey.nodeAlign` 同步落地——`justify`（默认）末端节点贴右缘、
+  `left` 按拓扑深度；
+- **仪表盘边界**：`gauge: 75` 数字简写生效（schema 一直允许、此前渲染空白）；
+  `max: 0` 不再被吞、负区间正常、`min === max` 不再除零出 NaN；未知 easing
+  名回落默认曲线，不再逐帧抛错；
+- **AI / MCP 面补齐**：`generate_chart_spec` 工具的 `requirement` 参数生效
+  （此前被完全无视，不参与选型）；schema 补齐 radarRingFill / candleMaColors /
+  candleUpColor / quadrant / facet / jitter / valueFormat / heatmap 系列 /
+  sankey 等一批已实现字段（AI 生成此前被「不用 schema 外字段」的规则引导
+  避开这些能力）；SPEC_RULES 补 arcCircular / granularity / valueFormat 用法；
+  few-shot 新增日历聚合与环形弧长示例；MCP catalog 收录指南页与 0.5.0 新
+  图型页（venn / sankey / chord / arc / gantt 此前 list / search 发现不了）；
+- 文档：interaction 页死链修复、设计页缓动（指数→五次）/ 刻度密度（26px→
+  ≥24px）/ 监控带 left 口径与 DESIGN 对齐；api 表补 `palette` 行、legend
+  左右位、gauge 数字简写、sankey.nodeAlign；README 补 0.5.0 图型、palette
+  与 `scene-change` 事件；「20+ 图表类型」口径更新为 29 种；
+- 新增健壮性回归（转义 / 大数组 / 缺 data / destroy / gauge / easing /
+  nodeAlign）与 13 项图型覆盖冒烟（radar / heatmap / bin / bullet / waterfall /
+  mixed / stacked-bar / area / doughnut / rose / sparkline / 横向条形 /
+  arcCircular 此前零直接测试），全仓 80 文件 1263 项测试全绿。
+
 ### @wil-works/evoke-charts — 七项回访：区间切片 / 日历铺满与粒度 / 弧形环状归位 / 动效全面化
 
 - **K 线 dataZoom 区间选择修复**：缩放切片此前只认 `labels` 数组，纯 candleData

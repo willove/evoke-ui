@@ -8,6 +8,7 @@ import {
   isMissingValue
 } from "./core";
 import { INTERACTION } from "../interactions";
+import { maxOf, minOf } from "../extent";
 function sturgesBinCount(n) {
   return Math.max(3, Math.ceil(Math.log2(n) + 1));
 }
@@ -17,8 +18,8 @@ function computeBins(options, hiddenSeries) {
   const allValues = [];
   visibleSeries.forEach((s) => allValues.push(...s.data.filter((v) => !isMissingValue(v))));
   if (allValues.length === 0) return null;
-  const dataMin = Math.min(...allValues);
-  const dataMax = Math.max(...allValues);
+  const dataMin = minOf(allValues);
+  const dataMax = maxOf(allValues);
   const range = dataMax - dataMin || 1;
   let bins;
   if (binConfig.bins && binConfig.bins.length > 1) {
@@ -50,7 +51,7 @@ function renderBinChart(ctx) {
   const dataMin = bins[0];
   const dataMax = bins[bins.length - 1];
   const range = dataMax - dataMin || 1;
-  const maxFreq = Math.max(...displayValues, 1);
+  const maxFreq = maxOf(displayValues, 1);
   const binCount = bins.length - 1;
   const barGap = 2;
   const barWidth = (plotArea.width - barGap * (binCount - 1)) / binCount;
@@ -121,8 +122,8 @@ function renderBulletChart(ctx) {
       allValues.push(r.from, r.to);
     });
   });
-  const maxVal = Math.max(...allValues, 0);
-  const minVal = Math.min(...allValues, 0);
+  const maxVal = maxOf(allValues, 0);
+  const minVal = minOf(allValues, 0);
   const range = maxVal - minVal || 1;
   const padMin = minVal >= 0 ? 0 : minVal - range * 0.1;
   const padMax = maxVal + range * 0.1;
@@ -325,8 +326,8 @@ function renderSparklineChart(ctx) {
     if (data.length === 0) return;
     const valid = data.filter((v) => !isMissingValue(v));
     if (valid.length === 0) return;
-    const min = Math.min(...valid);
-    const max = Math.max(...valid);
+    const min = minOf(valid);
+    const max = maxOf(valid);
     const range = max - min || 1;
     const points = [];
     const pointByIndex = [];

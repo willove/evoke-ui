@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-12T17:42:54.357Z",
+  "generatedAt": "2026-09-14T15:52:16.593Z",
   "sites": {
     "ui": {
       "label": "Evoke UI",
@@ -14,7 +14,7 @@
     "charts": {
       "label": "Evoke Charts",
       "host": "https://evoke-charts.wil-works.com",
-      "desc": "零依赖 Canvas 自绘图表库：20+ 图表类型，spec 配置式声明"
+      "desc": "零依赖 Canvas 自绘图表库：29 种图表类型，spec 配置式声明"
     }
   },
   "entries": [
@@ -762,6 +762,13 @@
     },
     {
       "site": "charts",
+      "name": "韦恩图",
+      "title": "分布与关系 · 韦恩图",
+      "category": "分布与关系",
+      "path": "/chart/venn"
+    },
+    {
+      "site": "charts",
       "name": "矩形树图",
       "title": "层级与多维 · 矩形树图",
       "category": "层级与多维",
@@ -783,10 +790,38 @@
     },
     {
       "site": "charts",
-      "name": "混合图",
-      "title": "组合与进阶 · 混合图",
+      "name": "桑基图",
+      "title": "关系与流动 · 桑基图",
+      "category": "关系与流动",
+      "path": "/chart/sankey"
+    },
+    {
+      "site": "charts",
+      "name": "弦图",
+      "title": "关系与流动 · 弦图",
+      "category": "关系与流动",
+      "path": "/chart/chord"
+    },
+    {
+      "site": "charts",
+      "name": "弧长连接图",
+      "title": "关系与流动 · 弧长连接图",
+      "category": "关系与流动",
+      "path": "/chart/arc"
+    },
+    {
+      "site": "charts",
+      "name": "混合图 · 双轴",
+      "title": "组合与进阶 · 混合图 · 双轴",
       "category": "组合与进阶",
       "path": "/chart/mixed"
+    },
+    {
+      "site": "charts",
+      "name": "甘特图",
+      "title": "组合与进阶 · 甘特图",
+      "category": "组合与进阶",
+      "path": "/chart/gantt"
     },
     {
       "site": "charts",
@@ -794,6 +829,55 @@
       "title": "组合与进阶 · 交互与联动",
       "category": "组合与进阶",
       "path": "/chart/interaction"
+    },
+    {
+      "site": "charts",
+      "name": "安装与引入",
+      "title": "安装与引入",
+      "category": "指南",
+      "path": "/guide/install"
+    },
+    {
+      "site": "charts",
+      "name": "主题接入",
+      "title": "主题接入",
+      "category": "指南",
+      "path": "/guide/theme"
+    },
+    {
+      "site": "charts",
+      "name": "主题配色",
+      "title": "主题配色",
+      "category": "指南",
+      "path": "/guide/palette"
+    },
+    {
+      "site": "charts",
+      "name": "AI 生成",
+      "title": "AI 生成",
+      "category": "指南",
+      "path": "/guide/ai"
+    },
+    {
+      "site": "charts",
+      "name": "设计规范",
+      "title": "设计规范",
+      "category": "指南",
+      "path": "/guide/design"
+    },
+    {
+      "site": "charts",
+      "name": "内嵌于组件库",
+      "title": "内嵌于组件库",
+      "category": "指南",
+      "path": "/guide/integration"
+    },
+    {
+      "site": "charts",
+      "name": "更新记录",
+      "title": "更新记录",
+      "category": "指南",
+      "path": "/guide/changelog"
     },
     {
       "site": "ui",
@@ -930,6 +1014,13 @@
     },
     {
       "site": "ui",
+      "name": "Slider",
+      "title": "Slider 滑块",
+      "category": "组件",
+      "path": "/components/slider"
+    },
+    {
+      "site": "ui",
       "name": "Avatar",
       "title": "Avatar 头像",
       "category": "组件",
@@ -955,6 +1046,20 @@
       "title": "Section 区块",
       "category": "组件",
       "path": "/components/section"
+    },
+    {
+      "site": "ui",
+      "name": "ScrollScene",
+      "title": "ScrollScene 滚动场景",
+      "category": "组件",
+      "path": "/components/scroll-scene"
+    },
+    {
+      "site": "ui",
+      "name": "Bento",
+      "title": "Bento 图文组合分区",
+      "category": "组件",
+      "path": "/components/bento"
     },
     {
       "site": "ui",

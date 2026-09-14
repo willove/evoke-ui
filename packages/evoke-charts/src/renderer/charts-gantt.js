@@ -1,4 +1,5 @@
 import { estimateTextWidth, mixColor, getContrastText, drawLabelWithBg, calculateTimeTicks, formatTimeTick } from "./core";
+import { maxOf, minOf } from "../extent";
 
 // ─── 甘特图（DESIGN §3.8）───
 // 行带 + 时间轴：条高 = 行高 × 0.52 圆角 4；进度实心、剩余 @25%；里程碑菱形；
@@ -29,13 +30,13 @@ function computeGanttLayout(plotArea, options, theme, hiddenSeries, valueFormatt
   if (parsed.length === 0) return null;
   const labelW = Math.max(
     LABEL_MIN,
-    Math.min(LABEL_MAX, Math.round(Math.max(...parsed.map((t) => estimateTextWidth(t.name || "", 12))) + 16))
+    Math.min(LABEL_MAX, Math.round(maxOf(parsed.map((t) => estimateTextWidth(t.name || "", 12))) + 16))
   );
   // padding.left 已预留标签列（getPadding gantt 分支），绘图区即条带区
   const chartX = plotArea.x;
   const chartW = plotArea.width;
-  let tmin = Math.min(...parsed.map((t) => Math.min(t.startTs, t.endTs)));
-  let tmax = Math.max(...parsed.map((t) => Math.max(t.startTs, t.endTs)));
+  let tmin = minOf(parsed.map((t) => Math.min(t.startTs, t.endTs)));
+  let tmax = maxOf(parsed.map((t) => Math.max(t.startTs, t.endTs)));
   if (options.ganttToday) {
     const today = toTs(options.ganttToday);
     if (today !== null) {

@@ -13,6 +13,7 @@ import {
   layoutLabelsAvoidOverlap
 } from "./core";
 import { categoryToX } from "./axes";
+import { maxOf, minOf } from "../extent";
 import {
   CALLOUT_RADIAL_LEN as PIE_RADIAL_LEN,
   CALLOUT_STUB_LEN as PIE_STUB_LEN,
@@ -27,7 +28,7 @@ function computePieMaxRadius(pieData, options, plotArea) {
     const pct = (d.value / total * 100).toFixed(1);
     return percentMode ? `${pct}%` : `${d.label || ""} (${pct}%)`;
   });
-  const maxTextWidth = Math.max(40, ...texts.map((t) => estimateTextWidth(t, 12)));
+  const maxTextWidth = Math.max(40, maxOf(texts.map((t) => estimateTextWidth(t, 12))));
   const horizNeed = PIE_RADIAL_LEN + PIE_STUB_LEN + PIE_TEXT_GAP + maxTextWidth + 10;
   return Math.max(30, Math.min(Math.min(plotArea.width, plotArea.height) / 2 - 20, plotArea.width / 2 - horizNeed));
 }
@@ -588,7 +589,7 @@ function renderPieChart(ctx, isDoughnut, isRose = false) {
     const sliceAngle = data.value / total * Math.PI * 2 * progress;
     const endAngle = startAngle + sliceAngle;
     const isHover = index === hoverIndex;
-    const roseRadius = isRose ? maxRadius * Math.sqrt(data.value / Math.max(...pieData.map((d) => d.value))) : maxRadius;
+    const roseRadius = isRose ? maxRadius * Math.sqrt(data.value / maxOf(pieData.map((d) => d.value))) : maxRadius;
     const hoverDistance = isRose ? Math.max(10, roseRadius * 0.15) : 12;
     const offset = isHover ? hoverDistance * hoverAnimProgress : 0;
     const radius = isRose ? roseRadius * progress : maxRadius;
@@ -653,8 +654,8 @@ function renderPieChart(ctx, isDoughnut, isRose = false) {
 }
 function createScatterScale(scatterData, yRange, plotArea) {
   const xValues = scatterData.map((d) => d.x);
-  const xMin = Math.min(...xValues);
-  const xMax = Math.max(...xValues);
+  const xMin = minOf(xValues);
+  const xMax = maxOf(xValues);
   const xRange = xMax - xMin || 1;
   const xPadding = xRange * 0.05;
   const yPadding = (yRange.max - yRange.min) * 0.05;
@@ -840,10 +841,10 @@ function computeFacetGrids(scatterData, plotArea, options) {
     const data = grouped.get(name);
     const xs = data.map((d) => d.x);
     const ys = data.map((d) => d.y);
-    const xMin = Math.min(...xs);
-    const xMax = Math.max(...xs);
-    const yMin = Math.min(...ys);
-    const yMax = Math.max(...ys);
+    const xMin = minOf(xs);
+    const xMax = maxOf(xs);
+    const yMin = minOf(ys);
+    const yMax = maxOf(ys);
     const xPad = (xMax - xMin || 1) * 0.08;
     const yPad = (yMax - yMin || 1) * 0.08;
     const outer = { x: plotArea.x + col * cellW, y: plotArea.y + row * cellH, width: cellW, height: cellH };
@@ -951,8 +952,8 @@ function computeMatrixCells(plotArea, fields) {
 function matrixFieldExtent(records, field) {
   const values = records.map((r) => r[field]).filter((v) => typeof v === "number" && Number.isFinite(v));
   if (values.length === 0) return { min: 0, max: 1 };
-  const min = Math.min(...values);
-  const max = Math.max(...values);
+  const min = minOf(values);
+  const max = maxOf(values);
   const pad = (max - min || 1) * 0.08;
   return { min: min - pad, max: max + pad };
 }

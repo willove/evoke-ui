@@ -8,9 +8,10 @@
 
 ## 特性
 
-- **20+ 图表类型**：折线 / 面积 / 柱状 / 堆叠柱 / 条形 / 饼图 / 环形 / 玫瑰图 / 散点（含趋势线）/ 雷达 / 漏斗 / 仪表盘 / 热力图 / K 线 / 子弹图 / 直方图 / 矩形树图 / 旭日图 / 瀑布图 / 箱线图 / 混合图 / 迷你图
+- **29 种图表类型**：折线 / 面积 / 柱状 / 堆叠柱 / 条形 / 饼图 / 环形 / 玫瑰图 / 散点（趋势线 / 四象限 / 分面 / 矩阵）/ 雷达 / 漏斗 / 仪表盘 / 热力图 / 日历热力 / K 线（量副图 / MA 均线）/ 子弹图 / 直方图 / 矩形树图 / 旭日图 / 瀑布图 / 箱线图 / 混合双轴 / 迷你图 / 桑基图 / 韦恩图 / 弦图 / 弧长连接图（线性 / 环形）/ 甘特图
 - **零运行时依赖**：仅 peer 依赖 Vue 3，全部绘制自研 Canvas 2D
 - **主题跟随**：从 `--ev-*` CSS 令牌实时读取颜色，宿主换主题 / 暗色即跟随；无令牌时使用内置色板兜底
+- **内置色系**：`palette` 一键固定成套配色（7 套现代色系，明暗双主题各 8 槽），生效后不随宿主换肤
 - **交互完备**：tooltip、图例点选 / 悬停高亮、十字准线、dataZoom（滑块 / 滚轮 / 触摸平移）、框选刷选、工具箱（导出 PNG / 还原）、多图 connect 联动
 - **叙述与编排**：`annotations[]` 图内旁白（峰值标注 / 区间强调 / 涨跌结论）、`emphasis` 焦点弱化、`scenes` 分幕 reveal / 自动播报
 - **AI 生成**：`generateChartSpec` 数据直生（CSV / 表格 → Spec，列推断与选型全自动）、`buildChartPrompt` 提示词契约（喂给任意大模型）、`lintChartSpec` 渲染自检；Spec 即 `options`，`getSpec / setSpec` 往返
@@ -91,7 +92,7 @@ const options = {
 
 ### 事件
 
-`ready` / `click` / `legend-click` / `hover` / `unhover` / `animation-end` / `data-update` / `brush-select` / `zoom`
+`ready` / `click` / `legend-click` / `hover` / `unhover` / `scene-change` / `animation-end` / `data-update` / `brush-select` / `zoom`
 
 ### 实例方法（ref）
 

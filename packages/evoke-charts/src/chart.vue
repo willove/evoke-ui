@@ -79,6 +79,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, h } from "vue";
 import { INTERACTION, applyWheelZoom, resolveCursor, pickTooltipRows } from "./interactions";
+import { maxOf, minOf } from "./extent";
 import {
   renderChart,
   createAnimation,
@@ -316,8 +317,8 @@ const effectiveOptions = computed(() => {
     }
   } else if (base.scatterData && base.scatterData.length > 0) {
     const xs = base.scatterData.map((d) => d.x);
-    const xMin = Math.min(...xs);
-    const xMax = Math.max(...xs);
+    const xMin = minOf(xs);
+    const xMax = maxOf(xs);
     const span = xMax - xMin || 1;
     const lo = xMin + range.start / 100 * span;
     const hi = xMin + range.end / 100 * span;
@@ -557,7 +558,8 @@ function buildRenderParams(progress, optionsOverride) {
   };
 }
 // ─── 焦点淡化缓动：图例悬浮 / emphasis 的 22% 淡化随 180ms 缓入（DESIGN §13.2）───
-let focusAnimProgress = 1;
+// 初始值跟 options.emphasis 对齐：挂载即配置焦点时首帧就是终态，不再等第一次交互
+let focusAnimProgress = emphasisSeriesName.value ? 1 : 0;
 let focusAnimFrameId = null;
 function animateFocusProgress() {
   if (focusAnimFrameId !== null) {
@@ -596,7 +598,7 @@ function snapshotSeriesData(opt) {
   (opt.series || []).forEach(
     (s) => map.set(
       s.name,
-      s.data.map((v) => isMissingValue(v) ? 0 : v)
+      (s.data || []).map((v) => isMissingValue(v) ? 0 : v)
     )
   );
   return map;
@@ -614,7 +616,7 @@ function interpolateOptions(prev, next, t) {
   const series = (next.series || []).map((s) => {
     const old = prev.get(s.name);
     if (!old) return s;
-    const data = s.data.map((v, i) => {
+    const data = (s.data || []).map((v, i) => {
       if (isMissingValue(v)) return v;
       const from = old[i + offset] ?? 0;
       return from + (v - from) * t;
@@ -625,7 +627,7 @@ function interpolateOptions(prev, next, t) {
 }
 function dataSignature(opt) {
   const total = (opt.series || []).reduce(
-    (sum, s) => sum + s.data.reduce((acc, v) => acc + (isMissingValue(v) ? 0 : v), 0),
+    (sum, s) => sum + (s.data || []).reduce((acc, v) => acc + (isMissingValue(v) ? 0 : v), 0),
     0
   );
   return `${(opt.series || []).length}\u7CFB\u5217/${(opt.labels || []).length}\u7C7B\u76EE/\u03A3${Math.round(total)}`;
@@ -645,7 +647,7 @@ function startTweenIfNeeded(prevOptions) {
   const changed = (nextOptions.series || []).some((s) => {
     const old = prevSnapshot.get(s.name);
     if (!old) return false;
-    return s.data.some((v, i) => (isMissingValue(v) ? 0 : v) !== (old[i] ?? 0));
+    return (s.data || []).some((v, i) => (isMissingValue(v) ? 0 : v) !== (old[i] ?? 0));
   });
   if (!changed) return false;
   stopAnimation();
@@ -902,7 +904,7 @@ function getHoveredData(x, y) {
     if (angle < 0) angle += Math.PI * 2;
     const total = slices.reduce((sum, d) => sum + d.value, 0);
     let currentAngle = 0;
-    const maxVal = Math.max(...slices.map((d) => d.value));
+    const maxVal = maxOf(slices.map((d) => d.value));
     for (let i = 0; i < slices.length; i++) {
       const sliceAngle = slices[i].value / total * Math.PI * 2;
       if (angle >= currentAngle && angle < currentAngle + sliceAngle) {
@@ -990,8 +992,8 @@ function getHoveredData(x, y) {
     const allValues = visible.flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])]);
     const axisCfg = options.boxHorizontal ? options.xAxis || {} : options.yAxis || {};
     const ext = resolveTickExtendedRange(
-      axisCfg.min ?? Math.min(...allValues),
-      axisCfg.max ?? Math.max(...allValues),
+      axisCfg.min ?? minOf(allValues),
+      axisCfg.max ?? maxOf(allValues),
       axisCfg.ticks || 5
     );
     return boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, { min: ext.min, max: ext.max });
@@ -1169,8 +1171,8 @@ function getHoveredData(x, y) {
     }
     const yValues = scatterData.map((d) => d.y);
     const axisConfig = options.yAxis || {};
-    const rawMin = axisConfig.min ?? Math.min(...yValues);
-    const rawMax = axisConfig.max ?? Math.max(...yValues);
+    const rawMin = axisConfig.min ?? minOf(yValues);
+    const rawMax = axisConfig.max ?? maxOf(yValues);
     const yExt = resolveTickExtendedRange(rawMin, rawMax, axisConfig.ticks || 5);
     // 点位与渲染同一口径（含抖动），看到的和命中的是同一批坐标
     const positions = scatterPointPositions(scatterData, { min: yExt.min, max: yExt.max }, plotArea, options);
@@ -1356,7 +1358,7 @@ function getHoveredData(x, y) {
       const angle = i * angleStep - Math.PI / 2;
       const ind = indicators[i];
       const span = ind.max - (ind.min || 0);
-      const maxR = span > 0 ? Math.max(...series.map((s) => radius * (Math.max(0, (s.data[i] || 0) - (ind.min || 0)) / span))) : 0;
+      const maxR = span > 0 ? maxOf(series.map((s) => radius * (Math.max(0, (s.data[i] || 0) - (ind.min || 0)) / span))) : 0;
       const px = centerX + Math.cos(angle) * maxR;
       const py = centerY + Math.sin(angle) * maxR;
       const dist = Math.sqrt((canvasX - px) ** 2 + (canvasY - py) ** 2);
@@ -1827,6 +1829,11 @@ function formatTooltipValue(value) {
   }
   return Number.isInteger(value) ? value.toString() : parseFloat(value.toFixed(4)).toString();
 }
+// 默认模板整体走 v-html，类目名/系列名等用户数据必须转义后才能进 HTML；
+// tooltip.formatter 的返回值是约定好的 HTML 出口（同 ECharts 语义），不做二次转义
+function escapeHtml(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
 function applyTooltipContent(params) {
   const formatter = props.options.tooltip?.formatter;
   if (formatter) {
@@ -1839,24 +1846,24 @@ function applyTooltipContent(params) {
     const rows = pickTooltipRows(params).map(
       (p) => `
       <div class="ev-chart__tooltip-item">
-        <span class="ev-chart__tooltip-dot" style="background: ${p.color}"></span>
-        <span class="ev-chart__tooltip-name">${p.seriesName}</span>
-        <span class="ev-chart__tooltip-value">${formatTooltipValue(p.value)}</span>
+        <span class="ev-chart__tooltip-dot" style="background: ${escapeHtml(p.color)}"></span>
+        <span class="ev-chart__tooltip-name">${escapeHtml(p.seriesName)}</span>
+        <span class="ev-chart__tooltip-value">${escapeHtml(formatTooltipValue(p.value))}</span>
       </div>
     `
     ).join("");
     tooltipContent.value = `
-      <div class="ev-chart__tooltip-title">${title}</div>
+      <div class="ev-chart__tooltip-title">${escapeHtml(title)}</div>
       ${rows}
     `;
   } else {
     const p = params;
     tooltipContent.value = `
-      <div class="ev-chart__tooltip-title">${p.name}</div>
+      <div class="ev-chart__tooltip-title">${escapeHtml(p.name)}</div>
       <div class="ev-chart__tooltip-item">
-        <span class="ev-chart__tooltip-dot" style="background: ${p.color}"></span>
-        <span class="ev-chart__tooltip-name">${p.seriesName}</span>
-        <span class="ev-chart__tooltip-value">${formatTooltipValue(p.value)}</span>
+        <span class="ev-chart__tooltip-dot" style="background: ${escapeHtml(p.color)}"></span>
+        <span class="ev-chart__tooltip-name">${escapeHtml(p.seriesName)}</span>
+        <span class="ev-chart__tooltip-value">${escapeHtml(formatTooltipValue(p.value))}</span>
       </div>
     `;
   }
@@ -1973,7 +1980,7 @@ function cloneOptionsSnapshot(opt) {
   return {
     ...opt,
     labels: [...opt.labels || []],
-    series: (opt.series || []).map((s) => ({ ...s, data: [...s.data] }))
+    series: (opt.series || []).map((s) => ({ ...s, data: [...(s.data || [])] }))
   };
 }
 function cloneSpec(value) {
@@ -2006,7 +2013,11 @@ watch(
     cachedPlotArea = null;
     internalError.value = null;
     runDevValidation();
-    focusSeries.value = emphasisSeriesName.value;
+    // 运行中通过 options 增删 emphasis 时补播淡化缓动（无变化不重绘）
+    if (focusSeries.value !== emphasisSeriesName.value) {
+      focusSeries.value = emphasisSeriesName.value;
+      animateFocusProgress();
+    }
     syncScenes();
     const zoom = getDataZoomConfig(props.options);
     const zoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
@@ -2058,6 +2069,8 @@ const connectorSelf = {
 };
 let unregisterConnector = null;
 onMounted(() => {
+  // options.emphasis 挂载即生效（watch 非 immediate，首帧前手动对齐一次）
+  focusSeries.value = emphasisSeriesName.value;
   render(true);
   syncScenes();
   setupResizeObserver();
@@ -2103,11 +2116,21 @@ defineExpose({
     return canvasRef.value?.toDataURL(type, quality) || "";
   },
   destroy() {
+    // 清理面与 onUnmounted 保持一致：window 监听、连接组、全部 rAF/timer
     cleanupResizeObserver();
     cleanupDarkModeObserver();
+    window.removeEventListener("pointerup", onWindowPointerUp);
+    window.removeEventListener("keydown", handleEscapeKey);
+    containerRef.value?.removeEventListener("wheel", handleWheel);
+    if (unregisterConnector) {
+      unregisterConnector();
+      unregisterConnector = null;
+    }
     stopAnimation();
     stopHoverAnimation();
+    stopTweenAnimation();
     stopSceneTimer();
+    stopFocusAnimation();
     if (tooltipRafId !== null) {
       cancelAnimationFrame(tooltipRafId);
       tooltipRafId = null;

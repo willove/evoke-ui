@@ -2,6 +2,7 @@
 // 确定性推断（离线可用），同时是「模型生成」路径的兜底与示例基线。
 
 import { chartOptionsSchema } from "../schema";
+import { maxOf, minOf } from "../extent";
 import { parseDataTable, inferColumns, distinctCount } from "./table";
 
 const INTENT_KEYWORDS = {
@@ -164,9 +165,9 @@ export function generateChartSpec(data, hint = {}) {
     spec.type = "mixed";
     spec.yAxisRight = { show: true };
     const peakOf = (s) =>
-      Math.max(0, ...s.data.filter((v) => typeof v === "number" && Number.isFinite(v)).map(Math.abs));
+      Math.max(0, maxOf(s.data.filter((v) => typeof v === "number" && Number.isFinite(v)).map(Math.abs)));
     const peakMax = peakOf(seriesList[splitIdx]);
-    const peakMin = Math.min(...seriesList.filter((_, i) => i !== splitIdx).map(peakOf).filter((v) => v > 0));
+    const peakMin = minOf(seriesList.filter((_, i) => i !== splitIdx).map(peakOf).filter((v) => v > 0));
     const ratioText =
       Number.isFinite(peakMin) && peakMin > 0 ? `（最高约为最低的 ${fmtRatio(peakMax / peakMin)} 倍）` : "";
     report.push({
@@ -204,8 +205,8 @@ function planDualAxis(seriesList) {
   );
   const valid = maxes.filter((m) => m > 0);
   if (seriesList.length < 2 || valid.length < 2) return -1;
-  const max = Math.max(...maxes);
-  const min = Math.min(...valid);
+  const max = maxOf(maxes);
+  const min = minOf(valid);
   return max / min >= 100 ? maxes.indexOf(max) : -1;
 }
 
@@ -238,6 +239,9 @@ export const SPEC_RULES = [
   "series[].data 长度必须与 labels 一致，缺失值用 null",
   "双轴：两个量纲或量级悬殊的度量用 type mixed——大量度 series 用 chartType bar 且 yAxis left，小量度 chartType line 且 yAxis right，并置顶层 yAxisRight",
   "palette 仅在需求要求固定配色（不随宿主主题换肤）时设置，取值限定 schema enum 中的色系 id；与 theme.colors 同时出现时以 theme.colors 为准",
+  "弧长连接图关系密集或需要闭合回路视角时置 arcCircular: true，数据仍走 arcData",
+  "日历热力需要周/月聚合视角时置 calendar.granularity（day 每日 / week / month，周月为求和聚合）",
+  "数值格式化优先用 valueFormat 快捷对象（decimals/thousandSeparator/prefix/suffix），确需函数式定制才用 valueFormatter",
   "叙述注解 annotations 单图不超过 3 处，emphasis 焦点最多 1 个系列",
   "不使用 schema 之外的字段",
   `支持的图表类型：${chartOptionsSchema.properties.type.enum.join(" / ")}`,

@@ -1,6 +1,7 @@
 import { CHART_COLORS, formatValue, getSeriesColors, readChartToken } from "../types";
 import { resolveChartPalette } from "../palettes";
 import { INTERACTION } from "../interactions";
+import { maxOf } from "../extent";
 function estimateTextWidth(text, fontSize = 12) {
   let width = 0;
   for (const ch of text) {
@@ -342,7 +343,7 @@ function getPadding(options, containerWidth = 600) {
     const pad2 = resolveUserPadding(options);
     const names2 = (options.ganttData || []).map((t) => t.name || "");
     const labelW = names2.length
-      ? Math.max(80, Math.min(180, Math.round(Math.max(...names2.map((n) => estimateTextWidth(n, 12))) + 16)))
+      ? Math.max(80, Math.min(180, Math.round(maxOf(names2.map((n) => estimateTextWidth(n, 12))) + 16)))
       : 100;
     const top2 = (pad2.top ?? 18) + titleBlockHeight(options) + (legendPosition === "top" ? LEGEND_BAND + legendRowsExtra : 0);
     const bottom2 = (pad2.bottom ?? 46) + (legendPosition === "bottom" ? LEGEND_BAND + legendRowsExtra : 0);
@@ -725,7 +726,8 @@ function updateAnimation(state) {
   }
   const elapsed = Date.now() - state.startTime;
   const t = Math.min(elapsed / state.duration, 1);
-  state.progress = easings[state.easing](t);
+  // easing 名拼写错误回落默认曲线，不让动画逐帧抛错
+  state.progress = (easings[state.easing] || easings.easeOut)(t);
   return t < 1;
 }
 export {

@@ -4,6 +4,7 @@
 
 import { validateOptions } from "../schema";
 import { renderChart, createSvgRecorder, estimateTextWidth, getTheme } from "../renderer";
+import { maxOf } from "../extent";
 
 const DEFAULT_SIZE = { width: 800, height: 450 };
 
@@ -125,7 +126,7 @@ export function lintChartSpec(spec, opts = {}) {
   if (fixed.type === "bar" && Array.isArray(fixed.series) && fixed.series.length === 1 && Array.isArray(fixed.labels)) {
     const width = opts.width ?? DEFAULT_SIZE.width;
     const labels = fixed.labels.map(String);
-    const maxLabelWidth = Math.max(...labels.map((l) => estimateTextWidth(l, 12)), 0);
+    const maxLabelWidth = maxOf(labels.map((l) => estimateTextWidth(l, 12)), 0);
     const slots = Math.max(1, (width - 80) / Math.max(1, labels.length));
     if (labels.length >= 7 && maxLabelWidth > slots * 0.9) {
       fixed.type = "horizontal-bar";

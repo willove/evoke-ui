@@ -1,4 +1,5 @@
 import { roundRect } from "./core";
+import { maxOf } from "../extent";
 function getDataZoomConfig(options) {
   const zoom = options.dataZoom;
   if (!zoom?.enabled) return null;
@@ -34,7 +35,7 @@ function renderDataZoomSlider(ctx, zoom) {
   const previewSeries = visibleSeries[0];
   if (previewSeries && previewSeries.data.length > 0) {
     const data = previewSeries.data;
-    const max = Math.max(...data.map((v) => v === null || Number.isNaN(v) ? 0 : v), 1);
+    const max = maxOf(data.map((v) => v === null || Number.isNaN(v) ? 0 : v), 1);
     const barAreaHeight = geo.height - 18;
     const barWidth = Math.max(1, geo.width / data.length - 1);
     data.forEach((raw, i) => {
