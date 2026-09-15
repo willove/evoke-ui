@@ -20,10 +20,22 @@ evoke-business-ui 的版本演进，最新在上。完整的变更明细（含�
 <script setup>
 const releases = [
   {
+    version: 'v0.6.0',
+    date: '2026-09-15',
+    title: '类型声明、按需导出与键盘可达性收口',
+    latest: true,
+    bullets: [
+      '153 个组件 + 4 个命令式 API 全量 d.ts 类型（vue-tsc 产物），主入口与子路径导入均有编辑器补全',
+      '按需子路径导出：import EbButton from .../button 只解析该组件与其依赖，不触达其余组件',
+      '运行时依赖全量外置，主入口从 2.4MB 降至 72KB（gzip 17KB），消除双份 dayjs/highlight.js',
+      '键盘与读屏收口：menu/tabs/select/table 方向键导航 + combobox/listbox 语义 + focus trap 圈闭六例回归',
+      'rate / radio / tag 默认色跟随明暗主题；组件文档 112/112 全覆盖',
+    ],
+  },
+  {
     version: 'v0.5.0',
     date: '2026-09-13',
     title: '磨砂参数化与稳定性',
-    latest: true,
     bullets: [
       '磨砂组件新增 saturate / tint 参数，与 blur 一致按组件独立调节质感',
       '磨砂开关支持 global:false 局部作用域，多个局部演示互不干扰',

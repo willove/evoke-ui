@@ -1,6 +1,6 @@
 # 组件总览
 
-Evoke UI 共内置 **60 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
+Evoke UI 共内置 **61 个组件**，按用途分为六组：基础元件、布局骨架、站点区块、媒体与交互、
 反馈与主题、移动端专属。每个组件卡片右上角带**平台兼容标识**：
 
 <span class="ov-legend"><ev-icon name="desktop" :size="13" /><ev-icon name="smartphone" :size="13" /> 双端兼容</span>

@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.8.0</EvTag>
+      <EvTag size="small">v0.9.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.8.0 发布：EvBento 图文组合分区 + ComparisonTable 双形态对比，产品页的图版与对比一屏讲完</span>
+      <span>v0.9.0 发布：类型声明与按需子路径导出——61 个组件全量 d.ts，编辑器补全与按需引入开箱即用</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -230,7 +230,7 @@ function storyFade(p, a, b) {
         </div>
       </EvCard>
       <EvCard tone="blue" sticker class="home-collage__card is-b">
-        <EvStatistic value="60" label="个组件" animated />
+        <EvStatistic value="61" label="个组件" animated />
         <div class="home-collage__meta">内置 960+ 图标 · MIT 开源</div>
       </EvCard>
       <EvCard tone="mint" sticker class="home-collage__card is-c">
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.8.0</EvTag>
+        <EvTag tone="primary" size="small">v0.9.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
@@ -278,7 +278,7 @@ function storyFade(p, a, b) {
     </div>
   </EvSection>
 
-  <EvSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，60 个组件基本都齐了。" align="center">
+  <EvSection eyebrow="components" title="官网需要的，这里都有" description="从首屏到页脚，企业官网与个人主页需要的版块，61 个组件基本都齐了。" align="center">
     <EvFeatureGrid
       variant="cards"
       :columns="3"

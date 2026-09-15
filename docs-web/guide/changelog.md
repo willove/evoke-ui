@@ -14,6 +14,16 @@ evoke-ui 的版本演进，最新在上。完整的变更明细（含行为变�
 <script setup>
 const releases = [
   {
+    tag: 'v0.9.0',
+    date: '2026-09-15',
+    title: '类型声明与按需子路径导出',
+    bullets: [
+      '61 个组件全量 d.ts 类型（vue-tsc 产物，props 带 JSDoc 悬浮提示），composables / directives / install 均有类型',
+      '按需子路径导出：import EvButton from .../button 只解析该组件与其依赖，不触达其余组件',
+      'exports 主入口补 types 条件、新增 ./* 通配双通道，sideEffects 声明 css 保证 JS 全量 tree-shaking',
+    ],
+  },
+  {
     tag: 'v0.8.0',
     date: '2026-09-14',
     title: 'EvBento 图文组合分区 + ComparisonTable 双形态',

@@ -2,7 +2,7 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased]
+## [ui 0.9.0 / business-ui 0.6.0] — 2026-09-15
 
 ### @wil-works/evoke-ui — 类型声明与按需子路径导出（v1 质量线首刀）
 
@@ -53,7 +53,7 @@
   `find` 拿到响应式代理导致**回复耗时从未被记录**（`toRaw` 修复），`ChatAttachments`
   对缺失 `type` 的附件直接渲染崩溃（类型守卫兜底）。
 
-### @wil-works/evoke-business-ui — 发布链路排雷与产物瘦身
+### @wil-works/evoke-business-ui — 发布链路排雷、a11y 收口与文档全覆盖
 
 - **运行时依赖全量 external 化**：dayjs / highlight.js / marked /
   @floating-ui/dom / async-validator 不再打进产物（此前主入口 2.4MB，仅
