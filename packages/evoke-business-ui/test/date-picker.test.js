@@ -390,3 +390,185 @@ describe('EbDatePicker 区间', () => {
     expect(picker().emitted('update:modelValue')[0][0]).toEqual([null, null])
   })
 })
+
+describe('EbDatePicker 键盘导航与 aria', () => {
+  it('触发器 combobox 语义：expanded/controls 随开合切换，面板 role=dialog', async () => {
+    const { wrapper } = mountPicker()
+    const input = wrapper.find('.eb-input__inner')
+    expect(input.attributes('role')).toBe('combobox')
+    expect(input.attributes('aria-haspopup')).toBe('dialog')
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await openPanel(wrapper)
+    expect(input.attributes('aria-expanded')).toBe('true')
+    const controls = input.attributes('aria-controls')
+    expect(controls).toBeTruthy()
+    expect(document.getElementById(controls)).toBeTruthy()
+    expect(document.querySelector('[role="dialog"].eb-picker-panel')).toBeTruthy()
+  })
+
+  it('日期网格 grid 语义：42 个 gridcell，唯一 roving tabindex，今日 aria-current', async () => {
+    const { wrapper } = mountPicker()
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    expect(grid.getAttribute('role')).toBe('grid')
+    expect(grid.querySelectorAll('[role="gridcell"]').length).toBe(42)
+    const focusables = grid.querySelectorAll('td[tabindex="0"]')
+    expect(focusables.length).toBe(1)
+    expect(grid.querySelector('td[aria-current="date"]')).toBeTruthy()
+    // 默认活动日 = 今天
+    expect(focusables[0].getAttribute('aria-label')).toBe(dayjs().format('YYYY-MM-DD'))
+  })
+
+  it('ArrowDown 打开面板并把焦点送进网格', async () => {
+    const { wrapper } = mountPicker()
+    await wrapper.find('.eb-input__inner').trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    expect(document.querySelector('.eb-picker__popper')).toBeTruthy()
+    expect(document.activeElement?.tagName).toBe('TD')
+  })
+
+  it('方向键移动活动日，Enter 选中并关闭', async () => {
+    const { wrapper, picker } = mountPicker()
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    await grid.querySelector('td[tabindex="0"]').focus()
+    grid.querySelector('td[tabindex="0"]')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))
+    await flush()
+    const moved = grid.querySelector('td[tabindex="0"]')
+    expect(moved.getAttribute('aria-label')).toBe(dayjs().add(1, 'day').format('YYYY-MM-DD'))
+    moved.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+    await flush()
+    const emitted = picker().emitted('update:modelValue')[0][0]
+    expect(dayjs(emitted).format('YYYY-MM-DD')).toBe(dayjs().add(1, 'day').format('YYYY-MM-DD'))
+    expect(document.querySelector('.eb-picker__popper')).toBeNull()
+  })
+
+  it('Esc 在网格内关闭面板且焦点回归输入框', async () => {
+    const { wrapper } = mountPicker()
+    await openPanel(wrapper)
+    const active = document.querySelector('.eb-date-table td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await flush()
+    expect(document.querySelector('.eb-picker__popper')).toBeNull()
+    expect(document.activeElement).toBe(wrapper.find('.eb-input__inner').element)
+  })
+
+  it('空格键等价选中（Space）', async () => {
+    const { wrapper, picker } = mountPicker()
+    await openPanel(wrapper)
+    const active = document.querySelector('.eb-date-table td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }))
+    await flush()
+    expect(picker().emitted('update:modelValue')).toBeTruthy()
+  })
+
+  it('禁用日顺延：今天被禁则活动日落到明天', async () => {
+    const { wrapper } = mountPicker({
+      disabledDate: (d) => dayjs(d).isSame(dayjs(), 'day'),
+    })
+    await openPanel(wrapper)
+    const active = document.querySelector('.eb-date-table td[tabindex="0"]')
+    expect(active.getAttribute('aria-label')).toBe(dayjs().add(1, 'day').format('YYYY-MM-DD'))
+    expect(active.getAttribute('aria-disabled')).toBeNull()
+  })
+
+  it('禁用日移动跳过：ArrowRight 跨过禁用日', async () => {
+    const { wrapper } = mountPicker({
+      disabledDate: (d) => dayjs(d).isSame(dayjs().add(1, 'day'), 'day'),
+    })
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    const active = grid.querySelector('td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))
+    await flush()
+    expect(grid.querySelector('td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      dayjs().add(2, 'day').format('YYYY-MM-DD')
+    )
+  })
+
+  it('PageUp/PageDown 翻月，Shift+PageUp 翻年', async () => {
+    const { wrapper } = mountPicker()
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    const active = grid.querySelector('td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: 'PageDown', bubbles: true, cancelable: true }))
+    await flush()
+    expect(grid.querySelector('td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      dayjs().add(1, 'month').format('YYYY-MM-DD')
+    )
+    const next = grid.querySelector('td[tabindex="0"]')
+    next.focus()
+    next.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'PageUp', shiftKey: true, bubbles: true, cancelable: true })
+    )
+    await flush()
+    expect(grid.querySelector('td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      dayjs().add(1, 'month').subtract(1, 'year').format('YYYY-MM-DD')
+    )
+  })
+
+  it('Home/End 定位本周首尾', async () => {
+    const { wrapper } = mountPicker()
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    const active = grid.querySelector('td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, cancelable: true }))
+    await flush()
+    expect(grid.querySelector('td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      dayjs().startOf('week').format('YYYY-MM-DD')
+    )
+  })
+
+  it('键盘跨月：月末 ArrowRight 翻页后焦点保持在新活动日', async () => {
+    const end = dayjs().endOf('month').startOf('day')
+    const { wrapper } = mountPicker({ modelValue: end.toDate() })
+    await openPanel(wrapper)
+    const grid = document.querySelector('.eb-date-table')
+    const active = grid.querySelector('td[tabindex="0"]')
+    active.focus()
+    active.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))
+    await flush()
+    expect(document.querySelector('.eb-picker__popper')).toBeTruthy()
+    expect(document.activeElement?.tagName).toBe('TD')
+    expect(grid.querySelector('td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      end.add(1, 'day').format('YYYY-MM-DD')
+    )
+  })
+
+  it('区间面板：键盘 Enter 走首击/次击流程', async () => {
+    const { wrapper, picker } = mountPicker({ type: 'daterange' })
+    await openPanel(wrapper)
+    const startCell = dayCell(dayjs().date())
+    startCell.focus()
+    startCell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+    await flush()
+    // 首击后处于 selecting，面板保持打开
+    expect(document.querySelector('.eb-picker__popper')).toBeTruthy()
+    // 方向键把活动日移动一周（7 次 ArrowRight），Enter 定终点
+    for (let i = 0; i < 7; i++) {
+      const cell = document.querySelector('.eb-date-table td[tabindex="0"]')
+      cell.focus()
+      cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))
+      await flush()
+    }
+    expect(document.querySelector('.eb-date-table td[tabindex="0"]').getAttribute('aria-label')).toBe(
+      dayjs().add(7, 'day').format('YYYY-MM-DD')
+    )
+    document.querySelector('.eb-date-table td[tabindex="0"]')
+      .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+    await flush()
+    const emitted = picker().emitted('update:modelValue')
+    expect(emitted).toBeTruthy()
+    const [s, e] = emitted[emitted.length - 1][0]
+    expect([dayjs(s).format('YYYY-MM-DD'), dayjs(e).format('YYYY-MM-DD')]).toEqual([
+      dayjs().format('YYYY-MM-DD'),
+      dayjs().add(7, 'day').format('YYYY-MM-DD'),
+    ])
+  })
+})

@@ -114,6 +114,19 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
   <eb-date-picker disabled placeholder="禁用状态" style="width: 180px;" />
 </DemoBlock>
 
+## 键盘操作
+
+输入框聚焦后 <kbd>Enter</kbd> 或 <kbd>↓</kbd> 打开面板并把焦点送入日历网格；网格内：
+
+| 按键 | 行为 |
+| --- | --- |
+| ← → ↑ ↓ | 移动一天 / 一周（禁用日自动跳过） |
+| Home / End | 本周首日 / 末日 |
+| PageUp / PageDown | 上 / 下一个月 |
+| Shift + PageUp / PageDown | 上 / 下一年 |
+| Enter / Space | 选中当前日期（区间为定起点 / 终点） |
+| Esc | 关闭面板，焦点回到输入框 |
+
 ## API
 
 <ApiTable title="DatePicker Props" :rows="[

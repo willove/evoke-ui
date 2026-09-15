@@ -26,8 +26,13 @@
         :placeholder="placeholder || singlePlaceholder"
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
+        role="combobox"
+        aria-haspopup="dialog"
+        :aria-expanded="pickerVisible ? 'true' : 'false'"
+        :aria-controls="pickerVisible ? panelId : undefined"
         @change="handleSingleInput"
         @focus="handleFocus"
+        @keydown="handleTriggerKeydown"
       />
       <span v-if="clearable && hasValue && !isDisabled" class="eb-input__suffix" @click.stop>
         <eb-icon
@@ -63,8 +68,13 @@
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
         autocomplete="off"
+        role="combobox"
+        aria-haspopup="dialog"
+        :aria-expanded="pickerVisible ? 'true' : 'false'"
+        :aria-controls="pickerVisible ? panelId : undefined"
         @change="handleRangeInput('start', $event)"
         @focus="handleFocus"
+        @keydown="handleTriggerKeydown"
       />
       <span class="eb-range-separator">{{ rangeSeparator }}</span>
       <input
@@ -75,8 +85,13 @@
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
         autocomplete="off"
+        role="combobox"
+        aria-haspopup="dialog"
+        :aria-expanded="pickerVisible ? 'true' : 'false'"
+        :aria-controls="pickerVisible ? panelId : undefined"
         @change="handleRangeInput('end', $event)"
         @focus="handleFocus"
+        @keydown="handleTriggerKeydown"
       />
       <eb-icon
         v-if="clearable && hasValue && !isDisabled"
@@ -91,6 +106,7 @@
       <Transition name="eb-picker-dropdown">
         <div
           v-if="pickerVisible && !isMobilePlatform"
+          :id="panelId"
           ref="floatingRef"
           class="eb-picker__popper eb-popper eb-picker__popper"
           :style="popperStyle"
@@ -107,6 +123,7 @@
             @pick="handleSinglePick"
             @confirm="handleConfirm"
             @shortcut="handleShortcut"
+            @esc="closePanel(true)"
           />
           <panel-date-range
             v-else
@@ -122,6 +139,7 @@
             @confirm="handleConfirm"
             @shortcut="handleShortcut"
             @calendar-change="handleCalendarChange"
+            @esc="closePanel(true)"
           />
         </div>
       </Transition>
@@ -200,6 +218,9 @@ import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
 
 defineOptions({ name: 'EbDatePicker', inheritAttrs: false })
+
+// aria-controls 指向面板 id（组件级唯一）
+let datePanelSeq = 0
 
 // 容器环境：mobile 下面板以底部弹层呈现（而非浮动定位）
 const { isMobile: isMobilePlatform } = usePlatform()
@@ -305,6 +326,7 @@ const floatingRef = ref(null)
 const inputRef = ref(null)
 const panelRef = ref(null)
 const pickerVisible = ref(false)
+const panelId = `eb-date-picker-panel-${++datePanelSeq}`
 
 const { zIndex, next: nextZIndex } = useZIndex()
 const { x, y, show: startFloating, hide: stopFloating } = useFloating({
@@ -336,12 +358,31 @@ async function openPanel() {
   await startFloating()
 }
 
-function closePanel() {
+function closePanel(returnFocus = false) {
   if (!pickerVisible.value) return
   pickerVisible.value = false
   stopFloating()
   emit('visible-change', false)
   emit('blur')
+  if (returnFocus) focusTrigger()
+}
+
+function focusTrigger() {
+  referenceRef.value?.querySelector?.('input')?.focus?.()
+}
+
+/** 触发器键盘：Enter/↓ 打开并把焦点送进网格，Esc 关闭 */
+function handleTriggerKeydown(e) {
+  if (isDisabled.value) return
+  if (e.key === 'ArrowDown' || e.key === 'Enter') {
+    if (!pickerVisible.value) {
+      e.preventDefault()
+      openPanel().then(() => panelRef.value?.focusGrid?.())
+    }
+  } else if (e.key === 'Escape' && pickerVisible.value) {
+    e.preventDefault()
+    closePanel()
+  }
 }
 
 function handleWrapperClick() {

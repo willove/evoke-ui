@@ -164,7 +164,7 @@ const role = ref('admin')
 | 名称 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | size | String | `'default'` | 全局组件尺寸 `small` / `default` / `large` |
-| locale | Object | `zhCN` | 语言包对象，内建 `zhCN` / `en` / `ja` / `zhTW`（见 `locale/`） |
+| locale | Object | `zhCN` | 语言包对象，内建 `zhCN` / `en` / `ja` / `zhTW` / `ko` / `es` / `pt`（见 `locale/`） |
 | namespace | String | `'ev'` | 类名前缀（保留扩展位） |
 | zIndex | Number | `2000` | 弹层 z-index 基准（保留扩展位） |
 | platform | String | `'auto'` | 容器环境 `auto` / `desktop` / `mobile`；移动端下 Select、DatePicker 呈底部弹出形态 |

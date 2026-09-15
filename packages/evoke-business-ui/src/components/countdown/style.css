@@ -1,0 +1,36 @@
+/* EbCountdown — 倒计时（结构与 Statistic 同族） */
+
+.eb-countdown {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eb-countdown__title {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+  line-height: 1.5;
+}
+
+.eb-countdown__content {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.eb-countdown__value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--eb-text-color-primary);
+  line-height: 1.3;
+}
+
+.eb-countdown__prefix,
+.eb-countdown__suffix {
+  font-size: var(--eb-font-size-sm);
+  font-weight: 500;
+  color: var(--eb-text-color-regular);
+  display: inline-flex;
+  align-items: baseline;
+}

@@ -23,6 +23,7 @@ export const CATEGORIES = [
       { name: 'Typography', zh: '排版', path: '/components/typography' },
       { name: 'Link', zh: '链接', path: '/components/link' },
       { name: 'Card', zh: '卡片', path: '/components/card' },
+      { name: 'SectionCard', zh: '区块卡片', path: '/components/section-card' },
     ],
   },
   {
@@ -72,6 +73,7 @@ export const CATEGORIES = [
     key: 'display',
     components: [
       { name: 'Statistic', zh: '统计数值', path: '/components/statistic' },
+      { name: 'Countdown', zh: '倒计时', path: '/components/countdown' },
       { name: 'StatCard', zh: '指标卡', path: '/components/stat-card' },
       { name: 'StatRow', zh: '指标卡行', path: '/components/stat-row' },
       { name: 'Table', zh: '表格', path: '/components/table' },
@@ -187,7 +189,10 @@ export const GUIDE_NAV = [
       { name: '快速开始', zh: '', path: '/guide/getting-started' },
       { name: '主题定制器', zh: '', path: '/guide/customizer' },
       { name: '主题与暗色模式', zh: '', path: '/guide/theming' },
+      { name: '设计规范', zh: '', path: '/guide/design' },
       { name: '企业级能力', zh: '', path: '/guide/enterprise' },
+      { name: '无障碍与对比度', zh: '', path: '/guide/accessibility' },
+      { name: 'SSR 兼容性', zh: '', path: '/guide/ssr' },
       { name: '更新记录', zh: '', path: '/guide/changelog' },
     ],
   },

@@ -159,6 +159,7 @@ import EbTour from './components/tour/index.vue'
 import EbQrcode from './components/qrcode/index.vue'
 import EbMention from './components/mention/index.vue'
 import EbStatistic from './components/statistic/index.vue'
+import EbCountdown from './components/countdown/index.vue'
 import EbFloatButton from './components/float-button/index.vue'
 import EbFloatButtonGroup from './components/float-button/group.vue'
 import EbComment from './components/comment/index.vue'
@@ -394,6 +395,7 @@ const components = {
   EbVirtualList,
   EbListy: EbVirtualList,
   EbStatistic,
+  EbCountdown,
   EbAutoComplete,
   EbTour,
   EbQrcode,
@@ -600,6 +602,7 @@ export {
   EbVirtualList,
   EbVirtualList as EbListy,
   EbStatistic,
+  EbCountdown,
   EbAutoComplete,
   EbTour,
   EbQrcode,

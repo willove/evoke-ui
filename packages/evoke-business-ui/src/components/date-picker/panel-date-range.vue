@@ -1,7 +1,10 @@
 <template>
   <div
     class="eb-picker-panel eb-date-range-picker"
+    role="dialog"
+    :aria-label="t('datepicker.selectDate')"
     :class="{ 'has-sidebar': !!shortcuts?.length, 'has-time': showTime }"
+    @keydown.esc.stop.prevent="emit('esc')"
   >
     <!-- 快捷选项 -->
     <div v-if="shortcuts?.length" class="eb-picker-panel__sidebar">
@@ -71,6 +74,7 @@
           </div>
           <basic-date-table
             v-if="type !== 'monthrange'"
+            ref="leftTableRef"
             :view-month="leftDate"
             :range="true"
             :min-date="rangeMin"
@@ -79,6 +83,7 @@
             :disabled-date="disabledDate"
             @pick="handleRangePick"
             @hover="handleHover"
+            @view-change="handleTableViewChange($event, 'left')"
           />
           <basic-month-table
             v-else
@@ -124,6 +129,7 @@
             :disabled-date="disabledDate"
             @pick="handleRangePick"
             @hover="handleHover"
+            @view-change="handleTableViewChange($event, 'right')"
           />
           <basic-month-table
             v-else
@@ -192,7 +198,7 @@ const props = defineProps({
   unlinkPanels: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['pick', 'confirm', 'shortcut', 'calendar-change'])
+const emit = defineEmits(['pick', 'confirm', 'shortcut', 'calendar-change', 'esc'])
 
 const { t } = useLocale()
 
@@ -205,6 +211,7 @@ const maxDate = ref(null)
 const selecting = ref(false)
 const hoverDate = ref(null)
 const activeTimePanel = ref(null)
+const leftTableRef = ref(null)
 
 // ─── 值同步/视图初始化 ───
 watch(
@@ -276,6 +283,19 @@ function nextMonth(side) {
   }
 }
 
+/** 键盘巡历跨月：与按钮翻页同一联动规则 */
+function handleTableViewChange(m, side) {
+  if (side === 'left') {
+    leftDate.value = m
+    if (!props.unlinkPanels) rightDate.value = m.add(1, 'month')
+  } else {
+    rightDate.value = m
+    if (!props.unlinkPanels && !m.isAfter(leftDate.value, 'month')) {
+      leftDate.value = m.subtract(1, 'month')
+    }
+  }
+}
+
 // ─── 选择流程 ───
 function handleHover(d) {
   if (selecting.value) hoverDate.value = d
@@ -338,5 +358,9 @@ function confirmPick() {
   }
 }
 
-defineExpose({ confirmPick })
+defineExpose({
+  confirmPick,
+  /** 键盘入口：焦点落到左面板日期网格活动日 */
+  focusGrid: () => leftTableRef.value?.focusActive?.(),
+})
 </script>

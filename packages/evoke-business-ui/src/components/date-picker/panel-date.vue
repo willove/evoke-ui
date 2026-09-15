@@ -1,7 +1,10 @@
 <template>
   <div
     class="eb-picker-panel eb-date-picker"
+    role="dialog"
+    :aria-label="t('datepicker.selectDate')"
     :class="{ 'has-sidebar': !!shortcuts?.length, 'has-time': showTime }"
+    @keydown.esc.stop.prevent="emit('esc')"
   >
     <!-- 快捷选项 -->
     <div v-if="shortcuts?.length" class="eb-picker-panel__sidebar">
@@ -91,10 +94,12 @@
         <div class="eb-picker-panel__content">
           <basic-date-table
             v-if="currentView === 'date'"
+            ref="dateTableRef"
             :view-month="viewDate"
             :selected="pickedValue"
             :disabled-date="disabledDate"
             @pick="handleDatePick"
+            @view-change="viewDate = $event"
           />
           <basic-month-table
             v-else-if="currentView === 'month'"
@@ -169,7 +174,7 @@ const props = defineProps({
   shortcuts: { type: Array, default: null },
 })
 
-const emit = defineEmits(['pick', 'confirm', 'shortcut'])
+const emit = defineEmits(['pick', 'confirm', 'shortcut', 'esc'])
 
 const { t, locale } = useLocale()
 
@@ -178,6 +183,7 @@ const showTime = computed(() => props.type === 'datetime')
 const viewDate = ref(dayjs())
 const currentView = ref(props.type === 'month' ? 'month' : props.type === 'year' ? 'year' : 'date')
 const timePanelVisible = ref(false)
+const dateTableRef = ref(null)
 
 // ─── 视图初始化/同步 ───
 watch(
@@ -300,5 +306,7 @@ defineExpose({
   resetView: () => {
     currentView.value = props.type === 'month' ? 'month' : props.type === 'year' ? 'year' : 'date'
   },
+  /** 键盘入口：焦点落到日期网格活动日 */
+  focusGrid: () => dateTableRef.value?.focusActive?.(),
 })
 </script>
