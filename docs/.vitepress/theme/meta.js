@@ -232,6 +232,7 @@ export const EXAMPLES_NAV = [
       { name: '项目协作', zh: '', path: '/examples/project' },
       { name: '报销审批', zh: '', path: '/examples/approval' },
       { name: '知识库', zh: '', path: '/examples/knowledge' },
+      { name: 'AI 运营助手', zh: '', path: '/examples/ai-workbench' },
       { name: '移动端 H5', zh: '', path: '/examples/mobile' },
     ],
   },
@@ -286,6 +287,7 @@ export const LIVE_EXAMPLES = [
   { key: 'project', name: '项目协作', path: '/examples/live/project' },
   { key: 'approval', name: '报销审批', path: '/examples/live/approval' },
   { key: 'knowledge', name: '知识库', path: '/examples/live/knowledge' },
+  { key: 'ai-workbench', name: 'AI 运营助手', path: '/examples/live/ai-workbench' },
   { key: 'mobile', name: '移动端', path: '/examples/live/mobile' },
 ]
 

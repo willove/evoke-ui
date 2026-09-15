@@ -34,6 +34,13 @@
 
 - business 站新增「AI」分类与 AiPromptBox / AiConsole 两页（AiConsole 页含 mock 流式
   transport 的可交互演示）；ui 站站点区块新增 AiPromptBox 页；三页全过 SSR 构建。
+- **新增示例「AI 运营助手工作台」**（examples/ebui-example-ai，端口 8629）：AiConsole 嵌入
+  AppLayout 后台骨架的完整工作台——场景路由回复模板、深度思考流（appendThinkContent →
+  stopThinking）、联网检索引用、附件上下文提示、停止生成（清计时器 + setMessageError，
+  生产换 AbortController）；文档页 + 全屏中心 + 示例总览/路线图三处登记。
+- **新增 ui 站案例「AI 产品首屏」**（cases/ai-landing）：EvAiPromptBox 做营销首屏主交互的
+  即问即答形态——展示体标题渐变高亮、大输入台、示例直发、就地流式作答面板（面板头展示
+  「场景 · 能力 · 模型」上下文元信息）、能力带与免费额度；案例页 + 全屏窗口 + 侧栏登记。
 
 ### @wil-works/evoke-business-ui — 基础能力补全：虚拟滚动集成与表格行内编辑（ROADMAP 收官双项）
 

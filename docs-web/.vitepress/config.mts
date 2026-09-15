@@ -103,6 +103,7 @@ export default defineConfig({
             { text: '企业官网', link: '/cases/corporate' },
             { text: '个人博客', link: '/cases/blog' },
             { text: '云笔记工作台', link: '/cases/notes' },
+            { text: 'AI 产品首屏', link: '/cases/ai-landing' },
           ],
         },
       ],

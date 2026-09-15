@@ -13,6 +13,7 @@
 - [项目协作 —— 进度计划 / 里程碑 / 团队用量](/examples/live/project)
 - [报销审批 —— 双视角审批流 / 留痕追溯](/examples/live/approval)
 - [知识库 —— 知识文档 / 问答库 / 知识图谱](/examples/live/knowledge)
+- [AI 运营助手 —— 场景路由 / 深度思考 / 停止生成](/examples/live/ai-workbench)
 - [移动端 H5 —— 手机工作台 / 简单模式](/examples/live/mobile)
 
 ## 场景路线图
@@ -27,6 +28,7 @@
 | 销售统计 / 客户管理 | 销售分析看板 + 客户 360 详情 | 雷达 / 漏斗联动、客户层级树 | 规划中 |
 | 排班考勤 / 人员管理 | 排班表 + 考勤统计 | 日历排班组件、考勤周期选择器 | 规划中 |
 | 知识整理 / 知识图谱 / 问答库 | [知识库（文档 / 问答 / 图谱）](/examples/knowledge) | 目录树联动、问答卡片、SVG 关系图 | 已上线 |
+| AI 助手 / 对话工作台 | [AI 运营助手](/examples/ai-workbench) | AiConsole + AiPromptBox + useChatEngine（transport 注入） | 已上线 |
 
 ## 示例总览
 
@@ -39,6 +41,7 @@
 | [项目协作](/examples/project) | 进度计划管理、里程碑推进、资源用量统计 | GanttProgress、CreditsProgress、StatCard、Segmented、Progress | [全屏打开](/examples/live/project) |
 | [报销审批](/examples/approval) | 双视角审批流：发起、跟踪、撤回、同意/驳回、留痕 | Steps、AuditTimeline、StatCard、Dialog、Form、Segmented | [全屏打开](/examples/live/approval) |
 | [知识库](/examples/knowledge) | 知识文档、问答库、知识图谱 | Tree、DataTable、DetailDescriptions、SVG 关系图 | [全屏打开](/examples/live/knowledge) |
+| [AI 运营助手](/examples/ai-workbench) | AI 工作台：场景路由、深度思考流、检索引用、模型切换、停止生成 | AiConsole、AiPromptBox、useChatEngine、AppLayout | [全屏打开](/examples/live/ai-workbench) |
 | [移动端 H5](/examples/mobile) | 移动工作台：简单模式开关、待办处理、用量与审批进度 | CreditsProgress、Steps、Segmented、Progress、Switch | [全屏打开](/examples/live/mobile) |
 
 ## 三种使用方式
@@ -63,6 +66,7 @@ pnpm example:ebui-project     # http://localhost:8625
 pnpm example:ebui-approval    # http://localhost:8626
 pnpm example:ebui-knowledge   # http://localhost:8627
 pnpm example:ebui-mobile      # http://localhost:8628
+pnpm example:ebui-ai          # http://localhost:8629
 ```
 
 示例工程通过 workspace 依赖 + vite alias **直接消费 `packages/evoke-business-ui` 源码**：改组件库源码，示例、全屏中心与文档站同时热更新，无需构建发包。日常体验无需运行它们，仅开发调试示例页面时使用。

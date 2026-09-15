@@ -29,6 +29,7 @@
     "example:ebui-approval": "pnpm --filter @wil-works/ebui-example-approval dev",
     "example:ebui-knowledge": "pnpm --filter @wil-works/ebui-example-knowledge dev",
     "example:ebui-mobile": "pnpm --filter @wil-works/ebui-example-mobile dev",
+    "example:ebui-ai": "pnpm --filter @wil-works/ebui-example-ai dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
