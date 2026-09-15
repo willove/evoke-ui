@@ -16,6 +16,10 @@ scripts/.env.deploy
 # AI 工具会话状态
 .mimosa/
 
+# Playwright：测试产物不入 git（视觉基线 visual/**-snapshots/ 必须进 git）
+test-results/
+playwright-report/
+
 # 内部开发文档（路线图 / 迁移计划等，不随仓库发布）
 .dev-docs/
 .zcode/

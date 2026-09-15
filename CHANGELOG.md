@@ -4,6 +4,92 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui — 类型声明与按需子路径导出（v1 质量线首刀）
+
+- **完整类型声明**：vue-tsc 全量产物（`dist/types/`，镜像 src 结构）——61 个组件
+  的 props 从 `defineProps` 运行时定义推断（含 JSDoc 悬浮提示），composables 返回
+  值、directives、`install` 均有类型；主入口 `import { EvButton } from
+  '@wil-works/evoke-ui'` 与编辑器补全开箱即用；
+- **按需子路径导出**：61 个组件逐一独立入口（`dist/<name>.mjs`），
+  `import EvButton from '@wil-works/evoke-ui/button'` 只解析该组件与其依赖，不触达
+  其余组件；子路径与主入口共享同一组件实例（无双实例陷阱），共享模块收敛
+  `chunks/` 不对外；
+- **消费端零负担**：`.vue` 类型说明符统一改写为 `.vue.d.ts`，普通 `tsc`
+  （bundler 解析）无需 vue-tsc 或 `allowArbitraryExtensions` 即可解析全部类型；
+  `exports` 主入口补 `types` 条件、新增 `./*` 通配双通道、`sideEffects` 声明
+  css 保证 JS 全量 tree-shaking；
+- 构建链翻新：vite 多入口（入口清单从 `src/index.js` 解析，`component-entries.mjs`
+  单一事实源）→ `vue-tsc --emitDeclarationOnly` → `post-types.mjs`（说明符改写 +
+  子路径类型存根）；`typescript` / `vue-tsc` 入 devDependencies；守卫测试锁定
+  「组件清单 ↔ 子路径映射 ↔ exports 面」三者一致。
+- **视觉回归基建落地**（ROADMAP 第 4 条）：根级 `@playwright/test` + `visual/`
+  截图对比，吃文档站构建产物（`pnpm visual` / `visual:only` / `visual:update`）；
+  首批 ui 站 6 个稳定页（首页 / 按钮卡片告警图标 / 企业官网案例），动画禁用 +
+  字体就绪 + 懒加载图片落定三重确定性保障，复跑零差异、换基线必红已双向验证；
+  基线随仓库走（darwin），CI 接入时切 Playwright Docker 统一字体。
+
+### @wil-works/evoke-business-ui — 类型声明与按需子路径导出（v1 质量线首刀跟进）
+
+- **完整类型声明**：vue-tsc 全量产物（`dist/types/`）——153 个组件入口 + 命令式
+  API（EbMessage / EbNotify / EbMsgbox / EbLoading）+ composables / directives /
+  主题工具 / 格式化工具；`EbChart` 经 evoke-charts 外部重导出（其类型待 charts 包
+  跟进，消费端 `skipLibCheck` 下无感）；
+- **按需子路径导出**：153 个组件 + 4 个命令式 API 桶独立入口
+  （`@wil-works/evoke-business-ui/button`、`/message`），与主入口共享同一组件
+  实例；共享模块收敛 `chunks/`；全量图标 `remix-full-paths` 保持动态加载，
+  按需导入不误拖 1.7MB 全量路径数据；`full-icons` 子路径补 `types` 条目；
+- **消费端零负担**：与 evoke-ui 同面——`.vue` 说明符改写 `.vue.d.ts`、exports
+  `types` 条件 + `./*` 通配、`sideEffects` 声明 css；
+- **顺手修两处命令式 API 类型脚枪**：`EbMessage.success/info/…` 与
+  `EbNotify.success/…` 快捷方法的 `options` 参数补默认值（运行时本就容忍缺省，
+  类型化后从「必传两参」回归可选）；构建链追加 `vue-tsc + post-types`，
+  `typescript` / `vue-tsc` 入 devDependencies（锁 TS 5.9——vue-tsc 3.3 不兼容
+  TypeScript 7）；守卫测试同 evoke-ui（EbChart / EbListy 别名豁免）。
+- **chatbot 升级为行为级测试（30 项）**：useChatEngine 状态机全流程（发送守卫 /
+  流式管线状态迁移 / 重新生成截断重发 / 错误标记）、utils 纯函数（simpleMarkdown
+  标题列表引用代码块与 XSS 转义、copyToClipboard 双路径）、chatMarkdown 协议引用
+  chip 与配置面、ChatMessage / Chatbot 动作条事件逐级转发、Sender 守卫；测试揪出
+  并修复两处真问题——`completeMessage` 的 `startTimeMap` 以原始对象为键而
+  `find` 拿到响应式代理导致**回复耗时从未被记录**（`toRaw` 修复），`ChatAttachments`
+  对缺失 `type` 的附件直接渲染崩溃（类型守卫兜底）。
+
+### @wil-works/evoke-business-ui — 发布链路排雷与产物瘦身
+
+- **运行时依赖全量 external 化**：dayjs / highlight.js / marked /
+  @floating-ui/dom / async-validator 不再打进产物（此前主入口 2.4MB，仅
+  highlight.js 就内联 1500+ 处），主入口降至 72KB（gzip 17KB）；正则外置
+  覆盖 `dayjs/plugin/*` 子路径导入，消费端按 dependencies 正常解析，
+  消除双份运行时；
+- **发布链路排雷**：`publish:pkg` 脚本由 npm publish（不改写 `workspace:^`
+  协议，误发即装不上）改为 pnpm publish；版本随类型工程升 0.6.0，顺带
+  修正线上依赖漂移（0.5.0 发布时 charts 尚为 0.4.x，caret 区间锁死旧版）；
+- **修复 menu 键盘可达性**：menuitem 的 tabindex 两个分支均为 -1，整个
+  菜单键盘不可达；非禁用项回归 tabindex=0（与 sub-menu 同口径），附回归
+  测试；
+- **command-palette 滚动锁收口**：直操 `body.style.overflow` 绕过引用计数，
+  叠在 dialog 上关闭时会提前解锁；改走 useLockScroll，新增叠加计数回归；
+- **守卫脚本补盲**：check-token-rule 增抓单段 ev-*/ew-* 裸类名（负向环视
+  排除 --ev-/--ew- 令牌尾巴）、--ev-* 豁免收紧为 `--ev-*: var(--eb-*)`
+  真实映射行、devDependencies 入依赖白名单（typescript / vue-tsc 显式
+  登记）；compat-check 新增 src/components ↔ src/index.js 导入交叉校验，
+  新组件漏导出构建即失败；
+- **文档站**：警示横幅 37px 定高改 min-height + 实测高度回写
+  --bd-devwarn-h，窄屏两行文案不再压顶栏；姊妹库组件数漏网口径
+  （49）统一为 60。
+- **a11y 批次**：tabs 方向键/Home/End 页签切换（自动激活、禁用跳过，
+  此前仅 Enter 可用）；select 触发器补 combobox 语义（role +
+  aria-expanded/haspopup/disabled）、选项列表补 listbox/option +
+  aria-selected/disabled；dropdown 触发器（fallback 与 split-button
+  两形态）补 aria-haspopup/aria-expanded；tour 的 scrollIntoView 加可选
+  守卫（jsdom / SSR 无布局环境不再抛错）；
+- **测试缺口回填**：新增 a11y.test.js（tabs 键盘 / select·dropdown aria /
+  useFocusTrap 圈闭六例：初始焦点、Tab/Shift+Tab 循环、容器外拉回、
+  焦点归还、Esc 回调）与 coverage.test.js（tour / mention / auth /
+  comment 零覆盖组件补测）；chatbot ChatMessage 的 copy/regenerate 由
+  「存在即过」改为真实点击断言（剪贴板桩化，与 jsdom 环境解耦）；
+  command.test.js 补 transformVNodeArgs 重置防御，notify / msgbox
+  幽灵实例与 overlay 同防。
+
 ## [charts 0.6.0] — 2026-09-15
 
 ### @wil-works/evoke-charts — AI 生成面五层收口：SPEC_RULES 能力规则词全量补齐 + 案例页入 MCP 目录

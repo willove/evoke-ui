@@ -30,9 +30,13 @@
     "example:ebui-knowledge": "pnpm --filter @wil-works/ebui-example-knowledge dev",
     "example:ebui-mobile": "pnpm --filter @wil-works/ebui-example-mobile dev",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "visual": "pnpm docs-web:build && playwright test",
+    "visual:only": "playwright test",
+    "visual:update": "pnpm docs-web:build && playwright test --update-snapshots"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/test-utils": "^2.4.9",
     "jsdom": "^29.1.0",
