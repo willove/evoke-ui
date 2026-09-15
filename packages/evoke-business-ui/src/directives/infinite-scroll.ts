@@ -8,9 +8,29 @@
  * binding.value：函数 或 { load, distance = 20, disabled = false }
  * 距底部 distance px 时触发 load；同一次触底只发一次，滚回后重置
  */
-export function createInfiniteScrollDirective() {
-  function getOptions(binding) {
-    if (typeof binding.value === 'function') return { load: binding.value, distance: 20 }
+import type { Directive, DirectiveBinding } from 'vue'
+
+export interface InfiniteScrollValue {
+  load?: () => unknown
+  /** 距底部多少 px 触发 */
+  distance?: number
+  disabled?: boolean
+}
+
+type InfiniteScrollBindingValue = ((() => unknown) | InfiniteScrollValue | null | undefined)
+
+type InfiniteScrollEl = HTMLElement & {
+  __evInfiniteHandler?: ((e: Event) => void) | null
+  __evInfiniteFired?: boolean
+}
+
+export function createInfiniteScrollDirective(): Directive<InfiniteScrollEl, InfiniteScrollBindingValue> {
+  function getOptions(binding: DirectiveBinding<InfiniteScrollBindingValue>): {
+    load?: () => unknown
+    distance: number
+    disabled: boolean
+  } {
+    if (typeof binding.value === 'function') return { load: binding.value, distance: 20, disabled: false }
     return {
       load: binding.value?.load,
       distance: binding.value?.distance ?? 20,
@@ -18,8 +38,8 @@ export function createInfiniteScrollDirective() {
     }
   }
 
-  function onScroll(e, binding) {
-    const el = e.target
+  function onScroll(e: Event, binding: DirectiveBinding<InfiniteScrollBindingValue>): void {
+    const el = e.target as InfiniteScrollEl
     if (el.nodeType !== 1) return
     const { load, distance, disabled } = getOptions(binding)
     if (typeof load !== 'function' || disabled) return
@@ -44,7 +64,7 @@ export function createInfiniteScrollDirective() {
     updated(el, binding) {
       // 处理器引用的 binding 是首帧闭包，值更新后重建
       if (binding.value !== binding.oldValue) {
-        el.removeEventListener('scroll', el.__evInfiniteHandler)
+        el.removeEventListener('scroll', el.__evInfiniteHandler!)
         el.__evInfiniteHandler = (e) => onScroll(e, binding)
         el.addEventListener('scroll', el.__evInfiniteHandler, { passive: true })
       }

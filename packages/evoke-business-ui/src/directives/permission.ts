@@ -10,11 +10,23 @@
  * 权限来源：ConfigProvider permissions > setPermissions()；动态权限变化在 disable 模式下实时生效
  */
 import { watchEffect } from 'vue'
+import type { Directive, DirectiveBinding, WatchStopHandle } from 'vue'
 import { usePermission } from '../composables/usePermission'
+import type { PermissionRequirement } from '../composables/usePermission'
 
-export function createPermissionDirective() {
+export interface PermissionDirectiveValue {
+  /** 权限判定入参：精确码 / 码表 / 自定义判定 */
+  has: PermissionRequirement
+  mode?: 'remove' | 'disable'
+}
+
+export type PermissionValue = string | PermissionDirectiveValue | null | undefined
+
+type PermissionEl = HTMLElement & { __evPermissionStop?: WatchStopHandle | null }
+
+export function createPermissionDirective(): Directive<PermissionEl, PermissionValue> {
   return {
-    mounted(el, binding) {
+    mounted(el, binding: DirectiveBinding<PermissionValue>) {
       const { has } = usePermission()
       el.__evPermissionStop = watchEffect(() => {
         const value = binding.value
@@ -24,11 +36,11 @@ export function createPermissionDirective() {
         if (allowed) {
           el.style.pointerEvents = ''
           el.classList.remove('is-permission-disabled')
-          if (mode === 'disable') el.disabled = false
+          if (mode === 'disable') (el as HTMLInputElement).disabled = false
         } else if (mode === 'disable') {
           el.classList.add('is-permission-disabled')
           el.style.pointerEvents = 'none'
-          if ('disabled' in el) el.disabled = true
+          if ('disabled' in el) (el as HTMLInputElement).disabled = true
         } else if (el.parentNode) {
           el.parentNode.removeChild(el)
         }

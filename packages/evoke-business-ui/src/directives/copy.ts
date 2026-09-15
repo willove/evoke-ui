@@ -6,14 +6,25 @@
  *   <span v-copy="orderNo">{{ orderNo }}</span>  复制指定值
  *   v-copy="{ value, feedback: false }"          关闭消息提示
  */
+import type { Directive, DirectiveBinding } from 'vue'
 import { EbMessage } from '../components/message'
 import { useClipboard } from '../composables/useClipboard'
 
-function attach(el, binding) {
+export interface CopyDirectiveValue {
+  value?: string
+  /** 关闭消息提示传 false */
+  feedback?: boolean
+}
+
+export type CopyValue = string | number | CopyDirectiveValue | null | undefined
+
+type CopyEl = HTMLElement & { __evCopyHandler?: ((e: Event) => void) | null }
+
+function attach(el: CopyEl, binding: DirectiveBinding<CopyValue>): void {
   const { copy } = useClipboard()
   const opts = typeof binding.value === 'object' && binding.value !== null ? binding.value : null
-  const getValue = () => {
-    if (opts) return opts.value
+  const getValue = (): string => {
+    if (opts) return String(opts.value)
     if (binding.value != null && typeof binding.value !== 'object') return String(binding.value)
     return el.textContent?.trim() ?? ''
   }
@@ -27,7 +38,7 @@ function attach(el, binding) {
   el.addEventListener('click', el.__evCopyHandler)
 }
 
-export function createCopyDirective() {
+export function createCopyDirective(): Directive<CopyEl, CopyValue> {
   return {
     mounted(el, binding) {
       attach(el, binding)

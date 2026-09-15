@@ -8,22 +8,32 @@
  *   <div v-reveal="{ type: 'left' }">…</div>                     // up(默认) | left | right | zoom | fade
  *   <div v-reveal="{ once: false }">…</div>                      // 每次进入视口都触发
  */
+import type { Directive } from 'vue'
 
 export const REVEAL_TYPES = ['up', 'left', 'right', 'zoom', 'fade']
 
+export interface RevealOptions {
+  type?: string
+  /** 交错入场延迟 ms */
+  delay?: number
+  /** 每次进入视口都触发时传 false */
+  once?: boolean
+}
+
 const observer = typeof IntersectionObserver !== 'undefined' ? IntersectionObserver : null
 
-let sharedObserver = null
+let sharedObserver: IntersectionObserver | null = null
 
-function getObserver() {
+function getObserver(): IntersectionObserver | null {
   if (!observer) return null
   if (!sharedObserver) {
     sharedObserver = new observer((entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-revealed')
-          if (entry.target.dataset.evRevealOnce !== 'false') {
-            sharedObserver.unobserve(entry.target)
+          const target = entry.target as HTMLElement
+          target.classList.add('is-revealed')
+          if (target.dataset.evRevealOnce !== 'false') {
+            sharedObserver!.unobserve(entry.target)
           }
         }
       }
@@ -36,10 +46,10 @@ function getObserver() {
  * 让单个元素获得滚动入场能力（指令与组件共用的底层实现）
  * @returns cleanup 函数
  */
-export function revealElement(el, options = {}) {
+export function revealElement(el: HTMLElement, options: RevealOptions = {}): () => void {
   const { type = 'up', delay = 0, once = true } = options
   el.classList.add('ev-reveal')
-  el.dataset.evReveal = REVEAL_TYPES.includes(type) ? type : 'up'
+  el.dataset.evReveal = (REVEAL_TYPES as string[]).includes(type) ? type : 'up'
   el.dataset.evRevealOnce = String(once)
   if (delay) el.style.transitionDelay = `${delay}ms`
 
@@ -53,7 +63,7 @@ export function revealElement(el, options = {}) {
   return () => io.unobserve(el)
 }
 
-export const revealDirective = {
+export const revealDirective: Directive<HTMLElement, RevealOptions | undefined> = {
   mounted(el, binding) {
     revealElement(el, binding.value || {})
   },

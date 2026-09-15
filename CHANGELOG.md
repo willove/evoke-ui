@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui / @wil-works/evoke-business-ui — TS 存量迁移第二刀：directives 全量转 TS（阶段 3 第 2 档）
+
+- **4 个指令 .js → .ts**：evoke-ui `v-reveal`，business `v-copy` /
+  `v-infinite-scroll` / `v-permission`；宿主元素自定义属性（`__evCopyHandler`
+  等）以交叉类型收敛，指令统一 `Directive<宿主元素, 值类型>` 泛型标注；
+- **公共类型导出**：`RevealOptions` / `CopyValue` + `CopyDirectiveValue` /
+  `InfiniteScrollValue` / `PermissionValue` + `PermissionDirectiveValue`，
+  TS 消费方在模板与指令注册处获得补全；运行时行为逐字保留
+  （`v-copy` 原始值经 `String()` 归一与原 DOMString 转换结果一致，
+  `v-permission` 的 `el.disabled` 写入走显式断言）；
+- 两包 vue-tsc --noEmit 通过，全仓 94 文件 1475 项测试全绿。
+
 ### @wil-works/evoke-ui / @wil-works/evoke-business-ui — TS 存量迁移第一刀：utils + composables 全量转 TS（阶段 3 开工）
 
 - **两包共 35 个模块 .js → .ts**：evoke-ui（utils 2 + composables 9）与
