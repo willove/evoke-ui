@@ -110,6 +110,10 @@ const dtPageSize = ref(10)
 const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (1000 + i) }))
 </script>
 
+## 撑满剩余空间
+
+`fit` 打开后组件按 flex 布局占满父容器的剩余高度，实测表格区高度后表格内部滚动，工具栏与分页常驻可视区——需要父链为 flex column 或有确定高度；与 `virtual` 组合即可承载万级数据的满屏表格。整页级封装（页头 + 查询区 + 工具栏 + 表格分页联动）见 [TablePage 表格页](/components/table-page)。
+
 ## API
 
 <ApiTable title="DataTable Props" :rows="[
@@ -128,6 +132,7 @@ const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (
   { name: 'pageSizes', desc: '每页条数选项', type: 'number[]', default: '[10, 20, 50, 100]' },
   { name: 'paginationLayout', desc: '分页条布局项', type: 'string', default: 'total, sizes, prev, pager, next' },
   { name: 'showPagination', desc: '是否显示分页条', type: 'boolean', default: 'true' },
+  { name: 'fit', desc: '高度自适应：撑满 flex 父容器剩余空间，实测高度写入表格并内部滚动（与 tableAttrs.height 同传时 fit 优先）', type: 'boolean', default: 'false' },
   { name: 'tableAttrs', desc: '透传 EbTable 其余 props（border/stripe/height 等）', type: 'object', default: '{}' },
 ]" />
 

@@ -157,6 +157,7 @@ export const CATEGORIES = [
     components: [
       { name: 'SearchFilter', zh: '筛选表单', path: '/components/search-filter' },
       { name: 'DataTable', zh: '数据表格', path: '/components/data-table' },
+      { name: 'TablePage', zh: '表格页', path: '/components/table-page' },
       { name: 'StatusTag', zh: '状态标签', path: '/components/status-tag' },
       { name: 'CreditsProgress', zh: '用量进度', path: '/components/credits-progress' },
       { name: 'GanttProgress', zh: '阶段进度', path: '/components/gantt-progress' },

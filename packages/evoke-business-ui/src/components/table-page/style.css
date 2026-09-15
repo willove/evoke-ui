@@ -1,0 +1,58 @@
+/* EbTablePage — 数据表格页封装（业务组件） */
+
+.eb-table-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eb-space-4);
+  min-width: 0;
+}
+
+/* ─── 页头区 ─── */
+.eb-table-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--eb-space-3);
+  flex-wrap: wrap;
+}
+.eb-table-page__header-main {
+  min-width: 0;
+}
+.eb-table-page__title {
+  margin: 0;
+  font-size: var(--eb-font-size-lg);
+  font-weight: var(--eb-font-weight-semibold);
+  color: var(--eb-text-color-primary);
+  line-height: var(--eb-line-height-base);
+}
+.eb-table-page__description {
+  margin: var(--eb-space-1) 0 0;
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
+}
+.eb-table-page__header-extra {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+  flex-wrap: wrap;
+}
+
+/* ─── 查询区 ─── */
+.eb-table-page__search {
+  min-width: 0;
+}
+
+/* ─── 表格区 ─── */
+.eb-table-page__table {
+  min-width: 0;
+}
+
+/* ─── 高度自适应（fit）：整页撑满 flex 父容器剩余空间，表格内部滚动 ─── */
+.eb-table-page.is-fit {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.eb-table-page.is-fit .eb-table-page__table {
+  flex: 1 1 auto;
+  min-height: 0;
+}

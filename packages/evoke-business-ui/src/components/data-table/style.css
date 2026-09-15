@@ -65,3 +65,13 @@
   display: flex;
   justify-content: flex-end;
 }
+
+/* ─── 高度自适应（fit）：撑满 flex 父容器剩余空间，表格内部滚动 ─── */
+.eb-data-table.is-fit {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.eb-data-table.is-fit .eb-data-table__table-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+}

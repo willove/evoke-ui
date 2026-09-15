@@ -148,6 +148,7 @@ import EbCellStack from './components/cell-stack/index.vue'
 import EbDetailDescriptions from './components/detail-descriptions/index.vue'
 import EbSearchFilter from './components/search-filter/index.vue'
 import EbDataTable from './components/data-table/index.vue'
+import EbTablePage from './components/table-page/index.vue'
 import EbImportExportPanel from './components/import-export-panel/index.vue'
 import EbAuditTimeline from './components/audit-timeline/index.vue'
 import EbColumnSettings from './components/column-settings/index.vue'
@@ -392,6 +393,7 @@ const components = {
   EbDetailDescriptions,
   EbSearchFilter,
   EbDataTable,
+  EbTablePage,
   EbImportExportPanel,
   EbAuditTimeline,
   EbColumnSettings,
@@ -601,6 +603,7 @@ export {
   EbDetailDescriptions,
   EbSearchFilter,
   EbDataTable,
+  EbTablePage,
   EbImportExportPanel,
   EbAuditTimeline,
   EbColumnSettings,

@@ -4,7 +4,28 @@
 
 ## [Unreleased]
 
-### @wil-works/evoke-business-ui — TS 存量迁移第三刀：命令式 API 四件套转 TS（阶段 3 第 3 档）
+### @wil-works/evoke-business-ui — 新增 EbTablePage 表格页 + EbDataTable 高度自适应
+
+- **新增 EbTablePage（表格页）**：CRUD 列表页整页封装，四区结构——页头
+  （title/description + header/extra 插槽）→ 查询区（`fields` 内建 EbSearchFilter，
+  或 `search` 插槽自定义表单，作用域 `{ params, search, reset, loading }`）→
+  工具栏（作用域 `{ selection, selectionCount, refresh, clearSelection }`）→
+  表格 + 分页（复用 EbDataTable）；
+- **数据代理**：`request` 交给内部 useTable（分页 + 请求状态 + 竞态保护）——
+  翻页/换容量自动重查（换容量回第 1 页）、查询合并筛选回第 1 页、重置恢复
+  `defaultParams`；`remote-sort` 把列排序写入 `sortPropKey/sortOrderKey` 参数
+  （asc/desc）以当前页重查，`remote-filter` 把列筛选收敛为 `filterParamKey`
+  参数回第 1 页，关闭即走表格内建客户端排序过滤；SearchFilter 重置后自带的
+  合并查询经抑制标记收敛为单次请求；列插槽原样透传；
+- **EbDataTable 新增 `fit`**：根节点撑满 flex 父容器剩余空间，ResizeObserver
+  实测表格区高度写入 EbTable 的 `height`——「高度撑满剩余空间、多出内部滚动、
+  不整页滚」一条 prop 落地，与 `virtual` 组合承载万级满屏表格；环境无
+  ResizeObserver（jsdom/SSR）自动降级不锁高；EbTablePage 默认 `fit` 开；
+- 14 项行为级测试（数据代理联动/查询区抑制/插槽上下文/fit 降级），全仓
+  95 文件 1489 项测试全绿；组件文档 table-page.md 入列（侧栏 ↔ 页面零断链），
+  文档站 SSR 全站构建通过。
+
+### @wil-works/evoke-ui / @wil-works/evoke-business-ui — TS 存量迁移第三刀：命令式 API 四件套转 TS（阶段 3 第 3 档）
 
 - **message / notify / msgbox / loading 目录桶 index.js → index.ts**——
   `EbMessage` / `EbNotify` / `EbMsgbox` 这类「函数 + 静态方法」形态以

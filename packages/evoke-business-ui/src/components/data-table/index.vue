@@ -1,5 +1,5 @@
 <template>
-  <div class="eb-data-table">
+  <div ref="rootRef" class="eb-data-table" :class="{ 'is-fit': fit }">
     <!-- 工具栏：标题 + 计数角标 + 右侧操作 -->
     <div v-if="title || $slots.actions || total > 0" class="eb-data-table__toolbar">
       <div class="eb-data-table__toolbar-left">
@@ -14,11 +14,12 @@
     </div>
 
     <!-- 表格 -->
-    <div class="eb-data-table__table-wrapper" :class="{ 'is-loading': loading }">
+    <div ref="tableWrapperRef" class="eb-data-table__table-wrapper" :class="{ 'is-loading': loading }">
       <eb-table
         ref="tableRef"
         v-bind="tableAttrs"
         :data="data"
+        :height="fitHeight || undefined"
         @selection-change="emit('selection-change', $event)"
         @sort-change="emit('sort-change', $event)"
         @row-click="emit('row-click', $event)"
@@ -83,7 +84,7 @@
  * 分页受控：page/pageSize props + update:page/update:pageSize/page-change 事件；
  * expose 透传 EbTable 实例方法（clearSelection/toggleRowSelection 等）
  */
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import EbButton from '../button/index.vue'
 import EbCellStack from '../cell-stack/index.vue'
 import EbIcon from '../icon/index.vue'
@@ -113,6 +114,12 @@ const props = defineProps({
   pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
   paginationLayout: { type: String, default: 'total, sizes, prev, pager, next' },
   showPagination: { type: Boolean, default: true },
+  /**
+   * 高度自适应：根节点撑满 flex 父容器的剩余空间，ResizeObserver 实测
+   * 表格区高度后写入 EbTable 的 height（多出内部滚动，不整页滚）；
+   * 需要父链为 flex column 或有确定高度；与 tableAttrs.height 同时传入时 fit 优先
+   */
+  fit: { type: Boolean, default: false },
   // 透传 EbTable 的其余 attrs（border/stripe/height 等）
   tableAttrs: { type: Object, default: () => ({}) },
 })
@@ -129,6 +136,50 @@ const emit = defineEmits([
 ])
 
 const tableRef = ref(null)
+const rootRef = ref(null)
+const tableWrapperRef = ref(null)
+/** fit 实测的表格区高度（px）；环境无 ResizeObserver 时保持 0（降级为不锁定高度） */
+const fitHeight = ref(0)
+
+let resizeObserver = null
+
+function measureFit() {
+  fitHeight.value = Math.round(tableWrapperRef.value?.getBoundingClientRect?.().height || 0)
+}
+
+onMounted(() => {
+  if (!props.fit) return
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => measureFit())
+    resizeObserver.observe(tableWrapperRef.value)
+  } else {
+    // jsdom 等环境：一次性静态量高（通常为 0，等效降级）
+    measureFit()
+  }
+})
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  resizeObserver = null
+})
+
+// fit 开关切换时补挂/卸观察
+watch(
+  () => props.fit,
+  (on) => {
+    if (!on) {
+      resizeObserver?.disconnect()
+      resizeObserver = null
+      fitHeight.value = 0
+      return
+    }
+    if (rootRef.value && typeof ResizeObserver !== 'undefined') {
+      resizeObserver?.disconnect()
+      resizeObserver = new ResizeObserver(() => measureFit())
+      resizeObserver.observe(tableWrapperRef.value)
+    }
+  },
+)
 
 function handlePageChange(val) {
   // 分页组件对象形态为 { page, size }，数字形态为页码
