@@ -26,6 +26,9 @@ import {
  * @param {boolean} [options.flip=true] 空间不足时翻转
  * @param {boolean} [options.shift=true] 视口内平移
  * @param {boolean} [options.autoUpdate=true] 滚动/resize 自动重算
+ * @param {Function} [options.onReferenceEscape] 参考元素随滚动越出视口边缘时的回调
+ *   （top<0 或 bottom>innerHeight，任一部分越出即触发；组件据此自动关闭弹层，
+ *   避免触发器不可见后弹层悬空、叠在站点顶栏之上）
  * @param {number} [options.zIndex] 附加 z-index（内部调用 nextZIndex 的结果）
  * @returns 浮层状态与方法
  */
@@ -37,6 +40,7 @@ export function useFloating(options = {}) {
     flip: flipEnabled = true,
     shift: shiftEnabled = true,
     autoUpdate: autoUpdateEnabled = true,
+    onReferenceEscape = null,
     arrow: externalArrowRef = null,
   } = options
 
@@ -70,6 +74,14 @@ export function useFloating(options = {}) {
     const reference = unref(referenceRef)
     const floating = unref(floatingRef)
     if (!reference || !floating) return
+    // 参考元素越出视口边缘：通知消费方关闭弹层（触发器不可见后弹层不应悬空）
+    if (onReferenceEscape) {
+      const r = reference.getBoundingClientRect()
+      if (r.top < 0 || r.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+        onReferenceEscape()
+        return
+      }
+    }
     const result = await computePosition(reference, floating, {
       strategy,
       placement: defaultPlacement,

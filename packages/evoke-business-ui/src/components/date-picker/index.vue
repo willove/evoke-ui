@@ -337,6 +337,7 @@ const { x, y, show: startFloating, hide: stopFloating } = useFloating({
   flip: true,
   shift: true,
   autoUpdate: true,
+  onReferenceEscape: () => closePanel(),
 })
 
 const popperStyle = computed(() => ({

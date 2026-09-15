@@ -96,6 +96,8 @@ const {
   placement: props.placement,
   offset: props.offset,
   autoUpdate: true,
+  // 触发器随滚动越出视口：浮层自动收起（触发器不可见后浮层不应悬空/叠在站点顶栏上）
+  onReferenceEscape: () => deactivateFloating(),
 })
 
 let showTimer = null

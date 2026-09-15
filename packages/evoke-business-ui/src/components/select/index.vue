@@ -276,6 +276,7 @@ const { x, y, update, show: activateFloating, hide: deactivateFloating } = useFl
   flip: true,
   shift: true,
   autoUpdate: true,
+  onReferenceEscape: () => closeDropdown(),
 })
 
 const dropdownStyle = computed(() => ({
