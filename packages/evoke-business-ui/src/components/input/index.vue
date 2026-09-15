@@ -2,7 +2,7 @@
   <div
     v-if="type === 'textarea'"
     class="eb-textarea eb-textarea"
-    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'is-focus': isFocused }, sizeClass, attrs.class]"
+    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'is-focus': isFocused, 'eb-ripple-off': ripple === false }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
@@ -45,6 +45,7 @@
         'is-exceed': isExceed,
         'is-error': hasError,
         'is-shake': isShaking,
+        'eb-ripple-off': ripple === false,
       },
     ]"
     :style="attrs.style"
@@ -140,6 +141,8 @@ const props = defineProps({
   autocomplete: { type: String, default: 'off' },
   /** 表单校验触发开关 */
   validateEvent: { type: Boolean, default: true },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits([

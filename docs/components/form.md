@@ -215,6 +215,7 @@ FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只�
   { name: 'scrollToError', desc: '校验失败自动滚动到错误项（预留，当前实现未消费）', type: 'boolean', default: 'false' },
   { name: 'hideRequiredAsterisk', desc: '隐藏必填星号', type: 'boolean', default: 'false' },
   { name: 'validateOnRuleChange', desc: 'rules 变化时自动重新校验', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '批量关闭表单内所有输入类组件的激活涟漪动效（组件级 ripple prop 可单独关闭；全局见 setRipple）', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="FormItem Props" :rows="[

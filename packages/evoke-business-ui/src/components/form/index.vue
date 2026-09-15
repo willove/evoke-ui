@@ -1,7 +1,7 @@
 <template>
   <form
     class="eb-form eb-form"
-    :class="[`eb-form--label-${labelPosition}`, { 'eb-form--inline': inline }]"
+    :class="[`eb-form--label-${labelPosition}`, { 'eb-form--inline': inline, 'eb-form--ripple-off': ripple === false }]"
     @submit.prevent
   >
     <slot />
@@ -38,6 +38,8 @@ const props = defineProps({
   scrollToError: { type: Boolean, default: false },
   hideRequiredAsterisk: { type: Boolean, default: false },
   validateOnRuleChange: { type: Boolean, default: true },
+  /** 批量关闭表单内所有输入类组件的激活涟漪动效（全局开关见 setRipple） */
+  ripple: { type: Boolean, default: true },
 })
 
 // 注册的字段（EbFormItem onMounted 注册）

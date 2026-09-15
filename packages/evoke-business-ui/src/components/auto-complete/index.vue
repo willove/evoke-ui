@@ -12,6 +12,7 @@
       <eb-input
         v-model="inputValue"
         v-bind="filterInputProps"
+        :ripple="ripple"
         role="combobox"
         :aria-expanded="panelVisible"
         :aria-autocomplete="'list'"
@@ -75,6 +76,8 @@ const props = defineProps({
   valueOnSelect: { type: Boolean, default: true },
   /** 透传给内部 EbInput 的原生属性（placeholder / clearable / size / disabled 等） */
   inputProps: { type: Object, default: () => ({}) },
+  /** 激活涟漪动效开关（作用于内部输入框）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'select', 'suggest', 'clear'])

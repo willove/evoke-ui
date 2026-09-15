@@ -1,7 +1,7 @@
 <template>
   <div
     class="eb-select eb-tree-select eb-select eb-tree-select"
-    :class="[sizeClass, { 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable }]"
+    :class="[sizeClass, { 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable, 'eb-ripple-off': ripple === false }]"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
   >
@@ -162,6 +162,8 @@ const props = defineProps({
   emptyText: { type: String, default: '' },
   lazy: { type: Boolean, default: false },
   load: { type: Function, default: null },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits([

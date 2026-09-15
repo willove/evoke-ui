@@ -61,3 +61,21 @@ toggle()                          // 缺省作用于 documentElement
 ## usePermission / setPermissions
 
 见 [Auth 权限](/components/auth)。`setPrimaryColor` / `setDensity` 运行时换肤见[主题与暗色模式](/guide/theming)。
+
+## setRipple — 全局关闭激活涟漪
+
+输入类组件（输入框 / 选择器 / 级联 / 日期时间 / 树选择 / 数字输入等）聚焦时会播放实体色影涟漪。三档关闭入口，按需选用：
+
+```js
+import { setRipple, getRipple } from '@wil-works/evoke-business-ui'
+
+setRipple(false)   // 全局关闭（可放应用初始化处）
+setRipple(true)    // 恢复
+getRipple()        // 读取当前状态
+```
+
+更细的粒度：
+
+- **单个组件**：`:ripple="false"`（Input / Select / Cascader / DatePicker / TimePicker / TimeSelect / InputNumber / TreeSelect / Textarea / AutoComplete 均支持）；
+- **批量**：`<eb-form :ripple="false">` 一次关闭表单内全部输入组件；
+- **全局**：`setRipple(false)`，等价于在 `html` 上设置 `data-eb-ripple="off"`。

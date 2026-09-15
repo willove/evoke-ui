@@ -318,3 +318,17 @@ export function getDensity() {
   if (typeof document === 'undefined') return 'default'
   return document.documentElement.getAttribute('data-eb-density') || 'default'
 }
+
+/** 全局激活涟漪开关：html[data-eb-ripple]，关闭后所有输入类组件聚焦不再播放涟漪。
+ *  组件级 :ripple="false" / Form 级 :ripple="false" 可局部关闭 */
+export function setRipple(enabled) {
+  if (typeof document === 'undefined') return false
+  if (enabled) document.documentElement.removeAttribute('data-eb-ripple')
+  else document.documentElement.setAttribute('data-eb-ripple', 'off')
+  return true
+}
+
+export function getRipple() {
+  if (typeof document === 'undefined') return true
+  return document.documentElement.getAttribute('data-eb-ripple') !== 'off'
+}

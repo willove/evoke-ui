@@ -1,7 +1,7 @@
 <template>
   <div
     class="eb-cascader eb-cascader"
-    :class="[sizeClass, { 'is-disabled': isDisabled }]"
+    :class="[sizeClass, { 'is-disabled': isDisabled, 'eb-ripple-off': ripple === false }]"
   >
     <div
       ref="referenceRef"
@@ -163,6 +163,8 @@ const props = defineProps({
   maxCollapseTags: { type: Number, default: 1 },
   /** 展开触发方式 click / hover */
   expandTrigger: { type: String, default: '' },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits([

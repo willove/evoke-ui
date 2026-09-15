@@ -2,7 +2,7 @@
   <div
     v-bind="$attrs"
     class="eb-select"
-    :class="[{ 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable, 'is-focus': isFocused }, sizeClass]"
+    :class="[{ 'is-disabled': isDisabled, 'is-multiple': multiple, 'is-filterable': filterable, 'is-focus': isFocused, 'eb-ripple-off': ripple === false }, sizeClass]"
     @click="handleClick"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
@@ -219,6 +219,8 @@ const props = defineProps({
   /** 虚拟滚动（需配合 options）：万级选项只渲染可视窗口 */
   virtual: { type: Boolean, default: false },
   name: { type: String, default: undefined },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits([

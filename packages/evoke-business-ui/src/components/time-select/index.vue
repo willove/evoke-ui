@@ -1,7 +1,7 @@
 <template>
   <div
     class="eb-date-editor eb-time-select eb-time-select"
-    :class="[sizeClass, { 'is-disabled': isDisabled }]"
+    :class="[sizeClass, { 'is-disabled': isDisabled, 'eb-ripple-off': ripple === false }]"
   >
     <div
       ref="referenceRef"
@@ -90,6 +90,8 @@ const props = defineProps({
   size: { type: String, default: '' },
   name: { type: String, default: undefined },
   prefixIcon: { type: String, default: 'clock' },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'change', 'clear', 'focus', 'blur', 'visible-change'])

@@ -33,6 +33,22 @@
   --eb-field-ring-color: var(--eb-color-danger);
 }
 
+/* ─── 涟漪开关 ───
+   组件级：根节点 .eb-ripple-off（组件 :ripple="false"）
+   Form 级：.eb-form--ripple-off（Form :ripple="false"，批量关闭表单内全部输入组件）
+   全局级：html[data-eb-ripple='off']（setRipple(false)） */
+.eb-ripple-off .eb-input__wrapper::before,
+.eb-ripple-off .eb-select__wrapper::before,
+.eb-ripple-off .eb-textarea::before,
+.eb-ripple-off.eb-input__wrapper::before,
+.eb-ripple-off.eb-select__wrapper::before,
+.eb-ripple-off.eb-textarea::before,
+.eb-form--ripple-off .eb-input__wrapper::before,
+.eb-form--ripple-off .eb-select__wrapper::before,
+.eb-form--ripple-off .eb-textarea::before {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html:not([data-eb-ripple='off']) .eb-input__wrapper.is-focus::before,
   html:not([data-eb-ripple='off']) .eb-select__wrapper.is-focused::before,

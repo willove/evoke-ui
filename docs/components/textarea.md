@@ -61,6 +61,7 @@ const h2 = ref('')
   { name: 'help', desc: '帮助文案（error 缺省时显示）', type: 'string', default: '' },
   { name: 'size', desc: '尺寸（缺省跟随 Form）', type: 'large | default | small', default: '' },
   { name: 'validateEvent', desc: '接入 Form 时触发校验', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="Textarea Events" :rows="[

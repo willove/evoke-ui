@@ -242,6 +242,8 @@ import {
   EB_THEME_PRESETS,
   setDensity,
   getDensity,
+  setRipple,
+  getRipple,
 } from './utils/theme'
 // ─── 格式化工具 ───
 import {
@@ -690,6 +692,8 @@ export {
   EB_THEME_PRESETS,
   setDensity,
   getDensity,
+  setRipple,
+  getRipple,
   // 格式化工具
   formatNumber,
   formatFileSize,

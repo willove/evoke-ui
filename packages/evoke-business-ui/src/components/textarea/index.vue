@@ -1,7 +1,7 @@
 <template>
   <div
     class="eb-textarea eb-textarea"
-    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed }, sizeClass, attrs.class]"
+    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'eb-ripple-off': ripple === false }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
@@ -58,6 +58,8 @@ const props = defineProps({
   name: { type: String, default: undefined },
   autocomplete: { type: String, default: 'off' },
   validateEvent: { type: Boolean, default: true },
+  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'change', 'input', 'clear'])

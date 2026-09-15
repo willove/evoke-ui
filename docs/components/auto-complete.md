@@ -58,6 +58,7 @@ const mentionValue = ref('')
 | minlength | Number | `0` | 触发联想最小字符数 |
 | value-on-select | Boolean | `true` | 选中后回填输入框 |
 | input-props | Object | `{}` | 透传内部 EbInput（placeholder / size / disabled…） |
+| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 `setRipple(false)` |
 
 ### 事件
 

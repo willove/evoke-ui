@@ -80,5 +80,6 @@ const options = [
 | filter-method | Function | — | 自定义过滤 `(node, query) => boolean` |
 | disabled | Boolean | `false` | 禁用 |
 | props | Object | `{}` | 自定义字段名 `{ label, value, children }` |
+| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 `setRipple(false)` |
 
 事件：`change(value)`、`visible-change(visible)`、`clear`。

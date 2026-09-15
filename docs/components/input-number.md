@@ -93,6 +93,7 @@ disabled 整体禁用（含步进按钮）；readonly 只读，输入与步进�
   { name: 'readonly', desc: '只读（输入与步进均被禁止）', type: 'boolean', default: 'false' },
   { name: 'placeholder', desc: '占位文本', type: 'string', default: '' },
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="InputNumber Events" :rows="[

@@ -47,6 +47,7 @@ const str = ref('')
   { name: 'editable', desc: '允许手动键入', type: 'boolean', default: 'true' },
   { name: 'disabled', desc: '禁用', type: 'boolean', default: 'false' },
   { name: 'size', desc: '尺寸（缺省跟随 Form）', type: 'large | default | small', default: '' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="TimePicker Events" :rows="[
