@@ -15,7 +15,7 @@ Evoke UI — 纯 JS Vue3 **官网/纯前端站点**组件库，Clean Navy 设计
 - **零运行时依赖**：仅 peer vue；图标为生成期静态快照，展示集独立 chunk 按需加载
 - **轻量动效**：spring 弹性微交互 + `v-reveal` 滚动浮现指令
 
-> 图标：核心集 39 个语义名内置；展示集 922 个原生名按需加载。组件 class 前缀 `ev-`、令牌前缀 `--ev-*` 为本库独立命名空间。
+> 图标：核心集 72 个语义名内置；展示集 922 个原生名按需加载。组件 class 前缀 `ev-`、令牌前缀 `--ev-*` 为本库独立命名空间。
 
 ## 安装
 
@@ -30,6 +30,20 @@ import '@wil-works/evoke-ui/styles'
 
 const app = createApp(App)
 app.use(EvokeUI) // 全量注册 Ev* 组件 + v-reveal 指令 + 主题初始化
+```
+
+### 按需导入
+
+不打全量插件时，单个组件可从子路径直接引入（自带类型声明，与主入口共享同一组件实例）：
+
+```js
+import EvButton from '@wil-works/evoke-ui/button'
+```
+
+子路径名与组件名对应（`EvIconButton` → `icon-button`、`EvAvatarGroup` → `avatar-group`）。样式始终走全局一份，按需导入时记得同样引入：
+
+```js
+import '@wil-works/evoke-ui/styles'
 ```
 
 ## 组件一览

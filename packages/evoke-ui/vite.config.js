@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { getComponentEntries } from './scripts/component-entries.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -10,24 +11,36 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
  * 纯 JS 源码，编译 .vue → .mjs，消费端无需源码级编译
  * 组件样式由各组件 import './style.css'，Vite 自动聚合为单一 css 产物
  * EvIconGrid 的展示图标集通过动态 import 独立分 chunk，不进主包
+ *
+ * 按需子路径导出：主入口外，每个组件单独成入口（清单从 src/index.js 解析，
+ * 见 scripts/component-entries.mjs）——`import EvButton from '@wil-works/evoke-ui/button'`
+ * 只解析 button 与其依赖，不触达其余组件。入口间共享模块落入 chunks/（不对外）。
  */
+const componentEntries = getComponentEntries()
+
 export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.js'),
+      entry: {
+        index: resolve(__dirname, 'src/index.js'),
+        ...Object.fromEntries(
+          componentEntries.map((c) => [c.name, resolve(__dirname, 'src', c.file)]),
+        ),
+      },
       formats: ['es'],
-      fileName: () => 'index.mjs',
     },
     rollupOptions: {
       external: ['vue'],
       output: {
         globals: { vue: 'Vue' },
-        // 动态 import 的展示图标集固定 chunk 名（相对引用，消费端构建器自动跟随）
+        entryFileNames: '[name].mjs',
+        // 动态 import 的展示图标集固定 chunk 名（相对引用，消费端构建器自动跟随）；
+        // 其余共享 chunk 归入 chunks/ 子目录，与组件入口文件隔离
         chunkFileNames: (chunkInfo) =>
           chunkInfo.isDynamicEntry && chunkInfo.name === 'showcase'
             ? 'showcase-icons.mjs'
-            : '[name].mjs',
+            : 'chunks/[name].mjs',
         assetFileNames: (assetInfo) =>
           assetInfo.names?.[0]?.endsWith('.css') ? 'evoke-ui.css' : assetInfo.names[0],
       },
