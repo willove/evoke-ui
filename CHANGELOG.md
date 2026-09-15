@@ -4,6 +4,25 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-ui / @wil-works/evoke-business-ui — TS 存量迁移第一刀：utils + composables 全量转 TS（阶段 3 开工）
+
+- **两包共 35 个模块 .js → .ts**：evoke-ui（utils 2 + composables 9）与
+  business-ui（utils 7 + composables 17，含 `color.ts` 试点外的全部工具层），
+  对应 TS 迁移计划阶段 3 优先级第 1 档（纯函数与 hooks，零 UI 风险）；directives
+  留待第 2 档；
+- **公共 API 类型化**：`useTable` 泛型化（`TableData` / `TableFetcher` /
+  `UseTableOptions<T>`，list/items/rows 三形态收敛）、`useFloating` /
+  `useFocusTrap` / `useTeleport` 等 options 接口化、`usePermission` 判定入参
+  `PermissionRequirement` 联合类型、主题工具导出 `EbThemeConfig` /
+  `EbThemePreset` / `DensityMode`、`useConfigProvider` 定义 `LocaleMessages` /
+  `ConfigProviderContext`（locale 文案树含字符串数组叶子）、`useSizeProp` /
+  `useFormItem` 表单契约接口化；运行时行为逐字保留（含 `useLocale` 字符串/
+  数组叶子取键得 undefined 的既有语义、`setSeries` 不过滤空槽位等）；
+- **产物与消费端无感**：Vite 产物仍是纯 JS（esbuild 只剥类型），两包
+  vue-tsc --noEmit 全量通过，d.ts 产出链路（说明符改写 + 子路径存根）不变；
+  全仓 94 文件 1475 项测试全绿；内部引用全部无扩展名，源码/测试/文档站/
+  示例工程零残留 `.js` 引用。
+
 ### 工程 — 视觉回归三站扩展：business / charts 站基线 + 两站暗色轮次
 
 - **business 站 8 页 + charts 站 6 页 darwin 基线**——页面遴选沿用 ui 站原则
