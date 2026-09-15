@@ -8,6 +8,8 @@ import EbOption from '../src/components/select/option.vue'
 import EbDropdown from '../src/components/dropdown/index.vue'
 import EbDropdownMenu from '../src/components/dropdown/menu.vue'
 import EbDropdownItem from '../src/components/dropdown/item.vue'
+import EbTable from '../src/components/table/index.vue'
+import EbTableColumn from '../src/components/table/column.vue'
 import { useFocusTrap } from '../src/composables/useFocusTrap'
 
 const wait = (ms = 30) => new Promise((r) => setTimeout(r, ms))
@@ -109,6 +111,41 @@ describe('EbSelect combobox 语义', () => {
     await box.trigger('click')
     await wait()
     expect(wrapper.find('.eb-select__wrapper').attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('activedescendant：键盘高亮项 id 同步 + aria-controls + 打开焦点保持', async () => {
+    const wrapper = mount(SelectHarness, { attachTo: document.body })
+    const box = () => wrapper.find('.eb-select__wrapper')
+    expect(box().attributes('tabindex')).toBe('0')
+    await box().trigger('click')
+    await wait()
+    // 非过滤模式焦点保持在 combobox 触发器上
+    expect(document.activeElement).toBe(box().element)
+    // aria-controls 指向 listbox
+    const list = document.querySelector('.eb-select-dropdown__list')
+    expect(list.id).toBeTruthy()
+    expect(box().attributes('aria-controls')).toBe(list.id)
+    // 方向键走 document 全局监听，is-hovering 项 id 同步到 aria-activedescendant
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+    await nextTick()
+    const first = list.querySelectorAll('.eb-select-dropdown__item')[0]
+    expect(first.classList.contains('is-hovering')).toBe(true)
+    expect(box().attributes('aria-activedescendant')).toBe(first.id)
+    wrapper.unmount()
+  })
+
+  it('打开时定位已选项：activedescendant 直接指向已选 option', async () => {
+    const wrapper = mount(SelectHarness, { attachTo: document.body })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await wait()
+    document.querySelectorAll('.eb-select-dropdown__item')[1].click()
+    await wait()
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await wait()
+    const second = document.querySelectorAll('.eb-select-dropdown__item')[1]
+    expect(second.classList.contains('is-hovering')).toBe(true)
+    expect(wrapper.find('.eb-select__wrapper').attributes('aria-activedescendant')).toBe(second.id)
     wrapper.unmount()
   })
 
@@ -247,6 +284,98 @@ describe('useFocusTrap', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     expect(wrapper.emitted('esc')).toHaveLength(1)
     wrapper.vm.trap.deactivate()
+    wrapper.unmount()
+  })
+})
+
+// ─── EbTable 行级键盘导航 ───
+
+const tableRows = [
+  { id: 1, name: '苹果' },
+  { id: 2, name: '香蕉' },
+  { id: 3, name: '橙子' },
+]
+
+const mountKeyboardTable = () =>
+  mount(EbTable, {
+    props: { data: tableRows },
+    slots: {
+      default: () => h('div', [h(EbTableColumn, { prop: 'name', label: '名称' })]),
+    },
+    attachTo: document.body,
+  })
+
+describe('EbTable 行级键盘导航', () => {
+  const flush = () => new Promise((r) => setTimeout(r, 10))
+  const dataRows = (w) => w.findAll('tbody tr[data-row-index]')
+
+  it('roving tabindex：首行 0 其余 -1，focusin 同步焦点位', async () => {
+    const wrapper = mountKeyboardTable()
+    await flush()
+    const rows = dataRows(wrapper)
+    expect(rows.length).toBe(3)
+    expect(rows[0].attributes('tabindex')).toBe('0')
+    expect(rows[1].attributes('tabindex')).toBe('-1')
+    rows[2].element.focus()
+    await nextTick()
+    expect(rows[0].attributes('tabindex')).toBe('-1')
+    expect(rows[2].attributes('tabindex')).toBe('0')
+    wrapper.unmount()
+  })
+
+  it('ArrowDown/ArrowUp 移动行焦点', async () => {
+    const wrapper = mountKeyboardTable()
+    await flush()
+    const rows = dataRows(wrapper)
+    rows[0].element.focus()
+    rows[0].element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    await nextTick()
+    expect(document.activeElement).toBe(rows[1].element)
+    rows[1].element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }))
+    await nextTick()
+    expect(document.activeElement).toBe(rows[0].element)
+    wrapper.unmount()
+  })
+
+  it('Home/End 跳首末行', async () => {
+    const wrapper = mountKeyboardTable()
+    await flush()
+    const rows = dataRows(wrapper)
+    rows[0].element.focus()
+    rows[0].element.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }))
+    await nextTick()
+    expect(document.activeElement).toBe(rows[2].element)
+    rows[2].element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }))
+    await nextTick()
+    expect(document.activeElement).toBe(rows[0].element)
+    wrapper.unmount()
+  })
+
+  it('Enter/Space 等价点击：emit row-click 同载荷', async () => {
+    const wrapper = mountKeyboardTable()
+    await flush()
+    const rows = dataRows(wrapper)
+    rows[1].element.focus()
+    rows[1].element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    rows[1].element.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
+    await nextTick()
+    const emitted = wrapper.findComponent(EbTable).emitted('row-click')
+    expect(emitted.length).toBe(2)
+    expect(emitted[0][0]).toEqual(tableRows[1])
+    expect(emitted[0][1]).toBe(1)
+    wrapper.unmount()
+  })
+
+  it('数据缩减后焦点位回钳到首行', async () => {
+    const wrapper = mountKeyboardTable()
+    await flush()
+    dataRows(wrapper)[2].element.focus()
+    await nextTick()
+    await wrapper.setProps({ data: tableRows.slice(0, 1) })
+    await flush()
+    const rows = dataRows(wrapper)
+    expect(rows.length).toBe(1)
+    expect(rows[0].attributes('tabindex')).toBe('0')
     wrapper.unmount()
   })
 })
