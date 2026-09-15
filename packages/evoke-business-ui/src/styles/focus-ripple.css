@@ -1,10 +1,10 @@
 /* ============================================
    Evoke Business UI — 边框激活涟漪（focus ripple）
-   实体涟漪：聚焦瞬间两条与输入体等高的实体色影自左右边缘
-   向外扩展约 6px 后消散（0.7s 单次，box-shadow 双影驱动，
-   圆角自动跟随输入圆角令牌 --eb-input-border-radius）。
-   只横向扩展：垂直方向零尺寸变化，输入框不会「长高」，
-   也不覆盖输入面与内容。
+   实体涟漪：聚焦瞬间一层与输入体同形状的实体色影自边缘
+   向四周扩展约 6px 后消散（0.7s 单次，box-shadow spread 驱动，
+   影子自动跟随输入圆角令牌 --eb-input-border-radius）。
+   四向等幅扩展是涟漪动效本身（0.7s 内消散）；布局高度不变，
+   不覆盖输入面与内容。
    覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
    input-number / time-select / time-picker）、eb-textarea 与 eb-select__wrapper。
    错误态色影跟随 danger 色（--eb-field-ring-color 可覆盖）；
@@ -41,24 +41,17 @@
   }
 }
 
-/* 左右两片实体色影（offset ±N px，垂直偏移恒为 0：高度永不变化） */
 @keyframes eb-field-ring {
   0% {
     opacity: 1;
-    box-shadow:
-      1px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 55%, transparent),
-      -1px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 55%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 55%, transparent);
   }
   60% {
-    opacity: 0.85;
-    box-shadow:
-      4px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 50%, transparent),
-      -4px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 50%, transparent);
+    opacity: 0.9;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 50%, transparent);
   }
   100% {
     opacity: 0;
-    box-shadow:
-      6px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 45%, transparent),
-      -6px 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 45%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 45%, transparent);
   }
 }
