@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, ref, transformVNodeArgs } from 'vue'
 import { EbMsgbox } from '../src/components/msgbox'
 import { EbNotify } from '../src/components/notify'
 import { EbLoading } from '../src/components/loading'
@@ -8,6 +8,9 @@ import { EbLoading } from '../src/components/loading'
 describe('EbMsgbox 命令式 API', () => {
   beforeEach(async () => {
     vi.useRealTimers()
+    // 前序文件 mount() 装的全局 vnode 转换器会 stub 命令式 render 的 Transition
+    // → afterLeave 永不触发、幽灵实例；与 overlay.test.js 同一防御
+    transformVNodeArgs(undefined)
     document.querySelectorAll('.eb-message-box').forEach((el) => el.remove())
     await new Promise((r) => setTimeout(r, 0))
   })

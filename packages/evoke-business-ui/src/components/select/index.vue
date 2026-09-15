@@ -11,6 +11,10 @@
       ref="referenceRef"
       class="eb-select__wrapper"
       :class="{ 'is-hovering': hovering && !isDisabled, 'is-focused': isFocused, 'is-disabled': isDisabled }"
+      role="combobox"
+      :aria-expanded="dropdownVisible"
+      aria-haspopup="listbox"
+      :aria-disabled="isDisabled || undefined"
     >
       <span v-if="multiple && selectedTags.length" class="eb-select__selection">
         <span
@@ -92,6 +96,8 @@
               <div
                 ref="dropdownListRef"
                 class="eb-select-dropdown__list"
+                role="listbox"
+                :aria-multiselectable="multiple || undefined"
                 style="overflow: auto; max-height: 274px"
                 @keydown="handleKeydown"
               >

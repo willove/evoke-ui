@@ -85,7 +85,8 @@ function measure() {
     currentTargetRect.value = null
     return
   }
-  el.scrollIntoView({ block: 'center', behavior: 'instant' })
+  // jsdom / SSR 等无布局环境没有 scrollIntoView，可选调用
+  el.scrollIntoView?.({ block: 'center', behavior: 'instant' })
   const r = el.getBoundingClientRect()
   currentTargetRect.value = { top: r.top, left: r.left, width: r.width, height: r.height }
 }

@@ -5,7 +5,7 @@
     :class="[sizeClass, { 'is-disabled': disabled }]"
   >
     <slot v-if="!splitButton" name="default">
-      <span class="eb-dropdown__trigger-inner">
+      <span class="eb-dropdown__trigger-inner" aria-haspopup="menu" :aria-expanded="open">
         <slot name="trigger" />
         <eb-icon name="arrow-down" class="eb-dropdown__caret" :class="{ 'is-reverse': open }" />
       </span>
@@ -14,7 +14,14 @@
       <eb-button :type="type" :size="size" @click="handleMainClick">
         <slot name="trigger">{{ text }}</slot>
       </eb-button>
-      <eb-button :type="type" :size="size" class="eb-dropdown__caret-button" @click="toggle">
+      <eb-button
+        :type="type"
+        :size="size"
+        class="eb-dropdown__caret-button"
+        aria-haspopup="menu"
+        :aria-expanded="open"
+        @click="toggle"
+      >
         <eb-icon name="arrow-down" class="eb-dropdown__caret" :class="{ 'is-reverse': open }" />
       </eb-button>
     </eb-button-group>

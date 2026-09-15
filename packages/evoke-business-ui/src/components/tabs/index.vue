@@ -1,6 +1,6 @@
 <template>
   <div
-    class="eb-tabs eb-tabs"
+    class="eb-tabs"
     :class="[`eb-tabs--${tabPosition}`, `eb-tabs--${type}`, { 'is-top': tabPosition === 'top' }]"
   >
     <div class="eb-tabs__header" :class="[`is-${tabPosition}`]">
@@ -29,6 +29,7 @@
               :tabindex="pane.disabled ? -1 : 0"
               @click="handleTabClick(pane)"
               @keydown.enter="handleTabClick(pane)"
+              @keydown="handleTabKeydown"
             >
               <span class="eb-tabs__item-text">
                 <component :is="pane.slots.label?.()" v-if="pane.slots.label" />
@@ -201,6 +202,30 @@ function handleTabClick(pane) {
   if (pane.disabled) return
   emit('tab-click', pane)
   currentName.value = pane.paneName
+}
+
+// 方向键在页签间移动焦点并激活（自动激活，APG tabs 约定）；
+// Home/End 跳首末，禁用项跳过；Enter/Space 走既有的 @keydown.enter
+function handleTabKeydown(e) {
+  const navKeys = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+  if (!navKeys.includes(e.key)) return
+  const enabled = panes.value.filter((p) => !p.disabled)
+  if (!enabled.length) return
+  e.preventDefault()
+  const curIdx = enabled.findIndex((p) => p.paneName === currentName.value)
+  let nextIdx
+  if (e.key === 'Home') {
+    nextIdx = 0
+  } else if (e.key === 'End') {
+    nextIdx = enabled.length - 1
+  } else {
+    const forward = e.key === 'ArrowRight' || e.key === 'ArrowDown'
+    nextIdx = (Math.max(curIdx, 0) + (forward ? 1 : -1) + enabled.length) % enabled.length
+  }
+  const target = enabled[nextIdx]
+  const items = e.currentTarget.parentNode.querySelectorAll('.eb-tabs__item')
+  items[panes.value.indexOf(target)]?.focus()
+  handleTabClick(target)
 }
 
 function handleTabRemove(pane) {

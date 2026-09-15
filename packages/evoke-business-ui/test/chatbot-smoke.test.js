@@ -1,6 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
+import { mount, flushPromises } from '@vue/test-utils'
 import { nextTick } from 'vue'
+// jsdom 无剪贴板 API/evalCommand，copy 链路桩化为立即成功（emit 断言与剪贴板解耦）
+vi.mock('../src/components/chatbot/utils', async (importOriginal) => {
+  const mod = await importOriginal()
+  return { ...mod, copyToClipboard: async () => {} }
+})
 import Chatbot from '../src/components/chatbot/Chatbot.vue'
 import ChatMessage from '../src/components/chatbot/ChatMessage.vue'
 import ChatMarkdown from '../src/components/chatbot/ChatMarkdown.vue'
@@ -57,11 +62,23 @@ describe('ChatMessage', () => {
     expect(wrapper.find('strong').exists()).toBe(true)
   })
 
-  it('emit copy/regenerate 动作', async () => {
-    const wrapper = mount(ChatMessage, { props: { message: MSGS()[0] } })
-    // 交互按钮存在即可（具体按钮视 hover 态渲染）
-    expect(wrapper.find('.eb-chat-message').exists()).toBe(true)
-    expect(wrapper.findComponent(ChatMessage).vm.$props.message.id).toBe('m1')
+  it('emit copy/regenerate 动作（真实点击 actionbar 按钮）', async () => {
+    // actionbar 仅在 assistant + status=done 渲染
+    const message = { id: 'm2', role: 'assistant', status: 'done', content: '你好' }
+    const wrapper = mount(ChatMessage, {
+      props: { message },
+      attachTo: document.body,
+    })
+    await nextTick()
+    const btns = wrapper.findAll('.eb-chat-actionbar__btn')
+    expect(btns.length).toBeGreaterThanOrEqual(2)
+    await btns[0].trigger('click')
+    await btns[1].trigger('click')
+    await flushPromises()
+    const emitted = wrapper.findComponent(ChatMessage).emitted()
+    expect(emitted.copy[0][0].id).toBe('m2')
+    expect(emitted.regenerate[0][0].id).toBe('m2')
+    wrapper.unmount()
   })
 })
 

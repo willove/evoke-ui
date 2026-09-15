@@ -7,6 +7,9 @@
       'is-disabled': isDisabled,
       'is-hovering': isHover,
     }"
+    role="option"
+    :aria-selected="isSelected"
+    :aria-disabled="isDisabled || undefined"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
     @click.stop="handleClick"
