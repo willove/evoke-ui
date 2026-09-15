@@ -6,11 +6,22 @@
 
 ### @wil-works/evoke-business-ui — 视觉修正
 
+- **修复 filterable 选择器家族的输入光标错位**——占位/已选文案与搜索输入框各占
+  `flex:1` 平分触发器行宽，聚焦后光标悬在行中间、与占位文本之间隔着一大段空白
+  （Select / Cascader / TreeSelect 同病）。统一改为标准形态：聚焦搜索时占位 span
+  让位（`v-show`），输入框占满整行，占位文案由原生 `placeholder` 承载——光标起点与
+  占位文本起点严格一致，输入即原地替换；Cascader 的 readonly 输入补上
+  `:not([readonly])` 防非 filterable 模式误展开；multiple 标签容器改自然宽度，
+  标签后紧跟光标。
 - **修复 Cascader / TreeSelect / TimePicker / TimeSelect 弹层不跟随页面滚动**——四个组件
   打开时只做一次性定位（裸 `update()`），从未启动 useFloating 的 autoUpdate 监听，页眉
   一滚弹层就脱离触发器原地不动；现统一改走 `show()`（定位 + 启动 autoUpdate），关闭时
   `hide()` 停止监听防泄漏；与 Select / DatePicker / Tooltip 等既有跟随行为对齐（已用
   浏览器实测：滚动前后弹层与触发器相对偏移恒定）。
+- **弹层触发器滚出视口时自动关闭**——useFloating 新增 `onReferenceEscape`（top<0 或
+  bottom>视口高即触发），表单浮层家族全量接线：触发器滚进吸顶顶栏后方时弹层自动收起，
+  不再悬空叠在站点顶栏上（有意不走抬高顶栏 z-index 路线：弹层与模态共用 z 计数链，
+  抬顶栏会连弹窗遮罩也盖不住顶栏）。
 
 ### @wil-works/evoke-ui — 视觉修正- **激活涟漪重做：实体色影向外扩展，不再染输入面**——聚焦瞬间一层与输入体同形状的
   实体色影（box-shadow spread 驱动）自边缘向外扩展约 6px 后消散：保留「实体扩展」的

@@ -250,13 +250,21 @@ describe('EbCascader 过滤', () => {
   it('输入关键字时占位文案隐藏，清空关键字后恢复', async () => {
     const { wrapper } = mountCascader({ filterable: true, placeholder: '输入「杭州」试试' })
     const input = wrapper.find('.eb-cascader__input')
+    // 关闭态：占位文案由 span 承载
     expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(true)
+    // 打开面板：span 让位，占位文案交给原生 input placeholder（光标起点一致）
+    await openDropdown(wrapper)
+    await flush()
+    expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(false)
+    expect(input.attributes('placeholder')).toBe('输入「杭州」试试')
     await input.setValue('杭州')
     await flush()
     expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(false)
+    expect(input.attributes('placeholder')).toBe('输入「杭州」试试')
     await input.setValue('')
     await flush()
-    expect(wrapper.find('.eb-cascader__placeholder').exists()).toBe(true)
+    // 清空关键字后原生占位仍在
+    expect(input.attributes('placeholder')).toBe('输入「杭州」试试')
   })
 
   it('disabled 不可打开', async () => {

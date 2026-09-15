@@ -33,11 +33,16 @@
       <!-- single 选中 label -->
       <span
         v-else-if="hasSelection"
-        class="eb-select__selected-item eb-select__placeholder is-transparent"
+        v-show="!(filterable && isFocused)"
+        class="eb-select__selected-item eb-select__placeholder"
       >
         <span class="eb-select__selected-item-text">{{ selectedLabel }}</span>
       </span>
-      <span v-else class="eb-select__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+      <span
+        v-else
+        v-show="!(filterable && isFocused)"
+        class="eb-select__placeholder"
+      >{{ placeholder || t('select.placeholder') }}</span>
 
       <!-- filterable 输入 -->
       <input
@@ -46,7 +51,7 @@
         class="eb-select__input"
         :value="query"
         :disabled="isDisabled"
-        :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
+        :placeholder="hasSelection && !isFocused ? selectedLabel : (placeholder || t('select.placeholder'))"
         @input="handleQueryInput"
         @focus="isFocused = true"
       />

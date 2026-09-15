@@ -30,14 +30,14 @@
           + {{ overflowCount }}
         </span>
       </span>
-      <span v-else-if="hasSelection && !filterActive" class="eb-cascader__label">{{ selectedLabel }}</span>
-      <span v-else-if="!filterActive" class="eb-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
+      <span v-else-if="hasSelection && !inputActive" class="eb-cascader__label">{{ selectedLabel }}</span>
+      <span v-else-if="!inputActive" class="eb-cascader__placeholder">{{ placeholder || t('select.placeholder') }}</span>
 
       <input
         ref="inputRef"
         class="eb-input__inner eb-cascader__input"
         :value="query"
-        :placeholder="hasSelection && !isFocused ? selectedLabel : ''"
+        :placeholder="inputPlaceholder"
         :readonly="!filterable || isDisabled"
         :disabled="isDisabled"
         @input="handleQueryInput"
@@ -274,6 +274,17 @@ const hovering = ref(false)
 const query = ref('')
 
 const filterActive = computed(() => props.filterable && query.value !== '')
+/**
+ * 搜索输入接管触发器行：filterable 且面板打开（输入聚焦）时，
+ * 占位/已选文案整体让位，输入框占满整行，光标与占位文本起点一致
+ */
+const inputActive = computed(() => props.filterable && dropdownVisible.value)
+/** 原生输入框占位：展开时显示提示文案；关闭且有选中时显示选中路径 */
+const inputPlaceholder = computed(() => {
+  if (inputActive.value) return props.placeholder || t('select.placeholder')
+  if (hasSelection.value && !dropdownVisible.value) return selectedLabel.value
+  return ''
+})
 /** 有过滤关键字时，占位/已选文案让位给过滤输入框；清空关键字后恢复 */
 
 const { zIndex, next: nextZIndex } = useZIndex()

@@ -76,8 +76,8 @@
   min-width: 0;
   padding: 0;
 }
-/* 仅 filterable 且聚焦搜索时展开为可输入区域 */
-.eb-cascader.eb-cascader .eb-cascader__input:focus {
+/* 仅 filterable 且聚焦搜索时展开为可输入区域（readonly 非 filterable 模式永不展开） */
+.eb-cascader.eb-cascader .eb-cascader__input:focus:not([readonly]) {
   flex: 1;
   min-width: 20px;
 }
@@ -86,7 +86,7 @@
   min-width: 20px;
 }
 .eb-cascader.eb-cascader .eb-cascader__input::placeholder {
-  color: transparent;
+  color: var(--eb-text-color-placeholder);
 }
 
 /* multiple 标签 */
@@ -95,7 +95,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--eb-space-1);
-  flex: 1;
+  /* 自然宽度：filterable 时搜索输入紧随标签之后，光标不悬在行中间 */
+  flex: 0 1 auto;
   min-width: 0;
 }
 .eb-cascader.eb-cascader .eb-cascader__tag {

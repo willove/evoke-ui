@@ -46,8 +46,8 @@
       </span>
       <span
         v-else
+        v-show="!(filterable && isFocused)"
         class="eb-select__placeholder"
-        :class="{ 'is-transparent': filterable && isFocused }"
       >{{ placeholder || t('select.placeholder') }}</span>
 
       <input
@@ -56,7 +56,7 @@
         class="eb-select__input"
         :value="query"
         :disabled="isDisabled"
-        placeholder=""
+        :placeholder="placeholder || t('select.placeholder')"
         @input="handleQueryInput"
         @keydown="handleKeydown"
         @focus="isFocused = true"

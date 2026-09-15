@@ -76,7 +76,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--eb-space-1);
-  flex: 1;
+  /* 自然宽度：filterable 时搜索输入紧随标签之后，光标不悬在行中间 */
+  flex: 0 1 auto;
   min-width: 0;
 }
 .eb-select.eb-select .eb-select__tag {
