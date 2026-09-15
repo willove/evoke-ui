@@ -12,8 +12,11 @@
       class="eb-select__wrapper"
       :class="{ 'is-hovering': hovering && !isDisabled, 'is-focused': isFocused, 'is-disabled': isDisabled }"
       role="combobox"
+      :tabindex="isDisabled ? -1 : 0"
       :aria-expanded="dropdownVisible"
       aria-haspopup="listbox"
+      :aria-controls="dropdownVisible ? listboxId : undefined"
+      :aria-activedescendant="activeDescendantId"
       :aria-disabled="isDisabled || undefined"
     >
       <span v-if="multiple && selectedTags.length" class="eb-select__selection">
@@ -95,6 +98,7 @@
               </div>
               <div
                 ref="dropdownListRef"
+                :id="listboxId"
                 class="eb-select-dropdown__list"
                 role="listbox"
                 :aria-multiselectable="multiple || undefined"
@@ -144,7 +148,7 @@
  * 子组件注册模式（EbOption onMounted 注册）；键盘导航（↑↓ Enter Esc）；
  * filterable/remote/multiple/collapse-tags/allow-create/clearable
  */
-import { computed, nextTick, onBeforeUnmount, provide, ref, toRef, watch, useAttrs } from 'vue'
+import { computed, nextTick, onBeforeUnmount, provide, ref, toRef, watch, useAttrs, useId } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
@@ -205,6 +209,13 @@ const isFocused = ref(false)
 const hovering = ref(false)
 const query = ref('')
 const hoveringOption = ref(null)
+
+// ─── combobox 无焦点跟随语义：listbox id + 键盘高亮项的 activedescendant ───
+const listboxId = useId()
+const activeDescendantId = computed(() => {
+  if (!dropdownVisible.value) return undefined
+  return hoveringOption.value?.id || undefined
+})
 /** 子组件注册的 Option 描述符 [{ value, label, disabled, el, group }] */
 const optionItems = ref([])
 /** allow-create 的临时选项 */
@@ -298,13 +309,14 @@ const tagDisabled = computed(() => false)
 
 // ─── Option 注册（子组件调用） ───
 function registerOption(item) {
-  if (!optionItems.value.some((o) => o.value === item.value)) {
-    optionItems.value.push(item)
-  }
+  // 以 value 为键替换式注册：选项存在「隐藏寄存区 → popper」迁移，实例会重建，
+  // 必须收敛到当前 DOM 代，否则 hover/id 等引用指向已销毁的旧实例
+  optionItems.value = optionItems.value.filter((o) => o.value !== item.value)
+  optionItems.value.push(item)
 }
 
 function unregisterOption(item) {
-  optionItems.value = optionItems.value.filter((o) => o !== item)
+  optionItems.value = optionItems.value.filter((o) => o.value !== item.value)
 }
 
 provideSelectContext({
@@ -337,6 +349,9 @@ async function openDropdown() {
   await nextTick()
   if (props.filterable) {
     inputRef.value?.focus?.()
+  } else {
+    // combobox 键盘语义：焦点保持在触发器上，activedescendant 变化才可被播报
+    referenceRef.value?.focus?.()
   }
 }
 
@@ -506,7 +521,11 @@ watch(dropdownVisible, (val) => {
     // 定位当前选中项
     if (!props.multiple && hasSelection.value) {
       const idx = visibleOptionList().findIndex((o) => o.value === selectedValues.value[0])
-      if (idx >= 0) keyboardIndex.value = idx
+      if (idx >= 0) {
+        keyboardIndex.value = idx
+        // 同步 hover 态，aria-activedescendant 随之指向已选项
+        hoveringOption.value = visibleOptionList()[idx] ?? null
+      }
     }
   }
 })

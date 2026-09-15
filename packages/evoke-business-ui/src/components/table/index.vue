@@ -107,9 +107,13 @@
                   { 'hover-row': hoverRowIndex === rowIndex },
                   { 'eb-table__row--level': false },
                 ]"
+                :data-row-index="rowIndex"
+                :tabindex="keyboardRowIndex === rowIndex ? 0 : -1"
                 @click="handleRowClick(row, rowIndex, $event)"
                 @dblclick="emit('row-dblclick', row, rowIndex, $event)"
                 @contextmenu="emit('row-contextmenu', row, rowIndex, $event)"
+                @keydown="handleRowKeydown(row, rowIndex, $event)"
+                @focusin="keyboardRowIndex = rowIndex"
                 @mouseenter="hoverRowIndex = rowIndex"
                 @mouseleave="hoverRowIndex = -1"
               >
@@ -230,7 +234,7 @@
  * 列注册模式（EbTableColumn）；colgroup 定宽；固定列 position:sticky；
  * selection/sort/filter/expand + TableInstance 全套方法
  */
-import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRef, useSlots } from 'vue'
+import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRef, useSlots, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
 import EbCheckbox from '../checkbox/index.vue'
 import EbButton from '../button/index.vue'
@@ -790,6 +794,43 @@ const displayData = computed(() => {
   treeInitDone = true
   return out
 })
+
+// ─── 行级键盘导航：roving tabindex，↑↓/Home/End 移动焦点，Enter/Space 等价点击 ───
+// （置于 displayData 声明之后：watch source 立即求值，不能落在其 TDZ 前）
+const keyboardRowIndex = ref(0)
+
+watch(
+  () => displayData.value.length,
+  (n) => {
+    if (keyboardRowIndex.value > n - 1) keyboardRowIndex.value = 0
+  }
+)
+
+function focusRowByIndex(index) {
+  keyboardRowIndex.value = index
+  nextTick(() => {
+    rootRef.value?.querySelector(`tr[data-row-index="${index}"]`)?.focus?.()
+  })
+}
+
+function handleRowKeydown(row, index, e) {
+  const total = displayData.value.length
+  let target = null
+  if (e.key === 'ArrowDown') target = Math.min(index + 1, total - 1)
+  else if (e.key === 'ArrowUp') target = Math.max(index - 1, 0)
+  else if (e.key === 'Home') target = total ? 0 : null
+  else if (e.key === 'End') target = total ? total - 1 : null
+  else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault()
+    handleRowClick(row, index, e)
+    return
+  } else {
+    return
+  }
+  if (target === null || target === index) return
+  e.preventDefault()
+  focusRowByIndex(target)
+}
 
 const treeKeyOf = (row) => treeNodeKeyMap.value.get(row)
 const rowLevel = (row) => treeLevelMap.value.get(row) ?? 0

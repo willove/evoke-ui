@@ -1,6 +1,7 @@
 <template>
   <li
     v-if="visible"
+    :id="optionId"
     class="eb-select-dropdown__item eb-select-option"
     :class="{
       'is-selected': isSelected,
@@ -22,7 +23,7 @@
 /**
  * EbOption — 选项（onMounted 向 Select 注册，）
  */
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, useId } from 'vue'
 import { useSelectContext } from './select-context'
 
 defineOptions({ name: 'EbOption' })
@@ -43,6 +44,9 @@ const isSelected = computed(() =>
 const isDisabled = computed(() => props.disabled || !!ctx?.disabled?.value)
 const isHover = computed(() => isHovering.value || ctx?.hoveringOption?.value?.value === props.value)
 
+// 稳定 DOM id：注册进上下文，供 combobox 的 aria-activedescendant 指向
+const optionId = `eb-select-opt-${useId()}`
+
 const visible = computed(() => {
   if (!ctx) return true
   return ctx.filteredOptions.value.some((o) => o.value === props.value)
@@ -52,6 +56,7 @@ const item = computed(() => ({
   value: props.value,
   label: props.label !== '' && props.label !== undefined ? props.label : String(props.value),
   disabled: props.disabled,
+  id: optionId,
 }))
 
 onMounted(() => {
