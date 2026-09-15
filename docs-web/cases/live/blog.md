@@ -1,5 +1,6 @@
 ---
 layout: false
+title: 在线案例：个人博客
 ---
 
 <script setup>

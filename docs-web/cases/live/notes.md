@@ -1,5 +1,6 @@
 ---
 layout: false
+title: 在线案例：云笔记工作台
 ---
 
 <script setup>

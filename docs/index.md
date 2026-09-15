@@ -63,7 +63,7 @@ layout: home
 <div class="bd-sibling">
   <p class="bd-sibling__eyebrow">sibling</p>
   <h2 class="bd-sibling__title">做官网或营销页？</h2>
-  <p class="bd-sibling__desc">看看同族的姊妹库 Evoke UI：Clean Navy 设计语言的 Vue3 官网组件库，57 个组件、明暗双主题与运行时换色，官网、落地页与个人主页开箱即用。</p>
+  <p class="bd-sibling__desc">看看同族的姊妹库 Evoke UI：Clean Navy 设计语言的 Vue3 官网组件库，60 个组件、明暗双主题与运行时换色，官网、落地页与个人主页开箱即用。</p>
   <a class="bd-sibling__btn" href="https://evoke-ui.wil-works.com" target="_blank" rel="noopener">
     访问 Evoke UI 文档
     <BdIcon name="arrow-right" :size="14" />

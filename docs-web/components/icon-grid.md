@@ -64,6 +64,6 @@
 | search-suffix | 搜索栏后缀动作位 |
 
 ::: tip 图标数据
-内置展示集为每个分类限量采样的 Remix 原生名图标；核心语义名（search / close 等 39 个）
+内置展示集为每个分类限量采样的 Remix 原生名图标；核心语义名（search / close 等 72 个）
 见 [EvIcon](./icon)。扩展采样量请调整生成脚本 `SHOWCASE_PER_CATEGORY` 后重新执行 `pnpm gen:icons`。
 :::
