@@ -30,10 +30,16 @@ export const CATEGORIES = [
     key: 'layout',
     components: [
       { name: 'Container', zh: '布局容器', path: '/components/container' },
+      { name: 'Header', zh: '顶栏', path: '/components/header' },
+      { name: 'Aside', zh: '侧边栏', path: '/components/aside' },
+      { name: 'Main', zh: '内容区', path: '/components/main' },
+      { name: 'Footer', zh: '底栏', path: '/components/footer' },
+      { name: 'Splitter', zh: '分隔面板', path: '/components/splitter' },
       { name: 'Row', zh: '栅格行', path: '/components/row' },
       { name: 'Col', zh: '栅格列', path: '/components/col' },
       { name: 'Space', zh: '间距', path: '/components/space' },
       { name: 'Divider', zh: '分割线', path: '/components/divider' },
+      { name: 'Scrollbar', zh: '滚动条', path: '/components/scrollbar' },
     ],
   },
   {
