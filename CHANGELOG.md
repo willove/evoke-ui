@@ -2,6 +2,47 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [Unreleased]
+
+### @wil-works/evoke-business-ui — ROADMAP 收尾批：a11y / 倒计时 / 国际化与工程化配套
+
+- **DatePicker 完整键盘导航（a11y 深化收口）**：日历网格升级 grid 语义（gridcell /
+  aria-selected / aria-current="date" / aria-label 完整日期 / aria-disabled）+ roving
+  tabindex 巡历——方向键移动一天 / ±7 天跨周、Home / End 周首尾、PageUp / PageDown 翻月、
+  Shift+PageUp / Down 翻年、Enter / Space 选中、禁用日自动顺延跳过；跨月巡历面板自动翻页
+  且焦点保持（区间面板左右联动与按钮翻页同规则）；触发器 combobox 语义（aria-expanded /
+  aria-controls / haspopup="dialog"），面板 role="dialog"，Enter / ↓ 打开并把焦点送进网格、
+  Esc 关闭且焦点回归输入框；新增 12 项键盘 / aria 回归（全文件 37 项）。
+- **新增 EbCountdown 倒计时**：目标时刻倒计时，`format` 令牌 HH（总小时可超 24）/ mm / ss，
+  title / prefix / suffix / valueStyle 与 Statistic 同族；走秒 `change`（剩余毫秒）、归零
+  `finish` 单次触发，value 变更重走计时，无效输入零值兜底；10 项行为级测试 + 文档页。
+- **国际化扩至 7 语言包**：新增韩语 `ko` / 西班牙语 `es` / 葡萄牙语 `pt`（自 zh-CN 全键集
+  翻译）；新增 locale-packs.test.js 键位奇偶守卫——任一语言包缺键 / 多键即刻红。
+- **EbSectionCard 文档页补齐**：基础 / 关闭内边距 / header 插槽三演示 + Props / Slots 表；
+  组件文档口径核对收官——侧栏 ↔ 页面零断链，154 个注册名全覆盖（50 个子组件挂父组件页，
+  移动组件在 mobile/、图表在 chart/ 板块）。
+- **WCAG 对比度符合性说明**（guide/accessibility.md）：基于导出令牌按 WCAG 2.1 公式实测
+  明暗两套 14 组前景背景对比——正文 / 标题 AAA，语义状态文字 AA 及以上；已知缺口如实披露
+  （暗色语义底×白字、placeholder、明色语义色仅大字号档）并给出使用建议。
+- **SSR 兼容性声明**（guide/ssr.md）：常设验证 = CI 中 VitePress SSR 构建全站演示页；
+  声明浏览器 API 时机约定、storage 静默降级、Teleport 弹层即客户端、测量类组件与命令式
+  API 边界。
+- **设计规范页**（guide/design.md）：色彩（语义 + 中性 + 8 扩展色）/ 4px 间距网格 / 字号
+  字重行高 / 圆角阴影五档 / 动效时长缓动，全部对应 `--eb-*` 令牌取值。
+
+### 工程 — 全仓收尾配套
+
+- **CI 接入 typecheck**：双包新增 `pnpm typecheck`（vue-tsc --noEmit，编辑器同口径），
+  根脚本递归执行；CI 新增 Typecheck 步骤（构建期 d.ts 生成是第二道类型关）。
+- **覆盖率统计落地**（ROADMAP 第 7 条统计面）：`@vitest/coverage-v8` + `pnpm test:coverage`
+  （text / html / lcov，排除样式与 locale），保守阈值入配置防整体回退（基线：语句 65.8 /
+  分支 58.1 / 函数 71.9 / 行 67.9，88 文件 1404 项全绿）；CI 新增 Coverage 步骤并存档产物。
+- **设计令牌导出**（ROADMAP 第 6 条）：`pnpm tokens:export`（scripts/export-tokens.mjs）
+  从两库令牌源文件解析明 / 暗两组（按包命名空间过滤，跨库映射层不计入），生成 W3C Design
+  Tokens 草案格式 JSON 至 `design-tokens/`（明色全量 336 项 + 暗色覆盖 155 项），可直接被
+  Figma Variables 插件消费。
+- 文档演示页 `docs/--port/` 意外空壳目录清理。
+
 ## [ui 0.9.0 / business-ui 0.6.0] — 2026-09-15
 
 ### @wil-works/evoke-ui — 类型声明与按需子路径导出（v1 质量线首刀）

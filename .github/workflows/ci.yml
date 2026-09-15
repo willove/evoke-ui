@@ -33,8 +33,16 @@ jobs:
           pnpm build:ebui
           pnpm build:charts
 
+      # 编辑器同口径类型检查（vue-tsc --noEmit）；构建期的 d.ts 生成是第二道类型关
+      - name: Typecheck
+        run: pnpm typecheck
+
       - name: Unit tests
         run: pnpm test
+
+      # 覆盖率统计（v8）：文本报告进日志，lcov/html 存档
+      - name: Coverage
+        run: pnpm test:coverage
 
       # 文档站从本地脚本部署上线，部署前先在 CI 验证两侧构建（含 SSR）可通过
       - name: Build docs (business)
@@ -42,3 +50,11 @@ jobs:
 
       - name: Build docs (ui)
         run: pnpm docs-web:build
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          retention-days: 7

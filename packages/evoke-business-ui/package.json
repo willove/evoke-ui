@@ -31,6 +31,7 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs && vue-tsc --project tsconfig.build.json && node scripts/post-types.mjs",
+    "typecheck": "vue-tsc --noEmit",
     "gen:icons": "node scripts/generate-remix-icons.mjs",
     "compat:check": "node scripts/compat-check.mjs",
     "lint:tokens": "node scripts/check-token-rule.mjs",

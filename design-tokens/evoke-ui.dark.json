@@ -1,0 +1,183 @@
+{
+  "$description": "@wil-works/evoke-ui（--ev-*） 设计令牌 — dark（html.dark 覆盖项，叠加在 light 之上使用）",
+  "color": {
+    "primary": {
+      "$value": "#4c91ff",
+      "$type": "color"
+    },
+    "primary-light-3": {
+      "$value": "#6ea6ff",
+      "$type": "color"
+    },
+    "primary-light-5": {
+      "$value": "#93bdff",
+      "$type": "color"
+    },
+    "primary-light-7": {
+      "$value": "#bdd6ff",
+      "$type": "color"
+    },
+    "primary-light-8": {
+      "$value": "#2c3b55",
+      "$type": "color"
+    },
+    "primary-light-9": {
+      "$value": "#1d2a42",
+      "$type": "color"
+    },
+    "primary-dark-2": {
+      "$value": "#3d7ae0",
+      "$type": "color"
+    },
+    "primary-rgb": {
+      "$value": "76, 145, 255"
+    },
+    "accent-lime": {
+      "$value": "#a8d94e",
+      "$type": "color"
+    },
+    "accent-lime-ink": {
+      "$value": "#1c2606",
+      "$type": "color"
+    }
+  },
+  "text": {
+    "primary": {
+      "$value": "#f2f4f8",
+      "$type": "color"
+    },
+    "regular": {
+      "$value": "#a5adc0",
+      "$type": "color"
+    },
+    "secondary": {
+      "$value": "#7a8194",
+      "$type": "color"
+    },
+    "disabled": {
+      "$value": "#4d5261",
+      "$type": "color"
+    },
+    "placeholder": {
+      "$value": "#5b6172",
+      "$type": "color"
+    },
+    "on-dark": {
+      "$value": "#f5f7fc",
+      "$type": "color"
+    }
+  },
+  "bg": {
+    "page": {
+      "$value": "#17171a",
+      "$type": "color"
+    },
+    "soft": {
+      "$value": "#1d1d21",
+      "$type": "color"
+    },
+    "muted": {
+      "$value": "#1a1a1e",
+      "$type": "color"
+    },
+    "container": {
+      "$value": "#232324",
+      "$type": "color"
+    },
+    "hover": {
+      "$value": "#2a2a2b",
+      "$type": "color"
+    }
+  },
+  "gradient": {
+    "hero": {
+      "$value": "linear-gradient(180deg, #1c1c20 0%, #19191c 55%, #17171a 100%)"
+    }
+  },
+  "pastel": {
+    "cream": {
+      "$value": "#2a2721",
+      "$type": "color"
+    },
+    "blue": {
+      "$value": "#1e2a3d",
+      "$type": "color"
+    },
+    "mint": {
+      "$value": "#1d2f26",
+      "$type": "color"
+    },
+    "pink": {
+      "$value": "#32222e",
+      "$type": "color"
+    },
+    "lime": {
+      "$value": "#272d1b",
+      "$type": "color"
+    }
+  },
+  "border": {
+    "color": {
+      "$value": "#333335",
+      "$type": "color"
+    },
+    "color-light": {
+      "$value": "#2b2b2d",
+      "$type": "color"
+    },
+    "color-dark": {
+      "$value": "#3d3d40",
+      "$type": "color"
+    },
+    "sticker": {
+      "$value": "#232324",
+      "$type": "color"
+    }
+  },
+  "fill": {
+    "1": {
+      "$value": "#232324",
+      "$type": "color"
+    },
+    "2": {
+      "$value": "#2a2a2b",
+      "$type": "color"
+    },
+    "3": {
+      "$value": "#373739",
+      "$type": "color"
+    }
+  },
+  "shadow": {
+    "1": {
+      "$value": "0 1px 4px rgba(0, 0, 0, 0.3)"
+    },
+    "2": {
+      "$value": "0 1px 4px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25)"
+    },
+    "3": {
+      "$value": "0 2px 8px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.3)"
+    },
+    "4": {
+      "$value": "0 12px 40px rgba(0, 0, 0, 0.5)"
+    },
+    "primary": {
+      "$value": "0 4px 14px rgba(0, 0, 0, 0.4)"
+    }
+  },
+  "focus": {
+    "ring": {
+      "$value": "0 0 0 2px rgba(var(--ev-color-primary-rgb), 0.45)"
+    }
+  },
+  "glass": {
+    "edge": {
+      "$value": "rgba(255, 255, 255, 0.16)",
+      "$type": "color"
+    },
+    "border": {
+      "$value": "color-mix(in srgb, var(--ev-border-color) 60%, transparent)",
+      "$type": "color"
+    }
+  }
+}

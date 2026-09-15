@@ -20,6 +20,9 @@ scripts/.env.deploy
 test-results/
 playwright-report/
 
+# 覆盖率报告（CI 存档产物，本地 pnpm test:coverage 重新生成）
+coverage/
+
 # 内部开发文档（路线图 / 迁移计划等，不随仓库发布）
 .dev-docs/
 .zcode/
