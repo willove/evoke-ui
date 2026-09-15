@@ -8,7 +8,7 @@ layout: home
     Evoke <span class="accent">Charts</span>
   </h1>
   <p class="cd-hero__desc">
-    Vue 3 图表库：折线、柱状、饼环、散点、热力、K 线等 20+ 图表类型，ECharts 风格的 options
+    Vue 3 图表库：折线、柱状、饼环、散点、热力、K 线等 29 种图表类型，ECharts 风格的 options
     配置式声明，绘制层全部自研 Canvas 2D，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
   </p>
   <div class="cd-hero__actions">
@@ -20,7 +20,7 @@ layout: home
     <a class="cd-hero__btn cd-hero__btn--ghost" href="https://www.npmjs.com/package/@wil-works/evoke-charts" target="_blank" rel="noopener">npm 主页</a>
   </div>
   <div class="cd-hero__stats">
-    <div class="cd-hero__stat"><strong>20+</strong><span>图表类型</span></div>
+    <div class="cd-hero__stat"><strong>29</strong><span>图表类型</span></div>
     <div class="cd-hero__stat"><strong>0</strong><span>第三方运行时依赖（仅 Vue 3 peer）</span></div>
     <div class="cd-hero__stat"><strong>PNG + SVG</strong><span>位图与真矢量双导出</span></div>
     <div class="cd-hero__stat"><strong>--ev-*</strong><span>令牌取色，换主题即跟随</span></div>

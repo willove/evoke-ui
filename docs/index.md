@@ -21,7 +21,7 @@ layout: home
   </div>
   <div class="bd-hero__stats">
     <div class="bd-hero__stat"><strong>150+</strong><span>通用与业务组件</span></div>
-    <div class="bd-hero__stat"><strong>20+</strong><span>图表类型（Canvas 自绘）</span></div>
+    <div class="bd-hero__stat"><strong>29</strong><span>图表类型（Canvas 自绘）</span></div>
     <div class="bd-hero__stat"><strong>8 套</strong><span>场景示例工程</span></div>
     <div class="bd-hero__stat"><strong>433</strong><span>内置图标（可按需扩展）</span></div>
   </div>
@@ -41,7 +41,7 @@ layout: home
   <div class="bd-feature">
     <div class="bd-feature__icon"><BdIcon name="zap" :size="20" /></div>
     <h3 class="bd-feature__title">Canvas 自绘图表</h3>
-    <p class="bd-feature__desc">折线、饼图、热力、K 线等 20+ 图表类型，绘制层不依赖第三方图形库；tooltip / 图例 / 联动 / 导出内建。</p>
+    <p class="bd-feature__desc">折线、饼图、热力、K 线等 29 种图表类型，绘制层不依赖第三方图形库；tooltip / 图例 / 联动 / 导出内建。</p>
   </div>
   <div class="bd-feature">
     <div class="bd-feature__icon"><BdIcon name="moon" :size="20" /></div>

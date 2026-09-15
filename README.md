@@ -8,7 +8,7 @@
 |----|------|--------|-----|
 | [@wil-works/evoke-ui](packages/evoke-ui) | 官网 / 营销页 / 纯前端站点组件库，Clean Navy 设计语言 | [evoke-ui.wil-works.com](https://evoke-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-ui) |
 | [@wil-works/evoke-business-ui](packages/evoke-business-ui) | 中后台管理组件库：150+ 通用组件、8 个业务场景组件 | [evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) |
-| [@wil-works/evoke-charts](packages/evoke-charts) | 零依赖 Canvas 自绘图表库：20+ 种图表类型，主题令牌驱动 | [evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-charts.svg)](https://www.npmjs.com/package/@wil-works/evoke-charts) |
+| [@wil-works/evoke-charts](packages/evoke-charts) | 零依赖 Canvas 自绘图表库：29 种图表类型，主题令牌驱动 | [evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-charts.svg)](https://www.npmjs.com/package/@wil-works/evoke-charts) |
 
 ---
 
@@ -47,11 +47,11 @@ createApp(App).use(EvokeUI).mount('#app')
 
 ## Evoke Business UI — 中后台组件库
 
-面向中后台管理界面的 Vue 3 组件库：**150+ 通用组件、8 个业务场景组件、20+ 种 Canvas 自绘图表**，配套在线文档与 8 套完整场景示例。默认商务蓝主题，支持暗色模式，桌面端（含 Electron）与移动端自适应。
+面向中后台管理界面的 Vue 3 组件库：**150+ 通用组件、8 个业务场景组件、29 种 Canvas 自绘图表**，配套在线文档与 8 套完整场景示例。默认商务蓝主题，支持暗色模式，桌面端（含 Electron）与移动端自适应。
 
-- **组件**：全量注册后以 `<ev-button>`、`<ev-data-table>` 等标签直接使用；虚拟滚动、统计数值、命令面板、新手引导等增强组件齐备
+- **组件**：全量注册后以 `<eb-button>`、`<eb-data-table>` 等标签直接使用；虚拟滚动、统计数值、命令面板、新手引导等增强组件齐备
 - **业务组件**：筛选表单、数据表格、状态标签、双行单元格、详情描述、导入导出面板、审计时间线、列设置
-- **图表**：Canvas 自绘折线 / 柱状 / 饼环 / 雷达 / 漏斗等 20+ 图表类型，tooltip、缩放、暗色适配内建，不依赖第三方图形库
+- **图表**：Canvas 自绘折线 / 柱状 / 饼环 / 雷达 / 漏斗等 29 种图表类型，tooltip、缩放、暗色适配内建，不依赖第三方图形库
 - **图标**：433 个常用单色图标内置（含微信 / 支付宝等品牌 Logo），Remix 全量 3229 个按需加载
 - **B 端生态**：`usePermission` / `v-permission`、`useTable`、`useClipboard` / `v-copy`、`useFullscreen`、`v-infinite-scroll`
 - **运行环境**：无 CDN 请求、模块顶层不访问 window / document，file:// 与 Electron 场景可直接运行
