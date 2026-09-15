@@ -35,9 +35,11 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "pnpm -r run typecheck",
     "tokens:export": "node scripts/export-tokens.mjs",
-    "visual": "pnpm docs-web:build && playwright test",
+    "visual": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && playwright test",
     "visual:only": "playwright test",
-    "visual:update": "pnpm docs-web:build && playwright test --update-snapshots"
+    "visual:update": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && playwright test --update-snapshots",
+    "visual:preview:business": "cd docs && pnpm exec vitepress preview --port 4174",
+    "visual:preview:charts": "cd docs-charts && pnpm exec vitepress preview --port 4175"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

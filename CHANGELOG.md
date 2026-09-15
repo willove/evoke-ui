@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### 工程 — 视觉回归三站扩展：business / charts 站基线 + 两站暗色轮次
+
+- **business 站 8 页 + charts 站 6 页 darwin 基线**——页面遴选沿用 ui 站原则
+  （排除强随机/时钟驱动内容：countdown、chatbot、ai-* 等不收）；business 收首页 /
+  组件总览 / button / form / data-table / menu / 设计规范 / 内嵌图表页，
+  charts 收首页 / line / bar / pie / mixed / dashboard 案例；
+- **暗色轮次**——business 站 4 页（`bd-dark`）+ charts 站 2 页（`cd-dark`）：
+  暗色经初始化脚本在页面脚本运行前写入 localStorage，DocLayout 挂载时统一应用
+  `html.dark`，图表首帧即按暗色渲染；
+- **三 project 分端口架构**——ui 4173 / business 4174 / charts 4175，baseURL 按
+  project 下发，spec 内统一相对路径；图表页 settle 加长至 1800ms 覆盖 canvas
+  入场动画（rAF 驱动，`animations:'disabled'` 管不到）；`pnpm visual` /
+  `visual:update` 语义升级为重建三站全量跑，`--project=business` 可单站执行；
+  余项：CI 走 Playwright Docker 镜像统一字体。
+
 ### @wil-works/evoke-business-ui — 视觉修正
 
 - **修复 filterable 选择器家族的输入光标错位**——占位/已选文案与搜索输入框各占
