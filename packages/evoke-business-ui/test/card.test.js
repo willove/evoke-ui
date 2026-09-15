@@ -202,6 +202,13 @@ describe('EbRate', () => {
     expect(wrapper.emitted('change')).toEqual([[3]])
   })
 
+  it('默认色跟随主题令牌（回归：曾硬编码 #F7BA2A 系）', () => {
+    const wrapper = mount(EbRate, { props: { modelValue: 3 } })
+    expect(wrapper.find('.eb-rate__icon--active').attributes('style')).toContain('var(--eb-color-warning')
+    const voidIcons = wrapper.findAll('.eb-rate__icon:not(.eb-rate__icon--active)')
+    expect(voidIcons[0].attributes('style')).toContain('var(--eb-fill-color-darker')
+  })
+
   it('allowHalf：mousemove 左半为半星', async () => {
     const wrapper = mount(EbRate, { props: { modelValue: 0, allowHalf: true } })
     const items = wrapper.findAll('.eb-rate__item')

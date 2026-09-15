@@ -22,10 +22,10 @@ const props = defineProps({
   size: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
   name: { type: String, default: undefined },
-  /** 文字颜色（border 模式激活态） */
-  textColor: { type: String, default: '#ffffff' },
-  /** 填充色（border/button 模式激活态） */
-  fill: { type: String, default: '#175DFF' },
+  /** 文字颜色（border 模式激活态）：白字压主色底，明暗两态通用 */
+  textColor: { type: String, default: 'var(--eb-color-white, #ffffff)' },
+  /** 填充色（border/button 模式激活态）：默认跟随主题主色 */
+  fill: { type: String, default: 'var(--eb-color-primary, #175DFF)' },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

@@ -71,7 +71,7 @@ const tagStyle = computed(() =>
     ? {
         backgroundColor: props.effect === 'plain' ? 'transparent' : props.color,
         borderColor: props.color,
-        color: props.effect === 'plain' ? props.color : '#fff',
+        color: props.effect === 'plain' ? props.color : 'var(--eb-color-white, #fff)',
       }
     : undefined
 )
