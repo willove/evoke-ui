@@ -59,6 +59,8 @@ export const CATEGORIES = [
     key: 'display',
     components: [
       { name: 'Statistic', zh: '统计数值', path: '/components/statistic' },
+      { name: 'StatCard', zh: '指标卡', path: '/components/stat-card' },
+      { name: 'StatRow', zh: '指标卡行', path: '/components/stat-row' },
       { name: 'Table', zh: '表格', path: '/components/table' },
       { name: 'Descriptions', zh: '描述列表', path: '/components/descriptions' },
       { name: 'Timeline', zh: '时间轴', path: '/components/timeline' },
@@ -86,12 +88,16 @@ export const CATEGORIES = [
     key: 'feedback',
     components: [
       { name: 'Message', zh: '全局提示', path: '/components/message' },
+      { name: 'Msgbox', zh: '消息弹窗', path: '/components/msgbox' },
+      { name: 'Notify', zh: '通知提醒', path: '/components/notify' },
+      { name: 'Loading', zh: '加载服务', path: '/components/loading' },
       { name: 'Dialog', zh: '对话框', path: '/components/dialog' },
       { name: 'Drawer', zh: '抽屉', path: '/components/drawer' },
       { name: 'Alert', zh: '警告提示', path: '/components/alert' },
       { name: 'Progress', zh: '进度条', path: '/components/progress' },
       { name: 'Skeleton', zh: '骨架屏', path: '/components/skeleton' },
       { name: 'Spin', zh: '加载中', path: '/components/spin' },
+      { name: 'EmptyState', zh: '统一空态', path: '/components/empty-state' },
     ],
   },
   {
@@ -106,6 +112,8 @@ export const CATEGORIES = [
       { name: 'Backtop', zh: '返回顶部', path: '/components/backtop' },
       { name: 'Affix', zh: '图钉', path: '/components/affix' },
       { name: 'Anchor', zh: '锚点', path: '/components/anchor' },
+      { name: 'PageHeader', zh: '页头', path: '/components/page-header' },
+      { name: 'CommandPalette', zh: '命令面板', path: '/components/command-palette' },
     ],
   },
   {
