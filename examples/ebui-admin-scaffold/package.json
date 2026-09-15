@@ -1,0 +1,21 @@
+{
+  "name": "@wil-works/ebui-admin-scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Evoke Business UI 中后台脚手架 — 5 种布局模式 / 明暗主题 / 中英双语 / 多标签页 / 全局搜索 / 主题定制 / Toast 通知",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@wil-works/evoke-business-ui": "workspace:*",
+    "vue": "^3.5.42",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.0.10"
+  }
+}

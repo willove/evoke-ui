@@ -4,6 +4,24 @@
 
 ## [Unreleased]
 
+### examples — 新增 ebui-admin-scaffold 中后台脚手架母版
+
+- **五模式应用壳，实时切换**：`sidebar` 经典侧边栏 / `double-sidebar` 双栏侧边栏 /
+  `top-nav` 顶部导航 / `mixed` 混合布局（顶栏一级 + 侧栏二级）/ `mixed-double`
+  混合双栏（顶栏一级 + 图标栏 + 二级面板）；菜单树与路由同源单文件配置；
+- **框架能力全家桶**：明暗主题（useDarkMode View Transitions 渐变）、中英双语
+  （脚手架字典 + ConfigProvider 注入库内文案同步切换）、多标签页（路由自动
+  登记、可关闭、关闭激活页跳邻居）、全局搜索（Ctrl/⌘+K EbCommandPalette 检索
+  页面与快捷操作）、主题定制抽屉（EB_THEME_PRESETS 预设 + 自定义色实时生成
+  整条色阶 + 密度切换，全部 localStorage 持久化）、Toast 通知系统（EbNotify
+  统一 `notify()` 出口 + 顶栏铃铛历史中心）；
+- **母版资产化**：README 提供「复制-改字段」五步指引（替换 pages / 字典 /
+  request 即可投产）；演示页覆盖仪表盘（EbStatCard + EbChart）、成员/订单
+  列表（EbTablePage 数据代理实战）、表单页、关于页；设置全量持久化；
+- 浏览器实测五模式切换 / 明暗 / 双语 / 命令面板 / 列表页数据代理零错误；
+  全仓 95 文件 1489 项测试保持全绿；`pnpm example:ebui-scaffold` 启动
+  （端口 8630，组件库源码级 alias 联调）。
+
 ### @wil-works/evoke-business-ui — 新增 EbTablePage 表格页 + EbDataTable 高度自适应
 
 - **新增 EbTablePage（表格页）**：CRUD 列表页整页封装，四区结构——页头

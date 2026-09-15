@@ -30,6 +30,7 @@
     "example:ebui-knowledge": "pnpm --filter @wil-works/ebui-example-knowledge dev",
     "example:ebui-mobile": "pnpm --filter @wil-works/ebui-example-mobile dev",
     "example:ebui-ai": "pnpm --filter @wil-works/ebui-example-ai dev",
+    "example:ebui-scaffold": "pnpm --filter @wil-works/ebui-admin-scaffold dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
