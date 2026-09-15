@@ -1,0 +1,78 @@
+# AiConsole AI 工作台
+
+完整的大模型对话工作台编排：欢迎标题（高亮词渐变）+ 示例问题 + AI 输入台 + 会话流。首次发送后欢迎区自动收起、会话区展开；模型调用通过 `transport` 注入（`transport(content, attachments, context)`），流式回写直接驱动 [useChatEngine](#api) 暴露的方法，组件内部不发起任何请求。
+
+## 基础用法
+
+`engine` 缺省时组件内部自建引擎；`transport` 里模拟流式打字即可看到完整会话流。点击示例问题直接发送：
+
+<DemoBlock>
+  <eb-ai-console
+    ref="consoleRef"
+    :welcome="{ title: '欢迎体验文本生成，今天你想创造什么？', highlight: '文本生成' }"
+    :examples="['请把“不要香菜，少放辣椒”翻译成自然英文', '帮我写一段新员工入职欢迎词', '用小学四年级能听懂的话解释什么是圆周率']"
+    :transport="mockTransport"
+    stoppable
+    style="max-width: 760px"
+  />
+</DemoBlock>
+
+## 受控引擎
+
+传 `engine`（`useChatEngine` 返回值）即完全受控：消息列表、loading、会话历史归使用方所有，Console 只负责编排与交互；`clear()` 一键清空回欢迎页。
+
+## API
+
+<ApiTable title="AiConsole Props" :rows="[
+  { name: 'engine', desc: '外部 useChatEngine 实例（受控）；缺省内部创建', type: 'object', default: 'null' },
+  { name: 'transport', desc: '模型调用入口：流式回写经引擎方法驱动', type: '(content, attachments, context) => void | Promise', default: 'null' },
+  { name: 'welcome', desc: '欢迎区：title / highlight（title 中的渐变高亮词）/ subtitle', type: 'object', default: 'null' },
+  { name: 'examples', desc: '示例问题：string 或 { text, prompt? }', type: 'array', default: '[]' },
+  { name: 'exampleAction', desc: '示例点击行为：send 直发 / fill 仅填充', type: 'send | fill', default: 'send' },
+  { name: 'placeholder', desc: '输入台占位文本', type: 'string', default: '今天你想创造什么？' },
+  { name: 'disabled', desc: '禁用输入台', type: 'boolean', default: 'false' },
+  { name: 'loading', desc: '强制 loading（与引擎态取或）', type: 'boolean', default: 'false' },
+  { name: 'scenes / capabilities / models / quota / showSettings', desc: '输入台配置面，同 AiPromptBox 同名参数', type: '—', default: '—' },
+  { name: 'allowAttachments / maxAttachments / maxLength / sendOnEnter / stoppable', desc: '输入台行为，同 AiPromptBox', type: '—', default: '—' },
+  { name: 'showThinking', desc: '会话消息展示思考过程', type: 'boolean', default: 'true' },
+  { name: 'renderMode', desc: '消息渲染模式', type: 'markdown | text', default: 'markdown' },
+  { name: 'autoScroll', desc: '新消息自动滚动到底部', type: 'boolean', default: 'true' },
+  { name: 'chatHeight', desc: '会话区最大高度', type: 'number | string', default: '420' },
+  { name: 'showTip', desc: '展示「内容由 AI 生成」提示', type: 'boolean', default: 'true' },
+]" />
+
+<ApiTable title="AiConsole Events" :rows="[
+  { name: 'send', desc: '发送（载荷同 AiPromptBox）', type: '(payload) => void', default: '—' },
+  { name: 'stop', desc: '停止生成', type: '() => void', default: '—' },
+  { name: 'example-click', desc: '点击示例问题', type: '(example) => void', default: '—' },
+  { name: 'copy / action', desc: '消息复制 / 自定义动作（转发自会话区）', type: '(payload) => void', default: '—' },
+  { name: 'quota-click / settings-click', desc: '额度 / 设置点击', type: '() => void', default: '—' },
+]" />
+
+<ApiTable title="AiConsole Methods（defineExpose）" :rows="[
+  { name: 'engine', desc: '当前引擎实例（messages / loading / appendContent / completeMessage 等）', type: 'object', default: '—' },
+  { name: 'clear', desc: '清空会话，回到欢迎区', type: '() => void', default: '—' },
+]" />
+
+<script setup>
+import { ref } from 'vue'
+
+const consoleRef = ref(null)
+
+// 模拟流式打字：真实场景在此 fetch/SSE 并调用引擎 appendContent / appendThinkContent
+function mockTransport(content, attachments, context) {
+  const eng = consoleRef.value?.engine
+  if (!eng) return
+  const reply = `（${context.model || '默认模型'}）已收到「${content}」——这是一段模拟回复，演示 transport 注入与流式回写。`
+  const msg = eng.createAssistantMessage()
+  let i = 0
+  const timer = setInterval(() => {
+    eng.appendContent(msg.id, reply.slice(i, i + 2))
+    i += 2
+    if (i >= reply.length) {
+      clearInterval(timer)
+      eng.completeMessage(msg.id)
+    }
+  }, 40)
+}
+</script>

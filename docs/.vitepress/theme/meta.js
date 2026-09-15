@@ -169,6 +169,14 @@ export const CATEGORIES = [
     ],
   },
   {
+    name: 'AI',
+    key: 'ai',
+    components: [
+      { name: 'AiPromptBox', zh: 'AI 输入台', path: '/components/ai-prompt-box' },
+      { name: 'AiConsole', zh: 'AI 工作台', path: '/components/ai-console' },
+    ],
+  },
+  {
     name: '工具',
     key: 'utils',
     components: [

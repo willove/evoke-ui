@@ -15,6 +15,7 @@ import EvHero from '../../../packages/evoke-ui/src/components/hero/index.vue'
 import EvNavbar from '../../../packages/evoke-ui/src/components/navbar/index.vue'
 import EvFooter from '../../../packages/evoke-ui/src/components/footer/index.vue'
 import EvSearchBox from '../../../packages/evoke-ui/src/components/search-box/index.vue'
+import EvAiPromptBox from '../../../packages/evoke-ui/src/components/ai-prompt-box/index.vue'
 import EvIconGrid from '../../../packages/evoke-ui/src/components/icon-grid/index.vue'
 import EvFeatureGrid from '../../../packages/evoke-ui/src/components/feature-grid/index.vue'
 import EvPricingCard from '../../../packages/evoke-ui/src/components/pricing-card/index.vue'
@@ -83,6 +84,7 @@ export default {
       EvIcon, EvButton, EvIconButton, EvTag, EvBadge, EvKeycap,
       EvSection, EvCard, EvHero, EvNavbar, EvFooter,
       EvSearchBox, EvIconGrid, EvFeatureGrid, EvPricingCard,
+      EvAiPromptBox,
       EvFaq, EvAlert, EvCodeBlock, EvStatistic, EvThemeToggle, EvQuote,
       EvMarkdown, EvMarkdownEditor,
       EvConfigProvider, EvTabs, EvSwitch, EvContainer, EvAvatar, EvAvatarGroup,

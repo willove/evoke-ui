@@ -1,0 +1,384 @@
+/* EvAiPromptBox — AI 输入台（官网首屏入口形态） */
+
+.ev-ai-prompt-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ev-space-5, 20px);
+  width: 100%;
+}
+
+/* ─── 模型 pill ─── */
+.ev-ai-prompt-box__model-bar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.ev-ai-prompt-box__model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: var(--ev-font-size-sm);
+  font-weight: 500;
+  color: var(--ev-color-ink);
+  background: var(--ev-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  cursor: pointer;
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+}
+
+.ev-ai-prompt-box__model-pill:hover:not(:disabled) {
+  border-color: var(--ev-border-color-dark);
+}
+
+.ev-ai-prompt-box__model-pill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ev-ai-prompt-box__model-pill .ev-icon.is-open {
+  transform: rotate(180deg);
+}
+
+.ev-ai-prompt-box__model-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  min-width: 180px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--ev-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-lg);
+  box-shadow: var(--ev-shadow-3);
+}
+
+.ev-ai-prompt-box__model-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-color-ink);
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--ev-radius-md);
+  cursor: pointer;
+}
+
+.ev-ai-prompt-box__model-item:hover {
+  background: var(--ev-bg-soft);
+}
+
+.ev-ai-prompt-box__model-item.is-active {
+  color: var(--ev-color-primary);
+  font-weight: 500;
+}
+
+.ev-ai-prompt-box__model-item span:first-child {
+  flex: 1;
+}
+
+.ev-ai-prompt-box-menu-enter-active,
+.ev-ai-prompt-box-menu-leave-active {
+  transition:
+    opacity var(--ev-duration-fast) var(--ev-ease-smooth, ease),
+    transform var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+}
+
+.ev-ai-prompt-box-menu-enter-from,
+.ev-ai-prompt-box-menu-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ─── 输入台：安静 hairline，focus 渐变描边一次点亮 ─── */
+.ev-ai-prompt-box__board {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ev-space-4, 16px) var(--ev-space-5, 20px);
+  background:
+    linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
+    var(--ev-border-color-light) border-box;
+  border: 1px solid transparent;
+  border-radius: var(--ev-radius-xl);
+  box-shadow: var(--ev-shadow-1);
+  transition:
+    box-shadow var(--ev-duration-base) var(--ev-ease-smooth, ease),
+    background var(--ev-duration-base) var(--ev-ease-smooth, ease);
+  cursor: text;
+}
+
+.ev-ai-prompt-box__board:hover:not(.is-disabled) {
+  background:
+    linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
+    var(--ev-border-color-dark) border-box;
+}
+
+.ev-ai-prompt-box__board.is-focus {
+  background:
+    linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
+    var(--ev-gradient-hero) border-box;
+  box-shadow: var(--ev-shadow-primary, var(--ev-shadow-2));
+}
+
+.ev-ai-prompt-box__board.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ev-ai-prompt-box__chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ev-space-2, 8px);
+  margin-bottom: var(--ev-space-2, 8px);
+}
+
+.ev-ai-prompt-box__scene-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 220px;
+  padding: 4px 10px;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-primary);
+  background: var(--ev-color-primary-light-9);
+  border-radius: var(--ev-radius-full);
+}
+
+.ev-ai-prompt-box__scene-tag--file {
+  color: var(--ev-color-ink-secondary);
+  background: var(--ev-fill-2);
+}
+
+.ev-ai-prompt-box__tag-close {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ev-ai-prompt-box__textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: var(--ev-font-size-base);
+  line-height: 22px;
+  color: var(--ev-color-ink);
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.ev-ai-prompt-box__textarea::placeholder {
+  color: var(--ev-color-ink-muted);
+}
+
+.ev-ai-prompt-box__textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* ─── 工具行 ─── */
+.ev-ai-prompt-box__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ev-space-3, 12px);
+  margin-top: var(--ev-space-2, 8px);
+}
+
+.ev-ai-prompt-box__toolbar-left,
+.ev-ai-prompt-box__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ev-space-1, 4px);
+  min-width: 0;
+}
+
+.ev-ai-prompt-box__toolbar-right {
+  flex-shrink: 0;
+}
+
+.ev-ai-prompt-box__tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 9px;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-ink-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--ev-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
+    background-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+}
+
+.ev-ai-prompt-box__tool-btn:hover:not(:disabled) {
+  color: var(--ev-color-ink);
+  background: var(--ev-bg-hover, var(--ev-fill-1));
+}
+
+.ev-ai-prompt-box__tool-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ev-ai-prompt-box__capability.is-active {
+  color: var(--ev-color-primary);
+  background: var(--ev-color-primary-light-9);
+}
+
+.ev-ai-prompt-box__capability.is-active:hover:not(:disabled) {
+  color: var(--ev-color-primary);
+  background: var(--ev-color-primary-light-9);
+}
+
+/* 设置滑杆符号（核心图标集无 settings 时的内绘 glyph） */
+.ev-ai-prompt-box__settings-glyph {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ev-ai-prompt-box__settings-glyph i {
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: currentcolor;
+  border-radius: 1px;
+}
+
+.ev-ai-prompt-box__settings-glyph i:nth-child(1) {
+  width: 10px;
+  margin-left: 4px;
+}
+
+.ev-ai-prompt-box__settings-glyph i:nth-child(3) {
+  width: 10px;
+}
+
+.ev-ai-prompt-box__file-input {
+  display: none;
+}
+
+.ev-ai-prompt-box__word-count {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-ink-muted);
+}
+
+.ev-ai-prompt-box__quota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-color-ink-secondary);
+  background: var(--ev-bg-soft);
+  border: none;
+  border-radius: var(--ev-radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ev-ai-prompt-box__quota:hover {
+  color: var(--ev-color-ink);
+}
+
+.ev-ai-prompt-box__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-left: var(--ev-space-2, 8px);
+  color: #fff;
+  background: var(--ev-color-primary);
+  border: none;
+  border-radius: var(--ev-radius-full);
+  cursor: pointer;
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+}
+
+.ev-ai-prompt-box__send:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.ev-ai-prompt-box__send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ev-ai-prompt-box__send.is-stop {
+  background: var(--ev-color-ink);
+}
+
+.ev-ai-prompt-box__stop-square {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+/* ─── 场景 chips 行 ─── */
+.ev-ai-prompt-box__scenes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ev-space-3, 12px);
+}
+
+.ev-ai-prompt-box__scene-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  font-size: var(--ev-font-size-sm);
+  color: var(--ev-color-ink-secondary);
+  background: var(--ev-bg-container);
+  border: 1px solid var(--ev-border-color-light);
+  border-radius: var(--ev-radius-full);
+  cursor: pointer;
+  transition:
+    color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
+    border-color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
+    background-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+}
+
+.ev-ai-prompt-box__scene-chip:hover:not(:disabled) {
+  color: var(--ev-color-ink);
+  border-color: var(--ev-border-color-dark);
+}
+
+.ev-ai-prompt-box__scene-chip.is-active {
+  color: var(--ev-color-primary);
+  background: var(--ev-color-primary-light-9);
+  border-color: var(--ev-color-primary-light-7);
+}
+
+.ev-ai-prompt-box__scene-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 暗色：渐变描边背景底色跟随 */
+html.dark .ev-ai-prompt-box__board {
+  background:
+    linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
+    var(--ev-border-color-light) border-box;
+}
+
+html.dark .ev-ai-prompt-box__board.is-focus {
+  background:
+    linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
+    var(--ev-gradient-hero) border-box;
+}

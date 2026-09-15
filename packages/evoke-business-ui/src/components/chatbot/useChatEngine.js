@@ -88,7 +88,7 @@ function useChatEngine(options = {}) {
   function clearMessages() {
     messages.value = [];
   }
-  async function sendMessage(content, attachments = []) {
+  async function sendMessage(content, attachments = [], context) {
     if (loading.value) return;
     if (!content.trim() && attachments.length === 0) return;
     loading.value = true;
@@ -96,7 +96,7 @@ function useChatEngine(options = {}) {
     try {
       addUserMessage(content.trim(), attachments);
       if (options.onSend) {
-        await options.onSend(content.trim(), attachments);
+        await options.onSend(content.trim(), attachments, context);
       }
     } catch (err) {
       const lastMsg = messages.value[messages.value.length - 1];

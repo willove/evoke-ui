@@ -1,0 +1,319 @@
+/* EbAiPromptBox — AI 输入台 */
+
+.eb-ai-prompt-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eb-space-4);
+  width: 100%;
+}
+
+/* ─── 模型 pill ─── */
+.eb-ai-prompt-box__model-bar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.eb-ai-prompt-box__model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
+  background: var(--eb-bg-color);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-full);
+  cursor: pointer;
+  transition: border-color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-ai-prompt-box__model-pill:hover:not(:disabled) {
+  border-color: var(--eb-border-color);
+}
+
+.eb-ai-prompt-box__model-pill:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.eb-ai-prompt-box__model-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: calc(var(--eb-z-index-popper, 2000) + 1);
+  min-width: 180px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-lg);
+  box-shadow: var(--eb-shadow-3);
+}
+
+.eb-ai-prompt-box__model-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-primary);
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--eb-radius-sm);
+  cursor: pointer;
+}
+
+.eb-ai-prompt-box__model-item:hover {
+  background: var(--eb-fill-color-light);
+}
+
+.eb-ai-prompt-box__model-item.is-active {
+  color: var(--eb-color-primary);
+  font-weight: var(--eb-font-weight-medium);
+}
+
+.eb-ai-prompt-box__model-item span:nth-child(2) {
+  flex: 1;
+}
+
+.eb-ai-prompt-box-menu-enter-active,
+.eb-ai-prompt-box-menu-leave-active {
+  transition:
+    opacity var(--eb-duration-fast) var(--eb-ease-out),
+    transform var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-ai-prompt-box-menu-enter-from,
+.eb-ai-prompt-box-menu-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ─── 输入台 ─── */
+.eb-ai-prompt-box__board {
+  display: flex;
+  flex-direction: column;
+  padding: var(--eb-space-3) var(--eb-space-4);
+  background: var(--eb-bg-color);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-xl);
+  transition:
+    border-color var(--eb-duration-fast) var(--eb-ease-out),
+    box-shadow var(--eb-duration-base) var(--eb-ease-out);
+  cursor: text;
+}
+
+.eb-ai-prompt-box__board:hover:not(.is-disabled) {
+  border-color: var(--eb-border-color);
+}
+
+.eb-ai-prompt-box__board.is-focus {
+  border-color: var(--eb-color-primary);
+  box-shadow: 0 0 0 3px var(--eb-color-primary-light-9);
+}
+
+.eb-ai-prompt-box__board.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.eb-ai-prompt-box__chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-2);
+}
+
+.eb-ai-prompt-box__scene-tag,
+.eb-ai-prompt-box__file-tag {
+  max-width: 220px;
+}
+
+.eb-ai-prompt-box__scene-tag-close {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.eb-ai-prompt-box__textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: var(--eb-font-size-base);
+  line-height: 22px;
+  color: var(--eb-text-color-primary);
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.eb-ai-prompt-box__textarea::placeholder {
+  color: var(--eb-text-color-placeholder);
+}
+
+.eb-ai-prompt-box__textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* ─── 工具行 ─── */
+.eb-ai-prompt-box__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eb-space-3);
+  margin-top: var(--eb-space-2);
+}
+
+.eb-ai-prompt-box__toolbar-left,
+.eb-ai-prompt-box__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-1);
+  min-width: 0;
+}
+
+.eb-ai-prompt-box__toolbar-right {
+  flex-shrink: 0;
+}
+
+.eb-ai-prompt-box__tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--eb-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-ai-prompt-box__tool-btn:hover:not(:disabled) {
+  color: var(--eb-text-color-primary);
+  background: var(--eb-fill-color-light);
+}
+
+.eb-ai-prompt-box__tool-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.eb-ai-prompt-box__capability.is-active {
+  color: var(--eb-color-primary);
+  background: var(--eb-color-primary-light-9);
+}
+
+.eb-ai-prompt-box__capability.is-active:hover:not(:disabled) {
+  color: var(--eb-color-primary);
+  background: var(--eb-color-primary-light-9);
+}
+
+.eb-ai-prompt-box__file-input {
+  display: none;
+}
+
+.eb-ai-prompt-box__word-count {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
+}
+
+.eb-ai-prompt-box__quota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+  background: var(--eb-fill-color-light);
+  border: none;
+  border-radius: var(--eb-radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.eb-ai-prompt-box__quota:hover {
+  color: var(--eb-text-color-primary);
+}
+
+.eb-ai-prompt-box__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: var(--eb-space-1);
+  color: #fff;
+  background: var(--eb-color-primary);
+  border: none;
+  border-radius: var(--eb-radius-full);
+  cursor: pointer;
+  transition:
+    opacity var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-ai-prompt-box__send:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.eb-ai-prompt-box__send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.eb-ai-prompt-box__send.is-stop {
+  background: var(--eb-text-color-primary);
+}
+
+/* ─── 场景 chips 行 ─── */
+.eb-ai-prompt-box__scenes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--eb-space-3);
+}
+
+.eb-ai-prompt-box__scene-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-regular);
+  background: var(--eb-bg-color);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-full);
+  cursor: pointer;
+  transition:
+    color var(--eb-duration-fast) var(--eb-ease-out),
+    border-color var(--eb-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-ai-prompt-box__scene-chip:hover:not(:disabled) {
+  color: var(--eb-text-color-primary);
+  border-color: var(--eb-border-color);
+}
+
+.eb-ai-prompt-box__scene-chip.is-active {
+  color: var(--eb-color-primary);
+  background: var(--eb-color-primary-light-9);
+  border-color: var(--eb-color-primary-light-7);
+}
+
+.eb-ai-prompt-box__scene-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

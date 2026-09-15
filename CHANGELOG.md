@@ -4,6 +4,37 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — AI 输入台与工作台（大模型调用形态组件化）
+
+- **新增 EbAiPromptBox（AI 输入台）**：模型选择 pill（输入台上方居中，menu 语义 +
+  外点/Esc 关闭）+ 场景 chips（选中映射输入台内可移除 tag，再点取消）+ 能力开关
+  （aria-pressed ghost 钮，深度思考/联网等词汇表由使用方定义）+ 额度胶囊 + 附件 +
+  字数统计 + 发送/停止双态钮；`send` 一次交出完整上下文
+  `{ text, scene, capabilities, model, attachments }`——组件不内置任何请求，transport
+  由使用方注入；16 项行为级测试。
+- **新增 EbAiConsole（AI 工作台）**：欢迎标题（highlight 渐变高亮词）+ 示例问题
+  （send 直发 / fill 填充两态）+ AiPromptBox + Chatbot 家族会话区全接线；首次发送后
+  欢迎区收起、会话展开；`engine` 受控传入或内部自建；`transport(content, attachments,
+  context)` 注入模型调用，context 携带输入台完整上下文；9 项行为级测试。
+- **useChatEngine 小扩**：`sendMessage` 增第三参 `context` 原样透传 `onSend`，存量调用
+  零感知。
+- 命名注意：编排组件的调用入口刻意命名为 `transport` 而非 `onSend`——后者与 Vue
+  `emit('send')` 的监听器约定同名，会被当监听器二次调用。
+
+### @wil-works/evoke-ui — 新增 EvAiPromptBox（AI 输入台，官网设计加强版）
+
+- 与 business-ui `AiPromptBox` 同 API 面（EvChart/EbChart 双名先例），官网设计语言落位：
+  输入台 focus 时 `--ev-gradient-hero` 渐变描边点亮（双背景 border-box 技法，暗色同步），
+  chips/额度胶囊走 --ev-* 令牌明暗一体；停止钮为内绘 CSS 方块（核心图标集无 stop）；
+  默认图标仅用 evoke-ui 核心集合（plus/close/check/wallet/arrow-up/chevron-down），
+  场景与能力 icon 由使用方传入且需在图标集内。
+- `send` 交出上下文后由使用方编排（官网自由拼装定位，不内置会话流）；11 项行为级测试。
+
+### 文档
+
+- business 站新增「AI」分类与 AiPromptBox / AiConsole 两页（AiConsole 页含 mock 流式
+  transport 的可交互演示）；ui 站站点区块新增 AiPromptBox 页；三页全过 SSR 构建。
+
 ### @wil-works/evoke-business-ui — 基础能力补全：虚拟滚动集成与表格行内编辑（ROADMAP 收官双项）
 
 - **Select 数据模式 + 虚拟滚动**：新增 `options` 数据驱动模式（无需手写 EbOption，下拉由

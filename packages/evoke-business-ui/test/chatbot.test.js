@@ -33,7 +33,8 @@ describe('useChatEngine', () => {
     const [msg] = engine.messages.value
     expect(msg).toMatchObject({ role: 'user', content: '你好', status: 'done' })
     expect(msg.attachments).toEqual([{ name: 'a.pdf' }])
-    expect(onSend).toHaveBeenCalledWith('你好', [{ name: 'a.pdf' }])
+    // 第三参 context：无编排上下文时为 undefined
+    expect(onSend).toHaveBeenCalledWith('你好', [{ name: 'a.pdf' }], undefined)
   })
 
   it('sendMessage：loading 中与空内容（且无附件）均忽略', async () => {
@@ -107,8 +108,8 @@ describe('useChatEngine', () => {
 
     engine.regenerateMessage(asst2.id)
     await Promise.resolve()
-    // asst2 被移除，重发产生新的一次 onSend('第二问')
-    expect(onSend).toHaveBeenLastCalledWith('第二问', [])
+    // asst2 被移除，重发产生新的一次 onSend('第二问')；context 保留 undefined
+    expect(onSend).toHaveBeenLastCalledWith('第二问', [], undefined)
     expect(engine.messages.value.length).toBeLessThan(countBefore + 2)
   })
 

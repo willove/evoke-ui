@@ -166,6 +166,7 @@ export default defineConfig({
           text: '站点区块',
           items: [
             { text: 'SearchBox 搜索框', link: '/components/search-box' },
+            { text: 'AiPromptBox AI 输入台', link: '/components/ai-prompt-box' },
             { text: 'IconGrid 图标网格', link: '/components/icon-grid' },
             { text: 'FeatureGrid 特性', link: '/components/feature-grid' },
             { text: 'Statistic 指标', link: '/components/statistic' },

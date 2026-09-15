@@ -49,6 +49,7 @@ import EvNavbar from './components/navbar/index.vue'
 import EvFooter from './components/footer/index.vue'
 import EvHero from './components/hero/index.vue'
 import EvSearchBox from './components/search-box/index.vue'
+import EvAiPromptBox from './components/ai-prompt-box/index.vue'
 import EvIconGrid from './components/icon-grid/index.vue'
 import EvFeatureGrid from './components/feature-grid/index.vue'
 import EvPricingCard from './components/pricing-card/index.vue'
@@ -120,6 +121,7 @@ const components = {
   EvFooter,
   EvHero,
   EvSearchBox,
+  EvAiPromptBox,
   EvIconGrid,
   EvFeatureGrid,
   EvPricingCard,
@@ -194,6 +196,7 @@ export {
   EvFooter,
   EvHero,
   EvSearchBox,
+  EvAiPromptBox,
   EvIconGrid,
   EvFeatureGrid,
   EvPricingCard,
