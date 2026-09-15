@@ -1,14 +1,13 @@
 /* ============================================
    Evoke Business UI — 边框激活涟漪（focus ripple）
-   聚焦瞬间一圈与输入体同形状的细环自边框向外扩散后消散
-   （0.7s 单次，外扩约 4~6px，圆角同步放大并跟随输入圆角
-   令牌 --eb-input-border-radius）。环状而非面填充：输入面
-   不会被整块染色，涟漪只贴边框走，视觉上从底层边缘发出。
-   层级：::before 铺在包装器之上、内容之下（环只在边缘，
-   不与内容重叠）。
+   实体涟漪：聚焦瞬间一层与输入体同形状的实体色影自边缘
+   向外扩展约 6px 后消散（0.7s 单次，box-shadow spread 驱动，
+   影子自动跟随输入圆角令牌 --eb-input-border-radius）。
+   实体但落在底层：色影只在输入体边界之外，不覆盖输入面、
+   不遮挡内容（区别于早期把整个输入面染蓝的面填充方案）。
    覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
    input-number / time-select / time-picker）、eb-textarea 与 eb-select__wrapper。
-   错误态色环跟随 danger 色（--eb-field-ring-color 可覆盖）；
+   错误态色影跟随 danger 色（--eb-field-ring-color 可覆盖）；
    全局关闭：html[data-eb-ripple='off']；
    prefers-reduced-motion 下自动停用。
    ============================================ */
@@ -26,8 +25,6 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: transparent;
-  border: 2px solid color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 45%, transparent);
   opacity: 0;
   pointer-events: none;
 }
@@ -45,7 +42,16 @@
 }
 
 @keyframes eb-field-ring {
-  0% { opacity: 1; inset: 0; }
-  60% { opacity: 0.85; inset: -4px; border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px); }
-  100% { opacity: 0; inset: -6px; border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 6px); }
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 55%, transparent);
+  }
+  60% {
+    opacity: 0.9;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 50%, transparent);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 45%, transparent);
+  }
 }

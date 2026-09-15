@@ -6,10 +6,12 @@
 
 ### @wil-works/evoke-business-ui — 视觉修正
 
-- **激活涟漪重做：面填充改边框扩散环**——聚焦瞬间不再整块输入面被主色染蓝，改为
-  一圈与输入体同形状的细环自边框向外扩散 4~6px 后消散（圆角同步放大、错误态跟随
-  danger、`html[data-eb-ripple='off']` 与 reduced-motion 关闭均保留）；覆盖面不变
-  （input / select / textarea / cascader / date-picker / input-number / time-* 全家族）。
+- **激活涟漪重做：实体色影向外扩展，不再染输入面**——聚焦瞬间一层与输入体同形状的
+  实体色影（box-shadow spread 驱动）自边缘向外扩展约 6px 后消散：保留「实体扩展」的
+  涟漪质感，但只落在输入体边界之外，不再整块输入面被主色染蓝、不遮内容；圆角自动跟随
+  输入圆角令牌，错误态跟随 danger、`html[data-eb-ripple='off']` 与 reduced-motion 关闭
+  均保留；覆盖面不变（input / select / textarea / cascader / date-picker / input-number /
+  time-* 全家族）。
 
 ### @wil-works/evoke-ui — 视觉修正
 
