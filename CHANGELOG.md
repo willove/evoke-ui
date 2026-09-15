@@ -89,6 +89,20 @@
   「存在即过」改为真实点击断言（剪贴板桩化，与 jsdom 环境解耦）；
   command.test.js 补 transformVNodeArgs 重置防御，notify / msgbox
   幽灵实例与 overlay 同防。
+- **select combobox 模式补完**：选项带稳定 DOM id 并注册进上下文，
+  触发器补 `aria-activedescendant`（键盘高亮/已选定位实时同步）与
+  `aria-controls`；非过滤模式打开后焦点保持在触发器上（补 tabindex），
+  activedescendant 变化才可被读屏播报；顺带修一处选项注册竞态——
+  「隐藏寄存区 → popper」迁移会重建实例，注册表改为按 value 替换式
+  收敛到当前 DOM 代（旧实现首占去重会残留已销毁实例）；
+- **table 行级键盘导航**：行采用 roving tabindex（首行可聚焦、focusin
+  同步焦点位、数据缩减回钳首行），↑↓/Home/End 移动行焦点，Enter/Space
+  等价点击（与指针点击同一 row-click 载荷，data-table 经由
+  eb-table 的 row-click 自动透传）；移除空壳 chart/ 目录。
+- **文档补页第一批（8 页）**：StatCard / StatRow（数据展示）、EmptyState
+  （反馈）、PageHeader / CommandPalette（导航）、Msgbox / Notify /
+  Loading（反馈，含 $confirm/$prompt 承接、输入校验、distinguishCancelAndClose、
+  service 与 v-loading 双用法）；至此无文档组件从 28 降到 20。
 
 ## [charts 0.6.0] — 2026-09-15
 
