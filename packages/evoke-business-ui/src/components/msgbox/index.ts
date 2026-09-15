@@ -11,13 +11,39 @@
  * lockScroll 默认 false
  */
 import { createVNode, render } from 'vue'
+import type { App, AppContext } from 'vue'
 import MsgboxView from './src/msgbox.vue'
 import { nextZIndex } from '../../utils/zIndex'
 import { inBrowser } from '../../utils/dom'
 
-/** 默认参数 */
-const DEFAULT_OPTIONS = {
-  lockScroll: false,
+export type MsgboxMode = 'alert' | 'confirm' | 'prompt'
+
+export interface MsgboxOptions {
+  message?: unknown
+  title?: string
+  type?: string
+  mode?: MsgboxMode
+  showCancelButton?: boolean
+  /** 默认 false */
+  lockScroll?: boolean
+  inputValue?: string
+  inputPattern?: RegExp
+  inputValidator?: (value: string) => boolean | string
+  inputPlaceholder?: string
+  confirmButtonText?: string
+  cancelButtonText?: string
+  onClose?: () => void
+  [key: string]: unknown
+}
+
+export interface MsgboxResult {
+  action: string
+  value?: unknown
+}
+
+/** 识别「直接传 app 实例」的形态（app._context 存在即视为 app） */
+function hasAppContext(v: unknown): boolean {
+  return !!(v && typeof v === 'object' && (v as { _context?: unknown })._context)
 }
 
 /**
@@ -25,21 +51,26 @@ const DEFAULT_OPTIONS = {
  *   (message, title?, options?, appContext?)
  *   (message, options?, appContext?)
  */
-function normalizeArgs(message, titleOrOptions, optionsOrAppContext, appContext) {
+function normalizeArgs(
+  message: string,
+  titleOrOptions?: string | MsgboxOptions | App | null,
+  optionsOrAppContext?: MsgboxOptions | App | null,
+  appContext?: App | AppContext | null,
+): { title: string; options: MsgboxOptions; appContext: App | AppContext | undefined } {
   let title = ''
-  let options = {}
-  let ctx = appContext
+  let options: MsgboxOptions = {}
+  let ctx: App | AppContext | undefined = appContext ?? undefined
   if (typeof titleOrOptions === 'string') {
     title = titleOrOptions
-    if (optionsOrAppContext && typeof optionsOrAppContext === 'object' && !optionsOrAppContext._context) {
-      options = optionsOrAppContext
-    } else if (optionsOrAppContext?._context) {
-      ctx = optionsOrAppContext
+    if (optionsOrAppContext && typeof optionsOrAppContext === 'object' && !hasAppContext(optionsOrAppContext)) {
+      options = optionsOrAppContext as MsgboxOptions
+    } else if (hasAppContext(optionsOrAppContext)) {
+      ctx = optionsOrAppContext as App | AppContext
     }
   } else if (titleOrOptions && typeof titleOrOptions === 'object') {
-    options = titleOrOptions
-    if (optionsOrAppContext?._context) {
-      ctx = optionsOrAppContext
+    options = titleOrOptions as MsgboxOptions
+    if (hasAppContext(optionsOrAppContext)) {
+      ctx = optionsOrAppContext as App | AppContext
     }
   }
   return { title, options, appContext: ctx }
@@ -47,19 +78,18 @@ function normalizeArgs(message, titleOrOptions, optionsOrAppContext, appContext)
 
 /**
  * 挂载消息框并返回 Promise
- * @param {object} options 完整选项（含 mode）
  */
-function showMsgbox(options = {}, appContext) {
+function showMsgbox(options: MsgboxOptions = {}, appContext?: App | AppContext | null): Promise<MsgboxResult> {
   if (!inBrowser()) {
     return Promise.reject(new Error('[EbMsgbox] 仅支持浏览器环境'))
   }
   const container = document.createElement('div')
 
-  return new Promise((resolve, reject) => {
+  return new Promise<MsgboxResult>((resolve, reject) => {
     const vnode = createVNode(MsgboxView, {
       ...options,
       zIndex: nextZIndex(),
-      onDone: (action, value) => {
+      onDone: (action: string, value: unknown) => {
         if (action === 'confirm') {
           resolve({ action, value })
         } else {
@@ -72,19 +102,49 @@ function showMsgbox(options = {}, appContext) {
       },
     })
     if (appContext) {
-      vnode.appContext = appContext
+      vnode.appContext = appContext as AppContext
     }
     render(vnode, container)
     document.body.appendChild(container)
   })
 }
 
-function EbMsgbox(message, titleOrOptions, optionsOrAppContext, appContext) {
+/** 默认参数 */
+const DEFAULT_OPTIONS: MsgboxOptions = {
+  lockScroll: false,
+}
+
+type MsgboxOverloadArgs = [
+  titleOrOptions?: string | MsgboxOptions | App | null,
+  optionsOrAppContext?: MsgboxOptions | App | null,
+  appContext?: App | AppContext | null,
+]
+
+interface MsgboxFn {
+  (message: MsgboxOptions | string, ...args: MsgboxOverloadArgs): Promise<MsgboxResult>
+  /** alert：仅确认按钮，永远 resolve */
+  alert: (message: string, ...args: MsgboxOverloadArgs) => Promise<MsgboxResult>
+  /** confirm：确认/取消，confirm resolve，其余 reject */
+  confirm: (message: string, ...args: MsgboxOverloadArgs) => Promise<MsgboxResult>
+  /** prompt：带输入框，confirm resolve { action, value } */
+  prompt: (message: string, ...args: MsgboxOverloadArgs) => Promise<MsgboxResult>
+  /** 关闭当前消息框（单例语义：渲染中实例 ESC 关闭由内部处理，此处兼容 API 存在） */
+  close: () => void
+}
+
+function EbMsgboxImpl(
+  message: MsgboxOptions | string,
+  titleOrOptions?: string | MsgboxOptions | App | null,
+  optionsOrAppContext?: MsgboxOptions | App | null,
+  appContext?: App | AppContext | null,
+): Promise<MsgboxResult> {
   // 对象式调用：EbMsgbox(options[, appContext])
   if (message && typeof message === 'object') {
     return showMsgbox(
       { ...DEFAULT_OPTIONS, ...message, showCancelButton: true, mode: 'confirm' },
-      typeof titleOrOptions === 'object' && titleOrOptions?._context ? titleOrOptions : undefined
+      typeof titleOrOptions === 'object' && hasAppContext(titleOrOptions)
+        ? (titleOrOptions as App | AppContext)
+        : undefined
     )
   }
   const { title, options, appContext: ctx } = normalizeArgs(
@@ -99,9 +159,8 @@ function EbMsgbox(message, titleOrOptions, optionsOrAppContext, appContext) {
   )
 }
 
-/**
- * alert：仅确认按钮，永远 resolve
- */
+const EbMsgbox = EbMsgboxImpl as MsgboxFn
+
 EbMsgbox.alert = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
@@ -115,9 +174,6 @@ EbMsgbox.alert = function (message, titleOrOptions, optionsOrAppContext, appCont
   ).catch(({ action, value }) => ({ action, value }))
 }
 
-/**
- * confirm：确认/取消，confirm resolve，其余 reject
- */
 EbMsgbox.confirm = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
@@ -131,9 +187,6 @@ EbMsgbox.confirm = function (message, titleOrOptions, optionsOrAppContext, appCo
   )
 }
 
-/**
- * prompt：带输入框，confirm resolve { action, value }
- */
 EbMsgbox.prompt = function (message, titleOrOptions, optionsOrAppContext, appContext) {
   const { title, options, appContext: ctx } = normalizeArgs(
     message,
@@ -154,11 +207,10 @@ EbMsgbox.prompt = function (message, titleOrOptions, optionsOrAppContext, appCon
   )
 }
 
-/** 关闭当前消息框（单例语义：渲染中实例 ESC 关闭由内部处理，此处兼容 API 存在） */
 EbMsgbox.close = () => {
   document
     .querySelectorAll('.eb-message-box.eb-message-box')
-    .forEach((el) => el.__ev_msgbox_close?.())
+    .forEach((el) => (el as Element & { __ev_msgbox_close?: () => void }).__ev_msgbox_close?.())
 }
 
 export { EbMsgbox }

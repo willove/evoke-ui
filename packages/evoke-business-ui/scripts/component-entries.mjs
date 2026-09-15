@@ -8,7 +8,7 @@
  * 子路径命名规则：Eb 前缀去除后 PascalCase → kebab-case，
  * 如 EbInputNumber → input-number、EbDropdownMenu → dropdown-menu。
  */
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -44,7 +44,13 @@ export function getComponentEntries(source = readFileSync(SRC_INDEX, 'utf8')) {
   // `import { EbLoading, createLoadingDirective } from './components/loading'`）
   for (const m of source.matchAll(/^import \{ ([^}]+) \} from '\.\/(components\/[a-z0-9-]+)'$/gm)) {
     const ebNames = m[1].split(',').map((s) => s.trim()).filter((s) => /^Eb[A-Z]/.test(s))
-    if (ebNames.length === 1) add(ebNames[0], `${m[2]}/index.js`)
+    if (ebNames.length === 1) {
+      // 目录桶实现已迁 TS（index.ts），仍兼容残留 index.js
+      const entryFile = existsSync(resolve(pkgRoot, 'src', m[2], 'index.ts'))
+        ? `${m[2]}/index.ts`
+        : `${m[2]}/index.js`
+      add(ebNames[0], entryFile)
+    }
   }
 
   if (seen.size === 0) throw new Error('[component-entries] index.js 未解析到任何组件导入')

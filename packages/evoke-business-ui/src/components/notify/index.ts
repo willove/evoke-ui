@@ -9,41 +9,74 @@
  * 四角定位独立堆叠列（top-right 默认，offset 16 起步，间距 16）
  */
 import { createVNode, render } from 'vue'
+import type { ComponentInternalInstance } from 'vue'
 import NotifyView from './src/notify.vue'
 import { nextZIndex } from '../../utils/zIndex'
 import { inBrowser } from '../../utils/dom'
+
+export type NotifyType = 'success' | 'warning' | 'info' | 'error'
+
+export type NotifyPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+
+export interface NotifyOptions {
+  title?: string
+  message?: unknown
+  type?: NotifyType
+  position?: NotifyPosition
+  duration?: number
+  showClose?: boolean
+  offset?: number
+  onClose?: () => void
+  [key: string]: unknown
+}
+
+export interface NotifyHandle {
+  close: () => void
+}
+
+type ExposedVM = ComponentInternalInstance
+
+interface NotifyInstance {
+  position: string
+  container: HTMLElement
+  vm: ExposedVM | null
+  handle: NotifyHandle | null
+}
 
 const GAP = 16
 const INITIAL_OFFSET = 16
 const FALLBACK_HEIGHT = 88
 
-/** @type {Record<string, Array<{position: string, container: HTMLElement, vm: object, handle: object}>>} */
-const columns = {
+const columns: Record<string, NotifyInstance[]> = {
   'top-right': [],
   'top-left': [],
   'bottom-right': [],
   'bottom-left': [],
 }
 
-function normalizeArgs(args) {
+function normalizeArgs(args: unknown[]): NotifyOptions {
   const first = args[0]
   if (typeof first === 'string') {
     // 快捷方法形态：(title, message?, options?)
-    const [title, message, options] = args
-    return { ...(typeof options === 'object' && options ? options : {}), title, message: message ?? '' }
+    const [title, message, options] = args as [string, unknown, NotifyOptions | null | undefined]
+    return {
+      ...(typeof options === 'object' && options ? options : {}),
+      title,
+      message: message ?? '',
+    }
   }
-  return typeof first === 'object' && first !== null ? first : {}
+  return typeof first === 'object' && first !== null ? (first as NotifyOptions) : {}
 }
 
 /** 重排同列堆叠 */
-function updateColumn(position) {
-  const list = columns[position]
+function updateColumn(position: string): void {
+  const list = columns[position]!
   const isTop = position.startsWith('top')
   let offset = INITIAL_OFFSET
   for (const instance of list) {
     // 按类名定位通知本体，不能取 container.firstElementChild——
     // 测试环境（@vue/test-utils 全局 transformVNodeArgs）或任何包装层都可能让首子元素不是通知元素
-    const el = instance.container.querySelector('.eb-notification')
+    const el = instance.container.querySelector<HTMLElement>('.eb-notification')
     if (el) {
       if (isTop) {
         el.style.top = `${offset}px`
@@ -56,7 +89,7 @@ function updateColumn(position) {
   }
 }
 
-function destroyInstance(instance) {
+function destroyInstance(instance: NotifyInstance): void {
   const list = columns[instance.position]
   const idx = list.indexOf(instance)
   if (idx >= 0) {
@@ -67,16 +100,29 @@ function destroyInstance(instance) {
   updateColumn(instance.position)
 }
 
-function closeInstance(instance) {
+function closeInstance(instance: NotifyInstance): void {
   instance.vm?.exposed?.close?.()
 }
 
-function EbNotify(...args) {
+interface NotifyFn {
+  (first: NotifyOptions | string, ...rest: unknown[]): NotifyHandle
+  success: (title: string, message?: unknown, options?: NotifyOptions | null) => NotifyHandle
+  warning: (title: string, message?: unknown, options?: NotifyOptions | null) => NotifyHandle
+  info: (title: string, message?: unknown, options?: NotifyOptions | null) => NotifyHandle
+  error: (title: string, message?: unknown, options?: NotifyOptions | null) => NotifyHandle
+  /** 关闭全部 */
+  close: () => void
+  closeAll: () => void
+  /** 各列活动实例数（测试用） */
+  _columns: Record<string, NotifyInstance[]>
+}
+
+function EbNotifyImpl(first: NotifyOptions | string, ...rest: unknown[]): NotifyHandle {
   if (!inBrowser()) {
     console.warn('[EbNotify] 仅支持浏览器环境')
     return { close: () => {} }
   }
-  const options = normalizeArgs(args)
+  const options = normalizeArgs([first, ...rest])
   const position = options.position ?? 'top-right'
   const type = options.type ?? 'info'
 
@@ -101,7 +147,7 @@ function EbNotify(...args) {
   render(vnode, container)
   document.body.appendChild(container)
 
-  const instance = {
+  const instance: NotifyInstance = {
     position,
     container,
     vm: vnode.component,
@@ -110,22 +156,23 @@ function EbNotify(...args) {
   instance.handle = {
     close: () => closeInstance(instance),
   }
-  columns[position].push(instance)
+  columns[position]!.push(instance)
   updateColumn(position)
   return instance.handle
 }
 
-function createShortcut(type) {
+function createShortcut(type: NotifyType): NotifyFn['success'] {
   return (title, message, options = {}) =>
     EbNotify({ ...(typeof options === 'object' && options ? options : {}), title, message, type })
 }
+
+const EbNotify = EbNotifyImpl as NotifyFn
 
 EbNotify.success = createShortcut('success')
 EbNotify.warning = createShortcut('warning')
 EbNotify.info = createShortcut('info')
 EbNotify.error = createShortcut('error')
 
-/** 关闭全部 */
 EbNotify.close = () => {
   for (const list of Object.values(columns)) {
     ;[...list].forEach(closeInstance)
@@ -134,7 +181,6 @@ EbNotify.close = () => {
 
 EbNotify.closeAll = EbNotify.close
 
-/** 各列活动实例数（测试用） */
 EbNotify._columns = columns
 
 export { EbNotify }

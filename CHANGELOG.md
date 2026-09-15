@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — TS 存量迁移第三刀：命令式 API 四件套转 TS（阶段 3 第 3 档）
+
+- **message / notify / msgbox / loading 目录桶 index.js → index.ts**——
+  `EbMessage` / `EbNotify` / `EbMsgbox` 这类「函数 + 静态方法」形态以
+  `interface MsgboxFn` + `as` 断言收敛，调用与静态两侧均获补全；
+- **公开选项/句柄类型导出**：`MessageOptions` / `MessageHandle` /
+  `NotifyOptions` / `NotifyPosition` / `NotifyHandle`、`MsgboxOptions` /
+  `MsgboxResult` / `MsgboxMode`（alert/confirm/prompt 重载与 app 直传形态
+  `hasAppContext`（`_context` 真值判定）类型保真）、`LoadingOptions` /
+  `LoadingHandle` / `LoadingDirectiveValue`；
+- **运行时逐字等价**：`columns[position]` 非 null 断言保留原失效语义、
+  v-loading 的 `vm.exposed.setVisible` 不加可选链、SSR 提前返回形状不变；
+  `component-entries.mjs` 目录桶入口改为探测 `index.ts`（兼容 index.js），
+  守卫测试、vite 多入口与类型存根三者继续对齐；
+- 两包 vue-tsc --noEmit 通过，全仓 94 文件 1475 项测试全绿。
+
 ### @wil-works/evoke-ui / @wil-works/evoke-business-ui — TS 存量迁移第二刀：directives 全量转 TS（阶段 3 第 2 档）
 
 - **4 个指令 .js → .ts**：evoke-ui `v-reveal`，business `v-copy` /
