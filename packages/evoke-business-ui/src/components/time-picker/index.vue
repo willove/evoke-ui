@@ -225,7 +225,7 @@ const draftStart = ref(new Date())
 const draftEnd = ref(new Date())
 
 const { zIndex, next: nextZIndex } = useZIndex()
-const { x, y, update } = useFloating({
+const { x, y, update, show: startFloating, hide: stopFloating } = useFloating({
   reference: referenceRef,
   floating: floatingRef,
   placement: 'bottom-start',
@@ -259,12 +259,14 @@ async function openPanel() {
   nextZIndex()
   pickerVisible.value = true
   await nextTick()
-  await update()
+  // show() 内部 update + 启动 autoUpdate：页面滚动/resize 时弹层持续跟随
+  await startFloating()
 }
 
 function closePanel() {
   if (!pickerVisible.value) return
   pickerVisible.value = false
+  stopFloating()
   emit('blur')
 }
 

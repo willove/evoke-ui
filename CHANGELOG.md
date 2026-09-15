@@ -6,7 +6,13 @@
 
 ### @wil-works/evoke-business-ui — 视觉修正
 
-- **激活涟漪重做：实体色影向外扩展，不再染输入面**——聚焦瞬间一层与输入体同形状的
+- **修复 Cascader / TreeSelect / TimePicker / TimeSelect 弹层不跟随页面滚动**——四个组件
+  打开时只做一次性定位（裸 `update()`），从未启动 useFloating 的 autoUpdate 监听，页眉
+  一滚弹层就脱离触发器原地不动；现统一改走 `show()`（定位 + 启动 autoUpdate），关闭时
+  `hide()` 停止监听防泄漏；与 Select / DatePicker / Tooltip 等既有跟随行为对齐（已用
+  浏览器实测：滚动前后弹层与触发器相对偏移恒定）。
+
+### @wil-works/evoke-ui — 视觉修正- **激活涟漪重做：实体色影向外扩展，不再染输入面**——聚焦瞬间一层与输入体同形状的
   实体色影（box-shadow spread 驱动）自边缘向外扩展约 6px 后消散：保留「实体扩展」的
   涟漪质感，但只落在输入体边界之外，不再整块输入面被主色染蓝、不遮内容；圆角自动跟随
   输入圆角令牌，错误态跟随 danger、`html[data-eb-ripple='off']` 与 reduced-motion 关闭

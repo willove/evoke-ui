@@ -190,7 +190,7 @@ const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
 const isDisabled = computed(() => formDisabled.value || props.disabled)
 
 const { zIndex, next: nextZIndex } = useZIndex()
-const { x, y, update } = useFloating({
+const { x, y, update, show: startFloating, hide: stopFloating } = useFloating({
   reference: referenceRef,
   floating: floatingRef,
   placement: 'bottom-start',
@@ -381,7 +381,8 @@ async function openDropdown() {
   dropdownVisible.value = true
   emit('visible-change', true)
   await nextTick()
-  await update()
+  // show() 内部 update + 启动 autoUpdate：页面滚动/resize 时弹层持续跟随
+  await startFloating()
   await nextTick()
   if (props.filterable) inputRef.value?.focus?.()
   emit('focus')
@@ -390,6 +391,7 @@ async function openDropdown() {
 function closeDropdown() {
   if (!dropdownVisible.value) return
   dropdownVisible.value = false
+  stopFloating()
   emit('visible-change', false)
   query.value = ''
   treeRef.value?.filter?.('')

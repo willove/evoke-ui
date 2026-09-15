@@ -277,7 +277,7 @@ const filterActive = computed(() => props.filterable && query.value !== '')
 /** 有过滤关键字时，占位/已选文案让位给过滤输入框；清空关键字后恢复 */
 
 const { zIndex, next: nextZIndex } = useZIndex()
-const { x, y, update } = useFloating({
+const { x, y, update, show: startFloating, hide: stopFloating } = useFloating({
   reference: referenceRef,
   floating: floatingRef,
   placement: 'bottom-start',
@@ -311,13 +311,15 @@ async function openDropdown() {
   dropdownVisible.value = true
   emit('visible-change', true)
   await nextTick()
-  await update()
+  // show() 内部 update + 启动 autoUpdate：页面滚动/resize 时弹层持续跟随
+  await startFloating()
   if (props.filterable) inputRef.value?.focus?.()
 }
 
 function closeDropdown() {
   if (!dropdownVisible.value) return
   dropdownVisible.value = false
+  stopFloating()
   emit('visible-change', false)
   query.value = ''
   isFocused.value = false
