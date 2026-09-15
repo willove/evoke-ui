@@ -116,7 +116,7 @@ function EbNotify(...args) {
 }
 
 function createShortcut(type) {
-  return (title, message, options) =>
+  return (title, message, options = {}) =>
     EbNotify({ ...(typeof options === 'object' && options ? options : {}), title, message, type })
 }
 

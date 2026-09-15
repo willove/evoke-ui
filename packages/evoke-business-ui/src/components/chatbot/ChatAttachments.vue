@@ -34,7 +34,8 @@ const emit = defineEmits(["remove"]);
 const Document = getIconByNameSync("document");
 const Close = getIconByNameSync("close");
 function isImage(type) {
-  return type.startsWith("image/");
+  // 附件数据来自宿主（LLM 结构不可控），type 缺失按非图片处理而非崩溃
+  return typeof type === "string" && type.startsWith("image/");
 }
 function handleRemove(file) {
   emit("remove", file);

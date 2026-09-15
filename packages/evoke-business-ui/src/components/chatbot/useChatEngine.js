@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, toRaw } from "vue";
 import { generateId } from "./utils";
 const startTimeMap = /* @__PURE__ */ new WeakMap();
 function useChatEngine(options = {}) {
@@ -66,7 +66,8 @@ function useChatEngine(options = {}) {
   function completeMessage(id) {
     const msg = messages.value.find((m) => m.id === id);
     if (msg) {
-      const startTime = startTimeMap.get(msg);
+      // find 返回的是响应式代理，startTimeMap 以原始对象为键，必须 toRaw 才能命中
+      const startTime = startTimeMap.get(toRaw(msg));
       const duration = startTime ? Date.now() - startTime : void 0;
       msg.status = "done";
       msg.thinking = false;

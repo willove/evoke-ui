@@ -37,6 +37,18 @@ import { EbMessage } from '@wil-works/evoke-business-ui'
 EbMessage.success('保存成功')
 ```
 
+### 按需导入单个组件
+
+组件支持子路径直接引入（自带类型声明，与主入口共享同一组件实例），样式仍走全局一份：
+
+```js
+import EbButton from '@wil-works/evoke-business-ui/button'
+import { EbMessage } from '@wil-works/evoke-business-ui/message'
+import '@wil-works/evoke-business-ui/styles'
+```
+
+子路径名与组件名对应（`EbInputNumber` → `input-number`、`EbDataTable` → `data-table`），命令式 API 以其模块名为路径（`message` / `notify` / `msgbox` / `loading`）。
+
 ### 模板中直接使用
 
 ```vue

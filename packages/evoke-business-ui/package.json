@@ -1,28 +1,40 @@
 {
   "name": "@wil-works/evoke-business-ui",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Evoke Business UI — 纯 JS Vue3 中后台组件库，内置 Remix Icon 图标体系（图表能力由 @wil-works/evoke-charts 提供）",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/index.mjs"
     },
     "./styles": "./dist/evoke-business-ui.css",
-    "./full-icons": "./dist/full-icons.mjs",
+    "./full-icons": {
+      "types": "./dist/types/full-icons.d.ts",
+      "default": "./dist/full-icons.mjs"
+    },
+    "./*": {
+      "types": "./dist/types/entries/*.d.ts",
+      "default": "./dist/*.mjs"
+    },
     "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "vite build --watch",
-    "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs",
+    "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs && vue-tsc --project tsconfig.build.json && node scripts/post-types.mjs",
     "gen:icons": "node scripts/generate-remix-icons.mjs",
     "compat:check": "node scripts/compat-check.mjs",
     "lint:tokens": "node scripts/check-token-rule.mjs",
-    "publish:pkg": "npm publish --access public"
+    "publish:pkg": "pnpm publish --access public --no-git-checks"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.8.0",
@@ -39,8 +51,10 @@
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/compiler-sfc": "^3.5.42",
     "remixicon": "^4.9.1",
+    "typescript": "^5.9.2",
     "vite": "^8.0.10",
-    "vue": "^3.5.42"
+    "vue": "^3.5.42",
+    "vue-tsc": "^3.3.11"
   },
   "keywords": [
     "vue3",

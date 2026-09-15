@@ -134,7 +134,7 @@ function EbMessage(...args) {
  * @param {'success'|'warning'|'info'|'error'} type
  */
 function createShortcut(type) {
-  return (message, options) =>
+  return (message, options = {}) =>
     EbMessage({ ...(typeof options === 'object' && options !== null ? options : {}), message, type })
 }
 
