@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 视觉修正
+
+- **激活涟漪重做：面填充改边框扩散环**——聚焦瞬间不再整块输入面被主色染蓝，改为
+  一圈与输入体同形状的细环自边框向外扩散 4~6px 后消散（圆角同步放大、错误态跟随
+  danger、`html[data-eb-ripple='off']` 与 reduced-motion 关闭均保留）；覆盖面不变
+  （input / select / textarea / cascader / date-picker / input-number / time-* 全家族）。
+
+### @wil-works/evoke-ui — 视觉修正
+
+- **EvAiPromptBox 跨浏览器激活态归一**：输入区屏蔽 Chrome / Safari / Firefox 的默认
+  聚焦环与 iOS 触控高亮（`outline: none` + `-webkit-tap-highlight-color`），焦点指示
+  统一由输入台的渐变描边承担；工具按钮保留键盘 `:focus-visible` 环。
+
 ### @wil-works/evoke-business-ui — AI 输入台与工作台（大模型调用形态组件化）
 
 - **新增 EbAiPromptBox（AI 输入台）**：模型选择 pill（输入台上方居中，menu 语义 +

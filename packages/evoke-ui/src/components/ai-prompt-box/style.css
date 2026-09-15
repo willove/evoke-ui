@@ -186,6 +186,28 @@
   cursor: not-allowed;
 }
 
+/* ─── 跨浏览器激活态归一：输入台自带焦点指示（渐变描边），
+       屏蔽 Chrome/Safari/Firefox 的默认输入框聚焦环与移动端点击高亮；
+       工具按钮保留全局 :focus-visible 键盘焦点环，仅关触控高亮 ─── */
+.ev-ai-prompt-box__textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ev-ai-prompt-box__textarea:focus,
+.ev-ai-prompt-box__textarea:focus-visible {
+  outline: none;
+}
+
+.ev-ai-prompt-box__textarea::-moz-focus-inner {
+  border: 0;
+}
+
+.ev-ai-prompt-box button {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* ─── 工具行 ─── */
 .ev-ai-prompt-box__toolbar {
   display: flex;

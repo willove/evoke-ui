@@ -173,6 +173,12 @@ onBeforeUnmount(() => timer && clearInterval(timer))
 </template>
 
 <style scoped>
+/* 站点头：实底 + 发丝线，导航文本与首屏内容拉开层次 */
+.ai-landing :deep(.ev-navbar) {
+  background: var(--ev-bg-container);
+  border-bottom: 1px solid var(--ev-border-color-light);
+}
+
 .ai-landing {
   min-height: 100vh;
   background: var(--ev-bg-page);

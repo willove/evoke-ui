@@ -1,7 +1,6 @@
 <template>
   <eb-app-layout
-    title="积云数合 · 智能运营助手"
-    logo-text="积"
+    title="智能运营助手"
     :collapsed="collapsed"
     @update:collapsed="collapsed = $event"
     :is-dark="isDark"
