@@ -21,6 +21,15 @@ const remoteOptions = ref([
   { value: 'shenzhen', label: '深圳' },
   { value: 'guangzhou', label: '广州' },
 ])
+const dataV = ref('')
+const virtualV = ref('')
+const cityOptions = [
+  '上海', '北京', '广州', '深圳', '杭州', '成都', '武汉', '南京', '重庆', '苏州', '西安', '长沙',
+].map((c) => ({ value: c, label: c }))
+const hugeOptions = Array.from({ length: 10000 }, (_, i) => ({
+  value: i + 1,
+  label: `数据行 ${String(i + 1).padStart(5, '0')}`,
+}))
 let remoteTimer = null
 function handleRemoteSearch(query) {
   remoteLoading.value = true
@@ -95,6 +104,17 @@ remote 声明远程模式：键入时调用 remote-method(query) 拉取选项（
 </eb-select>
 </DemoBlock>
 
+## 数据模式与虚拟滚动
+
+传 `options` 数组即进入数据模式：无需手写 eb-option，下拉由组件直接渲染；再叠加 `virtual` 开启虚拟滚动——万级选项只渲染可视窗口，滚动、键盘、过滤全程流畅。
+
+<DemoBlock>
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+  <eb-select v-model="dataV" :options="cityOptions" placeholder="数据模式（12 城）" style="width: 220px;" />
+  <eb-select v-model="virtualV" :options="hugeOptions" virtual filterable placeholder="虚拟滚动（10000 项，可搜索）" style="width: 240px;" />
+</div>
+</DemoBlock>
+
 ## 选项分组
 
 eb-option-group 以 label 作为分组标题，把选项按业务维度归组，长列表更易扫读。
@@ -150,6 +170,8 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'collapse-tags', desc: '多选时折叠超出数量的 tag', type: 'boolean', default: 'false' },
   { name: 'max-collapse-tags', desc: '折叠模式下展示的 tag 数上限，其余折叠为 + N', type: 'number', default: '1' },
   { name: 'collapse-tags-tooltip', desc: '预留参数（当前版本未启用）', type: 'boolean', default: 'false' },
+  { name: 'options', desc: '数据模式选项数组，传入后下拉由组件渲染，无需手写 option', type: '{ value, label?, disabled? }[]', default: 'null' },
+  { name: 'virtual', desc: '虚拟滚动（需配合 options），万级选项只渲染可视窗口', type: 'boolean', default: 'false' },
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
 ]" />
 

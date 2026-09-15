@@ -4,6 +4,26 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 基础能力补全：虚拟滚动集成与表格行内编辑（ROADMAP 收官双项）
+
+- **Select 数据模式 + 虚拟滚动**：新增 `options` 数据驱动模式（无需手写 EbOption，下拉由
+  组件渲染，label 缺省回退 String(value)）；叠加 `virtual` 走 EbVirtualList——万级选项只渲染
+  可视窗口（窗口外选项不注册、aria-activedescendant 自然静默，键盘滚动自动把高亮项带回
+  窗口）；过滤 / 键盘 / 多选 / allow-create / 预选中定位全链路兼容；插槽注册模式行为不变
+  （含首帧空注册表与空态共存的时序语义）；新增 10 项数据模式 / 虚拟回归。
+- **Table 虚拟滚动**：`virtual` + `rowHeight`（默认 48）占位行方案——单一 table 结构、
+  colgroup 列宽、sticky 固定列、多选、行级键盘导航全部保留；上下占位行撑开总高，窗口行
+  携带绝对索引（stripe / 键盘索引不漂移），键盘跨窗口自动滚动对齐目标行；视口无布局环境
+  （SSR / 测试）时退化为全量渲染；需配合 height / maxHeight；新增 5 项虚拟回归。
+- **Table 行内编辑**：EbTableColumn 新增 `editable`——单元格点击进入编辑，Enter / 失焦提交、
+  Esc 取消、值未变化不发事件；提交直接更新行数据并 emit `cell-change`（row / prop / value /
+  oldValue / $index）；formatter 只影响展示，编辑回写原始值；default 插槽列不受 editable
+  影响（复杂编辑器自行承载）。
+- **DataTable 承接**：Column 配置新增 `editable` 透传（配置 slot / stack 的列保持自定义
+  渲染），`cell-change` 事件重发；虚拟滚动经既有 `tableAttrs` 透传即可用。
+- 新增测试文件 select-virtual.test.js / table-virtual.test.js（21 项），全仓 90 文件
+  1425 项全绿。
+
 ### @wil-works/evoke-business-ui — ROADMAP 收尾批：a11y / 倒计时 / 国际化与工程化配套
 
 - **DatePicker 完整键盘导航（a11y 深化收口）**：日历网格升级 grid 语义（gridcell /

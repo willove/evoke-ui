@@ -96,7 +96,27 @@
               <div v-else-if="allOptions.length === 0" class="eb-select-dropdown__empty">
                 {{ t('select.noData') }}
               </div>
+              <!-- 数据模式 + 虚拟滚动：万级选项只渲染可视窗口；
+                   与下方列表互斥。插槽模式首帧注册表为空（寄存区刚卸载），
+                   空 listbox 分支若切断列表渲染会饿死注册，故空态与列表可共存 -->
+              <eb-virtual-list
+                v-if="isDataMode && virtual"
+                ref="virtualListRef"
+                :id="listboxId"
+                class="eb-select-dropdown__list"
+                role="listbox"
+                :aria-multiselectable="multiple || undefined"
+                :items="filteredOptions"
+                item-key="value"
+                :item-size="OPTION_HEIGHT"
+                :height="274"
+              >
+                <template #default="{ item }">
+                  <eb-option :value="item.value" :label="item.label" :disabled="item.disabled" />
+                </template>
+              </eb-virtual-list>
               <div
+                v-else
                 ref="dropdownListRef"
                 :id="listboxId"
                 class="eb-select-dropdown__list"
@@ -105,7 +125,16 @@
                 style="overflow: auto; max-height: 274px"
                 @keydown="handleKeydown"
               >
-                <slot />
+                <slot v-if="!isDataMode" />
+                <template v-else>
+                  <eb-option
+                    v-for="opt in filteredOptions"
+                    :key="opt.value"
+                    :value="opt.value"
+                    :label="opt.label"
+                    :disabled="opt.disabled"
+                  />
+                </template>
               </div>
             </template>
           </div>
@@ -145,11 +174,14 @@
 <script setup>
 /**
  * EbSelect — 选择器
- * 子组件注册模式（EbOption onMounted 注册）；键盘导航（↑↓ Enter Esc）；
- * filterable/remote/multiple/collapse-tags/allow-create/clearable
+ * 双模式：子组件注册模式（EbOption onMounted 注册，插槽承载）与数据模式（options 数组，
+ * 下拉由本组件渲染，可叠加 virtual 虚拟滚动承接万级选项）；
+ * 键盘导航（↑↓ Enter Esc）；filterable/remote/multiple/collapse-tags/allow-create/clearable
  */
 import { computed, nextTick, onBeforeUnmount, provide, ref, toRef, watch, useAttrs, useId } from 'vue'
 import EbIcon from '../icon/index.vue'
+import EbOption from './option.vue'
+import EbVirtualList from '../virtual-list/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
@@ -182,6 +214,10 @@ const props = defineProps({
   maxCollapseTags: { type: Number, default: 1 },
   /** v2 兼容：collapseTags 数量语义 */
   collapseTagsTooltip: { type: Boolean, default: false },
+  /** 数据模式：选项数组 [{ value, label, disabled }]；传入后下拉由本组件渲染（插槽模式仍可用） */
+  options: { type: Array, default: null },
+  /** 虚拟滚动（需配合 options）：万级选项只渲染可视窗口 */
+  virtual: { type: Boolean, default: false },
   name: { type: String, default: undefined },
 })
 
@@ -203,6 +239,7 @@ const referenceRef = ref(null)
 const floatingRef = ref(null)
 const inputRef = ref(null)
 const dropdownListRef = ref(null)
+const virtualListRef = ref(null)
 
 const dropdownVisible = ref(false)
 const isFocused = ref(false)
@@ -214,7 +251,10 @@ const hoveringOption = ref(null)
 const listboxId = useId()
 const activeDescendantId = computed(() => {
   if (!dropdownVisible.value) return undefined
-  return hoveringOption.value?.id || undefined
+  const target = hoveringOption.value
+  if (!target) return undefined
+  // id 以已挂载 EbOption 的注册表为准（虚拟模式下滚动出窗的选项无 id，播报自然静默）
+  return optionItems.value.find((o) => o.value === target.value)?.id || undefined
 })
 /** 子组件注册的 Option 描述符 [{ value, label, disabled, el, group }] */
 const optionItems = ref([])
@@ -246,9 +286,24 @@ const dropdownStyle = computed(() => ({
   minWidth: `${referenceRef.value?.offsetWidth ?? 0}px`,
 }))
 
-// ─── 全部选项（注册 + allow-create 虚拟项） ───
+// ─── 全部选项（数据模式 / 插槽注册 + allow-create 虚拟项） ───
+const OPTION_HEIGHT = 34
+
+/** 数据模式：下拉选项由本组件按 options 渲染；插槽模式：来源 = 注册表 */
+const isDataMode = computed(() => Array.isArray(props.options))
+
+const dataOptions = computed(() =>
+  isDataMode.value
+    ? props.options.map((o) => ({
+        value: o.value,
+        label: o.label ?? String(o.value),
+        disabled: !!o.disabled,
+      }))
+    : []
+)
+
 const allOptions = computed(() => {
-  const list = [...optionItems.value]
+  const list = isDataMode.value ? [...dataOptions.value] : [...optionItems.value]
   if (createdOption.value && !list.some((o) => o.value === createdOption.value.value)) {
     list.unshift(createdOption.value)
   }
@@ -507,6 +562,14 @@ function handleKeydown(e) {
 
 function scrollToHovering() {
   nextTick(() => {
+    // 虚拟模式：把高亮项滚进可视窗口（已入窗则不动，避免逐键跳动）
+    if (isDataMode.value && props.virtual && virtualListRef.value) {
+      const idx = filteredOptions.value.findIndex((o) => o.value === hoveringOption.value?.value)
+      if (idx < 0) return
+      const { start, end } = virtualListRef.value.getVisibleRange()
+      if (idx < start || idx > end) virtualListRef.value.scrollTo(idx)
+      return
+    }
     const listEl = dropdownListRef.value
     if (!listEl) return
     const active = listEl.querySelector('.eb-select-dropdown__item.is-hovering')
@@ -520,11 +583,16 @@ watch(dropdownVisible, (val) => {
     hoveringOption.value = null
     // 定位当前选中项
     if (!props.multiple && hasSelection.value) {
-      const idx = visibleOptionList().findIndex((o) => o.value === selectedValues.value[0])
+      const list = visibleOptionList()
+      const idx = list.findIndex((o) => o.value === selectedValues.value[0])
       if (idx >= 0) {
         keyboardIndex.value = idx
         // 同步 hover 态，aria-activedescendant 随之指向已选项
-        hoveringOption.value = visibleOptionList()[idx] ?? null
+        hoveringOption.value = list[idx] ?? null
+        // 虚拟模式把已选项滚进窗口
+        if (isDataMode.value && props.virtual) {
+          nextTick(() => virtualListRef.value?.scrollTo(idx))
+        }
       }
     }
   }

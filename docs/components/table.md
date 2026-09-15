@@ -23,6 +23,21 @@ const rows = ref([
 const tableRef = ref(null)
 const selected = ref([])
 const lastSort = ref('amount descending')
+
+const virtualRows = Array.from({ length: 500 }, (_, i) => ({
+  id: i + 1,
+  name: `资源项 ${String(i + 1).padStart(3, '0')}`,
+  value: Math.round(Math.sin(i / 7) * 500) + 500,
+}))
+const editRows = ref([
+  { name: 'SKU-A1001', stock: 62 },
+  { name: 'SKU-B2022', stock: 35 },
+  { name: 'SKU-C0314', stock: 12 },
+])
+const lastChange = ref('—')
+function onCellChange({ row, prop, value, oldValue }) {
+  lastChange.value = `${row.name} 的 ${prop}：${oldValue} → ${value}`
+}
 function onSortChange(e) { lastSort.value = e.order ? e.prop + ' ' + e.order : '未排序' }
 function onSelectionChange(selection) { selected.value = selection }
 </script>
@@ -127,6 +142,37 @@ function onSelectionChange(selection) { selected.value = selection }
 </eb-table>
 </DemoBlock>
 
+## 虚拟滚动
+
+`virtual` 开启后万级行只渲染可视窗口，表头 / 列宽 / 固定列 / 多选 / 键盘导航全量保留。需配合 `height` 或 `maxHeight` 形成滚动视口；`row-height` 需与实际行高一致（受 size 与内容换行影响时显式对齐）。展开行与树形层级不参与虚拟模式。
+
+<DemoBlock>
+<div style="margin-bottom:8px;color:var(--eb-text-color-secondary);font-size:13px">500 行数据，滚动手感与全量渲染一致</div>
+<eb-table :data="virtualRows" virtual :row-height="40" height="280" border>
+  <eb-table-column prop="id" label="ID" width="80" />
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="value" label="数值" width="120" />
+</eb-table>
+</DemoBlock>
+
+## 行内编辑
+
+列设置 `editable` 后，单元格点击进入编辑：Enter 或失焦提交、Esc 取消；提交时更新行数据并触发 `cell-change`（携带 row / prop / value / oldValue / $index），在其中做校验或落库。需要复杂编辑器（选择器、日期等）时用 default 插槽自行承载，插槽列不受 editable 影响。
+
+<DemoBlock>
+<div style="margin-bottom:8px;color:var(--eb-text-color-secondary);font-size:13px">点击「库存」单元格直接改数</div>
+<eb-table :data="editRows" border @cell-change="onCellChange">
+  <eb-table-column prop="name" label="SKU" />
+  <eb-table-column prop="stock" label="库存" editable width="140" />
+  <eb-table-column prop="status" label="状态" width="140">
+    <template #default="{ row }">
+      <eb-tag :type="row.stock > 40 ? 'success' : 'warning'" size="small">{{ row.stock > 40 ? '充足' : '偏低' }}</eb-tag>
+    </template>
+  </eb-table-column>
+</eb-table>
+<div style="margin-top:8px;color:var(--eb-text-color-secondary);font-size:13px">最近一次提交：{{ lastChange }}</div>
+</DemoBlock>
+
 ## API
 
 <ApiTable title="Table Props" :rows="[
@@ -145,6 +191,8 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'selectOnIndeterminate', desc: '预留参数（当前未参与全选逻辑）', type: 'boolean', default: 'true' },
   { name: 'emptyText', desc: '空数据文案，优先级低于 empty 插槽', type: 'string', default: '' },
   { name: 'showSummary / summaryMethod', desc: '表尾合计（当前版本暂未渲染表尾）', type: 'boolean / function', default: 'false' },
+  { name: 'virtual', desc: '虚拟滚动，万级行只渲染可视窗口（需配合 height / maxHeight；展开行与树形层级不参与）', type: 'boolean', default: 'false' },
+  { name: 'rowHeight', desc: '虚拟模式行高，需与实际行高一致', type: 'number', default: '48' },
 ]" />
 
 <ApiTable title="Table Events" :rows="[
@@ -159,6 +207,7 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'expand-change', desc: '展开行切换', type: '(row, expandedRows) => void', default: '—' },
   { name: 'current-change', desc: '当前行变化', type: '(currentRow, prevRow) => void', default: '—' },
   { name: 'header-click', desc: '表头单元格点击', type: '(column, event) => void', default: '—' },
+  { name: 'cell-change', desc: '行内编辑提交（值有变化时触发，行数据已同步更新）', type: '({ row, prop, value, oldValue, $index }) => void', default: '—' },
 ]" />
 
 <ApiTable title="Table Slots" :rows="[
@@ -199,6 +248,7 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'className / labelClassName', desc: '单元格 / 表头单元格类名', type: 'string', default: '' },
   { name: 'selectable', desc: 'selection 列的行可选判断，返回 false 禁用该行', type: '(row, index) => boolean', default: 'null' },
   { name: 'index', desc: 'index 列序号，数字为起始号，函数自定义', type: 'number | (index) => number', default: '—' },
+  { name: 'editable', desc: '行内编辑：点击单元格进入编辑，Enter / 失焦提交、Esc 取消（default 插槽列不受影响）', type: 'boolean', default: 'false' },
 ]" />
 
 <ApiTable title="TableColumn Slots" :rows="[

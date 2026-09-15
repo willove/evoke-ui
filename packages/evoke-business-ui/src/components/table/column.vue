@@ -42,6 +42,8 @@ const props = defineProps({
   labelClassName: { type: String, default: '' },
   selectable: { type: Function, default: null },
   index: { type: [Number, Function], default: undefined },
+  /** 行内编辑：单元格点击进入编辑（Enter/失焦提交，Esc 取消），提交后 emit cell-change */
+  editable: { type: Boolean, default: false },
 })
 
 const ctx = useTableContext()
@@ -78,6 +80,7 @@ const column = {
   labelClassName: props.labelClassName,
   selectable: props.selectable,
   index: props.index,
+  editable: props.editable,
   get id() {
     return this.columnKey || this.prop || this.type || this.label
   },
@@ -93,7 +96,7 @@ watch(
     props.sortable, props.sortMethod, props.sortBy, props.sortOrders, props.filters,
     props.filterMethod, props.filterMultiple, props.columnKey, props.align,
     props.headerAlign, props.showOverflowTooltip, props.formatter, props.className,
-    props.labelClassName, props.selectable, props.index,
+    props.labelClassName, props.selectable, props.index, props.editable,
   ],
   () => {
     Object.assign(column, {
@@ -119,6 +122,7 @@ watch(
       labelClassName: props.labelClassName,
       selectable: props.selectable,
       index: props.index,
+      editable: props.editable,
     })
   }
 )

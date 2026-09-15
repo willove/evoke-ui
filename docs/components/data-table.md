@@ -141,6 +141,7 @@ const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (
   { name: 'showOverflowTooltip', desc: '超出省略并悬浮显示完整内容', type: 'boolean', default: 'true' },
   { name: 'slot', desc: '自定义单元格插槽名（缺省用 prop 名）', type: 'string', default: '—' },
   { name: 'stack', desc: '双行单元格副行取值函数', type: '(row) => string', default: '—' },
+  { name: 'editable', desc: '行内编辑：点击单元格进入编辑，Enter / 失焦提交、Esc 取消（配置 slot / stack 的列不生效）', type: 'boolean', default: 'false' },
 ]" />
 
 <ApiTable title="Slots" :rows="[
@@ -157,6 +158,7 @@ const dtPageRows = Array.from({ length: 23 }, (_, i) => ({ name: '订单 B-' + (
   { name: 'sort-change', desc: '排序变化', type: '(e) => void', default: '—' },
   { name: 'row-click', desc: '行点击', type: '(e) => void', default: '—' },
   { name: 'cell-click', desc: '单元格点击', type: '(e) => void', default: '—' },
+  { name: 'cell-change', desc: '行内编辑提交（editable 列，值有变化时触发）', type: '({ row, prop, value, oldValue, $index }) => void', default: '—' },
 ]" />
 
 <ApiTable title="Methods" :rows="[

@@ -85,6 +85,7 @@
 
       <!-- 表体 -->
       <div
+        ref="bodyWrapperRef"
         class="eb-table__body-wrapper"
         :style="bodyWrapperStyle"
         @scroll="onBodyScroll"
@@ -98,7 +99,11 @@
             />
           </colgroup>
           <tbody>
-            <template v-for="(row, rowIndex) in displayData" :key="rowKeyOf(row, rowIndex)">
+            <!-- 虚拟滚动：上下占位行撑开总高，只渲染可视窗口行（含 buffer） -->
+            <tr v-if="spacerTop > 0" class="eb-table__virtual-spacer" aria-hidden="true">
+              <td :colspan="renderColumns.length" :style="{ height: spacerTop + 'px', padding: 0, border: 'none' }" />
+            </tr>
+            <template v-for="{ row, index: rowIndex } in virtualRows" :key="rowKeyOf(row, rowIndex)">
               <tr
                 class="eb-table__row"
                 :class="[
@@ -167,8 +172,27 @@
                       <template v-else-if="i === firstNormalColIndex && rowLevel(row) > 0">
                         <span class="eb-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
                       </template>
-                      <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
-                      <template v-else>{{ textOf(col, row, rowIndex) }}</template>
+                      <template v-if="col.editable && !col.slots?.default">
+                        <input
+                          v-if="isEditing(rowIndex, col)"
+                          v-model="editDraft"
+                          class="eb-table__edit-input"
+                          @keydown.enter.stop.prevent="commitEdit(rowIndex, col)"
+                          @keydown.esc.stop.prevent="cancelEdit"
+                          @blur="commitEdit(rowIndex, col)"
+                          @click.stop
+                        />
+                        <span
+                          v-else
+                          class="eb-table__editable-text"
+                          :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
+                          @click.stop="startEdit(rowIndex, col)"
+                        >{{ textOf(col, row, rowIndex) }}</span>
+                      </template>
+                      <template v-else>
+                        <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
+                        <template v-else>{{ textOf(col, row, rowIndex) }}</template>
+                      </template>
                     </template>
                   </div>
                 </td>
@@ -185,6 +209,9 @@
                 </td>
               </tr>
             </template>
+            <tr v-if="spacerBottom > 0" class="eb-table__virtual-spacer" aria-hidden="true">
+              <td :colspan="renderColumns.length" :style="{ height: spacerBottom + 'px', padding: 0, border: 'none' }" />
+            </tr>
           </tbody>
         </table>
         <!-- 空态 -->
@@ -274,6 +301,10 @@ const props = defineProps({
   /** 表尾合计（简化：函数返回行数组） */
   summaryMethod: { type: Function, default: null },
   showSummary: { type: Boolean, default: false },
+  /** 虚拟滚动：万级行只渲染可视窗口（需配合 height / maxHeight 形成滚动视口） */
+  virtual: { type: Boolean, default: false },
+  /** 虚拟模式行高（px），需与实际行高一致；随 size 变化时须显式对齐 */
+  rowHeight: { type: Number, default: 48 },
 })
 
 const emit = defineEmits([
@@ -289,6 +320,8 @@ const emit = defineEmits([
   'expand-change',
   'current-change',
   'header-click',
+  /** 行内编辑提交：{ row, prop, value, oldValue, $index } */
+  'cell-change',
 ])
 
 const slots = useSlots()
@@ -808,6 +841,16 @@ watch(
 
 function focusRowByIndex(index) {
   keyboardRowIndex.value = index
+  // 虚拟模式：目标行可能不在窗口内，先把滚动位置对齐到目标行
+  if (props.virtual && bodyWrapperRef.value) {
+    const el = bodyWrapperRef.value
+    const top = index * props.rowHeight
+    const viewH = el.clientHeight || bodyViewportH.value
+    if (viewH > 0) {
+      if (top < el.scrollTop) el.scrollTop = top
+      else if (top + props.rowHeight > el.scrollTop + viewH) el.scrollTop = top + props.rowHeight - viewH
+    }
+  }
   nextTick(() => {
     rootRef.value?.querySelector(`tr[data-row-index="${index}"]`)?.focus?.()
   })
@@ -849,9 +892,112 @@ function toggleTreeExpand(row) {
 }
 const indentStyle = (level) => ({ width: `${level * 18}px`, display: 'inline-block' })
 
-// ─── 滚动同步（预留：横向滚动阴影） ───
-function onBodyScroll() {
-  /* 预留 */
+// ─── 虚拟滚动（占位行方案：单一 table 结构 / colgroup / sticky 列全保留） ───
+const bodyWrapperRef = ref(null)
+const bodyScrollTop = ref(0)
+const bodyViewportH = ref(0)
+
+const VIRTUAL_BUFFER = 5
+
+const virtualRange = computed(() => {
+  const total = displayData.value.length
+  if (!props.virtual || !bodyViewportH.value) return { start: 0, end: total - 1 }
+  let start = Math.floor(bodyScrollTop.value / props.rowHeight) - VIRTUAL_BUFFER
+  start = Math.max(0, start)
+  const visible = Math.ceil(bodyViewportH.value / props.rowHeight)
+  let end = start + visible + VIRTUAL_BUFFER * 2
+  if (end > total - 1) end = total - 1
+  return { start, end }
+})
+
+const virtualRows = computed(() => {
+  const list = displayData.value
+  if (!props.virtual) return list.map((row, index) => ({ row, index }))
+  const { start, end } = virtualRange.value
+  const out = []
+  for (let i = start; i <= end; i++) out.push({ row: list[i], index: i })
+  return out
+})
+
+const spacerTop = computed(() =>
+  props.virtual ? virtualRange.value.start * props.rowHeight : 0
+)
+
+const spacerBottom = computed(() => {
+  if (!props.virtual) return 0
+  return Math.max(0, (displayData.value.length - 1 - virtualRange.value.end) * props.rowHeight)
+})
+
+function measureViewport() {
+  const el = bodyWrapperRef.value
+  if (el) bodyViewportH.value = el.clientHeight
+}
+
+const RO = typeof ResizeObserver !== 'undefined' ? ResizeObserver : null
+let bodyRo = null
+
+onMounted(() => {
+  measureViewport()
+  if (props.virtual && props.height === undefined && props.maxHeight === undefined) {
+    console.warn('[EbTable] virtual 需要设置 height 或 maxHeight 才能形成滚动视口')
+  }
+  if (RO && bodyWrapperRef.value) {
+    bodyRo = new RO(() => measureViewport())
+    bodyRo.observe(bodyWrapperRef.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  bodyRo?.disconnect()
+  bodyRo = null
+})
+
+watch(
+  () => [props.height, props.maxHeight, props.virtual],
+  () => nextTick(measureViewport)
+)
+
+// ─── 行内编辑 ───
+/** 当前编辑单元格 { index, prop }；同一时刻至多一个 */
+const editingCell = ref(null)
+const editDraft = ref('')
+
+const isEditing = (index, col) =>
+  editingCell.value?.index === index && editingCell.value?.prop === col.prop
+
+function startEdit(index, col) {
+  if (editingCell.value) commitEdit(editingCell.value.index, { prop: editingCell.value.prop })
+  const row = displayData.value[index]
+  editingCell.value = { index, prop: col.prop }
+  editDraft.value = row?.[col.prop] ?? ''
+  nextTick(() => {
+    rootRef.value?.querySelector('.eb-table__edit-input')?.focus?.()
+  })
+}
+
+function commitEdit(index, col) {
+  if (!editingCell.value) return
+  const row = displayData.value[index]
+  const prop = col.prop
+  const oldValue = row?.[prop]
+  const value = editDraft.value
+  editingCell.value = null
+  editDraft.value = ''
+  if (row == null || String(oldValue ?? '') === String(value)) return
+  row[prop] = value
+  emit('cell-change', { row, prop, value, oldValue, $index: index })
+}
+
+function cancelEdit() {
+  editingCell.value = null
+  editDraft.value = ''
+}
+
+// ─── 滚动同步 ───
+function onBodyScroll(e) {
+  bodyScrollTop.value = e.target.scrollTop
+  // 无布局环境（SSR/测试）首次滚动时补测视口高度
+  measureViewport()
 }
 
 /** 实例方法：doLayout()（sticky 布局自适应，保留 API 兼容） */

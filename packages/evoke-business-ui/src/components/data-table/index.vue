@@ -23,6 +23,7 @@
         @sort-change="emit('sort-change', $event)"
         @row-click="emit('row-click', $event)"
         @cell-click="emit('cell-click', $event)"
+        @cell-change="emit('cell-change', $event)"
       >
         <eb-table-column v-if="selectable" type="selection" :width="44" />
         <eb-table-column v-if="showIndex" type="index" label="#" :width="indexWidth" />
@@ -37,8 +38,10 @@
           :sortable="col.sortable"
           :align="col.align"
           :show-overflow-tooltip="col.showOverflowTooltip !== false"
+          :editable="col.editable"
         >
-          <template #default="scope">
+          <!-- 仅在有自定义单元格需求时挂 default 插槽；否则 editable 列走表格内建编辑 -->
+          <template v-if="col.slot || col.stack || $slots[col.prop]" #default="scope">
             <slot :name="col.slot || col.prop" v-bind="scope">
               <eb-cell-stack v-if="col.stack" :main="scope.row[col.prop]" :sub="col.stack(scope.row)" />
               <template v-else>{{ scope.row[col.prop] }}</template>
@@ -76,7 +79,7 @@
 /**
  * EbDataTable — CRUD 表格封装（业务封装）
  * toolbar（标题 + 计数角标 + actions 插槽）+ EbTable（columns 配置式）+ 内置分页；
- * columns = [{ prop, label, width?, minWidth?, fixed?, sortable?, align?, slot?, stack?(row)=>副行 }]；
+ * columns = [{ prop, label, width?, minWidth?, fixed?, sortable?, align?, slot?, stack?(row)=>副行, editable? }]；
  * 分页受控：page/pageSize props + update:page/update:pageSize/page-change 事件；
  * expose 透传 EbTable 实例方法（clearSelection/toggleRowSelection 等）
  */
@@ -122,6 +125,7 @@ const emit = defineEmits([
   'sort-change',
   'row-click',
   'cell-click',
+  'cell-change',
 ])
 
 const tableRef = ref(null)
