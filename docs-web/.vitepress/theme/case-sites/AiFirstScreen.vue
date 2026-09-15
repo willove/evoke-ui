@@ -173,10 +173,11 @@ onBeforeUnmount(() => timer && clearInterval(timer))
 </template>
 
 <style scoped>
-/* 站点头：实底 + 发丝线，导航文本与首屏内容拉开层次 */
+/* 站点头：实底 + 发丝线 + 轻阴影，导航与首屏拉开层次 */
 .ai-landing :deep(.ev-navbar) {
   background: var(--ev-bg-container);
   border-bottom: 1px solid var(--ev-border-color-light);
+  box-shadow: var(--ev-shadow-1);
 }
 
 .ai-landing {
@@ -194,6 +195,9 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   align-items: center;
   text-align: center;
   padding: 72px 24px 40px;
+  /* 顶部淡雾光晕：给首屏一点背景加持，衬托导航与标题层次 */
+  background:
+    radial-gradient(58% 46% at 50% 0%, var(--ev-color-primary-light-9) 0%, transparent 100%);
 }
 
 .ai-landing__badge {
@@ -215,8 +219,10 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   text-wrap: balance;
 }
 
+/* 文字专用渐变：主色 → 紫（--ev-gradient-hero 是区块背景用的近白渐变，禁用于文字） */
 .ai-landing__grad {
-  background: var(--ev-gradient-hero);
+  font-weight: 500;
+  background: linear-gradient(120deg, var(--ev-color-primary) 20%, #7c5cff 90%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
