@@ -14,6 +14,24 @@ describe('EvSection', () => {
     const wrapper = mount(EvSection, { props: { title: 'T', align: 'center' } })
     expect(wrapper.classes()).toContain('is-center')
   })
+
+  it('width 定宽档：full 默认不带档位类，其余档挂 is-width-*', () => {
+    const full = mount(EvSection, { props: { title: 'T' } })
+    expect(full.classes()).not.toContain('is-width-full')
+
+    const narrow = mount(EvSection, { props: { title: 'T', width: 'narrow' } })
+    expect(narrow.classes()).toContain('is-width-narrow')
+
+    const wide = mount(EvSection, { props: { title: 'T', width: 'wide' } })
+    expect(wide.classes()).toContain('is-width-wide')
+  })
+
+  it('width 定宽不影响 align / snap 等既有类', () => {
+    const wrapper = mount(EvSection, { props: { title: 'T', width: 'default', align: 'center', snap: true } })
+    expect(wrapper.classes()).toContain('is-width-default')
+    expect(wrapper.classes()).toContain('is-center')
+    expect(wrapper.classes()).toContain('is-snap')
+  })
 })
 
 describe('EvCard', () => {

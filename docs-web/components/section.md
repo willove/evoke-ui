@@ -31,9 +31,24 @@
 
 </DemoBlock>
 
+## 定宽档
+
+<DemoBlock title="width 定宽居中" description="整页视口下超过档位宽度后区块居中、不再撑到屏幕边缘；窄于档位宽度时自适应收缩。演示区列宽不足以触发档位，实际效果在整页使用时可见。">
+
+```vue
+<EvSection eyebrow="features" title="即时洞察" width="default">
+  <FeatureGrid :items="features" />
+</EvSection>
+
+<!-- 档位：narrow 920 / default 1152 / wide 1360 / full 通栏（默认） -->
+```
+
+</DemoBlock>
+
 ::: tip 区块节奏
 组件自带 96px 的底部外边距形成呼吸感；需要压缩时用 `gap` 属性覆写。
-所有区块内部建议再配合 [EvContainer](./container)（或内置容器的组件）对齐。
+整页使用时建议给区块声明 `width` 定宽档（与 [EvContainer](./container) 同一套档位与令牌）；
+不声明时区块通栏，也可继续外包 EvContainer 对齐。
 :::
 
 ## API
@@ -52,6 +67,7 @@
 | saturate | 磨砂饱和度（倍数），内联覆盖 `--ev-glass-saturate` | string / number | — |
 | tint | 磨砂底色浓度（%），内联覆盖 `--ev-glass-bg` | string / number | — |
 | snap | 滚动吸附：滚近时轻吸到视口顶（proximity，可打断）；页面有吸附区块即自动启用 | boolean | `false` |
+| width | 定宽档：超过档位宽度后居中不再撑边，与 Container 共用 `--ev-container-width` 令牌 | `'narrow' \| 'default' \| 'wide' \| 'full'` | `'full'` |
 
 ### 插槽
 

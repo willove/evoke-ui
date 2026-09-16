@@ -4,6 +4,27 @@
   margin-bottom: 96px;
 }
 
+/* ─── 定宽档（与 EvContainer 同一套令牌与档位表达式）：
+   窄于档位宽度自适应收缩，超过后居中不再撑边 ─── */
+.ev-section.is-width-narrow,
+.ev-section.is-width-default,
+.ev-section.is-width-wide {
+  margin-inline: auto;
+  padding-inline: var(--ev-space-6);
+}
+
+.ev-section.is-width-narrow {
+  max-width: min(var(--ev-container-width, 1152px), 920px);
+}
+
+.ev-section.is-width-default {
+  max-width: var(--ev-container-width, 1152px);
+}
+
+.ev-section.is-width-wide {
+  max-width: max(var(--ev-container-width, 1152px), 1360px);
+}
+
 .ev-section.is-center {
   text-align: center;
 }

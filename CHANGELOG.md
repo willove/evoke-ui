@@ -4,7 +4,14 @@
 
 ## [Unreleased]
 
-（暂无）
+### @wil-works/evoke-ui — EvSection 新增 width 定宽档
+
+- **区块级定宽居中**：`width` 四档 `narrow`（920）/ `default`（1152）/ `wide`（1360）/
+  `full`（通栏，默认），视口超过档位宽度后区块居中、不再撑到屏幕边缘，窄于档位
+  自适应收缩并自带两侧留白；整页组装时无需再外包 EvContainer；
+- 与 EvContainer 共用同一套档位表达式与 `--ev-container-width` 令牌，
+  ConfigProvider 整站调整容器宽时同步生效；默认 `full` 保持既有页面不受影响；
+- 2 项行为级测试（默认不带档位类、定宽与 align/snap 共存）。
 
 ## [ui 0.10.0 / business-ui 0.7.0] — 2026-09-16
 

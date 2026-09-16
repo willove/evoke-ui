@@ -1,5 +1,5 @@
 <template>
-  <section :class="['ev-section', `is-${align}`, { 'is-snap': snap, 'is-glass': glass === true, 'no-glass': glass === false }]" :style="[sectionStyle, glassVars]">
+  <section :class="['ev-section', `is-${align}`, widthClass, { 'is-snap': snap, 'is-glass': glass === true, 'no-glass': glass === false }]" :style="[sectionStyle, glassVars]">
     <div v-if="eyebrow || $slots.eyebrow" class="ev-section__eyebrow">
       <slot name="eyebrow">{{ eyebrow }}</slot>
     </div>
@@ -45,7 +45,15 @@ const props = defineProps({
   gap: { type: [String, Number], default: undefined },
   /** 滚动吸附：滚到该区块附近时轻吸到视口顶（proximity，可打断；需页面上有至少一个吸附区块才启用） */
   snap: { type: Boolean, default: false },
+  /** 定宽档：超过档位宽度后居中不再撑边；full 通栏（与 EvContainer 同一套 --ev-container-width 令牌） */
+  width: {
+    type: String,
+    default: 'full',
+    validator: (v) => ['narrow', 'default', 'wide', 'full'].includes(v),
+  },
 })
+
+const widthClass = computed(() => (props.width === 'full' ? '' : `is-width-${props.width}`))
 
 const sectionStyle = computed(() => {
   if (props.gap == null || props.gap === '') return undefined
