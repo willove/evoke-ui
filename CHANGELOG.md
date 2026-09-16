@@ -4,6 +4,28 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 新增 EbOtpInput 验证码输入框
+
+- **方框式 OTP 输入**：N 个方框（`length`，1~10）逐位输入，输入自动前进、
+  退格自动回退并清除前一位，方向键 / Home / End 在方框间移动；
+- **整段粘贴自动分配**：在任意方框上粘贴完整验证码，从该位起逐位分配并聚焦
+  末位；`type=number` 时移动端唤起数字键盘，首框启用 `one-time-code`
+  autocomplete，iOS 短信验证码自动填充（经 input 事件进来的多字符）同样
+  自动分配；
+- **形态完备**：`masked` 掩码显示（已填位圆点）、`status=error` 错误态、
+  尺寸三档、`autofocus`；接入 Form 表单契约（size / disabled 继承，
+  change 时机触发校验）；expose `focus / blur / clear`；
+- 14 项行为级测试（输入/粘贴/退格/方向键/过滤/掩码/禁用/回显/清空），
+  7 语言包补 otp 文案（键位奇偶守卫通过）。
+
+### @wil-works/evoke-ui — 新增 EvOtpInput 验证码输入框
+
+- 与 business-ui `EbOtpInput` 同 API 面（EvChart/EbChart 双名先例）：
+  方框式逐位输入自动前进、粘贴整段自动分配、masked 掩码、number/text 双
+  类型、one-time-code 自动填充；官网设计语言落位（--ev-* 令牌明暗一体，
+  悬停边框轻加深、聚焦主色描边）；`error` prop 独立控制错误态；
+- 9 项行为级测试覆盖输入/粘贴/退格/掩码/禁用/回显。
+
 ### examples — 新增 ebui-admin-scaffold 中后台脚手架母版
 
 - **五模式应用壳，实时切换**：`sidebar` 经典侧边栏 / `double-sidebar` 双栏侧边栏 /

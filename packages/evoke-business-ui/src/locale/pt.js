@@ -67,6 +67,10 @@ export const pt = {
       noData: 'Sem dados',
       placeholder: 'Selecionar',
     },
+    otp: {
+      groupLabel: 'Entrada de código',
+      charLabel: 'Dígito {index} do código',
+    },
     pagination: {
       goto: 'Ir para',
       pagesize: '/página',

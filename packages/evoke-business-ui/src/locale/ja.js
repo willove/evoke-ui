@@ -67,6 +67,10 @@ export const ja = {
       noData: 'データがありません',
       placeholder: '選択してください',
     },
+    otp: {
+      groupLabel: '認証コード入力',
+      charLabel: '認証コード {index} 桁目',
+    },
     pagination: {
       goto: '',
       pagesize: '件/ページ',

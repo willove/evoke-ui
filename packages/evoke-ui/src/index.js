@@ -67,6 +67,7 @@ import EvConfigProvider from './components/config-provider/index.vue'
 // Components — 第二批功能组件
 import EvTabs from './components/tabs/index.vue'
 import EvSwitch from './components/switch-comp/index.vue'
+import EvOtpInput from './components/otp-input/index.vue'
 // Components — 布局
 import EvContainer from './components/container/index.vue'
 import EvScrollScene from './components/scroll-scene/index.vue'
@@ -137,6 +138,7 @@ const components = {
   EvConfigProvider,
   EvTabs,
   EvSwitch,
+  EvOtpInput,
   EvContainer,
   EvScrollScene,
   EvBento,
@@ -212,6 +214,7 @@ export {
   EvConfigProvider,
   EvTabs,
   EvSwitch,
+  EvOtpInput,
   EvContainer,
   EvScrollScene,
   EvBento,

@@ -39,6 +39,7 @@ import EbCheckboxGroup from './components/checkbox/group.vue'
 import EbCheckboxButton from './components/checkbox/button.vue'
 import EbSwitch from './components/switch-comp/index.vue'
 import EbInputNumber from './components/input-number/index.vue'
+import EbOtpInput from './components/otp-input/index.vue'
 import EbForm from './components/form/index.vue'
 import EbFormItem from './components/form/item.vue'
 import EbDialog from './components/dialog/index.vue'
@@ -287,6 +288,7 @@ const components = {
   EbCheckboxButton,
   EbSwitch,
   EbInputNumber,
+  EbOtpInput,
   EbForm,
   EbFormItem,
   EbDialog,
@@ -487,6 +489,7 @@ export {
   EbCheckboxButton,
   EbSwitch,
   EbInputNumber,
+  EbOtpInput,
   EbForm,
   EbFormItem,
   EbDialog,

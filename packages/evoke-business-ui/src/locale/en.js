@@ -67,6 +67,10 @@ export const en = {
       noData: 'No data',
       placeholder: 'Select',
     },
+    otp: {
+      groupLabel: 'OTP code input',
+      charLabel: 'OTP digit {index}',
+    },
     pagination: {
       goto: 'Go to',
       pagesize: '/page',

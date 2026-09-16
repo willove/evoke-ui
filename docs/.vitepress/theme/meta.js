@@ -55,6 +55,7 @@ export const CATEGORIES = [
       { name: 'Select', zh: '选择器', path: '/components/select' },
       { name: 'TreeSelect', zh: '树形选择', path: '/components/tree-select' },
       { name: 'InputNumber', zh: '数字输入框', path: '/components/input-number' },
+      { name: 'OtpInput', zh: '验证码输入框', path: '/components/otp-input' },
       { name: 'Radio', zh: '单选框', path: '/components/radio' },
       { name: 'Checkbox', zh: '多选框', path: '/components/checkbox' },
       { name: 'Switch', zh: '开关', path: '/components/switch' },

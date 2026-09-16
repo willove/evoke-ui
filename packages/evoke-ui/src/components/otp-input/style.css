@@ -1,0 +1,54 @@
+/* EvOtpInput — 验证码输入框（方框式 OTP） */
+
+.ev-otp-input {
+  display: inline-flex;
+  gap: var(--ev-space-2);
+}
+
+.ev-otp-input__box {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--ev-border-color);
+  border-radius: var(--ev-radius-md);
+  background-color: var(--ev-bg-container);
+  color: var(--ev-text-primary);
+  text-align: center;
+  font-size: var(--ev-font-size-lg);
+  caret-color: var(--ev-color-primary);
+  outline: none;
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-smooth);
+}
+
+/* 悬停：边框轻加深一档（不做强调色） */
+.ev-otp-input__box:not(:disabled):not(:focus):hover {
+  border-color: var(--ev-border-color-dark);
+}
+
+.ev-otp-input__box:focus {
+  border-color: var(--ev-color-primary);
+}
+
+/* 尺寸三档 */
+.ev-otp-input--small .ev-otp-input__box {
+  width: 32px;
+  height: 32px;
+  font-size: var(--ev-font-size-base);
+}
+.ev-otp-input--large .ev-otp-input__box {
+  width: 48px;
+  height: 48px;
+  font-size: var(--ev-font-size-xl);
+}
+
+/* 错误态 */
+.ev-otp-input.is-error .ev-otp-input__box {
+  border-color: var(--ev-color-danger);
+}
+
+/* 禁用态 */
+.ev-otp-input.is-disabled .ev-otp-input__box {
+  background-color: var(--ev-fill-1);
+  color: var(--ev-text-disabled);
+  cursor: not-allowed;
+}

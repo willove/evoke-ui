@@ -67,6 +67,10 @@ export const zhTW = {
       noData: '無數據',
       placeholder: '請選擇',
     },
+    otp: {
+      groupLabel: '驗證碼輸入',
+      charLabel: '驗證碼第 {index} 位',
+    },
     pagination: {
       goto: '前往',
       pagesize: '條/頁',

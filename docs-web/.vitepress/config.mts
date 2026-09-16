@@ -140,6 +140,7 @@ export default defineConfig({
             { text: 'Badge 徽标', link: '/components/badge' },
             { text: 'Keycap 键帽', link: '/components/keycap' },
             { text: 'Input 输入框', link: '/components/input' },
+            { text: 'OtpInput 验证码输入框', link: '/components/otp-input' },
             { text: 'Textarea 多行输入', link: '/components/textarea' },
             { text: 'Select 下拉选择', link: '/components/select' },
             { text: 'Field 字段包装', link: '/components/field' },

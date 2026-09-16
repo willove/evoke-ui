@@ -67,6 +67,10 @@ export const zhCN = {
       noData: '无数据',
       placeholder: '请选择',
     },
+    otp: {
+      groupLabel: '验证码输入',
+      charLabel: '验证码第 {index} 位',
+    },
     pagination: {
       goto: '前往',
       pagesize: '条/页',

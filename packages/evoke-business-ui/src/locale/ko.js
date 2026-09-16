@@ -67,6 +67,10 @@ export const ko = {
       noData: '데이터 없음',
       placeholder: '선택',
     },
+    otp: {
+      groupLabel: '인증 코드 입력',
+      charLabel: '인증 코드 {index}번째 자리',
+    },
     pagination: {
       goto: '이동',
       pagesize: '/페이지',
