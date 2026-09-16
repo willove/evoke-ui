@@ -30,6 +30,7 @@ import EvQuote from '../../../packages/evoke-ui/src/components/quote/index.vue'
 import EvConfigProvider from '../../../packages/evoke-ui/src/components/config-provider/index.vue'
 import EvTabs from '../../../packages/evoke-ui/src/components/tabs/index.vue'
 import EvSwitch from '../../../packages/evoke-ui/src/components/switch-comp/index.vue'
+import EvOtpInput from '../../../packages/evoke-ui/src/components/otp-input/index.vue'
 import EvContainer from '../../../packages/evoke-ui/src/components/container/index.vue'
 import EvAvatar from '../../../packages/evoke-ui/src/components/avatar/index.vue'
 import EvAvatarGroup from '../../../packages/evoke-ui/src/components/avatar/group.vue'
@@ -88,6 +89,7 @@ export default {
       EvFaq, EvAlert, EvCodeBlock, EvStatistic, EvThemeToggle, EvQuote,
       EvMarkdown, EvMarkdownEditor,
       EvConfigProvider, EvTabs, EvSwitch, EvContainer, EvAvatar, EvAvatarGroup,
+      EvOtpInput,
       EvTimeline, EvComparisonTable, EvCta, EvNewsletter, EvLogoCloud,
       EvVideo, EvAudio, EvContactForm, EvCarousel, EvArticleCard, EvProfileCard,
       EvBorderBeam, EvExecCard, EvArticle, EvImageWall, EvImagePreview, EvWaterfall, EvModal,
