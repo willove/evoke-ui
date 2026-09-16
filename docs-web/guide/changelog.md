@@ -14,6 +14,16 @@ evoke-ui 的版本演进，最新在上。完整的变更明细（含行为变�
 <script setup>
 const releases = [
   {
+    tag: 'v0.10.1',
+    date: '2026-09-16',
+    title: 'EvSection 定宽档',
+    bullets: [
+      'EvSection 新增 width 属性：narrow（920）/ default（1152）/ wide（1360）/ full（通栏，默认），视口超过档位宽度后区块居中、不再撑到屏幕边缘',
+      '与 EvContainer 共用 --ev-container-width 令牌，ConfigProvider 整站调整容器宽时同步生效',
+      '默认 full 保持既有页面不受影响；整页组装时无需再外包 Container',
+    ],
+  },
+  {
     tag: 'v0.10.0',
     date: '2026-09-16',
     title: 'OtpInput 验证码输入框 + 存量源码 TypeScript 化',
