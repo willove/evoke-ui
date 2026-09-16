@@ -20,10 +20,21 @@ evoke-business-ui 的版本演进，最新在上。完整的变更明细（含�
 <script setup>
 const releases = [
   {
+    version: 'v0.7.0',
+    date: '2026-09-16',
+    title: 'EbOtpInput 验证码输入框 + EbTablePage 表格页',
+    latest: true,
+    bullets: [
+      '新增 EbOtpInput：方框式逐位输入自动前进，任意框粘贴整段验证码自动分配，masked 掩码与 number/text 双类型，iOS one-time-code 自动填充',
+      '新增 EbTablePage 表格页：页头 / 查询区 / 工具栏 / 表格分页四区一体，request 数据代理驱动分页排序筛选与查询重置联动',
+      'EbDataTable 新增 fit 高度自适应：撑满剩余空间、表格内部滚动，与 virtual 组合承载万级满屏表格',
+      'utils / composables / directives / 命令式 API 全量迁移 TypeScript，公共类型（MessageOptions / TableData 等）随 d.ts 分发',
+    ],
+  },
+  {
     version: 'v0.6.0',
     date: '2026-09-15',
     title: '类型声明、按需导出与键盘可达性收口',
-    latest: true,
     bullets: [
       '153 个组件 + 4 个命令式 API 全量 d.ts 类型（vue-tsc 产物），主入口与子路径导入均有编辑器补全',
       '按需子路径导出：import EbButton from .../button 只解析该组件与其依赖，不触达其余组件',

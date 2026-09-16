@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.9.0</EvTag>
+      <EvTag size="small">v0.10.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.9.0 发布：类型声明与按需子路径导出——61 个组件全量 d.ts，编辑器补全与按需引入开箱即用</span>
+      <span>v0.10.0 发布：OtpInput 验证码输入框——方框逐位输入、整段粘贴自动分配；工具层全量 TypeScript 化</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.9.0</EvTag>
+        <EvTag tone="primary" size="small">v0.10.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>

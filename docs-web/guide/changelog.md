@@ -14,6 +14,16 @@ evoke-ui 的版本演进，最新在上。完整的变更明细（含行为变�
 <script setup>
 const releases = [
   {
+    tag: 'v0.10.0',
+    date: '2026-09-16',
+    title: 'OtpInput 验证码输入框 + 存量源码 TypeScript 化',
+    bullets: [
+      '新增 EvOtpInput：方框式逐位输入自动前进，任意框粘贴整段验证码自动分配，masked 掩码与 number/text 双类型，iOS one-time-code 自动填充',
+      'utils / composables / directives 全量迁移 TypeScript（11 个模块），strict 模式零错误',
+      '构建产物保持纯 JS，消费端无感；EvOtpInput d.ts 类型随包分发',
+    ],
+  },
+  {
     tag: 'v0.9.0',
     date: '2026-09-15',
     title: '类型声明与按需子路径导出',

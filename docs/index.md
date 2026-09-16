@@ -3,7 +3,7 @@ layout: home
 ---
 
 <div class="bd-hero">
-  <p class="bd-hero__badge">v0.6.0 · 中后台组件库</p>
+  <p class="bd-hero__badge">v0.7.0 · 中后台组件库</p>
   <h1 class="bd-hero__title">
     Evoke <span class="accent">Business</span> UI
   </h1>
@@ -22,7 +22,7 @@ layout: home
   <div class="bd-hero__stats">
     <div class="bd-hero__stat"><strong>150+</strong><span>通用与业务组件</span></div>
     <div class="bd-hero__stat"><strong>29</strong><span>图表类型（Canvas 自绘）</span></div>
-    <div class="bd-hero__stat"><strong>8 套</strong><span>场景示例工程</span></div>
+    <div class="bd-hero__stat"><strong>9 套</strong><span>场景示例工程</span></div>
     <div class="bd-hero__stat"><strong>433</strong><span>内置图标（可按需扩展）</span></div>
   </div>
 </div>

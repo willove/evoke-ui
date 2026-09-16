@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+（暂无）
+
+## [ui 0.10.0 / business-ui 0.7.0] — 2026-09-16
+
 ### @wil-works/evoke-business-ui — 新增 EbOtpInput 验证码输入框
 
 - **方框式 OTP 输入**：N 个方框（`length`，1~10）逐位输入，输入自动前进、
