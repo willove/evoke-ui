@@ -1,0 +1,113 @@
+/* EbContextMenu —右键菜单 */
+
+.eb-context-menu.eb-context-menu {
+  display: block;
+}
+.eb-context-menu.eb-context-menu.is-disabled {
+  cursor: not-allowed;
+}
+
+/* 浮层（Teleport 至 body，光标处 fixed 定位） */
+.eb-context-menu__popper.eb-context-menu__popper {
+  position: fixed;
+  z-index: 2100;
+  margin: 0;
+  padding: var(--eb-space-1);
+  list-style: none;
+  min-width: 160px;
+  max-height: calc(100vh - 8px);
+  overflow-y: auto;
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-3);
+}
+
+/* 菜单项 */
+.eb-context-menu__item.eb-context-menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+  padding: 0 12px;
+  height: 34px;
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-regular);
+  border-radius: var(--eb-radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  list-style: none;
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out), color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-context-menu__item.eb-context-menu__item:not(.is-disabled):hover,
+.eb-context-menu__item.eb-context-menu__item:not(.is-disabled):focus-visible,
+.eb-context-menu__item.eb-context-menu__item.is-open {
+  background-color: var(--eb-fill-color-light);
+  color: var(--eb-color-primary);
+  outline: none;
+}
+
+.eb-context-menu__item.eb-context-menu__item.is-disabled {
+  color: var(--eb-text-color-disabled);
+  cursor: not-allowed;
+}
+
+.eb-context-menu__item.eb-context-menu__item.is-danger:not(.is-disabled) {
+  color: var(--eb-color-danger);
+}
+.eb-context-menu__item.eb-context-menu__item.is-danger:not(.is-disabled):hover,
+.eb-context-menu__item.eb-context-menu__item.is-danger:not(.is-disabled):focus-visible,
+.eb-context-menu__item.eb-context-menu__item.is-danger.is-open {
+  color: var(--eb-color-danger);
+}
+
+.eb-context-menu__item.eb-context-menu__item.is-divided {
+  margin-top: var(--eb-space-1);
+  border-top: 1px solid var(--eb-border-color-lighter);
+}
+
+.eb-context-menu__item.eb-context-menu__item .eb-context-menu__icon {
+  flex-shrink: 0;
+  color: var(--eb-text-color-secondary);
+}
+.eb-context-menu__item.eb-context-menu__item.is-danger:not(.is-disabled) .eb-context-menu__icon {
+  color: inherit;
+}
+
+.eb-context-menu__item.eb-context-menu__item .eb-context-menu__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eb-context-menu__item.eb-context-menu__item .eb-context-menu__arrow {
+  flex-shrink: 0;
+  color: var(--eb-text-color-secondary);
+}
+
+/* 子菜单（挂菜单项内侧边弹出） */
+.eb-context-menu__submenu {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  padding: var(--eb-space-1);
+  list-style: none;
+  min-width: 140px;
+  max-height: calc(100vh - 8px);
+  overflow-y: auto;
+  background: var(--eb-bg-color-overlay);
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-shadow-3);
+}
+
+/* 过渡（不位移，仅淡入淡出） */
+.eb-context-fade-enter-active,
+.eb-context-fade-leave-active {
+  transition: opacity var(--eb-duration-fast) var(--eb-ease-out);
+}
+.eb-context-fade-enter-from,
+.eb-context-fade-leave-to {
+  opacity: 0;
+}

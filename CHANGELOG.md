@@ -4,7 +4,22 @@
 
 ## [Unreleased]
 
-（暂无）
+### @wil-works/evoke-business-ui — 新增 EbContextMenu 右键菜单
+
+- **区域右键即菜单**：默认插槽包裹触发区域，区域内右键在光标处弹出（自动
+  阻止浏览器默认菜单）；视口边缘自动反向弹出并钳位，菜单过长走内部滚动，
+  不遮出屏不裁切；
+- **items 配置驱动**：`label` / `icon` / `command` / `disabled` / `divided` /
+  `danger` / `children`（一级子菜单：悬停延时展开、点击父项亦可展开，视口
+  右侧放不下自动翻到左侧），点击菜单项抛出 `command` 并自动收起；
+- **命令式调用**：`ref.open(event | { x, y }, itemsOverride?)` 在任意
+  contextmenu 处复用同一菜单实例并按目标切换菜单内容，`close()` / `visible`
+  程序化控制，`visible-change` 监听显隐；
+- 关闭时机收口：点击菜单项 / 点击外部 / ESC / 页面滚动与窗口缩放均收起，
+  浮层内部滚动不受影响；z-index 走全局队列；
+- 12 项行为级测试（弹出语义/菜单项形态/子菜单/命令式/关闭时机/禁用）。
+
+（暂无其他）
 
 ## [ui 0.10.1] — 2026-09-16
 

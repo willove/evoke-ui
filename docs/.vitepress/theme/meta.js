@@ -128,6 +128,7 @@ export const CATEGORIES = [
       { name: 'Breadcrumb', zh: '面包屑', path: '/components/breadcrumb' },
       { name: 'Pagination', zh: '分页', path: '/components/pagination' },
       { name: 'Dropdown', zh: '下拉菜单', path: '/components/dropdown' },
+      { name: 'ContextMenu', zh: '右键菜单', path: '/components/context-menu' },
       { name: 'Backtop', zh: '返回顶部', path: '/components/backtop' },
       { name: 'Affix', zh: '图钉', path: '/components/affix' },
       { name: 'Anchor', zh: '锚点', path: '/components/anchor' },

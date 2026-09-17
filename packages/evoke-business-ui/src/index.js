@@ -54,6 +54,7 @@ import EbOptionGroup from './components/select/option-group.vue'
 import EbDropdown from './components/dropdown/index.vue'
 import EbDropdownMenu from './components/dropdown/menu.vue'
 import EbDropdownItem from './components/dropdown/item.vue'
+import EbContextMenu from './components/context-menu/index.vue'
 import EbTabs from './components/tabs/index.vue'
 import EbTabPane from './components/tabs/pane.vue'
 import EbDrawer from './components/drawer/index.vue'
@@ -303,6 +304,7 @@ const components = {
   EbDropdown,
   EbDropdownMenu,
   EbDropdownItem,
+  EbContextMenu,
   EbTabs,
   EbTabPane,
   EbDrawer,
@@ -504,6 +506,7 @@ export {
   EbDropdown,
   EbDropdownMenu,
   EbDropdownItem,
+  EbContextMenu,
   EbTabs,
   EbTabPane,
   EbDrawer,
