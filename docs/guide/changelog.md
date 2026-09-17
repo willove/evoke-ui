@@ -20,10 +20,20 @@ evoke-business-ui 的版本演进，最新在上。完整的变更明细（含�
 <script setup>
 const releases = [
   {
+    version: 'v0.8.0',
+    date: '2026-09-17',
+    title: 'EbContextMenu 右键菜单',
+    latest: true,
+    bullets: [
+      '新增 EbContextMenu：区域右键在光标处弹出，items 配置驱动，支持图标、禁用、分隔线、危险色与一级子菜单',
+      '子菜单独立挂载不被父菜单裁切，视口边缘自动翻边并钳位，超长菜单内部滚动',
+      '命令式 open(event | {x,y}, itemsOverride?) 按目标复用同一菜单实例，close / visible 程序化控制显隐',
+    ],
+  },
+  {
     version: 'v0.7.0',
     date: '2026-09-16',
     title: 'EbOtpInput 验证码输入框 + EbTablePage 表格页',
-    latest: true,
     bullets: [
       '新增 EbOtpInput：方框式逐位输入自动前进，任意框粘贴整段验证码自动分配，masked 掩码与 number/text 双类型，iOS one-time-code 自动填充',
       '新增 EbTablePage 表格页：页头 / 查询区 / 工具栏 / 表格分页四区一体，request 数据代理驱动分页排序筛选与查询重置联动',
