@@ -215,4 +215,46 @@ describe('EbContextMenu 右键菜单', () => {
     expect(wrapper.findComponent(EbContextMenu).emitted('command')).toBeUndefined()
     expect(document.querySelector('.eb-context-menu__submenu')).toBeTruthy()
   })
+
+  it('子菜单 Teleport 至 body 独立挂载，不被父浮层 overflow 裁切', async () => {
+    wrapper = mountRegion(
+      {},
+      [{ label: '排序', children: [{ label: '升序', command: 'asc' }] }]
+    )
+    openByRegion(wrapper)
+    await wait()
+    itemEls()[0].dispatchEvent(new MouseEvent('mouseenter'))
+    await wait(200)
+    const popperEl = popper()
+    const sub = document.querySelector('.eb-context-menu__submenu')
+    expect(sub).toBeTruthy()
+    // 独立挂载：不在父浮层 DOM 子树内，直接挂在 body 下
+    expect(popperEl.contains(sub)).toBe(false)
+    expect(sub.parentElement).toBe(document.body)
+    // 层标记：主浮层与子菜单都带，供关闭判定识别"层内"
+    expect(popperEl.hasAttribute('data-eb-context-menu-layer')).toBe(true)
+    expect(sub.hasAttribute('data-eb-context-menu-layer')).toBe(true)
+    expect(sub.style.position).toBe('fixed')
+  })
+
+  it('子菜单层内 pointerdown / wheel 不误关菜单', async () => {
+    wrapper = mountRegion(
+      {},
+      [{ label: '排序', children: [{ label: '升序', command: 'asc' }] }]
+    )
+    openByRegion(wrapper)
+    await wait()
+    itemEls()[0].dispatchEvent(new MouseEvent('mouseenter'))
+    await wait(200)
+    const sub = document.querySelector('.eb-context-menu__submenu')
+
+    sub.querySelector('.eb-context-menu__item')
+      .dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+    await wait()
+    expect(popper()).toBeTruthy()
+
+    sub.dispatchEvent(new Event('wheel', { bubbles: true }))
+    await wait()
+    expect(popper()).toBeTruthy()
+  })
 })

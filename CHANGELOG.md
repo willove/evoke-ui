@@ -10,8 +10,9 @@
   阻止浏览器默认菜单）；视口边缘自动反向弹出并钳位，菜单过长走内部滚动，
   不遮出屏不裁切；
 - **items 配置驱动**：`label` / `icon` / `command` / `disabled` / `divided` /
-  `danger` / `children`（一级子菜单：悬停延时展开、点击父项亦可展开，视口
-  右侧放不下自动翻到左侧），点击菜单项抛出 `command` 并自动收起；
+  `danger` / `children`（一级子菜单：悬停延时展开、点击父项亦可展开；子菜单
+  Teleport 至 body 独立挂载，不被父菜单裁切，视口右侧放不下自动翻到左侧），
+  点击菜单项抛出 `command` 并自动收起；
 - **命令式调用**：`ref.open(event | { x, y }, itemsOverride?)` 在任意
   contextmenu 处复用同一菜单实例并按目标切换菜单内容，`close()` / `visible`
   程序化控制，`visible-change` 监听显隐；

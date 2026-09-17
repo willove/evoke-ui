@@ -16,11 +16,13 @@
           :style="popperStyle"
           role="menu"
           aria-orientation="vertical"
+          data-eb-context-menu-layer
         >
           <eb-context-menu-item
             v-for="(item, index) in activeItems"
             :key="index"
             :item="item"
+            :z-index="zIndex"
             @command="handleItemCommand"
           />
         </ul>
@@ -39,7 +41,6 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import EbContextMenuItem from './item.vue'
 import { useZIndex } from '../../composables/useZIndex'
-import { useClickOutside } from '../../composables/useClickOutside'
 import { on as onEvent } from '../../utils/events'
 import { inBrowser } from '../../utils/dom'
 
@@ -134,8 +135,14 @@ function handleRegionContextMenu(e) {
   open(e)
 }
 
-// ─── 全局事件：ESC / 浮层外右键 / 滚动意图 / 窗口缩放均收起 ───
+// ─── 全局事件：ESC / 浮层外右键 / 点击外部 / 滚动意图 / 窗口缩放均收起 ───
+// 子菜单 Teleport 至 body 独立挂载，"层内/层外"按 data-eb-context-menu-layer
+// 标记判定（主浮层与子菜单同标记），不能按主浮层 contains 判
 const cleanups = []
+
+function insideMenuLayer(target) {
+  return target instanceof Node && !!target.closest?.('[data-eb-context-menu-layer]')
+}
 
 function bindEvents() {
   if (!inBrowser()) return
@@ -150,16 +157,25 @@ function bindEvents() {
       'contextmenu',
       (e) => {
         if (!opened.value) return
-        const el = floatingRef.value
-        if (el && e.target instanceof Node && !el.contains(e.target)) close()
+        if (!insideMenuLayer(e.target)) close()
+      },
+      { capture: true }
+    )
+  )
+  cleanups.push(
+    onEvent(
+      document,
+      'pointerdown',
+      (e) => {
+        if (!opened.value) return
+        if (!insideMenuLayer(e.target)) close()
       },
       { capture: true }
     )
   )
   const onScrollLike = (e) => {
     if (!opened.value) return
-    const el = floatingRef.value
-    if (el && e.target instanceof Node && el.contains(e.target)) return
+    if (insideMenuLayer(e.target)) return
     close()
   }
   cleanups.push(onEvent(document, 'wheel', onScrollLike, { capture: true, passive: true }))
@@ -169,11 +185,8 @@ function bindEvents() {
 
 onMounted(bindEvents)
 
-const { stop: stopClickOutside } = useClickOutside([floatingRef], () => close(), true)
-
 onBeforeUnmount(() => {
   cleanups.splice(0).forEach((off) => off())
-  stopClickOutside()
 })
 
 defineExpose({
