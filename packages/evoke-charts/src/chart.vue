@@ -2075,9 +2075,20 @@ function cloneSpec(value) {
   if (Array.isArray(value)) return value.map(cloneSpec);
   const out = {};
   Object.keys(value).forEach((k) => {
+    // 原型链防护：__proto__ 键一律丢弃——宿主可能把不可信 JSON.parse 的产物传进 setSpec/getSpec，
+    // out[k] = ... 的赋值会命中 Object.prototype 的 __proto__ setter，把克隆对象的原型替换为攻击者对象
+    if (k === "__proto__") return;
     out[k] = cloneSpec(value[k]);
   });
   return out;
+}
+// 同类防护的就地合并入口：跳过 __proto__ 自有键（Object.assign 对该键走 [[Set]]，同样触发原型 setter）
+function assignSpec(target, source) {
+  Object.keys(source).forEach((k) => {
+    if (k === "__proto__") return;
+    target[k] = source[k];
+  });
+  return target;
 }
 // dev 模式下对 options 做轻量校验，非法配置去重告警（不阻断渲染）
 const IS_DEV = typeof import.meta !== "undefined" && !!import.meta.env?.DEV;
@@ -2284,7 +2295,7 @@ function invalidateHitCaches() {
 defineExpose({
   refresh: () => render(true),
   update(newOptions) {
-    Object.assign(props.options, newOptions);
+    assignSpec(props.options, newOptions);
     invalidateHitCaches();
     specVersion.value++;
     debouncedRender(true);
@@ -2451,7 +2462,7 @@ defineExpose({
     if (spec === null || typeof spec !== "object") return;
     const next = cloneSpec(spec);
     Object.keys(props.options).forEach((k) => delete props.options[k]);
-    Object.assign(props.options, next);
+    assignSpec(props.options, next);
     hiddenSeries.value = new Set();
     focusSeries.value = null;
     brushRect.value = null;

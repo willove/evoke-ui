@@ -83,6 +83,22 @@ describe('EvNavbar', () => {
     })
     expect(wrapper.find('.demo-action').exists()).toBe(true)
   })
+
+  it('安全回归：target="_blank" 自动补 rel="noopener noreferrer"（宿主显式 rel 优先）', () => {
+    const wrapper = mount(EvNavbar, {
+      props: {
+        items: [
+          { label: '外链', href: 'https://a.com', target: '_blank' },
+          { label: '自定义', href: 'https://b.com', target: '_blank', rel: 'external' },
+          { label: '本站', href: '/docs' },
+        ],
+      },
+    })
+    const links = wrapper.findAll('.ev-navbar__link')
+    expect(links[0].attributes('rel')).toBe('noopener noreferrer')
+    expect(links[1].attributes('rel')).toBe('external')
+    expect(links[2].attributes('rel')).toBeUndefined()
+  })
 })
 
 describe('EvFooter', () => {
@@ -100,6 +116,25 @@ describe('EvFooter', () => {
     expect(cols).toHaveLength(2)
     expect(wrapper.findAll('.ev-footer__link')).toHaveLength(3)
     expect(wrapper.find('.ev-footer__copyright').text()).toBe('© 2026 Remix Design')
+  })
+
+  it('安全回归：target="_blank" 自动补 rel="noopener noreferrer"（宿主显式 rel 优先）', () => {
+    const wrapper = mount(EvFooter, {
+      props: {
+        columns: [
+          {
+            title: 'Out',
+            links: [
+              { label: 'GitHub', href: 'https://github.com', target: '_blank' },
+              { label: 'Docs', href: 'https://docs', target: '_blank', rel: 'nofollow' },
+            ],
+          },
+        ],
+      },
+    })
+    const links = wrapper.findAll('.ev-footer__link')
+    expect(links[0].attributes('rel')).toBe('noopener noreferrer')
+    expect(links[1].attributes('rel')).toBe('nofollow')
   })
 })
 

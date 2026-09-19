@@ -14,6 +14,8 @@
       <eb-icon :name="iconName" class="eb-message__icon" />
       <div class="eb-message__content">
         <template v-if="html">
+          <!-- 信任边界：html:true 是宿主显式 opt-in 的 HTML 直出口（同 Element Plus 语义），
+               内容由调用方负责转义，组件不做二次处理；默认路径走插值自动转义 -->
           <span v-html="message"></span>
         </template>
         <template v-else>{{ message }}</template>

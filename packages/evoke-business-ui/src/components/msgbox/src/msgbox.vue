@@ -33,6 +33,8 @@
           <div class="eb-message-box__content">
             <div class="eb-message-box__container">
               <div v-if="message" class="eb-message-box__message">
+                <!-- 信任边界：html:true 是宿主显式 opt-in 的 HTML 直出口（同 Element Plus 语义），
+                     内容由调用方负责转义，组件不做二次处理；默认路径走插值自动转义 -->
                 <p v-if="html" v-html="message"></p>
                 <p v-else>{{ message }}</p>
               </div>

@@ -186,7 +186,14 @@ export function useThemeConfig() {
     reset,
     /** 一次性应用整份配置（EvConfigProvider 消费） */
     applyConfig(next?: Partial<ThemeConfigState> | null) {
-      Object.assign(config, DEFAULT_CONFIG, next || {})
+      Object.assign(config, DEFAULT_CONFIG)
+      // 原型链防护：next 可能来自宿主反序列化的不可信 JSON，__proto__ 自有键
+      // 经 Object.assign 会走 [[Set]] 命中 Object.prototype 的 __proto__ setter，必须跳过
+      const source = next as Record<string, unknown> | null
+      for (const key of Object.keys(source || {})) {
+        if (key === '__proto__') continue
+        ;(config as Record<string, unknown>)[key] = source![key]
+      }
       clearApplied()
       apply()
     },

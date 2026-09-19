@@ -7,6 +7,7 @@
     ]"
     :href="disabled || !href ? undefined : href"
     :target="disabled || !href ? undefined : target"
+    :rel="!disabled && href && target === '_blank' ? 'noopener noreferrer' : undefined"
     :aria-disabled="disabled || undefined"
     @click="handleClick"
   >

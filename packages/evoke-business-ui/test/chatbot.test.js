@@ -220,6 +220,15 @@ describe('chatMarkdown', () => {
     expect(html).toContain('eb-ref-chip--primary') // book 无主题配置 → primary
   })
 
+  it('data: 协议不在默认白名单，降级为 chip 不可点击；宿主可显式加回', () => {
+    const html = renderChatMarkdown('[页面](data:text/html,<h1>hi</h1>)')
+    expect(html).not.toContain('<a href="data:')
+    expect(html).toContain('data-protocol="data"')
+    configureChatMarkdown({ standardProtocols: { add: ['data'] } })
+    expect(renderChatMarkdown('[x](data:text/html,hi)')).toContain('<a href="data:')
+    configureChatMarkdown({ reset: true })
+  })
+
   it('configureChatMarkdown：增删协议、覆盖主题色、reset 归默认', () => {
     configureChatMarkdown({ standardProtocols: { add: ['book'] }, protocolThemes: { doc: 'danger' } })
     const customized = renderChatMarkdown('[x](book:1) [钩子](doc:r)')
@@ -235,6 +244,28 @@ describe('chatMarkdown', () => {
   it('代码块：已知语言走 hljs 高亮，未知语言回落 plaintext', () => {
     expect(renderChatMarkdown('```js\nconst a = 1\n```')).toContain('language-js')
     expect(renderChatMarkdown('```nope\nx\n```')).toContain('language-plaintext')
+  })
+
+  it('安全回归：链接 href/title/data-* 属性位转义，注入载荷不得逃逸出属性', () => {
+    // 无协议相对地址分支：裸引号注入 onmouseover
+    const rel = renderChatMarkdown('[x](a"onmouseover="alert(1)b)')
+    expect(rel).not.toContain('"onmouseover')
+    expect(rel).toContain('href="a&quot;onmouseover=&quot;alert(1)b"')
+    // ref-chip 分支：data-ref-href / data-ref-id 同样转义（无空格载荷才能进链接目的地）
+    const chip = renderChatMarkdown('[y](doc:react"xid="p)')
+    expect(chip).toContain('data-ref-href="doc:react&quot;xid=&quot;p"')
+    // title 注入：markdown 里的 \" 转义经 marked 反转义后是裸引号
+    const titled = renderChatMarkdown('[z](https://e.dev "b\\"c onmouseover=\\"x")')
+    expect(titled).toContain('title="b&quot;c onmouseover=&quot;x"')
+  })
+
+  it('安全回归：markdown 原文 raw HTML 转义为纯文本，不产生可执行节点', () => {
+    const html = renderChatMarkdown('前文 <img src=x onerror="alert(1)"> 后文')
+    expect(html).not.toContain('<img src=x')
+    expect(html).toContain('&lt;img src=x')
+    const script = renderChatMarkdown('<script>alert(1)</script>')
+    expect(script).not.toContain('<script>')
+    expect(script).toContain('&lt;script&gt;')
   })
 })
 

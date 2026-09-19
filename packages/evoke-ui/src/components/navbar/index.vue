@@ -34,7 +34,7 @@
             :key="item.label"
             :href="item.href"
             :target="item.target"
-            :rel="item.rel"
+            :rel="item.target === '_blank' ? item.rel || 'noopener noreferrer' : item.rel"
             class="ev-navbar__link"
             :class="{ 'is-active': isActive(item) }"
           >
@@ -66,7 +66,7 @@
           :key="item.label"
           :href="item.href"
           :target="item.target"
-          :rel="item.rel"
+          :rel="item.target === '_blank' ? item.rel || 'noopener noreferrer' : item.rel"
           class="ev-navbar__mobile-link"
           @click="menuOpen = false"
         >

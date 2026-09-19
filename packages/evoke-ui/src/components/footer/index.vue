@@ -20,6 +20,7 @@
               :key="link.label"
               :href="link.href"
               :target="link.target"
+              :rel="link.target === '_blank' ? link.rel || 'noopener noreferrer' : link.rel"
               class="ev-footer__link"
             >
               {{ link.label }}

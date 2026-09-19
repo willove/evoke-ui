@@ -707,3 +707,53 @@ describe('ganttHitTest 预计算布局契约', () => {
     expect(hit.params.extra.progress).toBe(0.5)
   })
 })
+
+describe('原型链污染防护（update / setSpec / getSpec）', () => {
+  it('update 传入 __proto__ 自有键不替换 options 原型（不可信 JSON 场景）', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'line',
+          animation: { enabled: false },
+          labels: ['a'],
+          series: [{ name: 's', data: [1] }],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    // JSON.parse 会把 "__proto__" 生成为自有数据键（对象字面量则不会），模拟宿主透传不可信 JSON
+    const poisoned = JSON.parse('{"title":{"show":true},"__proto__":{"polluted":true}}')
+    wrapper.vm.update(poisoned)
+    await flushRender()
+    const opts = wrapper.vm.getOption()
+    expect(opts.title).toEqual({ show: true })
+    expect(Object.getPrototypeOf(opts)).toBe(Object.prototype)
+    expect(opts.polluted).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('setSpec/getSpec 往返丢弃 __proto__ 键，克隆对象原型不被替换', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'line',
+          animation: { enabled: false },
+          labels: ['a'],
+          series: [{ name: 's', data: [1] }],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    wrapper.vm.setSpec(JSON.parse('{"type":"line","labels":["b"],"series":[{"name":"s","data":[2]}],"__proto__":{"polluted":true}}'))
+    await flushRender()
+    const spec = wrapper.vm.getSpec()
+    expect(spec.labels).toEqual(['b'])
+    expect(Object.getPrototypeOf(spec)).toBe(Object.prototype)
+    expect(spec.polluted).toBeUndefined()
+    wrapper.unmount()
+  })
+})

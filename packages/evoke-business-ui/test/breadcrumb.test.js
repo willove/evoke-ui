@@ -109,6 +109,14 @@ describe('EbLink', () => {
     expect(wrapper.emitted('click')).toHaveLength(1)
   })
 
+  it('安全回归：target="_blank" 自动补 rel="noopener noreferrer"', () => {
+    const blank = mount(EbLink, { props: { href: 'https://example.com', target: '_blank' } })
+    expect(blank.attributes('rel')).toBe('noopener noreferrer')
+    // 非 _blank 与禁用态不注入 rel
+    expect(mount(EbLink, { props: { href: '/a' } }).attributes('rel')).toBeUndefined()
+    expect(mount(EbLink, { props: { href: 'https://example.com', target: '_blank', disabled: true } }).attributes('rel')).toBeUndefined()
+  })
+
   it('icon 渲染', () => {
     const wrapper = mount(EbLink, { props: { icon: 'search' } })
     expect(wrapper.find('.eb-icon, .eb-iconfont').exists()).toBe(true)

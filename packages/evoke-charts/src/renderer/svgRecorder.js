@@ -293,7 +293,7 @@ function createSvgRecorder(real) {
   function gradientDefs() {
     return gradients.map((g, i) => {
       const stops = g.stops.map((s) => {
-        let color = s.color;
+        let color = escapeXml(String(s.color));
         let opacity = 1;
         const m = /^(#[0-9a-fA-F]{6})([0-9a-fA-F]{2})$/.exec(s.color);
         if (m) {
