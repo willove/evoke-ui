@@ -30,7 +30,26 @@ const targetKeys = ref(['zhang', 'zhao'])
 function onChange(keys) {
   // keys 即更新后的 modelValue
 }
+
+const slotData = [
+  { key: 'css', label: '样式重构', count: 12 },
+  { key: 'perf', label: '性能优化', count: 5 },
+  { key: 'a11y', label: '无障碍适配', count: 8 },
+]
+const slotKeys = ref(['a11y'])
 </script>
+
+## 自定义行内容
+
+`item` 作用域插槽两栏共用，暴露 `item`（行数据）与 `direction`（left / right，来源面板）；未提供插槽时回退渲染 `label` 纯文本。
+
+<DemoBlock>
+  <eb-transfer v-model="slotKeys" :data="slotData" :titles="['待规划', '进行中']">
+    <template #item="{ item, direction }">
+      <span :style="{ fontWeight: direction === 'right' ? 600 : 400 }">{{ item.label }}（{{ item.count }}）</span>
+    </template>
+  </eb-transfer>
+</DemoBlock>
 
 ## Transfer API
 
@@ -38,8 +57,13 @@ function onChange(keys) {
 | --- | --- | --- | --- |
 | modelValue | Array | `[]` | 右侧已选项的 key 数组（v-model） |
 | data | Array | `[]` | 全量数据，项为 `{ key, label }` |
-| titles | Array | `['列表 1', '列表 2']` | 左右栏标题 |
+| titles | Array | `['列表 1', '列表 2']` | 左右栏标题，缺省取当前语言包 |
 | filterable | Boolean | `false` | 开启搜索 |
-| filter-placeholder | String | `请输入搜索内容` | 搜索占位 |
+| filter-placeholder | String | 取语言包（中文为 请输入搜索内容） | 搜索占位 |
+| disabled | Boolean | `false` | 整体禁用：移动按钮、勾选框与搜索框联动 |
 
 事件：`update:modelValue`、`change(keys)`。
+
+<ApiTable title="Transfer Slots" :rows="[
+  { name: 'item', desc: '行内容作用域插槽，参数 item（行数据）与 direction（left / right），两栏共用，缺省渲染 label', type: '—', default: '—' },
+]" />

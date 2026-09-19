@@ -76,6 +76,21 @@ function handleReset() {
   checkFormRef.value?.resetFields()
   checkResult.value = ''
 }
+
+const eventFormRef = ref(null)
+const eventForm = ref({ name: '', email: '' })
+const eventRules = {
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+  email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }],
+}
+const eventStatus = ref('')
+function onFormFinish(values) {
+  eventStatus.value = `finish：${JSON.stringify(values)}`
+}
+function onFormFinishFailed({ errors }) {
+  const first = Object.values(errors || {})[0]
+  eventStatus.value = `finish-failed：${first ?? '存在校验失败字段'}`
+}
 </script>
 
 表单容器与表单项：`model` + `rules`（async-validator 格式）声明式校验，blur / change 时机自动触发，错误信息内联展示，支持 label 位置与宽度、行内布局、尺寸与禁用注入。FormItem 挂载时向 Form 注册（携带 prop），校验与重置按字段管理；`prop` 对应 `model` 中的字段路径，支持 a.b.c 嵌套。
@@ -199,6 +214,19 @@ FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只�
   <p v-if="checkResult" style="margin: 8px 0 0; font-size: 13px; color: var(--eb-text-color-secondary);">{{ checkResult }}</p>
 </DemoBlock>
 
+## 提交事件
+
+Form 根元素收口原生 submit：回车或 `native-type="submit"` 按钮触发时自动先跑 `validate`，全部通过触发 `finish`（负载为 model 副本），存在失败触发 `finish-failed`（负载 `values` 与 `errors`），页面不会真实提交；配合 `scroll-to-error` 在失败时自动滚到第一个错误项。任一字段值变化还会触发 `values-change`，负载为本次变化字段的最小集与全量值。
+
+<DemoBlock>
+  <eb-form ref="eventFormRef" :model="eventForm" :rules="eventRules" label-width="80px" style="max-width: 380px;" scroll-to-error @finish="onFormFinish" @finish-failed="onFormFinishFailed">
+    <eb-form-item label="姓名" prop="name"><eb-input v-model="eventForm.name" placeholder="必填" /></eb-form-item>
+    <eb-form-item label="邮箱" prop="email"><eb-input v-model="eventForm.email" placeholder="选填，格式需合法" /></eb-form-item>
+    <eb-form-item><eb-button native-type="submit" type="primary">提交</eb-button></eb-form-item>
+  </eb-form>
+  <div style="margin-top: 8px;">{{ eventStatus || '留空回车提交体验 finish-failed，填写后提交体验 finish' }}</div>
+</DemoBlock>
+
 ## API
 
 <ApiTable title="Form Props" :rows="[
@@ -212,10 +240,16 @@ FormItem `error` 直接指定错误文案并覆盖校验结果；`required` 只�
   { name: 'showMessage', desc: '显示校验错误信息', type: 'boolean', default: 'true' },
   { name: 'inlineMessage', desc: '错误信息行内展示', type: 'boolean', default: 'false' },
   { name: 'statusIcon', desc: '校验状态图标（预留，当前 FormItem 未消费）', type: 'boolean', default: 'false' },
-  { name: 'scrollToError', desc: '校验失败自动滚动到错误项（预留，当前实现未消费）', type: 'boolean', default: 'false' },
+  { name: 'scrollToError', desc: '校验失败自动滚动到第一个错误项（validate 与原生 submit 链路生效）', type: 'boolean', default: 'false' },
   { name: 'hideRequiredAsterisk', desc: '隐藏必填星号', type: 'boolean', default: 'false' },
   { name: 'validateOnRuleChange', desc: 'rules 变化时自动重新校验', type: 'boolean', default: 'true' },
   { name: 'ripple', desc: '批量关闭表单内所有输入类组件的激活涟漪动效（组件级 ripple prop 可单独关闭；全局见 setRipple）', type: 'boolean', default: 'true' },
+]" />
+
+<ApiTable title="Form Events" :rows="[
+  { name: 'finish', desc: '原生 submit（回车或 native-type=submit 按钮）校验全部通过后触发，负载为 model 副本', type: '(values: object) => void', default: '—' },
+  { name: 'finish-failed', desc: '原生 submit 校验失败后触发', type: '({ values, errors }) => void', default: '—' },
+  { name: 'values-change', desc: '任一字段值变化时触发（change 校验链路收口）', type: '(changedValues, allValues) => void', default: '—' },
 ]" />
 
 <ApiTable title="FormItem Props" :rows="[

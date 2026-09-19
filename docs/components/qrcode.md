@@ -14,19 +14,63 @@
   </eb-space>
 </DemoBlock>
 
-<script setup>
-import { ref } from 'vue'
-const text = ref('https://evoke-ui.example.com/join?id=42')
-</script>
-
 ## 自定义颜色与静区
+
+`margin` 收窄四周静区；第二个示例深底反白，前景与背景需保持足够对比度，否则影响扫码识别：
 
 <DemoBlock>
   <eb-space size="middle">
-    <eb-qrcode value="Evoke Business UI" :size="112" foreground="#175DFF" />
     <eb-qrcode value="Evoke Business UI" :size="112" :margin="2" />
+    <eb-qrcode value="Evoke Business UI" :size="112" foreground="#175DFF" background="#EFF6FF" />
+    <eb-qrcode value="Evoke Business UI" :size="112" foreground="#F9FAFB" background="#111827" />
   </eb-space>
 </DemoBlock>
+
+## 输出尺寸
+
+`size` 为画布输出尺寸（px），码点模块自动缩放并对齐像素边界，缩放不失真：
+
+<DemoBlock>
+  <eb-space size="middle">
+    <eb-qrcode :value="text" :size="qrSize" />
+    <eb-radio-group v-model="qrSize">
+      <eb-radio :label="96">96px</eb-radio>
+      <eb-radio :label="128">128px</eb-radio>
+      <eb-radio :label="192">192px</eb-radio>
+    </eb-radio-group>
+  </eb-space>
+</DemoBlock>
+
+## 导出 PNG
+
+通过 ref 调用 `toDataURL()` 拿到 PNG dataURL，可直接触发下载或回显：
+
+<DemoBlock>
+  <eb-space size="middle">
+    <eb-qrcode ref="qrRef" :value="text" :size="128" />
+    <div>
+      <eb-button type="primary" @click="downloadQrcode">下载 PNG</eb-button>
+      <p v-if="qrDataUrl" style="font-size: 12px; color: var(--eb-text-color-secondary); margin-top: 8px;">已通过 toDataURL 导出并触发下载</p>
+    </div>
+  </eb-space>
+</DemoBlock>
+
+<script setup>
+import { ref } from 'vue'
+const text = ref('https://evoke-ui.example.com/join?id=42')
+const qrSize = ref(128)
+const qrRef = ref(null)
+const qrDataUrl = ref('')
+const downloadQrcode = () => {
+  const url = qrRef.value?.toDataURL()
+  if (!url) return
+  qrDataUrl.value = url
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'qrcode.png'
+  link.click()
+}
+</script>
 
 ## QRCode API
 

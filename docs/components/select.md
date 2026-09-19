@@ -56,7 +56,7 @@ function handleRemoteSearch(query) {
 </eb-select>
 </DemoBlock>
 
-单选时绑定值为选中项的 value；clearable 默认关闭，开启后单选有值时展示清空按钮，点击清空绑定值并触发 clear 事件。
+单选时绑定值为选中项的 value；clearable 默认关闭，开启后有选中值时展示清空按钮，单选点击清空为空串、多选清空为空数组，并触发 clear 事件。
 
 ## 多选与折叠标签
 
@@ -159,7 +159,7 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'multiple', desc: '多选，绑定值为数组且选择后下拉保持打开', type: 'boolean', default: 'false' },
   { name: 'disabled', desc: '禁用（同时响应表单禁用态）', type: 'boolean', default: 'false' },
   { name: 'size', desc: '尺寸，支持 large / small', type: 'string', default: '' },
-  { name: 'clearable', desc: '可清空，单选有值时展示清空按钮', type: 'boolean', default: 'false' },
+  { name: 'clearable', desc: '可清空，单选有值或多选非空数组时展示清空按钮', type: 'boolean', default: 'false' },
   { name: 'placeholder', desc: '占位文本（缺省取语言包默认文案）', type: 'string', default: '' },
   { name: 'filterable', desc: '可搜索，键入关键字按 label 过滤选项', type: 'boolean', default: 'false' },
   { name: 'filter-method', desc: '自定义过滤函数，返回 true 保留该选项', type: '(query, option) => boolean', default: 'null' },
@@ -170,7 +170,8 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'collapse-tags', desc: '多选时折叠超出数量的 tag', type: 'boolean', default: 'false' },
   { name: 'max-collapse-tags', desc: '折叠模式下展示的 tag 数上限，其余折叠为 + N', type: 'number', default: '1' },
   { name: 'collapse-tags-tooltip', desc: '预留参数（当前版本未启用）', type: 'boolean', default: 'false' },
-  { name: 'options', desc: '数据模式选项数组，传入后下拉由组件渲染，无需手写 option', type: '{ value, label?, disabled? }[]', default: 'null' },
+  { name: 'options', desc: '数据模式选项数组，传入后下拉由组件渲染，无需手写 option；字段名可用 field-names 重映射', type: '{ value, label?, disabled? }[]', default: 'null' },
+  { name: 'field-names', desc: '数据模式字段映射 { label, value, disabled }，默认取同名字段，与 Cascader / Tree 的 props 映射能力对齐', type: 'object', default: 'null' },
   { name: 'virtual', desc: '虚拟滚动（需配合 options），万级选项只渲染可视窗口', type: 'boolean', default: 'false' },
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
   { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
@@ -182,13 +183,13 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'visible-change', desc: '下拉展开 / 收起', type: '(visible: boolean) => void', default: '—' },
   { name: 'remove-tag', desc: '多选移除某一选中项（tag 关闭或再次点击已选项）', type: '(value) => void', default: '—' },
   { name: 'filter-change', desc: '搜索关键字变化', type: '(query: string) => void', default: '—' },
-  { name: 'blur', desc: '下拉关闭时触发', type: '() => void', default: '—' },
-  { name: 'focus', desc: '预留声明（当前版本未主动触发）', type: '() => void', default: '—' },
+  { name: 'blur', desc: '焦点真离开组件时触发（Esc 关闭下拉但焦点仍在触发器上不触发）', type: '() => void', default: '—' },
+  { name: 'focus', desc: '组件获得焦点时触发（含展开下拉时聚焦输入框 / 触发器）', type: '() => void', default: '—' },
 ]" />
 
 <ApiTable title="Select Methods" :rows="[
   { name: 'focus', desc: 'filterable 时聚焦搜索输入框，否则打开下拉', type: '() => void', default: '—' },
-  { name: 'blur', desc: '关闭下拉并触发 blur', type: '() => void', default: '—' },
+  { name: 'blur', desc: '收起下拉并使触发器失焦（焦点离开时触发 blur 事件）', type: '() => void', default: '—' },
   { name: 'toggleDropdown', desc: '切换下拉展开 / 收起', type: '() => void', default: '—' },
   { name: 'clearSelection', desc: '清空选中值', type: '() => void', default: '—' },
   { name: 'updateDropdown', desc: '手动刷新下拉浮层定位', type: '() => void', default: '—' },

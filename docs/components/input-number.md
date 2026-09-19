@@ -9,6 +9,8 @@ const strictV = ref(20)
 const rangeV = ref(20)
 const sizeV = ref(1)
 const clearV = ref(5)
+const fmtV = ref(1234567)
+const fmtAddonV = ref(9)
 </script>
 
 
@@ -77,6 +79,26 @@ disabled 整体禁用（含步进按钮）；readonly 只读，输入与步进�
   <eb-input-number v-model="clearV" :min="1" :value-on-clear="1" placeholder="清空后写回 1" />
 </DemoBlock>
 
+## 格式化展示
+
+`formatter` 控制展示格式（如千分位金额），`parser` 把输入文本解析回数值；只传 formatter 时聚焦显原始数值串、失焦回显格式化值，缺省 parser 会自动去千分位逗号解析。传入 formatter 或 parser 后输入框切换为文本输入（inputmode 为 decimal），以容纳格式字符。
+
+<DemoBlock>
+  <eb-input-number
+    v-model="fmtV"
+    :formatter="(val) => String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+    :parser="(text) => Number(String(text).replace(/,/g, ''))"
+  />
+</DemoBlock>
+
+## 前后缀块
+
+`addon-before` / `addon-after` 在输入框外侧拼接前后缀块（货币符号、单位等），插槽 `addon-before` / `addon-after` 优先于同名 prop，可承载任意内容。
+
+<DemoBlock>
+  <eb-input-number v-model="fmtAddonV" :min="1" addon-before="￥" addon-after="件" />
+</DemoBlock>
+
 ## API
 
 <ApiTable title="InputNumber Props" :rows="[
@@ -93,6 +115,10 @@ disabled 整体禁用（含步进按钮）；readonly 只读，输入与步进�
   { name: 'readonly', desc: '只读（输入与步进均被禁止）', type: 'boolean', default: 'false' },
   { name: 'placeholder', desc: '占位文本', type: 'string', default: '' },
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
+  { name: 'formatter', desc: '展示格式化函数（如千分位），传入后输入框切换为文本输入', type: '(value: number) => string', default: '—' },
+  { name: 'parser', desc: '把输入文本解析回数值，缺省去千分位逗号后解析', type: '(text: string) => number', default: '—' },
+  { name: 'addon-before', desc: '框外前缀块文案，与 addon-before 插槽二选一（插槽优先）', type: 'string', default: '' },
+  { name: 'addon-after', desc: '框外后缀块文案，与 addon-after 插槽二选一（插槽优先）', type: 'string', default: '' },
   { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
@@ -100,6 +126,11 @@ disabled 整体禁用（含步进按钮）；readonly 只读，输入与步进�
   { name: 'update:modelValue / change', desc: '值变化（步进、输入失焦提交），返回钳制与格式化后的数值', type: '(value: number) => void', default: '—' },
   { name: 'blur', desc: '失焦，并触发表单项 blur 校验', type: '(e: FocusEvent) => void', default: '—' },
   { name: 'focus', desc: '聚焦', type: '(e: FocusEvent) => void', default: '—' },
+]" />
+
+<ApiTable title="InputNumber Slots" :rows="[
+  { name: 'addon-before', desc: '框外前缀块内容，优先于 addon-before prop', type: '—', default: '—' },
+  { name: 'addon-after', desc: '框外后缀块内容，优先于 addon-after prop', type: '—', default: '—' },
 ]" />
 
 <ApiTable title="InputNumber Methods" :rows="[

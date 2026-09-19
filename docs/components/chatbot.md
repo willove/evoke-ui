@@ -10,8 +10,17 @@
   <eb-chatbot v-model="messages" :loading="pending" height="360px" :show-tip="false" @send="onSend" />
 </DemoBlock>
 
+## 流式输出与思考过程
+
+配合导出的 `useChatEngine` 组装流式会话：`appendContent` 逐段回写正文（状态自动进入 streaming），`appendThinkContent` 写入思考内容（消息上方出现可折叠的思考块），`completeMessage` 收尾并自动记录回答用时。`regenerate` 事件里删掉旧回复后按上文重新流式输出即可：
+
+<DemoBlock>
+  <eb-chatbot v-model="streamMsgs" :loading="streamLoading" height="420px" :show-tip="false" @send="onStreamSend" @regenerate="onStreamRegen" />
+</DemoBlock>
+
 <script setup>
 import { ref } from 'vue'
+import { useChatEngine } from '@wil-works/evoke-business-ui'
 
 const messages = ref([
   { id: 1, role: 'assistant', content: '**你好**，我是接入示例。发送一条消息试试。', status: 'done' },
@@ -32,25 +41,298 @@ const onSend = (text) => {
     pending.value = false
   }, 800)
 }
+
+// ─── 流式输出与思考过程 ───
+const {
+  messages: streamMsgs,
+  createAssistantMessage,
+  appendContent,
+  appendThinkContent,
+  stopThinking,
+  completeMessage,
+} = useChatEngine()
+const streamLoading = ref(false)
+
+streamMsgs.value.push({
+  id: 'stream-hello',
+  role: 'assistant',
+  content: '**发送一条消息**：回复会逐段输出，展开「已深度思考」可查看思考内容。',
+  status: 'done',
+})
+
+function streamReply(prompt) {
+  const msg = createAssistantMessage()
+  appendThinkContent(msg.id, `收到「${prompt}」，先拆解问题，再组织语言作答。`)
+  streamLoading.value = true
+  const reply = `关于「${prompt}」：这是一段模拟流式回复。真实场景中，把服务端返回的增量片段依次传给 appendContent，全部结束后调用 completeMessage，消息会自动带上回答用时。`
+  let i = 0
+  const timer = setInterval(() => {
+    appendContent(msg.id, reply.slice(i, i + 2))
+    i += 2
+    if (i >= reply.length) {
+      clearInterval(timer)
+      stopThinking(msg.id)
+      completeMessage(msg.id)
+      streamLoading.value = false
+    }
+  }, 30)
+}
+
+const onStreamSend = (text) => streamReply(text)
+
+const onStreamRegen = (message) => {
+  const list = streamMsgs.value
+  const idx = list.findIndex((m) => m.id === message.id)
+  if (idx <= 0) return
+  let userIdx = idx - 1
+  while (userIdx >= 0 && list[userIdx].role !== 'user') userIdx--
+  if (userIdx < 0) return
+  const prompt = list[userIdx].content
+  list.splice(userIdx + 1)
+  streamReply(prompt)
+}
+
+// ─── 头像、名称与纯文本 ───
+const fancyMsgs = ref([
+  {
+    id: 'fancy-1',
+    role: 'assistant',
+    content: '这是**纯文本模式**：Markdown 标记原样展示，例如 `code` 和 **bold**。',
+    status: 'done',
+  },
+])
+let fancySeq = 2
+const onFancySend = (text) => {
+  fancyMsgs.value.push({ id: `fancy-u-${fancySeq}`, role: 'user', content: text, status: 'done' })
+  setTimeout(() => {
+    fancyMsgs.value.push({
+      id: `fancy-a-${fancySeq}`,
+      role: 'assistant',
+      content: `已收到「${text}」。切换 render-mode 为 markdown 即可恢复解析。`,
+      status: 'done',
+    })
+    fancySeq++
+  }, 500)
+}
+
+// ─── 自定义动作与事件埋点 ───
+const chatActions = [
+  { key: 'collect', label: '收藏', icon: 'star' },
+  { key: 'share', label: '分享', icon: 'share' },
+]
+const actionMsgs = ref([
+  { id: 'act-1', role: 'assistant', content: '悬停本条消息可见动作条：内置复制 / 重新生成，右侧为 actions 自定义动作。', status: 'done' },
+])
+const actionLog = ref(['试试复制、收藏或重新生成这条消息'])
+let actionLogSeq = 1
+function pushActionLog(text) {
+  actionLog.value = [`${actionLogSeq++}. ${text}`, ...actionLog.value].slice(0, 4)
+}
+const onActionSend = (text) => {
+  actionMsgs.value.push({ id: `act-u-${Date.now()}`, role: 'user', content: text, status: 'done' })
+  setTimeout(() => {
+    actionMsgs.value.push({
+      id: `act-a-${Date.now()}`,
+      role: 'assistant',
+      content: `已收到「${text}」。悬停本条消息试试动作条。`,
+      status: 'done',
+    })
+  }, 500)
+}
+const onActionCopy = (message) => pushActionLog(`copy：已复制「${String(message.content).slice(0, 10)}…」`)
+const onActionRegen = (message) => {
+  const idx = actionMsgs.value.findIndex((m) => m.id === message.id)
+  if (idx > -1) actionMsgs.value.splice(idx, 1)
+  pushActionLog('regenerate：删除旧回复并重新请求')
+  setTimeout(() => {
+    actionMsgs.value.push({ id: `act-a-${Date.now()}`, role: 'assistant', content: '这是重新生成的新回复，埋点由页面自行上报。', status: 'done' })
+  }, 500)
+}
+const onActionKey = (key, message) => {
+  const hit = chatActions.find((a) => a.key === key)
+  pushActionLog(`action：${key}${hit ? `（${hit.label}）` : ''}，消息 id ${message.id}`)
+}
+
+// ─── 附件与输入控制 ───
+const limitMsgs = ref([
+  { id: 'limit-1', role: 'assistant', content: '输入上限 30 字并显示字数；可添加最多 2 个附件；Enter 换行，点发送按钮提交。', status: 'done' },
+])
+const limitLog = ref([])
+const onLimitSend = (text, attachments) => {
+  limitMsgs.value.push({ id: `limit-u-${Date.now()}`, role: 'user', content: text, attachments: attachments.length ? attachments : undefined, status: 'done' })
+  setTimeout(() => {
+    limitMsgs.value.push({
+      id: `limit-a-${Date.now()}`,
+      role: 'assistant',
+      content: `已收到「${text}」${attachments.length ? `（含 ${attachments.length} 个附件）` : ''}。`,
+      status: 'done',
+    })
+  }, 500)
+}
+const onAttachmentAdd = (file) => {
+  limitLog.value = [`attachment-add：${file.name}`, ...limitLog.value].slice(0, 3)
+}
+
+// ─── 自定义区域与实例方法 ───
+const slotChatRef = ref(null)
+const slotMsgs = ref([])
+const slotInput = ref('')
+const onSlotSend = (text) => {
+  slotMsgs.value.push({ id: `slot-u-${Date.now()}`, role: 'user', content: text, status: 'done' })
+  setTimeout(() => {
+    slotMsgs.value.push({
+      id: `slot-a-${Date.now()}`,
+      role: 'assistant',
+      content: `这是「${text}」的回复。标题栏、空态与底部提示均来自页面插槽。`,
+      status: 'done',
+    })
+  }, 500)
+}
+const onSlotFocus = () => slotChatRef.value?.focus()
+const onSlotScroll = () => slotChatRef.value?.scrollToBottom(true)
+const onSlotClear = () => {
+  slotChatRef.value?.reset()
+  slotMsgs.value = []
+}
 </script>
 
+## 头像、名称与纯文本
+
+`user-name` / `assistant-name` 决定双方昵称与头像首字，`avatar-user` / `avatar-assistant` 传图片地址可替换为图片头像；`render-mode` 切换为 `text` 后消息不再解析 Markdown，适合展示日志、代码原文等纯文本：
+
+<DemoBlock>
+  <eb-chatbot
+    v-model="fancyMsgs"
+    user-name="王工"
+    assistant-name="小 Ev"
+    render-mode="text"
+    height="340px"
+    :show-tip="false"
+    @send="onFancySend"
+  />
+</DemoBlock>
+
+## 自定义动作与事件埋点
+
+`actions` 在助手消息的动作条上追加自定义动作（`{ key, label, icon? }`，icon 使用组件库图标名）；`copy` / `regenerate` / `action` 事件把消息对象透传给页面，在此上报埋点或执行业务逻辑。动作条悬停消息时显示：
+
+<DemoBlock>
+  <eb-chatbot
+    v-model="actionMsgs"
+    :actions="chatActions"
+    height="320px"
+    :show-tip="false"
+    @send="onActionSend"
+    @copy="onActionCopy"
+    @regenerate="onActionRegen"
+    @action="onActionKey"
+  />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    <p v-for="(line, idx) in actionLog" :key="idx" style="margin: 2px 0;">{{ line }}</p>
+  </div>
+</DemoBlock>
+
+## 附件与输入控制
+
+`max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量（图片自动生成预览）；`send-on-enter` 关闭后 Enter 只换行，需点击发送按钮提交。选中的附件经 `attachment-add` 事件通知页面，可在此做类型或大小校验：
+
+<DemoBlock>
+  <eb-chatbot
+    v-model="limitMsgs"
+    :max-length="30"
+    show-word-count
+    :max-attachments="2"
+    :send-on-enter="false"
+    placeholder="输入内容，Enter 换行，点右侧按钮发送"
+    height="300px"
+    :show-tip="false"
+    @send="onLimitSend"
+    @attachment-add="onAttachmentAdd"
+  />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    <p v-for="(line, idx) in limitLog" :key="idx" style="margin: 2px 0;">{{ line }}</p>
+  </div>
+</DemoBlock>
+
+## 自定义区域与实例方法
+
+`header` 定制面板标题栏，`empty` 定制空会话占位，`tip` 替换底部提示，`sender-toolbar` 在输入框工具栏追加按钮（示例配合 `v-model:input-value` 受控输入）；实例方法 `focus()` / `scrollToBottom(smooth)` / `reset()` 支持外部操控，注意 `reset()` 不会回写 `v-model`，受控使用时需同步清空绑定数组：
+
+<DemoBlock>
+  <div style="margin-bottom: 8px; display: flex; gap: 8px;">
+    <eb-button @click="onSlotFocus">聚焦输入框</eb-button>
+    <eb-button @click="onSlotScroll">滚动到底部</eb-button>
+    <eb-button @click="onSlotClear">清空会话</eb-button>
+  </div>
+  <eb-chatbot
+    ref="slotChatRef"
+    v-model="slotMsgs"
+    v-model:input-value="slotInput"
+    height="360px"
+    @send="onSlotSend"
+  >
+    <template #header>
+      <div style="padding: 12px 16px; font-size: 14px; font-weight: 600; border-bottom: 1px solid var(--eb-border-color-lighter); display: flex; align-items: center; gap: 8px;">
+        工单智能助手
+        <span style="font-size: 12px; font-weight: 400; color: var(--eb-color-primary); background: var(--eb-color-primary-light-9); border-radius: 4px; padding: 1px 8px;">Beta</span>
+      </div>
+    </template>
+    <template #empty>
+      <div style="text-align: center; color: var(--eb-text-color-placeholder);">
+        <eb-icon name="message" :size="28" />
+        <p style="margin-top: 8px; font-size: 13px;">还没有消息，输入问题开始对话</p>
+      </div>
+    </template>
+    <template #sender-toolbar>
+      <eb-button text @click="slotInput = '请介绍一下你能处理哪些工单类型'">
+        <eb-icon name="lightbulb" />
+        插入常用语
+      </eb-button>
+    </template>
+    <template #tip>内容由演示服务生成，仅用于组件体验</template>
+  </eb-chatbot>
+</DemoBlock>
+
+## API
+
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，项为 { id, role, content, status, thinking?, attachments? }', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments? }', type: 'array', default: '[]' },
+  { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },
+  { name: 'placeholder', desc: '输入框占位文案', type: 'string', default: '输入消息，按 Enter 发送，Shift+Enter 换行' },
   { name: 'height / width', desc: '容器尺寸', type: 'string | number', default: '600px / 100%' },
   { name: 'send-on-enter', desc: 'Enter 发送、Shift+Enter 换行；关闭后 Enter 换行', type: 'boolean', default: 'true' },
   { name: 'max-length / show-word-count', desc: '输入上限与字数统计', type: 'number / boolean', default: '2000 / false' },
   { name: 'allow-attachments / max-attachments', desc: '附件开关与上限', type: 'boolean / number', default: 'true / 5' },
+  { name: 'show-thinking', desc: '是否展示消息的思考过程折叠块', type: 'boolean', default: 'true' },
   { name: 'actions', desc: '消息动作条自定义动作 { key, label, icon? }', type: 'array', default: '[]' },
-  { name: 'user-name / assistant-name', desc: '双方显示名', type: 'string', default: '我 / AI助手' },
-  { name: 'avatar-user / avatar-assistant', desc: '双方头像地址', type: 'string', default: '' },
+  { name: 'user-name / assistant-name', desc: '双方显示名（同时决定默认头像首字）', type: 'string', default: '我 / AI助手' },
+  { name: 'avatar-user / avatar-assistant', desc: '双方头像图片地址', type: 'string', default: '' },
   { name: 'auto-scroll', desc: '新消息自动滚动到底部', type: 'boolean', default: 'true' },
+  { name: 'show-tip', desc: '是否展示底部提示，可用 #tip 插槽替换', type: 'boolean', default: 'true' },
   { name: 'disabled', desc: '整体禁用', type: 'boolean', default: 'false' },
 ]" />
 
 <ApiTable title="Chatbot Events" :rows="[
   { name: 'send', desc: '发送消息（文本 + 附件），回写 modelValue 完成闭环', type: '(text: string, attachments: array) => void', default: '—' },
-  { name: 'copy / regenerate', desc: '消息复制 / 重新生成（动作条透传）', type: '(message) => void', default: '—' },
+  { name: 'copy', desc: '消息复制（动作条透传）', type: '(message) => void', default: '—' },
+  { name: 'regenerate', desc: '重新生成（动作条透传，由页面删旧回复并重新请求）', type: '(message) => void', default: '—' },
   { name: 'action', desc: 'actions 自定义动作点击', type: '(key: string, message) => void', default: '—' },
+  { name: 'attachment-add', desc: '选择附件文件后触发，可在此做类型或大小校验', type: '(file: File) => void', default: '—' },
+]" />
+
+<ApiTable title="Chatbot Slots" :rows="[
+  { name: 'header', desc: '面板顶部标题栏', type: '—', default: '—' },
+  { name: 'empty', desc: '空消息占位内容', type: '—', default: '—' },
+  { name: 'message-header', desc: '消息区顶部（仅有消息时渲染）', type: '—', default: '—' },
+  { name: 'sender-prepend / sender-append', desc: '输入区左右扩展位', type: '—', default: '—' },
+  { name: 'sender-toolbar', desc: '输入框工具栏（附件按钮右侧）', type: '—', default: '—' },
+  { name: 'tip', desc: '底部提示内容', type: '—', default: '内容由 AI 生成，仅供参考' },
+]" />
+
+<ApiTable title="Chatbot Methods（defineExpose）" :rows="[
+  { name: 'reset', desc: '清空消息与输入区（含附件）；不回写 v-model，受控使用需同步清空绑定数组', type: '() => void', default: '—' },
+  { name: 'focus', desc: '聚焦输入框', type: '() => void', default: '—' },
+  { name: 'scrollToBottom', desc: '滚动到消息底部，传 true 平滑滚动', type: '(smooth?: boolean) => void', default: '—' },
 ]" />

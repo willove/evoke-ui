@@ -1,6 +1,6 @@
 # Table 表格
 
-表格组件：列由 `eb-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选、展开行、固定列（sticky）、当前行高亮与空态，并暴露排序、筛选、选中、展开等实例方法。
+表格组件：列由 `eb-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选、展开行、固定列（sticky）、当前行高亮与空态，并支持表尾合计、加载遮罩与服务端排序，暴露排序、筛选、选中、展开等实例方法。
 
 <script setup>
 import { ref } from 'vue'
@@ -40,6 +40,18 @@ function onCellChange({ row, prop, value, oldValue }) {
 }
 function onSortChange(e) { lastSort.value = e.order ? e.prop + ' ' + e.order : '未排序' }
 function onSelectionChange(selection) { selected.value = selection }
+
+const tableLoading = ref(false)
+const remoteRows = ref([
+  { name: '华北仓', amount: 4200 },
+  { name: '华南仓', amount: 15800 },
+  { name: '华东仓', amount: 8600 },
+])
+function onRemoteSortChange(e) {
+  if (!e.order) return
+  const dir = e.order === 'ascending' ? 1 : -1
+  remoteRows.value = [...remoteRows.value].sort((a, b) => (a[e.prop] - b[e.prop]) * dir)
+}
 </script>
 
 ## 基础用法
@@ -100,6 +112,18 @@ function onSelectionChange(selection) { selected.value = selection }
 <p style="margin-top: 8px;">当前排序：{{ lastSort }}</p>
 </DemoBlock>
 
+## 服务端排序
+
+列设 `sortable="custom"` 后点击箭头不在本地重排，只触发 `sort-change` 携带目标排序，由页面请求或重排数据后再传入；箭头状态仍在本地维护，适合分页与大数据量场景。本例在事件回调里模拟服务端返回。
+
+<DemoBlock>
+<eb-table :data="remoteRows" border @sort-change="onRemoteSortChange">
+  <eb-table-column prop="name" label="仓库" sortable="custom" />
+  <eb-table-column prop="amount" label="金额" align="right" sortable="custom" />
+</eb-table>
+<p style="margin-top: 8px;">服务端返回顺序：{{ remoteRows.map((r) => r.name).join('、') }}</p>
+</DemoBlock>
+
 ## 多选
 
 `type="selection"` 声明多选列，表头出现全选框（含半选态）；`selectable` 可禁用指定行（本例仅已支付行可选）。选中项通过 `selection-change` 同步，也可用实例方法 `clearSelection` 清空。
@@ -142,6 +166,21 @@ function onSelectionChange(selection) { selected.value = selection }
 </eb-table>
 </DemoBlock>
 
+## 加载中
+
+`loading` 为真时表体覆盖半透明遮罩并显示旋转指示，阻断数据区交互；适合远程拉取数据期间开启、结束后关闭。遮罩只盖住表体（含表尾合计），表头保持可见。
+
+<DemoBlock>
+<eb-table :data="rows" border :loading="tableLoading">
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="owner" label="负责人" />
+  <eb-table-column prop="amount" label="金额" align="right" />
+</eb-table>
+<div style="margin-top: 8px;">
+  <eb-button @click="tableLoading = !tableLoading">切换加载状态</eb-button>
+</div>
+</DemoBlock>
+
 ## 虚拟滚动
 
 `virtual` 开启后万级行只渲染可视窗口，表头 / 列宽 / 固定列 / 多选 / 键盘导航全量保留。需配合 `height` 或 `maxHeight` 形成滚动视口；`row-height` 需与实际行高一致（受 size 与内容换行影响时显式对齐）。展开行与树形层级不参与虚拟模式。
@@ -181,16 +220,18 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'maxHeight', desc: '最大高度，超出后表体滚动', type: 'string | number', default: '—' },
   { name: 'border', desc: '边框模式', type: 'boolean', default: 'false' },
   { name: 'stripe', desc: '斑马纹', type: 'boolean', default: 'false' },
+  { name: 'loading', desc: '表体加载遮罩，远程取数期间开启并阻断数据区交互', type: 'boolean', default: 'false' },
   { name: 'size', desc: '尺寸，缺省继承表单上下文', type: 'large | default | small', default: '' },
   { name: 'fit', desc: '列宽自适应容器（minWidth 列参与拉伸）', type: 'boolean', default: 'true' },
   { name: 'showHeader', desc: '是否渲染表头（当前版本始终渲染表头）', type: 'boolean', default: 'true' },
   { name: 'highlightCurrentRow', desc: '点击行时高亮并触发 current-change', type: 'boolean', default: 'false' },
   { name: 'rowKey', desc: '行键，字段名或 (row) => key', type: 'string | function', default: '—' },
-  { name: 'defaultExpandAll / expandRowKeys', desc: '默认展开全部 expand 行 / 指定默认展开行的 key 数组（需设置 rowKey）', type: 'boolean / array', default: 'false / []' },
+  { name: 'rowClassName', desc: '行附加类名，函数按行数据返回，也可直接传字符串', type: '(row, index) => string | string', default: '' },
+  { name: 'defaultExpandAll / expandRowKeys', desc: '默认展开全部 expand 行 / 指定默认展开行的 key 数组（需设置 rowKey）；expandRowKeys 仅初始化生效，动态展开用实例方法 toggleRowExpansion', type: 'boolean / array', default: 'false / []' },
   { name: 'defaultSort', desc: '初始排序 { prop, order }，order 为 ascending / descending', type: 'object', default: '{ prop: \'\', order: \'\' }' },
   { name: 'selectOnIndeterminate', desc: '预留参数（当前未参与全选逻辑）', type: 'boolean', default: 'true' },
   { name: 'emptyText', desc: '空数据文案，优先级低于 empty 插槽', type: 'string', default: '' },
-  { name: 'showSummary / summaryMethod', desc: '表尾合计（当前版本暂未渲染表尾）', type: 'boolean / function', default: 'false' },
+  { name: 'showSummary / summaryMethod', desc: '表尾合计行；summaryMethod 缺省对全数字列求和、其余列为空，传入时接收当前（排序/筛选后）数据数组并返回以列 prop 为键的文本映射', type: 'boolean / function', default: 'false' },
   { name: 'virtual', desc: '虚拟滚动，万级行只渲染可视窗口（需配合 height / maxHeight；展开行与树形层级不参与）', type: 'boolean', default: 'false' },
   { name: 'rowHeight', desc: '虚拟模式行高，需与实际行高一致', type: 'number', default: '48' },
 ]" />
@@ -202,7 +243,7 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'cell-click', desc: '单元格点击', type: '(row, prop, value, event) => void', default: '—' },
   { name: 'row-click', desc: '行点击（开启 highlightCurrentRow 时同时更新当前行）', type: '(row, index, event) => void', default: '—' },
   { name: 'row-dblclick / row-contextmenu', desc: '行双击 / 行右键', type: '(row, index, event) => void', default: '—' },
-  { name: 'sort-change', desc: '排序变化，order 为 ascending / descending / null', type: '({ prop, order, column }) => void', default: '—' },
+  { name: 'sort-change', desc: '排序变化（含 custom 服务端排序），order 为 ascending / descending / null', type: '({ prop, order, column }) => void', default: '—' },
   { name: 'filter-change', desc: '筛选应用或重置，参数为以列 id 为键的选中值映射', type: '(activeFilters) => void', default: '—' },
   { name: 'expand-change', desc: '展开行切换', type: '(row, expandedRows) => void', default: '—' },
   { name: 'current-change', desc: '当前行变化', type: '(currentRow, prevRow) => void', default: '—' },
@@ -233,7 +274,7 @@ function onSelectionChange(selection) { selected.value = selection }
   { name: 'label', desc: '列标题', type: 'string', default: '' },
   { name: 'width / minWidth', desc: '固定列宽 / 最小列宽（fit 模式下 minWidth 参与拉伸）', type: 'string | number', default: '—' },
   { name: 'fixed', desc: '固定列（position: sticky 实现）', type: 'boolean | left | right', default: 'false' },
-  { name: 'sortable', desc: '开启排序（custom 仅供语义标注，行为与 true 相同）', type: 'boolean | string', default: 'false' },
+  { name: 'sortable', desc: '开启排序；设为 custom 时不做本地排序，仅触发 sort-change 由服务端排序', type: 'boolean | string', default: 'false' },
   { name: 'sortMethod', desc: '自定义比较函数，返回值自动乘以排序方向', type: '(a, b) => number', default: 'null' },
   { name: 'sortBy', desc: '排序取值来源，字段名、字段数组或取值函数', type: 'string | array | (row) => any', default: '—' },
   { name: 'sortOrders', desc: '点击循环的排序序列', type: 'array', default: '[\'ascending\', \'descending\', null]' },
