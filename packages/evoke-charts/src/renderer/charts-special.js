@@ -16,7 +16,13 @@ function computeBins(options, hiddenSeries) {
   const binConfig = options.binConfig || {};
   const visibleSeries = (options.series || []).filter((s) => !hiddenSeries.has(s.name));
   const allValues = [];
-  visibleSeries.forEach((s) => allValues.push(...s.data.filter((v) => !isMissingValue(v))));
+  visibleSeries.forEach((s) => {
+    // 循环 push：push(...arr) 展开大数组（10 万+ 样本）会触发 RangeError
+    const data = s.data || [];
+    for (let i = 0; i < data.length; i++) {
+      if (!isMissingValue(data[i])) allValues.push(data[i]);
+    }
+  });
   if (allValues.length === 0) return null;
   const dataMin = minOf(allValues);
   const dataMax = maxOf(allValues);

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, markRaw } from 'vue'
 import EvChart from '../src/chart.vue'
 import { minOf, maxOf } from '../src/extent.js'
 import { createAnimation, updateAnimation } from '../src/renderer/index.js'
@@ -60,6 +60,19 @@ afterEach(() => {
 })
 
 const flushRender = () => new Promise((r) => setTimeout(r, 40))
+
+// jsdom 的 MouseEvent clientX 只读，VTU trigger 赋值会抛错：手动构造事件
+const fireMove = (wrapper, x, y) =>
+  wrapper.find('canvas').element.dispatchEvent(
+    new MouseEvent('pointermove', { clientX: x, clientY: y, bubbles: true })
+  )
+// 收集命中链路抛进 window 的错误（jsdom 不把监听器异常回传给 dispatchEvent）
+const captureWindowErrors = () => {
+  const errors = []
+  const onError = (e) => errors.push(e.error || e.message)
+  window.addEventListener('error', onError)
+  return { errors, done: () => window.removeEventListener('error', onError) }
+}
 
 describe('minOf / maxOf 循环归约', () => {
   it('大数据量不触发 RangeError（此前 Math.min(...arr) 约 10 万点即栈溢出）', () => {
@@ -136,6 +149,58 @@ describe('series 缺 data 不再卡死更新链路', () => {
     await flushRender()
     // 修复前：deep watch 回调在快照克隆处抛错，debouncedRender 永不再执行
     expect(drawCount()).toBeGreaterThan(before)
+    wrapper.unmount()
+  })
+})
+
+describe('缺 data 系列的命中链路不抛 TypeError', () => {
+  const OPTIONS = (extra = {}) => ({
+    type: 'line',
+    animation: { enabled: false },
+    labels: ['一', '二'],
+    series: [{ name: '缺数据' }, { name: '正常', data: [5, 10] }],
+    ...extra,
+  })
+
+  it('多系列命中路径：缺 data 系列不炸，tooltip 只列正常系列', async () => {
+    const wrapper = mount(EvChart, { props: { options: OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    const win = captureWindowErrors()
+    fireMove(wrapper, 400, 200)
+    await flushRender()
+    win.done()
+    // 修复前：缺 data 系列在 s.data[dataIndex] 处抛 TypeError，tooltip 永不出
+    expect(win.errors).toEqual([])
+    const tip = wrapper.find('.ev-chart__tooltip')
+    expect(tip.exists()).toBe(true)
+    expect(tip.text()).toContain('正常')
+    expect(tip.text()).not.toContain('缺数据')
+    wrapper.unmount()
+  })
+
+  it('showAllSeries 关闭时首列即缺 data：命中返回空且无 tooltip', async () => {
+    const wrapper = mount(EvChart, {
+      props: { options: OPTIONS({ tooltip: { showAllSeries: false } }) },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    const win = captureWindowErrors()
+    fireMove(wrapper, 400, 200)
+    await flushRender()
+    win.done()
+    expect(win.errors).toEqual([])
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('getDataExtent 跳过缺 data 系列（直接调用即抛/不抛可见）', () => {
+    const wrapper = mount(EvChart, { props: { options: OPTIONS() }, attachTo: document.body })
+    let extent
+    expect(() => { extent = wrapper.vm.getDataExtent() }).not.toThrow()
+    // 缺数据系列的缺失被跳过，极值只来自正常系列
+    expect(extent).toEqual({ min: 5, max: 10 })
     wrapper.unmount()
   })
 })
@@ -313,6 +378,143 @@ describe('大数据折线渲染（抽稀生效）', () => {
   })
 })
 
+describe('bin 直方图大样本不展开数组', () => {
+  it('20 万样本渲染不抛 RangeError（此前 push(...arr) 展开即栈溢出）', async () => {
+    const big = Array.from({ length: 200001 }, (_, i) => (i % 977) + 1)
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'bin',
+          animation: { enabled: false },
+          series: [{ name: '样本', data: big }],
+          binConfig: { binCount: 8 },
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    // 修复前：computeBins 与 getPadding 的 bin 分支都在 push 展开处抛 RangeError，
+    // 图表进错误态（.ev-chart__error）；修复后正常出画布
+    expect(wrapper.find('.ev-chart__error').exists()).toBe(false)
+    expect(wrapper.find('canvas.ev-chart__canvas').exists()).toBe(true)
+    expect(drawCount()).toBeGreaterThan(0)
+    wrapper.unmount()
+  })
+})
+
+describe('堆叠面积 null 断段基线', () => {
+  // B 系列前置 null：段首原始索引是 1（不是 0），基线应为 A[1]
+  const OPTS = () => ({
+    type: 'area',
+    animation: { enabled: false },
+    labels: ['一', '二', '三'],
+    series: [
+      { name: 'A', data: [1, 2, 3] },
+      { name: 'B', data: [null, 4, 5] },
+    ],
+    stackAreas: true,
+  })
+
+  it('渲染 + exportSVG 不炸，路径坐标不含 NaN', async () => {
+    const wrapper = mount(EvChart, { props: { options: OPTS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.find('.ev-chart__error').exists()).toBe(false)
+    const svg = wrapper.vm.exportSVG()
+    expect(svg).toContain('<path')
+    expect(svg).not.toContain('NaN')
+    wrapper.unmount()
+  })
+
+  it('断段起点锚在段首逐点基线：面积路径首 moveTo 与回程末 lineTo 闭合', async () => {
+    // moveTo/lineTo 的时序在分方法的 mock.calls 里丢失：换有序日志的 ctx 代理
+    const log = []
+    const fns = new Map()
+    const orderedCtx = new Proxy({
+      measureText: () => ({ width: 10 }),
+      createLinearGradient: () => ({ addColorStop: () => {} }),
+      createRadialGradient: () => ({ addColorStop: () => {} }),
+    }, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop]
+        if (prop === '__log') return log
+        if (!fns.has(prop)) {
+          fns.set(prop, vi.fn((...args) => { log.push([prop, args[0], args[1]]) }))
+        }
+        return fns.get(prop)
+      },
+    })
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(orderedCtx)
+    const wrapper = mount(EvChart, { props: { options: OPTS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    // 闭合路径（面积填充）的几何契约：首 moveTo 与回程末 lineTo 同 x 时必同 y。
+    // 修复前 baseValue 恒用索引 0（基线取 A[0]=1），回程按段首原始索引（A[1]=2），
+    // B 系列断段多边形同 x 两个 y 不闭合
+    let cur = []
+    let checked = 0
+    const finishGroup = () => {
+      if (cur.length > 2) {
+        const [op0, mx, my] = cur[0]
+        const [opN, lx, ly] = cur[cur.length - 1]
+        if (op0 === 'moveTo' && opN === 'lineTo' && lx === mx) {
+          expect(ly).toBe(my)
+          checked++
+        }
+      }
+      cur = []
+    }
+    for (const entry of log) {
+      const prop = entry[0]
+      if (prop === 'moveTo' || prop === 'lineTo') cur.push(entry)
+      else if (prop === 'closePath') finishGroup()
+      else if (prop === 'beginPath') cur = []
+    }
+    expect(checked).toBeGreaterThan(0)
+    wrapper.unmount()
+  })
+})
+
+describe('setSpec 清空命中缓存', () => {
+  it('setSpec 换数据后 padding 缓存同步失效，不残留旧布局的命中区', async () => {
+    // markRaw 模拟生产里非响应式普通 options：deep watch 不会兜底清缓存，
+    // 只能靠 setSpec 自己失效（VTU 直传的普通对象会被包成 reactive，测不出本 bug）
+    const wrapper = mount(EvChart, {
+      props: {
+        options: markRaw({
+          type: 'horizontal-bar',
+          animation: { enabled: false },
+          labels: ['A', 'B'],
+          series: [{ name: '系列', data: [5, 8] }],
+        }),
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    // 短分类名：绘图区左缘约 40，x=90 在绘图区内，命中第一个类目
+    fireMove(wrapper, 90, 300)
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(true)
+    // setSpec 换成超宽分类名：绘图区左缘实测推到约 134，x=90 落在图区外
+    wrapper.vm.setSpec({
+      type: 'horizontal-bar',
+      animation: { enabled: false },
+      labels: ['特别长的分类名称甲', '特别长的分类名称乙'],
+      series: [{ name: '系列', data: [5, 8] },
+      ],
+    })
+    await flushRender()
+    fireMove(wrapper, 90, 300)
+    await flushRender()
+    // 修复前：padding 缓存按 options 引用键控且 setSpec 不清空，仍按 40px 左缘命中，
+    // tooltip 残留旧数据；修复后必须重算 padding，图区外不再命中
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(false)
+    wrapper.unmount()
+  })
+})
+
 describe('静默边界改空态占位', () => {
   it('饼图全 0 不再留白画布，进空态', async () => {
     const wrapper = mount(EvChart, {
@@ -399,6 +601,21 @@ describe('键盘巡历（DESIGN §13.7 期 1–2）', () => {
     press(wrapper, 'Home')
     await flushRender()
     expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('一')
+    wrapper.unmount()
+  })
+
+  it('方向键步进两次，aria-live 播报跟随每次索引变化', async () => {
+    const wrapper = mount(EvChart, { props: { options: BAR_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__sr-only').text()).toContain('销量: 10')
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    // 修复前：播报锁在「从无到有」分支，第二次步进后读屏仍收旧值
+    expect(wrapper.find('.ev-chart__sr-only').text()).toContain('销量: 40')
+    expect(wrapper.find('.ev-chart__sr-only').text()).not.toContain('10')
     wrapper.unmount()
   })
 

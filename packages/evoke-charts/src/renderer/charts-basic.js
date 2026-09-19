@@ -170,7 +170,9 @@ function renderLineChart(ctx, yRange, side = "left") {
       canvasCtx.clip();
       segments.forEach(({ pts: seg, idxs }) => {
         canvasCtx.beginPath();
-        const baseValue = isStackedArea && filteredIndex > 0 ? stackedSeries.slice(0, filteredIndex).reduce((sum, s) => sum + (s.data[0] || 0), 0) : yRange.min;
+        // 断段基线取段首原始索引（与回程逐点同口径），不能恒用索引 0：
+        // 前置 null 的段起点会锚到错误基线，多边形闭合边错位
+        const baseValue = isStackedArea && filteredIndex > 0 ? stackedSeries.slice(0, filteredIndex).reduce((sum, s) => sum + (s.data[idxs[0]] || 0), 0) : yRange.min;
         const baseY = isStackedArea && filteredIndex > 0 ? plotArea.y + plotArea.height - (baseValue - yRange.min) * progress / (yRange.max - yRange.min) * plotArea.height : plotArea.y + plotArea.height;
         canvasCtx.moveTo(seg[0][0], baseY);
         canvasCtx.lineTo(seg[0][0], seg[0][1]);

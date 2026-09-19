@@ -443,9 +443,14 @@ function getPadding(options, containerWidth = 600) {
       }
     }
     if (options.type === "bin") {
-      const allValues = [];
-      (options.series || []).forEach((s) => allValues.push(...s.data.filter((v) => !isMissingValue(v))));
-      const maxFreq = allValues.length;
+      // 只需要非缺失个数：直接计数，不物化数组（push(...arr) 展开大样本会 RangeError）
+      let maxFreq = 0;
+      (options.series || []).forEach((s) => {
+        const data = s.data || [];
+        for (let i = 0; i < data.length; i++) {
+          if (!isMissingValue(data[i])) maxFreq++;
+        }
+      });
       const tickLabelWidth = String(maxFreq).length * 7;
       left2 = pad.left ?? Math.min(90, Math.max(36, tickLabelWidth + 16));
       bottom2 = Math.max(bottom2, 30);

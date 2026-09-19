@@ -1328,7 +1328,7 @@ function getHoveredData(x, y) {
     const params = visibleSeries2.map((s, sIdx) => ({
       seriesName: s.name,
       name: labels2[i] || `Point ${i + 1}`,
-      value: s.data[i],
+      value: (s.data || [])[i],
       color: s.color || theme.colors[options.series.indexOf(s) % theme.colors.length],
       dataIndex: i,
       seriesIndex: sIdx
@@ -1345,7 +1345,7 @@ function getHoveredData(x, y) {
     const params = visibleSeries2.map((s, sIdx) => ({
       seriesName: s.name,
       name: labels2[i],
-      value: s.data[i],
+      value: (s.data || [])[i],
       color: s.color || theme.colors[options.series.indexOf(s) % theme.colors.length],
       dataIndex: i,
       seriesIndex: sIdx
@@ -1400,11 +1400,11 @@ function getHoveredData(x, y) {
   const volume = (options.volumeData || [])[dataIndex];
   const showAllSeries = props.options.tooltip?.showAllSeries !== false;
   if (showAllSeries && visibleSeries.length > 1) {
-    if (visibleSeries.every((s) => isMissingValue(s.data[dataIndex]))) return null;
+    if (visibleSeries.every((s) => isMissingValue((s.data || [])[dataIndex]))) return null;
     const params = visibleSeries.map((s, sIdx) => ({
       seriesName: s.name,
       name: labels[dataIndex],
-      value: s.data[dataIndex],
+      value: (s.data || [])[dataIndex],
       volume,
       color: s.color || theme.colors[options.series.indexOf(s) % theme.colors.length],
       dataIndex: dataIndex + sliceStartOffset(),
@@ -1413,14 +1413,14 @@ function getHoveredData(x, y) {
     return { index: dataIndex, params };
   } else {
     const series = visibleSeries[0];
-    if (isMissingValue(series.data[dataIndex])) return null;
+    if (isMissingValue((series.data || [])[dataIndex])) return null;
     const color = series.color || theme.colors[0];
     return {
       index: dataIndex,
       params: {
         seriesName: series.name,
         name: labels[dataIndex],
-        value: series.data[dataIndex],
+        value: (series.data || [])[dataIndex],
         volume,
         color,
         dataIndex: dataIndex + sliceStartOffset(),
@@ -1711,7 +1711,7 @@ function showTooltipAt(clientX, clientY) {
   tooltipVisible.value = true;
   redraw();
 }
-function handlePointerMove(e) {
+function handlePointerMove(e, fromKeyboard = false) {
   const canvas = canvasRef.value;
   if (canvas) {
     const rect = canvas.getBoundingClientRect();
@@ -1783,16 +1783,20 @@ function handlePointerMove(e) {
       } else {
         scheduleHoverRedraw();
       }
-      if (prevIndex === -1) {
+      if (prevIndex === -1 || fromKeyboard) {
         const emitParams = Array.isArray(result.params) ? result.params[0] : result.params;
-        emit("hover", {
-          seriesName: emitParams.seriesName,
-          dataIndex: emitParams.dataIndex,
-          value: emitParams.value,
-          x: emitParams.x ?? e.clientX,
-          y: emitParams.y ?? e.clientY,
-          color: emitParams.color
-        });
+        if (prevIndex === -1) {
+          emit("hover", {
+            seriesName: emitParams.seriesName,
+            dataIndex: emitParams.dataIndex,
+            value: emitParams.value,
+            x: emitParams.x ?? e.clientX,
+            y: emitParams.y ?? e.clientY,
+            color: emitParams.color
+          });
+        }
+        // aria-live 播报：首次进入悬浮，或键盘步进的每次索引变化都要重播
+        // （指针移动驱动的后续变化不刷，避免读屏噪音）
         ariaLiveText.value = `${emitParams.seriesName}: ${formatTooltipValue(emitParams.value)}`;
       }
     } else if (enterAnimated && hoverAnimProgress < 1) {
@@ -2006,7 +2010,8 @@ function handleChartKeydown(e) {
   keyboardClientY = clientY;
   mouseX = clientX - rect.left;
   mouseY = clientY - rect.top;
-  handlePointerMove({ clientX, clientY, pointerType: "mouse" });
+  // fromKeyboard：步进后的每次索引变化都重播 aria-live（指针悬浮不刷）
+  handlePointerMove({ clientX, clientY, pointerType: "mouse" }, true);
 }
 // 焦点离开即清态：不留键盘悬浮残留（与指针离开画布同一出口）
 function handleFocusOut() {
@@ -2091,13 +2096,7 @@ let prevOptionsSnapshot = null;
 watch(
   () => props.options,
   (next) => {
-    cachedDataExtent = null;
-    cachedPlotArea = null;
-    cachedPadding = null;
-    scatterHitCache = null;
-    legendBoundsCache = null;
-    ganttLayoutCache = null;
-    sankeyLayoutCache = null;
+    invalidateHitCaches();
     internalError.value = null;
     runDevValidation();
     // 运行中通过 options 增删 emphasis 时补播淡化缓动（无变化不重绘）
@@ -2271,16 +2270,22 @@ function sankeyLayoutFor(plotArea, options, theme, hiddenSeries, isDark) {
   sankeyLayoutCache = { options, dark: isDark, hidden: hiddenSeries, px: plotArea.x, py: plotArea.y, pw: plotArea.width, ph: plotArea.height, layout };
   return layout;
 }
+// 命中 / 布局缓存统一失效：update 就地合并、setSpec 整体替换都不换 options 引用，
+// 引用键缓存（padding / 图例命中区 / 甘特 / 桑基布局等）会继续服务旧数据，必须显式清空
+function invalidateHitCaches() {
+  cachedDataExtent = null;
+  cachedPlotArea = null;
+  cachedPadding = null;
+  scatterHitCache = null;
+  legendBoundsCache = null;
+  ganttLayoutCache = null;
+  sankeyLayoutCache = null;
+}
 defineExpose({
   refresh: () => render(true),
   update(newOptions) {
     Object.assign(props.options, newOptions);
-    cachedDataExtent = null;
-    cachedPadding = null;
-    scatterHitCache = null;
-    legendBoundsCache = null;
-    ganttLayoutCache = null;
-    sankeyLayoutCache = null;
+    invalidateHitCaches();
     specVersion.value++;
     debouncedRender(true);
   },
@@ -2359,7 +2364,7 @@ defineExpose({
       if (v > max) max = v;
     };
     if (opt.series) {
-      opt.series.forEach((s) => s.data.forEach((v) => !isMissingValue(v) && consider(v)));
+      opt.series.forEach((s) => (s.data || []).forEach((v) => !isMissingValue(v) && consider(v)));
     }
     if (opt.scatterData) {
       opt.scatterData.forEach((p) => consider(p.y));
@@ -2459,8 +2464,7 @@ defineExpose({
     const zoom = getDataZoomConfig(next);
     zoomRange.value = { start: zoom?.start ?? 0, end: zoom?.end ?? 100 };
     lastZoomKey = zoom ? JSON.stringify({ e: zoom.enabled, s: zoom.start, e2: zoom.end, p: zoom.position, h: zoom.height }) : "";
-    cachedDataExtent = null;
-    cachedPlotArea = null;
+    invalidateHitCaches();
     // options 可能是非响应式普通对象（computed 无依赖会永久缓存旧值）：
     // 版本号失效 + 显式重绘双兜底
     specVersion.value++;
