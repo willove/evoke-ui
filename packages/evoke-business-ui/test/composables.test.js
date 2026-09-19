@@ -165,6 +165,17 @@ describe('useTable', () => {
     expect(table.error.value).toBeInstanceOf(Error)
     expect(table.loading.value).toBe(false)
   })
+
+  it('setPagination：page+pageSize 同传保留页码；单改 pageSize 回第 1 页', async () => {
+    const fetch = vi.fn(async (q) => ({ list: [], total: 0 }))
+    const table = useTable(fetch, { immediate: false })
+    table.setPagination({ page: 3, pageSize: 50 })
+    expect(table.pagination.page).toBe(3)
+    expect(table.pagination.pageSize).toBe(50)
+    table.setPagination({ pageSize: 100 })
+    expect(table.pagination.page).toBe(1)
+    expect(table.pagination.pageSize).toBe(100)
+  })
 })
 
 describe('useClipboard（jsdom execCommand 兜底）', () => {

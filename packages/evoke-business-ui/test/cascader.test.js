@@ -129,6 +129,23 @@ describe('EbCascader 单选流程', () => {
     expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
   })
 
+  it('expand-trigger=hover：hover 展开父级，点击叶子仍可选', async () => {
+    const { wrapper, cascader } = mountCascader({ expandTrigger: 'hover' })
+    await openDropdown(wrapper)
+    // 父级由 hover 展开（点击父级不选中）
+    nodeEl('浙江', 0).dispatchEvent(new MouseEvent('mouseenter'))
+    await flush()
+    nodeEl('杭州', 1).dispatchEvent(new MouseEvent('mouseenter'))
+    await flush()
+    expect(cascader().emitted('update:modelValue')).toBeUndefined()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(3)
+    // 点击叶子节点：正常 emit 选中
+    nodeEl('西湖', 2).click()
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou', 'xihu'])
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
+  })
+
   it('初始路径值回显 + 打开回放激活路径', async () => {
     const { wrapper } = mountCascader({ modelValue: ['zhejiang', 'hangzhou', 'xihu'] })
     expect(wrapper.find('.eb-cascader__label').text()).toBe('浙江 / 杭州 / 西湖')

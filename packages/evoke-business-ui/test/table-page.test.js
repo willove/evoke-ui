@@ -48,12 +48,12 @@ describe('EbTablePage — 数据代理', () => {
     expect(request.mock.calls.at(-1)[0]).toMatchObject({ page: 3, pageSize: 10 })
   })
 
-  it('改页容量 → 换容量并回第 1 页（useTable 既有语义）', async () => {
+  it('改页容量 → 换容量且页码按分页组件为准（同传 page+pageSize 保留页码）', async () => {
     const { wrapper, request } = mountPage()
     await flushPromises()
     wrapper.findComponent(EbDataTable).vm.$emit('page-change', { page: 3, pageSize: 50 })
     await flushPromises()
-    expect(request.mock.calls.at(-1)[0]).toMatchObject({ page: 1, pageSize: 50 })
+    expect(request.mock.calls.at(-1)[0]).toMatchObject({ page: 3, pageSize: 50 })
   })
 
   it('expose.search 合并筛选并回第 1 页；reset 恢复默认参数', async () => {

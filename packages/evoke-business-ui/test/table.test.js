@@ -298,6 +298,48 @@ describe('EbTable 筛选', () => {
     await flushTable(wrapper)
     expect(wrapper.findAll('tbody .eb-table__row')).toHaveLength(3)
   })
+
+  it('筛选面板：点击外部与 Esc 关闭，面板内点击不关', async () => {
+    const wrapper = mount(EbTable, {
+      props: { data: rows },
+      slots: {
+        default: () =>
+          h('div', [
+            h(EbTableColumn, {
+              prop: 'type',
+              label: '类型',
+              columnKey: 'type',
+              filters: [
+                { text: '水果', value: '水果' },
+                { text: '硬件', value: '硬件' },
+              ],
+            }),
+            h(EbTableColumn, { prop: 'name', label: '名称' }),
+          ]),
+      },
+    })
+    await flushTable(wrapper)
+    await wrapper.find('.eb-table__column-filter-trigger').trigger('click')
+    await flushTable(wrapper)
+    expect(document.querySelector('.eb-table__filter')).toBeTruthy()
+    // 面板内点击（勾选筛选项）不关闭
+    document.querySelector('.eb-table__filter-list-item').click()
+    await flushTable(wrapper)
+    expect(document.querySelector('.eb-table__filter')).toBeTruthy()
+    // 面板外 pointerdown 关闭
+    document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+    await flushTable(wrapper)
+    expect(document.querySelector('.eb-table__filter')).toBeNull()
+
+    // Esc 关闭
+    await wrapper.find('.eb-table__column-filter-trigger').trigger('click')
+    await flushTable(wrapper)
+    expect(document.querySelector('.eb-table__filter')).toBeTruthy()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await flushTable(wrapper)
+    expect(document.querySelector('.eb-table__filter')).toBeNull()
+    wrapper.unmount()
+  })
 })
 
 describe('EbTable 行事件与当前行', () => {

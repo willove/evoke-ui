@@ -131,7 +131,8 @@ export function useTable<T = Record<string, unknown>>(
     if (patch.page != null) pagination.page = patch.page
     if (patch.pageSize != null) {
       pagination.pageSize = patch.pageSize
-      pagination.page = 1
+      // 单独改页容量回到第 1 页；与 page 同传时保留显式页码
+      if (patch.page == null) pagination.page = 1
     }
   }
 

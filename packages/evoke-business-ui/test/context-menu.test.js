@@ -203,6 +203,25 @@ describe('EbContextMenu 右键菜单', () => {
     expect(document.querySelector('.eb-context-menu__submenu')).toBeNull()
   })
 
+  it('移出父项后移入子菜单：清掉关闭计时，子菜单不自动收起', async () => {
+    wrapper = mountRegion(
+      {},
+      [{ label: '排序', children: [{ label: '升序', command: 'asc' }] }]
+    )
+    openByRegion(wrapper)
+    await wait()
+    const parent = itemEls()[0]
+    parent.dispatchEvent(new MouseEvent('mouseenter'))
+    await wait(200)
+    const sub = document.querySelector('.eb-context-menu__submenu')
+    expect(sub).toBeTruthy()
+    // 父项 mouseleave 启动 CLOSE_DELAY 计时，指针进入 teleport 出的 ul 应清掉它
+    parent.dispatchEvent(new MouseEvent('mouseleave'))
+    sub.dispatchEvent(new MouseEvent('mouseenter'))
+    await wait(220)
+    expect(document.querySelector('.eb-context-menu__submenu')).toBeTruthy()
+  })
+
   it('点击带子菜单的父项仅展开子菜单、不抛 command', async () => {
     wrapper = mountRegion(
       {},

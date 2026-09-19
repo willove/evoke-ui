@@ -199,8 +199,7 @@ function handleReset() {
 const selection = ref([])
 
 function handlePageChange(e) {
-  // setPagination 的 pageSize 分支自带「改容量回第 1 页」语义；
-  // 只传变化的字段，避免翻页时 pageSize 同传把页码冲回 1
+  // 只传变化的字段；页码以分页组件给的为准（useTable 同传 page+pageSize 不再冲回第 1 页）
   const patch = {}
   if (e.page !== pagination.page) patch.page = e.page
   if (e.pageSize !== pagination.pageSize) patch.pageSize = e.pageSize

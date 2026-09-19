@@ -61,7 +61,7 @@ const props = defineProps({
 const popperRef = ref(null)
 
 defineExpose({
-  show: (...args) => popperRef.value?.show,
+  show: () => popperRef.value?.open?.(),
   hide: () => popperRef.value?.close?.(),
   update: () => popperRef.value?.update?.(),
 })

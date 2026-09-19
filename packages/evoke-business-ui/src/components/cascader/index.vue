@@ -390,7 +390,8 @@ function isNodeSelectable(node) {
 
 function handleNodeClick(node) {
   if (node.disabled) return
-  if (expandOnHover.value) return // hover 模式下点击仅选择
+  // hover 模式：仅不可选节点（需 hover 展开的父级）跳过点击，可选节点继续走选择
+  if (expandOnHover.value && !isNodeSelectable(node)) return
   if (!node.isLeaf) {
     expandNode(node)
     if (!checkStrictly.value && !props.multiple) return

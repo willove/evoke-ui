@@ -269,6 +269,8 @@ import { useFloating } from '../../composables/useFloating'
 import { provideTableContext } from './table-context'
 import { useLocale } from '../../composables/useLocale'
 import { useFormItem } from '../../composables/useFormItem'
+import { useClickOutside } from '../../composables/useClickOutside'
+import { on } from '../../utils/events'
 
 /** 函数式渲染组件：渲染作用域插槽产出的 vnode（数组或单节点） */
 const Vnodes = defineComponent({
@@ -647,6 +649,30 @@ function closeFilterPanel() {
   openFilterKey.value = ''
   filterAnchorEl.value = null
 }
+
+// 点击锚点/面板之外关闭（面板内勾选不受影响）；面板打开期间 Esc 关闭
+const { stop: stopFilterClickOutside } = useClickOutside(
+  [filterAnchorEl, filterPanelRef],
+  () => closeFilterPanel(),
+  true
+)
+onBeforeUnmount(stopFilterClickOutside)
+
+let offFilterKeydown = null
+watch(openFilterKey, (key) => {
+  if (key && !offFilterKeydown) {
+    offFilterKeydown = on(document, 'keydown', (e) => {
+      if (e.key === 'Escape') closeFilterPanel()
+    })
+  } else if (!key && offFilterKeydown) {
+    offFilterKeydown()
+    offFilterKeydown = null
+  }
+})
+onBeforeUnmount(() => {
+  offFilterKeydown?.()
+  offFilterKeydown = null
+})
 
 function emitFilterChange() {
   const active = {}

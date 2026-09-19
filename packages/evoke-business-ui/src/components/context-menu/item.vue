@@ -24,6 +24,7 @@
         role="menu"
         :style="subStyle"
         data-eb-context-menu-layer
+        @mouseenter="handleSubEnter"
       >
         <li
           v-for="(child, index) in item.children"
@@ -135,6 +136,11 @@ function handleLeave() {
     if (leaveTimer) clearTimeout(leaveTimer)
     leaveTimer = setTimeout(closeSub, CLOSE_DELAY)
   }
+}
+
+/** 子菜单 Teleport 至 body，不在父项 DOM 子树内，移入它不触发父项 mouseenter，须自行清关闭计时 */
+function handleSubEnter() {
+  clearTimers()
 }
 
 async function openSub() {

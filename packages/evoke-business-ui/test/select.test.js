@@ -58,6 +58,23 @@ describe('EbTooltip', () => {
     expect(document.querySelector('.eb-tooltip__popper')).toBeNull()
     wrapper.unmount()
   })
+
+  it('实例 show()/hide() 命令式开关浮层', async () => {
+    const wrapper = mount(EbTooltip, {
+      props: { content: '命令式', showAfter: 0, hideAfter: 0 },
+      slots: { default: '<span>t</span>' },
+      attachTo: document.body,
+    })
+    wrapper.vm.show()
+    await new Promise((r) => setTimeout(r, 20))
+    const popper = document.querySelector('.eb-tooltip__popper')
+    expect(popper).toBeTruthy()
+    expect(popper.textContent).toContain('命令式')
+    wrapper.vm.hide()
+    await new Promise((r) => setTimeout(r, 20))
+    expect(document.querySelector('.eb-tooltip__popper')).toBeNull()
+    wrapper.unmount()
+  })
 })
 
 describe('EbPopover', () => {
@@ -74,6 +91,30 @@ describe('EbPopover', () => {
     expect(popper.querySelector('.eb-popover__title').textContent).toBe('标题')
     expect(popper.querySelector('.eb-popover__content').textContent).toBe('内容')
     wrapper.unmount()
+  })
+
+  it('width 落到内容容器：数字补 px、字符串原样', async () => {
+    const wrapper = mount(EbPopover, {
+      props: { title: 't', content: 'c', trigger: 'click', width: 300 },
+      slots: { default: '<button>btn</button>' },
+      attachTo: document.body,
+    })
+    await wrapper.find('.eb-popper-trigger').trigger('click')
+    await new Promise((r) => setTimeout(r, 20))
+    let body = document.querySelector('.eb-popover .eb-popover__body')
+    expect(body.style.width).toBe('300px')
+    wrapper.unmount()
+
+    const wrapper2 = mount(EbPopover, {
+      props: { title: 't', content: 'c', trigger: 'click', width: '50%' },
+      slots: { default: '<button>btn</button>' },
+      attachTo: document.body,
+    })
+    await wrapper2.find('.eb-popper-trigger').trigger('click')
+    await new Promise((r) => setTimeout(r, 20))
+    body = document.querySelector('.eb-popover .eb-popover__body')
+    expect(body.style.width).toBe('50%')
+    wrapper2.unmount()
   })
 })
 
@@ -158,6 +199,23 @@ describe('EbSelect', () => {
     expect(items.length).toBe(2)
     expect(items[0].textContent).toContain('选项A')
     wrapper.unmount()
+  })
+
+  it('关闭态触发器键盘 Enter/Space/ArrowDown 打开下拉', async () => {
+    for (const key of ['Enter', ' ', 'ArrowDown']) {
+      const wrapper = mount(EbSelect, {
+        slots: {
+          default: () => h(EbOption, { value: 'a', label: '选项A' }),
+        },
+        attachTo: document.body,
+      })
+      const trigger = wrapper.find('.eb-select__wrapper')
+      await trigger.trigger('keydown', { key })
+      await new Promise((r) => setTimeout(r, 30))
+      expect(wrapper.emitted('visible-change')[0]).toEqual([true])
+      expect(document.querySelector('.eb-select__dropdown')).toBeTruthy()
+      wrapper.unmount()
+    }
   })
 
   it('单选：点击选项 emit update/change 并关闭', async () => {

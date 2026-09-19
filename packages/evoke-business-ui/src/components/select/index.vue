@@ -18,6 +18,7 @@
       :aria-controls="dropdownVisible ? listboxId : undefined"
       :aria-activedescendant="activeDescendantId"
       :aria-disabled="isDisabled || undefined"
+      @keydown="handleTriggerKeydown"
     >
       <span v-if="multiple && selectedTags.length" class="eb-select__selection">
         <span
@@ -431,6 +432,17 @@ function toggleDropdown() {
 function handleClick() {
   if (isDisabled.value) return
   toggleDropdown()
+}
+
+// 关闭态触发器键盘：Enter/Space/ArrowDown 打开下拉（Space 防滚屏、Enter 防表单提交）
+function handleTriggerKeydown(e) {
+  // filter 输入框的 keydown 冒泡上来时不处理（交给其自身导航逻辑）
+  if (e.target !== e.currentTarget) return
+  if (isDisabled.value || dropdownVisible.value) return
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+    e.preventDefault()
+    openDropdown()
+  }
 }
 
 // 点击外部关闭
