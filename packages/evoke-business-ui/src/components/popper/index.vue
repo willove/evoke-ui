@@ -245,12 +245,13 @@ onMounted(() => {
   bindGlobal()
 })
 
-// trigger/参考元素变化时重绑（virtual-ref 动态场景）
+// trigger/参考元素变化时重绑（virtual-ref 动态场景：换参考元素即换绑定目标，
+// 与 onMounted 同条件——虚拟模式此前被排除在此门外，换 ref 后旧监听被解绑却不再重绑）
 watch(
   () => [props.trigger, effectiveReference.value],
   () => {
     unbindAll()
-    if (props.trigger !== 'manual' && !props.virtualTriggering) {
+    if (props.trigger !== 'manual') {
       bindEvents()
     }
     bindGlobal()
