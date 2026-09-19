@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="rootRef"
     class="eb-form-item eb-form-item"
     :class="[
       formItemSize ? `eb-form-item--${formItemSize}` : '',
@@ -112,9 +113,20 @@ provide(
   {
     size: computed(() => formItemSize.value),
     disabled: computed(() => !!form?.disabled?.value),
-    validate: (trigger) => validate(trigger),
+    validate: (trigger) => {
+      // 值变化收口：change 触发时 model 已写入新值，向上上报一次
+      if (trigger === 'change') reportValuesChange()
+      return validate(trigger)
+    },
   }
 )
+
+/** 上报值变化（form 收口后 emit values-change） */
+function reportValuesChange() {
+  const model = form?.model?.value
+  if (!props.prop || !model || typeof model !== 'object') return
+  form?.valuesChange?.({ [props.prop]: fieldValue.value }, { ...model })
+}
 
 // ─── 规则收集 ───
 const normalizedRules = computed(() => {
@@ -215,6 +227,13 @@ function scrollToField() {
   el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
 }
 
+const rootRef = ref(null)
+
+/** scrollToError 用：失败项滚入视野（nearest + smooth） */
+function scrollErrorIntoView() {
+  rootRef.value?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
+}
+
 // ─── 手动 error prop ───
 watch(
   () => props.error,
@@ -258,6 +277,7 @@ const exposed = {
   resetField,
   clearValidate,
   scrollToField,
+  scrollErrorIntoView,
   validateState,
   validateMessage,
 }
@@ -267,6 +287,7 @@ defineExpose({
   resetField,
   clearValidate,
   scrollToField,
+  scrollErrorIntoView,
   validateState,
   validateMessage,
 })

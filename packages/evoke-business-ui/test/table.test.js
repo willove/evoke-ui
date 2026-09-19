@@ -376,3 +376,87 @@ describe('EbTable 行事件与当前行', () => {
     }
   })
 })
+
+describe('EbTable loading 与 rowClassName', () => {
+  it('loading 渲染加载遮罩，关闭后移除', async () => {
+    const wrapper = mountTable({ loading: true })
+    await flushTable(wrapper)
+    expect(wrapper.find('.eb-table__loading-mask').exists()).toBe(true)
+    await wrapper.setProps({ loading: false })
+    await flushTable(wrapper)
+    expect(wrapper.find('.eb-table__loading-mask').exists()).toBe(false)
+  })
+
+  it('rowClassName 函数与字符串均追加到行类名', async () => {
+    const wrapper = mountTable({ rowClassName: (row) => (row.price > 100 ? 'is-expensive' : '') })
+    await flushTable(wrapper)
+    const trs = wrapper.findAll('tbody .eb-table__row')
+    expect(trs[2].classes()).toContain('is-expensive')
+    expect(trs[0].classes()).not.toContain('is-expensive')
+    const stringWrapper = mountTable({ rowClassName: 'custom-row' })
+    await flushTable(stringWrapper)
+    expect(stringWrapper.findAll('tbody .eb-table__row')[0].classes()).toContain('custom-row')
+  })
+})
+
+describe('EbTable 服务端排序', () => {
+  it('sortable="custom" 不本地重排，仅发 sort-change 且箭头状态循环', async () => {
+    const wrapper = mount(EbTable, {
+      props: { data: rows },
+      slots: {
+        default: () =>
+          h('div', [
+            h(EbTableColumn, { prop: 'price', label: '价格', sortable: 'custom' }),
+            h(EbTableColumn, { prop: 'name', label: '名称' }),
+          ]),
+      },
+    })
+    await flushTable(wrapper)
+    const sortWrapper = wrapper.find('.eb-table__sort-wrapper')
+    await sortWrapper.trigger('click')
+    expect(wrapper.emitted('sort-change')[0][0]).toMatchObject({ prop: 'price', order: 'ascending' })
+    // 数据顺序保持原样
+    let texts = wrapper.findAll('tbody .eb-table__row').map((tr) => tr.text())
+    expect(texts).toEqual(['8苹果', '3香蕉', '999CPU'])
+    await sortWrapper.trigger('click')
+    expect(wrapper.emitted('sort-change')[1][0]).toMatchObject({ order: 'descending' })
+    texts = wrapper.findAll('tbody .eb-table__row').map((tr) => tr.text())
+    expect(texts).toEqual(['8苹果', '3香蕉', '999CPU'])
+    // 实例方法 sort 同样只上报不重排
+    wrapper.vm.sort('price', 'ascending')
+    await flushTable(wrapper)
+    texts = wrapper.findAll('tbody .eb-table__row').map((tr) => tr.text())
+    expect(texts).toEqual(['8苹果', '3香蕉', '999CPU'])
+  })
+})
+
+describe('EbTable 表尾合计', () => {
+  it('showSummary 渲染合计行，默认数字列求和、其余列为空', async () => {
+    const wrapper = mountTable({ showSummary: true })
+    await flushTable(wrapper)
+    const footRow = wrapper.find('tfoot .eb-table__footer-row')
+    expect(footRow.exists()).toBe(true)
+    const cells = footRow.findAll('.cell')
+    expect(cells[0].text()).toBe('')
+    expect(cells[1].text()).toBe('1010')
+  })
+
+  it('summaryMethod 自定义合计（接收数据，按列 prop 返回文本映射）', async () => {
+    const wrapper = mountTable({
+      showSummary: true,
+      summaryMethod: (data) => ({ name: `共 ${data.length} 条`, price: '—' }),
+    })
+    await flushTable(wrapper)
+    const cells = wrapper.find('tfoot .eb-table__footer-row').findAll('.cell')
+    expect(cells[0].text()).toBe('共 3 条')
+    expect(cells[1].text()).toBe('—')
+  })
+
+  it('合计行不参与斑马纹与行选择', async () => {
+    const wrapper = mountTable({ showSummary: true, stripe: true })
+    await flushTable(wrapper)
+    expect(wrapper.find('tfoot .eb-table__footer-row').classes()).not.toContain('eb-table__row')
+    expect(wrapper.find('tfoot .eb-table__footer-row').classes()).not.toContain('eb-table__row--striped')
+    expect(wrapper.find('tfoot .eb-checkbox').exists()).toBe(false)
+  })
+})

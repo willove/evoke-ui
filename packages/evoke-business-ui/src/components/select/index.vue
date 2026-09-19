@@ -19,6 +19,8 @@
       :aria-activedescendant="activeDescendantId"
       :aria-disabled="isDisabled || undefined"
       @keydown="handleTriggerKeydown"
+      @focusin="handleFocusIn"
+      @focusout="handleFocusOut"
     >
       <span v-if="multiple && selectedTags.length" class="eb-select__selection">
         <span
@@ -61,12 +63,11 @@
         @input="handleQueryInput"
         @keydown="handleKeydown"
         @focus="isFocused = true"
-        @blur="handleBlur"
       />
 
       <span class="eb-select__suffix">
         <eb-icon
-          v-if="clearable && hasSelection && !isDisabled && !multiple"
+          v-if="clearable && hasSelection && !isDisabled"
           class="eb-select__caret eb-select__clear"
           name="circle-close"
           @click.stop="handleClear"
@@ -215,8 +216,10 @@ const props = defineProps({
   maxCollapseTags: { type: Number, default: 1 },
   /** v2 兼容：collapseTags 数量语义 */
   collapseTagsTooltip: { type: Boolean, default: false },
-  /** 数据模式：选项数组 [{ value, label, disabled }]；传入后下拉由本组件渲染（插槽模式仍可用） */
+  /** 数据模式：选项数组 [{ value, label, disabled }]；传入后下拉由本组件渲染（插槽模式仍可用），字段名可用 field-names 重映射 */
   options: { type: Array, default: null },
+  /** 数据模式字段映射 { label, value, disabled }，默认取同名字段 */
+  fieldNames: { type: Object, default: null },
   /** 虚拟滚动（需配合 options）：万级选项只渲染可视窗口 */
   virtual: { type: Boolean, default: false },
   name: { type: String, default: undefined },
@@ -296,13 +299,23 @@ const OPTION_HEIGHT = 34
 /** 数据模式：下拉选项由本组件按 options 渲染；插槽模式：来源 = 注册表 */
 const isDataMode = computed(() => Array.isArray(props.options))
 
+/** 数据模式字段映射（field-names 重映射，默认同名字段） */
+const dataFieldMap = computed(() => ({
+  label: props.fieldNames?.label || 'label',
+  value: props.fieldNames?.value || 'value',
+  disabled: props.fieldNames?.disabled || 'disabled',
+}))
+
 const dataOptions = computed(() =>
   isDataMode.value
-    ? props.options.map((o) => ({
-        value: o.value,
-        label: o.label ?? String(o.value),
-        disabled: !!o.disabled,
-      }))
+    ? props.options.map((o) => {
+        const value = o[dataFieldMap.value.value]
+        return {
+          value,
+          label: o[dataFieldMap.value.label] ?? String(value),
+          disabled: !!o[dataFieldMap.value.disabled],
+        }
+      })
     : []
 )
 
@@ -421,6 +434,21 @@ function closeDropdown() {
   emit('visible-change', false)
   query.value = ''
   if (props.allowCreate) createdOption.value = null
+  // blur 改由触发器 focusout 语义负责：关下拉 ≠ 失焦（如 Esc 关闭后焦点仍在触发器）
+  isFocused.value = false
+}
+
+// ─── 焦点事件（focusin/focusout 区分「真失焦」与「关下拉」） ───
+function handleFocusIn() {
+  if (isDisabled.value) return
+  isFocused.value = true
+  emit('focus')
+}
+
+/** 焦点真离开组件（含传送浮层）才 emit blur；组件内部转移焦点不算 */
+function handleFocusOut(e) {
+  const to = e.relatedTarget
+  if (to && (referenceRef.value?.contains(to) || floatingRef.value?.contains(to))) return
   isFocused.value = false
   emit('blur')
 }
@@ -510,8 +538,7 @@ function handleQueryInput(e) {
 }
 
 function handleBlur() {
-  if (props.multiple && props.filterable) return
-  // blur 由 closeDropdown 处理
+  // blur 语义由触发器 focusout（handleFocusOut）承载，此处仅为输入框原生 blur 占位
 }
 
 // ─── 键盘导航 ───
@@ -635,7 +662,11 @@ onBeforeUnmount(() => {
 
 defineExpose({
   focus: () => (props.filterable ? inputRef.value?.focus?.() : openDropdown()),
-  blur: closeDropdown,
+  // 程序化失焦：收起下拉并主动失焦触发器（DOM blur 走 focusout 语义发 blur）
+  blur: () => {
+    closeDropdown()
+    referenceRef.value?.blur?.()
+  },
   toggleDropdown,
   clearSelection: handleClear,
   /** 手动刷新下拉定位 */

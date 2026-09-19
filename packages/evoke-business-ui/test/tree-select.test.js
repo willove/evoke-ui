@@ -209,6 +209,71 @@ describe('EbTreeSelect 多选', () => {
   })
 })
 
+describe('EbTreeSelect checked-strategy（多选复选回传归约）', () => {
+  it('child（默认）：只存叶子 key', async () => {
+    const { wrapper, select } = mountTreeSelect({
+      multiple: true, showCheckbox: true, checkedStrategy: 'child',
+    })
+    await openDropdown(wrapper)
+    nodeCheckboxOf('一级 1').dispatchEvent(new Event('change'))
+    await flush()
+    expect(select().emitted('update:modelValue')[0][0].sort((a, b) => a - b)).toEqual([12, 111])
+    // 回显：叶子 key 反查 label
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.map((t) => t.text())).toContain('三级 1-1-1')
+    expect(tags.map((t) => t.text())).toContain('二级 1-2')
+  })
+
+  it('all：全存勾选 key（含父级）', async () => {
+    const { wrapper, select } = mountTreeSelect({
+      multiple: true, showCheckbox: true, checkedStrategy: 'all',
+    })
+    await openDropdown(wrapper)
+    nodeCheckboxOf('一级 2').dispatchEvent(new Event('change'))
+    await flush()
+    expect(select().emitted('update:modelValue')[0][0].sort((a, b) => a - b)).toEqual([2, 21])
+    // 回显：父级 key 也能反查 label
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.length).toBe(2)
+    expect(tags.map((t) => t.text())).toContain('一级 2')
+    expect(tags.map((t) => t.text())).toContain('二级 2-1')
+  })
+
+  it('parent：只存子级全选中的最上层父 key', async () => {
+    const { wrapper, select } = mountTreeSelect({
+      multiple: true, showCheckbox: true, checkedStrategy: 'parent',
+    })
+    await openDropdown(wrapper)
+    nodeCheckboxOf('一级 1').dispatchEvent(new Event('change'))
+    await flush()
+    // 一级 1 子级全选中 → 只存父 key
+    expect(select().emitted('update:modelValue')[0][0]).toEqual([1])
+    let tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.length).toBe(1)
+    expect(tags[0].text()).toContain('一级 1')
+    // 取消一个叶子 → 一级 1 不再全选；二级 1-1 子树仍全选 → 归约为其最上层 key
+    nodeCheckboxOf('二级 1-2').dispatchEvent(new Event('change'))
+    await flush()
+    expect(select().emitted('update:modelValue')[1][0]).toEqual([11])
+    tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.map((t) => t.text())).toContain('二级 1-1')
+  })
+
+  it('parent：父 key 初始回显向下级联勾选', async () => {
+    const { wrapper } = mountTreeSelect({
+      multiple: true, showCheckbox: true, checkedStrategy: 'parent', modelValue: [1],
+    })
+    await openDropdown(wrapper)
+    const rootEl = [...document.querySelectorAll('.eb-tree-node')].find((el) =>
+      el.querySelector('.eb-tree-node__label')?.textContent === '一级 1'
+    )
+    expect(rootEl.classList.contains('is-checked')).toBe(true)
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.length).toBe(1)
+    expect(tags[0].text()).toContain('一级 1')
+  })
+})
+
 describe('EbTreeSelect 单选 + 复选', () => {
   it('勾选父级 → 取首个叶子 key；再点取消', async () => {
     const { wrapper, select } = mountTreeSelect({ showCheckbox: true })

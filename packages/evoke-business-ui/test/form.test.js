@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
 import EbForm from '../src/components/form/index.vue'
@@ -165,5 +165,80 @@ describe('EbForm 校验（async-validator 集成）', () => {
     await wrapper.find('input').trigger('blur')
     await new Promise((r) => setTimeout(r))
     expect(wrapper.find('.eb-form-item__error').text()).toBe('仅数字')
+  })
+})
+
+describe('EbForm 提交事件闭环', () => {
+  it('原生 submit：校验失败 emit finish-failed（values + errors），不真提交', async () => {
+    const wrapper = mount(
+      createFormHarness({ name: '' }, { name: [{ required: true, message: '名称必填' }] })
+    )
+    await wrapper.find('form').trigger('submit')
+    await new Promise((r) => setTimeout(r))
+    const form = wrapper.findComponent(EbForm)
+    expect(form.emitted('finish')).toBeUndefined()
+    const payload = form.emitted('finish-failed')[0][0]
+    expect(payload.values).toEqual({ name: '' })
+    expect(payload.errors).toEqual({ name: '名称必填' })
+    // 失败后内联错误已渲染
+    expect(wrapper.find('.eb-form-item__error').text()).toBe('名称必填')
+  })
+
+  it('原生 submit：校验通过 emit finish（model 副本）', async () => {
+    const wrapper = mount(
+      createFormHarness({ name: 'ok' }, { name: [{ required: true, message: '名称必填' }] })
+    )
+    await wrapper.find('form').trigger('submit')
+    await new Promise((r) => setTimeout(r))
+    const form = wrapper.findComponent(EbForm)
+    expect(form.emitted('finish-failed')).toBeUndefined()
+    expect(form.emitted('finish')[0][0]).toEqual({ name: 'ok' })
+  })
+
+  it('values-change：字段值变化上报最小 changedValues 与 allValues', async () => {
+    const wrapper = mount(
+      createFormHarness({ name: '' }, { name: [{ required: true, message: '必填', trigger: 'change' }] })
+    )
+    await wrapper.find('input').setValue('新值')
+    await new Promise((r) => setTimeout(r))
+    const events = wrapper.findComponent(EbForm).emitted('values-change')
+    expect(events.length).toBeGreaterThan(0)
+    const [changed, all] = events[0]
+    expect(changed).toEqual({ name: '新值' })
+    expect(all).toEqual({ name: '新值' })
+  })
+})
+
+describe('EbForm scrollToError', () => {
+  function withScrollIntoViewStub(run) {
+    const original = HTMLElement.prototype.scrollIntoView
+    const spy = vi.fn()
+    HTMLElement.prototype.scrollIntoView = spy
+    return run(spy).finally(() => {
+      HTMLElement.prototype.scrollIntoView = original
+    })
+  }
+
+  it('校验失败时第一个错误项滚入视野（nearest + smooth）', async () => {
+    await withScrollIntoViewStub(async (spy) => {
+      const wrapper = mount(
+        createFormHarness({ name: '' }, { name: [{ required: true, message: '名称必填' }] }, { scrollToError: true })
+      )
+      await wrapper.findComponent(EbForm).vm.validate().catch(() => {})
+      await new Promise((r) => setTimeout(r))
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy.mock.calls[0][0]).toEqual({ block: 'nearest', behavior: 'smooth' })
+    })
+  })
+
+  it('scrollToError 关闭时不触发滚动', async () => {
+    await withScrollIntoViewStub(async (spy) => {
+      const wrapper = mount(
+        createFormHarness({ name: '' }, { name: [{ required: true, message: '名称必填' }] })
+      )
+      await wrapper.findComponent(EbForm).vm.validate().catch(() => {})
+      await new Promise((r) => setTimeout(r))
+      expect(spy).not.toHaveBeenCalled()
+    })
   })
 })

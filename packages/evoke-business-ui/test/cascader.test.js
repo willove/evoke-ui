@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
 import EbCascader from '../src/components/cascader/index.vue'
@@ -237,6 +237,65 @@ describe('EbCascader 多选', () => {
     })
     expect(wrapper.findAll('.eb-cascader__tag').length).toBe(1)
     expect(wrapper.find('.eb-select__tags-collapse-item').text()).toBe('+ 1')
+  })
+})
+
+describe('EbCascader 懒加载', () => {
+  it('lazy + load-data：展开待加载节点触发加载，期间该列 loading，resolve 后并入子级', async () => {
+    const lazyOptions = [{ value: 'east', label: '华东', leaf: false }]
+    let resolveLoad
+    const loadData = vi.fn((option) => new Promise((resolve) => {
+      resolveLoad = () => {
+        option.children = [{ value: 'sh', label: '上海' }]
+        resolve()
+      }
+    }))
+    const { wrapper, cascader } = mountCascader({ options: lazyOptions, lazy: true, loadData })
+    await openDropdown(wrapper)
+    // 待加载节点（leaf:false 且无 children）展示展开箭头
+    expect(nodeEl('华东', 0).querySelector('.eb-cascader-node__postfix')).toBeTruthy()
+    nodeEl('华东', 0).click()
+    await flush()
+    // 加载期间：第二列出现且展示 loading 占位
+    expect(cascader().emitted('expand-change')[0][0]).toEqual([])
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(2)
+    expect(document.querySelectorAll('.eb-cascader-menu')[1].querySelector('.is-loading-node')).toBeTruthy()
+    // resolve 后子级并入，loading 消失
+    resolveLoad()
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu')[1].querySelector('.is-loading-node')).toBeNull()
+    expect(nodeEl('上海', 1)).toBeTruthy()
+    // 选中叶子 → 路径值
+    nodeEl('上海', 1).click()
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['east', 'sh'])
+    expect(loadData).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+  })
+
+  it('resolve 返回子级数组时兜底并入；已加载/普通叶子不重复触发', async () => {
+    const lazyOptions = [
+      { value: 'a', label: '甲' },
+      { value: 'b', label: '乙', leaf: false },
+    ]
+    const loadData = vi.fn(() => Promise.resolve([{ value: 'b1', label: '乙一' }]))
+    const { wrapper, cascader } = mountCascader({ options: lazyOptions, lazy: true, loadData })
+    await openDropdown(wrapper)
+    // 普通叶子（无 leaf:false）点击不触发加载、直接选中
+    nodeEl('甲', 0).click()
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['a'])
+    expect(loadData).not.toHaveBeenCalled()
+    // 待加载节点：resolve 返回数组并入
+    await openDropdown(wrapper)
+    nodeEl('乙', 0).click()
+    await flush()
+    expect(loadData).toHaveBeenCalledTimes(1)
+    expect(nodeEl('乙一', 1)).toBeTruthy()
+    nodeEl('乙一', 1).click()
+    await flush()
+    expect(cascader().emitted('update:modelValue')[1][0]).toEqual(['b', 'b1'])
+    wrapper.unmount()
   })
 })
 

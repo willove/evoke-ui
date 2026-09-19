@@ -246,9 +246,10 @@ function handleToggle(node) {
   const wasExpanded = expandedSet.value.has(node.key)
   const expanded = new Set(expandedSet.value)
   if (!wasExpanded) {
-    if (props.accordion && node.level === 1) {
-      // 手风琴：同级只展开一个
-      for (const other of roots.value) {
+    if (props.accordion) {
+      // 手风琴：同父兄弟互斥展开（全层级生效，根级以 roots 为兄弟）
+      const siblings = node.parent ? node.parent.childNodes : roots.value
+      for (const other of siblings) {
         if (other.key !== node.key) expanded.delete(other.key)
       }
     }

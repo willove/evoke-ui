@@ -2,7 +2,7 @@
   <form
     class="eb-form eb-form"
     :class="[`eb-form--label-${labelPosition}`, { 'eb-form--inline': inline, 'eb-form--ripple-off': ripple === false }]"
-    @submit.prevent
+    @submit.prevent="handleSubmit"
   >
     <slot />
   </form>
@@ -12,11 +12,14 @@
 /**
  * EbForm — 表单（async-validator 校验集成）
  * FormInstance 兼容：validate / validateField / resetFields / clearValidate / scrollToField
+ * 事件：finish / finish-failed（原生 submit 校验闭环）、values-change（字段值变化）
  */
 import { computed, provide, ref, toRef, watch } from 'vue'
 import { formContextKey } from '../../composables/useFormItem'
 
 defineOptions({ name: 'EbForm' })
+
+const emit = defineEmits(['finish', 'finish-failed', 'values-change'])
 
 const props = defineProps({
   /** 表单数据对象 */
@@ -80,6 +83,11 @@ function validate(callback) {
         resolve(true)
         callback?.(true)
       } else {
+        // scrollToError：第一个校验失败的 field 滚入视野
+        if (props.scrollToError) {
+          const firstProp = Object.keys(invalidFields)[0]
+          fields.value.find((f) => f.prop === firstProp)?.scrollErrorIntoView?.()
+        }
         reject(invalidFields)
         callback?.(false, invalidFields)
       }
@@ -140,6 +148,28 @@ function scrollToField(prop) {
   field?.scrollToField?.()
 }
 
+/**
+ * 原生 submit 收口：回车 / type=submit 按钮统一先跑 validate
+ * 通过 emit finish（负载为 model 副本），失败 emit finish-failed（{ values, errors }）
+ */
+async function handleSubmit() {
+  let invalidFields = null
+  const ok = await validate().catch((errors) => {
+    invalidFields = errors
+    return false
+  })
+  if (ok) {
+    emit('finish', { ...props.model })
+  } else {
+    emit('finish-failed', { values: { ...props.model }, errors: invalidFields ?? {} })
+  }
+}
+
+/** 值变化上报收口（FormItem 的 change 校验链路调用） */
+function handleValuesChange(changedValues, allValues) {
+  emit('values-change', changedValues, allValues)
+}
+
 provide(
   formContextKey,
   {
@@ -161,6 +191,7 @@ provide(
     resetFields,
     clearValidate,
     scrollToField,
+    valuesChange: handleValuesChange,
   }
 )
 

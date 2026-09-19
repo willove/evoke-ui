@@ -289,3 +289,29 @@
   border-radius: var(--eb-radius-sm);
   outline: none;
 }
+
+/* ─── 表体容器（相对定位，供加载遮罩 absolute 盖住表体可视区） ─── */
+.eb-table.eb-table .eb-table__body-outer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ─── 加载遮罩 ─── */
+.eb-table.eb-table .eb-table__loading-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--eb-mask-color);
+}
+
+/* ─── 表尾合计 ─── */
+.eb-table.eb-table .eb-table__footer-row .eb-table__cell {
+  background-color: var(--eb-fill-color-light);
+  font-weight: var(--eb-font-weight-medium);
+}

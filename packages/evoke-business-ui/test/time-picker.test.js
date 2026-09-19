@@ -166,6 +166,76 @@ describe('EbTimePicker 区间', () => {
     await flush()
     expect(comp().emitted('update:modelValue')[0][0]).toEqual([null, null])
   })
+
+  it('区间手输：合法走 confirm 通道（排序输出），非法回滚显示', async () => {
+    const s = dayjs().hour(8).minute(0).second(0).toDate()
+    const e = dayjs().hour(20).minute(0).second(0).toDate()
+    const { wrapper, comp } = mountWith(EbTimePicker, { isRange: true, modelValue: [s, e] })
+    const inputs = wrapper.findAll('.eb-range-input')
+    // 手输开始时间 → 立即确认（另一端沿用当前值）
+    await inputs[0].setValue('09:15:30')
+    await flush()
+    const first = comp().emitted('update:modelValue').at(-1)[0]
+    expect(dayjs(first[0]).format('HH:mm:ss')).toBe('09:15:30')
+    expect(dayjs(first[1]).format('HH:mm:ss')).toBe('20:00:00')
+    // 手输结束时间早于开始 → confirm 排序交换
+    await inputs[1].setValue('07:00:00')
+    await flush()
+    const second = comp().emitted('update:modelValue').at(-1)[0]
+    expect(dayjs(second[0]).format('HH:mm:ss')).toBe('07:00:00')
+    expect(dayjs(second[1]).format('HH:mm:ss')).toBe('09:15:30')
+    // 非法输入回滚显示，不提交
+    await inputs[0].setValue('bad-input')
+    await flush()
+    expect(comp().emitted('update:modelValue').length).toBe(2)
+    expect(inputs[0].element.value).toBe('07:00:00')
+  })
+})
+
+describe('EbTimePicker 禁用时间', () => {
+  it('disabled-hours：禁用项置灰不可选中，可用项正常', async () => {
+    const { wrapper, comp } = mountWith(EbTimePicker, {
+      modelValue: dayjs().hour(10).minute(0).second(0).toDate(),
+      disabledHours: () => [5, 6, 7],
+    })
+    await openPanel(wrapper)
+    const five = spinnerItem(0, '05')
+    expect(five.classList.contains('is-disabled')).toBe(true)
+    five.click()
+    await flush()
+    expect(comp().emitted('update:modelValue')).toBeUndefined()
+    spinnerItem(0, '08').click()
+    await flush()
+    expect(dayjs(comp().emitted('update:modelValue')[0][0]).hour()).toBe(8)
+  })
+
+  it('初始值落在禁用集内：打开面板自动让位到最近可用值', async () => {
+    const { wrapper, comp } = mountWith(EbTimePicker, {
+      modelValue: dayjs().hour(4).minute(0).second(0).toDate(),
+      disabledHours: () => [3, 4],
+    })
+    await openPanel(wrapper)
+    await flush()
+    const emitted = comp().emitted('update:modelValue')
+    expect(emitted).toBeTruthy()
+    expect(dayjs(emitted.at(-1)[0]).hour()).toBe(5)
+    // 回显同步为让位后的值
+    expect(wrapper.find('.eb-input__inner').element.value).toBe('05:00:00')
+  })
+
+  it('disabled-minutes：分钟让位（依赖当前 hour 的禁用集）', async () => {
+    const { wrapper, comp } = mountWith(EbTimePicker, {
+      modelValue: dayjs().hour(10).minute(30).second(0).toDate(),
+      disabledMinutes: (hour) => (hour === 10 ? [30] : []),
+    })
+    await openPanel(wrapper)
+    await flush()
+    const emitted = comp().emitted('update:modelValue')
+    expect(emitted).toBeTruthy()
+    const d = dayjs(emitted.at(-1)[0])
+    expect(d.hour()).toBe(10)
+    expect(d.minute()).toBe(29)
+  })
 })
 
 describe('EbTimeSelect', () => {

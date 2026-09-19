@@ -255,4 +255,102 @@ describe('EbInputNumber', () => {
     const wrapper = mount(EbInputNumber, { props: { controls: false } })
     expect(wrapper.find('.eb-input-number__increase').exists()).toBe(false)
   })
+
+  // ─── formatter / parser ───
+  const fmt = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  it('无 formatter 时维持 type=number，有则切换 text + decimal', () => {
+    expect(mount(EbInputNumber, { props: { modelValue: 1 } }).find('input').attributes('type')).toBe('number')
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 1, formatter: fmt } })
+    expect(wrapper.find('input').attributes('type')).toBe('text')
+    expect(wrapper.find('input').attributes('inputmode')).toBe('decimal')
+    wrapper.unmount()
+  })
+
+  it('formatter 千分位展示，blur 后回显格式化值', async () => {
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 1234567, formatter: fmt } })
+    const input = wrapper.find('input')
+    expect(input.element.value).toBe('1,234,567')
+    await input.trigger('blur')
+    expect(input.element.value).toBe('1,234,567')
+    wrapper.unmount()
+  })
+
+  it('focus 显原始数值串，编辑提交为数值（无 parser 去逗号解析）', async () => {
+    // 受控 v-model 环境驱动：提交后绑定值更新，回显才能反映新值的格式化
+    const Harness = defineComponent({
+      setup() {
+        const val = ref(1234567)
+        return () =>
+          h(EbInputNumber, {
+            modelValue: val.value,
+            formatter: fmt,
+            'onUpdate:modelValue': (v) => (val.value = v),
+          })
+      },
+    })
+    const wrapper = mount(Harness)
+    const input = wrapper.find('input')
+    expect(input.element.value).toBe('1,234,567')
+    await input.trigger('focus')
+    expect(input.element.value).toBe('1234567')
+    await input.setValue('1234569')
+    await input.trigger('change')
+    // 提交值为数值
+    expect(wrapper.findComponent(EbInputNumber).emitted('update:modelValue')[0]).toEqual([1234569])
+    // blur 回显格式化值
+    await input.trigger('blur')
+    expect(input.element.value).toBe('1,234,569')
+    wrapper.unmount()
+  })
+
+  it('parser 反解：格式化文本编辑后提交数值，聚焦保持格式化展示', async () => {
+    const wrapper = mount(EbInputNumber, {
+      props: {
+        modelValue: 9876543,
+        formatter: fmt,
+        parser: (t) => Number(String(t).replace(/,/g, '')),
+      },
+    })
+    const input = wrapper.find('input')
+    expect(input.element.value).toBe('9,876,543')
+    // 有 parser 时聚焦保持格式化展示（antd 同款）
+    await input.trigger('focus')
+    expect(input.element.value).toBe('9,876,543')
+    await input.setValue('9,876,600')
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual([9876600])
+    wrapper.unmount()
+  })
+
+  // ─── addon-before / addon-after ───
+  it('addon-before/after 渲染前后缀块并挂根类', () => {
+    const wrapper = mount(EbInputNumber, { props: { modelValue: 1, addonBefore: '￥', addonAfter: '元' } })
+    expect(wrapper.classes()).toContain('is-with-addon')
+    const addons = wrapper.findAll('.eb-input-number__addon')
+    expect(addons).toHaveLength(2)
+    expect(addons[0].text()).toBe('￥')
+    expect(addons[1].text()).toBe('元')
+    wrapper.unmount()
+  })
+
+  it('addon 插槽优先于 prop，无 addon 不渲染', () => {
+    const wrapper = mount({
+      components: { EbInputNumber },
+      template: `
+        <eb-input-number :model-value="1" addon-before="￥" addon-after="元">
+          <template #addon-before><b class="my-addon">USD</b></template>
+        </eb-input-number>
+      `,
+    })
+    const addons = wrapper.findAll('.eb-input-number__addon')
+    expect(addons).toHaveLength(2)
+    expect(addons[0].text()).toBe('USD')
+    expect(addons[1].text()).toBe('元')
+    wrapper.unmount()
+    const plain = mount(EbInputNumber, { props: { modelValue: 1 } })
+    expect(plain.find('.eb-input-number__addon').exists()).toBe(false)
+    expect(plain.classes()).not.toContain('is-with-addon')
+    plain.unmount()
+  })
 })

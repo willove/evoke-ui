@@ -110,9 +110,14 @@
                       @change="handleNodeCheck(node)"
                     />
                     <span class="eb-cascader-node__label">{{ node.label }}</span>
-                    <span v-if="!node.isLeaf" class="eb-cascader-node__postfix">
+                    <span v-if="!node.isLeaf || isLazyPending(node)" class="eb-cascader-node__postfix">
                       <eb-icon name="arrow-right" :size="12" />
                     </span>
+                  </li>
+                  <!-- lazy：待加载节点的子列为空，loading 期间展示加载态占位 -->
+                  <li v-if="menu.length === 0 && isLoadingColumn(mi)" class="eb-cascader-node is-loading-node">
+                    <eb-icon name="loading" :size="14" class="is-rotating" />
+                    <span class="eb-cascader-node__label">{{ t('select.loading') }}</span>
                   </li>
                 </ul>
               </div>
@@ -163,6 +168,10 @@ const props = defineProps({
   maxCollapseTags: { type: Number, default: 1 },
   /** 展开触发方式 click / hover */
   expandTrigger: { type: String, default: '' },
+  /** 懒加载开关（配合 load-data） */
+  lazy: { type: Boolean, default: false },
+  /** 懒加载函数 (option) => Promise，resolve 后子级并入该节点（可返回子级数组或在 option.children 就地写入） */
+  loadData: { type: Function, default: null },
   /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
@@ -200,7 +209,28 @@ const sizeClass = computed(() => {
 })
 
 // ─── 选项树 ───
-const tree = computed(() => normalizeOptions(props.options, config.value))
+// lazy：懒加载并入的子级（原始 data 对象 → 子级数据），不改写宿主 options
+const loadedChildren = new Map()
+/** 懒加载完成信号：resolve 后重建节点树 */
+const lazyTick = ref(0)
+
+const tree = computed(() => {
+  lazyTick.value
+  const nodes = normalizeOptions(props.options, config.value)
+  if (loadedChildren.size) {
+    const merge = (list) => {
+      for (const n of list) {
+        if (loadedChildren.has(n.data) && n.children.length === 0) {
+          n.children = normalizeOptions(loadedChildren.get(n.data), config.value, n)
+          n.isLeaf = n.children.length === 0
+        }
+        merge(n.children)
+      }
+    }
+    merge(nodes)
+  }
+  return nodes
+})
 
 // ─── 菜单栈（activePath 驱动） ───
 const activePath = ref([])
@@ -209,12 +239,46 @@ const menus = computed(() => {
   let level = tree.value
   for (const key of activePath.value) {
     const hit = level.find((n) => n.value === key)
-    if (!hit || hit.isLeaf) break
+    if (!hit || (hit.isLeaf && !isLazyPending(hit))) break
     level = hit.children
     list.push(level)
   }
   return list
 })
+
+// ─── 懒加载 ───
+/** lazy 待加载节点：leaf 标记为 false 且无 children */
+function isLazyPending(node) {
+  return !!props.lazy
+    && typeof props.loadData === 'function'
+    && node.children.length === 0
+    && node.data?.leaf === false
+    && !loadedChildren.has(node.data)
+}
+
+const loadingSet = ref(new Set())
+
+/** 第 mi 列（mi > 0）对应的父节点是否加载中 */
+function isLoadingColumn(mi) {
+  if (mi <= 0) return false
+  return loadingSet.value.has(activePath.value.slice(0, mi).join('/'))
+}
+
+/** 展开待加载节点：触发 load-data，期间该列展示加载态 */
+async function ensureChildrenLoaded(node) {
+  if (!isLazyPending(node)) return
+  const pathKey = nodeToPath(node).join('/')
+  if (loadingSet.value.has(pathKey)) return
+  loadingSet.value = new Set([...loadingSet.value, pathKey])
+  try {
+    const resolved = await props.loadData(node.data)
+    // 宿主未在 option.children 就地写入时，resolve 返回的子级数组兜底并入
+    if (Array.isArray(resolved)) loadedChildren.set(node.data, resolved)
+  } finally {
+    loadingSet.value = new Set([...loadingSet.value].filter((k) => k !== pathKey))
+    lazyTick.value += 1
+  }
+}
 
 // ─── 值解析 ───
 /** 单选：modelValue → { node, path } */
@@ -385,11 +449,16 @@ function outOfPath(path) {
 }
 
 function isNodeSelectable(node) {
-  return node.isLeaf || checkStrictly.value
+  return (node.isLeaf && !isLazyPending(node)) || checkStrictly.value
 }
 
 function handleNodeClick(node) {
   if (node.disabled) return
+  // 待加载节点：点击仅展开并触发加载，不参与选择
+  if (isLazyPending(node)) {
+    expandNode(node)
+    return
+  }
   // hover 模式：仅不可选节点（需 hover 展开的父级）跳过点击，可选节点继续走选择
   if (expandOnHover.value && !isNodeSelectable(node)) return
   if (!node.isLeaf) {
@@ -405,10 +474,11 @@ function handleNodeHover(node) {
   expandNode(node)
 }
 
-function expandNode(node) {
+async function expandNode(node) {
   const path = nodeToPath(node)
   activePath.value = path
   emit('expand-change', path.slice(0, -1))
+  await ensureChildrenLoaded(node)
 }
 
 function selectNode(node) {

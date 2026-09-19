@@ -130,6 +130,37 @@ describe('EbTree 展开交互', () => {
     expect(n2.classes()).toContain('is-expanded')
     expect(n1.classes()).not.toContain('is-expanded')
   })
+
+  it('accordion 全层级：二级同父兄弟互斥，且不牵连异父节点', async () => {
+    const wrapper = mount(EbTree, {
+      props: {
+        accordion: true,
+        nodeKey: 'id',
+        defaultExpandedKeys: [1],
+        data: [
+          {
+            id: 1, label: '一级 1',
+            children: [
+              { id: 11, label: '二级 1-1', children: [{ id: 111, label: '三级 1-1-1' }] },
+              { id: 12, label: '二级 1-2', children: [{ id: 121, label: '三级 1-2-1' }] },
+            ],
+          },
+          { id: 2, label: '一级 2', children: [{ id: 21, label: '二级 2-1' }] },
+        ],
+      },
+    })
+    const s1 = findNodeByLabel(wrapper, '二级 1-1')
+    const s2 = findNodeByLabel(wrapper, '二级 1-2')
+    await s1.find('.eb-tree-node__content').trigger('click')
+    expect(s1.classes()).toContain('is-expanded')
+    await s2.find('.eb-tree-node__content').trigger('click')
+    expect(s2.classes()).toContain('is-expanded')
+    // 同父兄弟互斥
+    expect(s1.classes()).not.toContain('is-expanded')
+    // 异父节点不牵连：根级展开态保持
+    expect(findNodeByLabel(wrapper, '一级 1').classes()).toContain('is-expanded')
+    expect(findNodeByLabel(wrapper, '一级 2').classes()).not.toContain('is-expanded')
+  })
 })
 
 describe('EbTree 复选级联', () => {

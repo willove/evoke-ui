@@ -37,7 +37,7 @@
  * 三列（时/分/秒），点击项即时 emit pick；底部 取消/确定
  * 供 EbDatePicker（datetime 系列头部）与 EbTimePicker 复用
  */
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useLocale } from '../../composables/useLocale'
 
 defineOptions({ name: 'EbTimePanel' })
@@ -50,8 +50,11 @@ const props = defineProps({
   /** 是否展示底部按钮（区间组合时由外层统一提供） */
   showFooter: { type: Boolean, default: true },
   disabled: { type: Boolean, default: false },
+  /** 禁用的小时集合（函数，返回数字数组） */
   disabledHours: { type: Function, default: null },
+  /** 禁用的分钟集合（入参 hour，返回数字数组） */
   disabledMinutes: { type: Function, default: null },
+  /** 禁用的秒集合（入参 hour、minute，返回数字数组） */
   disabledSeconds: { type: Function, default: null },
 })
 
@@ -68,17 +71,22 @@ const time = computed(() => {
   }
 })
 
+/** 各列禁用集合（antd 对齐：函数返回数字数组，分/秒依赖当前时/分） */
+function disabledListFor(key, hour, minute) {
+  if (key === 'hour' && props.disabledHours) return props.disabledHours() || []
+  if (key === 'minute' && props.disabledMinutes) return props.disabledMinutes(hour) || []
+  if (key === 'second' && props.disabledSeconds) return props.disabledSeconds(hour, minute) || []
+  return null
+}
+
 function buildItems(count, key) {
   const items = []
+  const list = disabledListFor(key, time.value.hour, time.value.minute)
   for (let i = 0; i < count; i++) {
-    let disabled = false
-    if (key === 'hour' && props.disabledHours) disabled = props.disabledHours(i)
-    else if (key === 'minute' && props.disabledMinutes) disabled = props.disabledMinutes(i, time.value.hour)
-    else if (key === 'second' && props.disabledSeconds) disabled = props.disabledSeconds(i, time.value.minute)
     items.push({
       value: i,
       label: String(i).padStart(2, '0'),
-      disabled,
+      disabled: !!list && list.includes(i),
     })
   }
   return items
@@ -103,4 +111,42 @@ function handleItemClick(colKey, item) {
   else next.setSeconds(item.value)
   emit('pick', next)
 }
+
+/** 距 current 最近的可用值（全部禁用时保持原值） */
+function nearestAvailable(total, list, current) {
+  if (!list || !list.includes(current)) return current
+  let best = current
+  let bestDist = Infinity
+  for (let i = 0; i < total; i++) {
+    if (list.includes(i)) continue
+    const dist = Math.abs(i - current)
+    if (dist < bestDist) {
+      bestDist = dist
+      best = i
+    }
+  }
+  return best
+}
+
+/**
+ * 让位：当前值落在禁用集内时换到最近可用值（时→分→秒 依次让位，
+ * 分/秒禁用集基于让位后的上游值计算）；pick 回流后收敛，无死循环
+ */
+function yieldDisabledValue() {
+  const d = props.modelValue
+  if (!d) return
+  const cur = { hour: d.getHours(), minute: d.getMinutes(), second: d.getSeconds() }
+  const hour = nearestAvailable(24, disabledListFor('hour', cur.hour, cur.minute), cur.hour)
+  const minute = nearestAvailable(60, disabledListFor('minute', hour, cur.minute), cur.minute)
+  const second = props.showSeconds
+    ? nearestAvailable(60, disabledListFor('second', hour, minute), cur.second)
+    : cur.second
+  if (hour === cur.hour && minute === cur.minute && second === cur.second) return
+  const next = new Date(d)
+  next.setHours(hour, minute, second)
+  emit('pick', next)
+}
+
+// 生成初始值 / 外部更新落在禁用集内时自动让位
+watch(() => props.modelValue, yieldDisabledValue, { immediate: true })
 </script>

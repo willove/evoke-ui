@@ -144,3 +144,26 @@
   padding: 0 12px;
   text-align: left;
 }
+
+/* ─── 框外前后缀 addon（根容器描边内拼块，中缝 1px 分隔线对齐三段式风格） ─── */
+.eb-input-number.eb-input-number .eb-input-number__addon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 12px;
+  background-color: var(--eb-fill-color-light);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-base);
+  white-space: nowrap;
+}
+.eb-input-number.eb-input-number .eb-input-number__addon:first-child {
+  border-right: 1px solid var(--eb-border-color);
+}
+.eb-input-number.eb-input-number .eb-input-number__addon:last-child {
+  border-left: 1px solid var(--eb-border-color);
+}
+.eb-input-number.eb-input-number.is-disabled .eb-input-number__addon {
+  color: var(--eb-disabled-text-color);
+  cursor: not-allowed;
+}

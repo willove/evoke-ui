@@ -1,11 +1,12 @@
 <template>
-  <div class="eb-transfer eb-transfer">
+  <div class="eb-transfer eb-transfer" :class="{ 'is-disabled': disabled }">
     <!-- 左面板：待选 -->
     <div class="eb-transfer-panel eb-transfer-panel">
       <div class="eb-transfer-panel__header">
         <eb-checkbox
           :model-value="isAllLeftChecked"
           :indeterminate="isLeftIndeterminate"
+          :disabled="disabled"
           @change="toggleAllLeft"
         />
         <span class="eb-transfer-panel__header-title">{{ leftTitle }}</span>
@@ -15,7 +16,8 @@
         <div v-if="filterable" class="eb-transfer-panel__filter">
           <eb-input
             v-model="leftQuery"
-            :placeholder="filterPlaceholder"
+            :placeholder="filterPlaceholderText"
+            :disabled="disabled"
             prefix-icon="search"
             clearable
             size="small"
@@ -30,13 +32,16 @@
           >
             <eb-checkbox
               :model-value="leftChecked.includes(item.key)"
-              :disabled="item.disabled"
+              :disabled="disabled || item.disabled"
               @change="toggleLeftItem(item.key)"
             />
-            <span class="eb-transfer-panel__item-label">{{ item.label }}</span>
+            <span class="eb-transfer-panel__item-label">
+              <!-- 行内容作用域插槽：两栏共用，direction 区分来源面板；缺省回退 label -->
+              <slot name="item" :item="item" direction="left">{{ item.label }}</slot>
+            </span>
           </label>
           <div v-if="filteredLeft.length === 0" class="eb-transfer-panel__empty">
-            {{ leftQuery ? '无匹配数据' : '暂无数据' }}
+            {{ leftQuery ? noMatchText : noDataText }}
           </div>
         </div>
       </div>
@@ -47,8 +52,8 @@
       <button
         type="button"
         class="eb-button eb-button--primary eb-transfer__btn"
-        :class="{ 'is-disabled': !leftChecked.length }"
-        :disabled="!leftChecked.length || undefined"
+        :class="{ 'is-disabled': disabled || !leftChecked.length }"
+        :disabled="disabled || !leftChecked.length || undefined"
         aria-label="向右移动"
         @click="moveTo('right')"
       >
@@ -57,8 +62,8 @@
       <button
         type="button"
         class="eb-button eb-button--primary eb-transfer__btn"
-        :class="{ 'is-disabled': !rightChecked.length }"
-        :disabled="!rightChecked.length || undefined"
+        :class="{ 'is-disabled': disabled || !rightChecked.length }"
+        :disabled="disabled || !rightChecked.length || undefined"
         aria-label="向左移动"
         @click="moveTo('left')"
       >
@@ -72,6 +77,7 @@
         <eb-checkbox
           :model-value="isAllRightChecked"
           :indeterminate="isRightIndeterminate"
+          :disabled="disabled"
           @change="toggleAllRight"
         />
         <span class="eb-transfer-panel__header-title">{{ rightTitle }}</span>
@@ -81,7 +87,8 @@
         <div v-if="filterable" class="eb-transfer-panel__filter">
           <eb-input
             v-model="rightQuery"
-            :placeholder="filterPlaceholder"
+            :placeholder="filterPlaceholderText"
+            :disabled="disabled"
             prefix-icon="search"
             clearable
             size="small"
@@ -96,13 +103,15 @@
           >
             <eb-checkbox
               :model-value="rightChecked.includes(item.key)"
-              :disabled="item.disabled"
+              :disabled="disabled || item.disabled"
               @change="toggleRightItem(item.key)"
             />
-            <span class="eb-transfer-panel__item-label">{{ item.label }}</span>
+            <span class="eb-transfer-panel__item-label">
+              <slot name="item" :item="item" direction="right">{{ item.label }}</slot>
+            </span>
           </label>
           <div v-if="filteredRight.length === 0" class="eb-transfer-panel__empty">
-            {{ rightQuery ? '无匹配数据' : '暂无数据' }}
+            {{ rightQuery ? noMatchText : noDataText }}
           </div>
         </div>
       </div>
@@ -114,30 +123,43 @@
 /**
  * EbTransfer — 穿梭框
  * 左右面板 + 中间移动按钮；checked 为面板内临时勾选（区别于 modelValue 已选项）；
- * filterable 双侧独立过滤；disabled 项不可勾选不参与移动
+ * filterable 双侧独立过滤；disabled 项不可勾选不参与移动；
+ * disabled 整体禁用；#item 行内容作用域插槽；文案经 useLocale 收口
  */
 import { ref, computed, watch } from 'vue'
 import EbCheckbox from '../checkbox/index.vue'
 import EbInput from '../input/index.vue'
 import EbIcon from '../icon/index.vue'
+import { useLocale } from '../../composables/useLocale'
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
   data: { type: Array, default: () => [] },
-  titles: { type: Array, default: () => ['列表 1', '列表 2'] },
+  titles: { type: Array, default: undefined },
   filterable: { type: Boolean, default: false },
-  filterPlaceholder: { type: String, default: '请输入搜索内容' },
+  filterPlaceholder: { type: String, default: '' },
+  disabled: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
+
+const { t, locale } = useLocale()
 
 const leftChecked = ref([])
 const rightChecked = ref([])
 const leftQuery = ref('')
 const rightQuery = ref('')
 
-const leftTitle = computed(() => props.titles[0] ?? '列表 1')
-const rightTitle = computed(() => props.titles[1] ?? '列表 2')
+// 文案走语言包（zh-CN 缺省），titles 数组不能经 t() 取，直接读 locale
+const localeTitles = computed(() => {
+  const list = locale.value?.eb?.transfer?.titles
+  return Array.isArray(list) && list.length >= 2 ? list : ['列表 1', '列表 2']
+})
+const leftTitle = computed(() => props.titles?.[0] ?? localeTitles.value[0])
+const rightTitle = computed(() => props.titles?.[1] ?? localeTitles.value[1])
+const noMatchText = computed(() => t('transfer.noMatch'))
+const noDataText = computed(() => t('transfer.noData'))
+const filterPlaceholderText = computed(() => props.filterPlaceholder || t('transfer.filterPlaceholder'))
 
 // 按 data 原序拆分左右两侧
 const leftList = computed(() => props.data.filter((d) => !props.modelValue.includes(d.key)))
@@ -191,6 +213,7 @@ function toggleAllRight(checked) {
 
 // ─── 移动 ───
 function moveTo(direction) {
+  if (props.disabled) return
   if (direction === 'right') {
     if (!leftChecked.value.length) return
     const moved = leftChecked.value.filter((k) => !props.data.find((d) => d.key === k)?.disabled)

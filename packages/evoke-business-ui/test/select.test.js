@@ -254,6 +254,81 @@ describe('EbSelect', () => {
     wrapper.unmount()
   })
 
+  it('多选 clearable：展示清空按钮，点击清空为 [] 并触发 clear', async () => {
+    const wrapper = mount(SelectHarness, {
+      props: { multiple: true, clearable: true },
+      attachTo: document.body,
+    })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    const items = document.querySelectorAll('.eb-select-dropdown__item')
+    items[0].click()
+    document.querySelectorAll('.eb-select-dropdown__item')[1].click()
+    await new Promise((r) => setTimeout(r, 30))
+    expect(wrapper.find('.eb-select__clear').exists()).toBe(true)
+    await wrapper.find('.eb-select__clear').trigger('click')
+    await new Promise((r) => setTimeout(r, 20))
+    const select = wrapper.findComponent(EbSelect)
+    const last = select.emitted('update:modelValue')
+    expect(last[last.length - 1][0]).toEqual([])
+    expect(select.emitted('clear')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('focus/blur：focusin 触发 focus，焦点真离开才触发 blur', async () => {
+    const wrapper = mount(EbSelect, {
+      slots: { default: () => h(EbOption, { value: 'a', label: 'A' }) },
+      attachTo: document.body,
+    })
+    const wrapperEl = wrapper.find('.eb-select__wrapper').element
+    const select = wrapper.findComponent(EbSelect)
+    // focusin（含子元素冒泡）→ focus
+    wrapperEl.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    await new Promise((r) => setTimeout(r, 20))
+    expect(select.emitted('focus')).toHaveLength(1)
+    // 焦点在组件内部转移（relatedTarget 仍在触发器内）→ 不算失焦
+    wrapperEl.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: wrapperEl }))
+    await new Promise((r) => setTimeout(r, 20))
+    expect(select.emitted('blur')).toBeUndefined()
+    // 焦点真离开组件 → blur
+    wrapperEl.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
+    await new Promise((r) => setTimeout(r, 20))
+    expect(select.emitted('blur')).toHaveLength(1)
+    wrapper.unmount()
+  })
+
+  it('field-names：数据模式自定义字段映射', async () => {
+    // v-model harness：承接 update:modelValue 驱动选中 label 回显
+    const FieldNamesHarness = defineComponent({
+      setup() {
+        const value = ref('')
+        return () => h(EbSelect, {
+          modelValue: value.value,
+          'onUpdate:modelValue': (v) => (value.value = v),
+          options: [
+            { key: 1, name: '甲', off: false },
+            { key: 2, name: '乙', off: true },
+          ],
+          fieldNames: { label: 'name', value: 'key', disabled: 'off' },
+        })
+      },
+    })
+    const wrapper = mount(FieldNamesHarness, { attachTo: document.body })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    const items = [...document.querySelectorAll('.eb-select-dropdown__item')]
+    expect(items.length).toBe(2)
+    expect(items[0].textContent).toContain('甲')
+    const disabled = items.find((el) => el.classList.contains('is-disabled'))
+    expect(disabled?.textContent).toContain('乙')
+    items[0].click()
+    await new Promise((r) => setTimeout(r, 20))
+    const select = wrapper.findComponent(EbSelect)
+    expect(select.emitted('update:modelValue')[0]).toEqual([1])
+    expect(wrapper.find('.eb-select__selected-item-text').text()).toBe('甲')
+    wrapper.unmount()
+  })
+
   it('filterable：本地过滤', async () => {
     const wrapper = mount(SelectHarness, {
       props: { filterable: true },

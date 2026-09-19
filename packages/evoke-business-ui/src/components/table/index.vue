@@ -83,142 +83,163 @@
         </table>
       </div>
 
-      <!-- 表体 -->
-      <div
-        ref="bodyWrapperRef"
-        class="eb-table__body-wrapper"
-        :style="bodyWrapperStyle"
-        @scroll="onBodyScroll"
-      >
-        <table class="eb-table__body" :style="{ width: bodyWidth }">
-          <colgroup>
-            <col
-              v-for="col in renderColumns"
-              :key="col.uid"
-              :style="colStyle(col)"
-            />
-          </colgroup>
-          <tbody>
-            <!-- 虚拟滚动：上下占位行撑开总高，只渲染可视窗口行（含 buffer） -->
-            <tr v-if="spacerTop > 0" class="eb-table__virtual-spacer" aria-hidden="true">
-              <td :colspan="renderColumns.length" :style="{ height: spacerTop + 'px', padding: 0, border: 'none' }" />
-            </tr>
-            <template v-for="{ row, index: rowIndex } in virtualRows" :key="rowKeyOf(row, rowIndex)">
-              <tr
-                class="eb-table__row"
-                :class="[
-                  { 'eb-table__row--striped': stripe && rowIndex % 2 === 1 },
-                  { 'current-row': currentRow === row },
-                  { 'hover-row': hoverRowIndex === rowIndex },
-                  { 'eb-table__row--level': false },
-                ]"
-                :data-row-index="rowIndex"
-                :tabindex="keyboardRowIndex === rowIndex ? 0 : -1"
-                @click="handleRowClick(row, rowIndex, $event)"
-                @dblclick="emit('row-dblclick', row, rowIndex, $event)"
-                @contextmenu="emit('row-contextmenu', row, rowIndex, $event)"
-                @keydown="handleRowKeydown(row, rowIndex, $event)"
-                @focusin="keyboardRowIndex = rowIndex"
-                @mouseenter="hoverRowIndex = rowIndex"
-                @mouseleave="hoverRowIndex = -1"
-              >
+      <!-- 表体（body-outer 相对定位，承载不随内容滚动的加载遮罩） -->
+      <div class="eb-table__body-outer">
+        <div
+          ref="bodyWrapperRef"
+          class="eb-table__body-wrapper"
+          :style="bodyWrapperStyle"
+          @scroll="onBodyScroll"
+        >
+          <table class="eb-table__body" :style="{ width: bodyWidth }">
+            <colgroup>
+              <col
+                v-for="col in renderColumns"
+                :key="col.uid"
+                :style="colStyle(col)"
+              />
+            </colgroup>
+            <tbody>
+              <!-- 虚拟滚动：上下占位行撑开总高，只渲染可视窗口行（含 buffer） -->
+              <tr v-if="spacerTop > 0" class="eb-table__virtual-spacer" aria-hidden="true">
+                <td :colspan="renderColumns.length" :style="{ height: spacerTop + 'px', padding: 0, border: 'none' }" />
+              </tr>
+              <template v-for="{ row, index: rowIndex } in virtualRows" :key="rowKeyOf(row, rowIndex)">
+                <tr
+                  class="eb-table__row"
+                  :class="[
+                    { 'eb-table__row--striped': stripe && rowIndex % 2 === 1 },
+                    { 'current-row': currentRow === row },
+                    { 'hover-row': hoverRowIndex === rowIndex },
+                    { 'eb-table__row--level': false },
+                    rowClassOf(row, rowIndex),
+                  ]"
+                  :data-row-index="rowIndex"
+                  :tabindex="keyboardRowIndex === rowIndex ? 0 : -1"
+                  @click="handleRowClick(row, rowIndex, $event)"
+                  @dblclick="emit('row-dblclick', row, rowIndex, $event)"
+                  @contextmenu="emit('row-contextmenu', row, rowIndex, $event)"
+                  @keydown="handleRowKeydown(row, rowIndex, $event)"
+                  @focusin="keyboardRowIndex = rowIndex"
+                  @mouseenter="hoverRowIndex = rowIndex"
+                  @mouseleave="hoverRowIndex = -1"
+                >
+                  <td
+                    v-for="(col, i) in renderColumns"
+                    :key="col.uid"
+                    class="eb-table__cell"
+                    :class="[cellClass(col), fixedClass(col)]"
+                    :style="fixedStyle(col, i)"
+                    @click="emit('cell-click', row, colProp(col), row?.[colProp(col)], $event)"
+                  >
+                    <div
+                      class="cell"
+                      :class="[`is-${col.align}`, col.className, { 'is-ellipsis': col.showOverflowTooltip }]"
+                      :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
+                    >
+                      <!-- selection -->
+                      <template v-if="col.type === 'selection'">
+                        <eb-checkbox
+                          :model-value="isSelected(row)"
+                          :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
+                          @change="toggleRowSelection(row, $event, rowIndex)"
+                        />
+                      </template>
+                      <!-- expand -->
+                      <template v-else-if="col.type === 'expand'">
+                        <span
+                          class="eb-table__expand-icon"
+                          :class="{ 'eb-table__expand-icon--expanded': expandedRows.has(row) }"
+                          @click.stop="toggleRowExpansion(row)"
+                        >
+                          <eb-icon name="arrow-right" :size="12" />
+                        </span>
+                      </template>
+                      <!-- index -->
+                      <template v-else-if="col.type === 'index'">
+                        {{ indexText(col, rowIndex) }}
+                      </template>
+                      <!-- 默认数据列 -->
+                      <template v-else>
+                        <template v-if="i === firstNormalColIndex && rowHasChildren(row)">
+                          <span class="eb-table__indent" :style="indentStyle(rowLevel(row))" />
+                          <span
+                            class="eb-table__expand-icon"
+                            :class="{ 'eb-table__expand-icon--expanded': rowExpanded(row) }"
+                            @click.stop="toggleTreeExpand(row)"
+                          >
+                            <eb-icon name="arrow-right" :size="12" />
+                          </span>
+                        </template>
+                        <template v-else-if="i === firstNormalColIndex && rowLevel(row) > 0">
+                          <span class="eb-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
+                        </template>
+                        <template v-if="col.editable && !col.slots?.default">
+                          <input
+                            v-if="isEditing(rowIndex, col)"
+                            v-model="editDraft"
+                            class="eb-table__edit-input"
+                            @keydown.enter.stop.prevent="commitEdit(rowIndex, col)"
+                            @keydown.esc.stop.prevent="cancelEdit"
+                            @blur="commitEdit(rowIndex, col)"
+                            @click.stop
+                          />
+                          <span
+                            v-else
+                            class="eb-table__editable-text"
+                            :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
+                            @click.stop="startEdit(rowIndex, col)"
+                          >{{ textOf(col, row, rowIndex) }}</span>
+                        </template>
+                        <template v-else>
+                          <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
+                          <template v-else>{{ textOf(col, row, rowIndex) }}</template>
+                        </template>
+                      </template>
+                    </div>
+                  </td>
+                </tr>
+                <!-- 展开行 -->
+                <tr
+                  v-if="hasExpandColumn && expandedRows.has(row)"
+                  class="eb-table__row eb-table__expanded-row"
+                >
+                  <td class="eb-table__cell" :colspan="renderColumns.length">
+                    <div class="cell">
+                      <vnodes :vnodes="renderExpand(row, rowIndex)" />
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr v-if="spacerBottom > 0" class="eb-table__virtual-spacer" aria-hidden="true">
+                <td :colspan="renderColumns.length" :style="{ height: spacerBottom + 'px', padding: 0, border: 'none' }" />
+              </tr>
+            </tbody>
+            <!-- 表尾合计（不参与排序 / 选择 / 斑马纹） -->
+            <tfoot v-if="showSummary">
+              <tr class="eb-table__footer-row">
                 <td
                   v-for="(col, i) in renderColumns"
                   :key="col.uid"
                   class="eb-table__cell"
                   :class="[cellClass(col), fixedClass(col)]"
                   :style="fixedStyle(col, i)"
-                  @click="emit('cell-click', row, colProp(col), row?.[colProp(col)], $event)"
                 >
-                  <div
-                    class="cell"
-                    :class="[`is-${col.align}`, col.className, { 'is-ellipsis': col.showOverflowTooltip }]"
-                    :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
-                  >
-                    <!-- selection -->
-                    <template v-if="col.type === 'selection'">
-                      <eb-checkbox
-                        :model-value="isSelected(row)"
-                        :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
-                        @change="toggleRowSelection(row, $event, rowIndex)"
-                      />
-                    </template>
-                    <!-- expand -->
-                    <template v-else-if="col.type === 'expand'">
-                      <span
-                        class="eb-table__expand-icon"
-                        :class="{ 'eb-table__expand-icon--expanded': expandedRows.has(row) }"
-                        @click.stop="toggleRowExpansion(row)"
-                      >
-                        <eb-icon name="arrow-right" :size="12" />
-                      </span>
-                    </template>
-                    <!-- index -->
-                    <template v-else-if="col.type === 'index'">
-                      {{ indexText(col, rowIndex) }}
-                    </template>
-                    <!-- 默认数据列 -->
-                    <template v-else>
-                      <template v-if="i === firstNormalColIndex && rowHasChildren(row)">
-                        <span class="eb-table__indent" :style="indentStyle(rowLevel(row))" />
-                        <span
-                          class="eb-table__expand-icon"
-                          :class="{ 'eb-table__expand-icon--expanded': rowExpanded(row) }"
-                          @click.stop="toggleTreeExpand(row)"
-                        >
-                          <eb-icon name="arrow-right" :size="12" />
-                        </span>
-                      </template>
-                      <template v-else-if="i === firstNormalColIndex && rowLevel(row) > 0">
-                        <span class="eb-table__indent" :style="indentStyle(rowLevel(row) * 18 + 14)" />
-                      </template>
-                      <template v-if="col.editable && !col.slots?.default">
-                        <input
-                          v-if="isEditing(rowIndex, col)"
-                          v-model="editDraft"
-                          class="eb-table__edit-input"
-                          @keydown.enter.stop.prevent="commitEdit(rowIndex, col)"
-                          @keydown.esc.stop.prevent="cancelEdit"
-                          @blur="commitEdit(rowIndex, col)"
-                          @click.stop
-                        />
-                        <span
-                          v-else
-                          class="eb-table__editable-text"
-                          :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
-                          @click.stop="startEdit(rowIndex, col)"
-                        >{{ textOf(col, row, rowIndex) }}</span>
-                      </template>
-                      <template v-else>
-                        <vnodes v-if="col.slots?.default" :vnodes="renderCell(col, row, rowIndex)" />
-                        <template v-else>{{ textOf(col, row, rowIndex) }}</template>
-                      </template>
-                    </template>
-                  </div>
+                  <div class="cell">{{ summaryText(col) }}</div>
                 </td>
               </tr>
-              <!-- 展开行 -->
-              <tr
-                v-if="hasExpandColumn && expandedRows.has(row)"
-                class="eb-table__row eb-table__expanded-row"
-              >
-                <td class="eb-table__cell" :colspan="renderColumns.length">
-                  <div class="cell">
-                    <vnodes :vnodes="renderExpand(row, rowIndex)" />
-                  </div>
-                </td>
-              </tr>
-            </template>
-            <tr v-if="spacerBottom > 0" class="eb-table__virtual-spacer" aria-hidden="true">
-              <td :colspan="renderColumns.length" :style="{ height: spacerBottom + 'px', padding: 0, border: 'none' }" />
-            </tr>
-          </tbody>
-        </table>
-        <!-- 空态 -->
-        <div v-if="displayData.length === 0" class="eb-table__empty-block">
-          <span class="eb-table__empty-text">
-            <slot name="empty">{{ emptyText || t('table.emptyText') }}</slot>
-          </span>
+            </tfoot>
+          </table>
+          <!-- 空态 -->
+          <div v-if="displayData.length === 0" class="eb-table__empty-block">
+            <span class="eb-table__empty-text">
+              <slot name="empty">{{ emptyText || t('table.emptyText') }}</slot>
+            </span>
+          </div>
+        </div>
+        <!-- 加载遮罩：盖在表体可视区，不随滚动内容移动 -->
+        <div v-if="loading" class="eb-table__loading-mask">
+          <eb-spin size="small" />
         </div>
       </div>
     </div>
@@ -265,6 +286,7 @@ import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provid
 import EbIcon from '../icon/index.vue'
 import EbCheckbox from '../checkbox/index.vue'
 import EbButton from '../button/index.vue'
+import EbSpin from '../spin/index.vue'
 import { useFloating } from '../../composables/useFloating'
 import { provideTableContext } from './table-context'
 import { useLocale } from '../../composables/useLocale'
@@ -300,7 +322,11 @@ const props = defineProps({
   selectOnIndeterminate: { type: Boolean, default: true },
   emptyText: { type: String, default: '' },
   treeProps: { type: Object, default: () => ({ children: 'children' }) },
-  /** 表尾合计（简化：函数返回行数组） */
+  /** 加载中：表体覆盖半透明遮罩与旋转指示 */
+  loading: { type: Boolean, default: false },
+  /** 行附加类名：(row, index) => string，也可直接传字符串 */
+  rowClassName: { type: [String, Function], default: '' },
+  /** 表尾合计：showSummary 开启渲染；summaryMethod(data) 返回以列 prop 为键的文本映射，缺省对数字列求和 */
   summaryMethod: { type: Function, default: null },
   showSummary: { type: Boolean, default: false },
   /** 虚拟滚动：万级行只渲染可视窗口（需配合 height / maxHeight 形成滚动视口） */
@@ -433,6 +459,11 @@ function cellClass(col) {
   return [`is-${col.align}`]
 }
 
+function rowClassOf(row, index) {
+  if (typeof props.rowClassName === 'function') return props.rowClassName(row, index) || ''
+  return props.rowClassName || ''
+}
+
 // ─── 固定列（sticky 偏移计算） ───
 function fixedClass(col) {
   if (col.fixed === true || col.fixed === 'left') return 'eb-table-fixed-column--left'
@@ -559,6 +590,8 @@ function handleHeaderClick(col, e) {
 const sortedData = computed(() => {
   if (!sortState.prop || !sortState.order) return props.data
   const col = columns.value.find((c) => c.prop === sortState.prop)
+  // 服务端排序（sortable="custom"）：只维护箭头状态并上报 sort-change，不在本地重排
+  if (col?.sortable === 'custom') return props.data
   const dir = sortState.order === 'ascending' ? 1 : -1
   const getVal = (row) => {
     if (col?.sortBy) {
@@ -704,9 +737,30 @@ function clearFilter(columnKeys) {
   emitFilterChange()
 }
 
+// ─── 表尾合计 ───
+/** 合计行取值：summaryMethod 接收当前（排序/筛选后）数据，返回以列 prop 为键的文本映射；缺省对全数字列求和，其余列为空 */
+function summaryText(col) {
+  const data = filteredData.value
+  if (typeof props.summaryMethod === 'function') {
+    return props.summaryMethod(data)?.[col.prop] ?? ''
+  }
+  if (!col.prop) return ''
+  let total = 0
+  let hasNumber = false
+  for (const row of data) {
+    const v = row?.[col.prop]
+    if (v === null || v === undefined || v === '') continue
+    if (typeof v !== 'number' || Number.isNaN(v)) return ''
+    total += v
+    hasNumber = true
+  }
+  return hasNumber ? String(total) : ''
+}
+
 // ─── 展开行 ───
 const expandedRows = ref(new Set())
 
+// 非受控：expandRowKeys 仅初始化生效，后续动态展开用实例方法 toggleRowExpansion
 function initExpanded() {
   const set = new Set()
   if (props.defaultExpandAll) {

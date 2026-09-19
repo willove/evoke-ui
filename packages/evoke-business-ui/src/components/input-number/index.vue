@@ -7,10 +7,15 @@
         'is-disabled': isDisabled,
         'is-controls-right': controlsPosition === 'right',
         'is-without-controls': !controls,
+        'is-with-addon': addonBeforeVisible || addonAfterVisible,
         'eb-ripple-off': ripple === false,
       },
     ]"
   >
+    <!-- 框外前缀块：插槽优先于 prop -->
+    <span v-if="addonBeforeVisible" class="eb-input-number__addon">
+      <slot name="addon-before">{{ addonBefore }}</slot>
+    </span>
     <!-- 默认模式：[-][输入框][+] 三个 flex 兄弟节点，输入框描边即左右分隔线 -->
     <span
       v-if="controls && controlsPosition !== 'right'"
@@ -26,7 +31,8 @@
       <input
         ref="inputRef"
         class="eb-input__inner"
-        type="number"
+        :type="inputType"
+        :inputmode="inputType === 'text' ? 'decimal' : undefined"
         :value="displayValue"
         :placeholder="placeholder"
         :disabled="isDisabled"
@@ -72,15 +78,21 @@
         <eb-icon :name="decreaseIcon" />
       </span>
     </template>
+    <!-- 框外后缀块：插槽优先于 prop -->
+    <span v-if="addonAfterVisible" class="eb-input-number__addon">
+      <slot name="addon-after">{{ addonAfter }}</slot>
+    </span>
   </div>
 </template>
 
 <script setup>
 /**
  * EbInputNumber — 计数器
- * min/max clamp、precision 格式化、step 步进、step-strictly、value-on-clear
+ * min/max clamp、precision 格式化、step 步进、step-strictly、value-on-clear；
+ * formatter/parser 控制展示与反解（focus 显原始值、blur 显格式化值）；
+ * addon-before/after 框外前后缀块（插槽与 prop 二选一）
  */
-import { computed, ref } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 
@@ -104,12 +116,30 @@ const props = defineProps({
   name: { type: String, default: undefined },
   /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
+  /** 展示格式化（如千分位），传入后输入框切换为文本输入 */
+  formatter: { type: Function, default: undefined },
+  /** 把输入文本解析回数值；缺省时去千分位逗号后解析 */
+  parser: { type: Function, default: undefined },
+  /** 框外前缀块文案（与 addon-before 插槽二选一，插槽优先） */
+  addonBefore: { type: String, default: '' },
+  /** 框外后缀块文案（与 addon-after 插槽二选一，插槽优先） */
+  addonAfter: { type: String, default: '' },
 })
 
 const emit = defineEmits(['update:modelValue', 'change', 'blur', 'focus'])
 
 const inputRef = ref(null)
 const userInput = ref(null)
+const slots = useSlots()
+
+const hasFormatter = computed(() => typeof props.formatter === 'function')
+const hasParser = computed(() => typeof props.parser === 'function')
+
+/** 有 formatter/parser 时原生 number 会拦下逗号等格式字符，切换为文本输入 */
+const inputType = computed(() => (hasFormatter.value || hasParser.value ? 'text' : 'number'))
+
+const addonBeforeVisible = computed(() => !!props.addonBefore || !!slots['addon-before'])
+const addonAfterVisible = computed(() => !!props.addonAfter || !!slots['addon-after'])
 
 const { size: formSize, disabled: formDisabled, formItem } = useFormItem({
   size: computed(() => props.size),
@@ -139,6 +169,7 @@ const increaseIcon = computed(() => 'plus')
 const displayValue = computed(() => {
   if (userInput.value !== null) return userInput.value
   if (props.modelValue === undefined || props.modelValue === null) return ''
+  if (hasFormatter.value) return props.formatter(Number(props.modelValue))
   return toPrecision(props.modelValue)
 })
 
@@ -191,6 +222,13 @@ function handleInput(e) {
   userInput.value = e.target.value
 }
 
+/** 输入文本解析回数值：优先 parser，缺省去千分位逗号 */
+function parseInput(raw) {
+  const text = String(raw)
+  if (hasParser.value) return Number(props.parser(text))
+  return Number.parseFloat(text.replace(/,/g, ''))
+}
+
 function handleChange(e) {
   const raw = e.target.value
   if (raw === '') {
@@ -201,7 +239,7 @@ function handleChange(e) {
     }
     return
   }
-  const parsed = Number.parseFloat(raw)
+  const parsed = parseInput(raw)
   if (!Number.isNaN(parsed)) {
     commit(parsed)
   } else {
@@ -210,11 +248,17 @@ function handleChange(e) {
 }
 
 function handleBlur(e) {
+  // 丢弃未提交的编辑态，回显格式化值（change 已在 blur 前完成提交）
+  if (userInput.value !== null) userInput.value = null
   emit('blur', e)
   triggerFormValidate(formItem, 'blur')
 }
 
 function handleFocus(e) {
+  // formatter 无 parser 时聚焦显原始数值串，便于编辑（antd 同款行为）
+  if (hasFormatter.value && !hasParser.value && props.modelValue !== undefined && props.modelValue !== null) {
+    userInput.value = toPrecision(props.modelValue)
+  }
   emit('focus', e)
 }
 

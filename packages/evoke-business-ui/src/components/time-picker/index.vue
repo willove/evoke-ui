@@ -64,6 +64,7 @@
         :placeholder="startPlaceholder || t('datepicker.startTime')"
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
+        @change="handleRangeInput(0, $event)"
         @focus="emit('focus')"
       />
       <span class="eb-range-separator">{{ rangeSeparator }}</span>
@@ -74,6 +75,7 @@
         :placeholder="endPlaceholder || t('datepicker.endTime')"
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
+        @change="handleRangeInput(1, $event)"
         @focus="emit('focus')"
       />
       <eb-icon
@@ -97,6 +99,9 @@
             v-if="!isRange"
             :model-value="draft"
             :show-seconds="showSeconds"
+            :disabled-hours="disabledHours"
+            :disabled-minutes="disabledMinutes"
+            :disabled-seconds="disabledSeconds"
             @pick="handleSinglePick"
             @confirm="closePanel"
             @cancel="closePanel"
@@ -110,6 +115,9 @@
                   :model-value="draftStart"
                   :show-seconds="showSeconds"
                   :show-footer="false"
+                  :disabled-hours="disabledHours"
+                  :disabled-minutes="disabledMinutes"
+                  :disabled-seconds="disabledSeconds"
                   class="eb-time-picker__cell-panel"
                   @pick="(d) => (draftStart = d)"
                 />
@@ -120,6 +128,9 @@
                   :model-value="draftEnd"
                   :show-seconds="showSeconds"
                   :show-footer="false"
+                  :disabled-hours="disabledHours"
+                  :disabled-minutes="disabledMinutes"
+                  :disabled-seconds="disabledSeconds"
                   class="eb-time-picker__cell-panel"
                   @pick="(d) => (draftEnd = d)"
                 />
@@ -172,6 +183,12 @@ const props = defineProps({
   size: { type: String, default: '' },
   name: { type: String, default: undefined },
   prefixIcon: { type: String, default: 'clock' },
+  /** 禁用的小时集合（函数，返回数字数组） */
+  disabledHours: { type: Function, default: null },
+  /** 禁用的分钟集合（入参 hour，返回数字数组） */
+  disabledMinutes: { type: Function, default: null },
+  /** 禁用的秒集合（入参 hour、minute，返回数字数组） */
+  disabledSeconds: { type: Function, default: null },
   /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
@@ -335,6 +352,33 @@ function handleSingleInput(e) {
   } else {
     e.target.value = displayValue.value
   }
+}
+
+/**
+ * range 手输：复用单值解析，另一端补当前值（缺省对齐面板打开的草稿默认）
+ * 合法后写入 draft 并走 confirmRange 通道（排序 / 提交 / 关闭一致），非法回滚显示
+ */
+function handleRangeInput(index, e) {
+  const text = e.target.value?.trim()
+  const display = index === 0 ? startDisplay.value : endDisplay.value
+  if (!text) {
+    e.target.value = display
+    return
+  }
+  const d = dayjs(text, props.format)
+  if (!d.isValid()) {
+    e.target.value = display
+    return
+  }
+  const [s, en] = parsedRange.value
+  if (index === 0) {
+    draftStart.value = d.toDate()
+    draftEnd.value = (en || dayjs().hour(23).minute(59).second(59)).toDate()
+  } else {
+    draftEnd.value = d.toDate()
+    draftStart.value = (s || dayjs().hour(0).minute(0).second(0)).toDate()
+  }
+  confirmRange()
 }
 
 function focus() {

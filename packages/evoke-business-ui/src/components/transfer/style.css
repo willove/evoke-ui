@@ -6,6 +6,22 @@
   font-size: var(--eb-font-size-base);
 }
 
+/* ─── 整体禁用（按钮/勾选框/搜索框原生 disabled 联动，此处补视觉态） ─── */
+.eb-transfer.eb-transfer.is-disabled {
+  cursor: not-allowed;
+}
+.eb-transfer.eb-transfer.is-disabled .eb-transfer-panel__header,
+.eb-transfer.eb-transfer.is-disabled .eb-transfer-panel__item {
+  cursor: not-allowed;
+}
+.eb-transfer.eb-transfer.is-disabled .eb-transfer-panel__item:hover {
+  background: transparent;
+}
+.eb-transfer.eb-transfer.is-disabled .eb-button.eb-transfer__btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ─── 面板 ─── */
 .eb-transfer.eb-transfer .eb-transfer-panel {
   width: 200px;

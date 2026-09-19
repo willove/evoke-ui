@@ -237,6 +237,12 @@
   flex-shrink: 0;
 }
 
+/* lazy：子列加载态占位 */
+.eb-cascader__dropdown .eb-cascader-node.is-loading-node {
+  color: var(--eb-text-color-secondary);
+  cursor: default;
+}
+
 /* 过滤建议 */
 .eb-cascader__dropdown .eb-cascader__suggestion-panel {
   min-width: 180px;

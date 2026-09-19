@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import EbTransfer from '../src/components/transfer/index.vue'
+import EbConfigProvider from '../src/components/config-provider/index.vue'
+import { en } from '../src/locale'
 import EbCarousel from '../src/components/carousel/index.vue'
 import EbCarouselItem from '../src/components/carousel/item.vue'
 import EbCascaderPanel from '../src/components/cascader-panel/index.vue'
@@ -95,6 +97,92 @@ describe('EbTransfer', () => {
     // 可移动的是 1/2/4（广州 disabled 被排除）
     await wrapper.findAll('.eb-transfer__btn')[0].trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([1, 2, 4])
+    wrapper.unmount()
+  })
+
+  it('item 作用域插槽：两栏共用，暴露 item 与 direction', () => {
+    const wrapper = mount({
+      components: { EbTransfer },
+      template: `
+        <eb-transfer :data="data" :model-value="[1]">
+          <template #item="{ item, direction }">
+            <em class="slot-item">{{ direction }}:{{ item.label }}</em>
+          </template>
+        </eb-transfer>
+      `,
+      setup() {
+        return { data: DATA }
+      },
+    }, { attachTo: document.body })
+    // 左面板 2/3/4 + 右面板 1
+    const items = wrapper.findAll('.slot-item')
+    expect(items).toHaveLength(4)
+    expect(items[0].text()).toBe('left:上海')
+    expect(items[3].text()).toBe('right:北京')
+    wrapper.unmount()
+  })
+
+  it('无插槽时回退渲染 label 纯文本', () => {
+    const wrapper = mountTransfer({ modelValue: [1] })
+    const labels = wrapper.findAll('.eb-transfer-panel__item-label')
+    expect(labels).toHaveLength(4)
+    expect(labels[0].text()).toBe('上海')
+    wrapper.unmount()
+  })
+
+  it('disabled 整体禁用：根 class + 按钮/勾选框/搜索框联动', async () => {
+    const wrapper = mountTransfer({ disabled: true, filterable: true })
+    expect(wrapper.classes()).toContain('is-disabled')
+    // 空勾选时按钮本就禁用，勾选框联动是重点：全部勾选框带原生 disabled
+    const boxes = wrapper.findAll('.eb-checkbox__original')
+    expect(boxes.length).toBeGreaterThan(0)
+    for (const box of boxes) {
+      expect(box.attributes('disabled')).toBeDefined()
+    }
+    // 搜索框禁用
+    expect(wrapper.find('.eb-input__inner').attributes('disabled')).toBeDefined()
+    // 勾选不生效（EbCheckbox 内部对 disabled 短路）→ 无值更新
+    await wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item input')[0].setValue(true)
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('disabled 下已勾选的移动按钮也被禁用', () => {
+    const wrapper = mountTransfer({ modelValue: [1], disabled: true })
+    const btn = wrapper.findAll('.eb-transfer__btn')[1]
+    expect(btn.classes()).toContain('is-disabled')
+    expect(btn.attributes('disabled')).toBeDefined()
+    wrapper.unmount()
+  })
+
+  it('文案经 useLocale 收口：默认中文标题/占位/空态', () => {
+    const wrapper = mountTransfer({ filterable: true })
+    expect(wrapper.findAll('.eb-transfer-panel__header-title')[0].text()).toBe('列表 1')
+    expect(wrapper.findAll('.eb-transfer-panel__header-title')[1].text()).toBe('列表 2')
+    expect(wrapper.find('.eb-input__inner').attributes('placeholder')).toBe('请输入搜索内容')
+    wrapper.unmount()
+    // 空数据空态
+    const empty = mountTransfer({ data: [] })
+    expect(empty.find('.eb-transfer-panel__empty').text()).toBe('无数据')
+    empty.unmount()
+  })
+
+  it('en 语言包：默认标题与空态随 locale 翻译', () => {
+    const wrapper = mount({
+      components: { EbTransfer, EbConfigProvider },
+      template: `
+        <eb-config-provider :locale="locale">
+          <eb-transfer :data="[]" />
+        </eb-config-provider>
+      `,
+      setup() {
+        return { locale: en }
+      },
+    })
+    const titles = wrapper.findAll('.eb-transfer-panel__header-title')
+    expect(titles[0].text()).toBe('List 1')
+    expect(titles[1].text()).toBe('List 2')
+    expect(wrapper.find('.eb-transfer-panel__empty').text()).toBe('No data')
     wrapper.unmount()
   })
 })

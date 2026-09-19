@@ -153,6 +153,8 @@ const props = defineProps({
   collapseTagsTooltip: { type: Boolean, default: false },
   showCheckbox: { type: Boolean, default: false },
   checkStrictly: { type: Boolean, default: false },
+  /** 复选回传值归约策略：child 只存叶子 key / parent 只存子级全选中的最上层父 key / all 全存勾选 key */
+  checkedStrategy: { type: String, default: 'child' },
   defaultExpandAll: { type: Boolean, default: false },
   defaultExpandedKeys: { type: Array, default: () => [] },
   expandOnClickNode: { type: Boolean, default: true },
@@ -365,6 +367,34 @@ function leafCheckedKeys() {
   })
 }
 
+/**
+ * checked-strategy 归约：基于树级联后的全选 key 集合回传
+ * child → 只存叶子 key；parent → 只存「子级全选中」的最上层父 key（不再下探）；all → 全存
+ */
+function reduceCheckedKeys() {
+  const tree = treeRef.value
+  if (!tree) return []
+  const checked = new Set(tree.getCheckedKeys())
+  if (props.checkedStrategy === 'all') return [...checked]
+  if (props.checkedStrategy === 'parent') {
+    const out = []
+    const walk = (list) => {
+      for (const item of list) {
+        const key = valueOf(item)
+        if (checked.has(key)) {
+          out.push(key)
+          continue
+        }
+        const children = item?.[propsMap.value.children]
+        if (Array.isArray(children)) walk(children)
+      }
+    }
+    walk(props.data || [])
+    return out
+  }
+  return leafCheckedKeys()
+}
+
 // ─── modelValue → 树同步 ───
 watch(
   [() => props.modelValue, dropdownVisible],
@@ -456,7 +486,7 @@ function handleTreeCheck(data) {
       updateValue(checkedKeys.includes(key) ? key : undefined)
     }
   } else if (props.multiple) {
-    updateValue(leafCheckedKeys())
+    updateValue(reduceCheckedKeys())
   } else {
     // 单选 + 复选：勾选父级 → 取首个可用叶子 key
     const firstLeaf = findFirstLeaf(data)
