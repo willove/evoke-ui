@@ -4,6 +4,40 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 对齐 antd 能力批
+
+- **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`
+  支持服务端排序（只发 `sort-change` 不做本地重排）；`showSummary` / `summaryMethod`
+  此前声明了但不渲染，现在真正渲染表尾合计行（默认对全数字列求和）；
+- **EbForm**：新增提交事件闭环——回车或 `native-type="submit"` 触发校验，通过 emit
+  `finish`、失败 emit `finish-failed`；新增 `values-change` 事件（最小变化集 + 全量值）；
+  `scroll-to-error` 此前是预留 prop，现在校验失败会滚到第一个错误字段；
+- **EbSelect**：`field-names` 支持自定义数据字段映射；多选模式下 `clearable` 清空按钮
+  此前不显示，现已生效；`focus` / `blur` 事件此前从未触发或与「关下拉」混淆，现按
+  真实焦点语义触发；
+- **EbCascader**：新增 `lazy` + `load-data` 动态懒加载子级（带列级加载占位）；
+- **EbTreeSelect**：新增 `checked-strategy`（child / parent / all）控制勾选回传值形态，
+  默认行为不变；
+- **EbTree**：`accordion` 手风琴此前只对一级节点生效，现在全层级同父互斥；
+- **EbTransfer**：新增 `#item` 作用域插槽自定义行内容与整体 `disabled`；文案接入
+  多语言包；
+- **EbInputNumber**：新增 `formatter` / `parser` 格式化展示与反解（千分位金额等），
+  新增 `addon-before` / `addon-after` 前后缀块（prop 与插槽两种传法）；
+- **EbTimePicker**：范围选择此前不能手输时间，现与单值模式一致可键入；新增
+  `disabled-hours` / `disabled-minutes` / `disabled-seconds` 限制可选时段，当前值
+  落在禁用集内自动让位到最近可用值。
+
+### 安全加固
+
+- **evoke-business-ui**：聊天消息 Markdown 管线（EbChatbot）修复两处可注入点——链接
+  href/title 与引用 chip 的属性位现在全量转义，消息原文中的原生 HTML 转义为纯文本
+  不再穿透执行；`data:` 协议移出链接白名单默认集（降级为不可点 chip，宿主可显式加回）；
+  EbLink `target="_blank"` 自动补 `rel="noopener noreferrer"`；
+- **evoke-ui**：EvNavbar / EvFooter `target="_blank"` 自动补
+  `rel="noopener noreferrer"`；主题配置合并对 `__proto__` 键免疫（原型链污染防护）；
+- **evoke-charts**：`setSpec` / `update` 对不可信 JSON 产物的 `__proto__` 键免疫；
+  SVG 导出的渐变颜色补 XML 转义。
+
 ### @wil-works/evoke-business-ui — 修复一批 review 问题
 
 - **EbContextMenu**：子菜单展开后把指针从父项移入子菜单，子菜单不再悬停约
