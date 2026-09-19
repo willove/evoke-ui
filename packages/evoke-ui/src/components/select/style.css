@@ -129,6 +129,12 @@
   box-shadow: var(--ev-shadow-3);
 }
 
+/* ─── 向上展开（placement=top）：菜单挂到触发器上方 ─── */
+.ev-select.is-top .ev-select__menu {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
 .ev-select__option {
   display: flex;
   align-items: center;
@@ -142,7 +148,8 @@
     color var(--ev-duration-fast) var(--ev-ease-in-out);
 }
 
-.ev-select__option:hover:not(.is-disabled) {
+.ev-select__option:hover:not(.is-disabled),
+.ev-select__option.is-active:not(.is-disabled) {
   background-color: var(--ev-fill-1);
   color: var(--ev-text-primary);
 }
@@ -182,6 +189,12 @@
 .ev-select-drop-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+/* 向上展开时动效方向同步自下而上 */
+.ev-select.is-top .ev-select-drop-enter-from,
+.ev-select.is-top .ev-select-drop-leave-to {
+  transform: translateY(4px);
 }
 
 /* ─── 下拉菜单宿主屏蔽 ───

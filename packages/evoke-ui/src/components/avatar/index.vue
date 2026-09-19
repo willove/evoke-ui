@@ -1,6 +1,6 @@
 <template>
   <span :class="['ev-avatar', `is-${shape}`, `is-${sizeClass}`]" :style="sizeStyle">
-    <img v-if="src" :src="src" :alt="alt || name" class="ev-avatar__img" @error="imgFailed = true" />
+    <img v-if="src && !imgFailed" :src="src" :alt="alt || name" class="ev-avatar__img" @error="imgFailed = true" />
     <EvIcon v-else-if="icon" :name="icon" :size="iconSize" />
     <span v-else class="ev-avatar__fallback">{{ initials }}</span>
   </span>

@@ -3,7 +3,10 @@
     :class="['ev-tabbar-item', { 'is-active': isActive, 'is-disabled': disabled }]"
     role="tab"
     :aria-selected="isActive"
+    :tabindex="disabled ? -1 : 0"
     @click="onClick"
+    @keydown.enter="onClick"
+    @keydown.space.prevent="onClick"
   >
     <div v-if="hasIcon" class="ev-tabbar-item__icon">
       <slot name="icon" :active="isActive">

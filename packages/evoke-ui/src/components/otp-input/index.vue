@@ -143,6 +143,17 @@ function onInput(i, e) {
     return
   }
   if (filtered.length > 1) {
+    // 已填框内追加单字符（新值为「旧值+新字符」）：覆写当前框并前进；
+    // 只有新增 ≥2 位（粘贴 / iOS 自动填充进空框）才整段分配
+    if (filtered.length === 2 && chars.value[i] && filtered.startsWith(chars.value[i])) {
+      const list = [...chars.value]
+      list[i] = filtered[1]
+      chars.value = list
+      commit()
+      if (i < props.length - 1) focus(i + 1)
+      nextTick(syncBoxValues)
+      return
+    }
     distribute(i, filtered)
     return
   }

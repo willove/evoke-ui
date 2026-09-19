@@ -87,4 +87,18 @@ describe('EvOtpInput 输入联动', () => {
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     wrapper.unmount()
   })
+
+  it('已填框内追加单字符覆写当前位并前进，不串位', async () => {
+    const { wrapper, inputs } = mountOtp({ length: 4 })
+    await inputs()[0].setValue('1')
+    await flushPromises()
+    const advance = vi.spyOn(inputs()[1].element, 'focus')
+    await inputs()[0].setValue('12')
+    await flushPromises()
+    expect(wrapper.emitted('update:modelValue').at(-1)[0]).toBe('2')
+    expect(inputs()[0].element.value).toBe('2')
+    expect(inputs()[1].element.value).toBe('')
+    expect(advance).toHaveBeenCalled()
+    wrapper.unmount()
+  })
 })

@@ -61,6 +61,16 @@ describe('EvAvatar / EvAvatarGroup', () => {
     expect(wrapper.classes()).toContain('is-square')
   })
 
+  it('图片加载失败回退首字符，src 变更后重试', async () => {
+    const wrapper = mount(EvAvatar, { props: { src: '/broken.png', name: '林一舟' } })
+    expect(wrapper.find('.ev-avatar__img').exists()).toBe(true)
+    await wrapper.find('.ev-avatar__img').trigger('error')
+    expect(wrapper.find('.ev-avatar__img').exists()).toBe(false)
+    expect(wrapper.find('.ev-avatar__fallback').text()).toBe('林一'.slice(0, 2))
+    await wrapper.setProps({ src: '/fixed.png' })
+    expect(wrapper.find('.ev-avatar__img').exists()).toBe(true)
+  })
+
   it('group 溢出折叠为 +N', () => {
     const wrapper = mount(EvAvatarGroup, {
       props: {

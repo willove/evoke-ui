@@ -85,6 +85,34 @@ describe('EvSelect', () => {
     const wrapper = mount(EvSelect, { props: { options, modelValue: 'post', bare: true } })
     expect(wrapper.classes()).toContain('is-bare')
   })
+
+  it('placement=top 根节点挂 is-top 类', () => {
+    const wrapper = mount(EvSelect, { props: { options, modelValue: 'post', placement: 'top' } })
+    expect(wrapper.classes()).toContain('is-top')
+    const bottom = mount(EvSelect, { props: { options, modelValue: 'post' } })
+    expect(bottom.classes()).not.toContain('is-top')
+  })
+
+  it('键盘：ArrowDown 高亮首项，Enter 选中并 emit', async () => {
+    const wrapper = mount(EvSelect, { props: { options, modelValue: '' } })
+    const trigger = wrapper.find('.ev-select__trigger')
+    await trigger.trigger('click')
+    expect(wrapper.find('.ev-select__option.is-active').exists()).toBe(false)
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    const first = wrapper.findAll('.ev-select__option')[0]
+    expect(first.classes()).toContain('is-active')
+    expect(trigger.attributes('aria-activedescendant')).toBe(first.attributes('id'))
+    await trigger.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['post'])
+    expect(wrapper.emitted('change')?.[0]).toEqual(['post'])
+    expect(wrapper.find('.ev-select__menu').exists()).toBe(false)
+  })
+
+  it('键盘：菜单关闭时 ArrowDown 直接打开', async () => {
+    const wrapper = mount(EvSelect, { props: { options, modelValue: '' } })
+    await wrapper.find('.ev-select__trigger').trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.find('.ev-select__menu').exists()).toBe(true)
+  })
 })
 
 describe('EvField', () => {

@@ -39,6 +39,20 @@ describe('EvStatistic 数字滚动', () => {
     vi.useRealTimers()
   })
 
+  it('animated 后动态更新 value，文本随之更新', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(EvStatistic, {
+      props: { value: '1,200+', label: '用户', animated: true, duration: 60 },
+    })
+    await vi.advanceTimersByTimeAsync(300)
+    expect(wrapper.find('.ev-statistic__num').text()).toBe('1,200+')
+    await wrapper.setProps({ value: '9,900+' })
+    await vi.advanceTimersByTimeAsync(100)
+    expect(wrapper.find('.ev-statistic__num').text()).toBe('9,900+')
+    vi.useRealTimers()
+    wrapper.unmount()
+  })
+
   it('非数值文案不参与滚动', () => {
     const wrapper = mount(EvStatistic, { props: { value: '开源免费', animated: true } })
     expect(wrapper.find('.ev-statistic__value').text()).toBe('开源免费')

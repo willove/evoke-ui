@@ -94,8 +94,9 @@ const emit = defineEmits([
 ])
 
 const panelRef = ref(null)
-let zSeed = 0
-const zIndex = computed(() => 2000 + zSeed)
+// 层级种子需响应式：否则 computed 首次求值后永久缓存，重复打开不递增
+const zSeed = ref(0)
+const zIndex = computed(() => 2000 + zSeed.value)
 
 const visible = computed(() => props.modelValue)
 
@@ -113,7 +114,7 @@ watch(
   (val) => {
     if (val) {
       emit('open')
-      zSeed += 1
+      zSeed.value += 1
       if (props.lockScroll && hasDom) lockBodyScroll()
       if (hasDom) window.addEventListener('keydown', onKeydown)
     } else {

@@ -3,10 +3,12 @@
     <Transition name="ev-image-preview">
       <div
         v-if="visible"
+        ref="dialogRef"
         :class="['ev-image-preview', { 'is-glass': glass === true, 'no-glass': glass === false }]"
         :style="glassVars"
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         :aria-label="`图片预览（${index + 1} / ${count}）`"
         @click.self="close"
       >
@@ -54,7 +56,7 @@
  * 打开期间锁定页面滚动，关闭后恢复。
  * v-model（可见） + v-model:index（当前下标）；images: [{ src, alt }] 或 url 字符串
  */
-import { computed, watch, onBeforeUnmount } from 'vue'
+import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
 import EvIcon from '../icon/index.vue'
 import { lockBodyScroll, unlockBodyScroll } from '../../composables/useScrollLock'
 
@@ -85,6 +87,9 @@ const count = computed(() => props.images.length)
 
 const visible = computed(() => props.modelValue)
 
+const dialogRef = ref(null)
+let lastFocused = null
+
 const normalized = computed(() =>
   props.images.map((img) => (typeof img === 'string' ? { src: img, alt: '' } : img))
 )
@@ -111,16 +116,19 @@ function onKeydown(e) {
   else if (e.key === 'ArrowRight') step(1)
 }
 
-// Esc / 方向键 + 滚动锁定
+// Esc / 方向键 + 滚动锁定；打开时焦点移入对话框、关闭后归还触发元素
 watch(() => props.modelValue, (visible) => {
   if (typeof document === 'undefined') return
   if (visible) {
+    lastFocused = document.activeElement
     document.addEventListener('keydown', onKeydown)
     lockBodyScroll()
     emit('open')
+    nextTick(() => dialogRef.value?.focus?.())
   } else {
     document.removeEventListener('keydown', onKeydown)
     unlockBodyScroll()
+    nextTick(() => lastFocused?.focus?.())
   }
 })
 

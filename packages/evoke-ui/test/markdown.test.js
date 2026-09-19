@@ -60,6 +60,15 @@ describe('parseMarkdown / 内置解析器', () => {
     expect(html).toContain('href="#"')
   })
 
+  it('属性位引号注入被转义（alt 逃逸不出属性）', () => {
+    const html = parseMarkdown('![a" onerror="alert(1)](https://x.png)')
+    const box = document.createElement('div')
+    box.innerHTML = html
+    const img = box.querySelector('img')
+    expect(img.getAttribute('onerror')).toBeNull()
+    expect(img.getAttribute('alt')).toBe('a" onerror="alert(1)')
+  })
+
   it('图片', () => {
     const html = parseMarkdown('![logo](/img.png)')
     expect(html).toContain('<img class="ev-md__img" src="/img.png" alt="logo" />')

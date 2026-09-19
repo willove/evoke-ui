@@ -17,7 +17,7 @@
  * animated 开启后：数值在进入视口时从 0 缓动滚动到目标值
  * （自动解析「前缀 + 数字 + 后缀」：¥120.5 / 99.99% / 1,200+；无法解析的纯文案直接显示）
  */
-import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useSlots, watch } from 'vue'
 import { onInView } from '../../composables/useInView'
 
 const props = defineProps({
@@ -39,6 +39,8 @@ const props = defineProps({
 const rootRef = ref(null)
 const animatedText = ref('')
 let cleanup = null
+// 滚动代次号：value 变更时自增使进行中的 tick 失效（rAF 与定时器兜底统一处理）
+let runId = 0
 
 const parts = computed(() => {
   const raw = String(props.value ?? '')
@@ -76,6 +78,7 @@ function format(num, decimals, useGrouping) {
 function start() {
   const p = parts.value
   if (!p) return
+  const run = ++runId
   const raf = typeof requestAnimationFrame !== 'undefined'
     ? requestAnimationFrame
     : (cb) => setTimeout(() => cb(performance.now()), 16)
@@ -83,6 +86,7 @@ function start() {
   // easeOutExpo：起步迅猛、收尾徐缓，比 cubic 系更有"仪表盘感"
   const eased = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
   const tick = (now) => {
+    if (run !== runId) return
     const t = Math.min(1, (now - startAt) / props.duration)
     if (t < 1) {
       animatedText.value = p.prefix + format(p.num * eased(t), p.decimals, p.useGrouping) + p.suffix
@@ -93,6 +97,15 @@ function start() {
   }
   raf(tick)
 }
+
+// value 动态更新：终止进行中的滚动并清掉终帧，让 displayValue 接管新值
+watch(
+  () => props.value,
+  () => {
+    runId += 1
+    animatedText.value = ''
+  },
+)
 
 onMounted(() => {
   if (!props.animated || !parts.value) return

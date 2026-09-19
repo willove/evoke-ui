@@ -10,8 +10,13 @@
  */
 import { highlightCode } from '../code-block/highlight'
 
+// & 必须最先转义，否则后续实体会被二次编码；引号进 alt/href 属性位，不转义可逃逸出属性
 const escapeHtml = (s) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 
 // 仅放行安全协议与相对地址，阻断 javascript: 等注入向量
 function safeUrl(u) {

@@ -173,6 +173,21 @@ describe('EvActionSheet', () => {
     expect(sheet.emitted('update:modelValue').at(-1)).toEqual([false])
     wrapper.unmount()
   })
+
+  it('重复打开层级递增', async () => {
+    const wrapper = mount(SheetHarness, { props: { modelValue: false }, attachTo: document.body })
+    await sleep(30)
+    await wrapper.setProps({ modelValue: true })
+    await sleep(30)
+    const first = Number(document.querySelector('.ev-action-sheet__overlay').style.zIndex)
+    await wrapper.setProps({ modelValue: false })
+    await sleep(30)
+    await wrapper.setProps({ modelValue: true })
+    await sleep(30)
+    const second = Number(document.querySelector('.ev-action-sheet__overlay').style.zIndex)
+    expect(second).toBeGreaterThan(first)
+    wrapper.unmount()
+  })
 })
 
 const TabbarHarness = defineComponent({
@@ -232,6 +247,21 @@ describe('EvTabbar', () => {
     const items = wrapper.findAll('.ev-tabbar-item')
     expect(items[1].classes()).toContain('is-active')
     expect(items[0].classes()).not.toContain('is-active')
+    wrapper.unmount()
+  })
+
+  it('页签可聚焦并支持 Enter/Space 切换；disabled 不可聚焦', async () => {
+    const wrapper = mount(TabbarHarness, { props: { modelValue: 'home' }, attachTo: document.body })
+    const items = wrapper.findAll('.ev-tabbar-item')
+    expect(items[0].attributes('tabindex')).toBe('0')
+    expect(items[2].attributes('tabindex')).toBe('-1')
+    await items[1].trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('change')).toEqual([['order']])
+    await wrapper.setProps({ modelValue: 'order' })
+    await items[1].trigger('keydown', { key: ' ' })
+    expect(wrapper.emitted('change')).toHaveLength(1)
+    await items[2].trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('change')).toHaveLength(1)
     wrapper.unmount()
   })
 })
