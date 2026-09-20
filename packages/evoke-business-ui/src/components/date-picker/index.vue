@@ -156,7 +156,7 @@
         >
           <div class="eb-picker__sheet" @click.stop>
             <div class="eb-picker__sheet-head">
-              <span class="eb-picker__sheet-title">{{ isRange ? '选择日期范围' : '选择日期' }}</span>
+              <span class="eb-picker__sheet-title">{{ sheetTitle }}</span>
               <eb-icon name="close" @click="closePanel" />
             </div>
             <div class="eb-picker__sheet-panel">
@@ -284,6 +284,9 @@ const sizeClass = computed(() => {
 const singlePlaceholder = computed(() =>
   props.type === 'datetime' ? t('datepicker.selectDate') + ' ' + t('datepicker.selectTime') : t('datepicker.selectDate')
 )
+
+// 移动端 sheet 标题
+const sheetTitle = computed(() => (isRange.value ? t('datepicker.selectDateRange') : t('datepicker.selectDate')))
 
 // ─── 值解析 ───
 const parsedSingle = computed(() => toSingleDayjs(props.modelValue, props.valueFormat))

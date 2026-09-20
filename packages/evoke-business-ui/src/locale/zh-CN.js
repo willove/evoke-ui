@@ -15,6 +15,7 @@ export const zhCN = {
       confirm: '确定',
       clear: '清空',
       selectDate: '选择日期',
+      selectDateRange: '选择日期范围',
       selectTime: '选择时间',
       startDate: '开始日期',
       startTime: '开始时间',
@@ -71,11 +72,20 @@ export const zhCN = {
       groupLabel: '验证码输入',
       charLabel: '验证码第 {index} 位',
     },
+    tour: {
+      close: '关闭引导',
+      prev: '上一步',
+      next: '下一步',
+      finish: '完成',
+    },
     pagination: {
       goto: '前往',
       pagesize: '条/页',
       total: '共 {total} 条',
       pageClassifier: '页',
+      prevPage: '上一页',
+      nextPage: '下一页',
+      ariaLabel: '分页，共 {total} 条',
     },
     messagebox: {
       title: '提示',

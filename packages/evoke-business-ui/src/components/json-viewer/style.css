@@ -1,10 +1,6 @@
-/* EbJsonViewer — JSON 查看器（设计令牌驱动） */
+/* EbJsonViewer — JSON 查看器（设计令牌驱动；值配色见 index.vue 的语义令牌映射） */
 
 .eb-json-viewer {
-  --jv-string: #16a34a;
-  --jv-number: #175dff;
-  --jv-boolean: #9333ea;
-  --jv-null: #9ca3af;
   box-sizing: border-box;
   min-width: 0;
 }

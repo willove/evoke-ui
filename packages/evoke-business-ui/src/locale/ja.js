@@ -15,6 +15,7 @@ export const ja = {
       confirm: 'OK',
       clear: 'クリア',
       selectDate: '日付を選択',
+      selectDateRange: '日付範囲を選択',
       selectTime: '時間を選択',
       startDate: '開始日',
       startTime: '開始時刻',
@@ -71,11 +72,20 @@ export const ja = {
       groupLabel: '認証コード入力',
       charLabel: '認証コード {index} 桁目',
     },
+    tour: {
+      close: 'ガイドを閉じる',
+      prev: '前へ',
+      next: '次へ',
+      finish: '完了',
+    },
     pagination: {
       goto: '',
       pagesize: '件/ページ',
       total: '合計 {total} 件',
       pageClassifier: '',
+      prevPage: '前のページ',
+      nextPage: '次のページ',
+      ariaLabel: 'ページング、合計 {total} 件',
     },
     messagebox: {
       title: 'お知らせ',

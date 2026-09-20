@@ -15,6 +15,7 @@ export const zhTW = {
       confirm: '確定',
       clear: '清空',
       selectDate: '選擇日期',
+      selectDateRange: '選擇日期範圍',
       selectTime: '選擇時間',
       startDate: '開始日期',
       startTime: '開始時間',
@@ -71,11 +72,20 @@ export const zhTW = {
       groupLabel: '驗證碼輸入',
       charLabel: '驗證碼第 {index} 位',
     },
+    tour: {
+      close: '關閉引導',
+      prev: '上一步',
+      next: '下一步',
+      finish: '完成',
+    },
     pagination: {
       goto: '前往',
       pagesize: '條/頁',
       total: '共 {total} 條',
       pageClassifier: '頁',
+      prevPage: '上一頁',
+      nextPage: '下一頁',
+      ariaLabel: '分頁，共 {total} 條',
     },
     messagebox: {
       title: '提示',

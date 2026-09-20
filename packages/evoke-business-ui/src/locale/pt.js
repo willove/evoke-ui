@@ -15,6 +15,7 @@ export const pt = {
       confirm: 'Confirmar',
       clear: 'Limpar',
       selectDate: 'Selecionar data',
+      selectDateRange: 'Selecionar intervalo de datas',
       selectTime: 'Selecionar hora',
       startDate: 'Data de início',
       startTime: 'Hora de início',
@@ -71,11 +72,20 @@ export const pt = {
       groupLabel: 'Entrada de código',
       charLabel: 'Dígito {index} do código',
     },
+    tour: {
+      close: 'Fechar guia',
+      prev: 'Anterior',
+      next: 'Próximo',
+      finish: 'Concluir',
+    },
     pagination: {
       goto: 'Ir para',
       pagesize: '/página',
       total: 'Total de {total}',
       pageClassifier: '',
+      prevPage: 'Página anterior',
+      nextPage: 'Página seguinte',
+      ariaLabel: 'Paginação, {total} itens no total',
     },
     messagebox: {
       title: 'Aviso',

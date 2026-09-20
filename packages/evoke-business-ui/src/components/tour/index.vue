@@ -8,7 +8,7 @@
           <span class="eb-tour__title">
             <slot name="title" :step="currentStep" :index="current">{{ currentStep.title }}</slot>
           </span>
-          <button class="eb-tour__close" type="button" aria-label="关闭引导" @click="skip">
+          <button class="eb-tour__close" type="button" :aria-label="t('tour.close')" @click="skip">
             <eb-icon name="close" :size="14" />
           </button>
         </div>
@@ -18,11 +18,11 @@
         <div class="eb-tour__footer">
           <span class="eb-tour__indicator">{{ current + 1 }} / {{ steps.length }}</span>
           <div class="eb-tour__actions">
-            <eb-button v-if="current > 0" size="small" @click="prev">上一步</eb-button>
+            <eb-button v-if="current > 0" size="small" @click="prev">{{ t('tour.prev') }}</eb-button>
             <eb-button v-if="current < steps.length - 1" size="small" type="primary" @click="next">
-              下一步
+              {{ t('tour.next') }}
             </eb-button>
-            <eb-button v-else size="small" type="primary" @click="finish">完成</eb-button>
+            <eb-button v-else size="small" type="primary" @click="finish">{{ t('tour.finish') }}</eb-button>
           </div>
         </div>
       </div>
@@ -42,8 +42,11 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { inBrowser } from '../../utils/dom'
 import EbIcon from '../icon/index.vue'
 import EbButton from '../button/index.vue'
+import { useLocale } from '../../composables/useLocale'
 
 defineOptions({ name: 'EbTour' })
+
+const { t } = useLocale()
 
 const props = defineProps({
   /** 步骤定义 */

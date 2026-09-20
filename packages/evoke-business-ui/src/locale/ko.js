@@ -15,6 +15,7 @@ export const ko = {
       confirm: '확인',
       clear: '지우기',
       selectDate: '날짜 선택',
+      selectDateRange: '날짜 범위 선택',
       selectTime: '시간 선택',
       startDate: '시작 날짜',
       startTime: '시작 시간',
@@ -71,11 +72,20 @@ export const ko = {
       groupLabel: '인증 코드 입력',
       charLabel: '인증 코드 {index}번째 자리',
     },
+    tour: {
+      close: '가이드 닫기',
+      prev: '이전',
+      next: '다음',
+      finish: '완료',
+    },
     pagination: {
       goto: '이동',
       pagesize: '/페이지',
       total: '총 {total}건',
       pageClassifier: '',
+      prevPage: '이전 페이지',
+      nextPage: '다음 페이지',
+      ariaLabel: '페이지 매기기, 총 {total}건',
     },
     messagebox: {
       title: '알림',

@@ -13,7 +13,7 @@
           :class="[typeClass, { 'is-center': center }]"
           role="alertdialog"
           aria-modal="true"
-          :aria-label="title || 'message box'"
+          :aria-label="title || t('messagebox.title')"
         >
           <div class="eb-message-box__header">
             <div class="eb-message-box__title">
@@ -58,7 +58,7 @@
               :round="roundButton"
               @click="handleAction('cancel')"
             >
-              {{ cancelButtonText }}
+              {{ cancelText }}
             </eb-button>
             <eb-button
               :type="confirmButtonClass || 'primary'"
@@ -67,7 +67,7 @@
               :round="roundButton"
               @click="handleAction('confirm')"
             >
-              {{ confirmButtonText }}
+              {{ confirmText }}
             </eb-button>
           </div>
         </div>
@@ -87,6 +87,7 @@ import EbButton from '../../button/index.vue'
 import EbInput from '../../input/index.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import { useLockScroll } from '../../../composables/useLockScroll'
+import { useLocale } from '../../../composables/useLocale'
 
 defineOptions({ name: 'EbMsgboxView' })
 
@@ -108,8 +109,9 @@ const props = defineProps({
   showClose: { type: Boolean, default: true },
   showCancelButton: { type: Boolean, default: false },
   distinguishCancelAndClose: { type: Boolean, default: false },
-  confirmButtonText: { type: String, default: '确定' },
-  cancelButtonText: { type: String, default: '取消' },
+  /** 空值时取语言包默认文案（messagebox.confirm / messagebox.cancel） */
+  confirmButtonText: { type: String, default: '' },
+  cancelButtonText: { type: String, default: '' },
   confirmButtonLoading: { type: Boolean, default: false },
   cancelButtonLoading: { type: Boolean, default: false },
   confirmButtonClass: { type: String, default: 'primary' },
@@ -137,6 +139,12 @@ const boxRef = ref(null)
 const inputRef = ref(null)
 const inputValue = ref(props.inputValue)
 const inputError = ref('')
+
+// 命令式挂载亦可取文案：无 appContext 时 useLocale 兜底 globalLocale
+const { t } = useLocale()
+
+const confirmText = computed(() => props.confirmButtonText || t('messagebox.confirm'))
+const cancelText = computed(() => props.cancelButtonText || t('messagebox.cancel'))
 
 const iconName = computed(() => {
   const map = {
@@ -168,7 +176,7 @@ function validateInput() {
   if (props.inputValidator) {
     const result = props.inputValidator(value)
     if (result === false) {
-      inputError.value = props.inputErrorMessage || '输入的数据不合法!'
+      inputError.value = props.inputErrorMessage || t('messagebox.error')
       return false
     }
     if (typeof result === 'string') {
@@ -176,7 +184,7 @@ function validateInput() {
       return false
     }
   } else if (props.inputPattern && !props.inputPattern.test(value)) {
-    inputError.value = props.inputErrorMessage || '输入的数据不合法!'
+    inputError.value = props.inputErrorMessage || t('messagebox.error')
     return false
   }
   inputError.value = ''

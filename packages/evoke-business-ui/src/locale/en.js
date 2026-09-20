@@ -15,6 +15,7 @@ export const en = {
       confirm: 'OK',
       clear: 'Clear',
       selectDate: 'Select date',
+      selectDateRange: 'Select date range',
       selectTime: 'Select time',
       startDate: 'Start Date',
       startTime: 'Start Time',
@@ -71,11 +72,20 @@ export const en = {
       groupLabel: 'OTP code input',
       charLabel: 'OTP digit {index}',
     },
+    tour: {
+      close: 'Close tour',
+      prev: 'Previous',
+      next: 'Next',
+      finish: 'Finish',
+    },
     pagination: {
       goto: 'Go to',
       pagesize: '/page',
       total: 'Total {total}',
       pageClassifier: '',
+      prevPage: 'Previous page',
+      nextPage: 'Next page',
+      ariaLabel: 'Pagination, {total} items in total',
     },
     messagebox: {
       title: 'Notice',

@@ -3,7 +3,7 @@
     class="eb-pagination eb-pagination"
     :class="[`eb-pagination--${computedSize}`, { 'is-background': background, 'is-disabled': disabled }]"
     role="pagination"
-    :aria-label="`分页，共 ${total} 条`"
+    :aria-label="t('pagination.ariaLabel', total)"
   >
     <template v-for="(part, i) in layoutParts" :key="i">
       <span v-if="part === 'total'" class="eb-pagination__total">
@@ -31,7 +31,7 @@
         class="btn-prev"
         :class="{ 'is-disabled': prevDisabled }"
         :disabled="prevDisabled"
-        aria-label="上一页"
+        :aria-label="t('pagination.prevPage')"
         @click="go(currentPage - 1)"
       >
         <eb-icon name="arrow-left" />
@@ -60,7 +60,7 @@
         class="btn-next"
         :class="{ 'is-disabled': nextDisabled }"
         :disabled="nextDisabled"
-        aria-label="下一页"
+        :aria-label="t('pagination.nextPage')"
         @click="go(currentPage + 1)"
       >
         <eb-icon name="arrow-right" />

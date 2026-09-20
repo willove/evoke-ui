@@ -15,6 +15,7 @@ export const es = {
       confirm: 'Aceptar',
       clear: 'Limpiar',
       selectDate: 'Seleccionar fecha',
+      selectDateRange: 'Seleccionar rango de fechas',
       selectTime: 'Seleccionar hora',
       startDate: 'Fecha de inicio',
       startTime: 'Hora de inicio',
@@ -71,11 +72,20 @@ export const es = {
       groupLabel: 'Entrada de código',
       charLabel: 'Dígito {index} del código',
     },
+    tour: {
+      close: 'Cerrar guía',
+      prev: 'Anterior',
+      next: 'Siguiente',
+      finish: 'Finalizar',
+    },
     pagination: {
       goto: 'Ir a',
       pagesize: '/página',
       total: 'Total {total}',
       pageClassifier: '',
+      prevPage: 'Página anterior',
+      nextPage: 'Página siguiente',
+      ariaLabel: 'Paginación, {total} elementos en total',
     },
     messagebox: {
       title: 'Aviso',

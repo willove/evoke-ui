@@ -5,13 +5,13 @@
       <slot name="header" :data="headerData">
         <div class="eb-calendar__title">{{ headerData.title }}</div>
         <div class="eb-calendar__nav">
-          <button type="button" class="eb-calendar__nav-btn" :disabled="isPrevDisabled" aria-label="上个月" @click="goPrev">
+          <button type="button" class="eb-calendar__nav-btn" :disabled="isPrevDisabled" :aria-label="t('datepicker.prevMonth')" @click="goPrev">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button type="button" class="eb-calendar__nav-btn eb-calendar__nav-btn--today" @click="goToday">今天</button>
-          <button type="button" class="eb-calendar__nav-btn" :disabled="isNextDisabled" aria-label="下个月" @click="goNext">
+          <button type="button" class="eb-calendar__nav-btn" :disabled="isNextDisabled" :aria-label="t('datepicker.nextMonth')" @click="goNext">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
               <polyline points="9 18 15 12 9 6" />
             </svg>
@@ -95,8 +95,11 @@
  * emits: update:modelValue / select / panel-change / event-click
  */
 import { ref, computed, watch } from 'vue'
+import { useLocale } from '../../composables/useLocale'
 
 defineOptions({ name: 'EbCalendar' })
+
+const { t } = useLocale()
 
 const props = defineProps({
   modelValue: { type: Date, default: undefined },

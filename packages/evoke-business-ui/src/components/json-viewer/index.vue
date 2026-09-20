@@ -48,11 +48,12 @@ async function copy() {
   }
 }
 
+// 值配色走 --eb-* 语义令牌（内联样式可解析），明暗主题自动跟随
 const VALUE_COLOR = {
-  string: 'var(--jv-string)',
-  number: 'var(--jv-number)',
-  boolean: 'var(--jv-boolean)',
-  null: 'var(--jv-null)',
+  string: 'var(--eb-color-success)',
+  number: 'var(--eb-color-primary)',
+  boolean: 'var(--eb-color-ext-violet)',
+  null: 'var(--eb-text-color-placeholder)',
 }
 
 function bracketsText(isArray) {
