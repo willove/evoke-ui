@@ -3,13 +3,16 @@
 // 交给 validateOptions / lintChartSpec 自检后 setSpec 回放。
 
 import { chartOptionsSchema } from "../schema";
+import { chart3dOptionsSchema } from "../3d/schema";
 import { parseDataTable } from "./table";
 import { SPEC_RULES } from "./spec";
-import { formatExamples } from "./examples";
+import { SPEC_RULES_3D } from "./threed";
+import { formatExamples, formatExamples3d } from "./examples";
 
 const PREVIEW_ROWS = 8;
 
-export function buildChartPrompt({ data, requirement, extraRules = [], examples = true } = {}) {
+export function buildChartPrompt({ data, requirement, extraRules = [], examples = true, mode = "2d" } = {}) {
+  const is3d = mode === "3d";
   const table = parseDataTable(data);
   let digest;
   if (table) {
@@ -25,14 +28,16 @@ export function buildChartPrompt({ data, requirement, extraRules = [], examples 
   } else {
     digest = "（未提供数据，请基于需求虚构合理示例数据）";
   }
-  const rules = [...SPEC_RULES, ...extraRules];
+  const rules = [...(is3d ? SPEC_RULES_3D : SPEC_RULES), ...extraRules];
   const sections = [
-    "你是图表配置生成器。根据下面的数据与需求，产出 EvChart 的 options JSON（下称 Spec），它将被 <ev-chart :options> 直接渲染。",
-    `## Options Schema\n${JSON.stringify(chartOptionsSchema)}`,
+    is3d
+      ? "你是三维图表配置生成器。根据下面的数据与需求，产出 EvChart3d 的 options JSON（下称 Spec），它将被 <ev-chart3d :options> 直接渲染（组件来自 @wil-works/evoke-charts/3d 子入口）。"
+      : "你是图表配置生成器。根据下面的数据与需求，产出 EvChart 的 options JSON（下称 Spec），它将被 <ev-chart :options> 直接渲染。",
+    `## Options Schema\n${JSON.stringify(is3d ? chart3dOptionsSchema : chartOptionsSchema)}`,
     `## 数据预览\n${digest}`,
   ];
   if (examples) {
-    sections.push(`## 示例\n${formatExamples()}`);
+    sections.push(`## 示例\n${is3d ? formatExamples3d() : formatExamples()}`);
   }
   sections.push(
     requirement

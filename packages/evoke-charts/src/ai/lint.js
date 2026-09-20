@@ -3,6 +3,7 @@
 // 能自动修的直接修（返回修后的 spec 副本），修不了的记为 issue。
 
 import { validateOptions } from "../schema";
+import { validateOptions3d } from "../3d/schema";
 import { renderChart, createSvgRecorder, estimateTextWidth, getTheme } from "../renderer";
 import { maxOf } from "../extent";
 
@@ -99,6 +100,16 @@ export function lintChartSpec(spec, opts = {}) {
   const fixed = { ...spec };
   if (!fixed || typeof fixed !== "object") {
     return { issues: [{ level: "error", message: "Spec 必须是对象" }], spec: fixed };
+  }
+
+  // 三维篇章 spec：type 以 3d 结尾 → 委托三维 schema 校验（二维规则与无头渲染不适用）
+  if (typeof fixed.type === "string" && /3d$/.test(fixed.type)) {
+    const { warnings } = validateOptions3d(fixed);
+    warnings.forEach((w) => issues.push({ level: "error", message: `${w.path} ${w.message}`, path: w.path }));
+    if (!issues.length) {
+      issues.push({ level: "info", message: "三维 spec 已过 schema 校验（几何层自检仅覆盖二维图型）", rule: "threed-schema-only" });
+    }
+    return { issues, spec: fixed };
   }
 
   // 1. schema 校验

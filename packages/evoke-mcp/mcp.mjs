@@ -227,10 +227,10 @@ server.registerTool(
   {
     title: '由数据生成图表 spec',
     description:
-      '传入表格数据（CSV 字符串或二维数组，首行为表头）与一句需求描述，自动选型并生成图表 options。',
+      '传入表格数据（CSV 字符串或二维数组，首行为表头）与一句需求描述，自动选型并生成图表 options。需求带「三维/立体/3D」或数据为三个数值列（无类目维度）时产出三维 spec（scatter3d/surface3d/bar3d/line3d/pie3d，渲染于 <ev-chart3d>）。',
     inputSchema: {
       data: z.string().describe('表格数据：CSV 字符串或 JSON 二维数组，首行为表头'),
-      requirement: z.string().optional().describe('需求描述，如「对比各季度营收趋势」「突出占比」'),
+      requirement: z.string().optional().describe('需求描述，如「对比各季度营收趋势」「三维看温度湿度海拔关系」'),
     },
   },
   async ({ data, requirement }) => {
@@ -245,14 +245,15 @@ server.registerTool(
   {
     title: '构建图表提示词',
     description:
-      '按 Evoke Charts 的约定生成一份可喂给任意大模型的提示词（含 schema 约束与 few-shot 示例），让任意 AI 都能写出合法图表配置。',
+      '按 Evoke Charts 的约定生成一份可喂给任意大模型的提示词（含 schema 约束与 few-shot 示例），让任意 AI 都能写出合法图表配置。mode="3d" 时切到三维篇章契约（EvChart3d options + 三维示例与规则）。',
     inputSchema: {
       data: z.string().optional().describe('表格数据（CSV 或二维数组）'),
       requirement: z.string().optional().describe('需求描述'),
+      mode: z.enum(['2d', '3d']).optional().describe('图型篇章：2d（缺省）产出 EvChart options，3d 产出 EvChart3d options'),
     },
   },
-  async ({ data, requirement }) => {
-    const prompt = buildChartPrompt({ data, requirement })
+  async ({ data, requirement, mode }) => {
+    const prompt = buildChartPrompt({ data, requirement, mode: mode || '2d' })
     return { content: [{ type: 'text', text: prompt }] }
   },
 )

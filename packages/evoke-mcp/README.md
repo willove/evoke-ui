@@ -16,8 +16,8 @@
 | `lint_chart_spec` | 图表 spec 三层校验（Schema → 规则 → 无头渲染文本越界），返回问题与自动修正 |
 | `get_chart3d_spec_schema` | 三维图表 options 的 JSON Schema（bar3d/line3d/scatter3d/surface3d/pie3d 与相机配置） |
 | `lint_chart3d_spec` | 三维图表 spec schema 校验，返回问题列表 |
-| `generate_chart_spec` | 表格数据直生图表 options（自动选型） |
-| `build_chart_prompt` | 生成图表契约提示词，让任意大模型都能写出合法配置 |
+| `generate_chart_spec` | 表格数据直生图表 options（自动选型；需求带「三维/立体/3D」或三个数值列时产出三维 spec） |
+| `build_chart_prompt` | 生成图表契约提示词，让任意大模型都能写出合法配置（`mode: '3d'` 切三维篇章契约） |
 
 组件文档正文实时取自三个文档站的纯 Markdown 版本，始终与线上文档一致；图表校验与生成由 `@wil-works/evoke-charts` 的 AI 生成引擎直接驱动。
 

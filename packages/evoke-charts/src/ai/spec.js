@@ -4,6 +4,7 @@
 import { chartOptionsSchema } from "../schema";
 import { maxOf, minOf } from "../extent";
 import { parseDataTable, inferColumns, distinctCount } from "./table";
+import { planThreed } from "./threed";
 
 const INTENT_KEYWORDS = {
   trend: ["趋势", "走势", "变化", "随时间", "增长", "trend"],
@@ -100,6 +101,17 @@ export function generateChartSpec(data, hint = {}) {
 
   const spec = {};
   if (hint.title) spec.title = hint.title;
+
+  // ── 三维篇章：显式意图（三维/立体/3D）或数据天然三维（≥3 数值列且无类目/时间维度）──
+  // 规划成功直接产出三维 spec；明确要三维但维度不足则告警后落回二维流程。
+  const three = planThreed({ hint, intent, numbers, times, cats, table, labels });
+  if (three) {
+    report.push(...three.report);
+    if (three.spec) {
+      Object.assign(spec, three.spec);
+      return { spec, report };
+    }
+  }
 
   // 双数值列且无类目维度 → 关系（散点）
   if (intent === "relation" && numbers.length >= 2) {

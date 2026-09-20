@@ -96,6 +96,24 @@
 - 清理根 package.json description 与 README 中「独立 charts-3d 包 / `docs-charts-3d:dev`
   文档站」的合并残留，README 本地开发段落补 `docs-charts:dev` 与 `demo:charts3d`。
 
+### @wil-works/evoke-charts — AI 生成接入三维篇章
+
+- **`generateChartSpec` 三维选型**：保守门——需求带「三维 / 立体 / 3D」，或数据天然三维
+  （≥3 个数值列且无类目/时间维度，二维散点必丢一维）才进三维；三个数值列构成完整
+  数值网格（前两列取值组合覆盖全部行，任一边 ≤64）时透视成 `surface3d` 高度场
+  （x/y 轴名来自列名），稀疏三元组产出 `scatter3d`；带类目/时间维度时按意图映射
+  `bar3d` 柱林 / `line3d` 空间折线 / `pie3d` 三维饼，「柱 / 条形」「折线」图表词
+  优先于意图默认；维度不足告警后回退二维，原有二维选型行为不变；
+- **`buildChartPrompt` 加 `mode: '3d'`**：Schema、few-shot（三维示例库 `SPEC_EXAMPLES_3D`
+  三条：三元组散点 / 高度场曲面 / 柱林）与硬性规则（`SPEC_RULES_3D`，与三维数据契约
+  一致）整套切换到 EvChart3d 契约；导出 `wantsThreed` / `planThreed`；
+- **`lintChartSpec` 三维委托**：type 为 `*3d` 时自动切 `validateOptions3d`（错误定位
+  path + message，合法给出 info），二维规则与无头渲染不再误伤三维 spec；
+- **evoke-mcp**：`generate_chart_spec` 描述注明三维触发条件，`build_chart_prompt`
+  新增 `mode` 参数（2d/3d）；构建期三维 schema 进共享 chunk（3d.mjs 129KB，ai 链
+  不含 vue，包体隔离不变）；
+- 文档站 AI 生成页新增「三维生成」段（可交互闭环示例：网格数据直生曲面）。
+
 ### @wil-works/evoke-business-ui — 对齐 antd 能力批
 
 - **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`

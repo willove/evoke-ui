@@ -9,8 +9,10 @@ import {
   buildChartPrompt,
   lintChartSpec,
   SPEC_EXAMPLES,
+  SPEC_EXAMPLES_3D,
 } from '../src/ai/index.js'
 import { validateOptions } from '../src/schema.js'
+import { validateOptions3d } from '../src/3d/schema.js'
 import { layoutSunburst, renderSunburstChart } from '../src/renderer/charts-extra.js'
 import { renderFunnelChart } from '../src/renderer/charts-advanced.js'
 
@@ -483,5 +485,139 @@ describe('漏斗图标签布局', () => {
     for (let i = 1; i < ys.length; i++) {
       expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(34)
     }
+  })
+})
+
+describe('AI 生成引擎：三维篇章接入', () => {
+  const GRID_CSV = `温度,压力,产率
+20,1,61
+20,2,67
+25,1,64
+25,2,72
+30,1,66
+30,2,69`
+  const SPARSE_CSV = `温度,湿度,故障率
+22,40,1.2
+28,55,2.8
+31,62,4.5
+19,35,0.8
+33,70,5.1`
+  const CAT_CSV = `季度,华东,华南,华北
+Q1,320,280,240
+Q2,356,302,262
+Q3,401,346,288
+Q4,388,331,305`
+  const TIME_CSV = `日期,华东,华南
+2024-01,320,280
+2024-02,356,302
+2024-03,401,346`
+
+  it('三数值列构成完整网格（无类目）→ surface3d，z 矩阵行×列对齐且带轴名', () => {
+    const { spec, report } = generateChartSpec(GRID_CSV, {})
+    expect(spec.type).toBe('surface3d')
+    expect(spec.surfaceData.x).toEqual([20, 25, 30])
+    expect(spec.surfaceData.y).toEqual([1, 2])
+    expect(spec.surfaceData.z).toEqual([
+      [61, 64, 66],
+      [67, 72, 69],
+    ])
+    expect(spec.xAxis.name).toBe('温度')
+    expect(spec.zAxis.name).toBe('产率')
+    expect(report.some((r) => r.message.includes('完整高度场'))).toBe(true)
+    expect(validateOptions3d(spec).ok).toBe(true)
+  })
+
+  it('稀疏三元组（网格不完整）→ scatter3d，二维不再丢一维', () => {
+    const { spec } = generateChartSpec(SPARSE_CSV, {})
+    expect(spec.type).toBe('scatter3d')
+    expect(spec.scatterData).toHaveLength(5)
+    expect(spec.scatterData[0]).toEqual({ x: 22, y: 40, z: 1.2 })
+    expect(spec.yAxis.name).toBe('湿度')
+    expect(validateOptions3d(spec).ok).toBe(true)
+  })
+
+  it('显式三维 + 类目维度 → bar3d；「柱林」词优先于趋势默认', () => {
+    const { spec } = generateChartSpec(CAT_CSV, { hint: '用三维柱林展示' })
+    expect(spec.type).toBe('bar3d')
+    expect(spec.labels).toEqual(['Q1', 'Q2', 'Q3', 'Q4'])
+    expect(spec.series).toHaveLength(3)
+    expect(spec.series[0].data).toEqual([320, 356, 401, 388])
+    expect(validateOptions3d(spec).ok).toBe(true)
+  })
+
+  it('显式三维 + 时间维度 → line3d', () => {
+    const { spec } = generateChartSpec(TIME_CSV, { hint: '三维立体空间折线' })
+    expect(spec.type).toBe('line3d')
+    expect(spec.labels).toEqual(['2024-01', '2024-02', '2024-03'])
+    expect(validateOptions3d(spec).ok).toBe(true)
+  })
+
+  it('显式三维 + 占比意图 → pie3d（多度量按列合计）', () => {
+    const { spec } = generateChartSpec(CAT_CSV, { hint: '三维占比' })
+    expect(spec.type).toBe('pie3d')
+    expect(spec.pieData).toHaveLength(3)
+    expect(spec.pieData[0]).toEqual({ name: '华东', value: 320 + 356 + 401 + 388 })
+    expect(validateOptions3d(spec).ok).toBe(true)
+  })
+
+  it('显式三维 + 类目 + 三度量 + 关系意图 → 带 label 的 scatter3d', () => {
+    const csv = `城市,温度,湿度,海拔
+A,22,40,120
+B,28,55,640
+C,31,62,1180
+D,19,35,80`
+    const { spec } = generateChartSpec(csv, { hint: '三维看温度湿度海拔的关系' })
+    expect(spec.type).toBe('scatter3d')
+    expect(spec.scatterData[0]).toEqual({ x: 22, y: 40, z: 120, label: 'A' })
+  })
+
+  it('类目数据无三维意图仍走二维；纯三数值列无类目则天然进三维', () => {
+    const cat = generateChartSpec(CAT_CSV, {})
+    expect(cat.spec.type).not.toMatch(/3d$/)
+    const grid = generateChartSpec(GRID_CSV, {})
+    // 三数值列无类目天然三维：即便没开口要，也进三维（二维散点会丢一维）
+    expect(grid.spec.type).toBe('surface3d')
+  })
+
+  it('要求三维但数值维度不足 → 回退二维并给出 warn', () => {
+    const two = `x,y\n1,2\n3,4\n5,6`
+    const { spec, report } = generateChartSpec(two, { hint: '三维' })
+    expect(spec.type).toBe('scatter')
+    expect(report.some((r) => r.level === 'warn' && r.message.includes('回退二维'))).toBe(true)
+  })
+
+  it('三维示例库自一致：每条 spec 都过 validateOptions3d', () => {
+    for (const e of SPEC_EXAMPLES_3D) {
+      const { ok, warnings } = validateOptions3d(e.spec)
+      expect(warnings).toEqual([])
+      expect(ok).toBe(true)
+    }
+  })
+
+  it('buildChartPrompt mode 3d：EvChart3d 措辞 + 三维 schema 与示例；examples: false 可关闭；默认仍是二维', () => {
+    const p3 = buildChartPrompt({ data: SPARSE_CSV, requirement: '三维', mode: '3d' })
+    expect(p3).toContain('EvChart3d')
+    expect(p3).toContain('ev-chart3d')
+    expect(p3).toContain('bar3d / line3d / scatter3d / surface3d / pie3d')
+    expect((p3.match(/需求：/g) || []).length).toBeGreaterThanOrEqual(3)
+    expect(p3).toContain('surfaceData')
+
+    const p3off = buildChartPrompt({ data: SPARSE_CSV, mode: '3d', examples: false })
+    expect(p3off).not.toContain('## 示例')
+
+    const p2 = buildChartPrompt({ data: SPARSE_CSV, requirement: '二维' })
+    expect(p2).toContain('EvChart 的 options')
+    expect(p2).not.toContain('EvChart3d')
+  })
+
+  it('lintChartSpec：3d spec 委托三维 schema 校验（非法定位 / 合法给 info）', () => {
+    const bad = lintChartSpec({ type: 'bar3d', labels: ['a'], series: [{ name: 's', data: [1] }], camera: { autoRotate: 'yes' } })
+    expect(bad.issues[0].level).toBe('error')
+    expect(bad.issues[0].path).toBe('options.camera.autoRotate')
+
+    const good = lintChartSpec({ type: 'pie3d', pieData: [{ name: 'a', value: 1 }] })
+    expect(good.issues).toHaveLength(1)
+    expect(good.issues[0].rule).toBe('threed-schema-only')
+    expect(good.issues[0].level).toBe('info')
   })
 })
