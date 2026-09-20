@@ -57,7 +57,6 @@
 - **evoke-ui**：内部标识符 `ewSvgPaths` / `ewShowcasePaths` / `ewIconGrid` 及 tabbar
   注入 key `ewTabbar` 改为 `ev-` 前缀（`evSvgPaths` 等，直接引用这些导出的消费方需同步）。
 
-
 ### @wil-works/charts-3d — 新包（0.1.0）
 
 - 零依赖 Canvas 三维图表库（Vue 3）：自研透视投影管线（向量/矩阵数学 → 轨道相机 →
@@ -78,6 +77,11 @@
   SVG 录制器）、`toDataURL` 位图导出、`validateOptions3d` 配置校验（告警不阻断）、
   aria 标注与 aria-live 播报；`render3d` / `projectScene` / `pickScene` /
   `createSvgRecorder` 底层管线可直接使用；
+- 文档站 `docs-charts-3d/`：首页 + 指南（安装 / 相机与交互 / 主题接入 / 设计规范 /
+  更新记录）+ 图型页（总览 / API 参考 / 五图型各页，每页 ≥2 个可交互示例），
+  源码级 alias 消费包源码，llms.txt 随构建生成；部署走
+  `./scripts/deploy-docs.sh charts3d`；视觉回归接入 playwright 第 4 project
+  （charts3d，端口 4176，7 张基线含暗色）；
 - 示例：`examples/charts-3d-playground`（源码级 alias，`pnpm demo:charts3d`）。
 
 ### @wil-works/evoke-business-ui — 对齐 antd 能力批
