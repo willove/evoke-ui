@@ -47,7 +47,7 @@ const props = defineProps({
 })
 
 const slots = useSlots()
-const tabbar = inject('ewTabbar', null)
+const tabbar = inject('evTabbar', null)
 const index = tabbar ? tabbar.registerItem() : -1
 
 const hasIcon = computed(() => !!props.icon || !!slots.icon)

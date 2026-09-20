@@ -1,5 +1,5 @@
 <template>
-  <div :class="['ev-tabs', `is-${variant}`, `is-${size}`]" role="tablist" ref="trackRef">
+  <div :class="['ev-tabs', `is-${variant}`, `is-${size}`]" role="tablist" ref="trackRef" @keydown="onKeydown">
     <template v-if="variant === 'capsule'">
       <span v-if="thumbReady" class="ev-tabs__thumb" :style="thumbStyle" aria-hidden="true" />
       <button
@@ -8,7 +8,9 @@
         :ref="(el) => (itemEls[i] = el)"
         type="button"
         role="tab"
+        :id="`${baseId}-${i}`"
         :aria-selected="current === item.value"
+        :tabindex="current === item.value && !item.disabled ? 0 : -1"
         :class="['ev-tabs__item', { 'is-active': current === item.value, 'is-disabled': item.disabled }]"
         @click="select(item)"
       >
@@ -18,11 +20,13 @@
     </template>
     <template v-else>
       <button
-        v-for="item in items"
+        v-for="(item, i) in items"
         :key="item.value"
         type="button"
         role="tab"
+        :id="`${baseId}-${i}`"
         :aria-selected="current === item.value"
+        :tabindex="current === item.value && !item.disabled ? 0 : -1"
         :class="['ev-tabs__item', { 'is-active': current === item.value, 'is-disabled': item.disabled }]"
         @click="select(item)"
       >
@@ -38,8 +42,10 @@
  * EvTabs — 标签页/分段控件
  * variant：capsule 分段胶囊（灰轨道 + 弹性滑块跟随）/ underline 下划线
  * 滑块位置随激活项平滑移动（resize 自适应）
+ * 键盘：tablist 上 ←/→ 移动激活 tab（disabled 项跳过、首尾环绕）、Home/End 跳首尾；
+ * roving tabindex（激活项 0 其余 -1），每个 tab 带稳定 id 供 aria 关联
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 import EvIcon from '../icon/index.vue'
 import { useUncontrolled } from '../../composables/useUncontrolled'
 
@@ -101,6 +107,30 @@ function select(item) {
   if (item.disabled || item.value === current.value) return
   emit('update:modelValue', set(item.value))
   emit('change', item.value)
+}
+
+const baseId = useId()
+
+/** 方向键在可用 tab 间移动激活项并跟焦，Home/End 跳首尾 */
+function onKeydown(e) {
+  const enabled = props.items.filter((it) => !it.disabled)
+  if (!enabled.length) return
+  const idx = enabled.findIndex((it) => it.value === current.value)
+  const at = idx === -1 ? 0 : idx
+  let next = -1
+  if (e.key === 'ArrowRight') next = (at + 1) % enabled.length
+  else if (e.key === 'ArrowLeft') next = (at - 1 + enabled.length) % enabled.length
+  else if (e.key === 'Home') next = 0
+  else if (e.key === 'End') next = enabled.length - 1
+  if (next < 0) return
+  e.preventDefault()
+  const item = enabled[next]
+  select(item)
+  nextTick(() => {
+    trackRef.value
+      ?.querySelector(`#${baseId}-${props.items.indexOf(item)}`)
+      ?.focus?.()
+  })
 }
 
 watch(() => [current.value, props.items, props.variant], measure)

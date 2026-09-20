@@ -4,7 +4,7 @@
  * （Remix Icon License v1.0，免费商用）。由 scripts/generate-remix-icons.mjs 生成，请勿手动修改
  */
 
-export const ewShowcasePaths = {
+export const evShowcasePaths = {
  "arrow-down-box-fill": {
   "viewBox": "0 0 24 24",
   "paths": [

@@ -3,9 +3,9 @@
     <template v-if="!sent">
       <div class="ev-contact-form__row">
         <div class="ev-contact-form__field">
-          <label class="ev-contact-form__label" for="ev-contact-name">称呼</label>
+          <label class="ev-contact-form__label" :for="`${uid}-name`">称呼</label>
           <input
-            id="ev-contact-name"
+            :id="`${uid}-name`"
             v-model.trim="form.name"
             class="ev-contact-form__input"
             :class="{ 'is-error': errors.name }"
@@ -16,9 +16,9 @@
           <span v-if="errors.name" class="ev-contact-form__error">请填写称呼</span>
         </div>
         <div class="ev-contact-form__field">
-          <label class="ev-contact-form__label" for="ev-contact-email">邮箱</label>
+          <label class="ev-contact-form__label" :for="`${uid}-email`">邮箱</label>
           <input
-            id="ev-contact-email"
+            :id="`${uid}-email`"
             v-model.trim="form.email"
             class="ev-contact-form__input"
             :class="{ 'is-error': errors.email }"
@@ -30,9 +30,9 @@
         </div>
       </div>
       <div class="ev-contact-form__field">
-        <label class="ev-contact-form__label" for="ev-contact-message">留言</label>
+        <label class="ev-contact-form__label" :for="`${uid}-message`">留言</label>
         <textarea
-          id="ev-contact-message"
+          :id="`${uid}-message`"
           v-model.trim="form.message"
           class="ev-contact-form__input ev-contact-form__textarea"
           :class="{ 'is-error': errors.message }"
@@ -62,8 +62,9 @@
 /**
  * EvContactForm — 留言/合作表单（企业站联系区块）
  * 内置必填与邮箱校验；submit 派发后切成功态，可 reset 再填
+ * label/input 关联用 useId 生成，多实例同页不串 id
  */
-import { reactive, ref } from 'vue'
+import { reactive, ref, useId } from 'vue'
 import EvButton from '../button/index.vue'
 import EvIcon from '../icon/index.vue'
 
@@ -73,6 +74,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['submit'])
+
+const uid = useId()
 
 const form = reactive({ name: '', email: '', message: '' })
 const errors = reactive({ name: false, email: false, message: false })

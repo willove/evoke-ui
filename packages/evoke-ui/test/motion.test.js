@@ -116,3 +116,19 @@ describe('EvTabs 胶囊滑块', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['b'])
   })
 })
+
+describe('EvNavbar burger 开关', () => {
+  it('aria-expanded 随开合，label 在「打开/关闭菜单」间切换', async () => {
+    const wrapper = mount(EvNavbar, { props: { items: [{ label: '文档', href: '/docs' }] } })
+    const burger = wrapper.find('.ev-navbar__burger')
+    expect(burger.attributes('aria-expanded')).toBe('false')
+    expect(burger.attributes('aria-label')).toBe('打开菜单')
+    await burger.trigger('click')
+    expect(burger.attributes('aria-expanded')).toBe('true')
+    expect(burger.attributes('aria-label')).toBe('关闭菜单')
+    expect(wrapper.find('.ev-navbar__mobile').exists()).toBe(true)
+    await burger.trigger('click')
+    expect(burger.attributes('aria-expanded')).toBe('false')
+    expect(wrapper.find('.ev-navbar__mobile').exists()).toBe(false)
+  })
+})

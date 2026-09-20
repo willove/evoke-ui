@@ -9,6 +9,8 @@
       :disabled="disabled"
       :placeholder="placeholder"
       @input="onInput"
+      @focus="focused = true"
+      @blur="focused = false"
     />
     <button
       v-if="clearable && modelValue && !disabled"
@@ -73,6 +75,7 @@ function clear() {
   emit('clear')
 }
 
+// 聚焦态由原生 focus/blur 事件维护，expose 的 focused 真实反映
 defineExpose({ focused })
 </script>
 

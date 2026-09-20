@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from './helpers'
+import { mount, describe, it, expect, beforeEach, EvConfigProvider } from './helpers'
 import { generatePrimaryRamp, hexToRgb, mixHex } from '../src/utils/color'
 import { resolveThemeVars, EV_COLOR_PRESETS, EV_RADIUS_PRESETS, EV_SPACE_PRESETS, EV_CONTAINER_PRESETS } from '../src/presets'
 import { useThemeConfig } from '../src/composables/useThemeConfig'
@@ -108,5 +108,35 @@ describe('useThemeConfig', () => {
     const { applyPreset } = useThemeConfig()
     applyPreset('no-such-preset')
     expect(document.documentElement.style.getPropertyValue('--ev-color-primary')).toBe('')
+  })
+})
+
+describe('EvConfigProvider 卸载还原 :root 令牌', () => {
+  it('卸载时移除自己写入且原本不存在的令牌', () => {
+    const style = document.documentElement.style
+    const wrapper = mount(EvConfigProvider, {
+      props: { primary: '#7C5CFC', radius: 'round', space: 'loose', container: 'wide' },
+      slots: { default: 'x' },
+    })
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('#7C5CFC')
+    expect(style.getPropertyValue('--ev-radius-xl')).toBeTruthy()
+    expect(style.getPropertyValue('--ev-container-width')).toBe('1360px')
+    wrapper.unmount()
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('')
+    expect(style.getPropertyValue('--ev-radius-xl')).toBe('')
+    expect(style.getPropertyValue('--ev-container-width')).toBe('')
+  })
+
+  it('卸载还原到卸载前已存在的原值', () => {
+    const style = document.documentElement.style
+    style.setProperty('--ev-color-primary', '#112233')
+    const wrapper = mount(EvConfigProvider, {
+      props: { primary: '#7C5CFC' },
+      slots: { default: 'x' },
+    })
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('#7C5CFC')
+    wrapper.unmount()
+    expect(style.getPropertyValue('--ev-color-primary')).toBe('#112233')
+    style.removeProperty('--ev-color-primary')
   })
 })

@@ -26,7 +26,7 @@
  * 加载完成后由父级改回 idle（还有数据）或 noMore（到底）/ error（失败可点重试）。
  * 触底检测用 IntersectionObserver，根为最近的滚动祖先，页面滚动容器与壳内滚动区都适用。
  */
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getScrollParent } from '../../utils/scroll'
 
 defineOptions({ name: 'EvLoadMore' })
@@ -71,7 +71,8 @@ function trigger() {
   emit('load-more')
 }
 
-onMounted(() => {
+/** 建立触底观察（autoLoad 且未禁用且哨兵在文档中才建） */
+function setupObserver() {
   if (
     !props.autoLoad ||
     props.disabled ||
@@ -91,12 +92,23 @@ onMounted(() => {
     }
   )
   observer.observe(sentinelRef.value)
-})
+}
 
-onBeforeUnmount(() => {
+function teardownObserver() {
   observer?.disconnect()
   observer = null
-})
+}
+
+onMounted(setupObserver)
+
+// 挂载后解除 disabled / 开启 autoLoad 时补建观察者，反之断开；
+// flush: post 等哨兵节点随 v-if 渲染完成后再取 ref
+watch(() => [props.autoLoad, props.disabled], () => {
+  teardownObserver()
+  setupObserver()
+}, { flush: 'post' })
+
+onBeforeUnmount(teardownObserver)
 
 defineExpose({
   /** 手动触发一次加载（等同点击） */

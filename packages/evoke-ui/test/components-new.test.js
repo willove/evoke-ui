@@ -108,6 +108,25 @@ describe('EvModal', () => {
     expect(document.querySelector('.ev-modal__close')).toBeTruthy()
     wrapper.unmount()
   })
+
+  it('Tab 焦点圈闭：末尾 Tab 回首个元素，首个 Shift+Tab 回末尾', async () => {
+    const wrapper = mount(EvModal, {
+      props: { modelValue: true, title: 'T' },
+      slots: { default: '<button class="trap-a" type="button">输入</button>' },
+      attachTo: document.body,
+    })
+    await nextTick()
+    const closeBtn = document.querySelector('.ev-modal__close')
+    const bodyBtn = document.querySelector('.trap-a')
+    // 焦点在末尾元素时 Tab → 回到首个可聚焦元素（关闭按钮）
+    bodyBtn.focus()
+    bodyBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+    expect(document.activeElement).toBe(closeBtn)
+    // 焦点在首个元素时 Shift+Tab → 回到末尾
+    closeBtn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }))
+    expect(document.activeElement).toBe(bodyBtn)
+    wrapper.unmount()
+  })
 })
 
 describe('EvSearchBox 远程搜索', () => {

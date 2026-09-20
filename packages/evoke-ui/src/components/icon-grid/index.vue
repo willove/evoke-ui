@@ -104,7 +104,7 @@ onMounted(async () => {
   }
   try {
     const m = await import('../icon/showcase.js')
-    builtIn.value = Object.entries(m.ewShowcasePaths).map(([name, paths]) => ({
+    builtIn.value = Object.entries(m.evShowcasePaths).map(([name, paths]) => ({
       name,
       category: m.EV_SHOWCASE_META[name]?.category || 'Others',
       categoryZh: m.EV_SHOWCASE_META[name]?.categoryZh,

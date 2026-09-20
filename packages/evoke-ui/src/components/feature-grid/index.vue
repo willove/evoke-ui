@@ -60,7 +60,8 @@ function applyReveal() {
 }
 
 onMounted(applyReveal)
-watch(() => [props.items, props.variant], applyReveal)
+// flush: post 等新节点渲染进 DOM 后再收集，动态换 items 时不丢入场动效
+watch(() => [props.items, props.variant], applyReveal, { flush: 'post' })
 </script>
 
 <style src="./style.css"></style>

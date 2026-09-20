@@ -66,7 +66,7 @@ function setActive(value) {
   emit('change', value)
 }
 
-provide('ewTabbar', {
+provide('evTabbar', {
   current,
   setActive,
   registerItem,

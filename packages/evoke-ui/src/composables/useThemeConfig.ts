@@ -119,6 +119,7 @@ export function useThemeConfig() {
 
   function setRadius(preset: string): void {
     config.radius = preset
+    if (typeof document === 'undefined') return
     if (preset === 'default') {
       for (const name of ['--ev-radius-sm', '--ev-radius-md', '--ev-radius-lg', '--ev-radius-xl', '--ev-radius-2xl']) {
         document.documentElement.style.removeProperty(name)
@@ -130,6 +131,7 @@ export function useThemeConfig() {
 
   function setSpace(preset: string): void {
     config.space = preset
+    if (typeof document === 'undefined') return
     if (preset === 'default') {
       for (let i = 1; i <= 20; i++) {
         document.documentElement.style.removeProperty(`--ev-space-${i}`)
@@ -141,6 +143,7 @@ export function useThemeConfig() {
 
   function setContainer(preset: string): void {
     config.container = preset
+    if (typeof document === 'undefined') return
     if (preset === 'default') {
       document.documentElement.style.removeProperty('--ev-container-width')
       return

@@ -1,4 +1,4 @@
-import { mount, describe, it, expect, vi, nextTick, EvVideo, EvAudio, EvContactForm, EvCarousel, EvArticleCard, EvProfileCard } from './helpers'
+import { mount, defineComponent, h, describe, it, expect, vi, nextTick, EvVideo, EvAudio, EvContactForm, EvCarousel, EvArticleCard, EvProfileCard } from './helpers'
 
 describe('EvVideo / EvAudio', () => {
   it('渲染原生 video 与画幅', () => {
@@ -41,6 +41,20 @@ describe('EvContactForm', () => {
     await nextTick()
     expect(wrapper.emitted('submit')?.[0]?.[0]).toEqual({ name: '林一舟', email: 'me@example.com', message: '合作洽谈' })
     expect(wrapper.find('.ev-contact-form__done').exists()).toBe(true)
+  })
+
+  it('label/input 经 useId 一一关联，同应用多实例不串 id', () => {
+    // 同一应用挂两个表单：useId 生成的 id 全部互不相同且能命中控件
+    const DualForm = defineComponent({
+      setup: () => () => h('div', [h(EvContactForm), h(EvContactForm)]),
+    })
+    const wrapper = mount(DualForm)
+    expect(wrapper.findAll('.ev-contact-form')).toHaveLength(2)
+    const forIds = wrapper.findAll('label').map((l) => l.attributes('for'))
+    expect(forIds).toHaveLength(6)
+    expect(new Set(forIds).size).toBe(6)
+    for (const id of forIds) expect(wrapper.find(`#${id}`).exists()).toBe(true)
+    wrapper.unmount()
   })
 })
 

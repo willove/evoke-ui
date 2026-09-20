@@ -2,7 +2,7 @@
  * 移动组件四件套 — EvPullRefresh / EvLoadMore / EvActionSheet / EvTabbar
  * 与 B 端库的 eb- 版本同 API（移动范式跨库一致，降低接入成本）
  */
-import { mount, defineComponent, h, ref, nextTick, describe, it, expect } from './helpers.js'
+import { mount, defineComponent, h, ref, nextTick, describe, it, expect, vi } from './helpers.js'
 import EvPullRefresh from '../src/components/pull-refresh/index.vue'
 import EvLoadMore from '../src/components/load-more/index.vue'
 import EvActionSheet from '../src/components/action-sheet/index.vue'
@@ -105,6 +105,66 @@ describe('EvLoadMore', () => {
     await wrapper.find('.ev-load-more__body').trigger('click')
     expect(wrapper.emitted('update:status')).toEqual([['loading']])
     expect(wrapper.emitted('load-more')).toBeTruthy()
+  })
+
+  it('挂载后解除 disabled 补建观察者，重新禁用与卸载时断开', async () => {
+    const created = []
+    class FakeIO {
+      constructor(cb, options) {
+        this.cb = cb
+        this.options = options
+        this.observed = []
+        this.disconnected = false
+        created.push(this)
+      }
+      observe(el) { this.observed.push(el) }
+      disconnect() { this.disconnected = true; this.observed = [] }
+    }
+    vi.stubGlobal('IntersectionObserver', FakeIO)
+    try {
+      // 初始 disabled：不建观察者
+      const wrapper = mount(EvLoadMore, { props: { disabled: true, autoLoad: true } })
+      expect(wrapper.find('.ev-load-more__sentinel').exists()).toBe(false)
+      expect(created).toHaveLength(0)
+      // 解除 disabled：哨兵渲染、补建观察者
+      await wrapper.setProps({ disabled: false })
+      expect(wrapper.find('.ev-load-more__sentinel').exists()).toBe(true)
+      expect(created).toHaveLength(1)
+      expect(created[0].observed).toHaveLength(1)
+      expect(created[0].disconnected).toBe(false)
+      // 重新禁用：断开
+      await wrapper.setProps({ disabled: true })
+      expect(created[0].disconnected).toBe(true)
+      expect(created).toHaveLength(1)
+      // 再解除：建新观察者；卸载断开
+      await wrapper.setProps({ disabled: false })
+      expect(created).toHaveLength(2)
+      wrapper.unmount()
+      expect(created[1].disconnected).toBe(true)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('autoLoad 关→开同样补建观察者', async () => {
+    const created = []
+    class FakeIO {
+      constructor() { created.push(this); this.observed = []; this.disconnected = false }
+      observe(el) { this.observed.push(el) }
+      disconnect() { this.disconnected = true; this.observed = [] }
+    }
+    vi.stubGlobal('IntersectionObserver', FakeIO)
+    try {
+      const wrapper = mount(EvLoadMore, { props: { autoLoad: false } })
+      expect(wrapper.find('.ev-load-more__sentinel').exists()).toBe(false)
+      await wrapper.setProps({ autoLoad: true })
+      expect(wrapper.find('.ev-load-more__sentinel').exists()).toBe(true)
+      expect(created).toHaveLength(1)
+      wrapper.unmount()
+      expect(created[0].disconnected).toBe(true)
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })
 

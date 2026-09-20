@@ -47,7 +47,7 @@
 /**
  * EvModal — 弹出层
  * 遮罩 + 居中面板；Teleport 到 body；Esc / 遮罩点击 / 关闭按钮关闭（均可配）；
- * 打开期间锁定页面滚动，打开时焦点移入面板、关闭后归还触发元素；
+ * 打开期间锁定页面滚动，打开时焦点移入面板、Tab 在面板内首尾循环（焦点圈闭）、关闭后归还触发元素；
  * 事件：update:modelValue / open / opened / close / closed。
  * 典型用法：弹出层 + 表单（邮箱验证、订阅、邀请）。
  */
@@ -105,9 +105,43 @@ function onOverlayClick() {
 }
 
 function onKeydown(e) {
-  if (e.key === 'Escape' && props.escClose) close()
+  if (e.key === 'Escape' && props.escClose) {
+    close()
+    return
+  }
+  if (e.key === 'Tab') trapFocus(e)
 }
 
+/** Tab 焦点圈闭：在面板可聚焦元素的首尾循环，面板内无可聚焦元素时焦点留在面板 */
+function trapFocus(e) {
+  const panel = panelRef.value
+  if (!panel) return
+  const focusables = Array.from(
+    panel.querySelectorAll(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  )
+  if (!focusables.length) {
+    e.preventDefault()
+    panel.focus()
+    return
+  }
+  const first = focusables[0]
+  const last = focusables[focusables.length - 1]
+  const active = document.activeElement
+  const inside = panel.contains(active)
+  if (e.shiftKey) {
+    if (!inside || active === first) {
+      e.preventDefault()
+      last.focus()
+    }
+  } else if (!inside || active === last) {
+    e.preventDefault()
+    first.focus()
+  }
+}
+
+// immediate：以 modelValue: true 直接挂载（如演示页）同样进入焦点管理、圈闭与滚动锁
 watch(visible, (show) => {
   if (typeof document === 'undefined') return
   if (show) {
@@ -121,7 +155,7 @@ watch(visible, (show) => {
     document.removeEventListener('keydown', onKeydown)
     nextTick(() => lastFocused?.focus?.())
   }
-})
+}, { immediate: true })
 
 onBeforeUnmount(() => {
   if (typeof document === 'undefined') return

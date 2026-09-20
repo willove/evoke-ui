@@ -150,6 +150,6 @@ registerIcons({ 'my-logo': MyLogo }) // 值可以是组件或 { viewBox, paths }
 | loadShowcaseIcons | 按需加载展示集 | `() => Promise<void>` |
 
 <script setup>
-import { ewSvgPaths } from '../../packages/evoke-ui/src/components/icon/svg-paths'
-const coreIcons = ewSvgPaths
+import { evSvgPaths } from '../../packages/evoke-ui/src/components/icon/svg-paths'
+const coreIcons = evSvgPaths
 </script>

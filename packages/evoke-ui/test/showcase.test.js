@@ -103,6 +103,18 @@ describe('EvFeatureGrid', () => {
     expect(wrapper.classes()).toContain('is-columns-2')
     expect(wrapper.find('.ev-feature__description').exists()).toBe(true)
   })
+
+  it('动态更换 items 后新节点同样获得入场动效（flush post）', async () => {
+    const wrapper = mount(EvFeatureGrid, {
+      props: { items: [{ title: 'A' }], variant: 'cards' },
+    })
+    expect(wrapper.findAll('.ev-feature')[0].classes()).toContain('ev-reveal')
+    await wrapper.setProps({ items: [{ title: 'A' }, { title: 'B' }] })
+    const nodes = wrapper.findAll('.ev-feature')
+    expect(nodes).toHaveLength(2)
+    expect(nodes[1].classes()).toContain('ev-reveal')
+    expect(nodes[1].attributes('data-ev-reveal')).toBe('up')
+  })
 })
 
 describe('EvPricingCard', () => {

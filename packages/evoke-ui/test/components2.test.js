@@ -26,6 +26,42 @@ describe('EvTabs', () => {
     const wrapper = mount(EvTabs, { props: { items, modelValue: 'm', variant: 'underline' } })
     expect(wrapper.classes()).toContain('is-underline')
   })
+
+  it('roving tabindex：激活项 0 其余 -1；tab 带稳定 id', () => {
+    const wrapper = mount(EvTabs, { props: { items, modelValue: 'm' } })
+    const btns = wrapper.findAll('.ev-tabs__item')
+    expect(btns[0].attributes('tabindex')).toBe('0')
+    expect(btns[1].attributes('tabindex')).toBe('-1')
+    for (const b of btns) expect(b.attributes('id')).toBeTruthy()
+  })
+
+  it('方向键移动激活项并跳过 disabled、首尾环绕，焦点跟随', async () => {
+    // attachTo 文档树，jsdom 下 focus 才生效
+    const wrapper = mount(EvTabs, { props: { items, modelValue: 'm' }, attachTo: document.body })
+    const btns = wrapper.findAll('.ev-tabs__item')
+    await btns[0].trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['y'])
+    await wrapper.setProps({ modelValue: 'y' })
+    expect(btns[1].attributes('tabindex')).toBe('0')
+    expect(btns[0].attributes('tabindex')).toBe('-1')
+    // Right 从 'y' 环绕跳过 disabled 'b' 回到 'm'，焦点跟到对应 tab
+    await btns[1].trigger('keydown', { key: 'ArrowRight' })
+    await wrapper.setProps({ modelValue: 'm' })
+    expect(document.activeElement).toBe(btns[0].element)
+    await btns[0].trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:modelValue')?.[2]).toEqual(['y'])
+    wrapper.unmount()
+  })
+
+  it('Home / End 跳到首/尾可用项', async () => {
+    const wrapper = mount(EvTabs, { props: { items, modelValue: 'm' } })
+    const btns = wrapper.findAll('.ev-tabs__item')
+    await btns[0].trigger('keydown', { key: 'End' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['y'])
+    await wrapper.setProps({ modelValue: 'y' })
+    await btns[1].trigger('keydown', { key: 'Home' })
+    expect(wrapper.emitted('update:modelValue')?.[1]).toEqual(['m'])
+  })
 })
 
 describe('EvSwitch', () => {

@@ -11,6 +11,7 @@
  *
  * props 变化时把对应的 --ev-* 令牌写入 :root（global，默认）或包裹元素，
  * 全库组件经令牌取值，主题即时生效；淡色阶（light-3…9/dark-2）由主色自动生成。
+ * global 模式卸载时把写入过的 :root 令牌还原（玻璃开关对齐），不污染站点其余页面。
  *
  * props：primary(hex) / radius('sharp'|'soft'|'default'|'round') /
  *        space('compact'|'default'|'loose') / container('narrow'|'default'|'wide'|'full')
@@ -57,13 +58,20 @@ const scopedStyle = computed(() => {
   )
 })
 
+// global 模式把 --ev-* 令牌写入 documentElement；记录每个令牌写入前的原值，
+// 卸载时统一还原（有原值恢复、无原值移除），避免卸载后污染站点其余页面
+let writtenVars = new Map()
+
 watch(
   () => [props.primary, props.series, props.radius, props.space, props.container, props.global],
   () => {
     if (typeof document === 'undefined' || !props.global) return
     const style = document.documentElement.style
     const vars = resolveThemeVars(props)
-    for (const [name, value] of Object.entries(vars)) style.setProperty(name, value)
+    for (const [name, value] of Object.entries(vars)) {
+      if (!writtenVars.has(name)) writtenVars.set(name, style.getPropertyValue(name))
+      style.setProperty(name, value)
+    }
   },
   { immediate: true }
 )
@@ -84,6 +92,12 @@ watch(
 
 onUnmounted(() => {
   if (typeof document === 'undefined' || !props.global) return
+  const style = document.documentElement.style
+  for (const [name, prev] of writtenVars) {
+    if (prev) style.setProperty(name, prev)
+    else style.removeProperty(name)
+  }
+  writtenVars = new Map()
   document.documentElement.removeAttribute('data-ev-glass')
 })
 </script>

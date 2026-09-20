@@ -175,7 +175,7 @@ writeFileSync(
  * 需增删图标时在脚本 MAPPING 中登记后重新执行生成
  */
 
-export const ewSvgPaths = ` + JSON.stringify(core, null, 1) + '\n'
+export const evSvgPaths = ` + JSON.stringify(core, null, 1) + '\n'
 )
 
 // ══════ 2. 展示图标集（每类限量、line/fill 配对采样、Remix 原生命名）══════
@@ -224,7 +224,7 @@ writeFileSync(
  * （Remix Icon License v1.0，免费商用）。由 scripts/generate-remix-icons.mjs 生成，请勿手动修改
  */
 
-export const ewShowcasePaths = ` + JSON.stringify(showcase, null, 1) + '\n'
+export const evShowcasePaths = ` + JSON.stringify(showcase, null, 1) + '\n'
 )
 
 writeFileSync(

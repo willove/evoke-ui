@@ -5,7 +5,7 @@
  * 需增删图标时在脚本 MAPPING 中登记后重新执行生成
  */
 
-export const ewSvgPaths = {
+export const evSvgPaths = {
  "arrow-up": {
   "viewBox": "0 0 24 24",
   "paths": [

@@ -45,12 +45,13 @@
 
       <div class="ev-navbar__actions">
         <slot name="actions" />
-        <!-- 移动端菜单开关 -->
+        <!-- 移动端菜单开关：aria-expanded/label 随开合切换 -->
         <EvIconButton
           v-if="items.length || $slots.default"
           class="ev-navbar__burger"
           icon="menu"
-          aria-label="打开菜单"
+          :aria-label="menuOpen ? '关闭菜单' : '打开菜单'"
+          :aria-expanded="menuOpen"
           @click="menuOpen = !menuOpen"
         />
       </div>

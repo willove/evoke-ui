@@ -71,6 +71,7 @@
         class="ev-ai-prompt-box__textarea"
         :placeholder="placeholder"
         :disabled="disabled"
+        :maxlength="maxLength"
         rows="2"
         @keydown="handleKeydown"
         @focus="focused = true"
@@ -210,7 +211,8 @@ const props = defineProps({
   showSettings: { type: Boolean, default: false },
   allowAttachments: { type: Boolean, default: true },
   maxAttachments: { type: Number, default: 5 },
-  maxLength: { type: Number, default: 2000 },
+  /** 输入长度上限；未传不限制（绑定 textarea maxlength，字数统计同源） */
+  maxLength: { type: Number, default: undefined },
   showWordCount: { type: Boolean, default: false },
   maxRows: { type: Number, default: 8 },
   sendOnEnter: { type: Boolean, default: true },

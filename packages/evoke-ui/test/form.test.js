@@ -25,6 +25,15 @@ describe('EvInput', () => {
     const wrapper = mount(EvInput, { attrs: { maxlength: 10 } })
     expect(wrapper.find('input').attributes('maxlength')).toBe('10')
   })
+
+  it('expose 的 focused 随 focus/blur 事件真实反映', async () => {
+    const wrapper = mount(EvInput)
+    expect(wrapper.vm.focused).toBe(false)
+    await wrapper.find('input').trigger('focus')
+    expect(wrapper.vm.focused).toBe(true)
+    await wrapper.find('input').trigger('blur')
+    expect(wrapper.vm.focused).toBe(false)
+  })
 })
 
 describe('EvTextarea', () => {

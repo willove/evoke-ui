@@ -42,6 +42,16 @@ describe('EvAiPromptBox 基础', () => {
     expect(wrapper.find('.ev-ai-prompt-box__word-count').text()).toBe('2/100')
     wrapper.unmount()
   })
+
+  it('maxLength 绑定 textarea maxlength；未传不绑', () => {
+    const withLimit = mountBox({ maxLength: 20 })
+    expect(withLimit.find('.ev-ai-prompt-box__textarea').attributes('maxlength')).toBe('20')
+    withLimit.unmount()
+    const noLimit = mountBox()
+    expect(noLimit.find('.ev-ai-prompt-box__textarea').attributes('maxlength')).toBeUndefined()
+    expect(noLimit.find('.ev-ai-prompt-box__word-count').exists()).toBe(false)
+    noLimit.unmount()
+  })
 })
 
 describe('EvAiPromptBox 场景与能力', () => {

@@ -9,7 +9,7 @@
  *   loadShowcaseIcons() // 按需加载 900+ 展示图标（不阻塞首屏）
  */
 import { h, ref } from 'vue'
-import { ewSvgPaths } from './svg-paths'
+import { evSvgPaths } from './svg-paths'
 
 /**
  * 注册表版本号：晚注册的图标（展示集异步加载 / registerIcons）会自增版本，
@@ -44,7 +44,7 @@ export function createSvgIcon(entry) {
 // ─── 名称注册表 ──────────────
 const registry = new Map()
 
-for (const [name, entry] of Object.entries(ewSvgPaths)) {
+for (const [name, entry] of Object.entries(evSvgPaths)) {
   registry.set(name, createSvgIcon(entry))
 }
 
@@ -79,7 +79,7 @@ let showcaseLoadPromise = null
 export function loadShowcaseIcons() {
   if (!showcaseLoadPromise) {
     showcaseLoadPromise = import('./showcase.js').then((m) => {
-      for (const [name, entry] of Object.entries(m.ewShowcasePaths)) {
+      for (const [name, entry] of Object.entries(m.evShowcasePaths)) {
         if (!registry.has(name)) registry.set(name, createSvgIcon(entry))
       }
       iconRegistryVersion.value++
