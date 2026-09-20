@@ -11,10 +11,12 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      // index：完整库（含 Vue 组件）；ai：AI 生成引擎（无 Vue 依赖，MCP/Node 场景轻量引入）
+      // index：完整库（含 Vue 组件）；ai：AI 生成引擎（无 Vue 依赖，MCP/Node 场景轻量引入）；
+      // 3d：三维篇章（轨道相机 + 透视投影自绘，独立子路径避免二维消费方背负包体）
       entry: {
         index: resolve(__dirname, 'src/index.js'),
         ai: resolve(__dirname, 'src/ai/index.js'),
+        '3d': resolve(__dirname, 'src/3d/index.js'),
       },
       formats: ['es'],
       fileName: (format, entryName) => `${entryName}.mjs`,

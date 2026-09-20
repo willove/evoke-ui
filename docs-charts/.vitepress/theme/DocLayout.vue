@@ -144,7 +144,7 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter, Content } from 'vitepress'
 import Icon from './Icon.vue'
-import { BRAND, GUIDE_NAV, CHART_NAV, EXAMPLES_NAV, ALL_CHART_PAGES, ALL_GUIDE_PAGES, ALL_EXAMPLES } from './meta.js'
+import { BRAND, GUIDE_NAV, CHART_NAV, THREED_NAV, EXAMPLES_NAV, ALL_CHART_PAGES, ALL_GUIDE_PAGES, ALL_THREED_PAGES, ALL_EXAMPLES } from './meta.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -157,13 +157,20 @@ const searchOpen = ref(true)
 
 const isHome = computed(() => route.path === '/' || route.path === '/index.html')
 const isGuide = computed(() => route.path.startsWith('/guide'))
-const isChart = computed(() => route.path.startsWith('/chart'))
+const isChart = computed(() => route.path.startsWith('/chart') && !route.path.startsWith('/3d'))
+const isThreed = computed(() => route.path.startsWith('/3d'))
 const isExamples = computed(() => route.path.startsWith('/examples'))
 
-/** 侧栏分组：指南区显示指南导航，图表区显示图表章节，案例区显示案例目录 */
+/** 侧栏分组：指南区显示指南导航，图表区显示图表章节，三维区显示三维篇章，案例区显示案例目录 */
 const sidebarGroups = computed(() => {
   if (isChart.value) {
     return CHART_NAV.map((cat) => ({
+      ...cat,
+      components: cat.components.map((c) => ({ ...c, label: c.name, suffix: c.zh })),
+    }))
+  }
+  if (isThreed.value) {
+    return THREED_NAV.map((cat) => ({
       ...cat,
       components: cat.components.map((c) => ({ ...c, label: c.name, suffix: c.zh })),
     }))
@@ -184,6 +191,7 @@ const navItems = computed(() => [
   { key: 'home', label: '首页', icon: 'home', path: '/', active: isHome.value },
   { key: 'guide', label: '指南', icon: 'book', path: '/guide/install', active: isGuide.value },
   { key: 'charts', label: '图表类型', icon: 'chart', path: '/chart', active: isChart.value },
+  { key: '3d', label: '三维图表', icon: 'box', path: '/3d/', active: isThreed.value },
   { key: 'examples', label: '案例', icon: 'play', path: '/examples/', active: isExamples.value },
   {
     key: 'family',
@@ -199,7 +207,7 @@ const navItems = computed(() => [
 const results = computed(() => {
   const q = keyword.value.trim().toLowerCase()
   if (!q) return []
-  const pool = [...ALL_CHART_PAGES, ...ALL_GUIDE_PAGES, ...ALL_EXAMPLES]
+  const pool = [...ALL_CHART_PAGES, ...ALL_THREED_PAGES, ...ALL_GUIDE_PAGES, ...ALL_EXAMPLES]
   return pool.filter(
     (c) => c.name.toLowerCase().includes(q) || c.zh.includes(q) || c.category.includes(q),
   ).slice(0, 8)
@@ -210,6 +218,7 @@ function isActive(path) {
     route.path === path ||
     route.path === `${path}.html` ||
     (path === '/examples/' && route.path === '/examples/index.html') ||
+    (path === '/3d/' && route.path === '/3d/index.html') ||
     (path === '/chart' && route.path === '/chart.html')
   )
 }

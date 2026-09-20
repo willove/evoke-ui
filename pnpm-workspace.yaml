@@ -3,7 +3,6 @@ packages:
   - 'docs'
   - 'docs-web'
   - 'docs-charts'
-  - 'docs-charts-3d'
   - 'examples/*'
 allowBuilds:
   esbuild: true

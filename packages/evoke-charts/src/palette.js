@@ -5,13 +5,16 @@
  * 页面上的全部图表即时重绘。任何宿主（组件库 / 站点 / 独立页面）都可直接调用，
  * 不必各自实现令牌写入与事件广播。
  *
- * palette 两种形态：
+ * palette 三种形态：
+ * - 'aurora' 等 id      内置色系按 id 取色（明暗随 options.dark / html.dark）；
  * - string[]            单套色值，明暗模式共用；
  * - { light, dark }     浅/暗两组，随 html.dark 自动换挡（经注入样式表实现）。
  *
  * clearSeriesPalette() 移除覆写（内联属性 + 注入样式表），回到内置成套色板。
  */
-const SLOT_COUNT = 8
+import { CHART_PALETTES } from './palettes.js'
+
+export const SLOT_COUNT = 8
 const PALETTE_EVENT = 'ev-theme-change'
 const STYLE_ID = 'data-ev-series-palette'
 
@@ -53,8 +56,9 @@ function normalizeSlots(colors) {
 
 /**
  * 应用一套数据色板
- * @param {string[] | { light: string[], dark: string[] }} palette
- *   数组：写入内联槽位（明暗共用）；{ light, dark }：注入样式表，随 html.dark 自动换挡
+ * @param {string | string[] | { light: string[], dark: string[] }} palette
+ *   色系 id：按内置注册表取色；数组：写入内联槽位（明暗共用）；
+ *   { light, dark }：注入样式表，随 html.dark 自动换挡
  * @param {{ dark?: boolean, target?: HTMLElement }} [options]
  *   dark 手动指定当前暗色态（默认探测 html.dark）；target 改写注入目标
  * @returns {boolean} 是否写入成功
@@ -63,6 +67,14 @@ export function applySeriesPalette(palette, options = {}) {
   if (typeof document === 'undefined') return false
   const el = options.target ?? document.documentElement
   if (!el || !palette) return false
+
+  // 色系 id → 展开为色值数组走同一管线（未知 id 返回 false）
+  if (typeof palette === 'string') {
+    const found = CHART_PALETTES.find((p) => p.id === palette)
+    if (!found) return false
+    const isDark = typeof options.dark === 'boolean' ? options.dark : document.documentElement.classList.contains('dark')
+    return applySeriesPalette(isDark ? found.dark : found.light, options)
+  }
 
   if (Array.isArray(palette)) {
     paletteStyleEl?.remove()

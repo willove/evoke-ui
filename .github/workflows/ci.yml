@@ -32,7 +32,6 @@ jobs:
           pnpm build:eui
           pnpm build:ebui
           pnpm build:charts
-          pnpm build:charts3d
 
       # 编辑器同口径类型检查（vue-tsc --noEmit）；构建期的 d.ts 生成是第二道类型关
       - name: Typecheck

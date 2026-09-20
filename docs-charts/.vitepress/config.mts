@@ -8,13 +8,13 @@ const uiRoot = resolve(__dirname, '../../packages/evoke-ui')
 
 /**
  * Evoke Charts 文档站
- * 自定义布局，源码级消费图表包（改动即时生效）
+ * 自定义布局，源码级消费图表包（改动即时生效），含三维篇章 /3d/
  * 注意：VitePress 自带 plugin-vue，勿再手动注入第二个实例（双实例会损坏 SFC 解析）
  */
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Evoke Charts',
-  description: '零依赖 Canvas 自绘图表库（Vue 3）：29 种图表类型，主题与暗色跟随宿主，交互与导出内建',
+  description: '零依赖 Canvas 自绘图表库（Vue 3）：29 种二维图型 + 三维篇章（柱林/折线/散点/曲面/饼环，无需 WebGL）',
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }]],
 
   vite: {
@@ -24,6 +24,10 @@ export default defineConfig({
         {
           find: /^@wil-works\/evoke-charts$/,
           replacement: resolve(chartsRoot, 'src/index.js'),
+        },
+        {
+          find: /^@wil-works\/evoke-charts\/3d$/,
+          replacement: resolve(chartsRoot, 'src/3d/index.js'),
         },
       ],
       dedupe: ['vue'],

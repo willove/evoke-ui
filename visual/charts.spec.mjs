@@ -6,6 +6,7 @@ import { settle } from './helpers.mjs'
  * 图表为 canvas 入场动画（rAF 驱动），settle 需加长余量等全部画完；
  * 暗色走 localStorage 'cd-dark'，DocLayout 挂载时统一应用 html.dark
  * （初始化脚本先于页面脚本运行，图表首帧即按暗色渲染）。
+ * /3d/ 前缀为三维篇章页面（canvas 3D，进场动画默认 600ms）。
  */
 const PAGES = [
   ['home', '/'],
@@ -14,11 +15,17 @@ const PAGES = [
   ['chart-pie', '/chart/pie'],
   ['chart-mixed', '/chart/mixed'],
   ['example-dashboard', '/examples/dashboard'],
+  ['3d-index', '/3d/'],
+  ['3d-bar3d', '/3d/bar3d'],
+  ['3d-surface3d', '/3d/surface3d'],
+  ['3d-pie3d', '/3d/pie3d'],
 ]
 
 const DARK_PAGES = [
   ['chart-line', '/chart/line'],
   ['example-dashboard', '/examples/dashboard'],
+  ['3d-bar3d', '/3d/bar3d'],
+  ['3d-surface3d', '/3d/surface3d'],
 ]
 
 async function shoot(page, path, name) {

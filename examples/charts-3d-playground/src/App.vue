@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { EvChart3d, applySeriesPalette, createSvgRecorder } from '@wil-works/charts-3d'
+import { EvChart3d, applySeriesPalette, createSvgRecorder } from '@wil-works/evoke-charts/3d'
 
 const dark = ref(false)
 const spinning = ref(false)

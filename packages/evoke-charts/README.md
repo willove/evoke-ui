@@ -2,13 +2,14 @@
 
 > **⚠️ 本包正在开发迭代中，尚未发布正式版：API、图表类型与视觉细节可能随版本调整，请勿用于生产环境。**
 
-`@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
+`@wil-works/evoke-charts` — 零依赖 Canvas 自绘图表库（Vue 3）：**29 种二维图型 + 三维篇章**。Evoke 生态的独立图表包，不依赖任何第三方图表引擎，也不依赖 Evoke 其他组件库。
 
 **在线文档**：[evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) — 全部图表类型、完整配置项与在线示例。
 
 ## 特性
 
 - **29 种图表类型**：折线 / 面积 / 柱状 / 堆叠柱 / 条形 / 饼图 / 环形 / 玫瑰图 / 散点（趋势线 / 四象限 / 分面 / 矩阵）/ 雷达 / 漏斗 / 仪表盘 / 热力图 / 日历热力 / K 线（量副图 / MA 均线）/ 子弹图 / 直方图 / 矩形树图 / 旭日图 / 瀑布图 / 箱线图 / 混合双轴 / 迷你图 / 桑基图 / 韦恩图 / 弦图 / 弧长连接图（线性 / 环形）/ 甘特图
+- **三维篇章**：柱林 / 空间折线 / 散点云 / 曲面高度场 / 三维饼环——透视投影自绘，无需 WebGL，详见下文[三维篇章](#三维篇章charts-3d)
 - **零运行时依赖**：仅 peer 依赖 Vue 3，全部绘制自研 Canvas 2D
 - **主题跟随**：从 `--ev-*` CSS 令牌实时读取颜色，宿主换主题 / 暗色即跟随；无令牌时使用内置色板兜底
 - **内置色系**：`palette` 一键固定成套配色（7 套现代色系，明暗双主题各 8 槽），生效后不随宿主换肤
@@ -109,6 +110,39 @@ const { options, chartProps, chartRef, resize, exportPNG, setTheme } = useChart(
 ```vue
 <EvChart v-bind="chartProps" ref="chartRef" />
 ```
+
+## 三维篇章（Charts 3D）
+
+三维能力以**独立子入口**提供，只用二维的消费方不背三维包体：
+
+```js
+import { EvChart3d, useChart3d } from '@wil-works/evoke-charts/3d'
+import '@wil-works/evoke-charts/styles'
+```
+
+```vue
+<template>
+  <EvChart3d :options="options" :height="360" />
+</template>
+
+<script setup>
+const options = {
+  type: 'bar3d',
+  labels: ['一月', '二月', '三月', '四月'],
+  series: [
+    { name: '华东', data: [120, 200, 150, 80] },
+    { name: '华南', data: [90, 60, 130, 170] },
+  ],
+}
+</script>
+```
+
+- **五种三维图型**：`bar3d` 柱林 / `line3d` 空间折线 / `scatter3d` 散点云 / `surface3d` 曲面高度场 / `pie3d` 三维饼环
+- **轨道相机**：拖拽环绕、滚轮与捏合缩放、Shift 平移、双击复位、方向键、自动旋转；悬浮拾取复用渲染投影，所见即所选
+- **与二维同一套配置**：系列色槽位、内置色系、`--ev-*` 令牌、暗色与换肤事件完全同源，`applySeriesPalette` 一次换装二维三维一起变
+- **导出**：`exportSVG` 真矢量（三维图可导出可缩放 SVG）、`toDataURL` 位图
+
+渲染为自研透视投影管线（画家算法深度排序 + 面法线光照），不依赖 WebGL 与任何三方渲染库。
 
 ## License
 

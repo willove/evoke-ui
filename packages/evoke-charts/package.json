@@ -1,7 +1,7 @@
 {
   "name": "@wil-works/evoke-charts",
-  "version": "0.6.0",
-  "description": "Evoke Charts — 零依赖 Canvas 自绘图表库（Vue3），Evoke 生态独立图表包",
+  "version": "0.7.0",
+  "description": "Evoke Charts — 零依赖 Canvas 自绘图表库（Vue3）：29 种二维图型 + 三维篇章（透视投影自绘，无需 WebGL）",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -9,6 +9,7 @@
     ".": {
       "import": "./dist/index.mjs"
     },
+    "./3d": "./dist/3d.mjs",
     "./ai": "./dist/ai.mjs",
     "./styles": "./dist/evoke-charts.css",
     "./package.json": "./package.json"
@@ -35,6 +36,7 @@
     "vue3",
     "charts",
     "canvas",
+    "3d",
     "chart-library",
     "evoke-charts",
     "visualization",

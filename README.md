@@ -1,6 +1,6 @@
 # Evoke UI Monorepo
 
-同一设计血统的三个 Vue 3 库：**Evoke UI** 面向官网与营销页，**Evoke Business UI** 面向中后台管理系统，**Evoke Charts** 是零依赖 Canvas 自绘图表库（与 business-ui 样式打通主题适配）。均基于纯 JS 实现、设计令牌驱动、MIT 开源。
+同一设计血统的三个 Vue 3 库：**Evoke UI** 面向官网与营销页，**Evoke Business UI** 面向中后台管理系统，**Evoke Charts** 是零依赖 Canvas 自绘图表库（29 种二维图型 + 三维篇章，透视投影自绘、无需 WebGL）。均基于纯 JS 实现、设计令牌驱动、MIT 开源。
 
 命名空间约定：`ev-*`（evoke-ui 与 evoke-charts，共享 `--ev-*` 令牌面）与 `eb-*`（evoke-business-ui，`--eb-*` 令牌）。
 
@@ -8,7 +8,7 @@
 |----|------|--------|-----|
 | [@wil-works/evoke-ui](packages/evoke-ui) | 官网 / 营销页 / 纯前端站点组件库，Clean Navy 设计语言 | [evoke-ui.wil-works.com](https://evoke-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-ui) |
 | [@wil-works/evoke-business-ui](packages/evoke-business-ui) | 中后台管理组件库：150+ 通用组件、8 个业务场景组件 | [evoke-business-ui.wil-works.com](https://evoke-business-ui.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-business-ui.svg)](https://www.npmjs.com/package/@wil-works/evoke-business-ui) |
-| [@wil-works/evoke-charts](packages/evoke-charts) | 零依赖 Canvas 自绘图表库：29 种图表类型，主题令牌驱动 | [evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-charts.svg)](https://www.npmjs.com/package/@wil-works/evoke-charts) |
+| [@wil-works/evoke-charts](packages/evoke-charts) | 零依赖 Canvas 自绘图表库：29 种二维图型 + 三维篇章（柱林 / 折线 / 散点 / 曲面 / 饼环） | [evoke-charts.wil-works.com](https://evoke-charts.wil-works.com) | [![npm](https://img.shields.io/npm/v/@wil-works/evoke-charts.svg)](https://www.npmjs.com/package/@wil-works/evoke-charts) |
 
 ---
 
@@ -92,8 +92,10 @@ pnpm install
 
 pnpm docs-web:dev    # Evoke UI 文档站（http://localhost:5173）
 pnpm docs:dev        # Evoke Business UI 文档站（组件文档 + 在线示例中心）
+pnpm docs-charts-3d:dev  # Charts 3D 文档站
 pnpm build:eui       # 构建 Evoke UI 产物
 pnpm build:ebui      # 构建 Evoke Business UI 产物
+
 pnpm test            # 单元测试
 ```
 

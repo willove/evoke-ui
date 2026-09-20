@@ -5,11 +5,11 @@ import { defineConfig } from '@playwright/test'
  *
  * 架构：测试吃各文档站构建产物（vitepress serve 静态伺服），不引入 specimen 应用，
  * 文档页里的 DemoBlock 就是组件的真实用法——站点样式回归即被捕获。
- * 四站各占一个 project 与独立端口：ui 4173 / business 4174 / charts 4175 / charts3d 4176，
+ * 三站各占一个 project 与独立端口：ui 4173 / business 4174 / charts 4175，
  * baseURL 按 project 下发，spec 内统一用相对路径。
  *
  * 运行：
- *   pnpm visual            # 重建四站 → 全量截图对比
+ *   pnpm visual            # 重建三站 → 全量截图对比
  *   pnpm visual:only       # 跳过构建（dist 已是最新时）
  *   pnpm visual:update     # 重建并重录基线
  *   pnpm visual:only -- --project=business   # 只跑单站（dist 需先构建）
@@ -57,17 +57,10 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
-    {
-      command: 'pnpm visual:preview:charts3d',
-      url: 'http://127.0.0.1:4176',
-      reuseExistingServer: !process.env.CI,
-      timeout: 60_000,
-    },
   ],
   projects: [
     { name: 'ui', testMatch: /visual\/ui\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4173' } },
     { name: 'business', testMatch: /visual\/business\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4174' } },
     { name: 'charts', testMatch: /visual\/charts\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4175' } },
-    { name: 'charts3d', testMatch: /visual\/charts3d\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4176' } },
   ],
 })

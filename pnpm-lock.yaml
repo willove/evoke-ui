@@ -77,28 +77,6 @@ importers:
         specifier: ^1.14.0
         version: 1.14.0
 
-  docs-charts-3d:
-    dependencies:
-      '@wil-works/charts-3d':
-        specifier: workspace:*
-        version: link:../packages/charts-3d
-      '@wil-works/evoke-ui':
-        specifier: workspace:*
-        version: link:../packages/evoke-ui
-      vue:
-        specifier: ^3.5.0
-        version: 3.5.42(typescript@5.9.2)
-    devDependencies:
-      highlight.js:
-        specifier: ^11.10.0
-        version: 11.12.0
-      vitepress:
-        specifier: ^1.6.0
-        version: 1.6.0(@algolia/client-search@5.57.0)(async-validator@4.2.5)(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(typescript@5.9.2)
-      vitepress-plugin-llms:
-        specifier: ^1.14.0
-        version: 1.14.0
-
   docs-web:
     dependencies:
       '@wil-works/evoke-ui':
@@ -117,9 +95,9 @@ importers:
 
   examples/charts-3d-playground:
     dependencies:
-      '@wil-works/charts-3d':
+      '@wil-works/evoke-charts':
         specifier: workspace:*
-        version: link:../../packages/charts-3d
+        version: link:../../packages/evoke-charts
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@5.9.2)
@@ -312,21 +290,6 @@ importers:
       vite:
         specifier: ^8.0.10
         version: 8.2.2
-
-  packages/charts-3d:
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.8
-        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
-      '@vue/compiler-sfc':
-        specifier: ^3.5.42
-        version: 3.5.42
-      vite:
-        specifier: ^8.0.10
-        version: 8.2.2
-      vue:
-        specifier: ^3.5.42
-        version: 3.5.42(typescript@5.9.2)
 
   packages/evoke-business-ui:
     dependencies:

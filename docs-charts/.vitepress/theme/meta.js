@@ -125,6 +125,33 @@ export const EXAMPLES_NAV = [
   },
 ]
 
+/** 三维篇章导航 — 侧栏在 /3d 路由下展示 */
+export const THREED_NAV = [
+  {
+    name: '三维',
+    key: '3d-basics',
+    components: [
+      { name: '三维总览与选型', zh: '', path: '/3d/' },
+      { name: '安装与引入', zh: '', path: '/3d/install' },
+      { name: '相机与交互', zh: '', path: '/3d/camera' },
+      { name: '主题接入', zh: '', path: '/3d/theme' },
+      { name: '设计规范', zh: '', path: '/3d/design' },
+    ],
+  },
+  {
+    name: '三维图型',
+    key: '3d-charts',
+    components: [
+      { name: '三维柱状图', zh: 'bar3d', path: '/3d/bar3d' },
+      { name: '三维折线图', zh: 'line3d', path: '/3d/line3d' },
+      { name: '三维散点图', zh: 'scatter3d', path: '/3d/scatter3d' },
+      { name: '三维曲面图', zh: 'surface3d', path: '/3d/surface3d' },
+      { name: '三维饼图 / 环形图', zh: 'pie3d', path: '/3d/pie3d' },
+      { name: 'API 参考', zh: '', path: '/3d/api' },
+    ],
+  },
+]
+
 /** 扁平指南清单（搜索用） */
 export const ALL_GUIDE_PAGES = GUIDE_NAV.flatMap((c) =>
   c.components.map((comp) => ({ ...comp, category: '指南' })),
@@ -133,6 +160,11 @@ export const ALL_GUIDE_PAGES = GUIDE_NAV.flatMap((c) =>
 /** 扁平图表章节清单（搜索用） */
 export const ALL_CHART_PAGES = CHART_NAV.flatMap((c) =>
   c.components.map((comp) => ({ ...comp, category: '图表' })),
+)
+
+/** 扁平三维篇章清单（搜索用） */
+export const ALL_THREED_PAGES = THREED_NAV.flatMap((c) =>
+  c.components.map((comp) => ({ ...comp, category: '三维' })),
 )
 
 /** 扁平案例清单（搜索用） */
@@ -146,5 +178,5 @@ export const ALL_EXAMPLES = EXAMPLES_NAV.flatMap((c) =>
 export const BRAND = {
   name: 'Evoke Charts',
   primary: '#175DFF',
-  version: '0.6.0',
+  version: '0.7.0',
 }

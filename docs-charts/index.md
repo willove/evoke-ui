@@ -103,6 +103,9 @@ layout: home
     <a class="cd-cat" href="/chart/line">
       <strong>图表类型</strong><span>折线 / 柱状 / 饼环 / 热力 / K 线…</span>
     </a>
+    <a class="cd-cat" href="/3d/">
+      <strong>三维图表</strong><span>柱林 / 空间折线 / 散点 / 曲面 / 饼环</span>
+    </a>
     <a class="cd-cat" href="/chart/interaction">
       <strong>交互与联动</strong><span>tooltip / 缩放 / 刷选 / 联动</span>
     </a>

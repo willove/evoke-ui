@@ -57,31 +57,31 @@
 - **evoke-ui**：内部标识符 `ewSvgPaths` / `ewShowcasePaths` / `ewIconGrid` 及 tabbar
   注入 key `ewTabbar` 改为 `ev-` 前缀（`evSvgPaths` 等，直接引用这些导出的消费方需同步）。
 
-### @wil-works/charts-3d — 新包（0.1.0）
+### @wil-works/evoke-charts — 0.7.0 三维篇章（原 charts-3d 并入）
 
-- 零依赖 Canvas 三维图表库（Vue 3）：自研透视投影管线（向量/矩阵数学 → 轨道相机 →
-  场景图元 → 画家算法深度排序 → Canvas 2D），不引入 WebGL 封装库，依赖白名单仅 vue；
+- **三维能力并入本包**，以独立子入口提供：`import { EvChart3d } from '@wil-works/evoke-charts/3d'`
+  （对齐 `./ai` 的篇章模式），只用二维的消费方不背三维包体；不再有独立 charts-3d 包；
+- 渲染为自研透视投影管线（向量/矩阵数学 → 轨道相机 → 场景图元 → 画家算法深度排序 →
+  Canvas 2D），不引入 WebGL 封装库；
 - 首批五种图型：`bar3d` 柱林、`line3d` 空间折线（落地投影 + 面带）、`scatter3d`
   散点（三元组/类目双模式，色带编码第四维）、`surface3d` 曲面高度场（连续色带 +
   逐格线框）、`pie3d` 三维饼与环形（悬浮扇区整体上浮）；
 - 轨道相机：拖拽环绕 / 滚轮与捏合缩放 / Shift 平移 / 双击复位 / 方向键环绕 /
   自动旋转；相机状态经 `camera-change` 事件外抛，`getCamera` / `setCamera` /
-  `resetCamera` 实例方法可用；
-- 拾取复用渲染投影（所见即所选），面/线/点统一取视深最近命中；图例点选显隐；
+  `resetCamera` 实例方法可用；拾取复用渲染投影（所见即所选），面/线/点统一取视深最近命中；
 - 三维坐标框：墙面与轴取边跟随相机（背墙永远在远侧），刻度标签屏幕空间防碰撞，
   轴名逐级退避；坐标框可用 `box` / `grid` 配置；
-- 与 evoke 生态同规：`--ev-*` 令牌（系列色槽位与 evoke-charts 一致）、
-  `ev-theme-change` 换肤、`html.dark` 暗色、同名内置色系同 id 同色值、
-  `applySeriesPalette` / `clearSeriesPalette` 可直接替换调用；
-- 工程面：空/载/错/成四态、DPR 适配、容器响应式、`exportSVG` 矢量导出（内置
-  SVG 录制器）、`toDataURL` 位图导出、`validateOptions3d` 配置校验（告警不阻断）、
+- **与二维共用一套配置**：系列色槽位、内置色系注册表、`--ev-*` 令牌读取、
+  `ev-theme-change` 换肤、`html.dark` 暗色全部同源；`applySeriesPalette` 现接受
+  色系 id（如 `'aurora'`）/ 色值数组 / 明暗两套三种形态，并导出 `SLOT_COUNT`，
+  一次换装二维三维一起变；构建期色系抽为两入口共享 chunk；
+- 工程面：空/载/错/成四态、DPR 适配、容器响应式、`exportSVG` 矢量导出（三维图可导出
+  真矢量 SVG）、`toDataURL` 位图导出、`validateOptions3d` 配置校验（告警不阻断）、
   aria 标注与 aria-live 播报；`render3d` / `projectScene` / `pickScene` /
-  `createSvgRecorder` 底层管线可直接使用；
-- 文档站 `docs-charts-3d/`：首页 + 指南（安装 / 相机与交互 / 主题接入 / 设计规范 /
-  更新记录）+ 图型页（总览 / API 参考 / 五图型各页，每页 ≥2 个可交互示例），
-  源码级 alias 消费包源码，llms.txt 随构建生成；部署走
-  `./scripts/deploy-docs.sh charts3d`；视觉回归接入 playwright 第 4 project
-  （charts3d，端口 4176，7 张基线含暗色）；
+  `createSvgRecorder` / `useChart3d` 底层管线与 Composable 可直接使用；
+- 文档站新增 **三维图表篇章**（`/3d/`：总览选型 / 安装 / 相机与交互 / 主题接入 /
+  设计规范 / 五图型各页 / API 参考，每页 ≥2 个可交互示例），导航与站内搜索收录，
+  视觉回归基线含三维页与暗色轮次；
 - 示例：`examples/charts-3d-playground`（源码级 alias，`pnpm demo:charts3d`）。
 
 ### @wil-works/evoke-business-ui — 对齐 antd 能力批

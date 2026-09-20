@@ -1,5 +1,5 @@
 {
-  "name": "@wil-works/charts-3d-playground",
+  "name": "@wil-works/evoke-charts-3d-playground",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@wil-works/charts-3d": "workspace:*",
+    "@wil-works/evoke-charts": "workspace:*",
     "vue": "^3.5.42"
   },
   "devDependencies": {
