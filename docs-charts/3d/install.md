@@ -2,13 +2,16 @@
 
 ## 安装
 
+三维能力是 `@wil-works/evoke-charts` 的子入口，安装主包即可：
+
 ```bash
-npm install @wil-works/evoke-charts/3d
+npm install @wil-works/evoke-charts
 # 或
-pnpm add @wil-works/evoke-charts/3d
+pnpm add @wil-works/evoke-charts
 ```
 
-唯一 peer 依赖为 Vue 3.5+，无任何第三方运行时依赖。
+唯一 peer 依赖为 Vue 3.5+，无任何第三方运行时依赖。二维与三维是同一包的两个子入口，
+按需引入各自的模块即可，只用二维的消费方不会引入三维代码。
 
 ## 全量引入
 
@@ -17,7 +20,7 @@ pnpm add @wil-works/evoke-charts/3d
 ```js
 import { createApp } from 'vue'
 import Charts3d from '@wil-works/evoke-charts/3d'
-import '@wil-works/evoke-charts/3d/styles'
+import '@wil-works/evoke-charts/styles'
 import App from './App.vue'
 
 createApp(App).use(Charts3d).mount('#app')
@@ -34,7 +37,7 @@ createApp(App).use(Charts3d).mount('#app')
 
 <script setup>
 import { EvChart3d } from '@wil-works/evoke-charts/3d'
-import '@wil-works/evoke-charts/3d/styles'
+import '@wil-works/evoke-charts/styles'
 
 const options = {
   type: 'bar3d',
@@ -46,9 +49,9 @@ const options = {
 
 ## 与二维图表并排
 
-`@wil-works/evoke-charts/3d` 与 `@wil-works/evoke-charts` 可同时安装使用：两者读取同一套
-`--ev-color-series-*` 系列色令牌与同名内置色系（同 id 同色值），二维图与三维图并排时
-系列色一致，换主题、切暗色同步跟随。
+子入口 `@wil-works/evoke-charts/3d` 与主入口 `@wil-works/evoke-charts` 可同时引入：
+两者读取同一套 `--ev-color-series-*` 系列色令牌与同名内置色系（同 id 同色值），
+二维图与三维图并排时系列色一致，换主题、切暗色同步跟随。
 
 ## Server-Side Rendering
 

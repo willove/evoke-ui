@@ -20,6 +20,7 @@ import {
   generateChartSpec,
   buildChartPrompt,
 } from '@wil-works/evoke-charts/ai'
+import { chart3dOptionsSchema, validateOptions3d } from '@wil-works/evoke-charts/3d'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const catalog = JSON.parse(readFileSync(resolve(here, 'data/catalog.json'), 'utf8'))
@@ -172,6 +173,37 @@ server.registerTool(
       { type: 'text', text: '```json\n' + JSON.stringify(chartOptionsSchema, null, 2) + '\n```' },
     ],
   }),
+)
+
+server.registerTool(
+  'get_chart3d_spec_schema',
+  {
+    title: '获取三维图表 options Schema',
+    description:
+      '返回 Evoke Charts 三维篇章（@wil-works/evoke-charts/3d）options 的 JSON Schema：bar3d/line3d/scatter3d/surface3d/pie3d 五图型与 camera/box/grid 等配置。写 EvChart3d 配置前先取一份对照。',
+    inputSchema: {},
+  },
+  async () => ({
+    content: [
+      { type: 'text', text: '```json\n' + JSON.stringify(chart3dOptionsSchema, null, 2) + '\n```' },
+    ],
+  }),
+)
+
+server.registerTool(
+  'lint_chart3d_spec',
+  {
+    title: '校验三维图表 spec',
+    description:
+      '对三维图表 options 做 schema 校验（bar3d/line3d/scatter3d/surface3d/pie3d），返回问题列表（path + message）。生成三维配置后调用一次自检。',
+    inputSchema: {
+      options: z.record(z.unknown()).describe('三维图表 options 对象（type 为 bar3d/line3d/scatter3d/surface3d/pie3d）'),
+    },
+  },
+  async ({ options }) => {
+    const result = validateOptions3d(options)
+    return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
+  },
 )
 
 server.registerTool(

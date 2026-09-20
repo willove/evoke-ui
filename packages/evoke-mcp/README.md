@@ -14,6 +14,8 @@
 | `get_docs_page` | 按路径取任意文档页（安装与引入 / 主题接入 / 设计规范…） |
 | `get_chart_spec_schema` | 图表 options 的 JSON Schema（ECharts 风格配置） |
 | `lint_chart_spec` | 图表 spec 三层校验（Schema → 规则 → 无头渲染文本越界），返回问题与自动修正 |
+| `get_chart3d_spec_schema` | 三维图表 options 的 JSON Schema（bar3d/line3d/scatter3d/surface3d/pie3d 与相机配置） |
+| `lint_chart3d_spec` | 三维图表 spec schema 校验，返回问题列表 |
 | `generate_chart_spec` | 表格数据直生图表 options（自动选型） |
 | `build_chart_prompt` | 生成图表契约提示词，让任意大模型都能写出合法配置 |
 
@@ -39,7 +41,8 @@
 1. 写界面前先 `list_components` / `search_components` 确认组件与所属包；
 2. `get_component_docs` 取该组件的完整文档与示例再动手；
 3. 写图表配置时先 `get_chart_spec_schema` 对照，生成后 `lint_chart_spec` 自检；
-4. 只有一堆表格数据时直接 `generate_chart_spec` / `build_chart_prompt`。
+4. 写三维图表（`EvChart3d`）时用 `get_chart3d_spec_schema` / `lint_chart3d_spec`，文档见 charts 站 `/3d/` 篇章；
+5. 只有一堆表格数据时直接 `generate_chart_spec` / `build_chart_prompt`。
 
 ## 相关包
 

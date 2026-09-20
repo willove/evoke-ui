@@ -84,6 +84,18 @@
   视觉回归基线含三维页与暗色轮次；
 - 示例：`examples/charts-3d-playground`（源码级 alias，`pnpm demo:charts3d`）。
 
+### @wil-works/evoke-charts — 三维篇章查漏补缺
+
+- **evoke-mcp 目录与三维 AI 面**：`data/catalog.json` 生成器此前漏读 `THREED_NAV`，
+  三维 11 个文档页不进 `list/search_components` 可发现面——已补循环并重生成（同时
+  刷新了 9 月以来 business 侧新增组件的陈旧目录）；新增 `get_chart3d_spec_schema` /
+  `lint_chart3d_spec` 两个 MCP 工具（三维 options Schema 与校验，对称二维面）；
+- **文档修正**：`/3d/install` 页安装命令误写为 `npm install @wil-works/evoke-charts/3d`
+  （3d 是子入口不是独立包，应装主包）、样式引入误用不存在的 `@wil-works/evoke-charts/3d/styles`
+  子路径（三维组件样式聚合在包级 `styles`）、「与二维并排」一节同步改写；
+- 清理根 package.json description 与 README 中「独立 charts-3d 包 / `docs-charts-3d:dev`
+  文档站」的合并残留，README 本地开发段落补 `docs-charts:dev` 与 `demo:charts3d`。
+
 ### @wil-works/evoke-business-ui — 对齐 antd 能力批
 
 - **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`

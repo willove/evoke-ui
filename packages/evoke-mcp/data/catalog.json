@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T17:03:44.907Z",
+  "generatedAt": "2026-09-20T03:01:07.270Z",
   "sites": {
     "ui": {
       "label": "Evoke UI",
@@ -14,7 +14,7 @@
     "charts": {
       "label": "Evoke Charts",
       "host": "https://evoke-charts.wil-works.com",
-      "desc": "零依赖 Canvas 自绘图表库：29 种图表类型，spec 配置式声明"
+      "desc": "零依赖 Canvas 自绘图表库：29 种二维图型 + 三维篇章（柱林/折线/散点/曲面/饼环），spec 配置式声明"
     }
   },
   "entries": [
@@ -90,10 +90,66 @@
     },
     {
       "site": "business",
+      "name": "区块卡片",
+      "title": "SectionCard",
+      "category": "通用",
+      "path": "/components/section-card"
+    },
+    {
+      "site": "business",
       "name": "布局容器",
       "title": "Container",
       "category": "布局",
       "path": "/components/container"
+    },
+    {
+      "site": "business",
+      "name": "应用框架",
+      "title": "AppLayout",
+      "category": "布局",
+      "path": "/components/app-layout"
+    },
+    {
+      "site": "business",
+      "name": "应用工具栏",
+      "title": "AppToolbar",
+      "category": "布局",
+      "path": "/components/app-toolbar"
+    },
+    {
+      "site": "business",
+      "name": "顶栏",
+      "title": "Header",
+      "category": "布局",
+      "path": "/components/header"
+    },
+    {
+      "site": "business",
+      "name": "侧边栏",
+      "title": "Aside",
+      "category": "布局",
+      "path": "/components/aside"
+    },
+    {
+      "site": "business",
+      "name": "内容区",
+      "title": "Main",
+      "category": "布局",
+      "path": "/components/main"
+    },
+    {
+      "site": "business",
+      "name": "底栏",
+      "title": "Footer",
+      "category": "布局",
+      "path": "/components/footer"
+    },
+    {
+      "site": "business",
+      "name": "分隔面板",
+      "title": "Splitter",
+      "category": "布局",
+      "path": "/components/splitter"
     },
     {
       "site": "business",
@@ -125,10 +181,24 @@
     },
     {
       "site": "business",
+      "name": "滚动条",
+      "title": "Scrollbar",
+      "category": "布局",
+      "path": "/components/scrollbar"
+    },
+    {
+      "site": "business",
       "name": "输入框",
       "title": "Input",
       "category": "数据录入",
       "path": "/components/input"
+    },
+    {
+      "site": "business",
+      "name": "文本域",
+      "title": "Textarea",
+      "category": "数据录入",
+      "path": "/components/textarea"
     },
     {
       "site": "business",
@@ -146,10 +216,24 @@
     },
     {
       "site": "business",
+      "name": "树形选择",
+      "title": "TreeSelect",
+      "category": "数据录入",
+      "path": "/components/tree-select"
+    },
+    {
+      "site": "business",
       "name": "数字输入框",
       "title": "InputNumber",
       "category": "数据录入",
       "path": "/components/input-number"
+    },
+    {
+      "site": "business",
+      "name": "验证码输入框",
+      "title": "OtpInput",
+      "category": "数据录入",
+      "path": "/components/otp-input"
     },
     {
       "site": "business",
@@ -178,6 +262,27 @@
       "title": "DatePicker",
       "category": "数据录入",
       "path": "/components/date-picker"
+    },
+    {
+      "site": "business",
+      "name": "时间选择器",
+      "title": "TimePicker",
+      "category": "数据录入",
+      "path": "/components/time-picker"
+    },
+    {
+      "site": "business",
+      "name": "时间选择",
+      "title": "TimeSelect",
+      "category": "数据录入",
+      "path": "/components/time-select"
+    },
+    {
+      "site": "business",
+      "name": "颜色选择器",
+      "title": "ColorPicker",
+      "category": "数据录入",
+      "path": "/components/color-picker"
     },
     {
       "site": "business",
@@ -213,6 +318,27 @@
       "title": "Statistic",
       "category": "数据展示",
       "path": "/components/statistic"
+    },
+    {
+      "site": "business",
+      "name": "倒计时",
+      "title": "Countdown",
+      "category": "数据展示",
+      "path": "/components/countdown"
+    },
+    {
+      "site": "business",
+      "name": "指标卡",
+      "title": "StatCard",
+      "category": "数据展示",
+      "path": "/components/stat-card"
+    },
+    {
+      "site": "business",
+      "name": "指标卡行",
+      "title": "StatRow",
+      "category": "数据展示",
+      "path": "/components/stat-row"
     },
     {
       "site": "business",
@@ -328,6 +454,13 @@
     },
     {
       "site": "business",
+      "name": "图片预览",
+      "title": "ImageViewer",
+      "category": "数据展示",
+      "path": "/components/image-viewer"
+    },
+    {
+      "site": "business",
       "name": "结果页",
       "title": "Result",
       "category": "数据展示",
@@ -349,6 +482,13 @@
     },
     {
       "site": "business",
+      "name": "级联面板",
+      "title": "CascaderPanel",
+      "category": "数据展示",
+      "path": "/components/cascader-panel"
+    },
+    {
+      "site": "business",
       "name": "树形控件",
       "title": "Tree",
       "category": "数据展示",
@@ -356,10 +496,38 @@
     },
     {
       "site": "business",
+      "name": "JSON 查看器",
+      "title": "JsonViewer",
+      "category": "数据展示",
+      "path": "/components/json-viewer"
+    },
+    {
+      "site": "business",
       "name": "全局提示",
       "title": "Message",
       "category": "反馈",
       "path": "/components/message"
+    },
+    {
+      "site": "business",
+      "name": "消息弹窗",
+      "title": "Msgbox",
+      "category": "反馈",
+      "path": "/components/msgbox"
+    },
+    {
+      "site": "business",
+      "name": "通知提醒",
+      "title": "Notify",
+      "category": "反馈",
+      "path": "/components/notify"
+    },
+    {
+      "site": "business",
+      "name": "加载服务",
+      "title": "Loading",
+      "category": "反馈",
+      "path": "/components/loading"
     },
     {
       "site": "business",
@@ -405,6 +573,13 @@
     },
     {
       "site": "business",
+      "name": "统一空态",
+      "title": "EmptyState",
+      "category": "反馈",
+      "path": "/components/empty-state"
+    },
+    {
+      "site": "business",
       "name": "导航菜单",
       "title": "Menu",
       "category": "导航",
@@ -440,6 +615,13 @@
     },
     {
       "site": "business",
+      "name": "右键菜单",
+      "title": "ContextMenu",
+      "category": "导航",
+      "path": "/components/context-menu"
+    },
+    {
+      "site": "business",
       "name": "返回顶部",
       "title": "Backtop",
       "category": "导航",
@@ -458,6 +640,20 @@
       "title": "Anchor",
       "category": "导航",
       "path": "/components/anchor"
+    },
+    {
+      "site": "business",
+      "name": "页头",
+      "title": "PageHeader",
+      "category": "导航",
+      "path": "/components/page-header"
+    },
+    {
+      "site": "business",
+      "name": "命令面板",
+      "title": "CommandPalette",
+      "category": "导航",
+      "path": "/components/command-palette"
     },
     {
       "site": "business",
@@ -510,6 +706,20 @@
     },
     {
       "site": "business",
+      "name": "卡片堆叠",
+      "title": "Stack",
+      "category": "能力增强",
+      "path": "/components/stack"
+    },
+    {
+      "site": "business",
+      "name": "浮层基础件",
+      "title": "Popper",
+      "category": "能力增强",
+      "path": "/components/popper"
+    },
+    {
+      "site": "business",
       "name": "权限",
       "title": "Auth",
       "category": "能力增强",
@@ -535,6 +745,13 @@
       "title": "DataTable",
       "category": "业务组件",
       "path": "/components/data-table"
+    },
+    {
+      "site": "business",
+      "name": "表格页",
+      "title": "TablePage",
+      "category": "业务组件",
+      "path": "/components/table-page"
     },
     {
       "site": "business",
@@ -591,6 +808,27 @@
       "title": "ColumnSettings",
       "category": "业务组件",
       "path": "/components/column-settings"
+    },
+    {
+      "site": "business",
+      "name": "对话窗口",
+      "title": "Chatbot",
+      "category": "业务组件",
+      "path": "/components/chatbot"
+    },
+    {
+      "site": "business",
+      "name": "AI 输入台",
+      "title": "AiPromptBox",
+      "category": "AI",
+      "path": "/components/ai-prompt-box"
+    },
+    {
+      "site": "business",
+      "name": "AI 工作台",
+      "title": "AiConsole",
+      "category": "AI",
+      "path": "/components/ai-console"
     },
     {
       "site": "business",
@@ -950,6 +1188,83 @@
       "path": "/examples/classroom"
     },
     {
+      "site": "charts",
+      "name": "三维总览与选型",
+      "title": "三维总览与选型",
+      "category": "三维",
+      "path": "/3d/"
+    },
+    {
+      "site": "charts",
+      "name": "安装与引入",
+      "title": "安装与引入",
+      "category": "三维",
+      "path": "/3d/install"
+    },
+    {
+      "site": "charts",
+      "name": "相机与交互",
+      "title": "相机与交互",
+      "category": "三维",
+      "path": "/3d/camera"
+    },
+    {
+      "site": "charts",
+      "name": "主题接入",
+      "title": "主题接入",
+      "category": "三维",
+      "path": "/3d/theme"
+    },
+    {
+      "site": "charts",
+      "name": "设计规范",
+      "title": "设计规范",
+      "category": "三维",
+      "path": "/3d/design"
+    },
+    {
+      "site": "charts",
+      "name": "三维柱状图",
+      "title": "三维柱状图",
+      "category": "三维图型",
+      "path": "/3d/bar3d"
+    },
+    {
+      "site": "charts",
+      "name": "三维折线图",
+      "title": "三维折线图",
+      "category": "三维图型",
+      "path": "/3d/line3d"
+    },
+    {
+      "site": "charts",
+      "name": "三维散点图",
+      "title": "三维散点图",
+      "category": "三维图型",
+      "path": "/3d/scatter3d"
+    },
+    {
+      "site": "charts",
+      "name": "三维曲面图",
+      "title": "三维曲面图",
+      "category": "三维图型",
+      "path": "/3d/surface3d"
+    },
+    {
+      "site": "charts",
+      "name": "三维饼图 / 环形图",
+      "title": "三维饼图 / 环形图",
+      "category": "三维图型",
+      "path": "/3d/pie3d"
+    },
+    {
+      "site": "charts",
+      "name": "API 参考",
+      "title": "API 参考",
+      "category": "三维图型",
+      "path": "/3d/api"
+    },
+    {
       "site": "ui",
       "name": "组件总览",
       "title": "组件总览",
@@ -1046,6 +1361,13 @@
       "title": "Input 输入框",
       "category": "组件",
       "path": "/components/input"
+    },
+    {
+      "site": "ui",
+      "name": "OtpInput",
+      "title": "OtpInput 验证码输入框",
+      "category": "组件",
+      "path": "/components/otp-input"
     },
     {
       "site": "ui",
@@ -1165,6 +1487,13 @@
       "title": "SearchBox 搜索框",
       "category": "组件",
       "path": "/components/search-box"
+    },
+    {
+      "site": "ui",
+      "name": "AiPromptBox AI",
+      "title": "AiPromptBox AI 输入台",
+      "category": "组件",
+      "path": "/components/ai-prompt-box"
     },
     {
       "site": "ui",

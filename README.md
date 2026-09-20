@@ -92,7 +92,8 @@ pnpm install
 
 pnpm docs-web:dev    # Evoke UI 文档站（http://localhost:5173）
 pnpm docs:dev        # Evoke Business UI 文档站（组件文档 + 在线示例中心）
-pnpm docs-charts-3d:dev  # Charts 3D 文档站
+pnpm docs-charts:dev # Evoke Charts 文档站（二维 + /3d/ 三维篇章）
+pnpm demo:charts3d   # Charts 3D playground（三维交互试验场）
 pnpm build:eui       # 构建 Evoke UI 产物
 pnpm build:ebui      # 构建 Evoke Business UI 产物
 

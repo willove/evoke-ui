@@ -65,6 +65,19 @@ for (const cat of chartsMeta.EXAMPLES_NAV) {
   }
 }
 
+// charts 三维篇章（/3d/ 五图型与指南页）：与二维同站，list/search 可发现
+for (const cat of chartsMeta.THREED_NAV) {
+  for (const comp of cat.components) {
+    entries.push({
+      site: 'charts',
+      name: comp.name,
+      title: comp.name,
+      category: cat.name,
+      path: comp.path,
+    })
+  }
+}
+
 // UI 站目录在 config.mts 侧栏里，提取 /components/ 与 /mobile/components 下的条目
 const uiConfig = await (async () => {
   const text = await import('node:fs').then((fs) => fs.readFileSync(resolve(repo, 'docs-web/.vitepress/config.mts'), 'utf8'))
@@ -98,7 +111,7 @@ const catalog = {
     charts: {
       label: 'Evoke Charts',
       host: 'https://evoke-charts.wil-works.com',
-      desc: '零依赖 Canvas 自绘图表库：29 种图表类型，spec 配置式声明',
+      desc: '零依赖 Canvas 自绘图表库：29 种二维图型 + 三维篇章（柱林/折线/散点/曲面/饼环），spec 配置式声明',
     },
   },
   entries,
