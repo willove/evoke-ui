@@ -12,6 +12,7 @@ import { cameraBasis, cameraMatrices, fitDistance, resolveCamera } from '../core
 import { pickScene, projectScene } from '../core/scene.js'
 import { clearCanvas, drawScene } from './draw.js'
 import { computeLegendItems, computeLegendLayout, drawColorScale, drawLegend } from './legend3d.js'
+import { resolveDepth } from './shared.js'
 import { getTheme } from '../types.js'
 import { resolveChartPalette } from '../palette.js'
 import { buildBar3dScene } from './charts/bar3d.js'
@@ -196,6 +197,8 @@ export function render3d(canvas, params) {
     eye: matrices.eye,
     basis,
     lighting: options.lighting,
+    // 纵深增强：雾化基准色取主题背景（透明底时用内置明暗底），文字层不参与
+    depth: { ...resolveDepth(options), hazeColor: theme.backdropColor },
   })
 
   drawScene(ctx, projected, { hoverKey, theme })

@@ -2,13 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render3d } from '../src/3d/renderer/index.js'
 import { createSvgRecorder } from '../src/3d/renderer/svgRecorder.js'
 import { pointInPolygon } from '../src/3d/core/scene.js'
+import { luminance } from '../src/3d/core/color.js'
+import { resolveDepth } from '../src/3d/renderer/shared.js'
 
-/** 纯 ctx 存根：记录调用次数，measureText 给固定宽度 */
+/** 纯 ctx 存根：记录调用次数，measureText 给固定宽度；渐变返回可加色标的空壳 */
 function stubCtx() {
   const calls = new Map()
   const target = {
     measureText: () => ({ width: 24 }),
     canvas: { width: 600, height: 400 },
+    createLinearGradient: () => ({ addColorStop() {} }),
+    createRadialGradient: () => ({ addColorStop() {} }),
   }
   const proxy = new Proxy(target, {
     get(obj, prop) {
@@ -33,6 +37,8 @@ const THEME = {
   isDark: false,
   colors: ['#175DFF', '#5AD8A6', '#F6BD16', '#6DC8EC', '#E8684A', '#9270CA', '#FF9D4D', '#5D7092'],
   backgroundColor: 'transparent',
+  /** 雾化基准色（真实主题由 getTheme 给出，测试夹具显式带上以免默认雾化被跳过） */
+  backdropColor: '#ffffff',
   textColor: '#1f2937',
   textColorSecondary: '#6b7280',
   gridColor: 'rgba(31,41,55,0.10)',
@@ -400,9 +406,11 @@ describe('背景面固定侧与淡出', () => {
   })
 
   it('墙内网格与墙顶棱跟着墙一起退场，背面视角不留悬空网格/棱线', () => {
-    expect(wallGrid(at(-52)).length).toBeGreaterThan(0)
-    expect(rimAt(at(-52), 0.5)).toBeTruthy()
-    const back = at(30)
+    // 网格线按网格色筛，关掉雾化以免颜色被向背景混合后对不上色值
+    const noHaze = (yaw) => at(yaw, { ...BAR_OPTIONS(), depth: { haze: 0 } })
+    expect(wallGrid(noHaze(-52)).length).toBeGreaterThan(0)
+    expect(rimAt(noHaze(-52), 0.5)).toBeTruthy()
+    const back = noHaze(30)
     expect(wallGrid(back)).toHaveLength(0)
     expect(rimAt(back, 0.5)).toBeUndefined()
     // 也不该整体挪到另一侧继续画（旧行为：墙组跟随相机换边）
@@ -429,6 +437,81 @@ describe('背景面固定侧与淡出', () => {
     const result = at(90, options)
     expect(backWall(result)).toBeUndefined()      // 相机在 +Y 侧 → 背墙退场
     expect(sideWall(result)).toBeTruthy()         // 相机仍在侧墙正面 → 侧墙保留
+  })
+})
+
+describe('纵深增强', () => {
+  const dataFaces = (result) => result.projected.items.filter((i) => i.visible !== false && i.kind === 'face'
+    && i.layer === 'data' && i.solid && i.meta)
+  const byDepth = (faces, dir) => faces.slice().sort((a, b) => dir * (a.depth - b.depth))[0]
+  const shadowFaces = (result) => result.projected.items.filter((i) => i.visible !== false && i.kind === 'face'
+    && i.layer === 'back' && i.color === '#000000')
+
+  const withDepth = (depth) => renderParams({ options: { ...BAR_OPTIONS(), depth } })
+
+  it('景深雾化：远景向背景色混合、近景与文字不动；深度 0 即关闭', () => {
+    const off = render3d(fakeCanvas(stubCtx()), withDepth({ haze: 0 }))
+    const on = render3d(fakeCanvas(stubCtx()), withDepth({ haze: 0.5 }))
+    const farOff = byDepth(dataFaces(off), -1)
+    const farOn = byDepth(dataFaces(on), -1)
+    expect(farOn.fill).not.toBe(farOff.fill)
+    // 混合方向：更靠近背景色（白）
+    expect(luminance(farOn.fill)).toBeGreaterThan(luminance(farOff.fill))
+    // 最近的数据面 t = 0，不参与混合
+    const nearOff = byDepth(dataFaces(off), 1)
+    const nearOn = byDepth(dataFaces(on), 1)
+    expect(nearOn.fill).toBe(nearOff.fill)
+    // 文字（刻度/轴名）不参与雾化
+    const textOf = off.projected.items.find((i) => i.kind === 'text')
+    const textOn = on.projected.items.find((i) => i.kind === 'text' && i.text === textOf.text)
+    expect(textOn.color).toBe(textOf.color)
+  })
+
+  it('面描边：实体面默认带同色深描边，depth.edge = 0 时无描边', () => {
+    const on = render3d(fakeCanvas(stubCtx()), renderParams())
+    const face = dataFaces(on)[0]
+    expect(face.stroke).toBeTruthy()
+    expect(luminance(face.stroke)).toBeLessThan(luminance(face.fill))
+    const off = render3d(fakeCanvas(stubCtx()), withDepth({ edge: 0 }))
+    expect(dataFaces(off).every((f) => !f.stroke)).toBe(true)
+  })
+
+  it('面内渐变：实体面带渐变强度，曲面高度色面不带', () => {
+    const bar = render3d(fakeCanvas(stubCtx()), renderParams())
+    expect(dataFaces(bar)[0].gradient).toBeGreaterThan(0)
+    const surface = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { type: 'surface3d', surfaceData: { z: [[1, 2], [3, 4]] } },
+    }))
+    const facets = surface.projected.items.filter((i) => i.visible !== false && i.kind === 'face' && i.layer === 'data')
+    expect(facets.length).toBeGreaterThan(0)
+    expect(facets.every((f) => !f.gradient)).toBe(true)
+  })
+
+  it('柱体投影：shadowStrength 控深浅、shadowOffset 平移落点', () => {
+    const base = render3d(fakeCanvas(stubCtx()), renderParams())
+    const weaker = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { ...BAR_OPTIONS(), bar: { shadowStrength: 0.4 } },
+    }))
+    expect(shadowFaces(base)[0].alpha).toBeCloseTo(0.1, 6)
+    expect(shadowFaces(weaker)[0].alpha).toBeCloseTo(0.4, 6)
+    const moved = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { ...BAR_OPTIONS(), bar: { shadowOffset: [0.12, 0] } },
+    }))
+    const cx = (f) => f.points.reduce((s, p) => s + p[0], 0) / f.points.length
+    expect(cx(shadowFaces(moved)[0]) - cx(shadowFaces(base)[0])).toBeCloseTo(0.12, 6)
+    const none = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { ...BAR_OPTIONS(), bar: { shadowStrength: 0 } },
+    }))
+    expect(shadowFaces(none)).toHaveLength(0)
+  })
+
+  it('饼图投影：pie.shadowStrength 生效；depth 缺省即三件套默认值', () => {
+    const pie = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { type: 'pie3d', pieData: [{ name: 'A', value: 3 }, { name: 'B', value: 2 }], pie: { shadowStrength: 0.3 } },
+    }))
+    expect(shadowFaces(pie)[0].alpha).toBeCloseTo(0.3, 6)
+    expect(resolveDepth({})).toEqual({ haze: 0.3, edge: 0.06, gradient: 0.08 })
+    expect(resolveDepth({ depth: { haze: 0, edge: 2, gradient: -1 } })).toEqual({ haze: 0, edge: 1, gradient: 0 })
   })
 })
 

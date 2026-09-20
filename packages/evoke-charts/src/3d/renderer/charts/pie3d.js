@@ -47,6 +47,7 @@ export function buildPie3dScene(rc) {
   const padAngle = clampNum(pie.padAngle, 0, 0.12, 0.01) * DEG
   const lift = 0.055
   const shadowOn = pie.shadow !== false
+  const shadowStrength = Number.isFinite(pie.shadowStrength) ? Math.max(0, Math.min(1, pie.shadowStrength)) : 0.09
   const labelCfg = options.label && typeof options.label === 'object' ? options.label : {}
   const showLabel = !!labelCfg.show
   const i18nPercent = (options.i18n && options.i18n.tooltip && options.i18n.tooltip.percent) || '占比'
@@ -80,6 +81,7 @@ export function buildPie3dScene(rc) {
     const faceOpts = {
       color: d.color,
       cull: true,
+      solid: true,
       doubleSided: false,
       alpha: Math.min(1, 0.4 + progress * 0.6),
       meta: {
@@ -99,11 +101,12 @@ export function buildPie3dScene(rc) {
     addFace(scene, top, faceOpts)
     addFace(scene, bottom, faceOpts)
 
-    // 外侧弧面
+    // 外侧弧面 / 内侧弧面：细分曲面，保留面内渐变但不描细分缝
+    const curvedOpts = { ...faceOpts, curved: true }
     const outerA = arcPoints(0, 0, radius, s0, s1, segments, zBase)
     const outerB = arcPoints(0, 0, radius, s0, s1, segments, zTop)
     for (let k = 0; k < segments; k++) {
-      addFace(scene, [outerA[k], outerA[k + 1], outerB[k + 1], outerB[k]], faceOpts)
+      addFace(scene, [outerA[k], outerA[k + 1], outerB[k + 1], outerB[k]], curvedOpts)
     }
 
     // 内侧弧面（环形）
@@ -111,7 +114,7 @@ export function buildPie3dScene(rc) {
       const innerA = arcPoints(0, 0, innerRadius, s0, s1, segments, zBase)
       const innerB = arcPoints(0, 0, innerRadius, s0, s1, segments, zTop)
       for (let k = 0; k < segments; k++) {
-        addFace(scene, [innerB[k], innerB[k + 1], innerA[k + 1], innerA[k]], faceOpts)
+        addFace(scene, [innerB[k], innerB[k + 1], innerA[k + 1], innerA[k]], curvedOpts)
       }
     }
 
@@ -147,11 +150,11 @@ export function buildPie3dScene(rc) {
   }
 
   // 盘底软阴影：一圈略大的黑色扁环，让圆盘「落」在地面上而不是悬浮
-  if (shadowOn && h > 0.005) {
+  if (shadowOn && shadowStrength > 0 && h > 0.005) {
     const shadowRing = annulusTop(0, 0, radius * 1.05, 0, 0, TAU, 48, 0.0008)
     addFace(scene, shadowRing, {
       color: '#000000',
-      alpha: 0.09,
+      alpha: shadowStrength,
       layer: 'back',
       flat: true,
       pickable: false,

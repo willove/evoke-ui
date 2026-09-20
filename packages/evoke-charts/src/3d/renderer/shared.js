@@ -88,6 +88,23 @@ export function normalizeSurface(options) {
   return { matrix, rows, cols, xValues, yValues, values }
 }
 
+/**
+ * 纵深增强默认值 — 立体感三件套，0 即关闭
+ * haze 景深雾化（远景向背景色混合）/ edge 实体面描边 / gradient 面内渐变（假 AO）
+ */
+export const DEPTH_DEFAULTS = { haze: 0.3, edge: 0.06, gradient: 0.08 }
+
+/** 解析 depth 配置，缺省即 DEPTH_DEFAULTS，越界钳到 [0,1] */
+export function resolveDepth(options) {
+  const cfg = options && typeof options.depth === 'object' ? options.depth : {}
+  const pick = (v, fallback) => (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : fallback)
+  return {
+    haze: pick(cfg.haze, DEPTH_DEFAULTS.haze),
+    edge: pick(cfg.edge, DEPTH_DEFAULTS.edge),
+    gradient: pick(cfg.gradient, DEPTH_DEFAULTS.gradient),
+  }
+}
+
 /** HTML 转义 — tooltip 默认模板必须转义，formatter 返回值由使用方自负 */
 export function escapeHtml(s) {
   return String(s ?? '')

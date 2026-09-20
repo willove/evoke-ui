@@ -3,7 +3,7 @@
  * 把绘制调用重放为 SVG 元素，实现三维图的矢量导出。
  *
  * 与 evoke-charts 的 svgRecorder 同思路、同 API 形状（{ ctx, toSvg }），
- * 但按三维管线的实际用量裁剪：无渐变（面着色已折算成纯色）、无裁剪、无位图。
+ * 但按三维管线的实际用量裁剪：无裁剪、无位图；线性渐变（面内渐变）转 <linearGradient>。
  * 面是凸多边形 → 路径直出；文字按当前 CTM 反推锚点坐标。
  *
  * 注意：禁止使用 RegExp.exec（安全扫描误报），统一用 match。
@@ -69,6 +69,7 @@ function colorToSvg(value) {
  */
 export function createSvgRecorder(real) {
   const elements = []
+  const gradients = []
   let matrix = [1, 0, 0, 1, 0, 0]
   const matrixStack = []
   const styleStack = []
@@ -86,6 +87,15 @@ export function createSvgRecorder(real) {
     lineDash: [],
     lineCap: 'butt',
     lineJoin: 'miter',
+  }
+
+  /** 填充样式 → SVG 值：渐变登记为 <linearGradient> 并引用 */
+  function resolveFill() {
+    if (typeof style.fillStyle === 'string') return style.fillStyle
+    const g = style.fillStyle
+    if (!g || !g.__gradient) return colorToSvg(g)
+    gradients.push(g)
+    return `url(#evg${gradients.length - 1})`
   }
 
   function pushPath(fill, stroke) {
@@ -116,7 +126,7 @@ export function createSvgRecorder(real) {
     }
     const attrs = {
       d,
-      fill: fill ? colorToSvg(style.fillStyle) : 'none',
+      fill: fill ? resolveFill() : 'none',
       'fill-opacity': fill && style.globalAlpha < 1 ? style.globalAlpha.toFixed(3) : undefined,
     }
     if (stroke) {
@@ -237,11 +247,23 @@ export function createSvgRecorder(real) {
       if (real && typeof real.measureText === 'function') return real.measureText(text)
       return { width: String(text).length * 7 }
     },
-    createLinearGradient() {
-      return { addColorStop() {} }
+    createLinearGradient(x0, y0, x1, y1) {
+      const [tx0, ty0] = applyMatrix(matrix, x0, y0)
+      const [tx1, ty1] = applyMatrix(matrix, x1, y1)
+      return {
+        __gradient: true,
+        x0: tx0,
+        y0: ty0,
+        x1: tx1,
+        y1: ty1,
+        stops: [],
+        addColorStop(offset, color) {
+          this.stops.push({ offset, color })
+        },
+      }
     },
     createRadialGradient() {
-      return { addColorStop() {} }
+      return { __gradient: false, addColorStop() {} }
     },
     setLineDash(dash) {
       style.lineDash = Array.isArray(dash) ? dash.slice() : []
@@ -272,6 +294,19 @@ export function createSvgRecorder(real) {
     },
   })
 
+  /** 渐变定义：坐标已随 CTM 落到最终画布空间，用 userSpaceOnUse 直出 */
+  function gradientDefs() {
+    return gradients
+      .map((g, i) => {
+        const stops = g.stops
+          .map((s) => `<stop offset="${(s.offset * 100).toFixed(1)}%" stop-color="${escapeXml(String(s.color))}"/>`)
+          .join('')
+        return `<linearGradient id="evg${i}" gradientUnits="userSpaceOnUse"`
+          + ` x1="${g.x0.toFixed(1)}" y1="${g.y0.toFixed(1)}" x2="${g.x1.toFixed(1)}" y2="${g.y1.toFixed(1)}">${stops}</linearGradient>`
+      })
+      .join('')
+  }
+
   function toSvg(width, height, backgroundColor = '#ffffff') {
     const body = elements
       .map((el) => {
@@ -283,8 +318,9 @@ export function createSvgRecorder(real) {
         return `<${el.tag} ${attrs}/>`
       })
       .join('\n')
+    const defs = gradients.length ? `<defs>${gradientDefs()}</defs>` : ''
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`
-      + `<rect width="${width}" height="${height}" fill="${colorToSvg(backgroundColor)}"/>`
+      + `${defs}<rect width="${width}" height="${height}" fill="${colorToSvg(backgroundColor)}"/>`
       + `${body}</svg>`
   }
 

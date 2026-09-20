@@ -108,12 +108,22 @@ export const chart3dOptionsSchema = {
         flat: { type: 'boolean' },
       },
     },
+    depth: {
+      type: 'object',
+      properties: {
+        haze: { type: 'number' },
+        edge: { type: 'number' },
+        gradient: { type: 'number' },
+      },
+    },
     bar: {
       type: 'object',
       properties: {
         width: { type: 'number' },
         depth: { type: 'number' },
         shadow: { type: 'boolean' },
+        shadowStrength: { type: 'number' },
+        shadowOffset: { type: 'array' },
       },
     },
     line: {
@@ -152,6 +162,7 @@ export const chart3dOptionsSchema = {
         startAngle: { type: 'number' },
         padAngle: { type: 'number' },
         shadow: { type: 'boolean' },
+        shadowStrength: { type: 'number' },
       },
     },
     legend: {

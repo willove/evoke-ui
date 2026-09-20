@@ -25,7 +25,7 @@ import {
   v3scale,
   v3sub,
 } from './math3d.js'
-import { shadeColor } from './color.js'
+import { darken, mixHue, shadeColor } from './color.js'
 
 export const LAYER_BACK = 'back'
 export const LAYER_DATA = 'data'
@@ -70,6 +70,10 @@ export function addFace(scene, points, options = {}) {
     cull: !!options.cull,
     /** 双面可见：曲面、带状面必须开，否则从下方看会整片消失 */
     doubleSided: options.doubleSided !== false ? true : false,
+    /** 实体面：柱体/饼体这类有体积的面，纵深增强（描边、面内渐变）只作用于它们 */
+    solid: !!options.solid,
+    /** 细分曲面面（饼体外弧面等）：光照明暗已足够，不加面内渐变、不描细分缝 */
+    curved: !!options.curved,
     pickable: options.pickable !== false,
     meta: options.meta || null,
     visible: true,
@@ -283,7 +287,49 @@ export function projectScene(scene, camera, viewport, options = {}) {
     items.push(out)
   }
 
+  if (options.depth && typeof options.depth === 'object') applyDepthCues(items, options.depth)
+
   return { items, mvp, eye, light, dropped }
+}
+
+/**
+ * 纵深增强 — 投影后按视深与「实体面」标记施加三道立体感线索
+ *   haze      按数据层视深把颜色向背景色混合（近深远浅的空气透视），文字不参与；
+ *   edge      给实体面补一圈同色深描边，形体边界更利落、相邻形体不糊在一起；
+ *   gradient  实体面面内顶亮底暗（假 AO），面片更「实心」。
+ * 雾化基准取数据层视深范围而非全场景：坐标框/墙体会把范围拉长，压掉数据自身的纵深差。
+ */
+function applyDepthCues(items, depth) {
+  const clamp01 = (v) => (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0)
+  const haze = clamp01(depth.haze)
+  const edge = clamp01(depth.edge)
+  const gradient = clamp01(depth.gradient)
+
+  if (haze > 0 && depth.hazeColor) {
+    let minD = Infinity
+    let maxD = -Infinity
+    for (const it of items) {
+      if (it.visible === false || it.kind === 'text' || it.layer !== LAYER_DATA) continue
+      if (it.depth < minD) minD = it.depth
+      if (it.depth > maxD) maxD = it.depth
+    }
+    const span = maxD - minD
+    for (const it of items) {
+      if (it.visible === false || it.kind === 'text') continue
+      const t = span > 1e-6 ? (it.depth - minD) / span : 0
+      if (!(t > 0)) continue
+      const k = haze * Math.min(1, t)
+      if (it.kind === 'face') it.fill = mixHue(it.fill, depth.hazeColor, k)
+      else it.color = mixHue(it.color, depth.hazeColor, k)
+    }
+  }
+
+  for (const it of items) {
+    // 细分曲面补丁（饼体外弧面这类）只保留光照明暗：逐面渐变在细分缝处对不齐、会显色带
+    if (it.visible === false || it.kind !== 'face' || !it.solid || it.curved) continue
+    if (edge > 0 && !it.stroke) it.stroke = darken(it.fill, edge)
+    if (gradient > 0) it.gradient = gradient
+  }
 }
 
 /** 深度排序 — 远 → 近（画家算法）；深度相同时保持建景顺序，避免共面闪烁 */

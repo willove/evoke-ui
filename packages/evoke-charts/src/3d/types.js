@@ -5,7 +5,7 @@
  * 同一套 --ev-color-series-N 槽位、同一套静态兜底色板，二维与三维必然同色。
  * 本文件只补三维独有部分：结构色（墙面/网格）与三维图型清单。
  */
-import { isDarkMode, readToken } from './core/color.js'
+import { isDarkMode, parseColor, readToken } from './core/color.js'
 import { CHART_COLORS as SHARED_CHART_COLORS, getSeriesColors as sharedGetSeriesColors } from '../types.js'
 
 /** 语义色：涨/跌结论共用默认值，可被配置覆写 */
@@ -15,6 +15,8 @@ export const DOWN_COLOR = '#16a34a'
 /** 结构色（非数据元素）——明暗两套，与缺省色板同源 */
 export const STRUCTURE_LIGHT = {
   backgroundColor: 'transparent',
+  /** 雾化基准色：背景透明时远景向它混合（空气透视的目标色） */
+  backdropColor: '#ffffff',
   textColor: '#1f2937',
   textColorSecondary: '#6b7280',
   gridColor: 'rgba(31, 41, 55, 0.10)',
@@ -25,6 +27,7 @@ export const STRUCTURE_LIGHT = {
 
 export const STRUCTURE_DARK = {
   backgroundColor: 'transparent',
+  backdropColor: '#1f2937',
   textColor: '#e5e7eb',
   textColorSecondary: '#9ca3af',
   gridColor: 'rgba(229, 231, 235, 0.12)',
@@ -102,10 +105,17 @@ export function getTheme(options = {}, customTheme = null, paletteColors = null)
   } else {
     colors = getSeriesColors(isDark ? CHART_COLORS.dark : CHART_COLORS.primary)
   }
+  // 雾化基准色：背景色本身不透明就用它；透明底（默认）时读浮层底色令牌、回落内置明暗底
+  const bgRaw = readToken('--ev-bg-color', structure.backgroundColor)
+  const bgParsed = parseColor(bgRaw)
+  const backdropColor = bgParsed && bgParsed.a >= 0.9
+    ? bgRaw
+    : readToken('--ev-bg-color-overlay', structure.backdropColor)
   const theme = {
     isDark,
     ...structure,
-    backgroundColor: readToken('--ev-bg-color', structure.backgroundColor),
+    backgroundColor: bgRaw,
+    backdropColor,
     textColor: readToken('--ev-text-color-primary', structure.textColor),
     textColorSecondary: readToken('--ev-text-color-secondary', structure.textColorSecondary),
     gridColor: readToken('--ev-border-color-lighter', structure.gridColor),

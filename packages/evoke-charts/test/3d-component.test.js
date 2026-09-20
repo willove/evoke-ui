@@ -14,6 +14,8 @@ function mockCanvasCtx() {
   const target = {
     measureText: () => ({ width: 10 }),
     canvas: null,
+    createLinearGradient: () => ({ addColorStop() {} }),
+    createRadialGradient: () => ({ addColorStop() {} }),
   }
   const ctx = new Proxy(target, {
     get(obj, prop) {

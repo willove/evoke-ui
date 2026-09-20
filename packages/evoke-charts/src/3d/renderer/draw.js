@@ -14,7 +14,7 @@
  * 全局压暗会同时压到被遮挡者，视觉归属反而混乱。
  */
 import { LAYER_BACK, LAYER_DATA, LAYER_FRONT, partitionByLayer } from '../core/scene.js'
-import { lighten, toRgba } from '../core/color.js'
+import { darken, lighten, toRgba } from '../core/color.js'
 
 /** 估算文本宽度（CJK 全宽按字号计，其余按 0.62 折算），与 evoke-charts 同口径 */
 export function estimateTextWidth(text, fontSize = 12) {
@@ -55,6 +55,24 @@ function fontString(item, theme) {
   return `${item.fontWeight === 'bold' ? '600' : '400'} ${item.fontSize}px ${family}`
 }
 
+/** 面填充色：实体面带面内渐变（顶亮底暗的假 AO），其余纯色 */
+function faceFill(ctx, item, emphasized) {
+  const base = emphasized ? lighten(item.fill, 0.08) : item.fill
+  const g = Number.isFinite(item.gradient) ? item.gradient : 0
+  if (!(g > 0) || !item.screen || item.screen.length < 3) return base
+  let top = Infinity
+  let bottom = -Infinity
+  for (const p of item.screen) {
+    if (p[1] < top) top = p[1]
+    if (p[1] > bottom) bottom = p[1]
+  }
+  if (!(bottom - top > 1)) return base
+  const grad = ctx.createLinearGradient(0, top, 0, bottom)
+  grad.addColorStop(0, lighten(base, g))
+  grad.addColorStop(1, darken(base, g))
+  return grad
+}
+
 function drawFace(ctx, item, emphasized) {
   if (!item.screen || item.screen.length < 3) return
   ctx.beginPath()
@@ -63,12 +81,18 @@ function drawFace(ctx, item, emphasized) {
     ctx.lineTo(item.screen[i][0], item.screen[i][1])
   }
   ctx.closePath()
-  ctx.fillStyle = emphasized ? lighten(item.fill, 0.08) : item.fill
+  ctx.fillStyle = faceFill(ctx, item, emphasized)
   applyAlpha(ctx, item, 1)
   ctx.fill()
   if (item.stroke || emphasized) {
     ctx.strokeStyle = item.stroke || lighten(item.fill, -0.02)
     ctx.lineWidth = emphasized ? 1.6 : Number.isFinite(item.strokeWidth) ? item.strokeWidth : 1
+    ctx.setLineDash([])
+    ctx.stroke()
+  } else if (item.curved) {
+    // 细分曲面：同色细描边盖住相邻面之间的抗锯齿细缝，弧面才不被切成一条条竖缝
+    ctx.strokeStyle = typeof item.fill === 'string' ? item.fill : item.color
+    ctx.lineWidth = 1
     ctx.setLineDash([])
     ctx.stroke()
   }

@@ -35,6 +35,7 @@
   { name: 'animation', desc: '进场动画：{ enabled, duration（ms，默认 600）, easing }', type: 'object', default: '—' },
   { name: 'camera', desc: '轨道相机：{ yaw, pitch, distance, fov, target, minPitch, maxPitch, minDistance, maxDistance, autoRotate, autoRotateSpeed, damping }，详见[相机与交互](/3d/camera)', type: 'object', default: '—' },
   { name: 'lighting', desc: '光照：{ ambient（默认 0.56）, intensity（默认 0.88）, follow（默认 true 随相机）, direction（固定世界方向 [x,y,z]）, flat（关闭着色） }', type: 'object', default: '—' },
+  { name: 'depth', desc: '纵深增强（0 即关闭）：{ haze（远景向背景色雾化，默认 0.3）, edge（实体面描边，默认 0.06）, gradient（面内渐变假 AO，默认 0.08） }', type: 'object', default: '{ haze: 0.3, edge: 0.06, gradient: 0.08 }' },
   { name: 'interaction', desc: '交互开关：{ zoom, pan, resetOnDblClick }', type: 'object', default: '—' },
   { name: 'xAxis / yAxis / zAxis', desc: '轴配置：{ show, name, labels, grid, line, title, type（category / value）, min, max, ticks, formatter }', type: 'object', default: '—' },
   { name: 'grid', desc: '网格：{ show }', type: 'object', default: '{ show: true }' },
@@ -51,11 +52,11 @@
   { name: 'pieData', desc: 'pie3d 数据源，每项 { name, value, color? }', type: 'array', default: '—' },
   { name: 'scatterData', desc: 'scatter3d 三元组模式数据：[x, y, z] 数组的数组；缺省时回落 labels + series 标量模式', type: 'array', default: '—' },
   { name: 'surfaceData', desc: 'surface3d 数据：{ x, y, z }，z 为行=y、列=x 的数值矩阵', type: 'object', default: '—' },
-  { name: 'bar', desc: '柱体样式：{ width, depth（占带位比例，默认 0.62）, shadow }', type: 'object', default: '—' },
+  { name: 'bar', desc: '柱体样式：{ width, depth（占带位比例，默认 0.62）, shadow（默认开）, shadowStrength（投影深浅，默认 0.1）, shadowOffset（[dx, dy] 世界偏移） }', type: 'object', default: '—' },
   { name: 'line', desc: '折线样式：{ area（落地面带）, dropLines（落地投影线，默认开）, width, points, pointRadius }', type: 'object', default: '—' },
   { name: 'scatter', desc: '散点样式：{ size（默认 5）, dropLines, colorScale（true 或色带 id）, depthScale（按视深缩点，默认开） }', type: 'object', default: '—' },
   { name: 'surface', desc: '曲面样式：{ wireframe（默认开）, opacity, ramp（色带 id，默认随 palette） }', type: 'object', default: '—' },
-  { name: 'pie', desc: '饼样式：{ radius（默认 0.42）, innerRadius（大于 0 即环形）, thickness（默认 0.18）, startAngle, padAngle, shadow }', type: 'object', default: '—' },
+  { name: 'pie', desc: '饼样式：{ radius（默认 0.42）, innerRadius（大于 0 即环形）, thickness（默认 0.18）, startAngle, padAngle, shadow, shadowStrength（盘底投影深浅，默认 0.09） }', type: 'object', default: '—' },
   { name: 'label', desc: 'pie3d 外部标签：{ show }，显示名称与占比', type: 'object', default: '{ show: false }' },
 ]" />
 

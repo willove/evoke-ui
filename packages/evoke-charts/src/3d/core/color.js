@@ -147,6 +147,23 @@ export function mixColor(a, b, t) {
   )
 }
 
+/**
+ * 向目标色混色相但保留自身透明度 — 雾化专用：
+ * 墙面这类半透明薄纱只换色相，不会因为混入不透明的背景色而变实。
+ */
+export function mixHue(color, target, t) {
+  const c = parseColor(color)
+  const g = parseColor(target)
+  if (!c || !g) return color
+  const k = clamp01(t)
+  const hex = rgbToHex(
+    c.r + (g.r - c.r) * k,
+    c.g + (g.g - c.g) * k,
+    c.b + (g.b - c.b) * k,
+  )
+  return c.a < 1 ? toRgba(hex, c.a) : hex
+}
+
 export function lighten(color, amount) {
   return adjustLightness(color, 1 + clamp01(amount))
 }

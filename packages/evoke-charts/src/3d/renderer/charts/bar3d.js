@@ -2,7 +2,8 @@
  * 三维柱状图 — 类目 × 系列 的柱林
  *
  * X 类目、Y 系列（进深）、Z 数值。柱体是封闭长方体：顶面受主光最亮、
- * 侧面随法线背光渐暗，形体感由光照而非描边给出。
+ * 侧面随法线背光渐暗；柱体标记为 solid，纵深增强（描边 / 面内渐变 / 远景雾化）
+ * 只作用于实体面，斜切面与曲面不参与。
  * 缺失值跳过（不占位、不出零高柱），零值柱保留（高度为 0 时仍画顶面封口，
  * 避免出现「看穿地面」的破面）。
  */
@@ -48,6 +49,10 @@ export function buildBar3dScene(rc) {
   const w = xBand * clamp01(bar.width)
   const d = yBand * clamp01(bar.depth)
   const shadow = bar.shadow !== false
+  const shadowStrength = Number.isFinite(bar.shadowStrength) ? Math.max(0, Math.min(1, bar.shadowStrength)) : 0.1
+  const shadowOffset = Array.isArray(bar.shadowOffset)
+    ? [Number(bar.shadowOffset[0]) || 0, Number(bar.shadowOffset[1]) || 0]
+    : [0, 0]
 
   series.forEach((s, si) => {
     const yStart = frame.y.scale.start(s.__index)
@@ -62,15 +67,16 @@ export function buildBar3dScene(rc) {
       const x1 = x0 + w
       const h = Math.max(0.0004, frame.z.scale.map(v) * progress)
 
-      if (shadow) {
+      if (shadow && shadowStrength > 0) {
+        const [ox, oy] = shadowOffset
         addFace(scene, [
-          [x0 - d * 0.12, y0 - d * 0.12, 0.0012],
-          [x1 + d * 0.12, y0 - d * 0.12, 0.0012],
-          [x1 + d * 0.12, y1 + d * 0.12, 0.0012],
-          [x0 - d * 0.12, y1 + d * 0.12, 0.0012],
+          [x0 - d * 0.12 + ox, y0 - d * 0.12 + oy, 0.0012],
+          [x1 + d * 0.12 + ox, y0 - d * 0.12 + oy, 0.0012],
+          [x1 + d * 0.12 + ox, y1 + d * 0.12 + oy, 0.0012],
+          [x0 - d * 0.12 + ox, y1 + d * 0.12 + oy, 0.0012],
         ], {
           color: '#000000',
-          alpha: 0.10 * progress,
+          alpha: shadowStrength * progress,
           layer: 'back',
           flat: true,
           pickable: false,
@@ -80,6 +86,7 @@ export function buildBar3dScene(rc) {
       addBox(scene, boxFaces([x0, y0, 0], [x1, y1, h]), {
         color: s.color,
         cull: true,
+        solid: true,
         meta: {
           key: `bar:${s.__index}:${i}`,
           type: 'bar3d',
