@@ -614,14 +614,17 @@ function renderHeatmapChart(ctx) {
   const heatmapConfig = options.heatmap || {};
   const colorScale = heatmapConfig.colorScale || [...CHART_COLORS.heatmapScale];
   const { xCategories, yCategories } = getHeatmapCategories(options);
-  const values = heatmapData.map((d) => d.value);
-  const minValue = minOf(values);
-  const maxValue = maxOf(values);
+  // 脏数据含 NaN 时极值会变 NaN：配色比例失效，fillStyle 落空沿用上一帧——求极值前过滤
+  const values = heatmapData.map((d) => d.value).filter((v) => typeof v === "number" && Number.isFinite(v));
+  const minValue = values.length ? minOf(values) : 0;
+  const maxValue = values.length ? maxOf(values) : 1;
   const valueRange = maxValue - minValue || 1;
   const cellWidth = plotArea.width / xCategories.length;
   const cellHeight = plotArea.height / yCategories.length;
   function getColor(value, customColor) {
     if (customColor) return customColor;
+    // 单元格值本身非有限：取色阶底色，避免 fillStyle 拿到 undefined
+    if (typeof value !== "number" || !Number.isFinite(value)) return colorScale[0];
     const ratio = (value - minValue) / valueRange;
     const index = Math.min(colorScale.length - 1, Math.floor(ratio * colorScale.length));
     return colorScale[index];

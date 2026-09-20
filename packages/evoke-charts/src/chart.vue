@@ -1010,11 +1010,14 @@ function getHoveredData(x, y) {
     );
     if (visible.length === 0) return null;
     const showOutliers = options.showOutliers !== false;
-    const allValues = visible.flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])]);
+    // 离群点常含 NaN（脏数据）：极值前过滤，否则量程为 NaN、箱体几何全 NaN（渲染/命中皆失效）
+    const allValues = visible
+      .flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])])
+      .filter((v) => typeof v === "number" && Number.isFinite(v));
     const axisCfg = options.boxHorizontal ? options.xAxis || {} : options.yAxis || {};
     const ext = resolveTickExtendedRange(
-      axisCfg.min ?? minOf(allValues),
-      axisCfg.max ?? maxOf(allValues),
+      axisCfg.min ?? (allValues.length ? minOf(allValues) : 0),
+      axisCfg.max ?? (allValues.length ? maxOf(allValues) : 1),
       axisCfg.ticks || 5
     );
     return boxplotHitTest(canvasX, canvasY, plotArea, options, theme, hiddenSeries.value, { min: ext.min, max: ext.max });
@@ -1968,7 +1971,9 @@ let keyboardClientY = -1;
 function handleChartKeydown(e) {
   const options = props.options;
   if (!KEYNAV_TYPES.has(options.type)) return;
-  const labels = options.labels || [];
+  // dataZoom 缩窗时悬浮命中共用切片后的 effectiveOptions，hoverIndex 是切片内索引：
+  // 巡历的 count 与坐标合成必须用切片 labels，否则步进越过窗口末端丢悬浮、Home/End 落窗口外
+  const labels = effectiveOptions.value.labels || [];
   const count = labels.length;
   if (count === 0) return;
   // Enter / Space：在键盘巡历落点上触发数据点 click（§13.7 期 3）
@@ -2439,6 +2444,8 @@ defineExpose({
         mouseX: -1,
         mouseY: -1,
         showCrosshair: false,
+        // 导出数据已是缩放切片后的内容：满窗口滑块与内容不符，剔除不导
+        zoomRange: undefined,
         brushRect: null,
         hoveredToolbox: null,
         focusSeries: null

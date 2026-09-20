@@ -287,16 +287,18 @@ function renderChart(canvas, params) {
         const boxData = boxDataAll.filter(
           (b) => !(b.group && hiddenSeries.has(b.group)) && !hiddenSeries.has(b.label)
         );
-        const allValues = boxData.flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])]);
+        // 与命中侧同一口径：NaN 离群点不进极值，否则量程 NaN、箱体全部画在 NaN 坐标上
+        const allValues = boxData
+          .flatMap((b) => [b.min, b.max, ...(showOutliers ? b.outliers || [] : [])])
+          .filter((v) => typeof v === "number" && Number.isFinite(v));
+        const valueLo = allValues.length ? minOf(allValues) : 0;
+        const valueHi = allValues.length ? maxOf(allValues) : 1;
         let range;
         if (horizontal) {
           // 横向：数值轴在底部（竖向网格线），类目走纵轴
-          range = renderHorizontalAxis(renderCtx, { min: minOf(allValues), max: maxOf(allValues) });
+          range = renderHorizontalAxis(renderCtx, { min: valueLo, max: valueHi });
         } else {
-          range = renderYAxis(renderCtx, "left", {
-            min: minOf(allValues),
-            max: maxOf(allValues)
-          });
+          range = renderYAxis(renderCtx, "left", { min: valueLo, max: valueHi });
         }
         leftRange = range;
         renderBoxplotChart(renderCtx, range);

@@ -4,7 +4,8 @@ import { nextTick, markRaw } from 'vue'
 import EvChart from '../src/chart.vue'
 import { minOf, maxOf } from '../src/extent.js'
 import { createAnimation, updateAnimation } from '../src/renderer/index.js'
-import { createSvgRecorder } from '../src/renderer/index.js'
+import { createSvgRecorder, getTheme, getPadding, computeFacetGrids } from '../src/renderer/index.js'
+import { CHART_COLORS } from '../src/types.js'
 import { computeSankeyLayout } from '../src/renderer/charts-relation.js'
 import { ganttHitTest } from '../src/renderer/charts-gantt.js'
 import { waterfallSteps, minMaxDecimatePoints } from '../src/renderer/core.js'
@@ -673,6 +674,46 @@ describe('键盘巡历（DESIGN §13.7 期 1–2）', () => {
     wrapper.unmount()
     wrapper2.unmount()
   })
+
+  it('dataZoom 缩窗下步进走切片 labels：逐格推进不丢悬浮，Home/End 对应窗口首末', async () => {
+    // 10 类目开 40–70 窗口：切片为 五/六/七 3 类，巡历 count 必须取切片口径
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'bar',
+          animation: { enabled: false },
+          labels: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
+          series: [{ name: '销量', data: [10, 42, 35, 60, 25, 80, 55, 30, 70, 45] }],
+          dataZoom: { enabled: true, start: 40, end: 70 },
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    // 修复前：坐标按全量 10 类合成，第 2 步起落点留在「五」，越过窗口末端还会回跳
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('五')
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('六')
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('七')
+    // 窗口末端继续步进：保持末格悬浮，不回跳也不丢
+    press(wrapper, 'ArrowRight')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('七')
+    expect(wrapper.find('.ev-chart__tooltip').exists()).toBe(true)
+    press(wrapper, 'End')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('七')
+    press(wrapper, 'Home')
+    await flushRender()
+    expect(wrapper.find('.ev-chart__tooltip-title').text()).toBe('五')
+    wrapper.unmount()
+  })
 })
 
 describe('exportSVG 旋转文本保真', () => {
@@ -754,6 +795,176 @@ describe('原型链污染防护（update / setSpec / getSpec）', () => {
     expect(spec.labels).toEqual(['b'])
     expect(Object.getPrototypeOf(spec)).toBe(Object.prototype)
     expect(spec.polluted).toBeUndefined()
+    wrapper.unmount()
+  })
+})
+
+describe('dataZoom 图导出剔除滑块', () => {
+  it('exportSVG 产物不含滑块特征（遮罩底/窗口底），只保留切片后内容', async () => {
+    const theme = getTheme(false)
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'line',
+          animation: { enabled: false },
+          labels: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
+          series: [{ name: '营收', data: [10, 42, 35, 60, 25, 80, 55, 30, 70, 45] }],
+          dataZoom: { enabled: true, start: 40, end: 70 },
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    expect(wrapper.vm.getDataZoomRange()).toEqual({ start: 40, end: 70 })
+    const svg = wrapper.vm.exportSVG()
+    expect(svg).toContain('<path')
+    // 滑块特征取自 renderer/dataZoom.js：遮罩 fill = 背景色+"aa"，
+    // 窗口 fill = 准线色改成 0.12 透明度；导出无需交互件，修复前会混进产物
+    expect(svg).not.toContain(`${theme.backgroundColor}aa`)
+    expect(svg).not.toContain('0.12)')
+    wrapper.unmount()
+  })
+})
+
+describe('脏数据 NaN 容错（命中/渲染）', () => {
+  // 有序日志 ctx：方法调用与样式赋值按序记账（手法同堆叠面积断段用例）
+  const orderedCtxOf = (log) => {
+    const fns = new Map()
+    return new Proxy({
+      measureText: () => ({ width: 10 }),
+      createLinearGradient: () => ({ addColorStop: () => {} }),
+      createRadialGradient: () => ({ addColorStop: () => {} }),
+    }, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop]
+        if (!fns.has(prop)) {
+          fns.set(prop, vi.fn((...args) => { log.push([prop, args[0], args[1]]) }))
+        }
+        return fns.get(prop)
+      },
+      set(obj, prop, value) {
+        log.push([`set:${String(prop)}`, value])
+        return true
+      },
+    })
+  }
+
+  it('箱线离群点含 NaN：量程过滤后悬浮仍正常命中', async () => {
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'boxplot',
+          animation: { enabled: false },
+          boxData: [
+            { label: '甲', min: 10, q1: 20, median: 30, q3: 40, max: 50, outliers: [5, NaN, 60] },
+            { label: '乙', min: 15, q1: 25, median: 35, q3: 45, max: 55 },
+          ],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    // 修复前：NaN 随 outliers 进极值，量程为 NaN，箱体几何全部画在 NaN 坐标上（图表不可见）
+    const fillRects = ctx.__calls.get('fillRect')?.mock.calls ?? []
+    expect(fillRects.length).toBeGreaterThan(0)
+    expect(fillRects.every(([x, y]) => Number.isFinite(x) && Number.isFinite(y))).toBe(true)
+    fireMove(wrapper, 250, 200)
+    await flushRender()
+    const tip = wrapper.find('.ev-chart__tooltip')
+    expect(tip.exists()).toBe(true)
+    expect(tip.find('.ev-chart__tooltip-title').text()).toContain('甲')
+    wrapper.unmount()
+  })
+
+  it('热力值含 NaN：valueRange 保持有效，单元格 fillStyle 全部落到色阶', async () => {
+    const log = []
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(orderedCtxOf(log))
+    const wrapper = mount(EvChart, {
+      props: {
+        options: {
+          type: 'heatmap',
+          animation: { enabled: false },
+          heatmapData: [
+            { x: '周一', y: '上午', value: 5 },
+            { x: '周二', y: '上午', value: NaN },
+            { x: '周三', y: '下午', value: 10 },
+          ],
+        },
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+    await flushRender()
+    const fills = log.filter((e) => e[0] === 'set:fillStyle').map((e) => e[1])
+    // 修复前：NaN 极值使配色比例失效，fillStyle 拿到 undefined（像素沿用上一帧）
+    expect(fills).not.toContain(undefined)
+    const scale = CHART_COLORS.heatmapScale
+    // 最小值 5 → 色阶首格，最大值 10 → 末格；NaN 格回落首格
+    expect(fills).toContain(scale[0])
+    expect(fills).toContain(scale[scale.length - 1])
+    wrapper.unmount()
+  })
+})
+
+describe('分面散点渲染/命中取色一致', () => {
+  const FACET_OPTIONS = () => ({
+    type: 'scatter',
+    facet: true,
+    animation: { enabled: false },
+    // 「线下」格内局部序号 0/1，全量序号 2/3——两种口径取色不同，正好区分
+    scatterData: [
+      { x: 10, y: 32, label: 'A项目', group: '线上' },
+      { x: 30, y: 48, label: 'B项目', group: '线上' },
+      { x: 50, y: 60, label: 'C项目', group: '线下' },
+      { x: 70, y: 90, label: 'D项目', group: '线下' },
+    ],
+  })
+
+  it('格内点按全量序号取色：渲染 stroke 与 tooltip 色块同色', async () => {
+    const log = []
+    const fns = new Map()
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(new Proxy({
+      measureText: () => ({ width: 10 }),
+      createLinearGradient: () => ({ addColorStop: () => {} }),
+      createRadialGradient: () => ({ addColorStop: () => {} }),
+    }, {
+      get(obj, prop) {
+        if (prop in obj) return obj[prop]
+        if (!fns.has(prop)) {
+          fns.set(prop, vi.fn((...args) => { log.push([prop, args[0], args[1]]) }))
+        }
+        return fns.get(prop)
+      },
+      set(obj, prop, value) {
+        log.push([`set:${String(prop)}`, value])
+        return true
+      },
+    }))
+    const wrapper = mount(EvChart, { props: { options: FACET_OPTIONS() }, attachTo: document.body })
+    await nextTick()
+    await flushRender()
+    // 命中坐标用渲染同一份分面几何合成：悬浮 C项目（全量序号 2）
+    const padding = getPadding(FACET_OPTIONS(), 800)
+    const plotArea = {
+      x: padding.left,
+      y: padding.top,
+      width: 800 - padding.left - padding.right,
+      height: 400 - padding.top - padding.bottom,
+    }
+    const grid = computeFacetGrids(FACET_OPTIONS().scatterData, plotArea, {})
+    const facet = grid.facets.find((f) => f.name === '线下')
+    fireMove(wrapper, facet.toX(50), facet.toY(60))
+    await flushRender()
+    const expected = getTheme(false).colors[2]
+    // 修复前渲染按格内局部序号取 colors[0]，命中侧按全量序号取 colors[2]，色块对不上
+    expect(log).toContainEqual(['set:strokeStyle', expected])
+    const tip = wrapper.find('.ev-chart__tooltip')
+    expect(tip.exists()).toBe(true)
+    const dot = tip.find('.ev-chart__tooltip-dot')
+    expect(dot.exists()).toBe(true)
+    expect(dot.attributes('style')).toContain(`background: ${expected}`)
     wrapper.unmount()
   })
 })

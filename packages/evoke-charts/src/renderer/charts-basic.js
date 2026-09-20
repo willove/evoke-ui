@@ -911,7 +911,8 @@ function renderScatterFacetChart(ctx, yRange) {
       const y = area.y + area.height - (area.y + area.height - finalY) * yFactor;
       const globalIdx = scatterData.indexOf(point);
       const size = (point.size || 5) * Math.min(yFactor * 1.5, 1);
-      const color = point.color || theme.colors[i % theme.colors.length];
+      // 取色与命中侧同一口径（全量索引）：tooltip 色块与渲染 fill 一致，同格内颜色仍多样
+      const color = point.color || theme.colors[globalIdx % theme.colors.length];
       const isHover = globalIdx === hoverIndex;
       canvasCtx.beginPath();
       canvasCtx.arc(x, y, isHover ? size + 2 : size, 0, Math.PI * 2);
