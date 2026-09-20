@@ -94,6 +94,15 @@ export function normalizeSurface(options) {
  */
 export const DEPTH_DEFAULTS = { haze: 0.3, edge: 0.06, gradient: 0.08 }
 
+/** 进场错峰占比默认值 — 0 即全部同步（柱林/扇区依次生长的幅度按条目数自动摊开） */
+export const STAGGER_DEFAULT = 0.25
+
+/** 解析 animation.stagger（0..1），缺省用 STAGGER_DEFAULT */
+export function resolveStagger(options) {
+  const cfg = options && typeof options.animation === 'object' ? options.animation : {}
+  return Number.isFinite(cfg.stagger) ? Math.max(0, Math.min(1, cfg.stagger)) : STAGGER_DEFAULT
+}
+
 /** 解析 depth 配置，缺省即 DEPTH_DEFAULTS，越界钳到 [0,1] */
 export function resolveDepth(options) {
   const cfg = options && typeof options.depth === 'object' ? options.depth : {}

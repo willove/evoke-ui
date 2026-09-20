@@ -22,7 +22,7 @@ EvChart 全部能力的字段与方法速查。示例与场景见左侧其余章
   { name: 'series', desc: '系列数组，每项 { name, data, color?, showSymbol?, lineWidth?, smooth?, chartType?, yAxis? }，data 与 labels 对齐；数据点圆点默认不绘制（showSymbol: true 显示）；smooth: true 单调插值平滑；chartType 取 bar / line 定 mixed 系列柱线形态（缺省 line）；yAxis 取 left / right 定双轴归侧（缺省 left，需配 yAxisRight）', type: 'array', default: '[]' },
   { name: 'legend', desc: '图例：{ show, position（top / bottom / left / right）, interactive, hoverEmphasis }', type: 'object', default: '{ show: true }' },
   { name: 'tooltip', desc: '提示框：{ show, trigger（hover / click）, showAllSeries, formatter }', type: 'object', default: '—' },
-  { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing }', type: 'object', default: '—' },
+  { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 1200）, easing, stagger（分段进场占比，默认 0 关闭；> 0 时数据按类目错峰长入） }；系统开启「减弱动态效果」时自动跳过进场与补间', type: 'object', default: '—' },
   { name: 'valueFormat', desc: '数值格式：{ decimals, thousandSeparator, prefix, suffix, abbreviate }（abbreviate 开启后按 万 / 亿 / K 缩写）', type: 'object', default: '—' },
   { name: 'xAxis / yAxis', desc: '轴配置：{ min, max, ticks, width, grid: { show, style: dashed } }；yAxis.width 显式定 y 轴槽宽（px，横向条形图为分类列宽），列表场景多图传同一值对齐绘图区起点', type: 'object', default: '—' },
   { name: 'yAxisRight', desc: '右值轴，配置结构同 yAxis；与 series[].yAxis 取 right 搭配开启双轴（mixed / line / area 均可）。不设时所有系列落左轴；值轴以左、右两根为限', type: 'object', default: '—' },

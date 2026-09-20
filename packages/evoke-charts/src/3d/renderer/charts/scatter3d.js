@@ -11,7 +11,8 @@
 import { addPoint, addSegment, createScene } from '../../core/scene.js'
 import { Z_HEIGHT, WORLD_HALF, buildFrame, categoryAxis, valueAxis, isMissing } from '../../frame.js'
 import { buildAxes3d, categoryTicks, valueTicks } from '../axes3d.js'
-import { normalizeSeries } from '../shared.js'
+import { normalizeSeries, resolveStagger } from '../shared.js'
+import { staggerProgress } from '../../../motion.js'
 import { gradientAt, toRgba } from '../../core/color.js'
 import { resolveChartRamp } from '../../palette.js'
 
@@ -35,6 +36,8 @@ export function buildScatter3dScene(rc) {
   const baseSize = Number.isFinite(cfg.size) ? cfg.size : 5
   const dropLines = cfg.dropLines !== false
   const sizeAttenuation = cfg.depthScale !== false
+  // 进场错峰：三元组模式按点序、类目模式按类目序依次升起
+  const stagger = resolveStagger(options)
 
   // ── 色带（第四维编码）──
   let ramp = null
@@ -76,11 +79,13 @@ export function buildScatter3dScene(rc) {
     }
     triples.forEach((t, idx) => {
       const s = t.s
+      const p = staggerProgress(progress, idx, triples.length, stagger)
       const zNorm = zDomain && zDomain[1] > zDomain[0]
         ? (t.v[2] - zDomain[0]) / (zDomain[1] - zDomain[0])
         : 0.5
       points.push({
-        world: [frame.x.scale.map(t.v[0]), frame.y.scale.map(t.v[1]), frame.z.scale.map(t.v[2]) * progress],
+        prog: p,
+        world: [frame.x.scale.map(t.v[0]), frame.y.scale.map(t.v[1]), frame.z.scale.map(t.v[2]) * p],
         color: colorScaleOn ? gradientAt(ramp, zNorm) : s ? s.color : theme.colors[0],
         size: baseSize,
         meta: {
@@ -123,10 +128,12 @@ export function buildScatter3dScene(rc) {
       for (let i = 0; i < frame.x.scale.count; i++) {
         const v = Number(s.data[i])
         if (isMissing(v)) continue
+        const p = staggerProgress(progress, i, frame.x.scale.count, stagger)
         const zNorm = zDomain && zDomain[1] > zDomain[0] ? (v - zDomain[0]) / (zDomain[1] - zDomain[0]) : 0.5
         const color = colorScaleOn ? gradientAt(ramp, zNorm) : s.color
         points.push({
-          world: [frame.x.scale.center(i), y, frame.z.scale.map(v) * progress],
+          prog: p,
+          world: [frame.x.scale.center(i), y, frame.z.scale.map(v) * p],
           color,
           size: baseSize,
           meta: {
@@ -149,7 +156,7 @@ export function buildScatter3dScene(rc) {
   for (const p of points) {
     if (dropLines) {
       addSegment(scene, p.world, [p.world[0], p.world[1], 0.0015], {
-        color: toRgba(p.color, 0.22),
+        color: toRgba(p.color, 0.22 * p.prog),
         layer: 'back',
         lineWidth: 1,
         dash: [2, 4],
@@ -163,7 +170,7 @@ export function buildScatter3dScene(rc) {
       depthScale: sizeAttenuation,
       stroke: theme.isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.85)',
       strokeWidth: 1,
-      alpha: Math.min(1, 0.35 + progress * 0.65),
+      alpha: Math.min(1, 0.35 + p.prog * 0.65),
       meta: p.meta,
     })
   }

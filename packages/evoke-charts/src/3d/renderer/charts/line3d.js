@@ -8,7 +8,8 @@
 import { addFace, addLine, addPoint, addSegment, createScene } from '../../core/scene.js'
 import { Z_HEIGHT, WORLD_HALF, buildFrame, categoryAxis, valueAxis, isMissing } from '../../frame.js'
 import { buildAxes3d, categoryTicks, valueTicks } from '../axes3d.js'
-import { normalizeSeries } from '../shared.js'
+import { normalizeSeries, resolveStagger } from '../shared.js'
+import { staggerProgress } from '../../../motion.js'
 import { toRgba } from '../../core/color.js'
 
 export function buildLine3dScene(rc) {
@@ -42,6 +43,9 @@ export function buildLine3dScene(rc) {
   const lineWidth = Number.isFinite(cfg.width) ? cfg.width : 2.4
   const pointRadius = Number.isFinite(cfg.pointRadius) ? cfg.pointRadius : 3.6
   const showPoints = cfg.points !== false
+  // 进场错峰：沿类目序从左到右推进，折线/投影/落点一并跟上
+  const stagger = resolveStagger(options)
+  const cols = frame.x.scale.count
 
   series.forEach((s) => {
     const y = frame.y.scale.center(s.__index)
@@ -49,7 +53,8 @@ export function buildLine3dScene(rc) {
     for (let i = 0; i < frame.x.scale.count; i++) {
       const v = Number(s.data[i])
       if (isMissing(v)) continue
-      pts.push({ i, v, world: [frame.x.scale.center(i), y, frame.z.scale.map(v) * progress] })
+      const p = staggerProgress(progress, i, cols, stagger)
+      pts.push({ i, v, prog: p, world: [frame.x.scale.center(i), y, frame.z.scale.map(v) * p] })
     }
     if (!pts.length) return
 
@@ -57,7 +62,7 @@ export function buildLine3dScene(rc) {
     if (dropLines) {
       for (const p of pts) {
         addSegment(scene, p.world, [p.world[0], p.world[1], 0.0015], {
-          color: toRgba(s.color, 0.28),
+          color: toRgba(s.color, 0.28 * p.prog),
           layer: 'back',
           lineWidth: 1,
           dash: [3, 4],
@@ -106,7 +111,7 @@ export function buildLine3dScene(rc) {
           pickRadius: Math.max(9, pointRadius * 2.4),
           stroke: theme.isDark ? 'rgba(0,0,0,0.35)' : '#ffffff',
           strokeWidth: 1.2,
-          alpha: Math.min(1, 0.3 + progress),
+          alpha: Math.min(1, 0.3 + p.prog),
           meta: {
             key: `line:${s.__index}:${p.i}`,
             type: 'line3d',

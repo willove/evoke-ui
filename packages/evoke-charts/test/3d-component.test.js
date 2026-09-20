@@ -283,6 +283,88 @@ describe('EvChart3d 指针交互', () => {
   })
 })
 
+describe('EvChart3d 动画（补间 / 惯性 / 减动效）', () => {
+  /** 指定类目的柱顶世界高度 */
+  const barTopZ = (wrapper, dataIndex) => {
+    const result = wrapper.vm.getProjected()
+    let top = 0
+    for (const f of result.projected.items) {
+      if (f.visible === false || f.kind !== 'face' || !f.meta || f.meta.dataIndex !== dataIndex) continue
+      for (const p of f.points) top = Math.max(top, p[2])
+    }
+    return top
+  }
+  const dataOf = (v) => ({ ...baseOptions(), series: [{ name: '华东', data: v }, { name: '华南', data: [90, 60, 130] }] })
+
+  it('数据更新走补间：同结构只改数值时从旧值长到新值，不重放进场', async () => {
+    const wrapper = await mountChart({ ...baseOptions(), animation: { duration: 80 } })
+    await new Promise((r) => setTimeout(r, 220)) // 等进场动画走完
+    const readyBefore = wrapper.emitted('ready').length
+    const fullTop = barTopZ(wrapper, 1) // 200 → 满高 ≈ 0.62
+    wrapper.setProps({ options: { ...dataOf([200, 400, 80]), animation: { duration: 400 } } })
+    await new Promise((r) => setTimeout(r, 60)) // 补间中
+    const midTop = barTopZ(wrapper, 1)
+    // 从旧值附近往上走：重放进场会从 0 重新长（该时刻只有约三成高）
+    expect(midTop).toBeGreaterThan(fullTop * 0.5)
+    expect(wrapper.emitted('ready').length).toBe(readyBefore) // 补间不派发 ready
+    await new Promise((r) => setTimeout(r, 600))
+    expect(barTopZ(wrapper, 1)).toBeCloseTo(0.62, 1) // 到达新值（400 → 满高）
+    expect(wrapper.emitted('animation-end').length).toBeGreaterThan(0)
+    wrapper.unmount()
+  })
+
+  it('结构变化回退进场动画（重新派发 ready）', async () => {
+    const wrapper = await mountChart({ ...baseOptions(), animation: { duration: 60 } })
+    await new Promise((r) => setTimeout(r, 180))
+    expect(wrapper.emitted('ready')).toHaveLength(1)
+    wrapper.setProps({ options: { ...baseOptions(), labels: ['一月', '二月', '三月', '四月'], series: [{ name: '华东', data: [120, 200, 150, 80] }], animation: { duration: 60 } } })
+    await new Promise((r) => setTimeout(r, 200))
+    expect(wrapper.emitted('ready')).toHaveLength(2)
+    wrapper.unmount()
+  })
+
+  it('拖拽惯性：松手后按 damping 继续滑行，damping = 0 时立即停住', async () => {
+    const wrapper = await mountChart({ ...baseOptions(), camera: { damping: 0.25 } })
+    const canvas = wrapper.find('canvas').element
+    firePointer(canvas, 'pointerdown', 300, 200)
+    firePointer(canvas, 'pointermove', 380, 200)
+    firePointer(canvas, 'pointermove', 460, 200)
+    firePointer(canvas, 'pointerup', 460, 200)
+    const yaw0 = wrapper.vm.getCamera().yaw
+    await new Promise((r) => setTimeout(r, 140))
+    expect(Math.abs(wrapper.vm.getCamera().yaw - yaw0)).toBeGreaterThan(0.5)
+    wrapper.unmount()
+
+    const still = await mountChart({ ...baseOptions(), camera: { damping: 0 } })
+    const canvas2 = still.find('canvas').element
+    firePointer(canvas2, 'pointerdown', 300, 200)
+    firePointer(canvas2, 'pointermove', 380, 200)
+    firePointer(canvas2, 'pointermove', 460, 200)
+    firePointer(canvas2, 'pointerup', 460, 200)
+    const yaw1 = still.vm.getCamera().yaw
+    await new Promise((r) => setTimeout(r, 140))
+    expect(still.vm.getCamera().yaw).toBe(yaw1)
+    still.unmount()
+  })
+
+  it('prefers-reduced-motion：跳过进场动画直接出终态', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+    const wrapper = await mountChart({ ...baseOptions(), animation: { duration: 600 } })
+    await flushRender()
+    expect(barTopZ(wrapper, 1)).toBeGreaterThan(0.5) // 满高（200 → 0.62）
+    expect(wrapper.emitted('ready')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('常规进场：同一时刻仍在生长，未到终态', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    const wrapper = await mountChart({ ...baseOptions(), animation: { duration: 600 } })
+    await flushRender()
+    expect(barTopZ(wrapper, 1)).toBeLessThan(0.4)
+    wrapper.unmount()
+  })
+})
+
 describe('EvChart3d 键盘与实例方法', () => {
   it('方向键环绕、加减缩放、Home 复位', async () => {
     const wrapper = await mountChart({ ...baseOptions(), camera: { yaw: 0, pitch: 30 } })

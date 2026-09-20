@@ -515,6 +515,48 @@ describe('纵深增强', () => {
   })
 })
 
+describe('进场错峰', () => {
+  /** 每个类目的柱顶世界高度（取该类目所有实心面的最大 z） */
+  const barTops = (result) => {
+    const byCat = new Map()
+    for (const f of result.projected.items) {
+      if (f.visible === false || f.kind !== 'face' || !f.solid || !f.meta) continue
+      const z = Math.max(...f.points.map((p) => p[2]))
+      byCat.set(f.meta.dataIndex, Math.max(byCat.get(f.meta.dataIndex) ?? 0, z))
+    }
+    return [...byCat.entries()].sort((a, b) => a[0] - b[0]).map(([, z]) => z)
+  }
+  // 等值数据（各条同高）：错峰与否只体现在高度上，不受数值差干扰
+  const FLAT = () => ({ type: 'bar3d', labels: ['一', '二', '三', '四'], series: [{ name: '平整', data: [100, 100, 100, 100] }] })
+  const at = (stagger) => render3d(fakeCanvas(stubCtx()), renderParams({
+    options: { ...FLAT(), animation: { stagger } },
+    progress: 0.5,
+  }))
+
+  it('错峰生效：同一 progress 下先出场的类目更高', () => {
+    const tops = barTops(at(0.6))
+    expect(tops).toHaveLength(4)
+    expect(tops[0]).toBeGreaterThan(tops[3])
+    expect(tops[0]).toBeGreaterThanOrEqual(tops[1])
+    expect(tops[1]).toBeGreaterThanOrEqual(tops[2])
+  })
+
+  it('stagger = 0：全部同步（等价无错峰）', () => {
+    const tops = barTops(at(0))
+    expect(new Set(tops.map((z) => z.toFixed(6))).size).toBe(1)
+  })
+
+  it('错峰在终点收齐：progress = 1 时各条目同高', () => {
+    const result = render3d(fakeCanvas(stubCtx()), renderParams({
+      options: { ...FLAT(), animation: { stagger: 0.6 } },
+      progress: 1,
+    }))
+    const tops = barTops(result)
+    const full = tops[0]
+    expect(tops[3]).toBeCloseTo(full, 6)
+  })
+})
+
 describe('render3d 健壮性', () => {
   const cases = [
     ['空 labels + 空系列', { type: 'bar3d', labels: [], series: [] }],

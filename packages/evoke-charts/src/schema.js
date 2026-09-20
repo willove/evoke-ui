@@ -102,7 +102,8 @@ export const chartOptionsSchema = {
       properties: {
         enabled: { type: "boolean" },
         duration: { type: "number" },
-        easing: { type: "string" }
+        easing: { type: "string" },
+        stagger: { type: "number" }
       }
     },
     xAxis: {

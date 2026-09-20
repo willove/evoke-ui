@@ -91,8 +91,11 @@ import {
   watch,
 } from 'vue'
 import { DEFAULT_CAMERA, autoRotateBy, cameraPayload, orbitBy, panBy, resolveCamera, wheelZoomFactor, zoomBy } from './core/camera.js'
+import { captureChart3dData, interpolateChart3dOptions, sameChart3dShape } from './core/tween.js'
+import { prefersReducedMotion } from '../motion.js'
 import { render3d } from './renderer/index.js'
 import { hitLegend } from './renderer/legend3d.js'
+import { resolveStagger } from './renderer/shared.js'
 import { getTheme, resolveEasing, resolveI18n } from './types.js'
 import { resolveChartPalette } from './palette.js'
 import { formatNumber } from './core/scale3d.js'
@@ -212,6 +215,18 @@ const pointers = new Map()
 let pinchDist = 0
 /** 拖拽判定阈值（px）：阈值内的位移算点击手抖，既不转相机也不吞掉点选 */
 const DRAG_THRESHOLD = 4
+/** 数据补间：结构不变、仅数值变化时逐帧插值，避免整图重放进场 */
+let tweenState = null
+let tweenRafId = 0
+/** 最近一次出图的数据快照 —— 下一轮更新据此判断能否补间 */
+let lastData = null
+/** 拖拽惯性：松手时记录的速度（px/ms）与拖拽模式，按 damping 衰减滑行 */
+let inertiaRafId = 0
+let inertiaVel = null
+let inertiaPan = false
+const INERTIA_MIN_SPEED = 0.15
+/** 甩动速度上限（px/ms）：按 damping 0.14 约等于一次 130px 的拖拽余量，再快也不至于甩飞 */
+const INERTIA_MAX_SPEED = 1.2
 
 function scheduleRender(delay = 16) {
   if (renderTimer) clearTimeout(renderTimer)
@@ -238,16 +253,18 @@ function sizeCanvas() {
   return { cssW, cssH }
 }
 
-function render() {
+function render(optionsOverride) {
   const canvas = canvasRef.value
   if (!canvas || isEmpty.value || internalError.value) return
+  // 补间进行中时，任何重绘都出中间态，避免与 autoRotate 等渲染路径打架
+  const options = optionsOverride || (tweenState && tweenState.options) || props.options
   try {
     const size = sizeCanvas()
     if (!size) return
     if (!cameraState.value) cameraState.value = currentCamera()
     const autoFit = !userTouchedCamera
     const result = render3d(canvas, {
-      options: props.options,
+      options,
       dpr: dpr.value,
       progress: animState ? animState.progress : 1,
       camera: cameraState.value,
@@ -261,15 +278,110 @@ function render() {
     lastResult.value = result
     overlayInfo.viewport = result.viewport
     overlayInfo.camera = result.camera
+    // 记录在屏数据快照：下一轮数据更新据此判断能否补间
+    if (!optionsOverride && !tweenState) lastData = captureChart3dData(props.options)
   } catch (err) {
     internalError.value = '渲染失败'
     if (typeof console !== 'undefined') console.error('[EvChart3d] render error:', err)
   }
 }
 
+function animationConfig() {
+  return props.options.animation && typeof props.options.animation === 'object' ? props.options.animation : {}
+}
+
+// ── 数据补间（结构不变、仅数值变化 → 过渡而非重放进场）──
+function stopTween() {
+  if (tweenRafId) {
+    cancelAnimationFrame(tweenRafId)
+    tweenRafId = 0
+  }
+  tweenState = null
+}
+
+/** 返回 true 表示这一轮更新由补间接管 */
+function startTweenIfNeeded() {
+  const cfg = animationConfig()
+  if (cfg.enabled === false || prefersReducedMotion()) return false
+  if (!lastData) return false
+  const next = captureChart3dData(props.options)
+  if (!sameChart3dShape(lastData, next)) return false
+  const from = lastData
+  const duration = Number.isFinite(cfg.duration) ? Math.max(0, cfg.duration) : 600
+  const easing = resolveEasing(cfg.easing)
+  const stagger = resolveStagger(props.options)
+  const startTime = Date.now()
+  tweenState = { options: interpolateChart3dOptions(from, props.options, 0, stagger) || props.options }
+  const step = () => {
+    if (!tweenState) return
+    const t = Math.min(1, (Date.now() - startTime) / Math.max(1, duration))
+    tweenState.options = interpolateChart3dOptions(from, props.options, easing(t), stagger) || props.options
+    render(tweenState.options)
+    lastData = captureChart3dData(tweenState.options)
+    if (t < 1) {
+      tweenRafId = requestAnimationFrame(step)
+    } else {
+      tweenRafId = 0
+      tweenState = null
+      lastData = captureChart3dData(props.options)
+      emit('animation-end')
+    }
+  }
+  tweenRafId = requestAnimationFrame(step)
+  return true
+}
+
+// ── 拖拽惯性（damping 落地：松手后按阻尼衰减继续滑行）──
+function stopInertia() {
+  if (inertiaRafId) {
+    cancelAnimationFrame(inertiaRafId)
+    inertiaRafId = 0
+  }
+  inertiaVel = null
+}
+
+function startInertia() {
+  const cam = cameraState.value
+  const vel = inertiaVel
+  const panMode = inertiaPan
+  inertiaVel = null
+  const damping = cam && Number.isFinite(cam.damping) ? cam.damping : 0.14
+  if (!cam || !vel || prefersReducedMotion() || !(damping > 0) || Math.hypot(vel[0], vel[1]) < INERTIA_MIN_SPEED) {
+    ensureAutoRotate()
+    return
+  }
+  let [vx, vy] = vel
+  let lastTs = 0
+  const step = (ts) => {
+    const dt = lastTs ? Math.min(32, ts - lastTs) : 16
+    lastTs = ts
+    // 按 dt/16 归一衰减：滑行距离只由初速与阻尼决定，不随帧率变化
+    const decay = Math.pow(1 - damping, dt / 16)
+    vx *= decay
+    vy *= decay
+    if (Math.hypot(vx, vy) < 0.02) {
+      inertiaRafId = 0
+      if (cameraState.value) emit('camera-change', cameraPayload(cameraState.value))
+      ensureAutoRotate()
+      return
+    }
+    const viewport = lastResult.value ? lastResult.value.viewport : null
+    if (cameraState.value) {
+      const next = panMode && viewport
+        ? panBy(cameraState.value, vx * dt, vy * dt, viewport)
+        : orbitBy(cameraState.value, vx * dt, vy * dt, viewport)
+      applyCamera(next, { emitEvent: false })
+    }
+    inertiaRafId = requestAnimationFrame(step)
+  }
+  inertiaRafId = requestAnimationFrame(step)
+}
+
 function startEnterAnimation() {
-  const cfg = props.options.animation && typeof props.options.animation === 'object' ? props.options.animation : {}
-  if (cfg.enabled === false) {
+  stopTween()
+  const cfg = animationConfig()
+  // 系统「减弱动态效果」时直接出终态：不做进场动画
+  if (cfg.enabled === false || prefersReducedMotion()) {
     animState = null
     render()
     emit('ready')
@@ -332,6 +444,7 @@ function applyCamera(next, options = {}) {
 }
 
 function resetCamera(options = {}) {
+  stopInertia()
   const cfg = props.options.camera && typeof props.options.camera === 'object' ? props.options.camera : {}
   // 未显式配置 distance 时保留 autoFit：复位回到的是开场构图，而不是「推远后的默认距离」
   userTouchedCamera = options.keepAutoFit !== true && Number.isFinite(cfg.distance)
@@ -474,6 +587,7 @@ function handlePointerDown(evt) {
   const p = canvasPoint(evt)
   if (!p) return
   stopAutoRotate()
+  stopInertia()
   try {
     canvasRef.value.setPointerCapture(evt.pointerId)
   } catch {
@@ -487,6 +601,9 @@ function handlePointerDown(evt) {
     startY: p.y,
     moved: false,
     pan: !!evt.shiftKey || props.options.interaction?.pan === true,
+    vx: 0,
+    vy: 0,
+    lastTs: 0,
   }
 }
 
@@ -518,6 +635,14 @@ function handlePointerMove(evt) {
       dragState.moved = true
       dragState.x = p.x
       dragState.y = p.y
+      // 速度用指数平滑：最后一帧的抖动不该决定甩动方向与幅度
+      const ts = Number.isFinite(evt.timeStamp) ? evt.timeStamp : Date.now()
+      const dt = Math.max(1, ts - (dragState.lastTs || ts - 16))
+      dragState.lastTs = ts
+      const vx = (dx / dt) * 0.75 + dragState.vx * 0.25
+      const vy = (dy / dt) * 0.75 + dragState.vy * 0.25
+      dragState.vx = Math.max(-INERTIA_MAX_SPEED, Math.min(INERTIA_MAX_SPEED, vx))
+      dragState.vy = Math.max(-INERTIA_MAX_SPEED, Math.min(INERTIA_MAX_SPEED, vy))
       userTouchedCamera = true
       const viewport = lastResult.value ? lastResult.value.viewport : null
       const next = dragState.pan && viewport
@@ -548,6 +673,8 @@ function handlePointerUp(evt) {
   if (pointers.size < 2) pinchDist = 0
   const wasDrag = dragState && dragState.id === evt.pointerId
   const hadMoved = wasDrag && dragState.moved
+  const vel = wasDrag ? [dragState.vx, dragState.vy] : null
+  const panMode = wasDrag ? dragState.pan : false
   dragState = null
 
   // 拖拽过程中抑制 camera-change（避免事件风暴），结束时补发一次终态
@@ -559,6 +686,13 @@ function handlePointerUp(evt) {
     // 视为点选：命中数据则派发 click，命中图例则切换显隐
     const p = canvasPoint(evt)
     if (p) handleClickAt(p)
+  }
+  // 松手速度够就交给惯性滑行（内部会在无惯性时接回自动旋转）
+  if (hadMoved && vel) {
+    inertiaVel = vel
+    inertiaPan = panMode
+    startInertia()
+    return
   }
   ensureAutoRotate()
 }
@@ -602,6 +736,7 @@ function handleWheel(evt) {
   if (interaction.zoom === false) return
   evt.preventDefault()
   if (!cameraState.value) return
+  stopInertia()
   userTouchedCamera = true
   applyCamera(zoomBy(cameraState.value, wheelZoomFactor(evt.deltaY)), { emitEvent: false })
 }
@@ -611,6 +746,7 @@ function handleKeydown(evt) {
   if (isEmpty.value || internalError.value) return
   const cam = cameraState.value
   if (!cam) return
+  stopInertia()
   const step = 8
   let handled = true
   switch (evt.key) {
@@ -724,6 +860,8 @@ watch(() => props.options, () => {
   userTouchedCamera = false
   hoverKey.value = null
   emit('data-update', { from: 'options', to: 'options' })
+  // 结构没变、只是数值变了 → 补间过渡；结构变了才重放进场
+  if (startTweenIfNeeded()) return
   scheduleRender(16)
   startEnterAnimation()
 }, { deep: true })
@@ -751,6 +889,8 @@ function toggleSeries(name) {
 
 function destroy() {
   stopAutoRotate()
+  stopInertia()
+  stopTween()
   if (animRafId) {
     cancelAnimationFrame(animRafId)
     animRafId = 0
@@ -818,6 +958,7 @@ defineExpose({
   },
   getCamera: () => (cameraState.value ? cameraPayload(cameraState.value) : null),
   setCamera(next) {
+    stopInertia()
     userTouchedCamera = true
     applyCamera(resolveCamera({ ...currentCamera(), ...(next || {}) }))
   },

@@ -32,7 +32,7 @@
   { name: 'series', desc: '系列数组，每项 { name, data, color? }；data 与 labels 对齐（散点三元组模式下 data 项为 [x, y, z]）', type: 'array', default: '[]' },
   { name: 'legend', desc: '图例：{ show, position（top / bottom）, align（start / center / end）, itemGap }', type: 'object', default: '{ show: true }' },
   { name: 'tooltip', desc: '提示框：{ show, formatter, valueFormatter }；默认模板已转义，formatter 返回值原样输出', type: 'object', default: '{ show: true }' },
-  { name: 'animation', desc: '进场动画：{ enabled, duration（ms，默认 600）, easing }', type: 'object', default: '—' },
+  { name: 'animation', desc: '动画：{ enabled, duration（ms，默认 600）, easing, stagger（分段进场占比，默认 0.25；0 即全部同步） }；结构不变的数据更新走补间过渡而非重放进场；系统开启「减弱动态效果」时自动跳过进场/补间/惯性', type: 'object', default: '{ stagger: 0.25 }' },
   { name: 'camera', desc: '轨道相机：{ yaw, pitch, distance, fov, target, minPitch, maxPitch, minDistance, maxDistance, autoRotate, autoRotateSpeed, damping }，详见[相机与交互](/3d/camera)', type: 'object', default: '—' },
   { name: 'lighting', desc: '光照：{ ambient（默认 0.56）, intensity（默认 0.88）, follow（默认 true 随相机）, direction（固定世界方向 [x,y,z]）, flat（关闭着色） }', type: 'object', default: '—' },
   { name: 'depth', desc: '纵深增强（0 即关闭）：{ haze（远景向背景色雾化，默认 0.3）, edge（实体面描边，默认 0.06）, gradient（面内渐变假 AO，默认 0.08） }', type: 'object', default: '{ haze: 0.3, edge: 0.06, gradient: 0.08 }' },

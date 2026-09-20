@@ -83,6 +83,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, h } from "vue";
 import { INTERACTION, applyWheelZoom, resolveCursor, pickTooltipRows } from "./interactions";
 import { maxOf, minOf } from "./extent";
+import { prefersReducedMotion, staggerProgress } from "./motion";
 import {
   renderChart,
   createAnimation,
@@ -530,10 +531,20 @@ function render(animate = true, animOverride = null) {
       options: props.options,
     };
     const animCfg = animOverride || props.options.animation;
-    const animEnabled = animate && animCfg?.enabled !== false;
+    // 系统「减弱动态效果」：跳过进场动画，直接出终态
+    const animEnabled = animate && animCfg?.enabled !== false && !prefersReducedMotion();
+    const stagger = staggerOf(effectiveOptions.value);
     animationState = createAnimation(animCfg);
     animationState.isAnimating = animEnabled;
-    if (animEnabled) {
+    if (animEnabled && stagger > 0 && hasInterpolatable(effectiveOptions.value)) {
+      // 分段进场：数据从零按类目错峰长到目标值，取代统一 progress 的整体成长
+      isEnterAnimating = true;
+      runDataTween(zeroSnapshot(effectiveOptions.value), animCfg, stagger, () => {
+        isEnterAnimating = false;
+        emit("animation-end");
+        emit("ready");
+      });
+    } else if (animEnabled) {
       isEnterAnimating = true;
       animateFrame();
     } else {
@@ -605,14 +616,23 @@ function stopFocusAnimation() {
   }
 }
 function snapshotSeriesData(opt) {
-  const map = /* @__PURE__ */ new Map();
+  const series = /* @__PURE__ */ new Map();
   (opt.series || []).forEach(
-    (s) => map.set(
+    (s) => series.set(
       s.name,
       (s.data || []).map((v) => isMissingValue(v) ? 0 : v)
     )
   );
-  return map;
+  const pieData = /* @__PURE__ */ new Map();
+  (opt.pieData || []).forEach(
+    (d) => pieData.set(d && d.name, Number.isFinite(Number(d && d.value)) ? Number(d.value) : 0)
+  );
+  return { series, pieData };
+}
+/** 有没有可插值的数值面（series / pieData 任一），都没有就不该走数据级补间 */
+function hasInterpolatable(opt) {
+  if ((opt.series || []).some((s) => Array.isArray(s.data) && s.data.length)) return true;
+  return (opt.pieData || []).length > 0;
 }
 function sameStructure(a, b) {
   const la = a.labels || [];
@@ -620,28 +640,50 @@ function sameStructure(a, b) {
   if (la.length !== lb.length || la.some((v, i) => v !== lb[i])) return false;
   const sa = (a.series || []).map((s) => s.name).join("|");
   const sb = (b.series || []).map((s) => s.name).join("|");
-  return sa === sb;
+  if (sa !== sb) return false;
+  const pa = (a.pieData || []).map((d) => d && d.name).join("|");
+  const pb = (b.pieData || []).map((d) => d && d.name).join("|");
+  return pa === pb;
 }
-function interpolateOptions(prev, next, t) {
+function interpolateOptions(prev, next, t, stagger = 0) {
   const offset = next.__sliceStart || 0;
+  const cols = Math.max(1, (next.labels || []).length);
   const series = (next.series || []).map((s) => {
-    const old = prev.get(s.name);
+    const old = prev.series.get(s.name);
     if (!old) return s;
     const data = (s.data || []).map((v, i) => {
       if (isMissingValue(v)) return v;
       const from = old[i + offset] ?? 0;
-      return from + (v - from) * t;
+      const ti = staggerProgress(t, i, cols, stagger);
+      return from + (v - from) * ti;
     });
     return { ...s, data };
   });
-  return { ...next, series };
+  const out = { ...next, series };
+  // 饼族（pie / doughnut / rose）的数值走在 pieData 上，逐项插值才能随进度长出
+  if (Array.isArray(next.pieData)) {
+    const sliceCount = Math.max(1, next.pieData.length);
+    out.pieData = next.pieData.map((d, i) => {
+      const to = Number(d && d.value);
+      if (!Number.isFinite(to)) return d;
+      const from = prev.pieData.get(d && d.name) ?? 0;
+      const ti = staggerProgress(t, i, sliceCount, stagger);
+      return { ...d, value: from + (to - from) * ti };
+    });
+  }
+  return out;
 }
 function dataSignature(opt) {
-  const total = (opt.series || []).reduce(
+  const seriesTotal = (opt.series || []).reduce(
     (sum, s) => sum + (s.data || []).reduce((acc, v) => acc + (isMissingValue(v) ? 0 : v), 0),
     0
   );
-  return `${(opt.series || []).length}\u7CFB\u5217/${(opt.labels || []).length}\u7C7B\u76EE/\u03A3${Math.round(total)}`;
+  const pieTotal = (opt.pieData || []).reduce(
+    (sum, d) => sum + (Number.isFinite(Number(d && d.value)) ? Math.abs(Number(d.value)) : 0),
+    0
+  );
+  const pieCount = (opt.pieData || []).length;
+  return `${(opt.series || []).length}\u7CFB\u5217/${pieCount}\u997C\u9879/${(opt.labels || []).length}\u7C7B\u76EE/\u03A3${Math.round(seriesTotal + pieTotal)}`;
 }
 function stopTweenAnimation() {
   if (tweenFrameId !== null) {
@@ -650,30 +692,29 @@ function stopTweenAnimation() {
   }
   tweenState = null;
 }
-function startTweenIfNeeded(prevOptions) {
-  const nextOptions = props.options;
-  if (nextOptions.animation?.enabled === false) return false;
-  if (!sameStructure(prevOptions, nextOptions)) return false;
-  const prevSnapshot = snapshotSeriesData(prevOptions);
-  const changed = (nextOptions.series || []).some((s) => {
-    const old = prevSnapshot.get(s.name);
-    if (!old) return false;
-    return (s.data || []).some((v, i) => (isMissingValue(v) ? 0 : v) !== (old[i] ?? 0));
-  });
-  if (!changed) return false;
+/** 错峰占比（0 = 关闭，沿用统一 progress 的进场动画） */
+function staggerOf(opt) {
+  const v = opt && opt.animation ? opt.animation.stagger : undefined;
+  return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0;
+}
+/** 全零数据快照 — 分段进场的起点（逐条长到目标值） */
+function zeroSnapshot(opt) {
+  const series = new Map();
+  (opt.series || []).forEach((s) => series.set(s.name, (s.data || []).map(() => 0)));
+  const pieData = new Map();
+  (opt.pieData || []).forEach((d) => pieData.set(d && d.name, 0));
+  return { series, pieData };
+}
+/** 数据补间主循环 — 更新补间与分段进场共用，按类目错峰插值后以 progress = 1 重绘 */
+function runDataTween(fromSnapshot, cfg, stagger, onDone) {
   stopAnimation();
   stopHoverAnimation();
-  isEnterAnimating = false;
   stopTweenAnimation();
-  const canvas = canvasRef.value;
-  if (!canvas) return false;
-  tweenState = createAnimation(nextOptions.animation);
-  const fromSig = dataSignature(prevOptions);
-  const toSig = dataSignature(nextOptions);
+  tweenState = createAnimation(cfg);
   function frame() {
     if (!tweenState) return;
     const isAnimating = updateAnimation(tweenState);
-    const tweened = interpolateOptions(prevSnapshot, effectiveOptions.value, tweenState.progress);
+    const tweened = interpolateOptions(fromSnapshot, effectiveOptions.value, tweenState.progress, stagger);
     try {
       renderChart(canvasRef.value, buildRenderParams(1, tweened));
     } catch (err) {
@@ -685,12 +726,37 @@ function startTweenIfNeeded(prevOptions) {
     } else {
       tweenFrameId = null;
       tweenState = null;
-      emit("data-update", { from: fromSig, to: toSig });
-      emit("animation-end");
+      if (onDone) onDone();
     }
   }
   tweenFrameId = requestAnimationFrame(frame);
   return true;
+}
+function startTweenIfNeeded(prevOptions) {
+  const nextOptions = props.options;
+  if (nextOptions.animation?.enabled === false) return false;
+  // 系统「减弱动态效果」：直接出终态，不补间
+  if (prefersReducedMotion()) return false;
+  if (!hasInterpolatable(nextOptions) || !sameStructure(prevOptions, nextOptions)) return false;
+  const prevSnapshot = snapshotSeriesData(prevOptions);
+  const seriesChanged = (nextOptions.series || []).some((s) => {
+    const old = prevSnapshot.series.get(s.name);
+    if (!old) return false;
+    return (s.data || []).some((v, i) => (isMissingValue(v) ? 0 : v) !== (old[i] ?? 0));
+  });
+  const pieChanged = (nextOptions.pieData || []).some((d) => {
+    const old = prevSnapshot.pieData.get(d && d.name);
+    const v = Number(d && d.value);
+    return old !== undefined && Number.isFinite(v) && v !== old;
+  });
+  if (!seriesChanged && !pieChanged) return false;
+  isEnterAnimating = false;
+  const fromSig = dataSignature(prevOptions);
+  const toSig = dataSignature(nextOptions);
+  return runDataTween(prevSnapshot, nextOptions.animation, staggerOf(nextOptions), () => {
+    emit("data-update", { from: fromSig, to: toSig });
+    emit("animation-end");
+  });
 }
 function handleRenderError(err) {
   const msg = err instanceof Error ? err.message : "Chart render error";

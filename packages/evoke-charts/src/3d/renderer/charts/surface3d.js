@@ -12,7 +12,8 @@
 import { addFace, addLine, createScene } from '../../core/scene.js'
 import { Z_HEIGHT, WORLD_HALF, buildFrame, valueAxis } from '../../frame.js'
 import { buildAxes3d, valueTicks } from '../axes3d.js'
-import { normalizeSurface } from '../shared.js'
+import { normalizeSurface, resolveStagger } from '../shared.js'
+import { staggerProgress } from '../../../motion.js'
 import { gradientAt } from '../../core/color.js'
 import { resolveChartRamp } from '../../palette.js'
 
@@ -70,11 +71,13 @@ export function buildSurface3dScene(rc) {
 
   const xWorld = (i) => frame.x.scale.map(data.xValues[i])
   const yWorld = (j) => frame.y.scale.map(data.yValues[j])
-  const zWorld = (v) => frame.z.scale.map(Number(v)) * progress
+  // 进场错峰：高度场按行依次抬升（沿 y 方向铺开）
+  const stagger = resolveStagger(options)
 
   // 顶点网格（抽稀后）
   const grid = []
-  for (const j of rowIdx) {
+  rowIdx.forEach((j, rj) => {
+    const p = staggerProgress(progress, rj, rowIdx.length, stagger)
     const line = []
     for (const i of colIdx) {
       const raw = data.matrix[j] ? data.matrix[j][i] : undefined
@@ -82,12 +85,12 @@ export function buildSurface3dScene(rc) {
       line.push({
         x: xWorld(i),
         y: yWorld(j),
-        z: Number.isFinite(v) ? zWorld(v) : 0,
+        z: Number.isFinite(v) ? frame.z.scale.map(v) * p : 0,
         value: Number.isFinite(v) ? v : null,
       })
     }
     grid.push(line)
-  }
+  })
 
   const norm = (v) => (zMax > zMin ? (v - zMin) / (zMax - zMin) : 0.5)
 

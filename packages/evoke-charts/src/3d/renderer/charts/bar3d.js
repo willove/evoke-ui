@@ -11,7 +11,8 @@ import { boxFaces } from '../../core/camera.js'
 import { addBox, addFace, createScene } from '../../core/scene.js'
 import { Z_HEIGHT, WORLD_HALF, buildFrame, categoryAxis, valueAxis, isMissing } from '../../frame.js'
 import { buildAxes3d, categoryTicks, valueTicks } from '../axes3d.js'
-import { normalizeSeries } from '../shared.js'
+import { normalizeSeries, resolveStagger } from '../shared.js'
+import { staggerProgress } from '../../../motion.js'
 
 function clamp01(v) {
   return Number.isFinite(v) ? Math.max(0.02, Math.min(1, v)) : 0.62
@@ -53,6 +54,9 @@ export function buildBar3dScene(rc) {
   const shadowOffset = Array.isArray(bar.shadowOffset)
     ? [Number(bar.shadowOffset[0]) || 0, Number(bar.shadowOffset[1]) || 0]
     : [0, 0]
+  // 进场错峰：按类目序依次生长（同一类目的各系列同步）
+  const stagger = resolveStagger(options)
+  const cols = frame.x.scale.count
 
   series.forEach((s, si) => {
     const yStart = frame.y.scale.start(s.__index)
@@ -62,10 +66,11 @@ export function buildBar3dScene(rc) {
     for (let i = 0; i < frame.x.scale.count; i++) {
       const v = Number(s.data[i])
       if (isMissing(v)) continue
+      const p = staggerProgress(progress, i, cols, stagger)
       const xStart = frame.x.scale.start(i)
       const x0 = xStart + (xBand - w) / 2
       const x1 = x0 + w
-      const h = Math.max(0.0004, frame.z.scale.map(v) * progress)
+      const h = Math.max(0.0004, frame.z.scale.map(v) * p)
 
       if (shadow && shadowStrength > 0) {
         const [ox, oy] = shadowOffset
@@ -76,7 +81,7 @@ export function buildBar3dScene(rc) {
           [x0 - d * 0.12 + ox, y1 + d * 0.12 + oy, 0.0012],
         ], {
           color: '#000000',
-          alpha: shadowStrength * progress,
+          alpha: shadowStrength * p,
           layer: 'back',
           flat: true,
           pickable: false,

@@ -7,7 +7,8 @@
  * 因为面片颜色已被光照调制过，再叠强调色容易失真。
  */
 import { addFace, addText, createScene } from '../../core/scene.js'
-import { normalizePie } from '../shared.js'
+import { normalizePie, resolveStagger } from '../shared.js'
+import { staggerProgress } from '../../../motion.js'
 
 const TAU = Math.PI * 2
 const DEG = Math.PI / 180
@@ -52,27 +53,31 @@ export function buildPie3dScene(rc) {
   const showLabel = !!labelCfg.show
   const i18nPercent = (options.i18n && options.i18n.tooltip && options.i18n.tooltip.percent) || '占比'
 
-  // 进场动画：角度扫入 + 厚度生长，两者节奏错开更有「冲压成型」感
-  const sweepProgress = Math.min(1, progress / 0.85)
-  const thickProgress = Math.max(0, Math.min(1, (progress - 0.1) / 0.8))
-  const h = thickness * thickProgress
+  // 进场动画：角度扫入 + 厚度生长，两者节奏错开更有「冲压成型」感；
+  // 扇区之间再按序错峰，一圈扇区依次扫入而不是整体同扫
+  const stagger = resolveStagger(options)
+  const sliceCount = items.length
 
   let acc = 0
-  for (const d of items) {
+  items.forEach((d, di) => {
+    const p = staggerProgress(progress, di, sliceCount, stagger)
+    const sweepProgress = Math.min(1, p / 0.85)
+    const thickProgress = Math.max(0, Math.min(1, (p - 0.1) / 0.8))
     const segAngle = d.percent * TAU * sweepProgress
     const a0 = startAngle + acc
     acc += segAngle
     const a1 = startAngle + acc
-    if (a1 - a0 < 1e-4) continue
+    if (a1 - a0 < 1e-4) return
 
     const gap = Math.min(padAngle, (a1 - a0) * 0.18)
     const s0 = a0 + gap / 2
     const s1 = a1 - gap / 2
-    if (s1 - s0 < 1e-4) continue
+    if (s1 - s0 < 1e-4) return
 
     const segments = Math.max(2, Math.ceil((s1 - s0) / (TAU / 72)))
     const isHover = hoverKey === `pie:${d.__index}`
     const zBase = 0.0016 + (isHover ? lift : 0)
+    const h = thickness * thickProgress
     const zTop = zBase + h
 
     const top = annulusTop(0, 0, radius, innerRadius, s0, s1, segments, zTop)
@@ -83,7 +88,7 @@ export function buildPie3dScene(rc) {
       cull: true,
       solid: true,
       doubleSided: false,
-      alpha: Math.min(1, 0.4 + progress * 0.6),
+      alpha: Math.min(1, 0.4 + p * 0.6),
       meta: {
         key: `pie:${d.__index}`,
         type: 'pie3d',
@@ -147,10 +152,11 @@ export function buildPie3dScene(rc) {
       })
       void i18nPercent
     }
-  }
+  })
 
   // 盘底软阴影：一圈略大的黑色扁环，让圆盘「落」在地面上而不是悬浮
-  if (shadowOn && shadowStrength > 0 && h > 0.005) {
+  const grownH = thickness * Math.max(0, Math.min(1, (progress - 0.1) / 0.8))
+  if (shadowOn && shadowStrength > 0 && grownH > 0.005) {
     const shadowRing = annulusTop(0, 0, radius * 1.05, 0, 0, TAU, 48, 0.0008)
     addFace(scene, shadowRing, {
       color: '#000000',
@@ -161,5 +167,5 @@ export function buildPie3dScene(rc) {
     })
   }
 
-  return { scene, frame: null, pie: { radius, innerRadius, thickness: h } }
+  return { scene, frame: null, pie: { radius, innerRadius, thickness: grownH } }
 }
