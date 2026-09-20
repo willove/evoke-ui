@@ -4,6 +4,60 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 对齐 antd 能力第二批
+
+- **EbSelect / EbTreeSelect**：`label-in-value` 让值携带 `{ value, label }`（多选为数组，
+  回显兼容两种形态）；Select 新增 `max-count` 多选上限与 `#popup-render` 下拉底部
+  自定义区块（点击不关闭下拉）；TreeSelect 触发器支持键盘打开；
+- **EbTable**：`scroll-x` 宽表横向滚动（表头表体同步、fixed 列兼容）；选中受控
+  `v-model:selection` 与 `selection-type="radio"` 单选模式；
+- **EbDescriptions**：`colon` 标签冒号、`column` 支持响应式对象（`{ xs, sm, md, lg }`）、
+  `label-style` / `content-style` 容器级与单元级；
+- **EbTransfer**：`one-way` 单向模式（隐藏回移入口）；
+- **EbAutoComplete**：`default-active-first-option` 自动高亮首条、候选支持
+  `{ value, label }` 对象与纯字符串、有输入无结果时显示空态、卸载清理防抖定时器。
+
+### @wil-works/evoke-business-ui — 键盘可达性专项
+
+- **EbDropdown / EbTimeSelect / EbCascader / EbTreeSelect**：触发器关闭态
+  Enter / Space / ↓ 打开浮层，Esc 关闭并归还焦点；
+- **EbDropdown**：菜单内 ↑↓ 移动、Enter/Space 选中、Esc 还焦；**EbCascader**：面板内
+  ↑↓ 高亮、→ 进子列、← 回退、Enter 选中；**EbTree**：↑↓ 移动当前节点、→/← 展开收起、
+  Enter 选中、Space 勾选；**EbImageViewer**：操作按钮改真实 button 可聚焦，←/→ 切换、
+  +/- 缩放、0 重置、打开移焦关闭还焦、接入滚动锁；
+- **EbMenu**：折叠态切换后子菜单弹层方向实时更新（原 setup 期取值一次不再变化）。
+
+### @wil-works/evoke-business-ui — i18n 收口与主题化
+
+- date-picker 移动端标题、tour、pagination aria、msgbox 默认文案、calendar aria、
+  autocomplete 空态接入多语言包（7 语言补齐，中文文案不变）；
+- **EbJsonViewer**：`--jv-*` 私有令牌与硬编码色值全部替换为 `--eb-*` 语义令牌，
+  随主题与暗色自适应。
+
+### @wil-works/evoke-ui — a11y 与暗桩批
+
+- **EvTabs** 方向键/Home/End 导航（roving tabindex）；**EvModal** Tab 焦点圈闭，
+  并修复 `modelValue: true` 初始挂载时焦点管理/滚动锁静默失效；
+- navbar 展开态 aria-expanded；ConfigProvider 卸载还原已写入的主题令牌；
+  useThemeConfig 三个 setter 补 SSR 守卫；ContactForm 改 useId 消除多实例 id 冲突；
+  AiPromptBox `maxLength` 真正约束输入（默认改为不限长）；LoadMore 动态解除
+  disabled 后自动建观察者；FeatureGrid 动态换数据不再丢入场动效；Input 暴露的
+  `focused` 真实反映焦点态。
+
+### @wil-works/evoke-charts — P2 收口
+
+- 键盘巡历感知 dataZoom 切片（步进/Home/End 按窗口数据而非全量）；
+- exportSVG 不再导出 dataZoom 滑块；箱线/热力含 NaN 时不命中或花屏修复；
+  分面散点渲染与悬浮取色一致。
+
+### 破坏性变更（Breaking）
+
+- **evoke-business-ui**：`EbTable` 的 `expand-change` 事件统一为
+  `(expandedKeys[], row, expanded)` 三参（原平铺/树两种形态分裂）；
+- **evoke-ui**：内部标识符 `ewSvgPaths` / `ewShowcasePaths` / `ewIconGrid` 及 tabbar
+  注入 key `ewTabbar` 改为 `ev-` 前缀（`evSvgPaths` 等，直接引用这些导出的消费方需同步）。
+
+
 ### @wil-works/charts-3d — 新包（0.1.0）
 
 - 零依赖 Canvas 三维图表库（Vue 3）：自研透视投影管线（向量/矩阵数学 → 轨道相机 →
