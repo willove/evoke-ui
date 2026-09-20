@@ -60,6 +60,7 @@
         <eb-icon name="arrow-right" :size="14" />
       </button>
       <button
+        v-if="!oneWay"
         type="button"
         class="eb-button eb-button--primary eb-transfer__btn"
         :class="{ 'is-disabled': disabled || !rightChecked.length }"
@@ -75,6 +76,7 @@
     <div class="eb-transfer-panel eb-transfer-panel">
       <div class="eb-transfer-panel__header">
         <eb-checkbox
+          v-if="!oneWay"
           :model-value="isAllRightChecked"
           :indeterminate="isRightIndeterminate"
           :disabled="disabled"
@@ -102,6 +104,7 @@
             :class="{ 'is-disabled': item.disabled }"
           >
             <eb-checkbox
+              v-if="!oneWay"
               :model-value="rightChecked.includes(item.key)"
               :disabled="disabled || item.disabled"
               @change="toggleRightItem(item.key)"
@@ -124,7 +127,7 @@
  * EbTransfer — 穿梭框
  * 左右面板 + 中间移动按钮；checked 为面板内临时勾选（区别于 modelValue 已选项）；
  * filterable 双侧独立过滤；disabled 项不可勾选不参与移动；
- * disabled 整体禁用；#item 行内容作用域插槽；文案经 useLocale 收口
+ * disabled 整体禁用；one-way 单向模式（隐藏回移与已选区勾选入口）；#item 行内容作用域插槽；文案经 useLocale 收口
  */
 import { ref, computed, watch } from 'vue'
 import EbCheckbox from '../checkbox/index.vue'
@@ -139,6 +142,8 @@ const props = defineProps({
   filterable: { type: Boolean, default: false },
   filterPlaceholder: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
+  /** 单向模式：隐藏右→左回移按钮与已选区勾选入口，数据只从左向右移动 */
+  oneWay: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

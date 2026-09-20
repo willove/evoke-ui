@@ -9,7 +9,13 @@
       ref="referenceRef"
       class="eb-select__wrapper"
       :class="{ 'is-hovering': hovering && !isDisabled, 'is-focused': isFocused, 'is-disabled': isDisabled }"
+      role="combobox"
+      :tabindex="isDisabled ? -1 : 0"
+      :aria-expanded="dropdownVisible"
+      aria-haspopup="tree"
+      :aria-disabled="isDisabled || undefined"
       @click="handleClick"
+      @keydown="handleTriggerKeydown"
     >
       <!-- multiple 标签 -->
       <span v-if="multiple && selectedTags.length" class="eb-select__selection">
@@ -122,6 +128,7 @@
  * 多选：默认复选级联，modelValue 存叶子 key（父子联动由树侧级联呈现）；
  *       check-strictly 时存全部勾选 key
  * filterable：输入过滤树（filter-method 自定义 (query, data) => bool）
+ * label-in-value：绑定值形如 { value, label }；触发器支持键盘展开（Enter/Space/↓）
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
@@ -135,7 +142,7 @@ import { useLocale } from '../../composables/useLocale'
 defineOptions({ name: 'EbTreeSelect', inheritAttrs: false })
 
 const props = defineProps({
-  modelValue: { type: [String, Number, Boolean, Array], default: undefined },
+  modelValue: { type: [String, Number, Boolean, Array, Object], default: undefined },
   data: { type: Array, default: () => [] },
   /** 字段映射 { value, label, children, disabled, isLeaf } */
   props: { type: Object, default: () => ({}) },
@@ -155,6 +162,8 @@ const props = defineProps({
   checkStrictly: { type: Boolean, default: false },
   /** 复选回传值归约策略：child 只存叶子 key / parent 只存子级全选中的最上层父 key / all 全存勾选 key */
   checkedStrategy: { type: String, default: 'child' },
+  /** 绑定值形如 { value, label }（multiple 为对象数组）；与 checked-strategy 组合时 label 取归约后 key 的文案 */
+  labelInValue: { type: Boolean, default: false },
   defaultExpandAll: { type: Boolean, default: false },
   defaultExpandedKeys: { type: Array, default: () => [] },
   expandOnClickNode: { type: Boolean, default: true },
@@ -251,15 +260,27 @@ function arrayEqual(a, b) {
   if (a.length !== b.length) return false
   return a.every((v, i) => v === b[i])
 }
+/** 从外部值提取原始 key：兼容基础值与 label-in-value 的 { value, label } 对象 */
+function rawValueOf(v) {
+  return v && typeof v === 'object' ? v.value : v
+}
 
 // ─── 选中态 ───
-const selectedValues = computed(() => toValidArray(props.modelValue))
+const selectedValues = computed(() => toValidArray(props.modelValue).map(rawValueOf))
 
 function labelOfKey(key) {
   const found = findDataByKey(key)
   if (found !== undefined) return String(labelOf(found))
   const node = treeRef.value?.getNode?.(key)
   if (node) return String(node.label)
+  // label-in-value 回显兼容：数据中查不到时回退到外部对象自带的 label
+  if (props.labelInValue) {
+    const source = props.multiple
+      ? toValidArray(props.modelValue).find((m) => rawValueOf(m) === key)
+      : props.modelValue
+    const inbound = source && typeof source === 'object' ? source.label : undefined
+    if (inbound !== undefined && inbound !== null && inbound !== '') return String(inbound)
+  }
   return String(key)
 }
 
@@ -282,13 +303,13 @@ function findDataByKey(key) {
 
 const hasSelection = computed(() => {
   if (props.multiple) return selectedValues.value.length > 0
-  const v = props.modelValue
+  const v = rawValueOf(props.modelValue)
   return v !== undefined && v !== null && v !== ''
 })
 
 const selectedLabel = computed(() => {
   if (props.multiple) return ''
-  const v = props.modelValue
+  const v = rawValueOf(props.modelValue)
   if (v === undefined || v === null || v === '') return ''
   return labelOfKey(v)
 })
@@ -341,18 +362,28 @@ function ancestorsOfKey(key) {
 }
 
 const currentNodeKeyResolved = computed(() =>
-  props.multiple || props.showCheckbox ? undefined : props.modelValue
+  props.multiple || props.showCheckbox ? undefined : rawValueOf(props.modelValue)
 )
 
 // ─── 值更新 ───
+/** label-in-value 组包：原始 key 包成 { value, label }（label 取归约后 key 的文案） */
+function wrapValue(key) {
+  return { value: key, label: labelOfKey(key) }
+}
+
+/** 按 label-in-value 形态组包；undefined / null 空值保持原样 */
+function packValue(next) {
+  if (!props.labelInValue || next === undefined || next === null) return next
+  return Array.isArray(next) ? next.map(wrapValue) : wrapValue(next)
+}
+
 function updateValue(next) {
-  const prev = props.multiple ? toValidArray(props.modelValue) : props.modelValue
-  const changed = props.multiple
-    ? !arrayEqual(prev, toValidArray(next))
-    : prev !== next
-  emit('update:modelValue', next)
+  const prev = props.multiple ? selectedValues.value : rawValueOf(props.modelValue)
+  const nextRaw = props.multiple ? toValidArray(next) : next
+  const changed = props.multiple ? !arrayEqual(prev, nextRaw) : prev !== nextRaw
+  emit('update:modelValue', packValue(next))
   if (changed) {
-    emit('change', next)
+    emit('change', packValue(next))
     triggerFormValidate(formItem, 'change')
   }
 }
@@ -400,14 +431,14 @@ watch(
   [() => props.modelValue, dropdownVisible],
   () => {
     if (!props.showCheckbox) return
-    nextTick(() => {
-      const tree = treeRef.value
-      if (!tree) return
-      const keys = toValidArray(props.modelValue)
-      if (!arrayEqual(tree.getCheckedKeys(), keys)) {
-        tree.setCheckedKeys(keys)
-      }
-    })
+  nextTick(() => {
+    const tree = treeRef.value
+    if (!tree) return
+    const keys = toValidArray(props.modelValue).map(rawValueOf)
+    if (!arrayEqual(tree.getCheckedKeys(), keys)) {
+      tree.setCheckedKeys(keys)
+    }
+  })
   },
   { immediate: true, deep: true }
 )
@@ -442,6 +473,17 @@ function handleClick() {
   dropdownVisible.value ? closeDropdown() : openDropdown()
 }
 
+// 关闭态触发器键盘：Enter/Space/ArrowDown 打开下拉（Space 防滚屏、Enter 防表单提交）；
+// filter 输入框的 keydown 冒泡上来时交给其自身逻辑，不触发打开
+function handleTriggerKeydown(e) {
+  if (e.target !== e.currentTarget) return
+  if (isDisabled.value || dropdownVisible.value) return
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+    e.preventDefault()
+    openDropdown()
+  }
+}
+
 const { stop: stopClickOutside } = useClickOutside(
   [referenceRef, floatingRef],
   () => closeDropdown(),
@@ -458,7 +500,8 @@ function handleNodeClick(data, node) {
   if (data?.[propsMap.value.disabled]) return
   const key = valueOf(data)
   if (props.multiple) {
-    const list = toValidArray(props.modelValue)
+    // 以归一化原始 key 做 toggle（label-in-value 下 modelValue 是对象数组）
+    const list = [...selectedValues.value]
     const idx = list.indexOf(key)
     if (idx >= 0) {
       list.splice(idx, 1)
@@ -491,17 +534,18 @@ function handleTreeCheck(data) {
     // 单选 + 复选：勾选父级 → 取首个可用叶子 key
     const firstLeaf = findFirstLeaf(data)
     const firstLeafKey = firstLeaf !== undefined ? valueOf(firstLeaf) : undefined
-    const hasCheckedChild = props.modelValue != null
-      && ancestorsOfKey(props.modelValue).includes(key)
+    const currentRaw = rawValueOf(props.modelValue)
+    const hasCheckedChild = currentRaw != null
+      && ancestorsOfKey(currentRaw).includes(key)
     updateValue(
-      firstLeafKey === props.modelValue || hasCheckedChild ? undefined : firstLeafKey
+      firstLeafKey === currentRaw || hasCheckedChild ? undefined : firstLeafKey
     )
   }
   // 同步树勾选态（cascade 重算后按 modelValue 重置，避免半选残留）
   nextTick(() => {
     const t = treeRef.value
     if (!t) return
-    t.setCheckedKeys(toValidArray(props.modelValue))
+    t.setCheckedKeys(toValidArray(props.modelValue).map(rawValueOf))
     emit('check', data, {
       checkedKeys: t.getCheckedKeys(),
       checkedNodes: t.getCheckedNodes(),
@@ -525,7 +569,8 @@ function findFirstLeaf(data) {
 }
 
 function removeTag(value) {
-  const list = toValidArray(props.modelValue).filter((v) => v !== value)
+  // 以归一化原始 key 过滤：label-in-value 下 modelValue 是对象数组，不能直接比对
+  const list = selectedValues.value.filter((v) => v !== value)
   updateValue(list)
   emit('remove-tag', value)
 }

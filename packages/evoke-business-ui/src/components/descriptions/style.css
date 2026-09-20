@@ -53,6 +53,12 @@
   color: var(--eb-text-color-primary);
 }
 
+/* colon：标签后冒号，次要文本色 */
+.eb-descriptions.eb-descriptions .eb-descriptions__colon {
+  margin-left: 4px;
+  color: var(--eb-text-color-secondary);
+}
+
 /* bordered 变体 */
 .eb-descriptions.eb-descriptions.is-bordered .eb-descriptions__cell {
   border: 1px solid var(--eb-border-color-lighter);

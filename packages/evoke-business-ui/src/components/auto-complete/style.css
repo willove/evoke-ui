@@ -33,3 +33,14 @@
   background-color: var(--eb-fill-color);
   color: var(--eb-text-color-primary);
 }
+
+/* 空态行：有输入且无匹配结果 */
+.eb-autocomplete__empty {
+  padding: 0 var(--eb-space-4);
+  height: var(--eb-control-h-md);
+  display: flex;
+  align-items: center;
+  font-size: var(--eb-font-size-base);
+  color: var(--eb-text-color-secondary);
+  cursor: default;
+}

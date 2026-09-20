@@ -174,6 +174,13 @@
   padding: 0;
 }
 
+/* popup-render 插槽：下拉底部自定义区块 */
+.eb-select__popper.eb-select__dropdown .eb-select-dropdown__footer {
+  border-top: 1px solid var(--eb-border-color-extra-light);
+  margin-top: var(--eb-space-1);
+  padding: var(--eb-space-2) var(--eb-space-1) calc(var(--eb-space-1) / 2);
+}
+
 /* 下拉过渡 */
 .eb-select-dropdown-enter-active,
 .eb-select-dropdown-leave-active {

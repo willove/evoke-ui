@@ -185,6 +185,36 @@ describe('EbTransfer', () => {
     expect(wrapper.find('.eb-transfer-panel__empty').text()).toBe('No data')
     wrapper.unmount()
   })
+
+  it('one-way 默认关闭：双按钮 + 右面板勾选回移可用', async () => {
+    const wrapper = mountTransfer({ modelValue: [1] })
+    expect(wrapper.findAll('.eb-transfer__btn')).toHaveLength(2)
+    const rightPanel = wrapper.findAll('.eb-transfer-panel')[1]
+    await rightPanel.findAll('.eb-transfer-panel__item input')[0].setValue(true)
+    await wrapper.findAll('.eb-transfer__btn')[1].trigger('click')
+    expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([])
+    wrapper.unmount()
+  })
+
+  it('one-way：隐藏左移按钮与已选区勾选入口，左面板勾选不受影响', () => {
+    const wrapper = mountTransfer({ modelValue: [1], oneWay: true })
+    expect(wrapper.findAll('.eb-transfer__btn')).toHaveLength(1)
+    const rightPanel = wrapper.findAll('.eb-transfer-panel')[1]
+    // 已选项仍展示，但行内/表头勾选框均隐藏（移除入口收起）
+    expect(rightPanel.findAll('.eb-transfer-panel__item')).toHaveLength(1)
+    expect(rightPanel.findAll('input')).toHaveLength(0)
+    expect(wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item input')).toHaveLength(3)
+    wrapper.unmount()
+  })
+
+  it('one-way：向右移动仍可用', async () => {
+    const wrapper = mountTransfer({ oneWay: true })
+    await wrapper.findAll('.eb-transfer-panel')[0].findAll('.eb-transfer-panel__item input')[0].setValue(true)
+    await wrapper.findAll('.eb-transfer__btn')[0].trigger('click')
+    expect(wrapper.emitted('update:modelValue')[0][0]).toEqual([1])
+    expect(wrapper.emitted('change')[0]).toEqual([[1], 'right', [1]])
+    wrapper.unmount()
+  })
 })
 
 describe('EbCarousel / EbCarouselItem', () => {

@@ -26,6 +26,7 @@
                 :align="cell.labelAlign"
               >
                 <component :is="CellSlotRenderer" :vnode="cell.item" kind="label" />
+                <span v-if="colon" class="eb-descriptions__colon">:</span>
               </th>
             </tr>
           </tbody>
@@ -56,6 +57,7 @@
                 :align="cell.labelAlign"
               >
                 <component :is="CellSlotRenderer" :vnode="cell.item" kind="label" />
+                <span v-if="colon" class="eb-descriptions__colon">:</span>
               </th>
               <td
                 class="eb-descriptions__cell eb-descriptions__content"
@@ -78,14 +80,23 @@
 /**
  * EbDescriptions — 描述列表
  * 列网格：每个 item 占 2*span 列（label 1 列 + content 2*span-1 列），
- * 横向按 column 分行、末行不满由最后格补齐；纵向 label/content 两个 tbody
+ * 横向按 column 分行、末行不满由最后格补齐；纵向 label/content 两个 tbody；
+ * column 支持响应式对象（matchMedia 断点感知，SSR 安全）；colon / 容器级样式可配
  */
-import { computed, defineComponent, useSlots, Fragment } from 'vue'
+import { computed, defineComponent, useSlots, Fragment, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import EbDescriptionsItem from './item.vue'
+import { inBrowser } from '../../utils/dom'
 
 const props = defineProps({
   border: { type: Boolean, default: false },
-  column: { type: Number, default: 3 },
+  /** 列数：数字固定档，或 { xs, sm, md, lg } 响应式对象（由小到大命中） */
+  column: { type: [Number, Object], default: 3 },
+  /** 标签后显示冒号（antd 默认 true，此处默认 false 保持既有视觉） */
+  colon: { type: Boolean, default: false },
+  /** 容器级标签单元格样式，item 同名 prop 可覆盖 */
+  labelStyle: { type: Object, default: undefined },
+  /** 容器级内容单元格样式，item 同名 prop 可覆盖 */
+  contentStyle: { type: Object, default: undefined },
   direction: {
     type: String,
     default: 'horizontal',
@@ -133,7 +144,78 @@ function collectItems() {
   return flat
 }
 
-const colCount = computed(() => Math.max(1, Math.floor(props.column)))
+// ─── 响应式列数：column 对象形态按 matchMedia 断点解析 ───
+// min-width 由小到大排列，取命中的最大档；全不命中回退最小已声明档
+const COLUMN_BREAKPOINTS = [
+  ['xs', 0],
+  ['sm', 576],
+  ['md', 768],
+  ['lg', 992],
+]
+
+const isResponsiveColumn = computed(() => typeof props.column === 'object' && props.column !== null)
+
+const mediaTick = ref(0)
+let mediaQueries = []
+
+const responsiveColumn = computed(() => {
+  if (!isResponsiveColumn.value) return null
+  mediaTick.value // 依赖断点变化信号
+  const obj = props.column
+  const declared = COLUMN_BREAKPOINTS.map(([key]) => key).filter((key) => obj[key] != null)
+  if (!declared.length) return null
+  let value = obj[declared[0]]
+  for (const [key] of COLUMN_BREAKPOINTS) {
+    if (obj[key] == null) continue
+    const entry = mediaQueries.find((m) => m.key === key)
+    if (entry?.mq.matches) value = obj[key]
+  }
+  return value
+})
+
+function teardownMedia() {
+  for (const { mq, handler } of mediaQueries) {
+    if (typeof mq.removeEventListener === 'function') mq.removeEventListener('change', handler)
+    else if (typeof mq.removeListener === 'function') mq.removeListener(handler)
+  }
+  mediaQueries = []
+}
+
+function setupMedia() {
+  teardownMedia()
+  // SSR / 非浏览器环境守卫：保持最小档渲染
+  if (!isResponsiveColumn.value || !inBrowser() || typeof window.matchMedia !== 'function') return
+  for (const [key, width] of COLUMN_BREAKPOINTS) {
+    if (props.column[key] == null) continue
+    const mq = window.matchMedia(`(min-width: ${width}px)`)
+    const handler = () => {
+      mediaTick.value++
+    }
+    if (typeof mq.addEventListener === 'function') mq.addEventListener('change', handler)
+    else if (typeof mq.addListener === 'function') mq.addListener(handler)
+    mediaQueries.push({ key, mq, handler })
+  }
+  mediaTick.value++ // 挂载后按真实视口重算
+}
+
+watch(
+  () => props.column,
+  () => {
+    if (isResponsiveColumn.value) setupMedia()
+    else teardownMedia()
+  },
+)
+onMounted(setupMedia)
+onBeforeUnmount(teardownMedia)
+
+const colCount = computed(() => {
+  const raw = isResponsiveColumn.value ? responsiveColumn.value : props.column
+  return Math.max(1, Math.floor(Number(raw ?? 1)))
+})
+
+function isStyleObject(v) {
+  return v != null && typeof v === 'object' && !Array.isArray(v)
+}
 
 function buildCell(item, index) {
   const p = item.props ?? {}
@@ -144,14 +226,25 @@ function buildCell(item, index) {
   const labelAlign = readProp(p, 'labelAlign', 'label-align') || align
   const className = readProp(p, 'className', 'class-name') ?? ''
   const labelClassName = readProp(p, 'labelClassName', 'label-class-name') ?? ''
+  // item 级样式覆盖容器级；width / minWidth 为既有 px 契约，最后合并保持优先
+  const itemLabelStyle = readProp(p, 'labelStyle', 'label-style')
+  const itemContentStyle = readProp(p, 'contentStyle', 'content-style')
   return {
     key: index,
     item,
     span: Math.min(span, colCount.value),
     class: className,
     labelClass: labelClassName,
-    style: width ? { width: `${Number(width)}px` } : undefined,
-    labelStyle: minWidth ? { minWidth: `${Number(minWidth)}px` } : undefined,
+    style: {
+      ...(isStyleObject(props.contentStyle) ? props.contentStyle : {}),
+      ...(isStyleObject(itemContentStyle) ? itemContentStyle : {}),
+      ...(width ? { width: `${Number(width)}px` } : {}),
+    },
+    labelStyle: {
+      ...(isStyleObject(props.labelStyle) ? props.labelStyle : {}),
+      ...(isStyleObject(itemLabelStyle) ? itemLabelStyle : {}),
+      ...(minWidth ? { minWidth: `${Number(minWidth)}px` } : {}),
+    },
     align,
     labelAlign,
     labelColspan: 1,

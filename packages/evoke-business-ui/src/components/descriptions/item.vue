@@ -18,6 +18,8 @@ export default {
     labelAlign: { type: String, default: '' },
     className: { type: String, default: '' },
     labelClassName: { type: String, default: '' },
+    labelStyle: { type: Object, default: undefined },
+    contentStyle: { type: Object, default: undefined },
   },
   render() {
     return null

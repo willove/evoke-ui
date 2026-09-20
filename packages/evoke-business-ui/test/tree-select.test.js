@@ -359,3 +359,90 @@ describe('EbTreeSelect 字段映射与 expose', () => {
     expect(select().vm.getCheckedKeys()).toEqual([12])
   })
 })
+
+describe('EbTreeSelect label-in-value 与键盘打开', () => {
+  it('label-in-value 单选：负载形如 { value, label }，外部对象值可回显', async () => {
+    const { wrapper, select } = mountTreeSelect({
+      labelInValue: true,
+      modelValue: { value: 21, label: '二级 2-1' },
+    })
+    // 外部对象值回显
+    expect(wrapper.find('.eb-select__selected-item-text').text()).toBe('二级 2-1')
+    await openDropdown(wrapper)
+    nodeContentOf('三级 1-1-1').click()
+    await flush()
+    expect(select().emitted('update:modelValue')[0]).toEqual([{ value: 111, label: '三级 1-1-1' }])
+    expect(select().emitted('change')[0]).toEqual([{ value: 111, label: '三级 1-1-1' }])
+    expect(wrapper.find('.eb-select__selected-item-text').text()).toBe('三级 1-1-1')
+    expect(document.querySelector('.eb-tree-select__popper')).toBeNull()
+  })
+
+  it('label-in-value 多选无复选：叶子 toggle 负载为对象数组', async () => {
+    const { wrapper, select } = mountTreeSelect({ labelInValue: true, multiple: true })
+    await openDropdown(wrapper)
+    nodeContentOf('一级 2').click() // 展开非叶子，不选中
+    await flush()
+    nodeContentOf('二级 2-1').click()
+    await flush()
+    expect(select().emitted('update:modelValue')[0][0]).toEqual([{ value: 21, label: '二级 2-1' }])
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.length).toBe(1)
+    expect(tags[0].text()).toContain('二级 2-1')
+  })
+
+  it('label-in-value 多选复选：与 checked-strategy 组合，label 取归约后 key 的文案', async () => {
+    const { wrapper, select } = mountTreeSelect({
+      labelInValue: true,
+      multiple: true,
+      showCheckbox: true,
+      checkedStrategy: 'parent',
+    })
+    await openDropdown(wrapper)
+    nodeCheckboxOf('一级 1').dispatchEvent(new Event('change'))
+    await flush()
+    expect(select().emitted('update:modelValue')[0][0]).toEqual([{ value: 1, label: '一级 1' }])
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags.length).toBe(1)
+    expect(tags[0].text()).toContain('一级 1')
+    // 外部对象数组初始值也能回显（归约 key 不在数据中时回退自带 label）
+    const wrapper2 = mount(Harness, {
+      props: {
+        data,
+        labelInValue: true,
+        multiple: true,
+        modelValue: [{ value: 999, label: '外部节点' }],
+      },
+      attachTo: document.body,
+    })
+    const tags2 = wrapper2.findAll('.eb-select__tag')
+    expect(tags2.length).toBe(1)
+    expect(tags2[0].text()).toContain('外部节点')
+    wrapper2.unmount()
+  })
+
+  it('关闭态触发器键盘 Enter/Space/ArrowDown 打开下拉', async () => {
+    for (const key of ['Enter', ' ', 'ArrowDown']) {
+      const { wrapper, select } = mountTreeSelect()
+      await wrapper.find('.eb-select__wrapper').trigger('keydown', { key })
+      await flush()
+      expect(select().emitted('visible-change')[0]).toEqual([true])
+      expect(document.querySelector('.eb-tree-select__popper')).toBeTruthy()
+      wrapper.unmount()
+    }
+  })
+
+  it('filter 输入框 keydown 冒泡被守卫拦截，不触发打开', async () => {
+    const { wrapper, select } = mountTreeSelect({ filterable: true })
+    await wrapper.find('.eb-select__input').trigger('keydown', { key: 'Enter' })
+    await flush()
+    expect(select().emitted('visible-change')).toBeUndefined()
+    expect(document.querySelector('.eb-tree-select__popper')).toBeNull()
+  })
+
+  it('disabled 下键盘不打开', async () => {
+    const { wrapper, select } = mountTreeSelect({ disabled: true })
+    await wrapper.find('.eb-select__wrapper').trigger('keydown', { key: 'Enter' })
+    await flush()
+    expect(select().emitted('visible-change')).toBeUndefined()
+  })
+})

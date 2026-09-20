@@ -41,7 +41,10 @@ const isSelected = computed(() =>
   ctx ? ctx.selectedValues.value.includes(props.value) : false
 )
 
-const isDisabled = computed(() => props.disabled || !!ctx?.disabled?.value)
+const isDisabled = computed(
+  // max-count 达上限的未选中项与禁用项同观感（由 Select 上下文下发）
+  () => props.disabled || !!ctx?.disabled?.value || !!ctx?.isOptionLimited?.(props.value)
+)
 const isHover = computed(() => isHovering.value || ctx?.hoveringOption?.value?.value === props.value)
 
 // 稳定 DOM id：注册进上下文，供 combobox 的 aria-activedescendant 指向

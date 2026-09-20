@@ -1,6 +1,6 @@
 <template>
   <eb-popper
-    :visible="panelVisible && suggestions.length > 0"
+    :visible="panelVisible"
     trigger="manual"
     placement="bottom-start"
     match-width
@@ -17,6 +17,7 @@
         :aria-expanded="panelVisible"
         :aria-autocomplete="'list'"
         :aria-controls="panelId"
+        :aria-activedescendant="highlightIndex >= 0 ? `${panelId}-option-${highlightIndex}` : undefined"
         @input="onInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -30,6 +31,7 @@
     <ul :id="panelId" class="eb-autocomplete__menu" role="listbox">
       <li
         v-for="(item, i) in suggestions"
+        :id="`${panelId}-option-${i}`"
         :key="i"
         class="eb-autocomplete__option"
         :class="{ 'is-highlight': i === highlightIndex }"
@@ -38,8 +40,10 @@
         @mouseenter="highlightIndex = i"
         @mousedown.prevent="select(item, i)"
       >
-        <slot name="option" :item="item">{{ item.value ?? item }}</slot>
+        <slot name="option" :item="item">{{ item.label ?? (item.value ?? item) }}</slot>
       </li>
+      <!-- 有输入且无结果：空态行（文案走语言包 select.noMatch） -->
+      <li v-if="showEmpty" class="eb-autocomplete__empty">{{ emptyText }}</li>
     </ul>
   </eb-popper>
 </template>
@@ -49,20 +53,22 @@
  * EbAutoComplete — 输入联想
  *
  * 数据源二选一：
- * - suggestions：静态候选数组（string 或 { value, ...payload }）
+ * - suggestions：静态候选数组（string / number 或 { value, label? }，显示 label 回退 value）
  * - fetch-suggestions：(query, cb) => void，异步返回候选（内部防抖）
  *
- * 键盘：↑↓ 移动高亮、Enter 选中、Esc 关闭；选中后可被 select 拦截（返回 false 不回填）
+ * 键盘：↑↓ 移动高亮、Enter 选中、Esc 关闭；选中后可被 select 拦截（返回 false 不回填）；
+ * default-active-first-option 结果更新自动高亮第一条；空态文案走语言包 select.noMatch
  */
-import { computed, ref, useAttrs, watch } from 'vue'
+import { computed, ref, useAttrs, watch, onBeforeUnmount } from 'vue'
 import EbInput from '../input/index.vue'
 import EbPopper from '../popper/index.vue'
+import { useLocale } from '../../composables/useLocale'
 
 defineOptions({ name: 'EbAutoComplete', inheritAttrs: false })
 
 const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
-  /** 静态候选：string[] 或 { value }[] */
+  /** 静态候选：string / number 或 { value, label? } 对象 */
   suggestions: { type: Array, default: undefined },
   /** 异步联想：(query, cb) => void */
   fetchSuggestions: { type: Function, default: undefined },
@@ -72,6 +78,8 @@ const props = defineProps({
   debounce: { type: Number, default: 200 },
   /** 联想触发最小字符数 */
   minlength: { type: Number, default: 0 },
+  /** 结果更新后自动高亮第一条（antd 默认 true，此处默认 false 保持既有行为） */
+  defaultActiveFirstOption: { type: Boolean, default: false },
   /** 选中后是否回填输入框 */
   valueOnSelect: { type: Boolean, default: true },
   /** 透传给内部 EbInput 的原生属性（placeholder / clearable / size / disabled 等） */
@@ -81,6 +89,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'select', 'suggest', 'clear'])
+
+const { t } = useLocale()
+const emptyText = computed(() => t('select.noMatch'))
 
 // 未声明的 attrs（placeholder / size / disabled / clearable…）透传给内部输入框
 const restAttrs = useAttrs()
@@ -98,8 +109,19 @@ const suggestions = ref([])
 let debounceTimer = null
 let fetchSeq = 0
 
+// 有输入且结果为空 → 空态行
+const showEmpty = computed(() => panelVisible.value && suggestions.value.length === 0)
+
 function normalize(list) {
-  return (list || []).map((it) => (typeof it === 'string' ? { value: it } : it))
+  return (list || []).map((it) => (typeof it === 'string' || typeof it === 'number' ? { value: it } : it))
+}
+
+// 结果落地：有结果或仍有输入则展示面板；可按需自动高亮第一条
+function applyResult(query, list) {
+  suggestions.value = normalize(list)
+  const hasResults = suggestions.value.length > 0
+  panelVisible.value = hasResults || String(query ?? '').length > 0
+  highlightIndex.value = hasResults && props.defaultActiveFirstOption ? 0 : -1
 }
 
 function runFilter(query) {
@@ -107,13 +129,7 @@ function runFilter(query) {
     const seq = ++fetchSeq
     props.fetchSuggestions(query, (list) => {
       if (seq !== fetchSeq) return // 过期响应丢弃
-      suggestions.value = normalize(list)
-      if (suggestions.value.length) {
-        panelVisible.value = true
-        highlightIndex.value = -1
-      } else {
-        panelVisible.value = false
-      }
+      applyResult(query, list)
     })
     return
   }
@@ -122,9 +138,7 @@ function runFilter(query) {
     const q = String(query).toLowerCase()
     list = list.filter((it) => String(it.value ?? '').toLowerCase().includes(q))
   }
-  suggestions.value = list
-  panelVisible.value = list.length > 0
-  highlightIndex.value = -1
+  applyResult(query, list)
 }
 
 function schedule(query) {
@@ -139,6 +153,14 @@ function schedule(query) {
     runFilter(query)
   }
 }
+
+// 卸载清防抖定时器，避免回调触达已卸载实例
+onBeforeUnmount(() => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+    debounceTimer = null
+  }
+})
 
 function onInput(e) {
   schedule(typeof e === 'string' ? e : e?.target?.value ?? '')

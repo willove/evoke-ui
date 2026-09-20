@@ -142,7 +142,7 @@ describe('EbPopconfirm', () => {
 })
 
 const SelectHarness = defineComponent({
-  props: ['multiple', 'filterable', 'clearable', 'collapseTags'],
+  props: ['multiple', 'filterable', 'clearable', 'collapseTags', 'labelInValue', 'maxCount'],
   setup(props, { slots }) {
     const value = ref(props.multiple ? [] : '')
     return () =>
@@ -155,6 +155,8 @@ const SelectHarness = defineComponent({
           filterable: props.filterable,
           clearable: props.clearable,
           collapseTags: props.collapseTags,
+          labelInValue: props.labelInValue,
+          maxCount: props.maxCount,
         },
         () => [
           h(EbOption, { value: 'a', label: '选项A' }),
@@ -382,5 +384,153 @@ describe('EbSelect', () => {
     expect(typeof wrapper.vm.focus).toBe('function')
     expect(typeof wrapper.vm.blur).toBe('function')
     expect(typeof wrapper.vm.updateDropdown).toBe('function')
+  })
+
+  it('label-in-value 单选：update/change 负载形如 { value, label }，外部对象值可回显', async () => {
+    const LivHarness = defineComponent({
+      setup() {
+        const value = ref({ value: 'east', label: '华东' })
+        return () => h(EbSelect, {
+          modelValue: value.value,
+          'onUpdate:modelValue': (v) => (value.value = v),
+          labelInValue: true,
+        }, () => [
+          h(EbOption, { value: 'east', label: '华东' }),
+          h(EbOption, { value: 'south', label: '华南' }),
+        ])
+      },
+    })
+    const wrapper = mount(LivHarness, { attachTo: document.body })
+    // 外部传入对象值也能回显
+    expect(wrapper.find('.eb-select__selected-item-text').text()).toBe('华东')
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    ;[...document.querySelectorAll('.eb-select-dropdown__item')]
+      .find((el) => el.textContent.includes('华南'))
+      .click()
+    await new Promise((r) => setTimeout(r, 20))
+    const select = wrapper.findComponent(EbSelect)
+    expect(select.emitted('update:modelValue')[0][0]).toEqual({ value: 'south', label: '华南' })
+    expect(select.emitted('change')[0][0]).toEqual({ value: 'south', label: '华南' })
+    expect(wrapper.find('.eb-select__selected-item-text').text()).toBe('华南')
+    wrapper.unmount()
+    // 注册表之外的对象值直接显示自带 label
+    const wrapper2 = mount(EbSelect, {
+      props: { modelValue: { value: 'west', label: '西北' }, labelInValue: true },
+    })
+    expect(wrapper2.find('.eb-select__selected-item-text').text()).toBe('西北')
+    wrapper2.unmount()
+  })
+
+  it('label-in-value 多选：负载数组元素形如 { value, label }，清空回落 []', async () => {
+    const wrapper = mount(SelectHarness, {
+      props: { multiple: true, labelInValue: true, clearable: true },
+      attachTo: document.body,
+    })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    document.querySelectorAll('.eb-select-dropdown__item')[0].click()
+    await new Promise((r) => setTimeout(r, 20))
+    document.querySelectorAll('.eb-select-dropdown__item')[1].click()
+    await new Promise((r) => setTimeout(r, 20))
+    const select = wrapper.findComponent(EbSelect)
+    let last = select.emitted('update:modelValue')
+    expect(last[last.length - 1][0]).toEqual([
+      { value: 'a', label: '选项A' },
+      { value: 'b', label: '选项B' },
+    ])
+    const tags = wrapper.findAll('.eb-select__tag')
+    expect(tags[0].text()).toContain('选项A')
+    expect(tags[1].text()).toContain('选项B')
+    await wrapper.find('.eb-select__clear').trigger('click')
+    await new Promise((r) => setTimeout(r, 20))
+    last = select.emitted('update:modelValue')
+    expect(last[last.length - 1][0]).toEqual([])
+    expect(select.emitted('clear')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('popup-render 插槽：下拉底部渲染自定义区块且点击不关闭下拉', async () => {
+    const wrapper = mount(EbSelect, {
+      slots: {
+        default: () => h(EbOption, { value: 'a', label: '选项A' }),
+        'popup-render': () => h('button', { class: 'popup-add-btn' }, '+ 新增'),
+      },
+      attachTo: document.body,
+    })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    const footer = document.querySelector('.eb-select-dropdown__footer')
+    expect(footer).toBeTruthy()
+    expect(footer.textContent).toContain('+ 新增')
+    // 点击区块内元素：不下拉关闭（visible-change 仍只有展开那一次）
+    footer.querySelector('.popup-add-btn').click()
+    await new Promise((r) => setTimeout(r, 30))
+    expect(wrapper.emitted('visible-change')).toHaveLength(1)
+    expect(wrapper.emitted('visible-change')[0]).toEqual([true])
+    expect(document.querySelector('.eb-select__dropdown').style.display).not.toBe('none')
+    wrapper.unmount()
+  })
+
+  it('max-count：达上限后其余选项置灰不可选（已选标签可移除后恢复）', async () => {
+    const MaxCountHarness = defineComponent({
+      setup() {
+        const value = ref([])
+        return () => h(EbSelect, {
+          modelValue: value.value,
+          'onUpdate:modelValue': (v) => (value.value = v),
+          multiple: true,
+          maxCount: 2,
+        }, () => [
+          h(EbOption, { value: 'a', label: '选项A' }),
+          h(EbOption, { value: 'b', label: '选项B' }),
+          h(EbOption, { value: 'c', label: '选项C' }),
+        ])
+      },
+    })
+    const wrapper = mount(MaxCountHarness, { attachTo: document.body })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    const items = () => [...document.querySelectorAll('.eb-select-dropdown__item')]
+    items()[0].click()
+    await new Promise((r) => setTimeout(r, 20))
+    items()[1].click()
+    await new Promise((r) => setTimeout(r, 20))
+    expect(wrapper.findAll('.eb-select__tag').length).toBe(2)
+    // 达上限：未选中项呈禁用观感且点击被拦截
+    const limited = items()[2]
+    expect(limited.classList.contains('is-disabled')).toBe(true)
+    limited.click()
+    await new Promise((r) => setTimeout(r, 20))
+    const select = wrapper.findComponent(EbSelect)
+    let last = select.emitted('update:modelValue')
+    expect(last[last.length - 1][0]).toEqual(['a', 'b'])
+    // 移除一个已选标签后恢复可选
+    await wrapper.findAll('.eb-tag__close')[0].trigger('click')
+    await new Promise((r) => setTimeout(r, 20))
+    items()[2].click()
+    await new Promise((r) => setTimeout(r, 20))
+    last = select.emitted('update:modelValue')
+    expect(last[last.length - 1][0]).toEqual(['b', 'c'])
+    wrapper.unmount()
+  })
+
+  it('max-count 为 0 不限制选中数', async () => {
+    const wrapper = mount(SelectHarness, {
+      props: { multiple: true, maxCount: 0 },
+      attachTo: document.body,
+    })
+    await wrapper.find('.eb-select__wrapper').trigger('click')
+    await new Promise((r) => setTimeout(r, 30))
+    document.querySelectorAll('.eb-select-dropdown__item')[0].click()
+    await new Promise((r) => setTimeout(r, 20))
+    document.querySelectorAll('.eb-select-dropdown__item')[1].click()
+    await new Promise((r) => setTimeout(r, 20))
+    // 可选项（a/b）均无禁用观感
+    const enabled = [...document.querySelectorAll('.eb-select-dropdown__item')].filter(
+      (el) => el.textContent.includes('选项')
+    )
+    expect(enabled.every((el) => !el.classList.contains('is-disabled'))).toBe(true)
+    wrapper.unmount()
   })
 })

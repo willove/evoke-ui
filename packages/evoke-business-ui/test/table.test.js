@@ -197,10 +197,19 @@ describe('EbTable 展开行与自定义列', () => {
     await flushTable(wrapper)
     expect(wrapper.find('.eb-table__expanded-row').exists()).toBe(true)
     expect(wrapper.find('.expand-content').text()).toBe('详情：苹果')
-    expect(wrapper.emitted('expand-change')).toBeTruthy()
+    // 统一载荷 (expandedKeys, row, expanded)；未设 rowKey 时 key 元素为行引用
+    const expandEv = wrapper.emitted('expand-change')[0]
+    expect(expandEv[0]).toEqual([rows[0]])
+    expect(expandEv[1]).toEqual(rows[0])
+    expect(expandEv[2]).toBe(true)
     await wrapper.find('.eb-table__expand-icon').trigger('click')
     await flushTable(wrapper)
     expect(wrapper.find('.eb-table__expanded-row').exists()).toBe(false)
+    // 收起：keys 清空、expanded 为 false（不再发 Set / boolean 旧形态）
+    const collapseEv = wrapper.emitted('expand-change')[1]
+    expect(collapseEv[0]).toEqual([])
+    expect(collapseEv[1]).toEqual(rows[0])
+    expect(collapseEv[2]).toBe(false)
   })
 
   it('作用域插槽渲染单元格 + formatter', async () => {
@@ -458,5 +467,167 @@ describe('EbTable 表尾合计', () => {
     expect(wrapper.find('tfoot .eb-table__footer-row').classes()).not.toContain('eb-table__row')
     expect(wrapper.find('tfoot .eb-table__footer-row').classes()).not.toContain('eb-table__row--striped')
     expect(wrapper.find('tfoot .eb-checkbox').exists()).toBe(false)
+  })
+})
+
+describe('EbTable scroll-x 横向滚动', () => {
+  function mountWideTable(props = {}) {
+    return mount(EbTable, {
+      props: { data: rows, ...props },
+      slots: {
+        default: () =>
+          h('div', [
+            h(EbTableColumn, { prop: 'name', label: '名称', width: 300 }),
+            h(EbTableColumn, { prop: 'price', label: '价格', minWidth: 200 }),
+            h(EbTableColumn, { prop: 'type', label: '类型' }),
+          ]),
+      },
+    })
+  }
+
+  it('scroll-x：表格按声明宽度渲染并允许溢出，列宽声明不被压缩', async () => {
+    const wrapper = mountWideTable({ scrollX: 800 })
+    await flushTable(wrapper)
+    const bodyStyle = wrapper.find('table.eb-table__body').attributes('style')
+    expect(bodyStyle).toContain('width: 800px')
+    expect(bodyStyle).toContain('min-width: 100%')
+    expect(wrapper.find('table.eb-table__header').attributes('style')).toContain('width: 800px')
+    // colgroup 保留列宽声明：固定宽列与 minWidth 列均落为固定宽（fixed 布局不解析 col 的 min-width）
+    const cols = wrapper.find('table.eb-table__body colgroup').findAll('col')
+    expect(cols[0].attributes('style')).toContain('width: 300px')
+    expect(cols[1].attributes('style')).toContain('width: 200px')
+    wrapper.unmount()
+  })
+
+  it('scroll-x：表体横向滚动时表头 scrollLeft 同步', async () => {
+    const wrapper = mountWideTable({ scrollX: 800 })
+    await flushTable(wrapper)
+    const body = wrapper.find('.eb-table__body-wrapper')
+    const header = wrapper.find('.eb-table__header-wrapper')
+    Object.defineProperty(body.element, 'scrollLeft', { value: 120, configurable: true })
+    Object.defineProperty(header.element, 'scrollLeft', { value: 0, writable: true, configurable: true })
+    await body.trigger('scroll')
+    expect(header.element.scrollLeft).toBe(120)
+    wrapper.unmount()
+  })
+
+  it('scroll-x 支持 max-content 字符串', async () => {
+    const wrapper = mountWideTable({ scrollX: 'max-content' })
+    await flushTable(wrapper)
+    expect(wrapper.find('table.eb-table__body').attributes('style')).toContain('width: max-content')
+    wrapper.unmount()
+  })
+
+  it('未传 scroll-x 保持原行为（宽度 100%，minWidth 列不转固定宽）', async () => {
+    const wrapper = mountWideTable()
+    await flushTable(wrapper)
+    expect(wrapper.find('table.eb-table__body').attributes('style')).toContain('width: 100%')
+    const cols = wrapper.find('table.eb-table__body colgroup').findAll('col')
+    expect(cols[1].attributes('style')).toContain('min-width: 200px')
+    expect(cols[1].attributes('style')).toContain('width: auto')
+    wrapper.unmount()
+  })
+})
+
+describe('EbTable 受控选中与单选', () => {
+  function mountSelectionTable(props = {}) {
+    return mount(EbTable, {
+      props: { data: rows, ...props },
+      slots: {
+        default: () =>
+          h('div', [
+            h(EbTableColumn, { type: 'selection' }),
+            h(EbTableColumn, { prop: 'name', label: '名称' }),
+          ]),
+      },
+    })
+  }
+
+  it('v-model:selection 受控：勾选 emit 行数组，外部按 key 回填可回显', async () => {
+    const wrapper = mountSelectionTable({ rowKey: 'id', selection: [] })
+    await flushTable(wrapper)
+    await wrapper.findAll('tbody .eb-checkbox')[0].find('input').trigger('change')
+    expect(wrapper.emitted('update:selection')[0][0]).toEqual([rows[0]])
+    // 外部按 rowKey 回填（如翻页回显），勾选态跟随受控值
+    await wrapper.setProps({ selection: [2] })
+    await flushTable(wrapper)
+    const boxes = wrapper.findAll('tbody .eb-checkbox')
+    expect(boxes[1].classes()).toContain('is-checked')
+    expect(boxes[0].classes()).not.toContain('is-checked')
+    wrapper.unmount()
+  })
+
+  it('selection-type=radio：单选互斥、update:selection 发单 key、表头无全选框', async () => {
+    const wrapper = mountSelectionTable({ rowKey: 'id', selectionType: 'radio' })
+    await flushTable(wrapper)
+    const radios = wrapper.findAll('tbody .eb-radio')
+    expect(radios.length).toBe(3)
+    expect(wrapper.find('thead .eb-checkbox').exists()).toBe(false)
+    await radios[0].find('input').trigger('change')
+    expect(wrapper.emitted('update:selection')[0][0]).toBe(1)
+    expect(wrapper.emitted('selection-change')[0][0]).toEqual([rows[0]])
+    // 互斥：改选另一行后仍只有一个选中
+    await radios[2].find('input').trigger('change')
+    const sel = wrapper.emitted('selection-change')[1][0]
+    expect(sel).toHaveLength(1)
+    expect(sel[0].name).toBe('CPU')
+    expect(wrapper.emitted('update:selection')[1][0]).toBe(3)
+    // 重复点击已选项不再发事件
+    const count = wrapper.emitted('update:selection').length
+    await radios[2].find('input').trigger('change')
+    expect(wrapper.emitted('update:selection').length).toBe(count)
+    // 受控 key 回显
+    await wrapper.setProps({ selection: 2 })
+    await flushTable(wrapper)
+    const next = wrapper.findAll('tbody .eb-radio')
+    expect(next[1].classes()).toContain('is-checked')
+    expect(next[0].classes()).not.toContain('is-checked')
+    wrapper.unmount()
+  })
+
+  it('非受控兼容：不传 selection 仍内部自持（radio 未设 rowKey 时 update:selection 发行对象）', async () => {
+    const wrapper = mountSelectionTable({ selectionType: 'radio' })
+    await flushTable(wrapper)
+    await wrapper.findAll('tbody .eb-radio')[1].find('input').trigger('change')
+    expect(wrapper.emitted('update:selection')[0][0]).toEqual(rows[1])
+    expect(wrapper.findAll('tbody .eb-radio')[1].classes()).toContain('is-checked')
+    wrapper.unmount()
+  })
+
+  it('树形行展开 expand-change 统一载荷（业务行 key 数组）', async () => {
+    const treeData = [
+      {
+        id: 1,
+        name: '研发部',
+        children: [{ id: 11, name: '前端组', children: [{ id: 111, name: '平台组' }] }],
+      },
+      { id: 2, name: '市场部' },
+    ]
+    const wrapper = mount(EbTable, {
+      props: { data: treeData, rowKey: 'id' },
+      slots: {
+        default: () => h('div', [h(EbTableColumn, { prop: 'name', label: '名称' })]),
+      },
+    })
+    await flushTable(wrapper)
+    await wrapper.find('.eb-table__expand-icon').trigger('click')
+    const expandEv = wrapper.emitted('expand-change')[0]
+    expect(expandEv[0]).toEqual([1])
+    expect(expandEv[1]).toEqual(treeData[0])
+    expect(expandEv[2]).toBe(true)
+    // 展开子行后 keys 聚合
+    const icons = wrapper.findAll('.eb-table__expand-icon')
+    expect(icons.length).toBe(2)
+    await icons[1].trigger('click')
+    const childEv = wrapper.emitted('expand-change')[1]
+    expect(childEv[0]).toEqual([1, 11])
+    expect(childEv[1]).toEqual(treeData[0].children[0])
+    expect(childEv[2]).toBe(true)
+    // 收起根节点：expanded 为 false，根 key 移出（子行展开态仍保留）
+    await wrapper.find('.eb-table__expand-icon').trigger('click')
+    const collapseEv = wrapper.emitted('expand-change')[2]
+    expect(collapseEv[0]).toEqual([11])
+    expect(collapseEv[2]).toBe(false)
+    wrapper.unmount()
   })
 })

@@ -139,6 +139,11 @@
                 </template>
               </div>
             </template>
+            <!-- popup-render 插槽：下拉底部自定义区块（对齐 antd dropdownRender）；
+                 点击 .stop 阻断冒泡，区块内元素默认不触发下拉关闭 -->
+            <div v-if="$slots['popup-render']" class="eb-select-dropdown__footer" @click.stop>
+              <slot name="popup-render" />
+            </div>
           </div>
         </div>
       </Transition>
@@ -178,7 +183,8 @@
  * EbSelect — 选择器
  * 双模式：子组件注册模式（EbOption onMounted 注册，插槽承载）与数据模式（options 数组，
  * 下拉由本组件渲染，可叠加 virtual 虚拟滚动承接万级选项）；
- * 键盘导航（↑↓ Enter Esc）；filterable/remote/multiple/collapse-tags/allow-create/clearable
+ * 键盘导航（↑↓ Enter Esc）；filterable/remote/multiple/collapse-tags/allow-create/clearable；
+ * label-in-value 对象值形态 / max-count 多选上限 / popup-render 下拉底部自定义区块
  */
 import { computed, nextTick, onBeforeUnmount, provide, ref, toRef, watch, useAttrs, useId } from 'vue'
 import EbIcon from '../icon/index.vue'
@@ -199,7 +205,7 @@ defineOptions({ name: 'EbSelect', inheritAttrs: false })
 const { isMobile: isMobilePlatform } = usePlatform()
 
 const props = defineProps({
-  modelValue: { type: [String, Number, Boolean, Array], default: '' },
+  modelValue: { type: [String, Number, Boolean, Array, Object], default: '' },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   size: { type: String, default: '' },
@@ -220,6 +226,10 @@ const props = defineProps({
   options: { type: Array, default: null },
   /** 数据模式字段映射 { label, value, disabled }，默认取同名字段 */
   fieldNames: { type: Object, default: null },
+  /** 选中值形如 { value, label }（multiple 为对象数组）；回显兼容基础值与对象两种形态 */
+  labelInValue: { type: Boolean, default: false },
+  /** 多选选中数上限，达上限后其余选项不可再选（0 表示不限） */
+  maxCount: { type: Number, default: 0 },
   /** 虚拟滚动（需配合 options）：万级选项只渲染可视窗口 */
   virtual: { type: Boolean, default: false },
   name: { type: String, default: undefined },
@@ -337,27 +347,42 @@ const filteredOptions = computed(() => {
 })
 
 // ─── 选中态 ───
+/** 从外部值提取原始 value：兼容基础值与 label-in-value 的 { value, label } 对象 */
+function rawValueOf(v) {
+  return v && typeof v === 'object' ? v.value : v
+}
+
 const selectedValues = computed(() => {
   if (props.multiple) {
-    return Array.isArray(props.modelValue) ? props.modelValue : []
+    const list = Array.isArray(props.modelValue) ? props.modelValue : []
+    return list.map(rawValueOf)
   }
-  const v = props.modelValue
+  const v = rawValueOf(props.modelValue)
   return v === undefined || v === null || v === '' ? [] : [v]
 })
 
 const hasSelection = computed(() => selectedValues.value.length > 0)
 
-const selectedLabel = computed(() => {
-  const first = selectedValues.value[0]
-  const opt = allOptions.value.find((o) => o.value === first)
-  return opt ? opt.label : String(first ?? '')
-})
+/** label 解析：优先取注册表；label-in-value 回显回退到外部对象自带的 label */
+function displayLabelOf(v) {
+  const opt = allOptions.value.find((o) => o.value === v)
+  if (opt) return opt.label
+  if (props.labelInValue) {
+    const source = props.multiple
+      ? (Array.isArray(props.modelValue) ? props.modelValue : []).find((m) => rawValueOf(m) === v)
+      : props.modelValue
+    const inbound = source && typeof source === 'object' ? source.label : undefined
+    if (inbound !== undefined && inbound !== null && inbound !== '') return String(inbound)
+  }
+  return String(v ?? '')
+}
+
+const selectedLabel = computed(() =>
+  selectedValues.value.length ? displayLabelOf(selectedValues.value[0]) : ''
+)
 
 const selectedTags = computed(() =>
-  selectedValues.value.map((v) => {
-    const opt = allOptions.value.find((o) => o.value === v)
-    return { value: v, label: opt ? opt.label : String(v) }
-  })
+  selectedValues.value.map((v) => ({ value: v, label: displayLabelOf(v) }))
 )
 
 const collapsedTags = computed(() => {
@@ -378,6 +403,13 @@ const sizeClass = computed(() => {
 })
 
 const tagDisabled = computed(() => false)
+
+// ─── max-count：多选选中数上限（0 不限）───
+/** 达上限后未选中项不可再选（选项呈禁用观感，已选项不受影响） */
+function isOptionCountLimited(value) {
+  if (!props.multiple || !props.maxCount || props.maxCount <= 0) return false
+  return !selectedValues.value.includes(value) && selectedValues.value.length >= props.maxCount
+}
 
 // ─── Option 注册（子组件调用） ───
 function registerOption(item) {
@@ -400,6 +432,8 @@ provideSelectContext({
   registerOption,
   unregisterOption,
   filteredOptions,
+  /** max-count 达上限后未选中项的禁用观感（Option 侧消费） */
+  isOptionLimited: isOptionCountLimited,
 })
 
 // ─── 下拉开关 ───
@@ -482,6 +516,17 @@ const { stop: stopClickOutside } = useClickOutside(
 onBeforeUnmount(stopClickOutside)
 
 // ─── 选择逻辑 ───
+/** label-in-value 组包：原始 value 包成 { value, label } */
+function wrapValue(v) {
+  const opt = allOptions.value.find((o) => o.value === v)
+  return { value: v, label: opt ? opt.label : String(v ?? '') }
+}
+
+/** 按 label-in-value 形态组包原始数组 */
+function packList(list) {
+  return props.labelInValue ? list.map(wrapValue) : list
+}
+
 function emitValue(next) {
   emit('update:modelValue', next)
   emit('change', next)
@@ -490,6 +535,8 @@ function emitValue(next) {
 
 function handleOptionClick(option) {
   if (option.disabled) return
+  // max-count 达上限：点击拦截（选项已呈禁用观感）
+  if (isOptionCountLimited(option.value)) return
   if (props.multiple) {
     const list = [...selectedValues.value]
     const idx = list.indexOf(option.value)
@@ -499,24 +546,25 @@ function handleOptionClick(option) {
     } else {
       list.push(option.value)
     }
-    emitValue(list)
+    emitValue(packList(list))
     if (props.filterable) {
       query.value = ''
     }
     // multiple 保持下拉打开
   } else {
-    emitValue(option.value)
+    emitValue(props.labelInValue ? wrapValue(option.value) : option.value)
     closeDropdown()
   }
 }
 
 function removeTag(value) {
   const list = selectedValues.value.filter((v) => v !== value)
-  emitValue(list)
+  emitValue(packList(list))
   emit('remove-tag', value)
 }
 
 function handleClear() {
+  // 清空回落空值哨兵：单选空串 / 多选空数组（label-in-value 下同样生效，回显端兼容两形态）
   emitValue(props.multiple ? [] : '')
   emit('clear')
   closeDropdown()
@@ -545,7 +593,8 @@ function handleBlur() {
 const keyboardIndex = ref(-1)
 
 function visibleOptionList() {
-  return filteredOptions.value.filter((o) => !o.disabled)
+  // max-count 达上限的未选中项与禁用项一致：键盘导航跳过
+  return filteredOptions.value.filter((o) => !o.disabled && !isOptionCountLimited(o.value))
 }
 
 function handleKeydown(e) {
@@ -594,7 +643,7 @@ function handleKeydown(e) {
       if (props.multiple && selectedValues.value.length && !query.value) {
         const list2 = [...selectedValues.value]
         list2.pop()
-        emitValue(list2)
+        emitValue(packList(list2))
       }
       break
     default:

@@ -18,9 +18,9 @@
       <div class="eb-table__column-slot" style="display: none">
         <slot />
       </div>
-      <!-- 表头 -->
-      <div class="eb-table__header-wrapper">
-        <table class="eb-table__header" :style="{ width: bodyWidth }">
+      <!-- 表头（横向滚动时 scrollLeft 随表体同步） -->
+      <div ref="headerWrapperRef" class="eb-table__header-wrapper">
+        <table class="eb-table__header" :style="tableSizeStyle">
           <colgroup>
             <col
               v-for="col in renderColumns"
@@ -39,9 +39,10 @@
                 @click="handleHeaderClick(col, $event)"
               >
                 <div class="cell" :class="[`is-${col.headerAlign || col.align}`, col.labelClassName]">
-                  <!-- selection 列：全选 -->
+                  <!-- selection 列：全选（radio 单选模式表头不渲染全选框） -->
                   <template v-if="col.type === 'selection'">
                     <eb-checkbox
+                      v-if="!isRadioSelection"
                       :model-value="isAllSelected"
                       :indeterminate="isIndeterminate"
                       :disabled="data.length === 0"
@@ -91,7 +92,7 @@
           :style="bodyWrapperStyle"
           @scroll="onBodyScroll"
         >
-          <table class="eb-table__body" :style="{ width: bodyWidth }">
+          <table class="eb-table__body" :style="tableSizeStyle">
             <colgroup>
               <col
                 v-for="col in renderColumns"
@@ -137,9 +138,17 @@
                       :class="[`is-${col.align}`, col.className, { 'is-ellipsis': col.showOverflowTooltip }]"
                       :title="col.showOverflowTooltip ? textOf(col, row, rowIndex) : undefined"
                     >
-                      <!-- selection -->
+                      <!-- selection（radio 模式选中即唯一值，重复点击不触发变更） -->
                       <template v-if="col.type === 'selection'">
+                        <eb-radio
+                          v-if="isRadioSelection"
+                          :model-value="isSelected(row)"
+                          :label="true"
+                          :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
+                          @change="toggleRowSelection(row, true, rowIndex)"
+                        />
                         <eb-checkbox
+                          v-else
                           :model-value="isSelected(row)"
                           :disabled="col.selectable ? !col.selectable(row, rowIndex) : false"
                           @change="toggleRowSelection(row, $event, rowIndex)"
@@ -280,11 +289,12 @@
 /**
  * EbTable — 表格
  * 列注册模式（EbTableColumn）；colgroup 定宽；固定列 position:sticky；
- * selection/sort/filter/expand + TableInstance 全套方法
+ * selection（多选/单选、受控可选）/sort/filter/expand + scroll-x 横向滚动 + TableInstance 全套方法
  */
 import { computed, defineComponent, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRef, useSlots, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
 import EbCheckbox from '../checkbox/index.vue'
+import EbRadio from '../radio/index.vue'
 import EbButton from '../button/index.vue'
 import EbSpin from '../spin/index.vue'
 import { useFloating } from '../../composables/useFloating'
@@ -333,12 +343,24 @@ const props = defineProps({
   virtual: { type: Boolean, default: false },
   /** 虚拟模式行高（px），需与实际行高一致；随 size 变化时须显式对齐 */
   rowHeight: { type: Number, default: 48 },
+  /** 横向滚动宽度：数字按 px，也可传 'max-content' 由内容撑开；列宽合计超容器时表体横向滚动、表头同步偏移 */
+  scrollX: { type: [Number, String], default: undefined },
+  /** 选中受控（v-model:selection）：checkbox 模式为行数组，radio 模式为单个 key（需 rowKey，兼容行对象或单元素数组回显）；不传则内部自持 */
+  selection: { type: [Array, String, Number, Object], default: undefined },
+  /** 选择模式：checkbox 多选（表头全选）/ radio 单选 */
+  selectionType: {
+    type: String,
+    default: 'checkbox',
+    validator: (v) => ['checkbox', 'radio'].includes(v),
+  },
 })
 
 const emit = defineEmits([
   'select',
   'select-all',
   'selection-change',
+  /** 选中受控：checkbox 发行数组，radio 发单个 key（未设 rowKey 时为行对象，未选为 null） */
+  'update:selection',
   'cell-click',
   'row-click',
   'row-dblclick',
@@ -435,15 +457,35 @@ function colStyle(col) {
     style.width = toCssWidth(col.width)
     style.minWidth = style.width
   } else if (col.minWidth !== undefined) {
-    style.minWidth = toCssWidth(col.minWidth)
-    style.width = props.fit ? 'auto' : undefined
+    if (hasScrollX.value) {
+      // scroll-x 下 fixed 表格布局不解析 col 的 min-width，转写为固定宽度防止压缩
+      style.width = toCssWidth(col.minWidth)
+      style.minWidth = style.width
+    } else {
+      style.minWidth = toCssWidth(col.minWidth)
+      style.width = props.fit ? 'auto' : undefined
+    }
   } else {
     style.width = 'auto'
   }
   return style
 }
 
-const bodyWidth = computed(() => '100%')
+// ─── 横向滚动（scroll-x） ───
+const hasScrollX = computed(
+  () => props.scrollX !== undefined && props.scrollX !== null && props.scrollX !== ''
+)
+const scrollXCss = computed(() => {
+  if (!hasScrollX.value) return undefined
+  const v = props.scrollX
+  // 数字或纯数字字符串补 px，其余按合法 CSS 宽度透传（如 max-content）
+  return typeof v === 'number' || /^\d+(\.\d+)?$/.test(String(v)) ? `${v}px` : String(v)
+})
+/** 列宽合计可超出容器：表体 wrapper 横向滚动，min-width:100% 保证窄表仍铺满 */
+const tableSizeStyle = computed(() => {
+  if (!hasScrollX.value) return { width: '100%' }
+  return { width: scrollXCss.value, minWidth: '100%' }
+})
 
 const headerAlignOf = (col) => col.headerAlign || col.align
 const colProp = (col) => col.prop
@@ -519,6 +561,11 @@ function rowKeyOf(row, index) {
   if (typeof props.rowKey === 'function') return props.rowKey(row)
   if (typeof props.rowKey === 'string' && props.rowKey) return row?.[props.rowKey]
   return index
+}
+
+/** 展开 key：设 rowKey 时为 key 值，否则退化为行引用 */
+function expandKeyOf(row) {
+  return props.rowKey ? rowKeyOf(row) : row
 }
 
 // ─── 单元格渲染 ───
@@ -784,28 +831,96 @@ function toggleRowExpansion(row, expanded) {
     set.delete(row)
   }
   expandedRows.value = set
-  emit('expand-change', row, [...set].filter((r) => r === row).length > 0 ? [...set] : set)
+  // 统一载荷：(expandedKeys, row, expanded)
+  emit('expand-change', [...set].map(expandKeyOf), row, next)
 }
 
-// ─── 多选 ───
+// ─── 多选 / 单选 ───
+// 内部选中（行引用数组，radio 模式至多 1 行）；受控时由 props.selection 同步
 const selection = ref([])
 const hoverRowIndex = ref(-1)
+const isRadioSelection = computed(() => props.selectionType === 'radio')
+
+/** 行等价：引用相等，或设置 rowKey 时按键比较 */
+function isSameRow(a, b) {
+  if (a === b) return true
+  if (!props.rowKey) return false
+  const ka = rowKeyOf(a)
+  const kb = rowKeyOf(b)
+  return ka !== undefined && ka === kb
+}
+
+/** 在 data 中定位受控值：支持行引用与 key（需 rowKey），未命中返回 null */
+function matchSelectionRow(item) {
+  const dataRows = props.data
+  if (item !== null && typeof item === 'object') {
+    if (dataRows.includes(item)) return item
+    if (props.rowKey) {
+      const k = typeof props.rowKey === 'function' ? props.rowKey(item) : item?.[props.rowKey]
+      return dataRows.find((r) => rowKeyOf(r) === k) ?? null
+    }
+    return null
+  }
+  if (props.rowKey) return dataRows.find((r) => rowKeyOf(r) === item) ?? null
+  return null
+}
+
+// 受控回填：外部传入选中（如翻页后按 rowKey 回填），解析为 data 内的行引用
+watch(
+  () => props.selection,
+  (next) => {
+    if (next === undefined || next === null) return
+    if (isRadioSelection.value) {
+      // 单值形态：key、行对象或单元素数组均可回显
+      const item = Array.isArray(next) ? next[0] : next
+      if (item === undefined || item === null || item === '') {
+        selection.value = []
+      } else {
+        const row = matchSelectionRow(item)
+        selection.value = row ? [row] : []
+      }
+      return
+    }
+    if (!Array.isArray(next)) return
+    selection.value = next.map((item) => matchSelectionRow(item)).filter(Boolean)
+  },
+  { immediate: true }
+)
+
+/** 选中变更统一出口：selection-change 始终发行数组；update:selection 按 radio / checkbox 分形态 */
+function emitSelectionChange(nextRows) {
+  emit('selection-change', nextRows)
+  if (isRadioSelection.value) {
+    const row = nextRows.length ? nextRows[0] : null
+    emit('update:selection', row === null ? null : props.rowKey ? rowKeyOf(row) : row)
+  } else {
+    emit('update:selection', nextRows)
+  }
+}
 
 function isSelected(row) {
-  return selection.value.includes(row)
+  return selection.value.some((r) => isSameRow(r, row))
 }
 
 function toggleRowSelection(row, selected, rowIndex) {
   const selectableCol = columns.value.find((c) => c.type === 'selection')
   if (selectableCol?.selectable && !selectableCol.selectable(row, rowIndex)) return
+  if (isRadioSelection.value) {
+    // 单选：选中即唯一值，重复点击已选项不变更
+    if (isSelected(row)) return
+    selection.value = [row]
+    emit('select', selection.value, row)
+    emitSelectionChange(selection.value)
+    return
+  }
   const next = selected === undefined || typeof selected === 'object' ? !isSelected(row) : selected
-  if (next && !selection.value.includes(row)) {
+  if (next && !isSelected(row)) {
     selection.value = [...selection.value, row]
   } else if (!next) {
-    selection.value = selection.value.filter((r) => r !== row)
+    selection.value = selection.value.filter((r) => !isSameRow(r, row))
   }
   emit('select', selection.value, row)
-  emit('selection-change', selection.value)
+  emitSelectionChange(selection.value)
 }
 
 const isAllSelected = computed(() => {
@@ -813,7 +928,7 @@ const isAllSelected = computed(() => {
   return displayData.value.every((row, i) => {
     const col = columns.value.find((c) => c.type === 'selection')
     if (col?.selectable && !col.selectable(row, i)) return true
-    return selection.value.includes(row)
+    return isSelected(row)
   })
 })
 
@@ -823,31 +938,34 @@ const isIndeterminate = computed(() => {
     const col = columns.value.find((c) => c.type === 'selection')
     return !col?.selectable || col.selectable(row, i)
   })
-  const selectedCount = selectableRows.filter((row) => selection.value.includes(row)).length
+  const selectedCount = selectableRows.filter((row) => isSelected(row)).length
   return selectedCount > 0 && selectedCount < selectableRows.length
 })
 
 function toggleAllSelection() {
+  // radio 单选无全选语义
+  if (isRadioSelection.value) return
   if (isAllSelected.value) {
     // 取消全部
-    const dataRows = new Set(displayData.value)
-    selection.value = selection.value.filter((r) => !dataRows.has(r))
+    selection.value = selection.value.filter(
+      (r) => !displayData.value.some((row) => isSameRow(r, row))
+    )
   } else {
     // 选中全部可选行
     const set = new Set(selection.value)
     displayData.value.forEach((row, i) => {
       const col = columns.value.find((c) => c.type === 'selection')
-      if (!col?.selectable || col.selectable(row, i)) set.add(row)
+      if ((!col?.selectable || col.selectable(row, i)) && !isSelected(row)) set.add(row)
     })
     selection.value = [...set]
   }
   emit('select-all', selection.value)
-  emit('selection-change', selection.value)
+  emitSelectionChange(selection.value)
 }
 
 function clearSelection() {
   selection.value = []
-  emit('selection-change', selection.value)
+  emitSelectionChange(selection.value)
 }
 
 // ─── 当前行 ───
@@ -962,13 +1080,24 @@ const rowHasChildren = (row) => {
   return Array.isArray(kids) && kids.length > 0
 }
 const rowExpanded = (row) => expandedTreeKeys.value.has(treeKeyOf(row))
+/** 树形展开 key 集合：把内部路径 key 还原为业务行 key（未设 rowKey 时为行引用，未命中保留路径 key） */
+function treeExpandedKeysOf(set) {
+  const rowByPath = new Map()
+  for (const [row, path] of treeNodeKeyMap.value.entries()) rowByPath.set(path, row)
+  return [...set].map((path) => {
+    const row = rowByPath.get(path)
+    return row === undefined ? path : expandKeyOf(row)
+  })
+}
+
 function toggleTreeExpand(row) {
   const key = treeKeyOf(row)
   const set = new Set(expandedTreeKeys.value)
   const willExpand = !set.has(key)
   set.has(key) ? set.delete(key) : set.add(key)
   expandedTreeKeys.value = set
-  emit('expand-change', row, willExpand)
+  // 统一载荷：(expandedKeys, row, expanded)
+  emit('expand-change', treeExpandedKeysOf(set), row, willExpand)
 }
 const indentStyle = (level) => ({ width: `${level * 18}px`, display: 'inline-block' })
 
@@ -1074,8 +1203,14 @@ function cancelEdit() {
 }
 
 // ─── 滚动同步 ───
+const headerWrapperRef = ref(null)
+
 function onBodyScroll(e) {
   bodyScrollTop.value = e.target.scrollTop
+  // scroll-x 模式：表体横向滚动时表头同步偏移（header-wrapper overflow:hidden，仅程序化偏移）
+  if (hasScrollX.value && headerWrapperRef.value) {
+    headerWrapperRef.value.scrollLeft = e.target.scrollLeft
+  }
   // 无布局环境（SSR/测试）首次滚动时补测视口高度
   measureViewport()
 }
