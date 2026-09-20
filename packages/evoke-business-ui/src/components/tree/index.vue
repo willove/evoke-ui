@@ -3,6 +3,8 @@
     class="eb-tree eb-tree"
     :class="{ 'eb-tree--highlight-current': highlightCurrent }"
     role="tree"
+    tabindex="0"
+    @keydown="handleTreeKeydown"
   >
     <eb-tree-node
       v-for="item in visibleRoots"
@@ -38,6 +40,7 @@
 /**
  * EbTree — 树形控件（.eb-tree / .eb-tree-node 双层类名）
  * 复选级联（check-strictly 关闭联动）/ filter-node-method / lazy load
+ * 键盘：容器 tabindex=0 承接 ↑↓ 移动 / →← 展开收起 / Enter 选中 / Space 勾选
  * expose：getNode/setCheckedKeys/getCheckedKeys/getCheckedNodes/getHalfCheckedKeys/
  *         getHalfCheckedNodes/setChecked/filter/setCurrentKey/getCurrentKey/getCurrentNode
  */
@@ -298,6 +301,88 @@ function handleNodeClick(node) {
     }
   }
   emit('node-click', node.raw, node)
+}
+
+// ─── 键盘导航 ───
+// 键盘游标独立于 currentKey 记忆；highlight-current 开启时联动高亮与 current-change
+const navKey = ref(null)
+
+/** 当前可见（展开链上）的节点 key 序列，按展示顺序、跳过禁用项 */
+function visibleKeyList() {
+  const out = []
+  const walk = (items) => {
+    for (const item of items) {
+      if (!item.node.disabled) out.push(item.node.key)
+      // 过滤态子级强制可见；普通态随展开集
+      if (item.visibleChildren.length && (filterActive.value || expandedSet.value.has(item.node.key))) {
+        walk(item.visibleChildren)
+      }
+    }
+  }
+  walk(visibleRoots.value)
+  return out
+}
+
+/** 键盘游标落点：navKey → currentKey → 首个可见节点 */
+function cursorKey() {
+  if (navKey.value != null && nodeMap.has(navKey.value)) return navKey.value
+  if (currentKey.value != null && nodeMap.has(currentKey.value)) return currentKey.value
+  return visibleKeyList()[0] ?? null
+}
+
+function setNavCursor(key) {
+  navKey.value = key
+  const node = nodeMap.get(key)
+  if (props.highlightCurrent && node) {
+    const prev = currentKey.value
+    currentKey.value = key
+    if (prev !== key) emit('current-change', node.raw, node)
+  }
+}
+
+function moveCursor(offset) {
+  const list = visibleKeyList()
+  if (!list.length) return
+  const idx = list.indexOf(cursorKey())
+  const next = idx < 0 ? 0 : Math.min(list.length - 1, Math.max(0, idx + offset))
+  setNavCursor(list[next])
+}
+
+function handleTreeKeydown(e) {
+  const key = cursorKey()
+  const node = key != null ? nodeMap.get(key) : null
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault()
+      moveCursor(1)
+      break
+    case 'ArrowUp':
+      e.preventDefault()
+      moveCursor(-1)
+      break
+    case 'ArrowRight':
+      e.preventDefault()
+      // 展开：仅对可展开且当前收起的节点生效
+      if (node && node.expandable && !expandedSet.value.has(node.key)) handleToggle(node)
+      break
+    case 'ArrowLeft':
+      e.preventDefault()
+      // 收起：仅对当前展开的节点生效
+      if (node && expandedSet.value.has(node.key)) handleToggle(node)
+      break
+    case 'Enter':
+      e.preventDefault()
+      // 与点击节点同语义（选中高亮 + node-click）
+      if (node) handleNodeClick(node)
+      break
+    case ' ':
+      e.preventDefault()
+      // 空格切换勾选（checkable 时），防滚屏
+      if (node && props.showCheckbox && !node.disabled) handleCheck(node)
+      break
+    default:
+      break
+  }
 }
 
 // ─── 数据同步 ───

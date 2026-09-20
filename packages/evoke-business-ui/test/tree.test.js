@@ -264,6 +264,89 @@ describe('EbTree 高亮当前节点', () => {
   })
 })
 
+describe('EbTree 键盘导航', () => {
+  function pressKey(wrapper, key) {
+    return wrapper.trigger('keydown', { key })
+  }
+
+  it('容器可聚焦（tabindex=0）+ role=tree；节点 role=treeitem + aria-selected/expanded', () => {
+    const wrapper = mountTree()
+    expect(wrapper.attributes('role')).toBe('tree')
+    expect(wrapper.attributes('tabindex')).toBe('0')
+    // 子节点不进 Tab 序
+    expect(findNodeByLabel(wrapper, '一级 1').attributes('tabindex')).toBe('-1')
+    const node = findNodeByLabel(wrapper, '一级 1')
+    expect(node.attributes('role')).toBe('treeitem')
+    expect(node.attributes('aria-expanded')).toBe('false')
+    expect(node.attributes('aria-selected')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('↑↓ 按可见顺序移动当前节点，联动 is-current 与 current-change', async () => {
+    const wrapper = mountTree({ highlightCurrent: true, defaultExpandAll: true })
+    const tree = wrapper.find('.eb-tree')
+    // 游标默认落在首个可见节点（一级 1，未落高亮），↓ 移动即联动高亮
+    expect(findNodeByLabel(wrapper, '一级 1').classes()).not.toContain('is-current')
+    await pressKey(tree, 'ArrowDown')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(findNodeByLabel(wrapper, '二级 1-1').classes()).toContain('is-current')
+    expect(wrapper.emitted('current-change')[0][0]).toMatchObject({ id: 11 })
+    // 顺序：二级1-1 → 三级1-1-1 → ↑ 回二级1-1
+    await pressKey(tree, 'ArrowDown')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(findNodeByLabel(wrapper, '三级 1-1-1').classes()).toContain('is-current')
+    await pressKey(tree, 'ArrowUp')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(findNodeByLabel(wrapper, '二级 1-1').classes()).toContain('is-current')
+    wrapper.unmount()
+  })
+
+  it('→ 展开、← 收起（联动 node-expand/node-collapse）', async () => {
+    const wrapper = mountTree()
+    const tree = wrapper.find('.eb-tree')
+    const root = findNodeByLabel(wrapper, '一级 1')
+    expect(root.classes()).not.toContain('is-expanded')
+    // 游标默认首个可见节点（一级 1），→ 直接展开
+    await pressKey(tree, 'ArrowRight')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(root.classes()).toContain('is-expanded')
+    expect(wrapper.emitted('node-expand')[0][0]).toMatchObject({ id: 1 })
+    await pressKey(tree, 'ArrowLeft')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(root.classes()).not.toContain('is-expanded')
+    expect(wrapper.emitted('node-collapse')[0][0]).toMatchObject({ id: 1 })
+    wrapper.unmount()
+  })
+
+  it('Enter 选中当前节点（current-change + node-click）', async () => {
+    const wrapper = mountTree({ highlightCurrent: true })
+    const tree = wrapper.find('.eb-tree')
+    await pressKey(tree, 'Enter')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(wrapper.vm.getCurrentKey()).toBe(1)
+    expect(wrapper.emitted('current-change')[0][0]).toMatchObject({ id: 1 })
+    expect(wrapper.emitted('node-click')[0][0]).toMatchObject({ id: 1 })
+    wrapper.unmount()
+  })
+
+  it('Space 切换勾选（checkable，级联后代），非 checkable 不动作', async () => {
+    const wrapper = mountTree({ showCheckbox: true })
+    const tree = wrapper.find('.eb-tree')
+    await pressKey(tree, ' ')
+    await new Promise((r) => setTimeout(r, 10))
+    // 游标在一级 1：级联勾选全部后代
+    expect(wrapper.vm.getCheckedKeys().sort((a, b) => a - b)).toEqual([1, 11, 12, 111])
+    expect(wrapper.emitted('check')).toBeTruthy()
+    wrapper.unmount()
+
+    const plain = mountTree()
+    await pressKey(plain.find('.eb-tree'), ' ')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(plain.emitted('check')).toBeUndefined()
+    plain.unmount()
+  })
+})
+
 describe('EbTree expose API', () => {
   it('getNode 返回节点（data 别名/level/isLeaf）', () => {
     const wrapper = mountTree()

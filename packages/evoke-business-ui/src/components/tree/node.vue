@@ -11,6 +11,7 @@
     role="treeitem"
     tabindex="-1"
     :aria-expanded="node.expandable ? isExpanded : undefined"
+    :aria-selected="isCurrent"
     :aria-disabled="node.disabled"
     :aria-checked="showCheckbox ? ariaChecked : undefined"
     :data-key="node.key"

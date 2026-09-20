@@ -49,7 +49,8 @@
 <script setup>
 /**
  * EbSubMenu — 子菜单
- * 垂直未折叠 → inline 高度展开；水平 / 折叠垂直 → Teleport 弹层（hover/click 触发）
+ * 垂直未折叠 → inline 高度展开；水平 / 折叠垂直 → Teleport 弹层（hover/click 触发）；
+ * 弹层方向随折叠态切换：折叠 → right-start，展开 → bottom-start（双定位实例按 collapse 切换）
  */
 import { inject, computed, ref, toRef, provide, watch, nextTick, onBeforeUnmount } from 'vue'
 import EbIcon from '../icon/index.vue'
@@ -94,19 +95,34 @@ const titleRef = ref(null)
 const floatingRef = ref(null)
 
 const { zIndex, next: nextZIndex } = useZIndex()
-const { x, y, show, hide } = useFloating({
+// useFloating 的 placement 在 setup 期一次性捕获、运行时不可变（computePosition 直读捕获值），
+// 折叠态切换后无法透传新方向 —— 故折叠/展开各建一套定位实例，按 collapse 切换消费；
+// 闲置实例从未 show()，不会启动 autoUpdate，无额外开销
+const floatRight = useFloating({
   reference: titleRef,
   floating: floatingRef,
-  placement: collapse.value ? 'right-start' : 'bottom-start',
+  placement: 'right-start',
   offset: 4,
   flip: true,
   shift: true,
   autoUpdate: true,
 })
+const floatBottom = useFloating({
+  reference: titleRef,
+  floating: floatingRef,
+  placement: 'bottom-start',
+  offset: 4,
+  flip: true,
+  shift: true,
+  autoUpdate: true,
+})
+const activeFloat = computed(() => (collapse.value ? floatRight : floatBottom))
+/** 当前生效实例的 placement（show 后为 floating-ui 实际定位方向） */
+const popperPlacement = computed(() => activeFloat.value.placement.value)
 const popperStyle = computed(() => ({
   position: 'fixed',
-  left: `${x.value}px`,
-  top: `${y.value}px`,
+  left: `${activeFloat.value.x.value}px`,
+  top: `${activeFloat.value.y.value}px`,
   zIndex: zIndex.value,
   minWidth: '160px',
 }))
@@ -146,12 +162,19 @@ function openPopper() {
   popOpen.value = true
   nextZIndex()
   // show 内部会 update 并启动 autoUpdate（滚动/resize 跟随，浮层不脱位）
-  nextTick(show)
+  nextTick(() => activeFloat.value.show())
 }
 function closePopper() {
   popOpen.value = false
-  hide()
+  activeFloat.value.hide()
 }
+
+// 折叠切换瞬间若弹层开着：先在旧实例上 hide（停掉其 autoUpdate），再开时新实例按新方向定位
+watch(collapse, (collapsed) => {
+  if (!popOpen.value) return
+  popOpen.value = false
+  ;(collapsed ? floatBottom : floatRight).hide()
+})
 
 function handleEnter() {
   notifyAncestorPopper?.()
@@ -182,6 +205,13 @@ function onLeave(el) {
     el.style.height = '0'
   })
 }
+
+defineExpose({
+  open: openPopper,
+  close: closePopper,
+  /** 当前生效实例的定位方向（弹层打开后为实际 placement） */
+  popperPlacement,
+})
 </script>
 
 <style src="./style.css"></style>

@@ -3,30 +3,52 @@
     <Transition name="eb-image-viewer-fade">
       <div
         v-if="visible"
+        ref="wrapperRef"
         class="eb-image-viewer__wrapper eb-image-viewer"
         :style="{ zIndex }"
         role="dialog"
         aria-modal="true"
         aria-label="图片查看器"
+        tabindex="-1"
         @click.self="handleOverlayClick"
       >
         <div class="eb-image-viewer__mask" />
-        <span class="eb-image-viewer__btn eb-image-viewer__close" @click="close">
+        <button type="button" class="eb-image-viewer__btn eb-image-viewer__close" aria-label="关闭" @click="close">
           <eb-icon name="close" :size="24" />
-        </span>
+        </button>
         <template v-if="!isSingle">
-          <span class="eb-image-viewer__btn eb-image-viewer__prev" :class="{ 'is-disabled': prevDisabled }" @click="prev">
+          <button
+            type="button"
+            class="eb-image-viewer__btn eb-image-viewer__prev"
+            :class="{ 'is-disabled': prevDisabled }"
+            :disabled="prevDisabled"
+            aria-label="上一张"
+            @click="prev"
+          >
             <eb-icon name="arrow-left" :size="24" />
-          </span>
-          <span class="eb-image-viewer__btn eb-image-viewer__next" :class="{ 'is-disabled': nextDisabled }" @click="next">
+          </button>
+          <button
+            type="button"
+            class="eb-image-viewer__btn eb-image-viewer__next"
+            :class="{ 'is-disabled': nextDisabled }"
+            :disabled="nextDisabled"
+            aria-label="下一张"
+            @click="next"
+          >
             <eb-icon name="arrow-right" :size="24" />
-          </span>
+          </button>
         </template>
         <div class="eb-image-viewer__actions">
           <span class="eb-image-viewer__actions__inner">
-            <eb-icon name="zoom-out" class="eb-image-viewer__action" @click="zoomOut" />
-            <eb-icon name="zoom-in" class="eb-image-viewer__action" @click="zoomIn" />
-            <eb-icon name="refresh-right" class="eb-image-viewer__action" @click="rotate" />
+            <button type="button" class="eb-image-viewer__action" aria-label="缩小" @click="zoomOut">
+              <eb-icon name="zoom-out" />
+            </button>
+            <button type="button" class="eb-image-viewer__action" aria-label="放大" @click="zoomIn">
+              <eb-icon name="zoom-in" />
+            </button>
+            <button type="button" class="eb-image-viewer__action" aria-label="旋转" @click="rotate">
+              <eb-icon name="refresh-right" />
+            </button>
             <span class="eb-image-viewer__counter">{{ index + 1 }} / {{ urlList.length }}</span>
           </span>
         </div>
@@ -50,11 +72,14 @@
 <script setup>
 /**
  * EbImageViewer — 图片查看器
- * 缩放/旋转/多图切换/ESC 关闭
+ * 缩放/旋转/多图切换；键盘：←/→ 切换、Esc 关闭、+/- 缩放、0 重置
+ * （焦点在容器内时 keydown 冒泡到 document 统一处理）
+ * 打开移焦入容器、关闭还焦（对齐 dialog/useFocusTrap 手法）；滚动锁 useLockScroll
  */
-import { computed, ref, watch, onBeforeUnmount } from 'vue'
+import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useZIndex } from '../../composables/useZIndex'
+import { useLockScroll } from '../../composables/useLockScroll'
 import { on as onEvent } from '../../utils/events'
 
 defineOptions({ name: 'EbImageViewer' })
@@ -147,6 +172,17 @@ function onKeydown(e) {
     case 'ArrowRight':
       next()
       break
+    case '+':
+    case '=':
+      zoomIn()
+      break
+    case '-':
+    case '_':
+      zoomOut()
+      break
+    case '0':
+      resetTransform()
+      break
     default:
       break
   }
@@ -168,9 +204,39 @@ watch(
   { immediate: true }
 )
 
+// ─── 焦点管理 + 滚动锁 ───
+const wrapperRef = ref(null)
+const { lock, unlock } = useLockScroll()
+let previouslyFocused = null
+
+watch(
+  visible,
+  (val) => {
+    if (typeof document === 'undefined') return
+    if (val) {
+      lock()
+      previouslyFocused = document.activeElement
+      nextTick(() => wrapperRef.value?.focus?.({ preventScroll: true }))
+    } else {
+      unlock()
+      restoreFocus()
+    }
+  },
+  { immediate: true }
+)
+
+/** 关闭还焦：归还打开前的焦点（对齐 useFocusTrap 的 deactivate） */
+function restoreFocus() {
+  const el = previouslyFocused
+  previouslyFocused = null
+  el?.focus?.()
+}
+
 onBeforeUnmount(() => {
   offKeydown?.()
   offKeydown = null
+  unlock()
+  restoreFocus()
 })
 </script>
 

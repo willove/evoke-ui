@@ -168,6 +168,72 @@ describe('EbMenu 家族', () => {
     wrapper.unmount()
   })
 
+  it('折叠切换后弹层方向跟随：展开 bottom-start ↔ 折叠 right-start', async () => {
+    const wrapper = mount(
+      {
+        components: { EbMenu, EbMenuItem, EbSubMenu },
+        props: ['collapse'],
+        template: `
+          <eb-menu mode="horizontal" :collapse="collapse" menu-trigger="click">
+            <eb-sub-menu index="1">
+              <template #title>管理</template>
+              <eb-menu-item index="1-1">用户</eb-menu-item>
+            </eb-sub-menu>
+          </eb-menu>
+        `,
+      },
+      { props: { collapse: false }, attachTo: document.body },
+    )
+    const sub = wrapper.findComponent(EbSubMenu)
+    const title = wrapper.find('.eb-sub-menu__title')
+    const flush = () => new Promise((r) => setTimeout(r, 30))
+    // 展开态：弹层向下
+    await title.trigger('click')
+    await flush()
+    expect(document.querySelector('.eb-menu__popper')).toBeTruthy()
+    expect(sub.vm.popperPlacement).toBe('bottom-start')
+    await title.trigger('click')
+    await flush()
+    // 切折叠后重开：方向改向右侧
+    await wrapper.setProps({ collapse: true })
+    await title.trigger('click')
+    await flush()
+    expect(document.querySelector('.eb-menu__popper')).toBeTruthy()
+    expect(sub.vm.popperPlacement).toBe('right-start')
+    wrapper.unmount()
+  })
+
+  it('弹层打开中切换 collapse：立即收起并停用旧方向实例', async () => {
+    const wrapper = mount(
+      {
+        components: { EbMenu, EbMenuItem, EbSubMenu },
+        props: ['collapse'],
+        template: `
+          <eb-menu mode="vertical" :collapse="collapse" menu-trigger="click">
+            <eb-sub-menu index="1">
+              <template #title>管理</template>
+              <eb-menu-item index="1-1">用户</eb-menu-item>
+            </eb-sub-menu>
+          </eb-menu>
+        `,
+      },
+      { props: { collapse: true }, attachTo: document.body },
+    )
+    const sub = wrapper.findComponent(EbSubMenu)
+    const title = wrapper.find('.eb-sub-menu__title')
+    const flush = () => new Promise((r) => setTimeout(r, 30))
+    await title.trigger('click')
+    await flush()
+    expect(document.querySelector('.eb-menu__popper')).toBeTruthy()
+    // 折叠切展开：旧方向弹层收起（后续点击转为 inline 展开，不再走弹层）
+    await wrapper.setProps({ collapse: false })
+    await flush()
+    expect(document.querySelector('.eb-menu__popper')).toBeNull()
+    // 生效实例已切到展开方向
+    expect(sub.vm.popperPlacement).toBe('bottom-start')
+    wrapper.unmount()
+  })
+
   it('uniqueOpened 互斥展开', async () => {
     const wrapper = mount(
       {

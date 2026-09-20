@@ -40,8 +40,12 @@
         :placeholder="inputPlaceholder"
         :readonly="!filterable || isDisabled"
         :disabled="isDisabled"
+        role="combobox"
+        :aria-expanded="dropdownVisible"
+        aria-haspopup="dialog"
         @input="handleQueryInput"
         @focus="handleFocus"
+        @keydown="handleTriggerKeydown"
       />
 
       <span class="eb-cascader__suffix">
@@ -88,7 +92,7 @@
               <div class="eb-cascader-menu__wrap">
                 <ul class="eb-cascader-menu__list">
                   <li
-                    v-for="node in menu"
+                    v-for="(node, ri) in menu"
                     :key="String(node.value)"
                     class="eb-cascader-node"
                     :class="{
@@ -96,6 +100,7 @@
                       'in-active-path': activePath.includes(node.value),
                       'is-disabled': node.disabled,
                       'is-selectable': isNodeSelectable(node),
+                      'is-keyboard-active': isKeyboardActive(mi, ri),
                     }"
                     @click="handleNodeClick(node)"
                     @mouseenter="handleNodeHover(node)"
@@ -147,6 +152,7 @@ import { useZIndex } from '../../composables/useZIndex'
 import { useClickOutside } from '../../composables/useClickOutside'
 import { useFormItem, triggerFormValidate } from '../../composables/useFormItem'
 import { useLocale } from '../../composables/useLocale'
+import { on as onEvent } from '../../utils/events'
 
 defineOptions({ name: 'EbCascader', inheritAttrs: false })
 
@@ -409,12 +415,132 @@ function handleWrapperClick() {
   dropdownVisible.value ? closeDropdown() : openDropdown()
 }
 
+// ─── 键盘可达性 ───
+// 关闭态触发器键盘：Enter/ArrowDown 打开面板（Esc 由面板全局键盘处理）
+function handleTriggerKeydown(e) {
+  if (isDisabled.value || dropdownVisible.value) return
+  if (e.key === 'Enter' || e.key === 'ArrowDown') {
+    e.preventDefault()
+    openDropdown()
+  }
+}
+
+// 面板 roving 高亮：keyboardCol/keyboardRow 指向「当前列」的当前行
+const keyboardCol = ref(0)
+const keyboardRow = ref(-1)
+
+function isKeyboardActive(colIdx, rowIdx) {
+  return !filterActive.value && keyboardCol.value === colIdx && keyboardRow.value === rowIdx
+}
+
+/** 当前列从 row 出发按 dir 移动，返回下一个非禁用行号（跳过禁用项，环形） */
+function nextNavigableRow(colIdx, row, dir) {
+  const col = menus.value[colIdx] ?? []
+  if (!col.length) return -1
+  let next = row
+  for (let i = 0; i < col.length; i++) {
+    next = (next + dir + col.length) % col.length
+    if (!col[next].disabled) return next
+  }
+  return -1
+}
+
+/** 键盘展开节点（不依赖 hover 模式），成功后高亮推进子列首行 */
+async function expandByKey(node) {
+  if (node.disabled || (node.isLeaf && !isLazyPending(node))) return
+  const colIdx = keyboardCol.value
+  await expandNode(node)
+  await nextTick()
+  // 子列就绪（含 lazy 加载完成）才推进高亮
+  if (menus.value.length > colIdx + 1) {
+    keyboardCol.value = colIdx + 1
+    keyboardRow.value = nextNavigableRow(keyboardCol.value, -1, 1)
+  }
+}
+
+/** 面板打开时的全局键盘：↑↓ 列内移动、→ 展开、← 回退、Enter 选中、Esc 关闭 */
+function handlePanelKeydown(e) {
+  if (filterActive.value) {
+    // 过滤建议面板暂只支持 Esc 关闭（选择走点击/输入）
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      closeDropdown()
+    }
+    return
+  }
+  const node = (menus.value[keyboardCol.value] ?? [])[keyboardRow.value] ?? null
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault()
+      keyboardRow.value = nextNavigableRow(keyboardCol.value, keyboardRow.value, 1)
+      break
+    case 'ArrowUp':
+      e.preventDefault()
+      keyboardRow.value = nextNavigableRow(keyboardCol.value, keyboardRow.value, -1)
+      break
+    case 'ArrowRight':
+      e.preventDefault()
+      if (node) expandByKey(node)
+      else keyboardRow.value = nextNavigableRow(keyboardCol.value, -1, 1)
+      break
+    case 'ArrowLeft': {
+      e.preventDefault()
+      if (keyboardCol.value <= 0) break
+      // 回退上一列：激活路径去尾，高亮落回父节点所在行
+      const parentValue = activePath.value[activePath.value.length - 1]
+      activePath.value = activePath.value.slice(0, -1)
+      keyboardCol.value -= 1
+      const pr = (menus.value[keyboardCol.value] ?? []).findIndex((n) => n.value === parentValue)
+      keyboardRow.value = pr
+      break
+    }
+    case 'Enter': {
+      e.preventDefault()
+      if (!node) {
+        keyboardRow.value = nextNavigableRow(keyboardCol.value, -1, 1)
+        break
+      }
+      // hover 展开模式下父级点击不选中，键盘 Enter 仍可展开
+      if (expandOnHover.value && !isNodeSelectable(node)) {
+        expandByKey(node)
+        break
+      }
+      handleNodeClick(node)
+      break
+    }
+    case 'Escape':
+      e.preventDefault()
+      closeDropdown()
+      break
+    default:
+      break
+  }
+}
+
+// 全局键盘（面板打开时挂到 document，输入框/选项聚焦均可触发）
+let offPanelKeydown = null
+watch(dropdownVisible, (val) => {
+  if (val) {
+    // 打开重置：高亮回到第一列（未定位到行，首次 ↓ 高亮首项）
+    keyboardCol.value = 0
+    keyboardRow.value = -1
+    if (!offPanelKeydown) offPanelKeydown = onEvent(document, 'keydown', handlePanelKeydown)
+  } else if (offPanelKeydown) {
+    offPanelKeydown()
+    offPanelKeydown = null
+  }
+})
+
 const { stop: stopClickOutside } = useClickOutside(
   [referenceRef, floatingRef],
   () => closeDropdown(),
   true
 )
-onBeforeUnmount(stopClickOutside)
+onBeforeUnmount(() => {
+  stopClickOutside()
+  offPanelKeydown?.()
+  offPanelKeydown = null
+})
 
 function handleFocus() {
   isFocused.value = true

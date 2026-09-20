@@ -20,7 +20,12 @@
         :placeholder="placeholder || t('datepicker.selectTime')"
         :readonly="!editable || isDisabled"
         :disabled="isDisabled"
+        role="combobox"
+        aria-haspopup="listbox"
+        :aria-expanded="dropdownVisible"
+        :aria-disabled="isDisabled || undefined"
         @change="handleInput"
+        @keydown="handleTriggerKeydown"
         @focus="emit('focus')"
       />
       <span v-if="clearable && hasValue && !isDisabled" class="eb-input__suffix" @click.stop>
@@ -63,7 +68,8 @@
 <script setup>
 /**
  * EbTimeSelect — 时间下拉选择（固定步长选项列表，.eb-time-select-dropdown 结构类）
- * start/end/step（HH:mm），minTime/maxTime 控制可选范围
+ * start/end/step（HH:mm），minTime/maxTime 控制可选范围；
+ * 键盘：触发器 Enter/ArrowDown（只读态含 Space）打开，Esc 关闭
  */
 import { computed, nextTick, onBeforeUnmount, ref, toRef } from 'vue'
 import EbIcon from '../icon/index.vue'
@@ -195,6 +201,24 @@ function closeDropdown() {
 function handleWrapperClick() {
   if (isDisabled.value) return
   dropdownVisible.value ? closeDropdown() : openDropdown()
+}
+
+// 触发器键盘：关闭态 Enter/Space/ArrowDown 打开面板（时间值不含空格，不与可编辑输入冲突）；Esc 关闭
+function handleTriggerKeydown(e) {
+  if (isDisabled.value) return
+  if (!dropdownVisible.value) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      openDropdown()
+    }
+    return
+  }
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    closeDropdown()
+    // 焦点保持在触发器输入框上
+    inputRef.value?.focus?.()
+  }
 }
 
 const { stop: stopClickOutside } = useClickOutside(

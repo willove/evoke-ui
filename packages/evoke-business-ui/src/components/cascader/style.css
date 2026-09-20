@@ -211,6 +211,10 @@
 .eb-cascader__dropdown .eb-cascader-node:hover:not(.is-disabled) {
   background-color: var(--eb-fill-color-light);
 }
+/* 键盘 roving 高亮：观感与 hover 一致 */
+.eb-cascader__dropdown .eb-cascader-node.is-keyboard-active:not(.is-disabled) {
+  background-color: var(--eb-fill-color-light);
+}
 .eb-cascader__dropdown .eb-cascader-node.in-active-path {
   color: var(--eb-color-primary);
   font-weight: 600;

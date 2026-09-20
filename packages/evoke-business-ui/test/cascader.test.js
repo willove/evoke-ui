@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
 import EbCascader from '../src/components/cascader/index.vue'
 
@@ -59,6 +59,9 @@ function nodeEl(label, menuIndex) {
     el.querySelector('.eb-cascader-node__label')?.textContent === label
   )
 }
+
+// 每个用例结束自动 unmount：避免未关闭的浮层实例残留 document 键盘监听，污染后续键盘用例
+enableAutoUnmount(afterEach)
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -350,3 +353,123 @@ describe('EbCascader 过滤', () => {
     expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
   })
 })
+
+describe('EbCascader 键盘可达性', () => {
+  function press(key) {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key }))
+  }
+
+  it('触发器 Enter/ArrowDown 打开面板，Esc 关闭，aria-expanded 跟随', async () => {
+    const { wrapper } = mountCascader()
+    const input = wrapper.find('.eb-cascader__input')
+    expect(input.attributes('aria-expanded')).toBe('false')
+    await input.trigger('keydown', { key: 'Enter' })
+    await flush()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
+    expect(input.attributes('aria-expanded')).toBe('true')
+    press('Escape')
+    await flush()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
+    expect(input.attributes('aria-expanded')).toBe('false')
+    // ArrowDown 同样可打开
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeTruthy()
+    wrapper.unmount()
+  })
+
+  it('面板 ↑↓ 在当前列间移动高亮（is-keyboard-active），→ 进子列、← 回退', async () => {
+    const { wrapper } = mountCascader()
+    await openDropdown(wrapper)
+    const firstColNodes = () => [
+      ...document.querySelectorAll('.eb-cascader-menu')[0].querySelectorAll('.eb-cascader-node'),
+    ]
+    // 初始无高亮
+    expect(document.querySelector('.is-keyboard-active')).toBeNull()
+    press('ArrowDown')
+    await flush()
+    expect(firstColNodes()[0].classList.contains('is-keyboard-active')).toBe(true) // 浙江
+    press('ArrowDown')
+    await flush()
+    expect(firstColNodes()[0].classList.contains('is-keyboard-active')).toBe(false)
+    expect(firstColNodes()[1].classList.contains('is-keyboard-active')).toBe(true) // 江苏
+    press('ArrowUp')
+    await flush()
+    expect(firstColNodes()[0].classList.contains('is-keyboard-active')).toBe(true)
+    // → 展开高亮节点进子列，子列首行高亮
+    press('ArrowRight')
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(2)
+    const subActive = document
+      .querySelectorAll('.eb-cascader-menu')[1]
+      .querySelector('.is-keyboard-active')
+    expect(subActive?.textContent).toContain('杭州')
+    // ← 回退上一列，高亮落回父节点
+    press('ArrowLeft')
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(1)
+    expect(firstColNodes()[0].classList.contains('is-keyboard-active')).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('键盘 Enter 逐级选中叶子：emit 路径值并关闭面板', async () => {
+    const { wrapper, cascader } = mountCascader()
+    await wrapper.find('.eb-cascader__input').trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    press('ArrowDown') // 高亮 浙江
+    await flush()
+    press('ArrowRight') // 进 杭州列
+    await flush()
+    press('ArrowRight') // 进 西湖列（首行 西湖）
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(3)
+    press('Enter') // 选中 西湖
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou', 'xihu'])
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('expand-trigger=hover：键盘 → 仍可展开（不依赖 hover），Enter 可选叶子', async () => {
+    const { wrapper, cascader } = mountCascader({ expandTrigger: 'hover' })
+    await openDropdown(wrapper)
+    press('ArrowDown') // 高亮 浙江（父级，hover 模式下点击不选中）
+    await flush()
+    expect(cascader().emitted('update:modelValue')).toBeUndefined()
+    press('ArrowRight') // 键盘展开进子列
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(2)
+    press('Enter') // 子列首行 杭州 仍是父级 → 继续展开
+    await flush()
+    expect(document.querySelectorAll('.eb-cascader-menu').length).toBe(3)
+    press('ArrowRight') // 进 西湖列
+    await flush()
+    press('Enter') // 选中叶子 西湖
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['zhejiang', 'hangzhou', 'xihu'])
+    expect(document.querySelector('.eb-cascader__dropdown')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('禁用项被高亮跳过，Enter 不选中', async () => {
+    const disabledOptions = [
+      { value: 'a', label: '甲' },
+      { value: 'b', label: '禁用', disabled: true },
+      { value: 'c', label: '丙' },
+    ]
+    const { wrapper, cascader } = mountCascader({ options: disabledOptions })
+    await openDropdown(wrapper)
+    press('ArrowDown') // 高亮 甲
+    await flush()
+    press('ArrowDown') // 跳过 禁用 → 高亮 丙
+    await flush()
+    const nodes = [...document.querySelectorAll('.eb-cascader-node')]
+    expect(nodes[2].classList.contains('is-keyboard-active')).toBe(true)
+    expect(nodes[1].classList.contains('is-keyboard-active')).toBe(false)
+    press('Enter')
+    await flush()
+    expect(cascader().emitted('update:modelValue')[0][0]).toEqual(['c'])
+    wrapper.unmount()
+  })
+})
+

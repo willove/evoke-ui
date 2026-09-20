@@ -300,4 +300,40 @@ describe('EbTimeSelect', () => {
     await flush()
     expect(comp().emitted('update:modelValue').length).toBe(1)
   })
+
+  it('键盘可达：触发器 Enter/Space/ArrowDown 打开面板，Esc 关闭', async () => {
+    for (const key of ['Enter', ' ', 'ArrowDown']) {
+      const { wrapper, comp } = mountWith(EbTimeSelect)
+      const input = wrapper.find('.eb-input__inner')
+      // combobox 语义 aria
+      expect(input.attributes('role')).toBe('combobox')
+      expect(input.attributes('aria-haspopup')).toBe('listbox')
+      expect(input.attributes('aria-expanded')).toBe('false')
+      await input.trigger('keydown', { key })
+      await flush()
+      expect(comp().emitted('visible-change')[0]).toEqual([true])
+      expect(document.querySelector('.eb-time-select-dropdown')).toBeTruthy()
+      expect(input.attributes('aria-expanded')).toBe('true')
+      // Esc 关闭，焦点留在触发器上
+      await input.trigger('keydown', { key: 'Escape' })
+      await flush()
+      expect(document.querySelector('.eb-time-select-dropdown')).toBeNull()
+      expect(comp().emitted('visible-change').at(-1)).toEqual([false])
+      expect(document.activeElement).toBe(input.element)
+      wrapper.unmount()
+    }
+  })
+
+  it('键盘打开后点选可用，禁用项键盘打开不受影响', async () => {
+    const { wrapper, comp } = mountWith(EbTimeSelect, { minTime: '10:00' })
+    const input = wrapper.find('.eb-input__inner')
+    expect(input.attributes('aria-disabled')).toBeUndefined()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await flush()
+    const items = [...document.querySelectorAll('.eb-time-select__item')]
+    items[2].click() // 10:00（首个可用项）
+    await flush()
+    expect(comp().emitted('update:modelValue')[0][0]).toBe('10:00')
+    wrapper.unmount()
+  })
 })

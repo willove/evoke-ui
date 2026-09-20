@@ -67,6 +67,114 @@ describe('EbDropdown 家族', () => {
     expect(wrapper.classes()).toContain('eb-dropdown-menu')
     expect(wrapper.classes()).toContain('eb-dropdown-menu')
   })
+
+  // ─── 键盘可达性（浮层家族第一批） ───
+  // 纯文本触发（default slot 非可聚焦元素）：root 容器补 tabindex=0 承接键盘
+
+  const mountKeyboardDropdown = () =>
+    mount(EbDropdown, {
+      props: { trigger: 'click' },
+      slots: {
+        default: '更多',
+        dropdown: () =>
+          h(EbDropdownMenu, () => [
+            h(EbDropdownItem, { command: 'a', label: '操作A' }),
+            h(EbDropdownItem, { command: 'b', label: '操作B' }),
+            h(EbDropdownItem, { command: 'c', label: '禁用项', disabled: true }),
+          ]),
+      },
+      attachTo: document.body,
+    })
+
+  it('键盘可达：纯文本触发时容器 tabindex=0，Enter/Space/ArrowDown 打开', async () => {
+    for (const key of ['Enter', ' ', 'ArrowDown']) {
+      const wrapper = mountKeyboardDropdown()
+      await new Promise((r) => setTimeout(r, 10)) // 等挂载后可聚焦性探测
+      const trigger = wrapper.find('.eb-dropdown')
+      expect(trigger.attributes('tabindex')).toBe('0')
+      expect(trigger.attributes('aria-haspopup')).toBe('menu')
+      await trigger.trigger('keydown', { key })
+      await new Promise((r) => setTimeout(r, 30))
+      expect(document.querySelector('.eb-dropdown-menu')).toBeTruthy()
+      wrapper.unmount()
+    }
+  })
+
+  it('键盘导航：ArrowDown 焦点进首项，↑↓ 循环移动，Enter 选中当前项并关闭', async () => {
+    const wrapper = mountKeyboardDropdown()
+    await new Promise((r) => setTimeout(r, 10))
+    const trigger = wrapper.find('.eb-dropdown')
+    await trigger.trigger('keydown', { key: 'Enter' })
+    await new Promise((r) => setTimeout(r, 30))
+    const enabled = () => [...document.querySelectorAll('.eb-dropdown-menu__item:not(.is-disabled)')]
+    // 焦点移入首项（roving focus，禁用项跳过）
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    expect(document.activeElement).toBe(enabled()[0])
+    // 循环向后
+    enabled()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    expect(document.activeElement).toBe(enabled()[1])
+    enabled()[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    // 越过末项回到首项
+    expect(document.activeElement).toBe(enabled()[0])
+    // Enter 选中当前项 → command 事件 + 关闭
+    document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await new Promise((r) => setTimeout(r, 30))
+    const dropdown = wrapper.findComponent(EbDropdown)
+    expect(dropdown.emitted('command')[0]).toEqual(['a'])
+    expect(document.querySelector('.eb-dropdown-menu')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('键盘 Esc 关闭并把焦点还给触发器（触发器/菜单内两处均可）', async () => {
+    const wrapper = mountKeyboardDropdown()
+    await new Promise((r) => setTimeout(r, 10))
+    const trigger = wrapper.find('.eb-dropdown')
+    await trigger.trigger('keydown', { key: 'Enter' })
+    await new Promise((r) => setTimeout(r, 30))
+    // 菜单内 Esc
+    document.querySelector('.eb-dropdown__popper').dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: false })
+    )
+    await new Promise((r) => setTimeout(r, 30))
+    expect(document.querySelector('.eb-dropdown-menu')).toBeNull()
+    expect(document.activeElement).toBe(trigger.element)
+    // 再开，触发器上 Esc
+    await trigger.trigger('keydown', { key: 'Enter' })
+    await new Promise((r) => setTimeout(r, 30))
+    await trigger.trigger('keydown', { key: 'Escape' })
+    await new Promise((r) => setTimeout(r, 30))
+    expect(document.querySelector('.eb-dropdown-menu')).toBeNull()
+    expect(document.activeElement).toBe(trigger.element)
+    wrapper.unmount()
+  })
+
+  it('slot 内原生 button 触发器：按键冒泡到容器同样可键盘打开，容器不抢焦点', async () => {
+    const wrapper = mount(DropdownHarness, { attachTo: document.body })
+    await new Promise((r) => setTimeout(r, 10))
+    // root 无 tabindex（不与原生 button 竞争 tab 位）
+    expect(wrapper.find('.eb-dropdown').attributes('tabindex')).toBeUndefined()
+    const btn = wrapper.find('.trigger-btn')
+    await btn.trigger('keydown', { key: 'Enter' })
+    await new Promise((r) => setTimeout(r, 30))
+    expect(document.querySelector('.eb-dropdown-menu')).toBeTruthy()
+    // 焦点在按钮上时方向键同样可进入菜单
+    await btn.trigger('keydown', { key: 'ArrowDown' })
+    const first = document.querySelector('.eb-dropdown-menu__item:not(.is-disabled)')
+    expect(document.activeElement).toBe(first)
+    wrapper.unmount()
+  })
+
+  it('键盘开合时 aria-expanded 跟随，菜单容器带 role=menu', async () => {
+    const wrapper = mountKeyboardDropdown()
+    await new Promise((r) => setTimeout(r, 10))
+    const trigger = wrapper.find('.eb-dropdown')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    await new Promise((r) => setTimeout(r, 30))
+    expect(document.querySelector('.eb-dropdown-menu').getAttribute('role')).toBe('menu')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
 })
 
 const TabsHarness = defineComponent({

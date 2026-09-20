@@ -25,9 +25,23 @@
   color: #fff;
   cursor: pointer;
   transition: background-color var(--eb-duration-fast) var(--eb-ease-out), opacity var(--eb-duration-fast) var(--eb-ease-out);
+  /* 原生 button 观感重置（保留上方既有样式） */
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
 }
 .eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__btn:hover {
   background-color: var(--eb-overlay-color-lighter, rgba(0, 0, 0, 0.7));
+}
+.eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__btn:focus-visible {
+  outline: 2px solid var(--eb-color-primary, #175dff);
+  outline-offset: 2px;
+}
+.eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__btn:disabled {
+  pointer-events: none;
 }
 .eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__btn.is-disabled {
   opacity: 0.3;
@@ -68,8 +82,28 @@
   color: #fff;
   font-size: 14px;
 }
+/* 操作栏 action：原生 button 重置，观感对齐原图标 */
 .eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
   cursor: pointer;
+  appearance: none;
+}
+.eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__action:focus-visible {
+  outline: 2px solid var(--eb-color-primary, #175dff);
+  outline-offset: 2px;
+  border-radius: var(--eb-radius-sm, 4px);
+}
+/* 容器承接焦点（tabindex=-1），不展示焦点圈 */
+.eb-image-viewer__wrapper.eb-image-viewer:focus {
+  outline: none;
 }
 .eb-image-viewer__wrapper.eb-image-viewer .eb-image-viewer__counter {
   font-size: var(--eb-font-size-sm);

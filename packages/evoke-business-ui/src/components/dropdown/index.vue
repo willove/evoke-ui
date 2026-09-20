@@ -3,9 +3,19 @@
     ref="rootRef"
     class="eb-dropdown eb-dropdown"
     :class="[sizeClass, { 'is-disabled': disabled }]"
+    :tabindex="rootTriggerTabindex"
+    :aria-haspopup="rootIsTrigger ? 'menu' : undefined"
+    :aria-expanded="rootIsTrigger ? open : undefined"
+    @keydown="handleTriggerKeydown"
   >
     <slot v-if="!splitButton" name="default">
-      <span class="eb-dropdown__trigger-inner" aria-haspopup="menu" :aria-expanded="open">
+      <span
+        class="eb-dropdown__trigger-inner"
+        aria-haspopup="menu"
+        :aria-expanded="open"
+        :tabindex="disabled ? -1 : 0"
+        :aria-disabled="disabled || undefined"
+      >
         <slot name="trigger" />
         <eb-icon name="arrow-down" class="eb-dropdown__caret" :class="{ 'is-reverse': open }" />
       </span>
@@ -33,6 +43,7 @@
           ref="floatingRef"
           class="eb-dropdown__popper eb-popper eb-dropdown__popper"
           :style="popperStyle"
+          @keydown="handleMenuKeydown"
         >
           <slot name="dropdown">
             <eb-dropdown-menu>
@@ -48,9 +59,10 @@
 <script setup>
 /**
  * EbDropdown — 下拉菜单
- * trigger 语义 hover/click/contextmenu；split-button 模式
+ * trigger 语义 hover/click/contextmenu；split-button 模式；
+ * 键盘可达：触发器 Enter/Space/ArrowDown 打开，↑↓ roving focus 移动菜单项，Enter 选中，Esc 关闭还焦点
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, toRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, provide, ref, toRef, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
 import EbButton from '../button/index.vue'
 import EbButtonGroup from '../button/group.vue'
@@ -150,6 +162,78 @@ function closeDropdown() {
 
 function toggle() {
   open.value ? closeDropdown() : openDropdown()
+}
+
+// ─── 键盘可达（roving focus：高亮 = 菜单项真实 DOM 焦点，高亮样式走 item.css :focus-visible） ───
+// 触发内容可聚焦性探测：slot 内有原生可聚焦元素（如 button）或回退 span（自带 tabindex）时，
+// root 不设 tabindex 不抢焦点，键盘依赖原生焦点 + 按键冒泡；纯文本触发则由 root 承接 tab 与键盘
+const FOCUSABLE_SEL = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+const slotFocusable = ref(false)
+function updateTriggerFocusable() {
+  // split-button 模式由原生按钮组承接键盘，root 不参与
+  if (props.splitButton) {
+    slotFocusable.value = true
+    return
+  }
+  slotFocusable.value = !!rootRef.value?.querySelector(FOCUSABLE_SEL)
+}
+onMounted(updateTriggerFocusable)
+onUpdated(updateTriggerFocusable)
+
+const rootIsTrigger = computed(() => !props.splitButton && !slotFocusable.value)
+const rootTriggerTabindex = computed(() => (rootIsTrigger.value && !props.disabled ? 0 : undefined))
+
+function getEnabledItems() {
+  if (!floatingRef.value) return []
+  return Array.from(floatingRef.value.querySelectorAll('.eb-dropdown-menu__item:not(.is-disabled)'))
+}
+
+function focusTrigger() {
+  const el = rootRef.value?.querySelector(FOCUSABLE_SEL)
+  if (el) el.focus()
+  else rootRef.value?.focus()
+}
+
+// 挂在 root 上冒泡承接两种触发内容。关闭态：Enter/Space/ArrowDown 打开；
+// 打开态：↑↓ 把焦点移入菜单首/末项，Esc 关闭并把焦点还给触发器
+function handleTriggerKeydown(e) {
+  // split-button：主按钮 Enter 走自身 click 语义，箭头按钮原生激活已可开合
+  if (props.splitButton || props.disabled) return
+  if (!open.value) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      openDropdown()
+    }
+    return
+  }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault()
+    const items = getEnabledItems()
+    const target = e.key === 'ArrowDown' ? items[0] : items[items.length - 1]
+    target?.focus()
+  } else if (e.key === 'Escape') {
+    closeDropdown()
+    focusTrigger()
+  }
+}
+
+// 菜单内键盘：↑↓ 循环移动，Enter/Space 选中当前项（click → handleCommand → 自动关闭），Esc 关闭还焦点
+function handleMenuKeydown(e) {
+  const items = getEnabledItems()
+  const idx = items.indexOf(document.activeElement)
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault()
+    if (items.length === 0) return
+    const next = e.key === 'ArrowDown' ? (idx + 1) % items.length : (idx <= 0 ? items.length - 1 : idx - 1)
+    items[next].focus()
+  } else if ((e.key === 'Enter' || e.key === ' ') && idx >= 0) {
+    e.preventDefault()
+    document.activeElement.click()
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    closeDropdown()
+    focusTrigger()
+  }
 }
 
 function handleMainClick(e) {
