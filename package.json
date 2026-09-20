@@ -22,6 +22,9 @@
     "docs-charts:dev": "pnpm --filter @wil-works/evoke-charts-docs docs:dev",
     "docs-charts:build": "pnpm --filter @wil-works/evoke-charts-docs docs:build",
     "docs-charts:preview": "pnpm --filter @wil-works/evoke-charts-docs docs:preview",
+    "docs-charts-3d:dev": "pnpm --filter @wil-works/charts-3d-docs docs:dev",
+    "docs-charts-3d:build": "pnpm --filter @wil-works/charts-3d-docs docs:build",
+    "docs-charts-3d:preview": "pnpm --filter @wil-works/charts-3d-docs docs:preview",
     "playground:ebui": "pnpm --filter @wil-works/evoke-business-ui-playground dev",
     "example:ebui-dashboard": "pnpm --filter @wil-works/ebui-example-dashboard dev",
     "example:ebui-crud-list": "pnpm --filter @wil-works/ebui-example-crud-list dev",
@@ -38,11 +41,12 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "pnpm -r run typecheck",
     "tokens:export": "node scripts/export-tokens.mjs",
-    "visual": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && playwright test",
+    "visual": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && pnpm docs-charts-3d:build && playwright test",
     "visual:only": "playwright test",
-    "visual:update": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && playwright test --update-snapshots",
+    "visual:update": "pnpm docs-web:build && pnpm docs:build && pnpm docs-charts:build && pnpm docs-charts-3d:build && playwright test --update-snapshots",
     "visual:preview:business": "cd docs && pnpm exec vitepress preview --port 4174",
-    "visual:preview:charts": "cd docs-charts && pnpm exec vitepress preview --port 4175"
+    "visual:preview:charts": "cd docs-charts && pnpm exec vitepress preview --port 4175",
+    "visual:preview:charts3d": "cd docs-charts-3d && pnpm exec vitepress preview --port 4176"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

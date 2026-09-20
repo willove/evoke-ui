@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 部署文档站到服务器（宝塔面板 + nginx 静态托管）
-# 用法: ./scripts/deploy-docs.sh [all|business|ui|charts]
+# 用法: ./scripts/deploy-docs.sh [all|business|ui|charts|charts3d]
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -39,6 +39,10 @@ case "$TARGET" in
     pnpm docs-charts:build
     deploy "Evoke Charts 文档站" "docs-charts/.vitepress/dist" "$DEPLOY_CHARTS_DIR"
     ;;
+  charts3d)
+    pnpm docs-charts-3d:build
+    deploy "Charts 3D 文档站" "docs-charts-3d/.vitepress/dist" "$DEPLOY_CHARTS3D_DIR"
+    ;;
   all)
     pnpm docs:build
     deploy "Evoke Business UI 文档站" "docs/.vitepress/dist" "$DEPLOY_BUSINESS_DIR"
@@ -46,9 +50,11 @@ case "$TARGET" in
     deploy "Evoke UI 文档站" "docs-web/.vitepress/dist" "$DEPLOY_UI_DIR"
     pnpm docs-charts:build
     deploy "Evoke Charts 文档站" "docs-charts/.vitepress/dist" "$DEPLOY_CHARTS_DIR"
+    pnpm docs-charts-3d:build
+    deploy "Charts 3D 文档站" "docs-charts-3d/.vitepress/dist" "$DEPLOY_CHARTS3D_DIR"
     ;;
   *)
-    echo "用法: $0 [all|business|ui|charts]"
+    echo "用法: $0 [all|business|ui|charts|charts3d]"
     exit 1
     ;;
 esac
