@@ -4,6 +4,28 @@
 
 ## [Unreleased]
 
+### @wil-works/charts-3d — 新包（0.1.0）
+
+- 零依赖 Canvas 三维图表库（Vue 3）：自研透视投影管线（向量/矩阵数学 → 轨道相机 →
+  场景图元 → 画家算法深度排序 → Canvas 2D），不引入 WebGL 封装库，依赖白名单仅 vue；
+- 首批五种图型：`bar3d` 柱林、`line3d` 空间折线（落地投影 + 面带）、`scatter3d`
+  散点（三元组/类目双模式，色带编码第四维）、`surface3d` 曲面高度场（连续色带 +
+  逐格线框）、`pie3d` 三维饼与环形（悬浮扇区整体上浮）；
+- 轨道相机：拖拽环绕 / 滚轮与捏合缩放 / Shift 平移 / 双击复位 / 方向键环绕 /
+  自动旋转；相机状态经 `camera-change` 事件外抛，`getCamera` / `setCamera` /
+  `resetCamera` 实例方法可用；
+- 拾取复用渲染投影（所见即所选），面/线/点统一取视深最近命中；图例点选显隐；
+- 三维坐标框：墙面与轴取边跟随相机（背墙永远在远侧），刻度标签屏幕空间防碰撞，
+  轴名逐级退避；坐标框可用 `box` / `grid` 配置；
+- 与 evoke 生态同规：`--ev-*` 令牌（系列色槽位与 evoke-charts 一致）、
+  `ev-theme-change` 换肤、`html.dark` 暗色、同名内置色系同 id 同色值、
+  `applySeriesPalette` / `clearSeriesPalette` 可直接替换调用；
+- 工程面：空/载/错/成四态、DPR 适配、容器响应式、`exportSVG` 矢量导出（内置
+  SVG 录制器）、`toDataURL` 位图导出、`validateOptions3d` 配置校验（告警不阻断）、
+  aria 标注与 aria-live 播报；`render3d` / `projectScene` / `pickScene` /
+  `createSvgRecorder` 底层管线可直接使用；
+- 示例：`examples/charts-3d-playground`（源码级 alias，`pnpm demo:charts3d`）。
+
 ### @wil-works/evoke-business-ui — 对齐 antd 能力批
 
 - **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`
