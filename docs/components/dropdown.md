@@ -12,6 +12,8 @@ const dropRef = ref(null)
 
 将动作或菜单收纳进触发区弹层：支持 hover / click / contextmenu 触发与 split-button 按钮组形态，弹层 Teleport 至 body 自动定位翻转，item 点击抛出 command 事件并自动收起，另提供命令式 open / close。
 
+键盘操作：触发器聚焦后 Enter / Space / ↓ 打开浮层（触发内容为原生可聚焦元素时依赖其原生焦点，纯文本触发由容器承接），↑↓ 在菜单项间移动焦点（跳过禁用项）、Enter / Space 选中当前项、Esc 关闭并把焦点还给触发器。
+
 ## 基础用法
 
 触发区内容放 `#trigger` 插槽（保留下拉箭头），菜单项放在 `#dropdown` 的 eb-dropdown-menu 内；item 的 `label` / `icon` 是默认插槽的兜底，写入插槽内容时以插槽为准。

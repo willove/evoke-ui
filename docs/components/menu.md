@@ -46,7 +46,7 @@ function onSelect(index, indexPath) {
 
 ## 折叠模式
 
-垂直菜单设 `collapse` 收窄为 64px 图标栏，子菜单转为右侧弹层；折叠后菜单项仅展示图标，需自备图标（子菜单同理，建议用图标替代文字标题）。
+垂直菜单设 `collapse` 收窄为 64px 图标栏，子菜单转为右侧弹层；折叠后菜单项仅展示图标，需自备图标（子菜单同理，建议用图标替代文字标题）。运行时切换 `collapse` 后子菜单弹层方向会同步切换（展开向下、折叠向右）。
 
 <DemoBlock>
   <eb-menu collapse default-active="1" style="width: 64px;">

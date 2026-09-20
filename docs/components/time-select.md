@@ -1,6 +1,6 @@
 # TimeSelect 时间选择
 
-下拉式固定时间点选择：由 start / end / step 生成等间隔选项，适合会议安排、班次选择这类离散时间点场景；连续时间请用 [TimePicker](/components/time-picker)。
+下拉式固定时间点选择：由 start / end / step 生成等间隔选项，适合会议安排、班次选择这类离散时间点场景；连续时间请用 [TimePicker](/components/time-picker)。键盘操作：输入框 Enter / Space / ↓ 打开面板，Esc 关闭（焦点保持在输入框上）。
 
 ## 基础用法
 

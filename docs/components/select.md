@@ -41,6 +41,23 @@ function handleRemoteSearch(query) {
       : [{ value: 'shenzhen', label: '深圳' }, { value: 'guangzhou', label: '广州' }]
   }, 400)
 }
+
+// ─── 选中数上限 ───
+const maxV = ref([])
+
+// ─── 对象值形态 ───
+const livV = ref(null)
+
+// ─── 下拉面板自定义区块 ───
+const renderV = ref('')
+const renderOptions = ref([
+  { value: 'rd', label: '研发部' },
+  { value: 'qa', label: '测试部' },
+])
+function handleRenderAdd() {
+  const seq = renderOptions.value.length + 1
+  renderOptions.value = [...renderOptions.value, { value: 'new-' + seq, label: '新增部门 ' + seq }]
+}
 </script>
 
 
@@ -68,6 +85,17 @@ multiple 时绑定值为数组，选中项以可关闭的 tag 呈现，选择后
   <eb-option label="杭州" value="hangzhou" /><eb-option label="成都" value="chengdu" />
 </eb-select>
 <eb-select v-model="colV" multiple collapse-tags :max-collapse-tags="2" placeholder="已选城市" style="width: 300px;">
+  <eb-option label="北京" value="beijing" /><eb-option label="上海" value="shanghai" />
+  <eb-option label="杭州" value="hangzhou" /><eb-option label="成都" value="chengdu" />
+</eb-select>
+</DemoBlock>
+
+## 选中数上限
+
+max-count 限定多选最多可选中数量：达到上限后其余选项呈置灰态、点击被拦截，已选标签可照常移除，移除后立即恢复可选；0 表示不限。
+
+<DemoBlock>
+<eb-select v-model="maxV" multiple :max-count="2" placeholder="最多选 2 项" style="width: 280px;">
   <eb-option label="北京" value="beijing" /><eb-option label="上海" value="shanghai" />
   <eb-option label="杭州" value="hangzhou" /><eb-option label="成都" value="chengdu" />
 </eb-select>
@@ -132,6 +160,31 @@ eb-option-group 以 label 作为分组标题，把选项按业务维度归组，
 </eb-select>
 </DemoBlock>
 
+## 对象值形态
+
+label-in-value 开启后绑定值形如 { value, label }（multiple 时为对象数组），业务侧免于二次反查文案；回显同时兼容基础值与对象两种形态，清空仍回落为空串 / 空数组。
+
+<DemoBlock>
+<eb-select v-model="livV" label-in-value placeholder="值形如 { value, label }" style="width: 220px;">
+  <eb-option label="华东" value="east" />
+  <eb-option label="华南" value="south" />
+  <eb-option label="华北" value="north" />
+</eb-select>
+<eb-text size="small" type="info" style="margin-top:8px;display:block">当前值：{{ JSON.stringify(livV) }}</eb-text>
+</DemoBlock>
+
+## 下拉面板自定义区块
+
+popup-render 插槽在选项列表之后、下拉面板底部追加自定义区块（对齐 antd 的 dropdownRender 语义），常用于「+ 新增」一类入口；点击区块内元素默认不会关闭下拉。
+
+<DemoBlock>
+<eb-select v-model="renderV" :options="renderOptions" placeholder="下拉底部点新增试试" style="width: 240px;">
+  <template #popup-render>
+    <eb-button size="small" style="width: 100%;" @click="handleRenderAdd">+ 新增部门</eb-button>
+  </template>
+</eb-select>
+</DemoBlock>
+
 ## 尺寸与禁用
 
 size 支持 large / small；disabled 禁用整个选择器，单个 option 设置 disabled 则该项不可选（呈置灰态）。
@@ -155,7 +208,7 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
 ## API
 
 <ApiTable title="Select Props" :rows="[
-  { name: 'v-model', desc: '绑定值，多选时为选中 value 数组', type: 'string | number | boolean | array', default: '' },
+  { name: 'v-model', desc: '绑定值，多选时为选中 value 数组；label-in-value 下形如 { value, label }', type: 'string | number | boolean | array | object', default: '' },
   { name: 'multiple', desc: '多选，绑定值为数组且选择后下拉保持打开', type: 'boolean', default: 'false' },
   { name: 'disabled', desc: '禁用（同时响应表单禁用态）', type: 'boolean', default: 'false' },
   { name: 'size', desc: '尺寸，支持 large / small', type: 'string', default: '' },
@@ -170,6 +223,8 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'collapse-tags', desc: '多选时折叠超出数量的 tag', type: 'boolean', default: 'false' },
   { name: 'max-collapse-tags', desc: '折叠模式下展示的 tag 数上限，其余折叠为 + N', type: 'number', default: '1' },
   { name: 'collapse-tags-tooltip', desc: '预留参数（当前版本未启用）', type: 'boolean', default: 'false' },
+  { name: 'label-in-value', desc: '选中值形如 { value, label }（multiple 为对象数组）；回显兼容基础值与对象两种形态，清空仍为空串 / 空数组', type: 'boolean', default: 'false' },
+  { name: 'max-count', desc: '多选选中数上限，达上限后其余选项置灰且点击被拦截，已选标签可照常移除；0 表示不限', type: 'number', default: '0' },
   { name: 'options', desc: '数据模式选项数组，传入后下拉由组件渲染，无需手写 option；字段名可用 field-names 重映射', type: '{ value, label?, disabled? }[]', default: 'null' },
   { name: 'field-names', desc: '数据模式字段映射 { label, value, disabled }，默认取同名字段，与 Cascader / Tree 的 props 映射能力对齐', type: 'object', default: 'null' },
   { name: 'virtual', desc: '虚拟滚动（需配合 options），万级选项只渲染可视窗口', type: 'boolean', default: 'false' },
@@ -178,13 +233,17 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
 ]" />
 
 <ApiTable title="Select Events" :rows="[
-  { name: 'update:modelValue / change', desc: '选中值变化（选择、移除 tag、清空、Backspace 均触发）', type: '(value) => void', default: '—' },
+  { name: 'update:modelValue / change', desc: '选中值变化（选择、移除 tag、清空、Backspace 均触发；label-in-value 时负载形如 { value, label }）', type: '(value) => void', default: '—' },
   { name: 'clear', desc: '点击清空按钮', type: '() => void', default: '—' },
   { name: 'visible-change', desc: '下拉展开 / 收起', type: '(visible: boolean) => void', default: '—' },
   { name: 'remove-tag', desc: '多选移除某一选中项（tag 关闭或再次点击已选项）', type: '(value) => void', default: '—' },
   { name: 'filter-change', desc: '搜索关键字变化', type: '(query: string) => void', default: '—' },
   { name: 'blur', desc: '焦点真离开组件时触发（Esc 关闭下拉但焦点仍在触发器上不触发）', type: '() => void', default: '—' },
   { name: 'focus', desc: '组件获得焦点时触发（含展开下拉时聚焦输入框 / 触发器）', type: '() => void', default: '—' },
+]" />
+
+<ApiTable title="Select Slots" :rows="[
+  { name: 'popup-render', desc: '下拉面板底部自定义区块（对齐 antd dropdownRender），在选项列表之后渲染；点击区块内元素默认不关闭下拉', type: '—', default: '—' },
 ]" />
 
 <ApiTable title="Select Methods" :rows="[

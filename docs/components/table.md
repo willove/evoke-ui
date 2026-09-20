@@ -1,6 +1,6 @@
 # Table 表格
 
-表格组件：列由 `eb-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选、展开行、固定列（sticky）、当前行高亮与空态，并支持表尾合计、加载遮罩与服务端排序，暴露排序、筛选、选中、展开等实例方法。
+表格组件：列由 `eb-table-column` 声明并注册到父表格（列组件自身不渲染 DOM），内置客户端排序、列筛选、多选 / 单选、展开行、固定列（sticky）、横向滚动、当前行高亮与空态，并支持表尾合计、加载遮罩与服务端排序，选中可经 v-model 受控，暴露排序、筛选、选中、展开等实例方法。
 
 <script setup>
 import { ref } from 'vue'
@@ -22,6 +22,7 @@ const rows = ref([
 ])
 const tableRef = ref(null)
 const selected = ref([])
+const radioSelected = ref(null)
 const lastSort = ref('amount descending')
 
 const virtualRows = Array.from({ length: 500 }, (_, i) => ({
@@ -124,9 +125,22 @@ function onRemoteSortChange(e) {
 <p style="margin-top: 8px;">服务端返回顺序：{{ remoteRows.map((r) => r.name).join('、') }}</p>
 </DemoBlock>
 
+## 横向滚动
+
+`scroll-x` 声明表格总宽（数字按 px，也可传 `max-content` 由内容撑开）：列宽合计超出容器时表体出现横向滚动条，表头随之同步偏移，`fixed` 列保持吸附；列声明了 `min-width` 时按该宽度保底、不被压缩。未传时列宽自适应容器，行为不变。
+
+<DemoBlock>
+<eb-table :data="rows" border :scroll-x="760">
+  <eb-table-column prop="name" label="订单名称" width="220" fixed="left" />
+  <eb-table-column prop="owner" label="负责人" width="160" />
+  <eb-table-column prop="city" label="城市" width="140" />
+  <eb-table-column prop="remark" label="备注" width="240" fixed="right" />
+</eb-table>
+</DemoBlock>
+
 ## 多选
 
-`type="selection"` 声明多选列，表头出现全选框（含半选态）；`selectable` 可禁用指定行（本例仅已支付行可选）。选中项通过 `selection-change` 同步，也可用实例方法 `clearSelection` 清空。
+`type="selection"` 声明多选列，表头出现全选框（含半选态）；`selectable` 可禁用指定行（本例仅已支付行可选）。选中项通过 `selection-change` 同步，也可用 `v-model:selection` 受控（传行数组回填，翻页后按 rowKey 回显），或用实例方法 `clearSelection` 清空。
 
 <DemoBlock>
 <eb-table ref="tableRef" :data="rows" border @selection-change="onSelectionChange">
@@ -138,9 +152,28 @@ function onRemoteSortChange(e) {
 <eb-button @click="tableRef.clearSelection()">清空选择</eb-button>
 </DemoBlock>
 
+## 单选
+
+`selection-type="radio"` 把选择列换成单选框：选中即唯一值，重复点击不变更，表头不再渲染全选框。此时受控值 `v-model:selection` 为单个 key（需配合 `row-key`，未选中为 null；传行对象或单元素数组也可回显），`selection-change` 仍发单元素数组。
+
+<DemoBlock>
+<eb-table
+  v-model:selection="radioSelected"
+  :data="rows"
+  border
+  row-key="id"
+  selection-type="radio"
+>
+  <eb-table-column type="selection" width="48" />
+  <eb-table-column prop="name" label="名称" />
+  <eb-table-column prop="owner" label="负责人" />
+</eb-table>
+<p style="margin: 8px 0;">当前选中 key：{{ radioSelected ?? '—' }}</p>
+</DemoBlock>
+
 ## 展开行
 
-`type="expand"` 声明展开列，默认插槽渲染在展开的附加行中（scope 为 `{ row, $index }`）；配合 `default-expand-all` 或 `expand-row-keys`（需 rowKey）可默认展开。
+`type="expand"` 声明展开列，默认插槽渲染在展开的附加行中（scope 为 `{ row, $index }`）；配合 `default-expand-all` 或 `expand-row-keys`（需 rowKey）可默认展开。展开态变化统一经 `expand-change` 上报 `(expandedKeys, row, expanded)`：expandedKeys 为当前全部展开 key（设 rowKey 时为业务 key），平铺展开列与树形行共用同一签名。
 
 <DemoBlock>
 <eb-table :data="rows" border row-key="id">
@@ -218,6 +251,7 @@ function onRemoteSortChange(e) {
   { name: 'data', desc: '表格数据', type: 'array', default: '[]' },
   { name: 'height', desc: '固定高度，表体区域内滚动', type: 'string | number', default: '—' },
   { name: 'maxHeight', desc: '最大高度，超出后表体滚动', type: 'string | number', default: '—' },
+  { name: 'scrollX', desc: '横向滚动总宽，数字按 px，也可传 max-content 由内容撑开；列宽合计超出容器时表体横向滚动、表头同步偏移，fixed 列照常吸附，minWidth 列按声明保底', type: 'number | string', default: '—' },
   { name: 'border', desc: '边框模式', type: 'boolean', default: 'false' },
   { name: 'stripe', desc: '斑马纹', type: 'boolean', default: 'false' },
   { name: 'loading', desc: '表体加载遮罩，远程取数期间开启并阻断数据区交互', type: 'boolean', default: 'false' },
@@ -230,6 +264,8 @@ function onRemoteSortChange(e) {
   { name: 'defaultExpandAll / expandRowKeys', desc: '默认展开全部 expand 行 / 指定默认展开行的 key 数组（需设置 rowKey）；expandRowKeys 仅初始化生效，动态展开用实例方法 toggleRowExpansion', type: 'boolean / array', default: 'false / []' },
   { name: 'defaultSort', desc: '初始排序 { prop, order }，order 为 ascending / descending', type: 'object', default: '{ prop: \'\', order: \'\' }' },
   { name: 'selectOnIndeterminate', desc: '预留参数（当前未参与全选逻辑）', type: 'boolean', default: 'true' },
+  { name: 'selection (v-model:selection)', desc: '选中受控：checkbox 模式为行数组（回填元素可为 key，需 rowKey），radio 模式为单个 key（未选中为 null，兼容行对象或单元素数组回显）；内部变更同步 emit update:selection，不传则组件内部自持', type: 'array / key', default: '—' },
+  { name: 'selectionType', desc: '选择模式：checkbox 多选（表头全选）/ radio 单选（选中即唯一值，表头无全选框）', type: 'checkbox | radio', default: 'checkbox' },
   { name: 'emptyText', desc: '空数据文案，优先级低于 empty 插槽', type: 'string', default: '' },
   { name: 'showSummary / summaryMethod', desc: '表尾合计行；summaryMethod 缺省对全数字列求和、其余列为空，传入时接收当前（排序/筛选后）数据数组并返回以列 prop 为键的文本映射', type: 'boolean / function', default: 'false' },
   { name: 'virtual', desc: '虚拟滚动，万级行只渲染可视窗口（需配合 height / maxHeight；展开行与树形层级不参与）', type: 'boolean', default: 'false' },
@@ -239,13 +275,13 @@ function onRemoteSortChange(e) {
 <ApiTable title="Table Events" :rows="[
   { name: 'select', desc: '手动勾选某一行', type: '(selection, row) => void', default: '—' },
   { name: 'select-all', desc: '点击表头全选框', type: '(selection) => void', default: '—' },
-  { name: 'selection-change', desc: '选中项变化', type: '(selection) => void', default: '—' },
+  { name: 'selection-change', desc: '选中项变化（radio 单选模式同样发单元素数组或空数组；受控时同时 emit update:selection，checkbox 发数组、radio 发单 key 或 null）', type: '(selection) => void', default: '—' },
   { name: 'cell-click', desc: '单元格点击', type: '(row, prop, value, event) => void', default: '—' },
   { name: 'row-click', desc: '行点击（开启 highlightCurrentRow 时同时更新当前行）', type: '(row, index, event) => void', default: '—' },
   { name: 'row-dblclick / row-contextmenu', desc: '行双击 / 行右键', type: '(row, index, event) => void', default: '—' },
   { name: 'sort-change', desc: '排序变化（含 custom 服务端排序），order 为 ascending / descending / null', type: '({ prop, order, column }) => void', default: '—' },
   { name: 'filter-change', desc: '筛选应用或重置，参数为以列 id 为键的选中值映射', type: '(activeFilters) => void', default: '—' },
-  { name: 'expand-change', desc: '展开行切换', type: '(row, expandedRows) => void', default: '—' },
+  { name: 'expand-change', desc: '展开态变化（平铺展开列与树形行统一载荷；expandedKeys 为当前全部展开 key，设 rowKey 时为业务 key，树形未命中保留路径 key，未设 rowKey 时为行引用）', type: '(expandedKeys, row, expanded) => void', default: '—' },
   { name: 'current-change', desc: '当前行变化', type: '(currentRow, prevRow) => void', default: '—' },
   { name: 'header-click', desc: '表头单元格点击', type: '(column, event) => void', default: '—' },
   { name: 'cell-change', desc: '行内编辑提交（值有变化时触发，行数据已同步更新）', type: '({ row, prop, value, oldValue, $index }) => void', default: '—' },

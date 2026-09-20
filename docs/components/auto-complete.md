@@ -1,6 +1,6 @@
 # AutoComplete 输入联想
 
-输入联想组件：静态候选自动前缀过滤，或经 `fetch-suggestions` 异步取数（内置防抖与过期响应丢弃）。键盘 ↑↓ 移动高亮、Enter 选中、Esc 关闭。
+输入联想组件：静态候选自动前缀过滤，或经 `fetch-suggestions` 异步取数（内置防抖与过期响应丢弃）。键盘 ↑↓ 移动高亮、Enter 选中、Esc 关闭。候选支持字符串 / 数字 / `{ value, label? }` 对象（显示 label，回退 value）；有输入且无结果时展示「无匹配数据」空态行（文案随语言包）；输入框带 combobox / listbox / aria-activedescendant 无障碍语义。
 
 <script setup>
 import { ref } from 'vue'
@@ -17,6 +17,14 @@ function remoteSearch(query, cb) {
 }
 
 const mentionValue = ref('')
+
+const objectValue = ref('')
+const objectSuggestions = [
+  { value: 'zh-CN', label: '简体中文' },
+  { value: 'en-US', label: 'English' },
+  { value: 'ja-JP', label: '日本語' },
+]
+const firstOptionValue = ref('')
 </script>
 
 ## 静态候选
@@ -44,6 +52,33 @@ const mentionValue = ref('')
   />
 </DemoBlock>
 
+## 候选字段与默认高亮
+
+候选为 `{ value, label? }` 对象时展示 `label`、回退 `value`，选中仍回填 `value`；`default-active-first-option` 开启后结果更新自动高亮第一条（antd 默认 true，本组件默认 false），Enter 直接选中。
+
+<DemoBlock>
+  <eb-space size="middle">
+    <eb-auto-complete
+      v-model="objectValue"
+      :suggestions="objectSuggestions"
+      :default-active-first-option="true"
+      placeholder="输入 j 试试"
+      style="width: 220px"
+    />
+    <span>当前值：{{ objectValue || '—' }}</span>
+    <eb-auto-complete
+      v-model="firstOptionValue"
+      :suggestions="objectSuggestions"
+      placeholder="未开启默认高亮"
+      style="width: 220px"
+    />
+  </eb-space>
+</DemoBlock>
+
+## 空态提示
+
+有输入但无匹配结果时，面板内展示「无匹配数据」空态行（取语言包 `select.noMatch`），随 ConfigProvider 语言切换；清空输入或匹配到结果后自动恢复候选列表。
+
 ## AutoComplete API
 
 ### Props
@@ -51,11 +86,12 @@ const mentionValue = ref('')
 | 名称 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | String / Number | — | 绑定值 |
-| suggestions | Array | — | 静态候选（string 或 `{ value }`） |
+| suggestions | Array | — | 静态候选：string / number 或 `{ value, label? }`（展示 label 回退 value） |
 | fetch-suggestions | Function | — | `(query, cb) => void` 异步联想 |
-| filterable | Boolean | `true` | 静态候选本地过滤开关 |
-| debounce | Number | `200` | 输入防抖（ms） |
+| filterable | Boolean | `true` | 静态候选本地过滤开关（按 value 匹配） |
+| debounce | Number | `200` | 输入防抖（ms），组件卸载时自动清理挂起定时器 |
 | minlength | Number | `0` | 触发联想最小字符数 |
+| default-active-first-option | Boolean | `false` | 结果更新自动高亮第一条（antd 默认 true），Enter 直接选中 |
 | value-on-select | Boolean | `true` | 选中后回填输入框 |
 | input-props | Object | `{}` | 透传内部 EbInput（placeholder / size / disabled…） |
 | ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 `setRipple(false)` |

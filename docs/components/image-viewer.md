@@ -32,6 +32,10 @@ const visible2 = ref(false)
 const switched = ref(-1)
 </script>
 
+## 键盘操作
+
+打开预览后焦点自动移入查看器（关闭时归还原焦点），操作按钮均为原生 button 可 Tab 聚焦：`←` / `→` 切换上一张/下一张，`Esc` 关闭（可用 `close-on-press-escape` 关闭），`+` / `-` 缩放，`0` 重置缩放与旋转。预览打开期间页面滚动被锁定，关闭后恢复。
+
 <ApiTable title="ImageViewer Props" :rows="[
   { name: 'modelValue', desc: '显隐（v-model）', type: 'boolean', default: 'false' },
   { name: 'url-list', desc: '图片地址列表', type: 'string[]', default: '[]' },

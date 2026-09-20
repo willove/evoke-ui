@@ -1,6 +1,6 @@
 # Descriptions 描述列表
 
-以表格化列表展示成组的只读字段，常用于详情页、审计信息等只读场景。字段由 `eb-descriptions-item` 声明（结构性子件，由父级收集渲染），支持边框模式、自定义列数、水平 / 垂直排列、跨列与单元格对齐、列宽控制。
+以表格化列表展示成组的只读字段，常用于详情页、审计信息等只读场景。字段由 `eb-descriptions-item` 声明（结构性子件，由父级收集渲染），支持边框模式、数字与响应式断点列数、标签冒号、水平 / 垂直排列、跨列与单元格对齐、单元格样式与列宽控制。
 
 ## 基础用法
 
@@ -84,12 +84,41 @@
   </eb-descriptions>
 </DemoBlock>
 
+## 标签冒号与单元格样式
+
+`colon` 开启后在每个标签后渲染冒号（次要文本色；antd 默认 true，本组件默认 false 保持既有视觉）；`label-style` / `content-style` 为容器级单元格样式，item 级同名属性可逐项覆盖，与 `width` / `min-width` 自由叠加。
+
+<DemoBlock>
+  <eb-descriptions title="容器信息" colon :column="2" :label-style="{ color: 'var(--eb-text-color-secondary)' }">
+    <eb-descriptions-item label="渠道" :content-style="{ fontWeight: 600 }">Web 控制台</eb-descriptions-item>
+    <eb-descriptions-item label="环境">生产</eb-descriptions-item>
+    <eb-descriptions-item label="负责人" :label-style="{ color: 'var(--eb-color-primary)' }" :content-style="{ fontWeight: 600 }">运营组</eb-descriptions-item>
+    <eb-descriptions-item label="值班">7 x 24</eb-descriptions-item>
+  </eb-descriptions>
+</DemoBlock>
+
+## 响应式列数
+
+`column` 除数字外支持 `{ xs, sm, md, lg }` 对象形态（min-width 断点 0 / 576 / 768 / 992，由小到大命中）：窄屏自动降为单列阅读，宽屏恢复多列，服务端渲染按最小档输出。
+
+<DemoBlock>
+  <eb-descriptions title="订单快照" border :column="{ xs: 1, md: 2 }">
+    <eb-descriptions-item label="订单号">SO-20260920-001</eb-descriptions-item>
+    <eb-descriptions-item label="金额">¥ 399.00</eb-descriptions-item>
+    <eb-descriptions-item label="支付方式">支付宝</eb-descriptions-item>
+    <eb-descriptions-item label="状态">已发货</eb-descriptions-item>
+  </eb-descriptions>
+</DemoBlock>
+
 ## API
 
 <ApiTable title="Descriptions Props" :rows="[
   { name: 'title', desc: '标题文本', type: 'string', default: '' },
   { name: 'extra', desc: '标题右侧附加文本', type: 'string', default: '' },
-  { name: 'column', desc: '每行列数（向下取整，最小 1）', type: 'number', default: '3' },
+  { name: 'column', desc: '每行列数（数字向下取整最小 1）；或响应式对象 { xs, sm, md, lg }，由小到大命中断点，全不命中回退最小已声明档', type: 'number | { xs, sm, md, lg }', default: '3' },
+  { name: 'colon', desc: '标签后显示冒号（antd 默认 true，本组件默认 false 保持既有视觉）', type: 'boolean', default: 'false' },
+  { name: 'labelStyle', desc: '容器级标签单元格样式，item 同名属性可覆盖', type: 'object', default: '—' },
+  { name: 'contentStyle', desc: '容器级内容单元格样式，item 同名属性可覆盖', type: 'object', default: '—' },
   { name: 'border', desc: '边框模式', type: 'boolean', default: 'false' },
   { name: 'direction', desc: '排列方向：horizontal 标签左内容右，vertical 标签上内容下', type: 'horizontal | vertical', default: 'horizontal' },
   { name: 'size', desc: '尺寸', type: 'large | default | small', default: 'default' },
@@ -110,6 +139,8 @@
   { name: 'labelAlign', desc: '标签对齐，缺省跟随 align', type: 'left | center | right', default: '' },
   { name: 'className', desc: '内容单元格类名（也接受 class-name 形式）', type: 'string', default: '' },
   { name: 'labelClassName', desc: '标签单元格类名（也接受 label-class-name 形式）', type: 'string', default: '' },
+  { name: 'labelStyle', desc: '标签单元格样式对象，覆盖容器级 label-style', type: 'object', default: '—' },
+  { name: 'contentStyle', desc: '内容单元格样式对象，覆盖容器级 content-style', type: 'object', default: '—' },
 ]" />
 
 <ApiTable title="DescriptionsItem Slots" :rows="[

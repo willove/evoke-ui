@@ -162,6 +162,10 @@ const onFilterReset = () => filterTreeRef.value?.filter('')
 onMounted(() => nextTick(syncCheckSummary))
 </script>
 
+## 键盘操作
+
+树容器可聚焦（`tabindex="0"`，子节点不进入 Tab 序）：`↑` / `↓` 按可见顺序移动当前节点（`highlight-current` 开启时联动高亮与 `current-change`），`→` 展开当前节点、`←` 收起，`Enter` 选中（同点击语义），`Space` 在开启复选框时切换勾选（父子级联）。节点带 `role="treeitem"` 与 `aria-expanded` / `aria-selected` / `aria-checked` 标记。
+
 ## Tree API
 
 <ApiTable title="Tree Props" :rows="[

@@ -37,7 +37,17 @@ const slotData = [
   { key: 'a11y', label: '无障碍适配', count: 8 },
 ]
 const slotKeys = ref(['a11y'])
+
+const oneWayKeys = ref([])
 </script>
+
+## 单向模式
+
+`one-way` 开启后隐藏右到左的回移按钮，并收起已选区的勾选入口（行内与表头），数据只从左向右移动——适合「确认即生效」的分配场景。
+
+<DemoBlock>
+  <eb-transfer v-model="oneWayKeys" :data="transferData" one-way filterable />
+</DemoBlock>
 
 ## 自定义行内容
 
@@ -61,6 +71,7 @@ const slotKeys = ref(['a11y'])
 | filterable | Boolean | `false` | 开启搜索 |
 | filter-placeholder | String | 取语言包（中文为 请输入搜索内容） | 搜索占位 |
 | disabled | Boolean | `false` | 整体禁用：移动按钮、勾选框与搜索框联动 |
+| one-way | Boolean | `false` | 单向模式：隐藏回移按钮与已选区勾选入口，数据只从左向右移动 |
 
 事件：`update:modelValue`、`change(keys)`。
 

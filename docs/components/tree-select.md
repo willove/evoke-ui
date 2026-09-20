@@ -1,6 +1,6 @@
 # TreeSelect 树形选择
 
-下拉树选择器：[Tree](/components/tree) 与选择器的组合，支持单选 / 多选（复选框）、过滤、懒加载；层级数据用 `props` 字段映射。
+下拉树选择器：[Tree](/components/tree) 与选择器的组合，支持单选 / 多选（复选框）、过滤、懒加载；层级数据用 `props` 字段映射。关闭态触发器支持键盘展开（Enter / Space / ↓）。
 
 ## 基础用法
 
@@ -24,6 +24,15 @@
 <DemoBlock>
   <eb-tree-select v-model="strategyVal" :data="treeData" multiple show-checkbox checked-strategy="parent" placeholder="勾满大区只记大区" />
   <eb-text size="small" type="info" style="margin-top:8px;display:block">当前值：{{ JSON.stringify(strategyVal) }}</eb-text>
+</DemoBlock>
+
+## 对象值形态
+
+`label-in-value` 让绑定值形如 { value, label }（multiple 时为对象数组），业务侧免于二次反查文案；与 `checked-strategy` 组合时 label 取归约后 key 的文案：
+
+<DemoBlock>
+  <eb-tree-select v-model="livVal" :data="treeData" label-in-value multiple show-checkbox checked-strategy="parent" placeholder="值形如 { value, label }" />
+  <eb-text size="small" type="info" style="margin-top:8px;display:block">当前值：{{ JSON.stringify(livVal) }}</eb-text>
 </DemoBlock>
 
 ## 过滤
@@ -106,6 +115,9 @@ const filtered = ref(null)
 // ─── 回传值策略 ───
 const strategyVal = ref([])
 
+// ─── 对象值形态 ───
+const livVal = ref([])
+
 // ─── 任意层级选择 ───
 const anyNode = ref(null)
 
@@ -142,11 +154,12 @@ const onEvtVisible = (visible) => pushEvtLog(`visible-change：${visible ? '展�
 </script>
 
 <ApiTable title="TreeSelect Props" :rows="[
-  { name: 'modelValue', desc: '绑定值；multiple 时为数组', type: 'string | number | boolean | array', default: '—' },
+  { name: 'modelValue', desc: '绑定值；multiple 时为数组，label-in-value 下形如 { value, label }', type: 'string | number | boolean | array | object', default: '—' },
   { name: 'data', desc: '树形数据（字段可用 props 映射）', type: 'array', default: '[]' },
   { name: 'props', desc: '字段映射 { value, label, children, disabled, isLeaf }', type: 'object', default: '{}' },
   { name: 'node-key', desc: '唯一键字段，缺省取 props.value', type: 'string', default: '—' },
   { name: 'multiple', desc: '多选（回显为标签）', type: 'boolean', default: 'false' },
+  { name: 'label-in-value', desc: '绑定值形如 { value, label }（multiple 为对象数组）；与 checked-strategy 组合时 label 取归约后 key 的文案，清空仍为 undefined / 空数组', type: 'boolean', default: 'false' },
   { name: 'size', desc: '尺寸：large / small', type: 'string', default: '—' },
   { name: 'placeholder', desc: '占位文案', type: 'string', default: '请选择' },
   { name: 'show-checkbox', desc: '节点前显示复选框', type: 'boolean', default: 'false' },
