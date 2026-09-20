@@ -44,18 +44,107 @@
   disabled 后自动建观察者；FeatureGrid 动态换数据不再丢入场动效；Input 暴露的
   `focused` 真实反映焦点态。
 
-### @wil-works/evoke-charts — P2 收口
-
-- 键盘巡历感知 dataZoom 切片（步进/Home/End 按窗口数据而非全量）；
-- exportSVG 不再导出 dataZoom 滑块；箱线/热力含 NaN 时不命中或花屏修复；
-  分面散点渲染与悬浮取色一致。
-
 ### 破坏性变更（Breaking）
 
 - **evoke-business-ui**：`EbTable` 的 `expand-change` 事件统一为
   `(expandedKeys[], row, expanded)` 三参（原平铺/树两种形态分裂）；
 - **evoke-ui**：内部标识符 `ewSvgPaths` / `ewShowcasePaths` / `ewIconGrid` 及 tabbar
   注入 key `ewTabbar` 改为 `ev-` 前缀（`evSvgPaths` 等，直接引用这些导出的消费方需同步）。
+
+### @wil-works/evoke-business-ui — 对齐 antd 能力批
+
+- **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`
+  支持服务端排序（只发 `sort-change` 不做本地重排）；`showSummary` / `summaryMethod`
+  此前声明了但不渲染，现在真正渲染表尾合计行（默认对全数字列求和）；
+- **EbForm**：新增提交事件闭环——回车或 `native-type="submit"` 触发校验，通过 emit
+  `finish`、失败 emit `finish-failed`；新增 `values-change` 事件（最小变化集 + 全量值）；
+  `scroll-to-error` 此前是预留 prop，现在校验失败会滚到第一个错误字段；
+- **EbSelect**：`field-names` 支持自定义数据字段映射；多选模式下 `clearable` 清空按钮
+  此前不显示，现已生效；`focus` / `blur` 事件此前从未触发或与「关下拉」混淆，现按
+  真实焦点语义触发；
+- **EbCascader**：新增 `lazy` + `load-data` 动态懒加载子级（带列级加载占位）；
+- **EbTreeSelect**：新增 `checked-strategy`（child / parent / all）控制勾选回传值形态，
+  默认行为不变；
+- **EbTree**：`accordion` 手风琴此前只对一级节点生效，现在全层级同父互斥；
+- **EbTransfer**：新增 `#item` 作用域插槽自定义行内容与整体 `disabled`；文案接入
+  多语言包；
+- **EbInputNumber**：新增 `formatter` / `parser` 格式化展示与反解（千分位金额等），
+  新增 `addon-before` / `addon-after` 前后缀块（prop 与插槽两种传法）；
+- **EbTimePicker**：范围选择此前不能手输时间，现与单值模式一致可键入；新增
+  `disabled-hours` / `disabled-minutes` / `disabled-seconds` 限制可选时段，当前值
+  落在禁用集内自动让位到最近可用值。
+
+### 安全加固
+
+- **evoke-business-ui**：聊天消息 Markdown 管线（EbChatbot）修复两处可注入点——链接
+  href/title 与引用 chip 的属性位现在全量转义，消息原文中的原生 HTML 转义为纯文本
+  不再穿透执行；`data:` 协议移出链接白名单默认集（降级为不可点 chip，宿主可显式加回）；
+  EbLink `target="_blank"` 自动补 `rel="noopener noreferrer"`；
+- **evoke-ui**：EvNavbar / EvFooter `target="_blank"` 自动补
+  `rel="noopener noreferrer"`；主题配置合并对 `__proto__` 键免疫（原型链污染防护）；
+### @wil-works/evoke-business-ui — 修复一批 review 问题
+
+- **EbContextMenu**：子菜单展开后把指针从父项移入子菜单，子菜单不再悬停约
+  160ms 就自动消失，可正常在子菜单内选择；
+- **EbCascader**：`expand-trigger="hover"` 模式下点击叶子节点（以及
+  checkStrictly 的任意层级节点）现在能正常选中，此前点击毫无反应；
+- **EbTooltip**：实例方法 `show()` 此前是空操作，现在真正打开浮层；
+- **useTable**：`setPagination({ page, pageSize })` 同时传页码与页容量时页码
+  不再被重置回第 1 页；单独改 `pageSize` 仍回到第 1 页；
+- **EbSelect**：关闭状态下按 Enter / Space / ↓ 现在能键盘打开下拉，此前只能
+  鼠标点击；
+- **EbTable**：列筛选面板此前只能再点一次筛选图标才收得起来，现在点击面板
+  外部或按 Esc 均关闭，面板内勾选不受影响；
+- **EbPopover**：`width` 属性此前声明了但不生效，现在真正约束浮层内容宽度
+  （数字与纯数字字符串补 px，`"50%"` 这类原样生效）。
+
+### @wil-works/evoke-ui — 修复一批 review 问题
+
+- **EvMarkdown 安全修复**：图片 `alt`、链接 `href` 属性位中的双引号现在会被转义，
+  `![a" onerror="alert(1)](…)` 之类的写法不再能逃逸出属性注入 HTML；
+- **EvAvatar**：图片加载失败不再停留裂图，回退姓名首字符；更换 `src` 自动重试；
+- **EvSelect**：`placement="top"` 此前不生效、菜单永远向下，现在真正向上展开
+  （动效方向同步）；新增键盘操作——关闭时 ↓ / Enter 打开，展开后 ↑↓ 循环移动高亮、
+  Home / End 跳首尾、Enter / Space 选中、Esc 关闭，并带 `aria-activedescendant`；
+- **EvTabbarItem**：页签此前无法用键盘触达，现在可 Tab 聚焦并以 Enter / Space 切换
+  （disabled 项移出焦点序）；
+- **EvImagePreview**：灯箱打开后焦点移入预览层、关闭后归还触发元素，键盘与读屏用户
+  不再"失焦"；
+- **EvOtpInput**：在已填方框内补打一位时直接覆写当前位并前进，不再把新字符串位挤到
+  后面的方框；粘贴整段 / 验证码自动填充行为不变；
+- **EvActionSheet**：重复打开时层级逐次递增，不再被上一次的浮层残影遮住；
+- **EvStatistic**：`animated` 滚动结束后动态更新 `value` 即时生效，不再被上一轮动画
+  终帧冻结。
+
+### @wil-works/evoke-charts — 修复一批 review 问题
+
+- **缺 data 系列的悬浮命中不再崩**：某系列缺 `data` 时渲染有兜底，但悬浮命中
+  （line / bar / horizontal-bar / sparkline 的 tooltip 取值）与 `getDataExtent()`
+  仍直接读 `s.data[i]` 抛 TypeError；统一为 `(s.data || [])` 口径，缺数据系列的
+  行自动从 tooltip 与极值统计中剔除；
+- **直方图大样本不再栈溢出**：bin 图 `computeBins` 与 padding 计算对全量样本做
+  `push(...arr)` 展开，约 10 万+ 样本即抛 RangeError 进错误态；改循环 push，
+  padding 分支只计数不物化数组，20 万样本可正常渲染；
+- **堆叠面积图 null 断段基线修正**：带缺失值的堆叠面积，断段后段的起始基线
+  此前恒取索引 0 的堆叠值，与回程逐点基线口径不一致，面积多边形闭合边错位；
+  改为按段首原始索引取基线，与回程一致；
+- **setSpec() 换 Spec 后命中缓存彻底失效**：`setSpec` 只清了 2 处缓存，
+  padding / 图例命中区 / 甘特 / 桑基布局缓存按 options 引用键控仍服务旧数据
+  （非响应式 options 场景悬浮命中错位）；抽出 `invalidateHitCaches()` 供
+  update / setSpec / deep watch 共用，7 处缓存一次清齐；
+- **键盘巡历 aria-live 每步重播报**：方向键步进后读屏此前只在首次进入悬浮时
+  收到读数；现在键盘驱动的每次索引变化都更新 aria-live 播报，指针悬浮仍只在
+  进入时播报一次（避免读屏噪音）；
+- 8 项行为级回归测试（缺 data 命中链路 ×3、bin 大样本、断段基线 ×2、
+  setSpec 缓存失效、aria-live 步进跟随）。
+
+## [charts 0.7.0] — 2026-09-20
+
+### @wil-works/evoke-charts — P2 收口
+
+- 键盘巡历感知 dataZoom 切片（步进/Home/End 按窗口数据而非全量）；
+- exportSVG 不再导出 dataZoom 滑块；箱线/热力含 NaN 时不命中或花屏修复；
+  分面散点渲染与悬浮取色一致。
 
 ### @wil-works/evoke-charts — 0.7.0 三维篇章（原 charts-3d 并入）
 
@@ -166,95 +255,10 @@
   惯性开停、减动效跳过）；
 - 文档站二维/三维 API 与「设计规范」（新增「动画」段）同步。
 
-### @wil-works/evoke-business-ui — 对齐 antd 能力批
+### @wil-works/evoke-charts — 安全加固
 
-- **EbTable**：新增 `loading` 加载遮罩与 `rowClassName` 行条件类名；`column.sortable="custom"`
-  支持服务端排序（只发 `sort-change` 不做本地重排）；`showSummary` / `summaryMethod`
-  此前声明了但不渲染，现在真正渲染表尾合计行（默认对全数字列求和）；
-- **EbForm**：新增提交事件闭环——回车或 `native-type="submit"` 触发校验，通过 emit
-  `finish`、失败 emit `finish-failed`；新增 `values-change` 事件（最小变化集 + 全量值）；
-  `scroll-to-error` 此前是预留 prop，现在校验失败会滚到第一个错误字段；
-- **EbSelect**：`field-names` 支持自定义数据字段映射；多选模式下 `clearable` 清空按钮
-  此前不显示，现已生效；`focus` / `blur` 事件此前从未触发或与「关下拉」混淆，现按
-  真实焦点语义触发；
-- **EbCascader**：新增 `lazy` + `load-data` 动态懒加载子级（带列级加载占位）；
-- **EbTreeSelect**：新增 `checked-strategy`（child / parent / all）控制勾选回传值形态，
-  默认行为不变；
-- **EbTree**：`accordion` 手风琴此前只对一级节点生效，现在全层级同父互斥；
-- **EbTransfer**：新增 `#item` 作用域插槽自定义行内容与整体 `disabled`；文案接入
-  多语言包；
-- **EbInputNumber**：新增 `formatter` / `parser` 格式化展示与反解（千分位金额等），
-  新增 `addon-before` / `addon-after` 前后缀块（prop 与插槽两种传法）；
-- **EbTimePicker**：范围选择此前不能手输时间，现与单值模式一致可键入；新增
-  `disabled-hours` / `disabled-minutes` / `disabled-seconds` 限制可选时段，当前值
-  落在禁用集内自动让位到最近可用值。
-
-### 安全加固
-
-- **evoke-business-ui**：聊天消息 Markdown 管线（EbChatbot）修复两处可注入点——链接
-  href/title 与引用 chip 的属性位现在全量转义，消息原文中的原生 HTML 转义为纯文本
-  不再穿透执行；`data:` 协议移出链接白名单默认集（降级为不可点 chip，宿主可显式加回）；
-  EbLink `target="_blank"` 自动补 `rel="noopener noreferrer"`；
-- **evoke-ui**：EvNavbar / EvFooter `target="_blank"` 自动补
-  `rel="noopener noreferrer"`；主题配置合并对 `__proto__` 键免疫（原型链污染防护）；
 - **evoke-charts**：`setSpec` / `update` 对不可信 JSON 产物的 `__proto__` 键免疫；
   SVG 导出的渐变颜色补 XML 转义。
-
-### @wil-works/evoke-business-ui — 修复一批 review 问题
-
-- **EbContextMenu**：子菜单展开后把指针从父项移入子菜单，子菜单不再悬停约
-  160ms 就自动消失，可正常在子菜单内选择；
-- **EbCascader**：`expand-trigger="hover"` 模式下点击叶子节点（以及
-  checkStrictly 的任意层级节点）现在能正常选中，此前点击毫无反应；
-- **EbTooltip**：实例方法 `show()` 此前是空操作，现在真正打开浮层；
-- **useTable**：`setPagination({ page, pageSize })` 同时传页码与页容量时页码
-  不再被重置回第 1 页；单独改 `pageSize` 仍回到第 1 页；
-- **EbSelect**：关闭状态下按 Enter / Space / ↓ 现在能键盘打开下拉，此前只能
-  鼠标点击；
-- **EbTable**：列筛选面板此前只能再点一次筛选图标才收得起来，现在点击面板
-  外部或按 Esc 均关闭，面板内勾选不受影响；
-- **EbPopover**：`width` 属性此前声明了但不生效，现在真正约束浮层内容宽度
-  （数字与纯数字字符串补 px，`"50%"` 这类原样生效）。
-
-### @wil-works/evoke-ui — 修复一批 review 问题
-
-- **EvMarkdown 安全修复**：图片 `alt`、链接 `href` 属性位中的双引号现在会被转义，
-  `![a" onerror="alert(1)](…)` 之类的写法不再能逃逸出属性注入 HTML；
-- **EvAvatar**：图片加载失败不再停留裂图，回退姓名首字符；更换 `src` 自动重试；
-- **EvSelect**：`placement="top"` 此前不生效、菜单永远向下，现在真正向上展开
-  （动效方向同步）；新增键盘操作——关闭时 ↓ / Enter 打开，展开后 ↑↓ 循环移动高亮、
-  Home / End 跳首尾、Enter / Space 选中、Esc 关闭，并带 `aria-activedescendant`；
-- **EvTabbarItem**：页签此前无法用键盘触达，现在可 Tab 聚焦并以 Enter / Space 切换
-  （disabled 项移出焦点序）；
-- **EvImagePreview**：灯箱打开后焦点移入预览层、关闭后归还触发元素，键盘与读屏用户
-  不再"失焦"；
-- **EvOtpInput**：在已填方框内补打一位时直接覆写当前位并前进，不再把新字符串位挤到
-  后面的方框；粘贴整段 / 验证码自动填充行为不变；
-- **EvActionSheet**：重复打开时层级逐次递增，不再被上一次的浮层残影遮住；
-- **EvStatistic**：`animated` 滚动结束后动态更新 `value` 即时生效，不再被上一轮动画
-  终帧冻结。
-
-### @wil-works/evoke-charts — 修复一批 review 问题
-
-- **缺 data 系列的悬浮命中不再崩**：某系列缺 `data` 时渲染有兜底，但悬浮命中
-  （line / bar / horizontal-bar / sparkline 的 tooltip 取值）与 `getDataExtent()`
-  仍直接读 `s.data[i]` 抛 TypeError；统一为 `(s.data || [])` 口径，缺数据系列的
-  行自动从 tooltip 与极值统计中剔除；
-- **直方图大样本不再栈溢出**：bin 图 `computeBins` 与 padding 计算对全量样本做
-  `push(...arr)` 展开，约 10 万+ 样本即抛 RangeError 进错误态；改循环 push，
-  padding 分支只计数不物化数组，20 万样本可正常渲染；
-- **堆叠面积图 null 断段基线修正**：带缺失值的堆叠面积，断段后段的起始基线
-  此前恒取索引 0 的堆叠值，与回程逐点基线口径不一致，面积多边形闭合边错位；
-  改为按段首原始索引取基线，与回程一致；
-- **setSpec() 换 Spec 后命中缓存彻底失效**：`setSpec` 只清了 2 处缓存，
-  padding / 图例命中区 / 甘特 / 桑基布局缓存按 options 引用键控仍服务旧数据
-  （非响应式 options 场景悬浮命中错位）；抽出 `invalidateHitCaches()` 供
-  update / setSpec / deep watch 共用，7 处缓存一次清齐；
-- **键盘巡历 aria-live 每步重播报**：方向键步进后读屏此前只在首次进入悬浮时
-  收到读数；现在键盘驱动的每次索引变化都更新 aria-live 播报，指针悬浮仍只在
-  进入时播报一次（避免读屏噪音）；
-- 8 项行为级回归测试（缺 data 命中链路 ×3、bin 大样本、断段基线 ×2、
-  setSpec 缓存失效、aria-live 步进跟随）。
 
 ## [business-ui 0.8.0] — 2026-09-17
 
