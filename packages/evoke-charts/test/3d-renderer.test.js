@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render3d } from '../src/3d/renderer/index.js'
 import { createSvgRecorder } from '../src/3d/renderer/svgRecorder.js'
+import { pointInPolygon } from '../src/3d/core/scene.js'
 
 /** 纯 ctx 存根：记录调用次数，measureText 给固定宽度 */
 function stubCtx() {
@@ -277,6 +278,157 @@ describe('render3d 管线', () => {
     expect(mFull.sceneSpan).toBeGreaterThan(mZero.sceneSpan * 1.15)
     // 单面片竖向跨度：贴地薄片远小于满高侧立面
     expect(mZero.maxFaceSpan).toBeLessThan(mFull.maxFaceSpan * 0.35)
+  })
+})
+
+describe('render3d 相机契约', () => {
+  it('params.camera 优先于 options.camera — 交互态相机必须出画', () => {
+    const ctx = stubCtx()
+    const result = render3d(fakeCanvas(ctx), renderParams({
+      options: { ...BAR_OPTIONS(), camera: { yaw: 10, pitch: 20, distance: 5 } },
+      camera: { yaw: 120, pitch: 45, distance: 2.5, target: [0, 0, 0.31], fov: 42 },
+    }))
+    expect(result.camera.yaw).toBe(120)
+    expect(result.camera.pitch).toBe(45)
+    expect(result.camera.distance).toBe(2.5)
+  })
+
+  it('autoFit 只反解距离，不动方位与 target', () => {
+    const ctx = stubCtx()
+    const camera = { yaw: 120, pitch: 45, distance: 5, target: [0.2, 0, 0.31], fov: 42 }
+    const result = render3d(fakeCanvas(ctx), renderParams({ camera, autoFit: true }))
+    expect(result.camera.yaw).toBe(120)
+    expect(result.camera.pitch).toBe(45)
+    expect(result.camera.target).toEqual([0.2, 0, 0.31])
+    expect(result.camera.distance).toBeLessThan(5)
+  })
+})
+
+describe('坐标框棱线分层', () => {
+  /** 按世界端点找线段图元（同端点的轴线/棱线取第一条即可，二者同层） */
+  const findSegment = (result, a, b) => result.projected.items.find((i) => i.kind === 'line'
+    && i.points.length === 2
+    && i.points.some((p) => p.every((v, k) => Math.abs(v - a[k]) < 1e-9))
+    && i.points.some((p) => p.every((v, k) => Math.abs(v - b[k]) < 1e-9)))
+
+  /** 沿屏幕折线按步长采样：只看端点会漏掉「中段从柱体里穿过」这类回归 */
+  const sampleAlong = (item, step = 3) => {
+    const pts = item.kind === 'line' ? item.screen : [item.screen]
+    const out = []
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [ax, ay] = pts[i]
+      const [bx, by] = pts[i + 1]
+      const steps = Math.max(2, Math.ceil(Math.hypot(bx - ax, by - ay) / step))
+      for (let s = 0; s <= steps; s++) out.push([ax + ((bx - ax) * s) / steps, ay + ((by - ay) * s) / steps])
+    }
+    if (pts.length === 1) out.push([pts[0].x, pts[0].y])
+    return out
+  }
+
+  /** 压顶层里仍有采样点落在「更近的数据面」之内的图元（应当为空） */
+  const frontOffenders = (result) => {
+    const faces = result.projected.items.filter((i) => i.visible !== false && i.layer === 'data' && i.kind === 'face' && i.meta)
+    const offenders = []
+    for (const item of result.projected.items) {
+      if (item.visible === false || item.layer !== 'front' || item.kind === 'text') continue
+      if (!item.screen) continue
+      const pts = sampleAlong(item)
+      const covered = pts.filter(([x, y]) => faces.some((f) => f.depth < item.depth - 1e-4 && pointInPolygon(f.screen, x, y)))
+      if (covered.length) offenders.push({ points: item.points, ratio: covered.length / pts.length })
+    }
+    return offenders
+  }
+
+  it('远侧棱线垫底、近侧棱线压顶（默认相机在 +X / -Y 侧）', () => {
+    const ctx = stubCtx()
+    const result = render3d(fakeCanvas(ctx), renderParams())
+    // 远侧底边：背墙基座（y = +0.5）与远侧（x = -0.5）
+    expect(findSegment(result, [-0.5, 0.5, 0], [0.5, 0.5, 0]).layer).toBe('back')
+    expect(findSegment(result, [-0.5, 0.5, 0], [-0.5, -0.5, 0]).layer).toBe('back')
+    // 近侧底边：X 轴基线（y = -0.5）与 Y 轴基线（x = +0.5）
+    expect(findSegment(result, [-0.5, -0.5, 0], [0.5, -0.5, 0]).layer).toBe('front')
+    expect(findSegment(result, [0.5, -0.5, 0], [0.5, 0.5, 0]).layer).toBe('front')
+  })
+
+  it('远角 Z 轴与远侧墙顶垫底，避免切过柱身', () => {
+    const ctx = stubCtx()
+    const result = render3d(fakeCanvas(ctx), renderParams())
+    expect(findSegment(result, [-0.5, 0.5, 0], [-0.5, 0.5, 0.62]).layer).toBe('back')
+    expect(findSegment(result, [-0.5, 0.5, 0.62], [0.5, 0.5, 0.62]).layer).toBe('back')
+  })
+
+  it('相机退回中轴面（yaw = 0）时近侧取到的是侧棱：它连同轴基线一起垫底', () => {
+    const ctx = stubCtx()
+    const result = render3d(fakeCanvas(ctx), renderParams({ camera: { yaw: 0, pitch: 24, distance: 3.6, target: [0, 0, 0.31] } }))
+    // x = +0.5 是真正的近侧（相机在 +X 外侧）→ 压顶
+    expect(findSegment(result, [0.5, -0.5, 0], [0.5, 0.5, 0]).layer).toBe('front')
+    // y = ±0.5 两条同距，都是侧棱（柱体在它们前面）→ 垫底
+    expect(findSegment(result, [-0.5, -0.5, 0], [0.5, -0.5, 0]).layer).toBe('back')
+    expect(findSegment(result, [-0.5, 0.5, 0], [0.5, 0.5, 0]).layer).toBe('back')
+  })
+
+  it('压顶层不再有位于数据后方的图元（棱线与 Z 轴都已被前排柱体遮住）', () => {
+    // 中轴视角（yaw 0/±90/180）是取边判据的退化点，必须与斜视角一起守住
+    for (const yaw of [-52, 0, 90, 180, -90]) {
+      const ctx = stubCtx()
+      const result = render3d(fakeCanvas(ctx), renderParams({ camera: { yaw, pitch: 24, distance: 3.6, target: [0, 0, 0.31] } }))
+      expect(frontOffenders(result), `yaw=${yaw}`).toEqual([])
+    }
+  })
+})
+
+describe('背景面固定侧与淡出', () => {
+  const at = (yaw, options = BAR_OPTIONS()) => render3d(fakeCanvas(stubCtx()), renderParams({
+    options, camera: { yaw, pitch: 26, distance: 3.6, target: [0, 0, 0.31] },
+  }))
+  /** 背墙 = 整片落在 y = 0.5 的大四边形；alpha 为 0 时不存在 */
+  const backWall = (result) => result.projected.items.find((i) => i.kind === 'face' && i.visible !== false
+    && i.points.length === 4 && i.points.every((p) => Math.abs(p[1] - 0.5) < 1e-9))
+  const wallAt = (result, y) => result.projected.items.find((i) => i.kind === 'face' && i.visible !== false
+    && i.points.length === 4 && i.points.every((p) => Math.abs(p[1] - y) < 1e-9))
+  /** 墙面网格线：按网格色筛（几何同形的远角立柱 / Z 轴是轴色，不会混入） */
+  const wallGrid = (result, y = 0.5) => result.projected.items.filter((i) => i.kind === 'line'
+    && i.color === THEME.gridColor && i.points.every((p) => Math.abs(p[1] - y) < 1e-9))
+  const rimAt = (result, y) => result.projected.items.find((i) => i.kind === 'line' && i.points.length === 2
+    && i.points.every((p) => Math.abs(p[1] - y) < 1e-9 && Math.abs(p[2] - 0.62) < 1e-9))
+
+  it('背墙钉在 +Y 侧：转到镜像视角也不换面（旧行为会翻到 y = -0.5）', () => {
+    expect(backWall(at(-52))).toBeTruthy()
+    // yaw 150°：相机已到墙背面 → 整组退场，而不是把墙挪到 y = -0.5 继续画
+    expect(backWall(at(150))).toBeUndefined()
+    expect(wallAt(at(150), -0.5)).toBeUndefined()
+  })
+
+  it('墙内网格与墙顶棱跟着墙一起退场，背面视角不留悬空网格/棱线', () => {
+    expect(wallGrid(at(-52)).length).toBeGreaterThan(0)
+    expect(rimAt(at(-52), 0.5)).toBeTruthy()
+    const back = at(30)
+    expect(wallGrid(back)).toHaveLength(0)
+    expect(rimAt(back, 0.5)).toBeUndefined()
+    // 也不该整体挪到另一侧继续画（旧行为：墙组跟随相机换边）
+    expect(wallGrid(back, -0.5)).toHaveLength(0)
+    expect(rimAt(back, -0.5)).toBeUndefined()
+  })
+
+  it('相机越过墙面时按跨距淡出：alpha 单调下降，越过即退场', () => {
+    const alphaAt = (yaw) => { const w = backWall(at(yaw)); return w ? w.alpha : 0 }
+    expect(alphaAt(-52)).toBe(1)
+    const before = alphaAt(-8)
+    const onPlane = alphaAt(0)
+    const past = alphaAt(8)
+    expect(before).toBeGreaterThan(onPlane)
+    expect(onPlane).toBeGreaterThan(past)
+    expect(past).toBeGreaterThanOrEqual(0)
+    expect(alphaAt(30)).toBe(0)
+  })
+
+  it('两片墙各自独立判定：walls=all 时侧墙（-X）在 yaw 90° 仍在场', () => {
+    const sideWall = (result) => result.projected.items.find((i) => i.kind === 'face' && i.visible !== false
+      && i.points.length === 4 && i.points.every((p) => Math.abs(p[0] + 0.5) < 1e-9))
+    const options = { ...BAR_OPTIONS(), box: { walls: 'all' } }
+    const result = at(90, options)
+    expect(backWall(result)).toBeUndefined()      // 相机在 +Y 侧 → 背墙退场
+    expect(sideWall(result)).toBeTruthy()         // 相机仍在侧墙正面 → 侧墙保留
   })
 })
 

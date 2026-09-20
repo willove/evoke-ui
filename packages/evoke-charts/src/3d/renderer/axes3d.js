@@ -1,10 +1,13 @@
 /**
  * 三维坐标框 — 地面网格 / 背墙 / 轴线 / 刻度标签
  *
- * 关键决策：墙与轴的取边**跟随相机**。
- *   · 背墙永远选在离相机远的那一侧（否则墙会挡在数据前面）
+ * 关键决策：轴线取边跟随相机，背景面则钉死在固定侧。
+ *   · 背景面固定在 +Y（背墙）/ -X（侧墙）——跟随相机会让它在旋转中整面跳边；
+ *     相机绕到墙背面时整组（面 + 网格 + 顶棱）短距离淡出，避免挡在数据前面
  *   · X/Y 轴线与刻度贴在离相机近的那条底边（标签不与数据重叠）
  *   · Z 轴立在离相机最远的立柱上（不遮挡柱体）
+ * 底边棱线与 Z 轴按远近分层：近侧压顶保证轴线清晰，远侧的垫底交还给数据遮挡；
+ * 相机不在该棱面外侧时（中轴视角 / 俯视入盒），近侧一样垫底——压顶的前提是它真的在前方。
  * 因此任意视角下坐标框都在「衬托」数据而不是「遮挡」数据，
  * 这是二维轴渲染器照搬不过来、必须重做的一层。
  *
@@ -22,6 +25,9 @@ function strideFor(count, maxCount) {
   if (!(count > maxCount) || maxCount < 1) return 1
   return Math.ceil(count / maxCount)
 }
+
+/** 背景面淡出跨度（相机方向余弦）——转过约 20° 即完全退场，避免贴墙时突然消失 */
+const WALL_FADE_SPAN = 0.35
 
 /** 世界方向 → 屏幕像素方向（用于把标签沿「远离盒体」的方向外推） */
 function screenDir(mvp, viewport, from, worldDir, pixelDist) {
@@ -146,6 +152,25 @@ export function buildAxes3d(scene, frame, rc) {
   const farY = nearY === y1 ? y0 : y1
   const nearX = eye[0] > cx ? x1 : x0
   const farX = nearX === x1 ? x0 : x1
+  // 压顶的前提是这条底边确实在数据前方：相机要落在这个棱面的外侧（整盒都在它身后）。
+  // 相机退回中轴面（yaw 恰为 0/±90/180°）或俯视到盒身之内时，取到的「近边」其实
+  // 是一条侧棱，柱体在它前面，压顶就会切过柱身——此时必须垫底。
+  const nearXFront = nearX === x1 ? eye[0] > x1 : eye[0] < x0
+  const nearYFront = nearY === y1 ? eye[1] > y1 : eye[1] < y0
+
+  // ── 背景面：钉在默认视角的背墙（+Y）与侧墙（-X），不随相机换边 ──
+  // 相机绕到墙的背面时，墙会挡在数据与网格前面——此时整组（墙面 + 墙内网格 + 墙顶棱）
+  // 按「相机方向偏离墙正面」的程度淡出退场，而不是把墙挪到另一侧；
+  // 「跟着相机换边」正是旋转中背景面整面跳变的来源。
+  const wallY = y1
+  const wallX = x0
+  const eyeDir = [eye[0] - cx, eye[1] - cy, eye[2] - (z0 + z1) / 2]
+  const eyeLen = Math.hypot(eyeDir[0], eyeDir[1], eyeDir[2]) || 1
+  /** 可见度 0..1：frontCos 为相机相对墙面的正视程度（墙面外法线方向的投影距离/视距）。 */
+  const wallVis = (frontCos) => Math.max(0, Math.min(1, frontCos / WALL_FADE_SPAN))
+  // 墙在数据后方时全量可见；越过墙面（相机绕到墙背侧）即按跨距淡出，避免挡在数据前面
+  const backWallVis = wallVis((wallY - eye[1]) / eyeLen)
+  const sideWallVis = wallVis((eye[0] - wallX) / eyeLen)
 
   const gridColor = theme.gridColor
   const wallColor = theme.wallColor
@@ -156,15 +181,15 @@ export function buildAxes3d(scene, frame, rc) {
   if (boxShow && walls !== 'none' && gridShow) {
     const wantBack = walls === 'all' || walls === 'back' || walls === true
     const wantSide = walls === 'all' || walls === 'side'
-    if (wantBack) {
+    if (wantBack && backWallVis > 0) {
       addFace(scene, [
-        [x0, farY, z0], [x1, farY, z0], [x1, farY, z1], [x0, farY, z1],
-      ], { color: wallColor, layer: 'back', flat: true, pickable: false, alpha: 1 })
+        [x0, wallY, z0], [x1, wallY, z0], [x1, wallY, z1], [x0, wallY, z1],
+      ], { color: wallColor, layer: 'back', flat: true, pickable: false, alpha: backWallVis })
     }
-    if (wantSide) {
+    if (wantSide && sideWallVis > 0) {
       addFace(scene, [
-        [farX, y0, z0], [farX, y1, z0], [farX, y1, z1], [farX, y0, z1],
-      ], { color: wallColor, layer: 'back', flat: true, pickable: false, alpha: 1 })
+        [wallX, y0, z0], [wallX, y1, z0], [wallX, y1, z1], [wallX, y0, z1],
+      ], { color: wallColor, layer: 'back', flat: true, pickable: false, alpha: sideWallVis })
     }
   }
 
@@ -187,47 +212,65 @@ export function buildAxes3d(scene, frame, rc) {
   }
   // ── 墙内网格：Z 刻度横线 + 墙面竖线 ──
   if (gridShow && zc.grid && Array.isArray(frame.z.ticks) && boxShow && walls !== 'none') {
+    const wantBack = walls === 'all' || walls === 'back' || walls === true
+    const wantSide = walls === 'all' || walls === 'side'
+    const backLine = { color: gridColor, layer: 'back', lineWidth: 1, pickable: false, alpha: backWallVis }
+    const sideLine = { color: gridColor, layer: 'back', lineWidth: 1, pickable: false, alpha: sideWallVis }
     for (const t of frame.z.ticks) {
       const gz = t.world
-      if (walls === 'all' || walls === 'back' || walls === true) {
-        addSegment(scene, [x0, farY, gz], [x1, farY, gz], { color: gridColor, layer: 'back', lineWidth: 1, pickable: false })
+      if (wantBack && backWallVis > 0) {
+        addSegment(scene, [x0, wallY, gz], [x1, wallY, gz], backLine)
       }
-      if (walls === 'all' || walls === 'side') {
-        addSegment(scene, [farX, y0, gz], [farX, y1, gz], { color: gridColor, layer: 'back', lineWidth: 1, pickable: false })
-      }
-    }
-    if (walls === 'all' || walls === 'back' || walls === true) {
-      if (Array.isArray(frame.x.ticks)) {
-        const stride = strideFor(frame.x.ticks.length, 30)
-        for (let i = 0; i < frame.x.ticks.length; i += stride) {
-          const gx = frame.x.ticks[i].world
-          addSegment(scene, [gx, farY, z0], [gx, farY, z1], { color: gridColor, layer: 'back', lineWidth: 1, pickable: false })
-        }
+      if (wantSide && sideWallVis > 0) {
+        addSegment(scene, [wallX, y0, gz], [wallX, y1, gz], sideLine)
       }
     }
-    if (walls === 'all' || walls === 'side') {
-      if (Array.isArray(frame.y.ticks)) {
-        const stride = strideFor(frame.y.ticks.length, 30)
-        for (let i = 0; i < frame.y.ticks.length; i += stride) {
-          const gy = frame.y.ticks[i].world
-          addSegment(scene, [farX, gy, z0], [farX, gy, z1], { color: gridColor, layer: 'back', lineWidth: 1, pickable: false })
-        }
+    if (wantBack && backWallVis > 0 && Array.isArray(frame.x.ticks)) {
+      const stride = strideFor(frame.x.ticks.length, 30)
+      for (let i = 0; i < frame.x.ticks.length; i += stride) {
+        const gx = frame.x.ticks[i].world
+        addSegment(scene, [gx, wallY, z0], [gx, wallY, z1], backLine)
+      }
+    }
+    if (wantSide && sideWallVis > 0 && Array.isArray(frame.y.ticks)) {
+      const stride = strideFor(frame.y.ticks.length, 30)
+      for (let i = 0; i < frame.y.ticks.length; i += stride) {
+        const gy = frame.y.ticks[i].world
+        addSegment(scene, [wallX, gy, z0], [wallX, gy, z1], sideLine)
       }
     }
   }
 
   // ── 盒体棱线（外框描一圈，收束形体感）──
+  // 棱线按远近分层：近侧棱线在数据前方，压顶更清晰；远侧棱线垫底，才能被数据正确遮挡，
+  // 否则背墙底边会「透」在前排柱体上，看着像把柱子切成两段。
   if (boxShow && boxCfg.frame !== false) {
-    const edges = [
-      // 底面四边
-      [[x0, y0, z0], [x1, y0, z0]], [[x1, y0, z0], [x1, y1, z0]],
-      [[x1, y1, z0], [x0, y1, z0]], [[x0, y1, z0], [x0, y0, z0]],
-      // 两片背墙的顶部与远侧立柱
-      [[x0, farY, z1], [x1, farY, z1]], [[farX, y0, z1], [farX, y1, z1]],
+    const nearEdges = [
+      // 近侧底边（沿 Y）——与 Y 轴基线重合
+      { a: [nearX, y0, z0], b: [nearX, y1, z0], front: nearXFront },
+      // 近侧底边（沿 X）——与 X 轴基线重合
+      { a: [x0, nearY, z0], b: [x1, nearY, z0], front: nearYFront },
+    ]
+    // 墙顶棱跟着墙走（面淡出时棱线一起退场）；地面框与远角立柱仍按相机取边
+    const wallRims = [
+      { a: [wallX, y0, z1], b: [wallX, y1, z1], vis: sideWallVis },
+      { a: [x0, wallY, z1], b: [x1, wallY, z1], vis: backWallVis },
+    ]
+    const farEdges = [
+      // 远侧底边（沿 Y / 沿 X，即箱体地面轮廓）
+      [[farX, y0, z0], [farX, y1, z0]],
+      [[x0, farY, z0], [x1, farY, z0]],
+      // 远角立柱
       [[farX, farY, z0], [farX, farY, z1]],
     ]
-    for (const [a, b] of edges) {
-      addSegment(scene, a, b, { color: lineColor, layer: 'front', lineWidth: 1, pickable: false })
+    for (const { a, b, front } of nearEdges) {
+      addSegment(scene, a, b, { color: lineColor, layer: front ? 'front' : 'back', lineWidth: 1, pickable: false })
+    }
+    for (const { a, b, vis } of wallRims) {
+      if (vis > 0) addSegment(scene, a, b, { color: lineColor, layer: 'back', lineWidth: 1, pickable: false, alpha: vis })
+    }
+    for (const [a, b] of farEdges) {
+      addSegment(scene, a, b, { color: lineColor, layer: 'back', lineWidth: 1, pickable: false })
     }
   }
 
@@ -237,7 +280,7 @@ export function buildAxes3d(scene, frame, rc) {
 
   if (xc.show && Array.isArray(frame.x.ticks)) {
     if (xc.line) {
-      addSegment(scene, [x0, nearY, z0], [x1, nearY, z0], { color: axisLineColor, layer: 'front', lineWidth: 1.2, pickable: false })
+      addSegment(scene, [x0, nearY, z0], [x1, nearY, z0], { color: axisLineColor, layer: nearYFront ? 'front' : 'back', lineWidth: 1.2, pickable: false })
     }
     const outDir = [0, nearY === y1 ? 1 : -1, 0]
     let xRects = []
@@ -251,7 +294,7 @@ export function buildAxes3d(scene, frame, rc) {
 
   if (yc.show && Array.isArray(frame.y.ticks)) {
     if (yc.line) {
-      addSegment(scene, [nearX, y0, z0], [nearX, y1, z0], { color: axisLineColor, layer: 'front', lineWidth: 1.2, pickable: false })
+      addSegment(scene, [nearX, y0, z0], [nearX, y1, z0], { color: axisLineColor, layer: nearXFront ? 'front' : 'back', lineWidth: 1.2, pickable: false })
     }
     const outDir = [nearX === x1 ? 1 : -1, 0, 0]
     let yRects = []
@@ -269,9 +312,9 @@ export function buildAxes3d(scene, frame, rc) {
   }
 
   if (zc.show && Array.isArray(frame.z.ticks)) {
-    // Z 轴立在远角立柱上
+    // Z 轴立在远角立柱上：与背墙同层，柱体在前时才挡得住它（否则竖线会切过柱身）
     if (zc.line) {
-      addSegment(scene, [farX, farY, z0], [farX, farY, z1], { color: axisLineColor, layer: 'front', lineWidth: 1.2, pickable: false })
+      addSegment(scene, [farX, farY, z0], [farX, farY, z1], { color: axisLineColor, layer: 'back', lineWidth: 1.2, pickable: false })
     }
     const outDir = [farX === x0 ? -1 : 1, farY === y0 ? -1 : 1, 0]
     let zRects = []

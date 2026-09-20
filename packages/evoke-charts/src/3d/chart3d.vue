@@ -210,6 +210,8 @@ let userTouchedCamera = false
 let dragState = null
 const pointers = new Map()
 let pinchDist = 0
+/** 拖拽判定阈值（px）：阈值内的位移算点击手抖，既不转相机也不吞掉点选 */
+const DRAG_THRESHOLD = 4
 
 function scheduleRender(delay = 16) {
   if (renderTimer) clearTimeout(renderTimer)
@@ -243,6 +245,7 @@ function render() {
     const size = sizeCanvas()
     if (!size) return
     if (!cameraState.value) cameraState.value = currentCamera()
+    const autoFit = !userTouchedCamera
     const result = render3d(canvas, {
       options: props.options,
       dpr: dpr.value,
@@ -251,8 +254,10 @@ function render() {
       hiddenSeries: hiddenSeries.value,
       hoverKey: hoverKey.value,
       theme: currentTheme(),
-      autoFit: !userTouchedCamera,
+      autoFit,
     })
+    // autoFit 会按包围盒反解距离：把这一帧的实际相机回写，用户随后接管时距离才不会跳变
+    if (autoFit && result.camera) cameraState.value = result.camera
     lastResult.value = result
     overlayInfo.viewport = result.viewport
     overlayInfo.camera = result.camera
@@ -327,7 +332,9 @@ function applyCamera(next, options = {}) {
 }
 
 function resetCamera(options = {}) {
-  userTouchedCamera = !options.keepAutoFit
+  const cfg = props.options.camera && typeof props.options.camera === 'object' ? props.options.camera : {}
+  // 未显式配置 distance 时保留 autoFit：复位回到的是开场构图，而不是「推远后的默认距离」
+  userTouchedCamera = options.keepAutoFit !== true && Number.isFinite(cfg.distance)
   applyCamera(currentCamera())
 }
 
@@ -476,6 +483,8 @@ function handlePointerDown(evt) {
     id: evt.pointerId,
     x: p.x,
     y: p.y,
+    startX: p.x,
+    startY: p.y,
     moved: false,
     pan: !!evt.shiftKey || props.options.interaction?.pan === true,
   }
@@ -503,7 +512,9 @@ function handlePointerMove(evt) {
   if (dragState && dragState.id === evt.pointerId) {
     const dx = p.x - dragState.x
     const dy = p.y - dragState.y
-    if (Math.abs(dx) + Math.abs(dy) > 0) {
+    // 越过阈值前不认作拖拽，否则一次普通点击会被当成轨道旋转（并吃掉 click 事件）
+    if (!dragState.moved && Math.hypot(p.x - dragState.startX, p.y - dragState.startY) < DRAG_THRESHOLD) return
+    if (dx !== 0 || dy !== 0) {
       dragState.moved = true
       dragState.x = p.x
       dragState.y = p.y
@@ -653,9 +664,13 @@ function setupWatchers() {
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
   }
   document.addEventListener('ev-theme-change', handleThemeChange)
-  const wheelTarget = canvasRef.value
-  if (wheelTarget) wheelTarget.addEventListener('wheel', handleWheel, { passive: false })
 }
+
+// canvas 只在非空态存在：空态 → 有数据时是后来创建的，滚轮监听要跟着元素走
+watch(canvasRef, (el, prev) => {
+  if (prev) prev.removeEventListener('wheel', handleWheel)
+  if (el) el.addEventListener('wheel', handleWheel, { passive: false })
+}, { flush: 'post' })
 
 function teardownWatchers() {
   if (resizeObserver) {

@@ -220,6 +220,52 @@ describe('EvChart3d 指针交互', () => {
     wrapper.unmount()
   })
 
+  it('点击手抖（阈值内位移）仍算点选：派发 click 且相机不动', async () => {
+    const wrapper = await mountChart()
+    const canvas = wrapper.find('canvas').element
+    const { cx, cy, meta } = pickTarget(wrapper)
+    const before = wrapper.vm.getCamera()
+    firePointer(canvas, 'pointerdown', cx, cy)
+    firePointer(canvas, 'pointermove', cx + 2, cy + 1)
+    firePointer(canvas, 'pointerup', cx + 2, cy + 1)
+    await flushRender()
+    const clicks = wrapper.emitted('click')
+    expect(clicks).toBeTruthy()
+    expect(clicks[0][0].seriesName).toBe(meta.seriesName)
+    const after = wrapper.vm.getCamera()
+    expect(after.yaw).toBe(before.yaw)
+    expect(after.distance).toBe(before.distance)
+    wrapper.unmount()
+  })
+
+  it('接管相机不改变缩放：拖拽前后渲染距离保持自动适配值', async () => {
+    const wrapper = await mountChart()
+    const opening = wrapper.vm.getProjected().camera.distance
+    const canvas = wrapper.find('canvas').element
+    firePointer(canvas, 'pointerdown', 300, 200)
+    firePointer(canvas, 'pointermove', 380, 200)
+    firePointer(canvas, 'pointerup', 380, 200)
+    await flushRender()
+    expect(wrapper.vm.getProjected().camera.distance).toBeCloseTo(opening, 3)
+    expect(wrapper.vm.getCamera().distance).toBeCloseTo(opening, 3)
+    wrapper.unmount()
+  })
+
+  it('复位回到开场构图（含自动适配距离），而不是拉远后的默认距离', async () => {
+    const wrapper = await mountChart()
+    const opening = wrapper.vm.getProjected().camera
+    const canvas = wrapper.find('canvas').element
+    canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 480, cancelable: true }))
+    await flushRender()
+    expect(wrapper.vm.getProjected().camera.distance).toBeGreaterThan(opening.distance)
+    wrapper.vm.resetCamera()
+    await flushRender()
+    const reset = wrapper.vm.getProjected().camera
+    expect(reset.yaw).toBe(opening.yaw)
+    expect(reset.distance).toBeCloseTo(opening.distance, 3)
+    wrapper.unmount()
+  })
+
   it('双击复位：yaw 回到配置默认', async () => {
     const wrapper = await mountChart({ ...baseOptions(), camera: { yaw: 20 } })
     const canvas = wrapper.find('canvas').element

@@ -4,8 +4,9 @@
  * 与 evoke-charts 同构的外部契约：render3d(canvas, params) 纯函数式渲染一帧，
  * 返回投影结果与拾取闭包；params.ctx 可注入录制器实现 SVG 导出。
  *
- * 相机决策顺序：resolveCamera(默认 + options.camera) → autoFit 时按世界包围盒
- * 反解 distance（只调距离不动方位，用户一旦手动交互即由组件关掉 autoFit）。
+ * 相机决策顺序：resolveCamera(默认 ← options.camera ← params.camera) → autoFit 时按
+ * 世界包围盒反解 distance（只调距离不动方位，用户一旦手动交互即由组件关掉 autoFit）。
+ * params.camera 是组件实时相机（拖拽/滚轮的结果），优先级最高，否则交互无法出画。
  */
 import { cameraBasis, cameraMatrices, fitDistance, resolveCamera } from '../core/camera.js'
 import { pickScene, projectScene } from '../core/scene.js'
@@ -166,6 +167,7 @@ export function render3d(canvas, params) {
   let camera = resolveCamera({
     target: defaultTargetFor(type),
     ...(options.camera && typeof options.camera === 'object' ? options.camera : {}),
+    ...(params && params.camera && typeof params.camera === 'object' ? params.camera : {}),
   })
   if (params && params.autoFit) {
     camera = { ...camera, distance: fitDistance(worldBoundsFor(options), camera, viewport) }
