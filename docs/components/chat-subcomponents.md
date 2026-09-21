@@ -501,6 +501,53 @@ message.testResults = {
   </div>
 </DemoBlock>
 
+## 沙箱运行与网页预览
+
+这两张是本仓唯一会承载外部内容的组件。`EbChatSandbox` 跑一段宿主给的 HTML/JS，`EbChatWebPreview` 嵌一个网址。
+
+### EbChatSandbox
+
+组件**不执行代码**，只把一个隔离 iframe 管起来：宿主给 HTML → 组件拼 bootstrap → `srcdoc` + sandbox 属性 → iframe；console 与错误经 `postMessage` 上来，**组件只转发不解析**。
+
+**sandbox 旗标策略**（全部安全性的落点）：
+
+| 旗标 | 默认 | 说明 |
+| --- | --- | --- |
+| `allow-scripts` | 开 | 不开跑不起来 |
+| `allow-same-origin` | **永久禁** | 与 `allow-scripts` 同开等于没有沙箱：iframe 能拿同源存储并操作父文档。宿主传了也会被剔除并告警 |
+| `allow-modals` / `allow-forms` / `allow-popups` / `allow-downloads` / `allow-pointer-lock` 等 | 禁 | 经 `extra-sandbox` 按需开，白名单外的一律忽略 |
+| `allow-top-navigation` | 禁 | 不在白名单内 |
+
+不给 `allow-same-origin` ⇒ 不透明源 ⇒ **代价是沙箱内 `localStorage` 不可用**。
+
+```vue
+<eb-chat-sandbox :html="generatedHtml" title="用户脚本" auto-height boot-console @error="onSandboxError" />
+```
+
+`auto-height` 由内容上报高度自动撑开（内容抖会带着卡片跳，默认关）；`reload` 会重建 iframe，避免复用旧 frame 留着上一段的状态。**`html` 优先于 `src`**——`srcdoc` 在规范上就压过 `src`，所以为空的 `srcdoc` 不会再被绑上去盖掉外部沙箱地址。
+
+<DemoBlock>
+  <eb-chat-sandbox :html="DEMO_SANDBOX_HTML" title="模型生成的页面" :height="160" />
+</DemoBlock>
+
+### EbChatWebPreview
+
+iframe + 截图双模式。**有一个绕不过去的硬限制**：目标站返回 `X-Frame-Options: DENY` 或 `frame-ancestors` 时浏览器显示空白错误页，而跨域下脚本**无法可靠区分**「禁嵌的空白页」与「真的空白内容」——`load` 两种情况都触发。
+
+所以判断只能由宿主在服务端 `HEAD` 拿到后传进来：`embeddable` 为 `true` 直接用 iframe、`false` 且有截图就直接用截图、不传则先试 iframe。两种素材都在时给手动切换——白框时用户能自救。
+
+**「在新窗口打开」不是可选项，是必须项**：iframe 直嵌在目标站禁嵌时必然是白框，逃生口是唯一的确定性出路。
+
+<DemoBlock>
+  <eb-chat-web-preview
+    src="https://example.com"
+    screenshot="https://placehold.co/800x420/e8f0ff/175dff?text=Web+Preview"
+    :embeddable="false"
+    :height="220"
+    title="example.com"
+  />
+</DemoBlock>
+
 ## 输入类
 
 ### EbChatSender
@@ -584,6 +631,17 @@ const DEMO_TESTS = {
   ],
 }
 const DEMO_STACK = 'Error: boom\n    at doThing (http://app.example/main.js:10:5)\n    at Object.next (node_modules/lib/index.js:3:1)\n    at http://app.example/other.js:20:7\n    at process (node:internal/process/task_queues:95:5)'
+
+// ─── 沙箱演示：一段真会跑的代码，用来展示 console 桥 ───
+const DEMO_SANDBOX_HTML = [
+  '<!DOCTYPE html><html><body style="margin:0;font:13px system-ui;display:flex;align-items:center;justify-content:center;height:100%">',
+  '<div id="box" style="padding:16px 20px;border-radius:10px;background:#e8f0ff;color:#175dff">沙箱内的页面</div>',
+  '<script>',
+  'console.log("沙箱已就绪");',
+  'setTimeout(function () { console.log("两秒后的一次日志"); }, 2000);',
+  '</' + 'script>',
+  '</body></html>',
+].join('')
 
 // ─── 长会话虚拟滚动演示 ───
 const LONG_COUNT = 300
