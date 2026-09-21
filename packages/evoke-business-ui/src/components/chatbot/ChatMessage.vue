@@ -45,6 +45,18 @@
             :content="message?.thinkContent"
             :thinking="message?.thinking"
           />
+          <div v-if="resolvedToolCalls.length" class="eb-chat-message__tools">
+            <p v-if="resolvedToolCalls.length > 1" class="eb-chat-message__tools-heading">
+              {{ labels.tool.group(resolvedToolCalls.length) }}
+            </p>
+            <ChatToolCall
+              v-for="tc in resolvedToolCalls"
+              :key="tc.id"
+              :tool-call="tc"
+              :retryable="toolRetryable"
+              @retry="handleToolRetry"
+            />
+          </div>
           <div v-if="awaitingReply" class="eb-chat-message__loading">
             <ChatLoading />
           </div>
@@ -115,6 +127,7 @@ import ChatSuggestion from "./ChatSuggestion.vue";
 import ChatFeedback from "./ChatFeedback.vue";
 import ChatMessageEdit from "./ChatMessageEdit.vue";
 import ChatSources from "./ChatSources.vue";
+import ChatToolCall from "./ChatToolCall.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
@@ -132,9 +145,11 @@ const props = defineProps({
   /** 助手消息显示点赞点踩 */
   feedback: { type: Boolean, required: false, default: false },
   /** 点踩原因词汇表；不传用内置 */
-  feedbackReasons: { type: Array, required: false, default: () => [] }
+  feedbackReasons: { type: Array, required: false, default: () => [] },
+  /** 工具调用失败态是否给重试钮 */
+  toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry"]);
 const hovered = ref(false);
 const editing = ref(false);
 const sourcesRef = ref(null);
@@ -166,6 +181,10 @@ const showActions = computed(() => {
 });
 const showFeedback = computed(() => props.feedback && props.message?.role === "assistant" && props.message?.status === "done");
 const resolvedSuggestions = computed(() => props.message?.suggestions || []);
+const resolvedToolCalls = computed(() => props.message?.toolCalls || []);
+function handleToolRetry(toolCall) {
+  emit("tool-retry", toolCall, props.message);
+}
 function handleEditSave(content) {
   editing.value = false;
   emit("edit", props.message, content);
@@ -336,6 +355,19 @@ function handleAction(key, message) {
 }
 
 .eb-chat-message__edited {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
+}
+
+/* 多个工具调用归到一组，组标题在此、单卡状态在 ChatToolCall */
+.eb-chat-message__tools {
+  display: flex;
+  flex-direction: column;
+  gap: var(--eb-space-1);
+}
+
+.eb-chat-message__tools-heading {
+  margin: 0 0 2px;
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-placeholder);
 }

@@ -30,6 +30,8 @@
       @feedback="handleFeedback"
       @suggestion-click="handleSuggestionClick"
       @citation-click="handleCitationClick"
+      :tool-retryable="toolRetryable"
+      @tool-retry="handleToolRetry"
     >
       <template v-if="$slots.empty" #empty>
         <slot name="empty" />
@@ -98,6 +100,8 @@ const props = defineProps({
   /** 助手消息显示点赞点踩 */
   feedback: { type: Boolean, required: false, default: false },
   feedbackReasons: { type: Array, required: false, default: () => [] },
+  /** 工具调用失败态是否给重试钮 */
+  toolRetryable: { type: Boolean, required: false, default: true },
   height: { type: [String, Number], required: false, default: "600px" },
   width: { type: [String, Number], required: false, default: "100%" },
   avatarUser: { type: String, required: false, default: "" },
@@ -111,7 +115,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "attachment-add"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -175,6 +179,9 @@ function handleSuggestionClick(text, suggestion, message) {
 }
 function handleCitationClick(id, message) {
   emit("citation-click", id, message);
+}
+function handleToolRetry(toolCall, message) {
+  emit("tool-retry", toolCall, message);
 }
 function handleAttachmentAdd(file) {
   emit("attachment-add", file);

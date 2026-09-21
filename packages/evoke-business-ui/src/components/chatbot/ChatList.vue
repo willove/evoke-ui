@@ -37,6 +37,8 @@
         @feedback="handleFeedback"
         @suggestion-click="handleSuggestionClick"
         @citation-click="handleCitationClick"
+        :tool-retryable="toolRetryable"
+        @tool-retry="handleToolRetry"
       />
       <div ref="bottomRef" class="eb-chat-list__bottom" />
     </div>
@@ -74,9 +76,10 @@ const props = defineProps({
   editable: { type: Boolean, required: false, default: false },
   editMaxLength: { type: Number, required: false, default: 0 },
   feedback: { type: Boolean, required: false, default: false },
-  feedbackReasons: { type: Array, required: false, default: () => [] }
+  feedbackReasons: { type: Array, required: false, default: () => [] },
+  toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "scroll"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "scroll"]);
 const listRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);
@@ -151,6 +154,9 @@ function handleSuggestionClick(text, suggestion, message) {
 }
 function handleCitationClick(id, message) {
   emit("citation-click", id, message);
+}
+function handleToolRetry(toolCall, message) {
+  emit("tool-retry", toolCall, message);
 }
 // 单一深监听：内容增量与新增消息都覆盖（此前 length 与深监听双触发，逐 token 滚两次）
 watch(() => props.messages, () => {

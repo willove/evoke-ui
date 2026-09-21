@@ -147,6 +147,7 @@ import EbChatSuggestion from './components/chatbot/ChatSuggestion.vue'
 import EbChatFeedback from './components/chatbot/ChatFeedback.vue'
 import EbChatMessageEdit from './components/chatbot/ChatMessageEdit.vue'
 import EbChatSources from './components/chatbot/ChatSources.vue'
+import EbChatToolCall from './components/chatbot/ChatToolCall.vue'
 export { useChatEngine } from './components/chatbot/useChatEngine'
 // 业务组件
 import EbStatusTag from './components/status-tag/index.vue'
@@ -400,6 +401,7 @@ const components = {
   EbChatFeedback,
   EbChatMessageEdit,
   EbChatSources,
+  EbChatToolCall,
   EbStatusTag,
   EbCellStack,
   EbDetailDescriptions,
@@ -615,6 +617,7 @@ export {
   EbChatFeedback,
   EbChatMessageEdit,
   EbChatSources,
+  EbChatToolCall,
   // 业务组件
   EbStatusTag,
   EbCellStack,

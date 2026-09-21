@@ -56,6 +56,17 @@ export const chatLabels = {
   suggestion: {
     group: '推荐追问',
   },
+  tool: {
+    pending: '等待执行',
+    running: '执行中',
+    done: '已完成',
+    error: '执行失败',
+    fallback: '工具调用',
+    group: (n) => `执行了 ${n} 个步骤`,
+    args: '参数',
+    result: '结果',
+    retry: '重试',
+  },
   feedback: {
     group: '回答评价',
     up: '有帮助',

@@ -323,6 +323,48 @@ function onCiteClick(id) {
   citeHint.value = `citation-click：已定位到来源 ${id}`
 }
 
+// ─── 工具调用卡 ───
+const toolHint = ref('展开某一步看参数与结果；失败那步有重试钮')
+const toolMsgs = ref([
+  { id: 'tool-u1', role: 'user', content: '查一下热泉口化能合成的最新进展并算一下能量通量', status: 'done' },
+  {
+    id: 'tool-a1',
+    role: 'assistant',
+    status: 'done',
+    content: '已完成检索与计算，结论见上。',
+    toolCalls: [
+      {
+        id: 'tc1',
+        name: 'web_search',
+        label: '搜索网页',
+        status: 'done',
+        duration: 820,
+        args: { query: 'hydrothermal vent chemolithotrophy 2026', topK: 5 },
+        result: { hits: 5, first: 'Nature Reviews Microbiology' },
+      },
+      {
+        id: 'tc2',
+        name: 'read_page',
+        status: 'error',
+        error: '目标站点 403，已跳过该来源',
+        args: { url: 'https://journal.example.org/nrm/chemolithotrophy' },
+      },
+      {
+        id: 'tc3',
+        name: 'calc',
+        label: '能量通量估算',
+        status: 'done',
+        duration: 40,
+        args: { sulfide_flux: 12.5, efficiency: 0.32 },
+        result: '≈ 4.0 mol·m⁻²·d⁻¹',
+      },
+    ],
+  },
+])
+function onToolRetry(toolCall, message) {
+  toolHint.value = `tool-retry：准备重放 ${toolCall.name}（消息 ${message.id}）`
+}
+
 // ─── 自定义区域与实例方法 ───
 const slotChatRef = ref(null)
 const slotMsgs = ref([])
@@ -416,6 +458,19 @@ const onSlotClear = () => {
 
 链接文字是纯数字就直接用作序号；不是数字则按本次渲染递增分配。刻意不做裸 `[1]` 自动识别——那会和有序列表、脚注、代码里的方括号打架；宿主若拿到的是 Perplexity 风格的裸数字，在自己的 transport 里改写成 `[n](source:id)` 即可。
 
+## 工具调用卡
+
+消息带 `toolCalls` 数组即在正文之前渲染执行轨迹（先执行再作答）：每步一行，带状态标记、状态文案与耗时，有参数或结果时可展开。多个步骤自动归到「执行了 N 个步骤」组标题下。失败态给重试钮，点击抛 `tool-retry`（工具调用 + 消息两参）。
+
+配合 `useChatEngine` 的状态机驱动：`startToolCall(msgId, { name, args })` 新建并转执行中（传已存在的 `id` 则复用），`completeToolCall(msgId, callId, result)` 收尾并自动记耗时，`failToolCall(msgId, callId, error)` 转失败。参数与结果默认走带环检测的 JSON `<pre>`，宿主可用 `#args` / `#result` 插槽换成 `EbJsonViewer` 等。
+
+<DemoBlock>
+  <eb-chatbot v-model="toolMsgs" height="420px" :show-tip="false" @tool-retry="onToolRetry" />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    {{ toolHint }}
+  </div>
+</DemoBlock>
+
 ## 附件与输入控制
 
 `max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量（图片自动生成预览）；`send-on-enter` 关闭后 Enter 只换行，需点击发送按钮提交。选中的附件经 `attachment-add` 事件通知页面，可在此做类型或大小校验：
@@ -480,7 +535,7 @@ const onSlotClear = () => {
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },
@@ -496,6 +551,7 @@ const onSlotClear = () => {
   { name: 'edit-max-length', desc: '编辑框输入上限，传 0 不限长', type: 'number', default: '0' },
   { name: 'feedback', desc: '助手消息显示点赞点踩；点踩展开结构化原因面板', type: 'boolean', default: 'false' },
   { name: 'feedback-reasons', desc: '点踩原因词汇表；不传用内置六项', type: 'array', default: '[]' },
+  { name: 'tool-retryable', desc: '失败的工具调用卡是否给重试钮', type: 'boolean', default: 'true' },
   { name: 'user-name / assistant-name', desc: '双方显示名（同时决定默认头像首字）', type: 'string', default: '我 / AI助手' },
   { name: 'avatar-user / avatar-assistant', desc: '双方头像图片地址', type: 'string', default: '' },
   { name: 'auto-scroll', desc: '新消息自动滚动到底部', type: 'boolean', default: 'true' },
@@ -513,6 +569,7 @@ const onSlotClear = () => {
   { name: 'feedback', desc: '评价提交；取消时 payload.value 为 null', type: '(message, { value, reasons, note }) => void', default: '—' },
   { name: 'suggestion-click', desc: '点击回答尾部的追问 chip', type: '(text: string, suggestion, message) => void', default: '—' },
   { name: 'citation-click', desc: '点击正文里的引用上标（来源卡会自动展开并高亮，此处供埋点或自定义跳转）', type: '(id: string, message) => void', default: '—' },
+  { name: 'tool-retry', desc: '点击失败工具调用卡的重试钮', type: '(toolCall, message) => void', default: '—' },
   { name: 'attachment-add', desc: '选择附件文件后触发，可在此做类型或大小校验', type: '(file: File) => void', default: '—' },
 ]" />
 

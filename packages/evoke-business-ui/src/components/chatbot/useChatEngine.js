@@ -161,6 +161,53 @@ function useChatEngine(options = {}) {
       loading.value = false;
     }
   }
+  // ── 工具调用状态机 ──
+  // 工具调用挂在具体的 assistant 消息上，宿主 transport 里按消息 id 驱动
+  function findMessage(id) {
+    return messages.value.find((m) => m.id === id);
+  }
+  function addToolCall(messageId, call = {}) {
+    const msg = findMessage(messageId);
+    if (!msg) return null;
+    const tc = {
+      id: call.id || generateId(),
+      name: call.name || "tool",
+      label: call.label || "",
+      args: call.args ?? null,
+      result: undefined,
+      status: call.status || "pending",
+      duration: 0,
+      error: "",
+      startedAt: 0
+    };
+    msg.toolCalls = [...(msg.toolCalls || []), tc];
+    return tc;
+  }
+  function updateToolCall(messageId, callId, updates) {
+    const msg = findMessage(messageId);
+    if (!msg?.toolCalls) return;
+    msg.toolCalls = msg.toolCalls.map((t) => t.id === callId ? { ...t, ...updates } : t);
+  }
+  /** 开始一次工具调用：给了已存在的 id 就复用，否则新建。返回调用 id。 */
+  function startToolCall(messageId, call = {}) {
+    const msg = findMessage(messageId);
+    if (!msg) return null;
+    const existing = call.id && (msg.toolCalls || []).find((t) => t.id === call.id);
+    const tc = existing || addToolCall(messageId, call);
+    if (!tc) return null;
+    updateToolCall(messageId, tc.id, { status: "running", startedAt: Date.now() });
+    return tc.id;
+  }
+  function completeToolCall(messageId, callId, result) {
+    const msg = findMessage(messageId);
+    const tc = (msg?.toolCalls || []).find((t) => t.id === callId);
+    const duration = tc?.startedAt ? Date.now() - tc.startedAt : 0;
+    updateToolCall(messageId, callId, { status: "done", result, duration });
+  }
+  function failToolCall(messageId, callId, error) {
+    const text = error instanceof Error ? error.message : error;
+    updateToolCall(messageId, callId, { status: "error", error: text || labels.tool.error });
+  }
   /** 记录一条消息的点赞点踩与结构化原因 */
   function setFeedback(messageId, value, payload = {}) {
     updateMessage(messageId, {
@@ -189,7 +236,12 @@ function useChatEngine(options = {}) {
     sendMessage,
     regenerateMessage,
     editAndResend,
-    setFeedback
+    setFeedback,
+    addToolCall,
+    updateToolCall,
+    startToolCall,
+    completeToolCall,
+    failToolCall
   };
 }
 export {

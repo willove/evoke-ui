@@ -50,6 +50,8 @@
         @feedback="handleFeedback"
         @suggestion-click="handleSuggestionClick"
         @citation-click="handleCitationClick"
+        :tool-retryable="toolRetryable"
+        @tool-retry="handleToolRetry"
       >
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
       </ChatList>
@@ -154,6 +156,7 @@ const props = defineProps({
   /** 助手消息点赞点踩 */
   feedback: { type: Boolean, default: false },
   feedbackReasons: { type: Array, default: () => [] },
+  toolRetryable: { type: Boolean, default: true },
   /** 会话区最大高度（px 或 CSS 值） */
   chatHeight: { type: [Number, String], default: 420 },
   showTip: { type: Boolean, default: true },
@@ -169,6 +172,7 @@ const emit = defineEmits([
   'feedback',
   'suggestion-click',
   'citation-click',
+  'tool-retry',
   'quota-click',
   'settings-click',
   'example-click',
@@ -244,6 +248,9 @@ function handleSuggestionClick(text, suggestion, message) {
 }
 function handleCitationClick(id, message) {
   emit('citation-click', id, message);
+}
+function handleToolRetry(toolCall, message) {
+  emit('tool-retry', toolCall, message);
 }
 
 const listRef = ref(null)
