@@ -80,7 +80,7 @@
 <script setup>
 import EbIcon from "../icon/index.vue"
 import { ref, computed, watch, nextTick } from "vue";
-import { generateId, validateAttachment } from "./utils";
+import { generateId, validateAttachment, filesFromDataTransfer } from "./utils";
 import ChatAttachments from "./ChatAttachments.vue";
 import { isImeComposing } from "../../utils/events";
 import { chatLabels as labels } from "./labels";
@@ -201,14 +201,7 @@ function onDrop(e) {
 }
 function onPaste(e) {
   if (!props.allowDrop || props.disabled) return;
-  const items = e.clipboardData?.items;
-  if (!items) return;
-  const files = [];
-  for (const item of items) {
-    if (item.kind !== "file") continue;
-    const file = item.getAsFile();
-    if (file) files.push(file);
-  }
+  const files = filesFromDataTransfer(e.clipboardData);
   // 有文件才拦下默认行为，纯文本粘贴照常进输入框
   if (files.length) {
     e.preventDefault();
@@ -235,7 +228,8 @@ function addFiles(files) {
       status: "ready"
     };
     attachments.value.push(attachment);
-    emit("attachment-add", file, attachment);
+    // 同上：给宿主数组里的响应式代理，回写 status / progress 才会驱动更新
+    emit("attachment-add", file, attachments.value[attachments.value.length - 1]);
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e2) => {

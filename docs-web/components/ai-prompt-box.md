@@ -97,6 +97,9 @@ const generating = ref(false)
 | quota | 额度展示；传 null 不渲染 | string \| `{ label, percent }` | `null` |
 | showSettings | 工具行显示设置按钮 | boolean | `false` |
 | allowAttachments / maxAttachments | 允许附件 / 数量上限 | boolean / number | `true` / `5` |
+| accept | 附件类型白名单（`.ext` / `mime/*` / `mime/type`，逗号分隔）；拖拽与粘贴路径同样按它校验 | string | — |
+| maxFileSize | 单个附件字节上限，0 为不限 | number | `0` |
+| allowDrop | 允许拖拽进输入台与粘贴剪贴板图片 | boolean | `true` |
 | maxLength / showWordCount | 输入长度上限（绑到 textarea maxlength，字数统计同源）/ 字数统计；未传则不限长 | number / boolean | — / `false` |
 | maxRows | 输入区最大行数 | number | `8` |
 | sendOnEnter | Enter 发送、Shift+Enter 换行；输入法组字中的 Enter 交还输入法，不会误发 | boolean | `true` |
@@ -112,6 +115,8 @@ const generating = ref(false)
 | update:activeCapabilities / capability-change | 能力开关变化 | `keys, key` |
 | update:model / model-change | 模型切换 | `key` |
 | quota-click / settings-click | 额度 / 设置点击 | — |
+| attachment-add | 附件通过校验后触发；第二参数是列表内的响应式对象，回写 `status` / `progress` 即驱动 chip 显示上传中与失败 | `(file, item)` |
+| attachment-reject | 附件被拒；`reason` 取 `type` / `size` / `limit` / `empty`，提示文案由宿主决定 | `(file, reason)` |
 
 ### 插槽
 

@@ -114,6 +114,9 @@ function stopGenerate() {
   { name: 'showSettings', desc: '工具行显示设置按钮', type: 'boolean', default: 'false' },
   { name: 'allowAttachments', desc: '允许附件', type: 'boolean', default: 'true' },
   { name: 'maxAttachments', desc: '附件数量上限', type: 'number', default: '5' },
+  { name: 'accept', desc: '附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；拖拽与粘贴路径同样按它校验', type: 'string', default: '—' },
+  { name: 'maxFileSize', desc: '单个附件字节上限，0 为不限', type: 'number', default: '0' },
+  { name: 'allowDrop', desc: '允许拖拽进输入台与粘贴剪贴板图片', type: 'boolean', default: 'true' },
   { name: 'maxLength', desc: '文本长度上限，真正约束 textarea；未传不限长', type: 'number', default: '—' },
   { name: 'showWordCount', desc: '显示字数统计', type: 'boolean', default: 'false' },
   { name: 'maxRows', desc: '输入区最大行数（超出滚动）', type: 'number', default: '8' },
@@ -129,6 +132,8 @@ function stopGenerate() {
   { name: 'update:model / model-change', desc: '模型切换', type: '(key: string) => void', default: '—' },
   { name: 'quota-click', desc: '点击额度胶囊', type: '() => void', default: '—' },
   { name: 'settings-click', desc: '点击设置按钮', type: '() => void', default: '—' },
+  { name: 'attachment-add', desc: '附件通过校验后触发；第二参数是列表内的响应式对象，宿主回写 status / progress 即驱动 chip 显示上传中与失败', type: '(file: File, item) => void', default: '—' },
+  { name: 'attachment-reject', desc: '附件被拒；reason 取 type / size / limit / empty，提示文案由宿主决定', type: '(file: File, reason: string) => void', default: '—' },
 ]" />
 
 <ApiTable title="AiPromptBox Slots" :rows="[

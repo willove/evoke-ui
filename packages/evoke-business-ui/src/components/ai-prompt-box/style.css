@@ -97,6 +97,7 @@
 
 /* ─── 输入台 ─── */
 .eb-ai-prompt-box__board {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: var(--eb-space-3) var(--eb-space-4);
@@ -131,6 +132,44 @@
 }
 
 .eb-ai-prompt-box__scene-tag,
+/* 拖拽投放态：整块虚线 + 居中提示，与 ChatSender 同一套观感 */
+.eb-ai-prompt-box__board.is-dragover {
+  border-style: dashed;
+  border-color: var(--eb-color-primary);
+  background: var(--eb-color-primary-light-9);
+}
+
+.eb-ai-prompt-box__drop-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--eb-color-primary-light-9);
+  color: var(--eb-color-primary);
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  pointer-events: none;
+}
+
+.eb-ai-prompt-box__file-state {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.eb-ai-prompt-box__file-state--error {
+  color: var(--eb-color-danger);
+}
+
+.eb-ai-prompt-box__file-tag.is-error {
+  border-color: var(--eb-color-danger-light-7);
+  background: var(--eb-color-danger-light-9);
+  color: var(--eb-color-danger);
+}
+
 .eb-ai-prompt-box__file-tag {
   max-width: 220px;
 }

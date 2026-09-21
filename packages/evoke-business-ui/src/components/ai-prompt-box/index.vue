@@ -37,9 +37,14 @@
     <!-- 输入台 -->
     <div
       class="eb-ai-prompt-box__board"
-      :class="{ 'is-focus': focused, 'is-disabled': disabled }"
+      :class="{ 'is-focus': focused, 'is-disabled': disabled, 'is-dragover': dragOver }"
       @click="focusInput"
+      @dragenter.prevent="onDragEnter"
+      @dragover.prevent="onDragEnter"
+      @dragleave.prevent="onDragLeave"
+      @drop.prevent="onDrop"
     >
+      <div v-if="dragOver" class="eb-ai-prompt-box__drop-hint" aria-hidden="true">{{ dropLabel }}</div>
       <!-- 台内顶部：场景 tag + 附件 -->
       <div v-if="activeSceneObj || attachments.length" class="eb-ai-prompt-box__chips-row">
         <span v-if="activeSceneObj" class="eb-tag eb-tag--primary eb-tag--light eb-ai-prompt-box__scene-tag">
@@ -56,9 +61,13 @@
           v-for="file in attachments"
           :key="file.__id"
           class="eb-tag eb-tag--info eb-tag--light eb-ai-prompt-box__file-tag"
+          :class="{ 'is-error': file.status === 'error' }"
+          :title="file.status === 'error' ? (file.error || failedLabel) : undefined"
         >
-          <eb-icon name="attachment" :size="12" />
+          <eb-icon :name="file.status === 'error' ? 'warning-filled' : 'attachment'" :size="12" />
           <span>{{ file.name }}</span>
+          <span v-if="file.status === 'uploading'" class="eb-ai-prompt-box__file-state">{{ file.progress ?? 0 }}%</span>
+          <span v-else-if="file.status === 'error'" class="eb-ai-prompt-box__file-state eb-ai-prompt-box__file-state--error">{{ file.error || failedLabel }}</span>
           <eb-icon
             v-if="!disabled"
             class="eb-ai-prompt-box__scene-tag-close"
@@ -82,6 +91,7 @@
         @focus="focused = true"
         @blur="focused = false"
         @input="autoResize"
+        @paste="onPaste"
       />
 
       <!-- 底部工具行 -->
@@ -102,6 +112,7 @@
               type="file"
               class="eb-ai-prompt-box__file-input"
               :multiple="maxAttachments > 1"
+              :accept="accept || undefined"
               @change="handleFileSelect"
             />
           </template>
@@ -187,6 +198,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useClickOutside } from '../../composables/useClickOutside'
+import { validateAttachment, filesFromDataTransfer } from '../../utils/files'
 import { isImeComposing } from '../../utils/events'
 
 defineOptions({ name: 'EbAiPromptBox' })
@@ -216,6 +228,12 @@ const props = defineProps({
   showSettings: { type: Boolean, default: false },
   allowAttachments: { type: Boolean, default: true },
   maxAttachments: { type: Number, default: 5 },
+  /** 附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；拖拽与粘贴同样按它校验 */
+  accept: { type: String, default: '' },
+  /** 单个附件字节上限，0 为不限 */
+  maxFileSize: { type: Number, default: 0 },
+  /** 允许拖拽与粘贴投递 */
+  allowDrop: { type: Boolean, default: true },
   /** 文本长度上限；未传不限制（绑定 textarea maxlength，字数统计同源） */
   maxLength: { type: Number, default: undefined },
   showWordCount: { type: Boolean, default: false },
@@ -237,6 +255,8 @@ const emit = defineEmits([
   'model-change',
   'quota-click',
   'settings-click',
+  'attachment-add',
+  'attachment-reject',
 ])
 
 const textareaRef = ref(null)
@@ -311,17 +331,60 @@ onBeforeUnmount(stopModelOutside)
 
 // ─── 附件 ───
 let attachSeq = 0
+const dragOver = ref(false)
+let dragDepth = 0
+const dropLabel = '松开以上传文件'
+const failedLabel = '上传失败'
 
 function triggerFileUpload() {
   fileInputRef.value?.click?.()
 }
-
-function handleFileSelect(e) {
-  const files = Array.from(e.target.files || [])
-  for (const file of files) {
-    if (attachments.value.length >= props.maxAttachments) break
-    attachments.value.push({ __id: ++attachSeq, file, name: file.name })
+function onDragEnter() {
+  if (!props.allowDrop || props.disabled) return
+  dragDepth += 1
+  dragOver.value = true
+}
+function onDragLeave() {
+  if (!props.allowDrop) return
+  dragDepth = Math.max(0, dragDepth - 1)
+  if (dragDepth === 0) dragOver.value = false
+}
+function onDrop(e) {
+  dragDepth = 0
+  dragOver.value = false
+  if (!props.allowDrop || props.disabled) return
+  addFiles(e.dataTransfer?.files)
+}
+function onPaste(e) {
+  if (!props.allowDrop || props.disabled) return
+  const files = filesFromDataTransfer(e.clipboardData)
+  // 有文件才拦默认行为，纯文本粘贴照常进输入框
+  if (files.length) {
+    e.preventDefault()
+    addFiles(files)
   }
+}
+/** 三条投递路径（选文件 / 拖拽 / 粘贴）共用一套校验，宿主自己发请求 */
+function addFiles(files) {
+  if (!files?.length) return
+  for (const file of Array.from(files)) {
+    if (attachments.value.length >= props.maxAttachments) {
+      emit('attachment-reject', file, 'limit')
+      continue
+    }
+    const reason = validateAttachment(file, { accept: props.accept, maxFileSize: props.maxFileSize })
+    if (reason) {
+      emit('attachment-reject', file, reason)
+      continue
+    }
+    attachments.value.push({ __id: ++attachSeq, file, name: file.name, size: file.size, status: 'ready' })
+    // 交出数组里的响应式代理而非闭包中的原始对象：宿主回写 status / progress
+    // 必须能驱动 chip 更新，给原始对象等于这条 API 静默失效
+    emit('attachment-add', file, attachments.value[attachments.value.length - 1])
+  }
+}
+function handleFileSelect(e) {
+  addFiles(e.target.files)
   e.target.value = ''
 }
 

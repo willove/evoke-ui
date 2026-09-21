@@ -154,6 +154,27 @@ describe('ChatSender 文件投递', () => {
   })
 })
 
+describe('ChatSender 宿主回写附件状态', () => {
+  it('attachment-add 交出的是响应式代理：宿主改 status / progress 能驱动 chip', async () => {
+    // 曾因把闭包里的原始对象 emit 出去而静默失效——数组里存的是代理，
+    // 改原始对象不触发任何更新，等于这条 API 白给
+    const w = mount(ChatSender, { props: { modelValue: '' } })
+    const input = w.find('.eb-chat-sender__file-input').element
+    Object.defineProperty(input, 'files', { value: [file('a.png', 'image/png')], configurable: true })
+    await w.find('.eb-chat-sender__file-input').trigger('change')
+    const item = w.emitted('attachment-add')[0][1]
+    item.status = 'uploading'
+    item.progress = 42
+    await nextTick()
+    expect(w.find('[role="progressbar"]').exists()).toBe(true)
+    expect(w.find('.eb-chat-attachments__bar-fill').attributes('style')).toContain('width: 42%')
+    item.status = 'error'
+    item.error = '扫描未通过'
+    await nextTick()
+    expect(w.find('.eb-chat-attachments__error').text()).toBe('扫描未通过')
+  })
+})
+
 describe('ChatAttachments 上传态', () => {
   it('uploading 渲染进度条并夹取 0-100', () => {
     const w = mount(ChatAttachments, {

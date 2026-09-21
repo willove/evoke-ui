@@ -3,7 +3,7 @@
 .ev-ai-prompt-box {
   display: flex;
   flex-direction: column;
-  gap: var(--ev-space-5, 20px);
+  gap: var(--ev-space-5);
   width: 100%;
 }
 
@@ -26,7 +26,7 @@
   border: 1px solid var(--ev-border-color-light);
   border-radius: var(--ev-radius-full);
   cursor: pointer;
-  transition: border-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+  transition: border-color var(--ev-duration-fast) var(--ev-ease-smooth);
 }
 
 .ev-ai-prompt-box__model-pill:hover:not(:disabled) {
@@ -89,8 +89,8 @@
 .ev-ai-prompt-box-menu-enter-active,
 .ev-ai-prompt-box-menu-leave-active {
   transition:
-    opacity var(--ev-duration-fast) var(--ev-ease-smooth, ease),
-    transform var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+    opacity var(--ev-duration-fast) var(--ev-ease-smooth),
+    transform var(--ev-duration-fast) var(--ev-ease-smooth);
 }
 
 .ev-ai-prompt-box-menu-enter-from,
@@ -101,9 +101,10 @@
 
 /* ─── 输入台：安静 hairline，focus 渐变描边一次点亮 ─── */
 .ev-ai-prompt-box__board {
+  position: relative;
   display: flex;
   flex-direction: column;
-  padding: var(--ev-space-4, 16px) var(--ev-space-5, 20px);
+  padding: var(--ev-space-4) var(--ev-space-5);
   background:
     linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
     var(--ev-border-color-light) border-box;
@@ -111,8 +112,8 @@
   border-radius: var(--ev-radius-xl);
   box-shadow: var(--ev-shadow-1);
   transition:
-    box-shadow var(--ev-duration-base) var(--ev-ease-smooth, ease),
-    background var(--ev-duration-base) var(--ev-ease-smooth, ease);
+    box-shadow var(--ev-duration-base) var(--ev-ease-smooth),
+    background var(--ev-duration-base) var(--ev-ease-smooth);
   cursor: text;
 }
 
@@ -126,7 +127,7 @@
   background:
     linear-gradient(var(--ev-bg-container), var(--ev-bg-container)) padding-box,
     var(--ev-gradient-hero) border-box;
-  box-shadow: var(--ev-shadow-primary, var(--ev-shadow-2));
+  box-shadow: var(--ev-shadow-primary));
 }
 
 .ev-ai-prompt-box__board.is-disabled {
@@ -137,8 +138,8 @@
 .ev-ai-prompt-box__chips-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ev-space-2, 8px);
-  margin-bottom: var(--ev-space-2, 8px);
+  gap: var(--ev-space-2);
+  margin-bottom: var(--ev-space-2);
 }
 
 .ev-ai-prompt-box__scene-tag {
@@ -151,6 +152,44 @@
   color: var(--ev-color-primary);
   background: var(--ev-color-primary-light-9);
   border-radius: var(--ev-radius-full);
+}
+
+/* 拖拽投放态：board 用渐变描边，改 border-style 会破它、覆盖 background 会吃掉渐变，
+   所以这里只加 outline，不碰 border 与 background */
+.ev-ai-prompt-box__board.is-dragover {
+  outline: 2px dashed var(--ev-color-primary);
+  outline-offset: -3px;
+}
+
+.ev-ai-prompt-box__drop-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--ev-bg-container);
+  color: var(--ev-color-primary);
+  font-size: var(--ev-font-size-sm);
+  font-weight: 500;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.ev-ai-prompt-box__file-state {
+  font-size: var(--ev-font-size-xs);
+  color: var(--ev-text-color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ev-ai-prompt-box__file-state--error {
+  color: var(--ev-color-danger);
+}
+
+.ev-ai-prompt-box__scene-tag--file.is-error {
+  border-color: var(--ev-color-danger);
+  color: var(--ev-color-danger);
 }
 
 .ev-ai-prompt-box__scene-tag--file {
@@ -213,15 +252,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ev-space-3, 12px);
-  margin-top: var(--ev-space-2, 8px);
+  gap: var(--ev-space-3);
+  margin-top: var(--ev-space-2);
 }
 
 .ev-ai-prompt-box__toolbar-left,
 .ev-ai-prompt-box__toolbar-right {
   display: flex;
   align-items: center;
-  gap: var(--ev-space-1, 4px);
+  gap: var(--ev-space-1);
   min-width: 0;
 }
 
@@ -241,13 +280,13 @@
   border-radius: var(--ev-radius-md);
   cursor: pointer;
   transition:
-    color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
-    background-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+    color var(--ev-duration-fast) var(--ev-ease-smooth),
+    background-color var(--ev-duration-fast) var(--ev-ease-smooth);
 }
 
 .ev-ai-prompt-box__tool-btn:hover:not(:disabled) {
   color: var(--ev-color-ink);
-  background: var(--ev-bg-hover, var(--ev-fill-1));
+  background: var(--ev-bg-hover));
 }
 
 .ev-ai-prompt-box__tool-btn:disabled {
@@ -322,13 +361,13 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  margin-left: var(--ev-space-2, 8px);
+  margin-left: var(--ev-space-2);
   color: #fff;
   background: var(--ev-color-primary);
   border: none;
   border-radius: var(--ev-radius-full);
   cursor: pointer;
-  transition: opacity var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+  transition: opacity var(--ev-duration-fast) var(--ev-ease-smooth);
 }
 
 .ev-ai-prompt-box__send:hover:not(:disabled) {
@@ -356,7 +395,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--ev-space-3, 12px);
+  gap: var(--ev-space-3);
 }
 
 .ev-ai-prompt-box__scene-chip {
@@ -371,9 +410,9 @@
   border-radius: var(--ev-radius-full);
   cursor: pointer;
   transition:
-    color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
-    border-color var(--ev-duration-fast) var(--ev-ease-smooth, ease),
-    background-color var(--ev-duration-fast) var(--ev-ease-smooth, ease);
+    color var(--ev-duration-fast) var(--ev-ease-smooth),
+    border-color var(--ev-duration-fast) var(--ev-ease-smooth),
+    background-color var(--ev-duration-fast) var(--ev-ease-smooth);
 }
 
 .ev-ai-prompt-box__scene-chip:hover:not(:disabled) {
