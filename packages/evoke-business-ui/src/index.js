@@ -149,6 +149,14 @@ import EbChatMessageEdit from './components/chatbot/ChatMessageEdit.vue'
 import EbChatSources from './components/chatbot/ChatSources.vue'
 import EbChatToolCall from './components/chatbot/ChatToolCall.vue'
 export { useChatEngine } from './components/chatbot/useChatEngine'
+// 对话正文渲染的配置面：协议白名单 / 主题色 / 追加高亮语言
+export {
+  configureChatMarkdown,
+  getChatMarkdownConfig,
+  renderChatMarkdown,
+  registerHighlightLanguage,
+} from './components/chatbot/chatMarkdown'
+export { chatLabels } from './components/chatbot/labels'
 // 业务组件
 import EbStatusTag from './components/status-tag/index.vue'
 import EbCellStack from './components/cell-stack/index.vue'

@@ -557,6 +557,33 @@ const onSlotClear = () => {
   </eb-chatbot>
 </DemoBlock>
 
+## 正文渲染配置
+
+对话正文的 Markdown 管线从包入口导出四个函数，宿主可在挂载前统一调配置：
+
+```js
+import {
+  configureChatMarkdown,
+  getChatMarkdownConfig,
+  renderChatMarkdown,
+  registerHighlightLanguage,
+} from '@wil-works/evoke-business-ui'
+
+// 自定义协议链接的主题色（默认 entity→primary、doc→info、action→danger …）
+configureChatMarkdown({ protocolThemes: { ticket: 'warning' } })
+
+// 放行宿主自己的协议；data: 默认不在链接白名单内（聊天内容不可信）
+configureChatMarkdown({ standardProtocols: { add: ['https'] } })
+
+// 默认高亮只带 highlight.js/lib/common 的 36 种语言，冷门语言自行注册
+import cobol from 'highlight.js/lib/languages/cobol'
+registerHighlightLanguage('cobol', cobol)
+```
+
+安全边界（都是刻意选择，不是漏做）：正文里的 raw HTML 一律转义为纯文本展示，`<script>` / `<iframe>` / 注释都进不来；链接协议走白名单，非白名单协议降级成可配置的引用芯片；**图片 `src` 只放行 `http` / `https` / `data`**，其余协议退回可读纯文本，并统一补 `loading="lazy"` 与 `referrerpolicy="no-referrer"`。
+
+已知未接：**脚注**。marked v18 不带脚注扩展，`[^1]` 此前会被误解析成一个指向定义文本的假链接，现在退回原样文本（不再产错，但也还没有上标 + 尾注列表）。完整支持需要接一个脚注扩展，另列一项。
+
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[

@@ -17,6 +17,7 @@ import {
 import {
   renderChatMarkdown,
   configureChatMarkdown,
+  registerHighlightLanguage,
 } from '../src/components/chatbot/chatMarkdown'
 
 // ── useChatEngine 状态机 ──
@@ -588,5 +589,82 @@ describe('P0 回归：代码块工具条与消息列表无障碍', () => {
     expect(header.attributes('aria-expanded')).toBeDefined()
     await header.trigger('click')
     expect(header.attributes('aria-expanded')).toBe('false')
+  })
+})
+
+// ── P1 工程债批：图片协议过滤 / 脚注 / 高亮瘦身 ──
+
+describe('chatMarkdown 图片协议过滤', () => {
+  it('http/https/data 放行，并补懒加载与 referer 策略', () => {
+    const html = renderChatMarkdown('![图](https://example.com/a.png)')
+    expect(html).toContain('<img src="https://example.com/a.png"')
+    expect(html).toContain('loading="lazy"')
+    expect(html).toContain('referrerpolicy="no-referrer"')
+    expect(renderChatMarkdown('![内联](data:image/png;base64,AAAA)')).toContain('src="data:image/png;base64,AAAA"')
+  })
+
+  it('javascript: 与 file: 不落 img，退回可读纯文本', () => {
+    for (const src of ['javascript:alert(1)', 'file:///etc/passwd', 'vbscript:x']) {
+      const html = renderChatMarkdown(`![提示](${src})`)
+      expect(html).not.toContain('<img')
+      expect(html).not.toContain(src)
+      expect(html).toContain('[提示]')
+    }
+  })
+
+  it('无 href 的图片不产出破标签；alt 里的引号不逃逸出属性', () => {
+    expect(renderChatMarkdown('![]()')).not.toContain('<img')
+    const hostile = renderChatMarkdown('![a"b](https://example.com/x.png)')
+    expect(hostile).toContain('alt="a&quot;b"')
+    expect(hostile).not.toMatch(/alt="a"[^>]*b"/)
+  })
+})
+
+describe('chatMarkdown 脚注不再错误渲染', () => {
+  it('[^1] 不产出指向定义文本的假链接，退回原样文本', () => {
+    const html = renderChatMarkdown('结论[^1]\n\n[^1]: 出处说明')
+    expect(html).not.toContain('<a href="出处说明"')
+    expect(html).not.toMatch(/<a [^>]*>\^1<\/a>/)
+    expect(html).toContain('[^1]')
+  })
+
+  it('正常链接不被误伤（脱字号不在开头、含行内标记都照走 <a>）', () => {
+    expect(renderChatMarkdown('[官网](https://example.com)')).toContain('<a href="https://example.com"')
+    expect(renderChatMarkdown('[a^b](https://example.com)')).toContain('>a^b</a>')
+    expect(renderChatMarkdown('[**bold**](https://example.com)')).toContain('<strong>bold</strong>')
+  })
+
+  it('多脚注各自退回原样，且定义文本不泄漏成正文', () => {
+    const html = renderChatMarkdown('见[^a]与[^b]\n\n[^a]: A\n[^b]: B')
+    expect(html).toContain('[^a]')
+    expect(html).toContain('[^b]')
+    expect(html).not.toContain('<a ')
+    expect(html).not.toMatch(/>A<|>B</)
+  })
+
+  // 注：[^1](url) 这种「脚注形态写成显式链接」的输入，marked v18 自己就拒解析、
+  // 连 URL 一起丢掉（产出 <p>[^1]</p>），不经本渲染器，不是这里能管的范围。
+  // 完整脚注支持（上标 + 尾注列表）需要接脚注扩展，另列一项。
+})
+
+describe('chatMarkdown 高亮瘦身到 lib/common', () => {
+  it('常见语言仍高亮，冷门语言回落 plaintext 而不抛', () => {
+    expect(renderChatMarkdown('```js\nconst a = 1\n```')).toContain('hljs-keyword')
+    const rare = renderChatMarkdown('```cobol\nIDENTIFICATION DIVISION.\n```')
+    expect(rare).toContain('language-plaintext')
+    expect(rare).toContain('IDENTIFICATION DIVISION.')
+  })
+
+  it('registerHighlightLanguage 注册后该语言即走高亮', () => {
+    expect(renderChatMarkdown('```cobol\nFOO\n```')).toContain('language-plaintext')
+    const ok = registerHighlightLanguage('cobol', () => ({ contains: [{ className: 'keyword', begin: '\\bFOO\\b' }] }))
+    expect(ok).toBe(true)
+    const html = renderChatMarkdown('```cobol\nFOO\n```')
+    expect(html).toContain('language-cobol')
+    expect(html).toContain('hljs-keyword')
+  })
+
+  it('非法定义返回 false 不抛', () => {
+    expect(registerHighlightLanguage('bogus', null)).toBe(false)
   })
 })

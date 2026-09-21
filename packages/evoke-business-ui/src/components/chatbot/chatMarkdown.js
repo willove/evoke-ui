@@ -1,5 +1,5 @@
 import { Marked, marked } from "marked";
-import hljs from "highlight.js";
+import hljs from "highlight.js/lib/common";
 import { chatLabels as labels } from "./labels";
 function createDefaultConfig() {
   return {
@@ -29,6 +29,13 @@ function createDefaultConfig() {
 }
 let config = createDefaultConfig();
 // 属性位转义：href/title/data-* 等拼进 HTML 属性前必须过这里，否则引号可逃逸出属性（与 marked 默认渲染器的 encodeURI 语义对齐）
+function stripTags(html) {
+  return String(html ?? "").replace(/<[^>]*>/g, "");
+}
+function schemeOf(href) {
+  const idx = href.indexOf(":");
+  return idx > 0 ? href.slice(0, idx).toLowerCase() : "";
+}
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
@@ -85,8 +92,26 @@ renderer.code = function({ text, lang }) {
 renderer.html = function({ text }) {
   return escapeHtml(text);
 };
+// 图片 src 只放行这三个协议：javascript:/file: 等一律不出网、不落属性。
+// data: 保留是因为宿主普遍用它传内联缩略图，且 img 的 data: 不执行脚本。
+const imageProtocols = /* @__PURE__ */ new Set(["http", "https", "data"]);
+renderer.image = function({ href, title, text }) {
+  const alt = escapeHtml(text || "");
+  if (!href || !imageProtocols.has(schemeOf(href))) {
+    // 协议不允许时退回可读纯文本，而不是留下一个点不动的破图
+    return alt ? `[${alt}]` : "";
+  }
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+  return `<img src="${escapeHtml(href)}" alt="${alt}"${titleAttr} loading="lazy" referrerpolicy="no-referrer">`;
+};
 renderer.link = function({ href, title, tokens }) {
   const text = this.parser.parseInline(tokens) || href || "";
+  // 脚注形态（[^1]）不是链接：marked v18 无脚注扩展，误解析会产出一个指向
+  // 定义文本的假链接。退回原样文本，等真正接脚注扩展时再改
+  const footnoteId = /^\^[\w-]+$/.test(stripTags(text).trim()) ? stripTags(text).trim().slice(1) : "";
+  if (footnoteId) {
+    return escapeHtml(`[^${footnoteId}]`);
+  }
   const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
   if (!href) {
     return text;
@@ -116,6 +141,18 @@ renderer.link = function({ href, title, tokens }) {
 };
 let citationSeq = 0;
 md.use({ renderer });
+/**
+ * 默认高亮走 highlight.js/lib/common（36 种语言，避免整包 193 种进产物）。
+ * 需要冷门语言时由宿主注册，返回 false 表示注册失败（如定义不是函数）
+ */
+function registerHighlightLanguage(name, definition) {
+  try {
+    hljs.registerLanguage(name, definition);
+    return true;
+  } catch {
+    return false;
+  }
+}
 function renderChatMarkdown(content) {
   if (!content) return "";
   citationSeq = 0;
@@ -123,6 +160,7 @@ function renderChatMarkdown(content) {
 }
 export {
   configureChatMarkdown,
+  registerHighlightLanguage,
   getChatMarkdownConfig,
   renderChatMarkdown
 };
