@@ -161,6 +161,73 @@ function useChatEngine(options = {}) {
       loading.value = false;
     }
   }
+  // ── 计划 ──
+  function setPlan(messageId, plan) {
+    updateMessage(messageId, { plan });
+  }
+  function updatePlanStep(messageId, stepId, patch) {
+    const msg = findMessage(messageId);
+    if (!msg?.plan) return;
+    msg.plan = {
+      ...msg.plan,
+      steps: (msg.plan.steps || []).map((s) => s.id === stepId ? { ...s, ...patch } : s)
+    };
+  }
+  function startPlanStep(messageId, stepId) {
+    updatePlanStep(messageId, stepId, { status: "running", startedAt: Date.now() });
+  }
+  function completePlanStep(messageId, stepId, detail) {
+    const msg = findMessage(messageId);
+    const step = (msg?.plan?.steps || []).find((s) => s.id === stepId);
+    const duration = step?.startedAt ? Date.now() - step.startedAt : 0;
+    updatePlanStep(messageId, stepId, detail === void 0 ? { status: "done", duration } : { status: "done", duration, detail });
+  }
+  function failPlanStep(messageId, stepId, error) {
+    const text = error instanceof Error ? error.message : error;
+    updatePlanStep(messageId, stepId, { status: "error", detail: text || labels.plan.status.error });
+  }
+  function skipPlanStep(messageId, stepId) {
+    updatePlanStep(messageId, stepId, { status: "skipped" });
+  }
+
+  // ── 人工确认门 ──
+  function setConfirmation(messageId, confirmation) {
+    updateMessage(messageId, { confirmation });
+  }
+  /**
+   * 记录响应。动作的语义由它自己声明：actions[].status 取 approved / rejected；
+   * 未声明时按 type 兜底——danger 视为拒绝，其余视为批准。不替宿主猜业务含义，
+   * 只保证「点了拒绝不会显示成已批准」这个方向不出错。
+   */
+  function respondConfirmation(messageId, actionKey) {
+    const msg = findMessage(messageId);
+    const current = msg?.confirmation;
+    if (!current || (current.status && current.status !== "pending")) return;
+    const action = (current.actions || []).find((a) => a.key === actionKey);
+    if (!action) return;
+    const status = action.status || (action.type === "danger" ? "rejected" : "approved");
+    msg.confirmation = { ...current, status, responseKey: actionKey, respondedAt: Date.now() };
+  }
+
+  // ── 产物 ──
+  function addArtifact(messageId, artifact = {}) {
+    const msg = findMessage(messageId);
+    if (!msg) return null;
+    const item = { id: generateId(), type: "", title: "", ...artifact };
+    msg.artifacts = [...(msg.artifacts || []), item];
+    return item;
+  }
+  function updateArtifact(messageId, artifactId, patch) {
+    const msg = findMessage(messageId);
+    if (!msg?.artifacts) return;
+    msg.artifacts = msg.artifacts.map((a) => a.id === artifactId ? { ...a, ...patch } : a);
+  }
+  function removeArtifact(messageId, artifactId) {
+    const msg = findMessage(messageId);
+    if (!msg?.artifacts) return;
+    msg.artifacts = msg.artifacts.filter((a) => a.id !== artifactId);
+  }
+
   // ── 工具调用状态机 ──
   // 工具调用挂在具体的 assistant 消息上，宿主 transport 里按消息 id 驱动
   function findMessage(id) {
@@ -241,7 +308,18 @@ function useChatEngine(options = {}) {
     updateToolCall,
     startToolCall,
     completeToolCall,
-    failToolCall
+    failToolCall,
+    setPlan,
+    updatePlanStep,
+    startPlanStep,
+    completePlanStep,
+    failPlanStep,
+    skipPlanStep,
+    setConfirmation,
+    respondConfirmation,
+    addArtifact,
+    updateArtifact,
+    removeArtifact
   };
 }
 export {

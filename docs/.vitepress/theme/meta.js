@@ -170,6 +170,7 @@ export const CATEGORIES = [
       { name: 'ColumnSettings', zh: '列设置', path: '/components/column-settings' },
       { name: 'Chatbot', zh: '对话窗口', path: '/components/chatbot' },
       { name: 'Chat 子组件', zh: '对话子组件', path: '/components/chat-subcomponents' },
+      { name: 'Chat 三件套', zh: '计划/确认/产物', path: '/components/chat-agent' },
     ],
   },
   {

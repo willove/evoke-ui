@@ -32,6 +32,11 @@
       @suggestion-click="handleSuggestionClick"
       @citation-click="handleCitationClick"
       @tool-retry="handleToolRetry"
+      @plan-toggle="(p) => emit('plan-toggle', p)"
+      @plan-step-click="(step, i, m) => emit('plan-step-click', step, i, m)"
+      @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
+      @artifact-open="(a, m) => emit('artifact-open', a, m)"
+      @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
     >
       <template v-if="$slots.empty" #empty>
         <slot name="empty" />
@@ -132,7 +137,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "attachment-add", "attachment-reject"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "attachment-add", "attachment-reject"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);

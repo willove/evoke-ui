@@ -56,6 +56,17 @@
             :content="message?.thinkContent"
             :thinking="message?.thinking"
           />
+          <ChatPlan
+            v-if="message?.plan?.steps?.length"
+            :plan="message.plan"
+            @toggle="emit('plan-toggle', $event)"
+            @step-click="(step, i) => emit('plan-step-click', step, i, message)"
+          />
+          <ChatConfirmation
+            v-if="message?.confirmation"
+            :confirmation="message.confirmation"
+            @respond="(c, key) => emit('confirm-respond', c, key, message)"
+          />
           <div v-if="resolvedToolCalls.length" class="eb-chat-message__tools">
             <p v-if="resolvedToolCalls.length > 1" class="eb-chat-message__tools-heading">
               {{ labels.tool.group(resolvedToolCalls.length) }}
@@ -105,6 +116,12 @@
               ref="sourcesRef"
               :items="message.citations"
             />
+            <ChatArtifact
+              v-if="message?.artifacts?.length"
+              :artifacts="message.artifacts"
+              @open="(a) => emit('artifact-open', a, message)"
+              @copy="(a) => emit('artifact-copy', a, message)"
+            />
           </template>
           <ChatSuggestion
             v-if="resolvedSuggestions.length"
@@ -149,6 +166,9 @@ import ChatFeedback from "./ChatFeedback.vue";
 import ChatMessageEdit from "./ChatMessageEdit.vue";
 import ChatSources from "./ChatSources.vue";
 import ChatToolCall from "./ChatToolCall.vue";
+import ChatPlan from "./ChatPlan.vue";
+import ChatConfirmation from "./ChatConfirmation.vue";
+import ChatArtifact from "./ChatArtifact.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
@@ -170,7 +190,7 @@ const props = defineProps({
   /** 工具调用失败态是否给重试钮 */
   toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy"]);
 const hovered = ref(false);
 const editing = ref(false);
 const sourcesRef = ref(null);

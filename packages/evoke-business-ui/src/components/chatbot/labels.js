@@ -62,6 +62,40 @@ export const chatLabels = {
   suggestion: {
     group: '推荐追问',
   },
+  plan: {
+    group: '执行计划',
+    progress: (done, total) => `${done}/${total} 完成`,
+    empty: '暂无步骤',
+    expand: '展开计划',
+    collapse: '收起计划',
+    status: {
+      pending: '等待',
+      running: '执行中',
+      done: '完成',
+      error: '失败',
+      skipped: '跳过',
+    },
+  },
+  confirmation: {
+    group: '待确认',
+    title: '需要你确认',
+    status: {
+      pending: '等待确认',
+      approved: '已批准',
+      rejected: '已拒绝',
+      expired: '已超时',
+    },
+    responded: (label) => `已选择「${label}」`,
+    hint: '确认后由你的代码执行相应动作',
+  },
+  artifact: {
+    group: '产物',
+    open: '查看',
+    copy: '复制内容',
+    copied: '已复制',
+    download: '下载',
+    unknownType: '文件',
+  },
   widget: {
     expand: '打开助手',
     collapse: '收起助手',

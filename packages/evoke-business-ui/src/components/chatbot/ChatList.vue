@@ -37,6 +37,11 @@
             @suggestion-click="handleSuggestionClick"
             @citation-click="handleCitationClick"
             @tool-retry="handleToolRetry"
+            @plan-toggle="(p) => emit('plan-toggle', p)"
+            @plan-step-click="(step, i, m) => emit('plan-step-click', step, i, m)"
+            @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
+            @artifact-open="(a, m) => emit('artifact-open', a, m)"
+            @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
           >
             <template v-if="$slots['message-content']" #content="p">
               <slot name="message-content" v-bind="p" />
@@ -83,7 +88,7 @@ const props = defineProps({
   feedbackReasons: { type: Array, required: false, default: () => [] },
   toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "scroll"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "scroll"]);
 const listRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);

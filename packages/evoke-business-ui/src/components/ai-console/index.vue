@@ -68,6 +68,11 @@
         @citation-click="handleCitationClick"
         :tool-retryable="toolRetryable"
         @tool-retry="handleToolRetry"
+        @plan-toggle="(p) => emit('plan-toggle', p)"
+        @plan-step-click="(step, i, m) => emit('plan-step-click', step, i, m)"
+        @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
+        @artifact-open="(a, m) => emit('artifact-open', a, m)"
+        @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
       >
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
       </ChatList>
@@ -193,6 +198,11 @@ const emit = defineEmits([
   'suggestion-click',
   'citation-click',
   'tool-retry',
+  'plan-toggle',
+  'plan-step-click',
+  'confirm-respond',
+  'artifact-open',
+  'artifact-copy',
   'quota-click',
   'settings-click',
   'example-click',
