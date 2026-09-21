@@ -602,11 +602,34 @@ import cobol from 'highlight.js/lib/languages/cobol'
 registerHighlightLanguage('cobol', cobol)
 ```
 
+数学公式与图表同理——**渲染器由你注入**，包内不引这两个依赖：
+
+```js
+import katex from 'katex'
+import 'katex/dist/katex.min.css'   // 样式与字体要自己引
+
+configureChatMarkdown({
+  // (tex, displayMode) => html；返回的内容按原样插入，转义由你的渲染器负责
+  math: (tex, display) => katex.renderToString(tex, { displayMode: display, throwOnError: false }),
+})
+
+// mermaid 是异步的，塞不进同步渲染管线：围栏保留为代码块，旁边多一个
+// 「渲染图表」按钮，点击后调这个函数并把代码块换成返回的 SVG
+configureChatMarkdown({
+  mermaid: async (source) => {
+    const { svg } = await mermaid.render(`m${Date.now()}`, source)
+    return svg
+  },
+})
+```
+
+不注入就不出现：`$x$` 与 `$$…$$` 原样保留，mermaid 围栏就是普通代码块。数学的行内识别带两条保守规则——`$` 内侧不留空白，且纯数字内容（`$100 与 $200` 这类金额写法）直接放行不当公式。宿主渲染器抛错时退回转义原文，不影响整篇。
+
 安全边界（都是刻意选择，不是漏做）：正文里的 raw HTML 一律转义为纯文本展示，`<script>` / `<iframe>` / 注释都进不来；链接协议走白名单，非白名单协议降级成可配置的引用芯片；**图片 `src` 只放行 `http` / `https` / `data`**，其余协议退回可读纯文本，并统一补 `loading="lazy"` 与 `referrerpolicy="no-referrer"`。
 
 **脚注**：marked v18 不带脚注扩展，管线里自己接了一个。`结论[^1]` 配 `[^1]: 出处说明` 渲染成可点击上标 + 文末尾注列表——编号按定义出现顺序（与 GFM 一致），未被引用的定义不进尾注，没有对应定义的引用退回原样文本，代码块里的 `[^1]:` 不会被当成定义。上标与 `source:` 引用共用 `.eb-chat-citation` 类名，宿主可统一着色。
 
-已知未接：KaTeX 数学公式与 Mermaid 图（都需要引入额外依赖）。
+Mermaid 的图是点击后直接改 `v-html` 出来的 DOM——流式期间重渲染会覆盖它，所以按钮只在已经渲染完成的块上有意义。
 
 ## API
 

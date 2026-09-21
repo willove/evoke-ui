@@ -14,6 +14,11 @@ function createDefaultConfig() {
       "skype"
       // data: 不进默认白名单——聊天内容不可信，data: 链接降级为 ref-chip；确有需要的宿主经 standardProtocols.add 加回
     ]),
+    // 数学公式：宿主注入渲染函数才启用（例如 katex.renderToString）。
+    // 不内置实现——katex 的 CSS 与字体要宿主自己引，打进包里是替所有人做选择
+    math: null,
+    // Mermaid：宿主注入异步渲染函数才给「渲染图表」按钮
+    mermaid: null,
     protocolThemes: {
       entity: "primary",
       concept: "success",
@@ -46,6 +51,12 @@ function configureChatMarkdown(options) {
   if (options.protocolThemes) {
     config.protocolThemes = { ...config.protocolThemes, ...options.protocolThemes };
   }
+  if ("math" in options) {
+    config.math = options.math;
+  }
+  if ("mermaid" in options) {
+    config.mermaid = options.mermaid;
+  }
   if (options.standardProtocols) {
     if (options.standardProtocols.add) {
       for (const p of options.standardProtocols.add) {
@@ -62,7 +73,9 @@ function configureChatMarkdown(options) {
 function getChatMarkdownConfig() {
   return {
     standardProtocols: new Set(config.standardProtocols),
-    protocolThemes: { ...config.protocolThemes }
+    protocolThemes: { ...config.protocolThemes },
+    math: config.math,
+    mermaid: config.mermaid
   };
 }
 const md = new Marked();
@@ -70,7 +83,8 @@ md.setOptions({ breaks: true, gfm: true });
 const renderer = new marked.Renderer();
 
 renderer.code = function({ text, lang }) {
-  const language = lang && hljs.getLanguage(lang) ? lang : "plaintext";
+  // mermaid 例外：hljs 没有该语言，但渲染按钮与后续替换都靠这个语言名认人
+  const language = lang === "mermaid" ? "mermaid" : lang && hljs.getLanguage(lang) ? lang : "plaintext";
   let highlighted;
   try {
     highlighted = hljs.highlight(text, { language }).value;
@@ -79,8 +93,14 @@ renderer.code = function({ text, lang }) {
   }
   // 代码工具条：语言标签 + 复制。复制文本由 ChatMarkdown 事件委托从 <code> 读，
   // 不把原文塞进 data-* （大段代码会让 HTML 体积翻倍）
+  // mermaid 只能异步渲染，塞不进同步管线：保留代码块 + 给一个渲染按钮，
+  // 点击后由 ChatMarkdown 调宿主注入的渲染器替换（Streamdown 也是这个做法）
+  const renderBtn = lang === "mermaid" && config.mermaid
+    ? `<button type="button" class="eb-chat-mermaid__render">${escapeHtml(labels.markdown.renderDiagram)}</button>`
+    : "";
   const bar = `<div class="eb-chat-code__bar">` +
     `<span class="eb-chat-code__lang">${escapeHtml(language)}</span>` +
+    renderBtn +
     `<button type="button" class="eb-chat-code__copy" aria-label="${escapeHtml(labels.markdown.copyCode)}">` +
     `<span class="eb-chat-code__copy-text">${escapeHtml(labels.markdown.copyCode)}</span>` +
     `</button></div>`;
@@ -189,7 +209,55 @@ const footnoteDefExt = {
   }
 };
 
-md.use({ extensions: [footnoteDefExt, footnoteRefExt] });
+// 数学公式：宿主注入 math(tex, displayMode) => html 才生效。
+// 字符串按 HTML 原样插入，转义由宿主渲染器负责（katex.renderToString 自带）
+const mathInlineExt = {
+  name: "mathInline",
+  level: "inline",
+  start(src) {
+    const i = src.indexOf("$");
+    return i < 0 ? void 0 : i;
+  },
+  tokenizer(src) {
+    if (!config.math) return void 0;
+    const m = /^\$(?!\s)([^\n$]+?)(?<!\s)\$/.exec(src);
+    if (!m) return void 0;
+    // `$100 与 $200` 这类金额写法别被当成公式吃掉
+    if (/^[\d,.\s]+$/.test(m[1])) return void 0;
+    return { type: "mathInline", raw: m[0], tex: m[1] };
+  },
+  renderer(token) {
+    try {
+      return `<span class="eb-chat-math eb-chat-math--inline">${config.math(token.tex, false)}</span>`;
+    } catch {
+      return escapeHtml(token.raw);
+    }
+  }
+};
+
+const mathBlockExt = {
+  name: "mathBlock",
+  level: "block",
+  start(src) {
+    const i = src.indexOf("$$");
+    return i < 0 ? void 0 : i;
+  },
+  tokenizer(src) {
+    if (!config.math) return void 0;
+    const m = /^\$\$[ \t]*\n?([\s\S]+?)\n?\$\$[ \t]*(?:\n|$)/.exec(src);
+    if (!m) return void 0;
+    return { type: "mathBlock", raw: m[0], tex: m[1].trim() };
+  },
+  renderer(token) {
+    try {
+      return `<div class="eb-chat-math eb-chat-math--block">${config.math(token.tex, true)}</div>`;
+    } catch {
+      return escapeHtml(token.raw);
+    }
+  }
+};
+
+md.use({ extensions: [footnoteDefExt, footnoteRefExt, mathBlockExt, mathInlineExt] });
 md.use({ renderer });
 /**
  * 默认高亮走 highlight.js/lib/common（36 种语言，避免整包 193 种进产物）。

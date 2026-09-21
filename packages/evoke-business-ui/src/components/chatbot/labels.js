@@ -51,6 +51,8 @@ export const chatLabels = {
     copied: '已复制',
     citation: (num) => `查看第 ${num} 条来源`,
     footnote: (num) => `查看第 ${num} 条脚注`,
+    renderDiagram: '渲染图表',
+    diagramFailed: '图表渲染失败',
   },
   sources: {
     toggle: (n) => `${n} 个来源`,

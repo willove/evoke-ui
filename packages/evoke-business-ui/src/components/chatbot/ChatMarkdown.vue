@@ -10,7 +10,7 @@
 
 <script setup>
 import { ref, watch, onBeforeUnmount } from "vue";
-import { renderChatMarkdown } from "./chatMarkdown";
+import { renderChatMarkdown, getChatMarkdownConfig } from "./chatMarkdown";
 import { copyToClipboard } from "./utils";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
@@ -92,6 +92,29 @@ function emitCitation(el) {
   emit("citation-click", id);
   return true;
 }
+/**
+ * 把 mermaid 代码块换成宿主渲染的图。
+ * 这里直接改 v-html 出来的 DOM——流式期间重渲染会覆盖掉，所以按钮只在
+ * 已经渲染完成的块上有意义；失败时把按钮恢复并改文案，不静默。
+ */
+async function renderDiagram(btn) {
+  const block = btn.closest(".eb-chat-code");
+  const code = block?.querySelector("code");
+  const renderer = getChatMarkdownConfig().mermaid;
+  if (!code || !renderer) return;
+  btn.disabled = true;
+  try {
+    const svg = await renderer(code.textContent ?? "");
+    const host = document.createElement("div");
+    host.className = "eb-chat-mermaid";
+    host.innerHTML = typeof svg === "string" ? svg : "";
+    block.replaceWith(host);
+  } catch {
+    btn.disabled = false;
+    btn.textContent = labels.markdown.diagramFailed;
+  }
+}
+
 function handleKeydown(e) {
   // 上标是 role=button 的 sup，键盘要能触发
   if (e.key !== "Enter" && e.key !== " ") return;
@@ -99,6 +122,11 @@ function handleKeydown(e) {
 }
 function handleClick(e) {
   if (emitCitation(e.target?.closest?.(".eb-chat-citation"))) return;
+  const mermaidBtn = e.target?.closest?.(".eb-chat-mermaid__render");
+  if (mermaidBtn) {
+    renderDiagram(mermaidBtn);
+    return;
+  }
   const btn = e.target?.closest?.(".eb-chat-code__copy");
   if (!btn) return;
   // 复制文本从渲染后的 <code> 读，避免把原文塞进 data-* 撑大 HTML
@@ -392,6 +420,61 @@ function handleClick(e) {
   max-width: 100%;
   border-radius: var(--eb-radius-md);
   margin: 8px 0;
+}
+
+/* ── 数学公式（宿主注入渲染器才出现）── */
+.eb-chat-markdown :deep(.eb-chat-math--inline) {
+  padding: 0 2px;
+}
+
+.eb-chat-markdown :deep(.eb-chat-math--block) {
+  margin: var(--eb-space-2) 0;
+  padding: var(--eb-space-2) 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* ── Mermaid 渲染结果 ── */
+.eb-chat-markdown :deep(.eb-chat-mermaid) {
+  margin: var(--eb-space-2) 0;
+  padding: var(--eb-space-3);
+  border: 1px solid var(--eb-border-color-lighter);
+  border-radius: var(--eb-radius-md);
+  background: var(--eb-bg-color-overlay);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.eb-chat-markdown :deep(.eb-chat-mermaid svg) {
+  max-width: 100%;
+  height: auto;
+}
+
+.eb-chat-markdown :deep(.eb-chat-mermaid__render) {
+  padding: 2px 8px;
+  border: none;
+  border-radius: var(--eb-radius-sm);
+  background: transparent;
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s var(--eb-ease-out), color 0.15s var(--eb-ease-out);
+}
+
+.eb-chat-markdown :deep(.eb-chat-mermaid__render:hover:not(:disabled)) {
+  background: var(--eb-bg-color-overlay);
+  color: var(--eb-text-color-primary);
+}
+
+.eb-chat-markdown :deep(.eb-chat-mermaid__render:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.eb-chat-markdown :deep(.eb-chat-mermaid__render:focus-visible) {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: -2px;
 }
 
 /* ── 脚注尾注列表 ── */

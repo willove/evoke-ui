@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Chatbot from '../src/components/chatbot/Chatbot.vue'
@@ -6,6 +6,7 @@ import ChatMessage from '../src/components/chatbot/ChatMessage.vue'
 import ChatAttachments from '../src/components/chatbot/ChatAttachments.vue'
 import ChatSender from '../src/components/chatbot/ChatSender.vue'
 import ChatMarkdown from '../src/components/chatbot/ChatMarkdown.vue'
+import { chatLabels } from '../src/components/chatbot/labels'
 import { useChatEngine } from '../src/components/chatbot/useChatEngine'
 import {
   generateId,
@@ -18,7 +19,9 @@ import {
   renderChatMarkdown,
   configureChatMarkdown,
   registerHighlightLanguage,
+  getChatMarkdownConfig,
 } from '../src/components/chatbot/chatMarkdown'
+import ChatMarkdown from '../src/components/chatbot/ChatMarkdown.vue'
 
 // ── useChatEngine 状态机 ──
 
@@ -786,5 +789,109 @@ describe('chatMarkdown 脚注', () => {
     const cite = renderChatMarkdown('见[1](source:c1)')
     expect(fn).toContain('class="eb-chat-citation"')
     expect(cite).toContain('class="eb-chat-citation"')
+  })
+})
+
+// ── 数学公式与图表（都是宿主注入渲染器的 opt-in 能力）──
+
+describe('chatMarkdown 数学公式', () => {
+  const fakeTex = (tex, display) => `<span class="fake-tex" data-display="${display}">${tex}</span>`
+
+  afterEach(() => {
+    configureChatMarkdown({ reset: true })
+  })
+
+  it('未配置渲染器时原样保留，不猜', () => {
+    expect(renderChatMarkdown('质能方程 $E=mc^2$ 很好记')).toContain('$E=mc^2$')
+    expect(renderChatMarkdown('$$\\int_0^1 x dx$$')).not.toContain('eb-chat-math')
+  })
+
+  it('配置后行内与块级分别渲染，displayMode 传给宿主', () => {
+    configureChatMarkdown({ math: fakeTex })
+    const inline = renderChatMarkdown('质能方程 $E=mc^2$ 很好记')
+    expect(inline).toContain('class="eb-chat-math eb-chat-math--inline"')
+    expect(inline).toContain('data-display="false"')
+    expect(inline).toContain('E=mc^2')
+
+    const block = renderChatMarkdown('推导如下：\n\n$$\\int_0^1 x\\,dx = \\frac{1}{2}$$\n\n结束')
+    expect(block).toContain('class="eb-chat-math eb-chat-math--block"')
+    expect(block).toContain('data-display="true"')
+  })
+
+  it('金额写法不被当成公式（纯数字内容直接放行）', () => {
+    configureChatMarkdown({ math: fakeTex })
+    const html = renderChatMarkdown('这套 $100 与那套 $200 都要')
+    expect(html).not.toContain('eb-chat-math')
+    expect(html).toContain('$100')
+    expect(html).toContain('$200')
+  })
+
+  it('宿主渲染器抛错时退回转义原文，不炸整篇', () => {
+    configureChatMarkdown({ math: () => { throw new Error('katex 出错') } })
+    const html = renderChatMarkdown('前 $x$ 后')
+    expect(html).toContain('$x$')
+    expect(html).toContain('前')
+    expect(html).toContain('后')
+  })
+
+  it('reset 关闭该能力', () => {
+    configureChatMarkdown({ math: fakeTex })
+    expect(renderChatMarkdown('$x$')).toContain('eb-chat-math')
+    configureChatMarkdown({ reset: true })
+    expect(renderChatMarkdown('$x$')).not.toContain('eb-chat-math')
+  })
+})
+
+describe('chatMarkdown Mermaid', () => {
+  const SOURCE = '```mermaid\ngraph TD\n  A --> B\n```'
+
+  afterEach(() => {
+    configureChatMarkdown({ reset: true })
+  })
+
+  it('未配置渲染器时就是普通代码块，不给按钮', () => {
+    const html = renderChatMarkdown(SOURCE)
+    expect(html).toContain('eb-chat-code')
+    expect(html).not.toContain('eb-chat-mermaid__render')
+    expect(html).toContain('graph TD')
+  })
+
+  it('配置后保留代码块并补「渲染图表」按钮（异步不能塞进同步管线）', () => {
+    configureChatMarkdown({ mermaid: async () => '<svg></svg>' })
+    const html = renderChatMarkdown(SOURCE)
+    expect(html).toContain('eb-chat-mermaid__render')
+    expect(html).toContain('language-mermaid')
+    expect(html).toContain('graph TD')
+  })
+
+  it('点渲染按钮：宿主收到源码，块被换成图；失败则按钮恢复并改文案', async () => {
+    const seen = []
+    configureChatMarkdown({ mermaid: async (src) => { seen.push(src); return '<svg class="fake-diagram"></svg>' } })
+    const ok = mount(ChatMarkdown, { props: { content: SOURCE } })
+    await ok.vm.$nextTick()
+    await ok.find('.eb-chat-mermaid__render').trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(seen[0]).toContain('graph TD')
+    expect(ok.find('.eb-chat-mermaid svg.fake-diagram').exists()).toBe(true)
+    expect(ok.find('.eb-chat-code').exists()).toBe(false)
+
+    configureChatMarkdown({ reset: true })
+    configureChatMarkdown({ mermaid: async () => { throw new Error('mermaid 出错') } })
+    const bad = mount(ChatMarkdown, { props: { content: SOURCE } })
+    await bad.vm.$nextTick()
+    await bad.find('.eb-chat-mermaid__render').trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const btn = bad.find('.eb-chat-mermaid__render')
+    expect(btn.exists()).toBe(true)
+    expect(btn.attributes('disabled')).toBeUndefined()
+    expect(btn.text()).toBe(chatLabels.markdown.diagramFailed)
+  })
+
+  it('getChatMarkdownConfig 交出 math / mermaid 供宿主自检', () => {
+    const renderer = () => ''
+    configureChatMarkdown({ math: renderer, mermaid: renderer })
+    const cfg = getChatMarkdownConfig()
+    expect(cfg.math).toBe(renderer)
+    expect(cfg.mermaid).toBe(renderer)
   })
 })
