@@ -260,6 +260,15 @@ function useChatEngine(options = {}) {
     updateMessage(messageId, { usage: usage || null });
   }
 
+  // ── 调用链追踪 ──
+  // 只记 id / 地址，不拼 URL：各家追踪平台路径不同，模板由宿主给
+  function setTrace(messageId, trace = {}) {
+    updateMessage(messageId, {
+      traceId: trace.traceId || "",
+      traceUrl: trace.traceUrl || ""
+    });
+  }
+
   // ── 产物 ──
   function addArtifact(messageId, artifact = {}) {
     const msg = findMessage(messageId);
@@ -377,7 +386,8 @@ function useChatEngine(options = {}) {
     addArtifact,
     updateArtifact,
     removeArtifact,
-    setUsage
+    setUsage,
+    setTrace
   };
 }
 export {

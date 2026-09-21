@@ -420,6 +420,25 @@ engine.setUsage(msg.id, {
 
 千与百万以上折算成 `12.4k` / `2.3M`，成本小额保留四位（`$0.0032`）常规两位（`¥1.24`）。
 
+## 观测性深链
+
+消息带 `traceId` 时，动作条上出现一颗跳转外链——契约是 **URL 模板**而不是 URL 生成器：各家追踪平台路径差异极大（LangSmith / Langfuse / Phoenix / 自建 Jaeger），模板是最小可复用面。
+
+```js
+engine.setTrace(msg.id, { traceId: 'run_abc123' })   // 或直接给 traceUrl
+```
+
+```vue
+<eb-chatbot v-model="messages" trace-url="https://smith.example.com/o/acme/runs/{traceId}" />
+```
+
+- `message.traceUrl` 直接给全量地址时优先于模板（你自己拼好了就别再套模板）
+- `{traceId}` 会被 `encodeURIComponent` 编码，`a/b?c=1` 这类 id 不会破 URL
+- 解析不出地址（无 id、无模板、模板里没占位符）就不渲染，**不留死链**
+- 外链是 `<a target="_blank" rel="noopener noreferrer">` 而不是按钮——导航语义本来就该是锚点
+
+要完全自定义这块，用已有的 `#message` scoped 插槽整条接管即可，没有另开 `#trace` 插槽——那与 `#message` 能力重叠。
+
 ## 输入类
 
 ### EbChatSender

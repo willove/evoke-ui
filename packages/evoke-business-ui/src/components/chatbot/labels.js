@@ -40,6 +40,7 @@ export const chatLabels = {
     copied: '已复制',
     regenerate: '重新生成',
     edit: '编辑',
+    trace: '查看调用链',
   },
   attachments: {
     done: '已上传',

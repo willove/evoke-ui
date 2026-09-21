@@ -30,6 +30,17 @@
     >
       <eb-icon name="refresh-right" />
     </button>
+    <a
+      v-if="traceHref"
+      class="eb-chat-actionbar__btn"
+      :href="traceHref"
+      target="_blank"
+      rel="noopener noreferrer"
+      :title="labels.actionbar.trace"
+      :aria-label="labels.actionbar.trace"
+    >
+      <eb-icon name="top-right" />
+    </a>
     <ChatSpeak
       v-if="showSpeech && message?.role === 'assistant' && message?.content"
       :text="String(message.content)"
@@ -51,7 +62,7 @@
 
 <script setup>
 import EbIcon from "../icon/index.vue"
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { copyToClipboard } from "./utils";
 import ChatSpeak from "./ChatSpeak.vue";
 import { chatLabels as labels } from "./labels";
@@ -63,9 +74,22 @@ const props = defineProps({
   /** 用户消息的「编辑并重发」；role 收敛在模板里 */
   showEdit: { type: Boolean, required: false, default: false },
   /** 助手消息的朗读钮；浏览器不支持 Web Speech 时不渲染 */
-  showSpeech: { type: Boolean, required: false, default: false }
+  showSpeech: { type: Boolean, required: false, default: false },
+  /** 追踪链接模板，如 https://…/runs/{traceId}；message.traceUrl 优先 */
+  traceUrl: { type: String, required: false, default: "" }
 });
 const emit = defineEmits(["copy", "regenerate", "edit", "action"]);
+
+/** 消息直接给了全量地址就优先用它，否则按模板替换 {traceId}；都解析不出就不渲染 */
+const traceHref = computed(() => {
+  const direct = props.message?.traceUrl;
+  if (direct) return String(direct);
+  const id = props.message?.traceId;
+  if (!id || !props.traceUrl) return "";
+  return props.traceUrl.includes("{traceId}")
+    ? props.traceUrl.replaceAll("{traceId}", encodeURIComponent(String(id)))
+    : "";
+});
 const copied = ref(false);
 async function handleCopy() {
   if (!props.message) return;

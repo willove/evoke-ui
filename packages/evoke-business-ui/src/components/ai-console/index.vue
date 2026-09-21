@@ -68,6 +68,7 @@
         @citation-click="handleCitationClick"
         :tool-retryable="toolRetryable"
         :speech="speech"
+        :trace-url="traceUrl"
         @tool-retry="handleToolRetry"
         @plan-toggle="(p) => emit('plan-toggle', p)"
         @plan-step-click="(step, i, m) => emit('plan-step-click', step, i, m)"
@@ -185,6 +186,7 @@ const props = defineProps({
   feedbackReasons: { type: Array, default: () => [] },
   toolRetryable: { type: Boolean, default: true },
   speech: { type: Boolean, default: false },
+  traceUrl: { type: String, default: "" },
   /** 会话区最大高度（px 或 CSS 值） */
   chatHeight: { type: [Number, String], default: 420 },
   showTip: { type: Boolean, default: true },
