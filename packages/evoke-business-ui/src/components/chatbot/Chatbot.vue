@@ -24,6 +24,7 @@
       :feedback="feedback"
       :feedback-reasons="feedbackReasons"
       :tool-retryable="toolRetryable"
+      :speech="speech"
       @copy="handleCopy"
       @regenerate="handleRegenerate"
       @action="handleAction"
@@ -125,6 +126,8 @@ const props = defineProps({
   feedbackReasons: { type: Array, required: false, default: () => [] },
   /** 工具调用失败态是否给重试钮 */
   toolRetryable: { type: Boolean, required: false, default: true },
+  /** 助手消息显示朗读钮（浏览器不支持 Web Speech 时自动不渲染） */
+  speech: { type: Boolean, required: false, default: false },
   /** 附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；空为不限 */
   accept: { type: String, required: false, default: "" },
   /** 单个附件字节上限，0 为不限 */

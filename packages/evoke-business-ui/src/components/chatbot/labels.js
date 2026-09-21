@@ -145,6 +145,12 @@ export const chatLabels = {
     expiry30: '30 天',
     expiryNever: '永久',
   },
+  speech: {
+    speak: '朗读这条回复',
+    stopSpeak: '停止朗读',
+    startListening: '开始语音输入',
+    stopListening: '停止语音输入',
+  },
   widget: {
     expand: '打开助手',
     collapse: '收起助手',

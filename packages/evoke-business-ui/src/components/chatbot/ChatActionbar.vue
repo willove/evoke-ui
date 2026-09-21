@@ -30,6 +30,10 @@
     >
       <eb-icon name="refresh-right" />
     </button>
+    <ChatSpeak
+      v-if="showSpeech && message?.role === 'assistant' && message?.content"
+      :text="String(message.content)"
+    />
     <button 
       v-for="action in actions" 
       :key="action.key"
@@ -49,6 +53,7 @@
 import EbIcon from "../icon/index.vue"
 import { ref } from "vue";
 import { copyToClipboard } from "./utils";
+import ChatSpeak from "./ChatSpeak.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
@@ -56,7 +61,9 @@ const props = defineProps({
   showCopy: { type: Boolean, required: false, default: true },
   showRegenerate: { type: Boolean, required: false, default: true },
   /** 用户消息的「编辑并重发」；role 收敛在模板里 */
-  showEdit: { type: Boolean, required: false, default: false }
+  showEdit: { type: Boolean, required: false, default: false },
+  /** 助手消息的朗读钮；浏览器不支持 Web Speech 时不渲染 */
+  showSpeech: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["copy", "regenerate", "edit", "action"]);
 const copied = ref(false);

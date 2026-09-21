@@ -93,7 +93,8 @@ const props = defineProps({
   editMaxLength: { type: Number, required: false, default: 0 },
   feedback: { type: Boolean, required: false, default: false },
   feedbackReasons: { type: Array, required: false, default: () => [] },
-  toolRetryable: { type: Boolean, required: false, default: true }
+  toolRetryable: { type: Boolean, required: false, default: true },
+  speech: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "scroll"]);
 const listRef = ref();
@@ -192,7 +193,8 @@ function messagePropsFor(msg) {
     editMaxLength: props.editMaxLength,
     feedback: props.feedback,
     feedbackReasons: props.feedbackReasons,
-    toolRetryable: props.toolRetryable
+    toolRetryable: props.toolRetryable,
+    speech: props.speech
   };
 }
 // 单一深监听：内容增量与新增消息都覆盖（此前 length 与深监听双触发，逐 token 滚两次）

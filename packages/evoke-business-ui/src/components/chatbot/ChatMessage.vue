@@ -147,6 +147,7 @@
             :message="message"
             :actions="actions"
             :show-edit="editable && message?.role === 'user'"
+            :show-speech="speech"
             @copy="handleCopy"
             @regenerate="handleRegenerate"
             @edit="editing = true"
@@ -202,7 +203,9 @@ const props = defineProps({
   /** 点踩原因词汇表；不传用内置 */
   feedbackReasons: { type: Array, required: false, default: () => [] },
   /** 工具调用失败态是否给重试钮 */
-  toolRetryable: { type: Boolean, required: false, default: true }
+  toolRetryable: { type: Boolean, required: false, default: true },
+  /** 助手消息显示朗读钮（浏览器不支持 Web Speech 时自动不渲染） */
+  speech: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select"]);
 const hovered = ref(false);

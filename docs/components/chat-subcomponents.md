@@ -234,6 +234,57 @@ ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可
   <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">{{ shareHint }}</div>
 </DemoBlock>
 
+## 语音：朗读与口述
+
+两个 composable 提供能力，两个按钮组件提供入口。**都按 Web Speech API 的能力检测决定给不给入口**——Firefox 目前没有 `SpeechRecognition`，Safari 部分版本只认 `webkit` 前缀；不支持时 `supported` 为 `false`、按钮整个不渲染，调用 `speak` / `start` 也是安全空操作。
+
+### 朗读（`useSpeech` · `EbChatSpeak`）
+
+```js
+const { supported, speaking, speak, stop } = useSpeech({ lang: 'zh-CN', rate: 1 })
+speak('念这段')   // 空文本返回 false；再点会先 cancel 上一条
+```
+
+`EbChatSpeak` 是动作条上的那颗按钮（图标 `volume`，朗读中转 `pause` 并脉动）。**开箱用法**是开 `speech` 开关，它会自动出现在助手消息上、用户消息上没有：
+
+```vue
+<eb-chatbot v-model="messages" speech />
+```
+
+单实例单次朗读：同一条里再次点击会先停掉上一条，避免多条消息同时念。
+
+### 口述（`useSpeechInput` · `EbChatVoiceInput`）
+
+```js
+const { supported, listening, error, start, stop, toggle } = useSpeechInput({
+  lang: 'zh-CN',
+  onInterim: (text) => { /* 临时结果：覆盖填充输入框 */ },
+  onFinal: (text) => { /* 定稿片段：追加，光标不跳 */ },
+  onError: (code) => { /* not-allowed / no-speech / network ... */ },
+})
+```
+
+结果分两路是刻意的：临时结果随时在变，直接覆盖填充；定稿才追加，这样光标不会往回跳。一次定稿多句时逐段交出，不拼成一坨。
+
+`EbChatVoiceInput` 是独立按钮，丢进输入区**已有的插槽**即可，不需要改 composer：
+
+```vue
+<eb-chatbot v-model="messages" v-model:input-value="draft">
+  <template #sender-toolbar>
+    <eb-chat-voice-input lang="zh-CN" @interim="draft = $event" @result="draft += $event" />
+  </template>
+</eb-chatbot>
+```
+
+`EbAiPromptBox` 侧同理走 `#toolbar-extra`。
+
+<DemoBlock>
+  <eb-chatbot v-model="speechMsgs" speech height="280px" :show-tip="false" />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    {{ speechHint }}
+  </div>
+</DemoBlock>
+
 ## 输入类
 
 ### EbChatSender
@@ -298,6 +349,24 @@ ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可
 
 <script setup>
 import { ref } from 'vue'
+
+// ─── 语音演示 ───
+const speechSupported = typeof window !== 'undefined'
+  && typeof window.speechSynthesis !== 'undefined'
+const speechHint = ref(
+  speechSupported
+    ? '悬停助手消息，动作条里多了一颗喇叭——点它会用系统语音念出这条回复'
+    : '当前浏览器没有 speechSynthesis，朗读钮不会渲染（能力检测生效）'
+)
+const speechMsgs = ref([
+  { id: 'v-1', role: 'user', content: '用一句话介绍这个组件库', status: 'done' },
+  {
+    id: 'v-2',
+    role: 'assistant',
+    status: 'done',
+    content: 'Evoke Business UI 是一套面向中后台的 Vue 3 组件库，**内置了完整的 AI 对话家族**——从消息流、工具卡到多会话与浮动挂件。',
+  },
+])
 
 // ─── 分享弹层演示 ───
 const shareOpen = ref(false)
