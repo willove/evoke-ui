@@ -291,6 +291,38 @@ const onAttachmentAdd = (file) => {
   limitLog.value = [`attachment-add：${file.name}`, ...limitLog.value].slice(0, 3)
 }
 
+// ─── 来源引用与行内上标 ───
+const citeHint = ref('点正文里的上标试试')
+const citeMsgs = ref([
+  {
+    id: 'cite-a1',
+    role: 'assistant',
+    status: 'done',
+    content:
+      '深海热泉口化能合成生态系统的能量来源不依赖阳光[1](source:c1 "Nature Reviews Microbiology")，' +
+      '初级生产者主要是硫氧化菌[2](source:c2 "维基百科：热泉口")。',
+    citations: [
+      {
+        id: 'c1',
+        title: 'Chemolithotrophy at deep-sea hydrothermal vents',
+        url: 'https://journal.example.org/nrm/chemolithotrophy',
+        source: 'Nature Reviews Microbiology',
+        snippet: '综述热泉口化能合成群落的能量通量与微生物组成。',
+      },
+      {
+        id: 'c2',
+        title: '热泉口 - 维基百科',
+        url: 'https://example.org/wiki/hydrothermal-vent',
+        source: '维基百科',
+        snippet: '初级生产者以硫化氢氧化获取能量。',
+      },
+    ],
+  },
+])
+function onCiteClick(id) {
+  citeHint.value = `citation-click：已定位到来源 ${id}`
+}
+
 // ─── 自定义区域与实例方法 ───
 const slotChatRef = ref(null)
 const slotMsgs = ref([])
@@ -371,6 +403,19 @@ const onSlotClear = () => {
   </div>
 </DemoBlock>
 
+## 来源引用与行内上标
+
+消息带 `citations` 数组即渲染来源卡列表（序号 / favicon / 标题 / 域名 / 摘要，可折叠）。正文里的行内引用用 **`source:` 协议**书写——`[1](source:c1)` 渲染成可点击上标，点击会展开来源列表并高亮对应卡片，同时抛 `citation-click`：
+
+<DemoBlock>
+  <eb-chatbot v-model="citeMsgs" height="320px" :show-tip="false" @citation-click="onCiteClick" />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    {{ citeHint }}
+  </div>
+</DemoBlock>
+
+链接文字是纯数字就直接用作序号；不是数字则按本次渲染递增分配。刻意不做裸 `[1]` 自动识别——那会和有序列表、脚注、代码里的方括号打架；宿主若拿到的是 Perplexity 风格的裸数字，在自己的 transport 里改写成 `[n](source:id)` 即可。
+
 ## 附件与输入控制
 
 `max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量（图片自动生成预览）；`send-on-enter` 关闭后 Enter 只换行，需点击发送按钮提交。选中的附件经 `attachment-add` 事件通知页面，可在此做类型或大小校验：
@@ -435,7 +480,7 @@ const onSlotClear = () => {
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },
@@ -467,6 +512,7 @@ const onSlotClear = () => {
   { name: 'edit', desc: '用户消息编辑后保存（组件只交出文本，重发由你驱动引擎 editAndResend 或自行截断）', type: '(message, content: string) => void', default: '—' },
   { name: 'feedback', desc: '评价提交；取消时 payload.value 为 null', type: '(message, { value, reasons, note }) => void', default: '—' },
   { name: 'suggestion-click', desc: '点击回答尾部的追问 chip', type: '(text: string, suggestion, message) => void', default: '—' },
+  { name: 'citation-click', desc: '点击正文里的引用上标（来源卡会自动展开并高亮，此处供埋点或自定义跳转）', type: '(id: string, message) => void', default: '—' },
   { name: 'attachment-add', desc: '选择附件文件后触发，可在此做类型或大小校验', type: '(file: File) => void', default: '—' },
 ]" />
 

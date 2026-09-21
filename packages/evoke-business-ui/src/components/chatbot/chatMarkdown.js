@@ -98,6 +98,15 @@ renderer.link = function({ href, title, tokens }) {
     const externalAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
     return `<a href="${escapeHtml(href)}"${externalAttrs}${titleAttr}>${text}</a>`;
   }
+  // source: 协议——行内引用上标。用显式协议而非裸 [1] 自动识别，
+  // 后者会和有序列表、脚注、代码里的方括号打架
+  if (protocol === "source") {
+    const refId = href.slice(colonIdx + 1);
+    const plain = String(text).replace(/<[^>]*>/g, "").trim();
+    // 链接文字本身是数字就沿用它作序号，否则按本次渲染递增分配
+    const num = /^\d+$/.test(plain) ? plain : String(++citationSeq);
+    return `<sup class="eb-chat-citation" data-ref-id="${escapeHtml(refId)}" data-cite-num="${num}" role="button" tabindex="0" aria-label="${escapeHtml(labels.markdown.citation(num))}"${titleAttr}>${num}</sup>`;
+  }
   if (protocol) {
     const refId = href.slice(colonIdx + 1);
     const theme = config.protocolThemes[protocol] || "primary";
@@ -105,9 +114,11 @@ renderer.link = function({ href, title, tokens }) {
   }
   return `<a href="${escapeHtml(href)}"${titleAttr}>${text}</a>`;
 };
+let citationSeq = 0;
 md.use({ renderer });
 function renderChatMarkdown(content) {
   if (!content) return "";
+  citationSeq = 0;
   return md.parse(content, { async: false });
 }
 export {

@@ -46,6 +46,12 @@ export const chatLabels = {
   markdown: {
     copyCode: '复制代码',
     copied: '已复制',
+    citation: (num) => `查看第 ${num} 条来源`,
+  },
+  sources: {
+    toggle: (n) => `${n} 个来源`,
+    open: '展开来源列表',
+    close: '收起来源列表',
   },
   suggestion: {
     group: '推荐追问',

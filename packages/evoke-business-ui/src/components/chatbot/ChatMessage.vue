@@ -60,6 +60,7 @@
                 v-if="renderMode === 'markdown'"
                 :content="message.content"
                 :streaming="isStreaming"
+                @citation-click="handleCitationClick"
               />
               <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
             </div>
@@ -67,6 +68,11 @@
               <eb-icon name="stop" />
               <span>{{ labels.message.cancelled }}</span>
             </div>
+            <ChatSources
+              v-if="message?.citations?.length"
+              ref="sourcesRef"
+              :items="message.citations"
+            />
           </template>
           <ChatSuggestion
             v-if="resolvedSuggestions.length"
@@ -108,6 +114,7 @@ import ChatActionbar from "./ChatActionbar.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import ChatFeedback from "./ChatFeedback.vue";
 import ChatMessageEdit from "./ChatMessageEdit.vue";
+import ChatSources from "./ChatSources.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
@@ -127,9 +134,15 @@ const props = defineProps({
   /** 点踩原因词汇表；不传用内置 */
   feedbackReasons: { type: Array, required: false, default: () => [] }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click"]);
 const hovered = ref(false);
 const editing = ref(false);
+const sourcesRef = ref(null);
+function handleCitationClick(id) {
+  // 上标与来源卡是兄弟节点，联动走 expose 而不是把 citations 塞进渲染层
+  sourcesRef.value?.highlight?.(id);
+  emit("citation-click", id, props.message);
+}
 const awaitingReply = computed(() => {
   const m = props.message;
   return m?.status === "pending" || (m?.thinking && !m?.content);

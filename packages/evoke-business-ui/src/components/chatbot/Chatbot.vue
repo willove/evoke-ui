@@ -29,6 +29,7 @@
       @edit="handleEdit"
       @feedback="handleFeedback"
       @suggestion-click="handleSuggestionClick"
+      @citation-click="handleCitationClick"
     >
       <template v-if="$slots.empty" #empty>
         <slot name="empty" />
@@ -110,7 +111,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "attachment-add"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -171,6 +172,9 @@ function handleFeedback(message, payload) {
 }
 function handleSuggestionClick(text, suggestion, message) {
   emit("suggestion-click", text, suggestion, message);
+}
+function handleCitationClick(id, message) {
+  emit("citation-click", id, message);
 }
 function handleAttachmentAdd(file) {
   emit("attachment-add", file);

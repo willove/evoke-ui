@@ -4,6 +4,7 @@
     :class="{ 'is-streaming': streaming }"
     v-html="out"
     @click="handleClick"
+    @keydown="handleKeydown"
   />
 </template>
 
@@ -84,7 +85,20 @@ function schedule() {
 }
 watch(() => [props.content, props.streaming], schedule, { immediate: true });
 onBeforeUnmount(dropFrame);
+const emit = defineEmits(["citation-click"]);
+function emitCitation(el) {
+  const id = el?.dataset?.refId;
+  if (id === undefined) return false;
+  emit("citation-click", id);
+  return true;
+}
+function handleKeydown(e) {
+  // 上标是 role=button 的 sup，键盘要能触发
+  if (e.key !== "Enter" && e.key !== " ") return;
+  if (emitCitation(e.target?.closest?.(".eb-chat-citation"))) e.preventDefault();
+}
 function handleClick(e) {
+  if (emitCitation(e.target?.closest?.(".eb-chat-citation"))) return;
   const btn = e.target?.closest?.(".eb-chat-code__copy");
   if (!btn) return;
   // 复制文本从渲染后的 <code> 读，避免把原文塞进 data-* 撑大 HTML
@@ -378,6 +392,36 @@ function handleClick(e) {
   max-width: 100%;
   border-radius: var(--eb-radius-md);
   margin: 8px 0;
+}
+
+/* ── 行内引用上标（source: 协议）── */
+.eb-chat-markdown :deep(.eb-chat-citation) {
+  display: inline-block;
+  min-width: 15px;
+  padding: 0 4px;
+  margin: 0 2px;
+  border-radius: 8px;
+  background: var(--eb-fill-color);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  font-weight: var(--eb-font-weight-medium);
+  line-height: 15px;
+  text-align: center;
+  vertical-align: baseline;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--eb-duration-fast) var(--eb-ease-out), color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-chat-markdown :deep(.eb-chat-citation:hover),
+.eb-chat-markdown :deep(.eb-chat-citation:focus-visible) {
+  background: var(--eb-color-primary);
+  color: #fff;
+}
+
+.eb-chat-markdown :deep(.eb-chat-citation:focus-visible) {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 1px;
 }
 
 /* ── 引用芯片（entity: concept: product: doc: ... 等自定义协议链接） ── */

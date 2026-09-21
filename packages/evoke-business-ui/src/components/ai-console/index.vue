@@ -49,6 +49,7 @@
         @edit="handleEdit"
         @feedback="handleFeedback"
         @suggestion-click="handleSuggestionClick"
+        @citation-click="handleCitationClick"
       >
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
       </ChatList>
@@ -167,6 +168,7 @@ const emit = defineEmits([
   'edit',
   'feedback',
   'suggestion-click',
+  'citation-click',
   'quota-click',
   'settings-click',
   'example-click',
@@ -239,6 +241,9 @@ function handleFeedback(message, payload) {
 }
 function handleSuggestionClick(text, suggestion, message) {
   emit('suggestion-click', text, suggestion, message);
+}
+function handleCitationClick(id, message) {
+  emit('citation-click', id, message);
 }
 
 const listRef = ref(null)
