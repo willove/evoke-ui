@@ -200,6 +200,40 @@ ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可
 
 **文件树**是改动集汇总、不属于单个工具，所以给了消息级字段 `message.fileTree`，渲染在产物之后，抛 `file-select(file, path, message)`。
 
+## EbChatShare 会话分享弹层
+
+收集「可见范围 + 有效期」，链接的生成与权限校验由你的服务端负责——组件**不发请求**；`link` 为空是配置态、非空是已创建态。
+
+```vue
+<eb-chat-share
+  v-model="shareOpen"
+  v-model:scope="scope"
+  v-model:expiry="expiry"
+  :title="activeThread?.title"
+  :link="shareLink"
+  :creating="creating"
+  @create="createLink"
+  @revoke="revokeLink"
+/>
+```
+
+`create` 触发时按当前 `scope` / `expiry` 去你的服务端换链接，把结果回灌给 `link`，弹层即切到已创建态。`scopes` / `expiries` 可整组替换，默认给「任何人可查看 / 仅本组织 / 仅受邀成员」与「7 天 / 30 天 / 永久」。
+
+<DemoBlock>
+  <eb-button @click="shareOpen = true">打开分享弹层</eb-button>
+  <eb-chat-share
+    v-model="shareOpen"
+    v-model:scope="shareScope"
+    v-model:expiry="shareExpiry"
+    :title="'季度报表口径对齐'"
+    :link="shareLink"
+    :creating="shareCreating"
+    @create="createShare"
+    @revoke="revokeShare"
+  />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">{{ shareHint }}</div>
+</DemoBlock>
+
 ## 输入类
 
 ### EbChatSender
@@ -263,6 +297,28 @@ ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可
 附件卡片列表：图片预览或类型图标、文件名、体积、移除钮；宿主回写 `status` 时显示进度条（`uploading` + `progress`）、失败原因（`error`）或已上传（`done`）。`{ attachments, removable }`，抛 `remove(file)`。
 
 <script setup>
+import { ref } from 'vue'
+
+// ─── 分享弹层演示 ───
+const shareOpen = ref(false)
+const shareScope = ref('anyone')
+const shareExpiry = ref('7d')
+const shareLink = ref('')
+const shareCreating = ref(false)
+const shareHint = ref('点「创建链接」看组件如何把意图抛给宿主')
+function createShare() {
+  // 真实场景：拿 scope/expiry 去服务端换链接
+  shareCreating.value = true
+  setTimeout(() => {
+    shareLink.value = `https://example.com/s/${Math.random().toString(36).slice(2, 8)}`
+    shareCreating.value = false
+    shareHint.value = '链接已回灌，弹层切到已创建态'
+  }, 600)
+}
+function revokeShare() {
+  shareLink.value = ''
+  shareHint.value = '已撤销，回到配置态'
+}
 
 // ─── 代码 agent 三卡演示数据 ───
 const DEMO_DIFF = [
