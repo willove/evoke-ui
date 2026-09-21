@@ -4,6 +4,7 @@ import { nextTick } from 'vue'
 import ChatSender from '../src/components/chatbot/ChatSender.vue'
 import ChatAttachments from '../src/components/chatbot/ChatAttachments.vue'
 import Chatbot from '../src/components/chatbot/Chatbot.vue'
+import ChatQueue from '../src/components/chatbot/ChatQueue.vue'
 import { matchesAccept, validateAttachment, formatBytes } from '../src/components/chatbot/utils'
 import { chatLabels } from '../src/components/chatbot/labels'
 
@@ -232,5 +233,59 @@ describe('Chatbot 投递透传', () => {
     const rej = w.emitted('attachment-reject')
     expect(rej[0][0]).toBe(bad)
     expect(rej[0][1]).toBe('type')
+  })
+})
+
+// ── 生成中的输入排队（UI 侧） ──
+
+describe('ChatSender queueable', () => {
+  it('未开 queueable：生成中拦下（回归钉）', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '排队问题', loading: true } })
+    await w.find('.eb-chat-sender__textarea').trigger('keydown', { key: 'Enter' })
+    expect(w.emitted('send')).toBeUndefined()
+    expect(w.find('.eb-chat-sender__send-btn').attributes('disabled')).toBeDefined()
+  })
+
+  it('开了 queueable：生成中照常发出，由宿主交给引擎排队', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '排队问题', loading: true, stoppable: true, queueable: true } })
+    await w.find('.eb-chat-sender__textarea').trigger('keydown', { key: 'Enter' })
+    expect(w.emitted('send')[0][0]).toBe('排队问题')
+  })
+
+  it('queueable 与 stoppable 互不干扰：停止钮仍可点、点了抛 stop 而不是发送', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '', loading: true, stoppable: true, queueable: true } })
+    const btn = w.find('.eb-chat-sender__send-btn')
+    expect(btn.classes()).toContain('is-stop')
+    await btn.trigger('click')
+    expect(w.emitted('stop')).toHaveLength(1)
+    expect(w.emitted('send')).toBeUndefined()
+  })
+})
+
+describe('ChatQueue', () => {
+  const ITEMS = [
+    { id: 'q1', content: '第二个问题' },
+    { id: 'q2', content: '', attachments: [{ name: 'a.png' }] },
+  ]
+
+  it('空队列不渲染', () => {
+    expect(mount(ChatQueue, { props: { items: [] } }).find('.eb-chat-queue').exists()).toBe(false)
+  })
+
+  it('逐条显示并标序号；仅附件的条目不空着', () => {
+    const w = mount(ChatQueue, { props: { items: ITEMS } })
+    expect(w.find('.eb-chat-queue__lead').text()).toContain('2 条排队')
+    const items = w.findAll('.eb-chat-queue__item')
+    expect(items[0].text()).toContain('第二个问题')
+    expect(items[1].text()).toContain(chatLabels.queue.attachmentOnly)
+    expect(items[0].find('.eb-chat-queue__index').text()).toBe('1')
+  })
+
+  it('移除单条与清空各自抛出', async () => {
+    const w = mount(ChatQueue, { props: { items: ITEMS } })
+    await w.findAll('.eb-chat-queue__remove')[1].trigger('click')
+    expect(w.emitted('remove')[0]).toEqual(['q2'])
+    await w.find('.eb-chat-queue__clear').trigger('click')
+    expect(w.emitted('clear')).toHaveLength(1)
   })
 })

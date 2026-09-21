@@ -145,6 +145,13 @@ export const chatLabels = {
     expiry30: '30 天',
     expiryNever: '永久',
   },
+  queue: {
+    group: '待发送',
+    lead: (n) => `生成中，${n} 条排队等待发送`,
+    attachmentOnly: '（仅附件）',
+    remove: '移出队列',
+    clear: '全部清空',
+  },
   speech: {
     speak: '朗读这条回复',
     stopSpeak: '停止朗读',

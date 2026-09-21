@@ -6,6 +6,9 @@ function useChatEngine(options = {}) {
   const messages = ref(options.initialMessages || []);
   const loading = ref(false);
   const inputValue = ref("");
+  // 生成期间的待发送队列；steerable 为真时改走宿主注入当前轮
+  const pending = ref([]);
+  const steerable = ref(options.steerable ?? false);
   const assistantMessage = computed(() => {
     return messages.value.find((m) => m.role === "assistant" && (m.status === "streaming" || m.status === "pending"));
   });
@@ -97,14 +100,24 @@ function useChatEngine(options = {}) {
     messages.value = [];
   }
   async function sendMessage(content, attachments = [], context) {
-    if (loading.value) return;
-    if (!content.trim() && attachments.length === 0) return;
+    const text = String(content ?? "").trim();
+    if (loading.value) {
+      // 生成中不再静默丢弃：可转向就交给宿主注入到当前这一轮，否则排队等下一轮
+      if (steerable.value && options.onSteer) {
+        inputValue.value = "";
+        await options.onSteer(text, attachments, context);
+        return "steered";
+      }
+      enqueue(text, attachments, context);
+      return "queued";
+    }
+    if (!text && attachments.length === 0) return;
     loading.value = true;
     inputValue.value = "";
     try {
-      addUserMessage(content.trim(), attachments);
+      addUserMessage(text, attachments);
       if (options.onSend) {
-        await options.onSend(content.trim(), attachments, context);
+        await options.onSend(text, attachments, context);
       }
     } catch (err) {
       const lastMsg = messages.value[messages.value.length - 1];
@@ -113,6 +126,8 @@ function useChatEngine(options = {}) {
       }
     } finally {
       loading.value = false;
+      // 一轮结束后自动带出排队中的下一条；每条消费一项，不会自激
+      if (pending.value.length) flushQueue();
     }
   }
   function regenerateMessage(messageId) {
@@ -161,6 +176,36 @@ function useChatEngine(options = {}) {
       loading.value = false;
     }
   }
+  // ── 生成中的输入排队 ──
+  // 用户在生成期间发出的消息不再被丢掉：默认排队，steerable 时转交宿主注入当前轮
+  function enqueue(content, attachments = [], context) {
+    const text = String(content ?? "").trim();
+    if (!text && !attachments.length) return null;
+    const item = { id: generateId(), content: text, attachments, context, createdAt: Date.now() };
+    pending.value = [...pending.value, item];
+    options.onQueueChange?.(pending.value);
+    return item.id;
+  }
+  function dequeue(id) {
+    if (!pending.value.some((i) => i.id === id)) return;
+    pending.value = pending.value.filter((i) => i.id !== id);
+    options.onQueueChange?.(pending.value);
+  }
+  function clearQueue() {
+    pending.value = [];
+    options.onQueueChange?.([]);
+  }
+  /** 手动带出下一条（自动 flush 已接在每轮结束时，这里留给宿主做「立即发送」） */
+  async function flushQueue() {
+    if (loading.value) return false;
+    const [next, ...rest] = pending.value;
+    if (!next) return false;
+    pending.value = rest;
+    options.onQueueChange?.(pending.value);
+    await sendMessage(next.content, next.attachments, next.context);
+    return true;
+  }
+
   // ── 计划 ──
   function setPlan(messageId, plan) {
     updateMessage(messageId, { plan });
@@ -302,6 +347,12 @@ function useChatEngine(options = {}) {
     clearMessages,
     sendMessage,
     regenerateMessage,
+    pending,
+    steerable,
+    enqueue,
+    dequeue,
+    clearQueue,
+    flushQueue,
     editAndResend,
     setFeedback,
     addToolCall,

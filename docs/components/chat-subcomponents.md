@@ -285,6 +285,54 @@ const { supported, listening, error, start, stop, toggle } = useSpeechInput({
   </div>
 </DemoBlock>
 
+## 生成中的输入：排队与转向
+
+此前生成期间发出的消息会被**静默丢弃**（`sendMessage` 在 loading 时直接 return）。现在默认改为**排队**，并在每轮结束后自动带出下一条。
+
+```js
+const engine = useChatEngine({ transport })
+
+engine.sendMessage('第一个问题')
+engine.sendMessage('第二个问题')   // 返回 'queued'，不丢
+engine.pending.value              // [{ id, content, attachments, context }]
+engine.dequeue(id) / engine.clearQueue() / engine.flushQueue()
+```
+
+`flushQueue()` 生成中不动作、空闲时手动带出一条——自动带出已经接在每轮结束，这个入口留给宿主做「立即发送」。
+
+## 转向（steer）
+
+有的产品希望生成中发出的消息**注入到当前这一轮**（「顺便也看下另一个指标」），而不是等下一轮。这需要宿主能往进行中的请求里塞内容，所以交给宿主：
+
+```js
+const engine = useChatEngine({
+  transport,
+  steerable: true,
+  onSteer: (text) => myStream.appendToCurrentRun(text),   // 由你决定怎么注入
+})
+engine.sendMessage('补充一句')     // 返回 'steered'
+```
+
+`steerable` 为真但没给 `onSteer` 时**退回排队**——宁可晚一轮，也不丢。
+
+## 输入区的配合
+
+`EbChatbot` 加 `queueable` 后，生成中 Enter 与发送钮都会照常发出（宿主交给引擎即自动入队）；不开则维持原样「生成中拦下」。与 `stoppable` 互不干扰：停止钮仍是停止钮，点了不会变成发送。
+
+`EbChatQueue` 是待发送队列那条窄带，宿主放在输入区上方即可（`#sender-prepend` 或自己排布）：
+
+```vue
+<eb-chatbot v-model="messages" queueable @send="onSend">
+  <template #sender-prepend>
+    <eb-chat-queue
+      :items="engine.pending.value"
+      @remove="engine.dequeue"
+      @clear="engine.clearQueue"
+    />
+  </template>
+</eb-chatbot>
+```
+
 ## 输入类
 
 ### EbChatSender

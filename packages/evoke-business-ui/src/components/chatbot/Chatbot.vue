@@ -79,6 +79,7 @@
           :accept="accept"
           :max-file-size="maxFileSize"
           :allow-drop="allowDrop"
+          :queueable="queueable"
           @send="handleSend"
           @stop="handleStop"
           @attachment-add="handleAttachmentAdd"
@@ -134,6 +135,8 @@ const props = defineProps({
   maxFileSize: { type: Number, required: false, default: 0 },
   /** 允许拖拽与粘贴投递 */
   allowDrop: { type: Boolean, required: false, default: true },
+  /** 生成中允许继续发出（交给引擎即自动排队）；关掉则生成中拦下 */
+  queueable: { type: Boolean, required: false, default: false },
   height: { type: [String, Number], required: false, default: "600px" },
   width: { type: [String, Number], required: false, default: "100%" },
   avatarUser: { type: String, required: false, default: "" },

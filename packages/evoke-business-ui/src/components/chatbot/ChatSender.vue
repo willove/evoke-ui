@@ -103,7 +103,9 @@ const props = defineProps({
   /** 单个附件字节上限，0 为不限 */
   maxFileSize: { type: Number, required: false, default: 0 },
   /** 允许拖拽与粘贴投递 */
-  allowDrop: { type: Boolean, required: false, default: true }
+  allowDrop: { type: Boolean, required: false, default: true },
+  /** 生成中允许继续发出（宿主交给引擎即自动排队）；关掉则生成中拦下 */
+  queueable: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add", "attachment-reject"]);
 const textareaRef = ref();
@@ -120,7 +122,7 @@ const maxlengthAttr = computed(() => props.maxLength > 0 ? props.maxLength : voi
 const sendBtnDisabled = computed(() => {
   if (props.disabled) return true;
   if (isStopping.value) return false;
-  return !canSend.value || props.loading;
+  return !canSend.value || (props.loading && !props.queueable);
 });
 watch(() => props.modelValue, (val) => {
   inputValue.value = val;
@@ -153,8 +155,8 @@ function handleKeydown(e) {
   if (isImeComposing(e)) return;
   if (e.key === "Enter" && !e.shiftKey && props.sendOnEnter) {
     e.preventDefault();
-    // 生成中：Enter 既不并发投递也不触中断（中断只走停止钮点击）
-    if (props.loading) return;
+    // 生成中：可排队时照常发出（引擎会入队），否则既不并发投递也不触中断
+    if (props.loading && !props.queueable) return;
     handleSend();
   }
 }
@@ -166,7 +168,8 @@ function handleSendClick() {
   handleSend();
 }
 function handleSend() {
-  if (props.disabled || props.loading || !canSend.value) return;
+  if (props.disabled || !canSend.value) return;
+  if (props.loading && !props.queueable) return;
   const content = inputValue.value.trim();
   const atts = [...attachments.value];
   inputValue.value = "";

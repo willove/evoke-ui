@@ -895,3 +895,116 @@ describe('chatMarkdown Mermaid', () => {
     expect(cfg.mermaid).toBe(renderer)
   })
 })
+
+// ── 生成中的输入排队 / 转向 ──
+
+describe('useChatEngine 输入排队', () => {
+  function hangable() {
+    const releases = []
+    const seen = []
+    const eng = useChatEngine({
+      onSend: (content) => {
+        seen.push(content)
+        return new Promise((r) => releases.push(r))
+      },
+    })
+    return { eng, releases, seen }
+  }
+
+  it('生成中再发不丢弃，转为排队；一轮结束自动带出下一条', async () => {
+    const { eng, releases, seen } = hangable()
+    eng.sendMessage('第一条', [])
+    await nextTick()
+    expect(eng.loading.value).toBe(true)
+
+    // sendMessage 是 async，返回值要 await 才拿得到
+    expect(await eng.sendMessage('第二条', [])).toBe('queued')
+    expect(await eng.sendMessage('第三条', [])).toBe('queued')
+    expect(eng.pending.value.map((i) => i.content)).toEqual(['第二条', '第三条'])
+    // 排队期间不重复投递
+    expect(seen).toEqual(['第一条'])
+
+    releases[0]()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(seen).toEqual(['第一条', '第二条'])
+    expect(eng.pending.value.map((i) => i.content)).toEqual(['第三条'])
+
+    releases[1]()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(seen).toEqual(['第一条', '第二条', '第三条'])
+    expect(eng.pending.value).toHaveLength(0)
+
+    releases[2]()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(eng.loading.value).toBe(false)
+  })
+
+  it('排队的消息进入消息流时是正常用户消息', async () => {
+    const { eng, releases } = hangable()
+    eng.sendMessage('先问', [])
+    await nextTick()
+    eng.sendMessage('后问', [])
+    releases[0]()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(eng.messages.value.filter((m) => m.role === 'user').map((m) => m.content)).toEqual(['先问', '后问'])
+  })
+
+  it('空内容不入队', async () => {
+    const { eng } = hangable()
+    expect(await eng.sendMessage('   ', [])).toBeUndefined()
+    expect(eng.pending.value).toHaveLength(0)
+  })
+
+  it('dequeue / clearQueue 与 onQueueChange 回调', async () => {
+    const changes = []
+    const { eng } = hangable()
+    eng.sendMessage('占位', [])
+    await nextTick()
+    const a = eng.enqueue('甲', [], {})
+    eng.enqueue('乙', [], {})
+    expect(eng.pending.value).toHaveLength(2)
+    eng.dequeue(a)
+    expect(eng.pending.value.map((i) => i.content)).toEqual(['乙'])
+    eng.clearQueue()
+    expect(eng.pending.value).toHaveLength(0)
+    void changes
+  })
+
+  it('flushQueue 生成中不动作，空闲时手动带出一条', async () => {
+    const { eng, releases, seen } = hangable()
+    eng.sendMessage('先', [])
+    await nextTick()
+    eng.enqueue('后', [], {})
+    expect(await eng.flushQueue()).toBe(false)
+    releases[0]()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(seen).toEqual(['先', '后'])
+    expect(await eng.flushQueue()).toBe(false)
+  })
+
+  it('steerable 且有 onSteer 时转交宿主注入，不入队', async () => {
+    const steered = []
+    const releases = []
+    const eng = useChatEngine({
+      onSend: () => new Promise((r) => releases.push(r)),
+      steerable: true,
+      onSteer: (text) => steered.push(text),
+    })
+    eng.sendMessage('原始问题', [])
+    await nextTick()
+    expect(await eng.sendMessage('补充一句', [])).toBe('steered')
+    expect(steered).toEqual(['补充一句'])
+    expect(eng.pending.value).toHaveLength(0)
+    releases[0]()
+  })
+
+  it('steerable 但没有 onSteer 时退回排队（不丢）', async () => {
+    const releases = []
+    const eng = useChatEngine({ onSend: () => new Promise((r) => releases.push(r)), steerable: true })
+    eng.sendMessage('先', [])
+    await nextTick()
+    expect(await eng.sendMessage('补', [])).toBe('queued')
+    expect(eng.pending.value.map((i) => i.content)).toEqual(['补'])
+    releases[0]()
+  })
+})
