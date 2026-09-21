@@ -50,7 +50,7 @@ const props = defineProps({
   },
   reverse: { type: Boolean, default: false },
   pending: { type: [Boolean, String], default: false },
-  pendingDot: { type: [Object, String], default: undefined },
+  pendingDot: { type: [Object, String, Function], default: undefined },
   variant: {
     type: String,
     default: 'outlined',

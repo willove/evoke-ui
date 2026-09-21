@@ -123,7 +123,7 @@ const props = defineProps({
   circle: { type: Boolean, default: false },
   text: { type: Boolean, default: false },
   link: { type: Boolean, default: false },
-  icon: { type: [Object, String], default: undefined },
+  icon: { type: [Object, String, Function], default: undefined },
   nativeType: {
     type: String,
     default: 'button',

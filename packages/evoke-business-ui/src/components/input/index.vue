@@ -129,8 +129,8 @@ const props = defineProps({
   /** 清空按钮（默认开启） */
   clearable: { type: Boolean, default: true },
   showPassword: { type: Boolean, default: false },
-  prefixIcon: { type: [Object, String], default: undefined },
-  suffixIcon: { type: [Object, String], default: undefined },
+  prefixIcon: { type: [Object, String, Function], default: undefined },
+  suffixIcon: { type: [Object, String, Function], default: undefined },
   maxlength: { type: Number, default: undefined },
   showWordLimit: { type: Boolean, default: false },
   rows: { type: Number, default: 2 },
