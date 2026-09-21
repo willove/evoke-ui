@@ -394,6 +394,27 @@ function handleClick(e) {
   margin: 8px 0;
 }
 
+/* ── 脚注尾注列表 ── */
+.eb-chat-markdown :deep(.eb-chat-footnotes) {
+  margin: var(--eb-space-3) 0 0;
+  padding: var(--eb-space-2) 0 0 var(--eb-space-4);
+  border-top: 1px solid var(--eb-border-color-lighter);
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
+}
+
+.eb-chat-markdown :deep(.eb-chat-footnotes > li) {
+  margin: 2px 0;
+  padding-left: 0;
+  line-height: 1.6;
+  list-style: decimal;
+}
+
+/* 尾注条目不该带正文那种圆点/自定义序号 */
+.eb-chat-markdown :deep(.eb-chat-footnotes > li::before) {
+  content: none;
+}
+
 /* ── 行内引用上标（source: 协议）── */
 .eb-chat-markdown :deep(.eb-chat-citation) {
   display: inline-block;

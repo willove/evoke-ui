@@ -87,7 +87,11 @@ function streamReply(prompt) {
 function greet(name) {
   return \`hello \${name}\`
 }
-\`\`\``
+\`\`\`
+
+脚注[^1]与行内引用[2](source:doc-1)也走同一套上标样式。
+
+[^1]: 这是一种**少见的**写法，尾注只列出被引用过的条目。`
   let i = 0
   const timer = setInterval(() => {
     appendContent(msg.id, reply.slice(i, i + 2))
@@ -600,7 +604,9 @@ registerHighlightLanguage('cobol', cobol)
 
 安全边界（都是刻意选择，不是漏做）：正文里的 raw HTML 一律转义为纯文本展示，`<script>` / `<iframe>` / 注释都进不来；链接协议走白名单，非白名单协议降级成可配置的引用芯片；**图片 `src` 只放行 `http` / `https` / `data`**，其余协议退回可读纯文本，并统一补 `loading="lazy"` 与 `referrerpolicy="no-referrer"`。
 
-已知未接：**脚注**。marked v18 不带脚注扩展，`[^1]` 此前会被误解析成一个指向定义文本的假链接，现在退回原样文本（不再产错，但也还没有上标 + 尾注列表）。完整支持需要接一个脚注扩展，另列一项。
+**脚注**：marked v18 不带脚注扩展，管线里自己接了一个。`结论[^1]` 配 `[^1]: 出处说明` 渲染成可点击上标 + 文末尾注列表——编号按定义出现顺序（与 GFM 一致），未被引用的定义不进尾注，没有对应定义的引用退回原样文本，代码块里的 `[^1]:` 不会被当成定义。上标与 `source:` 引用共用 `.eb-chat-citation` 类名，宿主可统一着色。
+
+已知未接：KaTeX 数学公式与 Mermaid 图（都需要引入额外依赖）。
 
 ## API
 

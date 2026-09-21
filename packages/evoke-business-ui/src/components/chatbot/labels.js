@@ -50,6 +50,7 @@ export const chatLabels = {
     copyCode: '复制代码',
     copied: '已复制',
     citation: (num) => `查看第 ${num} 条来源`,
+    footnote: (num) => `查看第 ${num} 条脚注`,
   },
   sources: {
     toggle: (n) => `${n} 个来源`,

@@ -140,6 +140,56 @@ renderer.link = function({ href, title, tokens }) {
   return `<a href="${escapeHtml(href)}"${titleAttr}>${text}</a>`;
 };
 let citationSeq = 0;
+
+// ── 脚注 ──
+// marked v18 不带脚注扩展。定义体不在原地渲染，先收集，解析完再统一附尾注；
+// 编号按定义出现顺序，与 GFM 一致。
+let footnoteDefs = new Map();
+
+const footnoteRefExt = {
+  name: "footnoteRef",
+  level: "inline",
+  start(src) {
+    const i = src.indexOf("[^");
+    return i < 0 ? void 0 : i;
+  },
+  tokenizer(src) {
+    const m = /^\[\^([\w-]+)\]/.exec(src);
+    if (!m) return void 0;
+    return { type: "footnoteRef", raw: m[0], id: m[1] };
+  },
+  renderer(token) {
+    const def = footnoteDefs.get(token.id);
+    // 没有对应定义的引用不猜，退回原样文本
+    if (!def) return escapeHtml(`[^${token.id}]`);
+    def.referenced = true;
+    return `<sup class="eb-chat-citation" data-ref-id="${escapeHtml(token.id)}" data-cite-num="${def.index}" role="button" tabindex="0" aria-label="${escapeHtml(labels.markdown.footnote(def.index))}">${def.index}</sup>`;
+  }
+};
+
+const footnoteDefExt = {
+  name: "footnoteDef",
+  level: "block",
+  start(src) {
+    const m = /^\[\^[\w-]+\]:/m.exec(src);
+    return m ? m.index : void 0;
+  },
+  tokenizer(src) {
+    // 定义体允许续行：直到下一个定义或空行
+    const m = /^\[\^([\w-]+)\]:[ \t]*([^\n]*(?:\n(?![ \t]*\n|\[\^[\w-]+\]:)[^\n]*)*)/.exec(src);
+    if (!m) return void 0;
+    // 词法阶段登记：编号按定义出现顺序，正文引用在渲染时回填 referenced
+    if (!footnoteDefs.has(m[1])) {
+      footnoteDefs.set(m[1], { id: m[1], text: m[2].trim(), index: footnoteDefs.size + 1, referenced: false });
+    }
+    return { type: "footnoteDef", raw: m[0], id: m[1], text: m[2].trim() };
+  },
+  renderer() {
+    return "";
+  }
+};
+
+md.use({ extensions: [footnoteDefExt, footnoteRefExt] });
 md.use({ renderer });
 /**
  * 默认高亮走 highlight.js/lib/common（36 种语言，避免整包 193 种进产物）。
@@ -159,7 +209,19 @@ function registerHighlightLanguage(name, definition) {
 function renderChatMarkdown(content) {
   if (!content) return "";
   citationSeq = 0;
-  return md.parse(content, { async: false });
+  footnoteDefs = new Map();
+  const html = md.parse(content, { async: false });
+  return html + renderFootnotes();
+}
+
+/** 尾注列表：只有被引用过的定义才出现，避免正文里的死条目 */
+function renderFootnotes() {
+  const used = [...footnoteDefs.values()].filter((d) => d.referenced);
+  if (!used.length) return "";
+  const items = used
+    .map((d) => `<li id="eb-fn-${escapeHtml(d.id)}">${md.parseInline(d.text, { async: false })}</li>`)
+    .join("");
+  return `<ol class="eb-chat-footnotes">${items}</ol>`;
 }
 export {
   configureChatMarkdown,

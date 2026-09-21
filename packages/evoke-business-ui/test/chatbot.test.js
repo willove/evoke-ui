@@ -621,11 +621,12 @@ describe('chatMarkdown 图片协议过滤', () => {
 })
 
 describe('chatMarkdown 脚注不再错误渲染', () => {
-  it('[^1] 不产出指向定义文本的假链接，退回原样文本', () => {
+  it('[^1] 不产出指向定义文本的假链接（接了脚注扩展后渲染成上标 + 尾注）', () => {
     const html = renderChatMarkdown('结论[^1]\n\n[^1]: 出处说明')
     expect(html).not.toContain('<a href="出处说明"')
     expect(html).not.toMatch(/<a [^>]*>\^1<\/a>/)
-    expect(html).toContain('[^1]')
+    expect(html).toContain('data-cite-num="1"')
+    expect(html).toContain('eb-chat-footnotes')
   })
 
   it('正常链接不被误伤（脱字号不在开头、含行内标记都照走 <a>）', () => {
@@ -634,12 +635,15 @@ describe('chatMarkdown 脚注不再错误渲染', () => {
     expect(renderChatMarkdown('[**bold**](https://example.com)')).toContain('<strong>bold</strong>')
   })
 
-  it('多脚注各自退回原样，且定义文本不泄漏成正文', () => {
-    const html = renderChatMarkdown('见[^a]与[^b]\n\n[^a]: A\n[^b]: B')
-    expect(html).toContain('[^a]')
-    expect(html).toContain('[^b]')
+  it('多脚注各自成上标，定义文本只出现在尾注里', () => {
+    const html = renderChatMarkdown('见[^a]与[^b]\n\n[^a]: A 出处\n[^b]: B 出处')
+    expect(html).toMatch(/data-ref-id="a" data-cite-num="1"/)
+    expect(html).toMatch(/data-ref-id="b" data-cite-num="2"/)
     expect(html).not.toContain('<a ')
-    expect(html).not.toMatch(/>A<|>B</)
+    // 正文段里不能出现定义体，只允许在尾注列表里
+    const [body] = html.split('<ol class="eb-chat-footnotes">')
+    expect(body).not.toContain('A 出处')
+    expect(body).not.toContain('B 出处')
   })
 
   // 注：[^1](url) 这种「脚注形态写成显式链接」的输入，marked v18 自己就拒解析、
@@ -711,5 +715,76 @@ describe('ChatMessage 系统提示形态', () => {
     const u = mount(ChatMessage, { props: { message: { id: 'u1', role: 'user', content: 'x', status: 'done' } } })
     expect(u.find('.eb-chat-message__avatar').exists()).toBe(true)
     expect(u.find('.eb-chat-message__system').exists()).toBe(false)
+  })
+})
+
+// ── 脚注（marked 无内置扩展，自己接的）──
+
+describe('chatMarkdown 脚注', () => {
+  it('引用渲染为上标、定义收进尾注，且可点（role=button 可聚焦）', () => {
+    const html = renderChatMarkdown('结论[^1]\n\n[^1]: 出处说明')
+    expect(html).toContain('data-ref-id="1"')
+    expect(html).toContain('data-cite-num="1"')
+    expect(html).toContain('role="button"')
+    expect(html).toContain('tabindex="0"')
+    expect(html).toContain('aria-label="查看第 1 条脚注"')
+    expect(html).toContain('<ol class="eb-chat-footnotes">')
+    expect(html).toContain('<li id="eb-fn-1">出处说明</li>')
+    // 定义体不再原地出现
+    expect(html).not.toMatch(/<p>\[1\]:/)
+  })
+
+  it('编号按定义出现顺序，不按引用顺序', () => {
+    const html = renderChatMarkdown('先引乙[^b]再引甲[^a]\n\n[^a]: A\n[^b]: B')
+    // b 定义在后 → 编号 2；a 定义在前 → 编号 1
+    expect(html).toMatch(/data-ref-id="b" data-cite-num="2"/)
+    expect(html).toMatch(/data-ref-id="a" data-cite-num="1"/)
+  })
+
+  it('未被引用的定义不进尾注；只有定义没有引用时不出尾注', () => {
+    const used = renderChatMarkdown('正文[^1]\n\n[^1]: 用到的\n[^2]: 没用到')
+    expect(used).toContain('用到的')
+    expect(used).not.toContain('没用到')
+    const none = renderChatMarkdown('正文\n\n[^x]: 只有定义')
+    expect(none).not.toContain('eb-chat-footnotes')
+    // 定义体被消费掉，不留在正文里
+    expect(none).toBe('<p>正文</p>\n')
+  })
+
+  it('没有对应定义的引用退回原样文本，不产出假链接', () => {
+    const html = renderChatMarkdown('正文[^missing]')
+    expect(html).toContain('[^missing]')
+    expect(html).not.toContain('<sup')
+    expect(html).not.toContain('<a ')
+  })
+
+  it('代码块里的 [^1]: 不被当成定义', () => {
+    const html = renderChatMarkdown('```\n[^1]: 不该被当定义\n```\n\n正文[^1]')
+    expect(html).toContain('[^1]: 不该被当定义')
+    expect(html).not.toContain('eb-chat-footnotes')
+    // 正文里的引用因为无定义而退回原文
+    expect(html).toContain('正文[^1]')
+  })
+
+  it('定义体支持续行与行内标记', () => {
+    const multi = renderChatMarkdown('正文[^1]\n\n[^1]: 第一行\n第二行')
+    expect(multi).toContain('第一行<br>第二行')
+    const bold = renderChatMarkdown('正文[^1]\n\n[^1]: **加粗**出处')
+    expect(bold).toContain('<strong>加粗</strong>出处')
+  })
+
+  it('跨次渲染不串号：上一次的定义与编号都不泄漏', () => {
+    renderChatMarkdown('甲[^1]\n\n[^1]: 第一次')
+    const second = renderChatMarkdown('乙[^1]\n\n[^1]: 第二次')
+    expect(second).toContain('第二次')
+    expect(second).not.toContain('第一次')
+    expect(second).toContain('data-cite-num="1"')
+  })
+
+  it('脚注上标与 source: 引用共用同一套类名，宿主可统一着色', () => {
+    const fn = renderChatMarkdown('正文[^1]\n\n[^1]: 出处')
+    const cite = renderChatMarkdown('见[1](source:c1)')
+    expect(fn).toContain('class="eb-chat-citation"')
+    expect(cite).toContain('class="eb-chat-citation"')
   })
 })
