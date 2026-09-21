@@ -16,8 +16,8 @@
           v-if="allowAttachments"
           class="eb-chat-sender__tool-btn"
           type="button"
-          :title="attachLabel"
-          :aria-label="attachLabel"
+          :title="labels.sender.attach"
+          :aria-label="labels.sender.attach"
           :disabled="disabled || attachments.length >= maxAttachments"
           @click="triggerFileUpload"
         >
@@ -54,8 +54,8 @@
           class="eb-chat-sender__send-btn"
           :class="{ 'is-stop': isStopping }"
           type="button"
-          :title="isStopping ? stopLabel : sendLabel"
-          :aria-label="isStopping ? stopLabel : sendLabel"
+          :title="isStopping ? labels.sender.stop : labels.sender.send"
+          :aria-label="isStopping ? labels.sender.stop : labels.sender.send"
           :disabled="sendBtnDisabled"
           @click="handleSendClick"
         >
@@ -72,10 +72,10 @@ import { ref, computed, watch, nextTick } from "vue";
 import { generateId } from "./utils";
 import ChatAttachments from "./ChatAttachments.vue";
 import { isImeComposing } from "../../utils/events";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   modelValue: { type: String, required: false, default: "" },
-  placeholder: { type: String, required: false, default: "\u8F93\u5165\u6D88\u606F..." },
+  placeholder: { type: String, required: false, default: labels.sender.placeholder },
   disabled: { type: Boolean, required: false, default: false },
   loading: { type: Boolean, required: false, default: false },
   allowAttachments: { type: Boolean, required: false, default: true },
@@ -89,11 +89,6 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add"]);
-const Plus = getIconByNameSync("plus");
-const Promotion = getIconByNameSync("promotion");
-const attachLabel = "\u6DFB\u52A0\u9644\u4EF6";
-const sendLabel = "\u53D1\u9001";
-const stopLabel = "\u505C\u6B62\u751F\u6210";
 const textareaRef = ref();
 const fileInputRef = ref();
 const inputValue = ref(props.modelValue);

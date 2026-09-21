@@ -12,8 +12,8 @@
         <eb-icon v-else :name="expanded ? 'arrow-down' : 'arrow-right'" />
       </div>
       <span class="eb-chat-thinking__label">
-        {{ thinking ? thinkingLabel : doneLabel }}
-        <span v-if="duration" class="eb-chat-thinking__duration">（用时 {{ formatDuration(duration) }}）</span>
+        {{ thinking ? labels.thinking.pending : labels.thinking.done }}
+        <span v-if="duration" class="eb-chat-thinking__duration">{{ labels.message.duration(formatDuration(duration)) }}</span>
       </span>
     </button>
     <transition name="eb-chat-thinking-collapse">
@@ -24,7 +24,7 @@
         :aria-busy="thinking ? 'true' : void 0"
       >
         <ChatMarkdown v-if="content" :content="content" :streaming="thinking" />
-        <div v-else class="eb-chat-thinking__placeholder">{{ placeholderLabel }}</div>
+        <div v-else class="eb-chat-thinking__placeholder">{{ labels.thinking.placeholder }}</div>
       </div>
     </transition>
   </div>
@@ -34,17 +34,12 @@
 import EbIcon from "../icon/index.vue"
 import { ref, computed } from "vue";
 import ChatMarkdown from "./ChatMarkdown.vue";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   content: { type: String, required: false, default: "" },
   thinking: { type: Boolean, required: false, default: false },
   duration: { type: Number, required: false, default: 0 }
 });
-const ArrowDown = getIconByNameSync("arrow-down");
-const ArrowRight = getIconByNameSync("arrow-right");
-const thinkingLabel = "\u601D\u8003\u4E2D...";
-const doneLabel = "\u5DF2\u6DF1\u5EA6\u601D\u8003";
-const placeholderLabel = "\u6B63\u5728\u601D\u8003\u4E2D...";
 const expanded = ref(true);
 // 思考进行中强制展开，结束后回到用户可控的折叠态
 const isOpen = computed(() => expanded.value || props.thinking);

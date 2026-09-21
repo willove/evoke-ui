@@ -1,5 +1,6 @@
 import { ref, computed, toRaw } from "vue";
 import { generateId } from "./utils";
+import { chatLabels as labels } from "./labels";
 const startTimeMap = /* @__PURE__ */ new WeakMap();
 function useChatEngine(options = {}) {
   const messages = ref(options.initialMessages || []);
@@ -108,7 +109,7 @@ function useChatEngine(options = {}) {
     } catch (err) {
       const lastMsg = messages.value[messages.value.length - 1];
       if (lastMsg && lastMsg.role === "assistant") {
-        setMessageError(lastMsg.id, err?.message || "\u53D1\u9001\u5931\u8D25");
+        setMessageError(lastMsg.id, err?.message || labels.engine.sendFailed);
       }
     } finally {
       loading.value = false;
@@ -126,6 +127,47 @@ function useChatEngine(options = {}) {
       const userMsg = messages.value[userMsgIndex];
       sendMessage(userMsg.content, userMsg.attachments || []);
     }
+  }
+  /**
+   * 编辑用户消息后就地重发：截断该条之后的所有消息，不重复追加提问。
+   * 与 regenerateMessage 的区别是提问文本本身变了，且要留「已编辑」标记。
+   */
+  async function editAndResend(messageId, content, context) {
+    if (loading.value) return;
+    const text = (content || "").trim();
+    const index = messages.value.findIndex((m) => m.id === messageId);
+    if (index < 0 || !text) return;
+    const edited = {
+      ...messages.value[index],
+      content: text,
+      edited: true,
+      status: "done",
+      createdAt: Date.now()
+    };
+    const attachments = edited.attachments || [];
+    messages.value.splice(index, messages.value.length - index, edited);
+    loading.value = true;
+    inputValue.value = "";
+    try {
+      if (options.onSend) {
+        await options.onSend(text, attachments, context);
+      }
+    } catch (err) {
+      const lastMsg = messages.value[messages.value.length - 1];
+      if (lastMsg && lastMsg.role === "assistant") {
+        setMessageError(lastMsg.id, err?.message || labels.engine.sendFailed);
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+  /** 记录一条消息的点赞点踩与结构化原因 */
+  function setFeedback(messageId, value, payload = {}) {
+    updateMessage(messageId, {
+      feedback: value || null,
+      feedbackReasons: payload.reasons || [],
+      feedbackNote: payload.note || ""
+    });
   }
   return {
     messages,
@@ -145,7 +187,9 @@ function useChatEngine(options = {}) {
     removeMessage,
     clearMessages,
     sendMessage,
-    regenerateMessage
+    regenerateMessage,
+    editAndResend,
+    setFeedback
   };
 }
 export {

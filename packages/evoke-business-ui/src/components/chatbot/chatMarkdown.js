@@ -1,5 +1,6 @@
 import { Marked, marked } from "marked";
 import hljs from "highlight.js";
+import { chatLabels as labels } from "./labels";
 function createDefaultConfig() {
   return {
     standardProtocols: /* @__PURE__ */ new Set([
@@ -60,7 +61,7 @@ function getChatMarkdownConfig() {
 const md = new Marked();
 md.setOptions({ breaks: true, gfm: true });
 const renderer = new marked.Renderer();
-const copyCodeLabel = "\u590D\u5236\u4EE3\u7801";
+
 renderer.code = function({ text, lang }) {
   const language = lang && hljs.getLanguage(lang) ? lang : "plaintext";
   let highlighted;
@@ -73,8 +74,8 @@ renderer.code = function({ text, lang }) {
   // 不把原文塞进 data-* （大段代码会让 HTML 体积翻倍）
   const bar = `<div class="eb-chat-code__bar">` +
     `<span class="eb-chat-code__lang">${escapeHtml(language)}</span>` +
-    `<button type="button" class="eb-chat-code__copy" aria-label="${escapeHtml(copyCodeLabel)}">` +
-    `<span class="eb-chat-code__copy-text">${escapeHtml(copyCodeLabel)}</span>` +
+    `<button type="button" class="eb-chat-code__copy" aria-label="${escapeHtml(labels.markdown.copyCode)}">` +
+    `<span class="eb-chat-code__copy-text">${escapeHtml(labels.markdown.copyCode)}</span>` +
     `</button></div>`;
   return `<div class="eb-chat-code">${bar}` +
     `<pre><code class="hljs language-${language}">${highlighted}</code></pre></div>`;

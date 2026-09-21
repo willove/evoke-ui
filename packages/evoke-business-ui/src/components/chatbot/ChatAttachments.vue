@@ -19,8 +19,8 @@
         v-if="removable"
         class="eb-chat-attachments__remove"
         type="button"
-        :title="removeLabel(file.name)"
-        :aria-label="removeLabel(file.name)"
+        :title="labels.attachments.remove(file.name)"
+        :aria-label="labels.attachments.remove(file.name)"
         @click="handleRemove(file)"
       >
         <eb-icon name="close" />
@@ -32,17 +32,12 @@
 <script setup>
 import EbIcon from "../icon/index.vue"
 import { formatFileSize } from "./utils";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   attachments: { type: Array, required: false, default: () => [] },
   removable: { type: Boolean, required: false, default: false }
 });
 const emit = defineEmits(["remove"]);
-const Document = getIconByNameSync("document");
-const Close = getIconByNameSync("close");
-function removeLabel(name) {
-  return `\u79FB\u9664\u9644\u4EF6 ${name || ""}`.trim();
-}
 function isImage(type) {
   // 附件数据来自宿主（LLM 结构不可控），type 缺失按非图片处理而非崩溃
   return typeof type === "string" && type.startsWith("image/");

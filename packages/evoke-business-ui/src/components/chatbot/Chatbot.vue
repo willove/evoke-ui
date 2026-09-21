@@ -19,9 +19,16 @@
       :render-mode="renderMode"
       :actions="actions"
       :auto-scroll="autoScroll"
+      :editable="editable"
+      :edit-max-length="editMaxLength"
+      :feedback="feedback"
+      :feedback-reasons="feedbackReasons"
       @copy="handleCopy"
       @regenerate="handleRegenerate"
       @action="handleAction"
+      @edit="handleEdit"
+      @feedback="handleFeedback"
+      @suggestion-click="handleSuggestionClick"
     >
       <template v-if="$slots.empty" #empty>
         <slot name="empty" />
@@ -58,7 +65,7 @@
       </div>
       <div v-if="showTip" class="eb-chatbot__tip">
         <slot name="tip">
-          <span>内容由 AI 生成，仅供参考</span>
+          <span>{{ labels.message.tip }}</span>
         </slot>
       </div>
     </template>
@@ -68,12 +75,13 @@
 <script setup>
 import { ref, watch, computed, nextTick } from "vue";
 import { generateId } from "./utils";
+import { chatLabels as labels } from "./labels";
 import ChatContent from "./ChatContent.vue";
 import ChatList from "./ChatList.vue";
 import ChatSender from "./ChatSender.vue";
 const props = defineProps({
   modelValue: { type: Array, required: false, default: () => [] },
-  placeholder: { type: String, required: false, default: "\u8F93\u5165\u6D88\u606F\uFF0C\u6309 Enter \u53D1\u9001\uFF0CShift+Enter \u6362\u884C" },
+  placeholder: { type: String, required: false, default: labels.sender.sendOnEnterPlaceholder },
   loading: { type: Boolean, required: false, default: false },
   disabled: { type: Boolean, required: false, default: false },
   showThinking: { type: Boolean, required: false, default: true },
@@ -83,12 +91,18 @@ const props = defineProps({
   showWordCount: { type: Boolean, required: false, default: false },
   sendOnEnter: { type: Boolean, required: false, default: true },
   actions: { type: Array, required: false, default: () => [] },
+  /** 用户消息可原地编辑并重发（edit 事件交出原文与新文） */
+  editable: { type: Boolean, required: false, default: false },
+  editMaxLength: { type: Number, required: false, default: 0 },
+  /** 助手消息显示点赞点踩 */
+  feedback: { type: Boolean, required: false, default: false },
+  feedbackReasons: { type: Array, required: false, default: () => [] },
   height: { type: [String, Number], required: false, default: "600px" },
   width: { type: [String, Number], required: false, default: "100%" },
   avatarUser: { type: String, required: false, default: "" },
   avatarAssistant: { type: String, required: false, default: "" },
-  userName: { type: String, required: false, default: "\u6211" },
-  assistantName: { type: String, required: false, default: "AI\u52A9\u624B" },
+  userName: { type: String, required: false, default: labels.message.user },
+  assistantName: { type: String, required: false, default: labels.message.assistant },
   renderMode: { type: String, required: false, default: "markdown" },
   autoScroll: { type: Boolean, required: false, default: true },
   showTip: { type: Boolean, required: false, default: true },
@@ -96,7 +110,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "attachment-add"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -148,6 +162,15 @@ function handleRegenerate(message) {
 }
 function handleAction(key, message) {
   emit("action", key, message);
+}
+function handleEdit(message, content) {
+  emit("edit", message, content);
+}
+function handleFeedback(message, payload) {
+  emit("feedback", message, payload);
+}
+function handleSuggestionClick(text, suggestion, message) {
+  emit("suggestion-click", text, suggestion, message);
 }
 function handleAttachmentAdd(file) {
   emit("attachment-add", file);

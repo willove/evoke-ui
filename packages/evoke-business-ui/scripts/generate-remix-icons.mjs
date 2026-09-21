@@ -82,6 +82,11 @@ const MAPPING = {
   upload: ['System', 'upload-2-line'],
   'upload-filled': ['System', 'upload-cloud-fill'],
   pointer: ['Development', 'cursor-line'],
+  // 反馈（点赞 / 点踩）：line 为未选态，fill 为选中态
+  'thumb-up': ['System', 'thumb-up-line'],
+  'thumb-down': ['System', 'thumb-down-line'],
+  'thumb-up-filled': ['System', 'thumb-up-fill'],
+  'thumb-down-filled': ['System', 'thumb-down-fill'],
   // ─── 对象 / 文件 ───
   box: ['Others', 'box-3-line'],
   'copy': ['Document', 'file-copy-line'],
@@ -593,7 +598,7 @@ writeFileSync(
  * 由 scripts/generate-remix-icons.mjs 生成，请勿手动修改。
  *
  * 体积约 1.5MB，不随主包加载；通过 '@wil-works/evoke-business-ui/full-icons'
- * 的 loadFullIcons() 注册后，所有 Remix 原生名称即可经 ev-icon 直接使用。
+ * 的 loadFullIcons() 注册后，所有 Remix 原生名称即可经 eb-icon 直接使用。
  * 数据格式：值为单个 path 的 d 字符串（默认 viewBox 0 0 24 24），
  * 或 { paths: [{ d, fillRule? }] }（多段 / 带挖洞规则）。
  */

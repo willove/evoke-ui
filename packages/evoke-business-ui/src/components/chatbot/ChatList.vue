@@ -5,12 +5,12 @@
     role="log"
     :aria-live="autoScroll ? 'polite' : 'off'"
     aria-relevant="additions"
-    :aria-label="listLabel"
+    :aria-label="labels.list.label"
     @scroll="handleScroll"
   >
     <div v-if="!messages || messages.length === 0" class="eb-chat-list__empty">
       <slot name="empty">
-        <EbEmpty :description="emptyDescription" />
+        <EbEmpty :description="labels.list.empty" />
       </slot>
     </div>
     <div v-else class="eb-chat-list__messages">
@@ -26,9 +26,16 @@
         :assistant-name="assistantName"
         :render-mode="renderMode"
         :actions="actions"
+        :editable="editable"
+        :edit-max-length="editMaxLength"
+        :feedback="feedback"
+        :feedback-reasons="feedbackReasons"
         @copy="handleCopy"
         @regenerate="handleRegenerate"
         @action="handleAction"
+        @edit="handleEdit"
+        @feedback="handleFeedback"
+        @suggestion-click="handleSuggestionClick"
       />
       <div ref="bottomRef" class="eb-chat-list__bottom" />
     </div>
@@ -37,8 +44,8 @@
         v-show="showBackToBottom"
         class="eb-chat-list__backtop"
         type="button"
-        :title="backToBottomLabel"
-        :aria-label="backToBottomLabel"
+        :title="labels.list.backToBottom"
+        :aria-label="labels.list.backToBottom"
         @click="scrollToBottom(true)"
       >
         <eb-icon name="arrow-down" />
@@ -52,23 +59,23 @@ import EbIcon from "../icon/index.vue"
 import { ref, watch, nextTick, onMounted, computed } from "vue";
 import EbEmpty from "../empty/index.vue";
 import ChatMessage from "./ChatMessage.vue";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   messages: { type: Array, required: false, default: () => [] },
   showThinking: { type: Boolean, required: false, default: true },
   avatarUser: { type: String, required: false, default: "" },
   avatarAssistant: { type: String, required: false, default: "" },
-  userName: { type: String, required: false, default: "\u6211" },
-  assistantName: { type: String, required: false, default: "AI\u52A9\u624B" },
+  userName: { type: String, required: false, default: labels.message.user },
+  assistantName: { type: String, required: false, default: labels.message.assistant },
   renderMode: { type: String, required: false, default: "markdown" },
   actions: { type: Array, required: false, default: () => [] },
-  autoScroll: { type: Boolean, required: false, default: true }
+  autoScroll: { type: Boolean, required: false, default: true },
+  editable: { type: Boolean, required: false, default: false },
+  editMaxLength: { type: Number, required: false, default: 0 },
+  feedback: { type: Boolean, required: false, default: false },
+  feedbackReasons: { type: Array, required: false, default: () => [] }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "scroll"]);
-const ArrowDown = getIconByNameSync("arrow-down");
-const listLabel = "\u5BF9\u8BDD\u6D88\u606F";
-const emptyDescription = "\u6682\u65E0\u5BF9\u8BDD\u6D88\u606F";
-const backToBottomLabel = "\u56DE\u5230\u5BF9\u8BDD\u5E95\u90E8";
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "scroll"]);
 const listRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);
@@ -131,6 +138,15 @@ function handleRegenerate(message) {
 }
 function handleAction(key, message) {
   emit("action", key, message);
+}
+function handleEdit(message, content) {
+  emit("edit", message, content);
+}
+function handleFeedback(message, payload) {
+  emit("feedback", message, payload);
+}
+function handleSuggestionClick(text, suggestion, message) {
+  emit("suggestion-click", text, suggestion, message);
 }
 // 单一深监听：内容增量与新增消息都覆盖（此前 length 与深监听双触发，逐 token 滚两次）
 watch(() => props.messages, () => {

@@ -183,6 +183,56 @@ const onFancySend = (text) => {
   }, 500)
 }
 
+// ─── 追问建议、评价与编辑重发 ───
+const baLog = ref(['试试：点回答下方的追问 chips / 点赞或点踩 / 悬停你的提问点「编辑」'])
+let baSeq = 0
+const baMsgs = ref([
+  { id: 'ba-u1', role: 'user', content: '帮我对比一下批 A 的三个组件', status: 'done' },
+  {
+    id: 'ba-a1',
+    role: 'assistant',
+    status: 'done',
+    content: '**ChatSuggestion** 在回答尾部给可点的追问 chips；**ChatFeedback** 收点赞点踩与结构化原因；**ChatMessageEdit** 让你改自己的提问后就地重发。',
+    suggestions: ['三个组件分别怎么用？', '点踩的理由能自定义吗？'],
+  },
+])
+function pushBaLog(text) {
+  baLog.value = [`${++baSeq}. ${text}`, ...baLog.value].slice(0, 4)
+}
+function baReply(prompt) {
+  return {
+    id: `ba-a-${Date.now()}`,
+    role: 'assistant',
+    status: 'done',
+    content: `已收到「${prompt}」。真实场景在这里请求你的接口。`,
+    suggestions: ['再说说批 B 的来源引用'],
+  }
+}
+function onBaSend(text) {
+  baMsgs.value = [...baMsgs.value, { id: `ba-u-${Date.now()}`, role: 'user', content: text, status: 'done' }, baReply(text)]
+}
+function onBaSuggest(text) {
+  pushBaLog(`suggestion-click：${text}`)
+  onBaSend(text)
+}
+function onBaEdit(message, content) {
+  const idx = baMsgs.value.findIndex((m) => m.id === message.id)
+  if (idx < 0) return
+  // 截断该提问之后的消息、换成新文再重出回答；引擎侧 editAndResend 是同语义的现成实现
+  baMsgs.value = [...baMsgs.value.slice(0, idx), { ...baMsgs.value[idx], content, edited: true }, baReply(content)]
+  pushBaLog(`edit：「${message.content}」→「${content}」`)
+}
+function onBaFeedback(message, payload) {
+  const idx = baMsgs.value.findIndex((m) => m.id === message.id)
+  if (idx < 0) return
+  baMsgs.value = [
+    ...baMsgs.value.slice(0, idx),
+    { ...baMsgs.value[idx], feedback: payload.value, feedbackReasons: payload.reasons, feedbackNote: payload.note },
+    ...baMsgs.value.slice(idx + 1),
+  ]
+  pushBaLog(`feedback：${payload.value ?? '已取消'}${payload.reasons.length ? `（${payload.reasons.join('、')}）` : ''}`)
+}
+
 // ─── 自定义动作与事件埋点 ───
 const chatActions = [
   { key: 'collect', label: '收藏', icon: 'star' },
@@ -300,6 +350,27 @@ const onSlotClear = () => {
   </div>
 </DemoBlock>
 
+## 追问建议、评价与编辑重发
+
+`editable` 给你的消息加「编辑」，点开后原地变输入框，保存抛 `edit`（原文与新文两参）；`feedback` 在助手回答下加点赞点踩，点踩会展开结构化原因与备注面板，提交抛 `feedback`（消息 + `{ value, reasons, note }`）；回答尾部的追问 chips 来自消息的 `suggestions` 字段，点击抛 `suggestion-click`。三者都由 `modelValue` 承载状态，宿主负责回写：
+
+<DemoBlock>
+  <eb-chatbot
+    v-model="baMsgs"
+    editable
+    feedback
+    height="400px"
+    :show-tip="false"
+    @send="onBaSend"
+    @edit="onBaEdit"
+    @feedback="onBaFeedback"
+    @suggestion-click="onBaSuggest"
+  />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    <p v-for="(line, idx) in baLog" :key="idx" style="margin: 2px 0;">{{ line }}</p>
+  </div>
+</DemoBlock>
+
 ## 附件与输入控制
 
 `max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量（图片自动生成预览）；`send-on-enter` 关闭后 Enter 只换行，需点击发送按钮提交。选中的附件经 `attachment-add` 事件通知页面，可在此做类型或大小校验：
@@ -364,7 +435,7 @@ const onSlotClear = () => {
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },
@@ -376,6 +447,10 @@ const onSlotClear = () => {
   { name: 'allow-attachments / max-attachments', desc: '附件开关与上限', type: 'boolean / number', default: 'true / 5' },
   { name: 'show-thinking', desc: '是否展示消息的思考过程折叠块', type: 'boolean', default: 'true' },
   { name: 'actions', desc: '消息动作条自定义动作 { key, label, icon? }', type: 'array', default: '[]' },
+  { name: 'editable', desc: '用户消息可原地编辑并重发（动作条加「编辑」）', type: 'boolean', default: 'false' },
+  { name: 'edit-max-length', desc: '编辑框输入上限，传 0 不限长', type: 'number', default: '0' },
+  { name: 'feedback', desc: '助手消息显示点赞点踩；点踩展开结构化原因面板', type: 'boolean', default: 'false' },
+  { name: 'feedback-reasons', desc: '点踩原因词汇表；不传用内置六项', type: 'array', default: '[]' },
   { name: 'user-name / assistant-name', desc: '双方显示名（同时决定默认头像首字）', type: 'string', default: '我 / AI助手' },
   { name: 'avatar-user / avatar-assistant', desc: '双方头像图片地址', type: 'string', default: '' },
   { name: 'auto-scroll', desc: '新消息自动滚动到底部', type: 'boolean', default: 'true' },
@@ -389,6 +464,9 @@ const onSlotClear = () => {
   { name: 'copy', desc: '消息复制（动作条透传）', type: '(message) => void', default: '—' },
   { name: 'regenerate', desc: '重新生成（动作条透传，由页面删旧回复并重新请求）', type: '(message) => void', default: '—' },
   { name: 'action', desc: 'actions 自定义动作点击', type: '(key: string, message) => void', default: '—' },
+  { name: 'edit', desc: '用户消息编辑后保存（组件只交出文本，重发由你驱动引擎 editAndResend 或自行截断）', type: '(message, content: string) => void', default: '—' },
+  { name: 'feedback', desc: '评价提交；取消时 payload.value 为 null', type: '(message, { value, reasons, note }) => void', default: '—' },
+  { name: 'suggestion-click', desc: '点击回答尾部的追问 chip', type: '(text: string, suggestion, message) => void', default: '—' },
   { name: 'attachment-add', desc: '选择附件文件后触发，可在此做类型或大小校验', type: '(file: File) => void', default: '—' },
 ]" />
 

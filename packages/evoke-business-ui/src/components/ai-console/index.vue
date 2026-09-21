@@ -39,9 +39,16 @@
         :user-name="userName"
         :assistant-name="assistantName"
         :actions="actions"
+        :editable="editable"
+        :edit-max-length="editMaxLength"
+        :feedback="feedback"
+        :feedback-reasons="feedbackReasons"
         @copy="emit('copy', $event)"
         @regenerate="handleRegenerate"
         @action="handleAction"
+        @edit="handleEdit"
+        @feedback="handleFeedback"
+        @suggestion-click="handleSuggestionClick"
       >
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
       </ChatList>
@@ -140,6 +147,12 @@ const props = defineProps({
   avatarAssistant: { type: String, default: '' },
   /** 消息动作条自定义动作 { key, label, icon? } */
   actions: { type: Array, default: () => [] },
+  /** 用户消息可编辑重发 */
+  editable: { type: Boolean, default: false },
+  editMaxLength: { type: Number, default: 0 },
+  /** 助手消息点赞点踩 */
+  feedback: { type: Boolean, default: false },
+  feedbackReasons: { type: Array, default: () => [] },
   /** 会话区最大高度（px 或 CSS 值） */
   chatHeight: { type: [Number, String], default: 420 },
   showTip: { type: Boolean, default: true },
@@ -151,6 +164,9 @@ const emit = defineEmits([
   'copy',
   'regenerate',
   'action',
+  'edit',
+  'feedback',
+  'suggestion-click',
   'quota-click',
   'settings-click',
   'example-click',
@@ -213,6 +229,16 @@ function handleRegenerate(message) {
 // action 是 (key, message) 两参，$event 只接得住第一个
 function handleAction(key, message) {
   emit('action', key, message);
+}
+// 编辑重发：交回宿主决定是走引擎 editAndResend 还是自己截断重发
+function handleEdit(message, content) {
+  emit('edit', message, content);
+}
+function handleFeedback(message, payload) {
+  emit('feedback', message, payload);
+}
+function handleSuggestionClick(text, suggestion, message) {
+  emit('suggestion-click', text, suggestion, message);
 }
 
 const listRef = ref(null)

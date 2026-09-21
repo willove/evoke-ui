@@ -250,6 +250,22 @@ export const REMIX_ICON_META = {
   "category": "Development",
   "remix": "cursor-line"
  },
+ "thumb-up": {
+  "category": "System",
+  "remix": "thumb-up-line"
+ },
+ "thumb-down": {
+  "category": "System",
+  "remix": "thumb-down-line"
+ },
+ "thumb-up-filled": {
+  "category": "System",
+  "remix": "thumb-up-fill"
+ },
+ "thumb-down-filled": {
+  "category": "System",
+  "remix": "thumb-down-fill"
+ },
  "box": {
   "category": "Others",
   "remix": "box-3-line"

@@ -25,49 +25,72 @@
           <eb-icon name="stopwatch" />
           {{ formatDuration(message.duration) }}
         </span>
+        <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
       </div>
       <div class="eb-chat-message__content">
         <ChatAttachments 
-          v-if="message?.attachments?.length" 
+          v-if="message?.attachments?.length && !editing" 
           :attachments="message.attachments" 
         />
-        <ChatThinking 
-          v-if="showThinking && (message?.thinking || message?.thinkContent)"
-          :content="message?.thinkContent"
-          :thinking="message?.thinking"
+        <ChatMessageEdit
+          v-if="editing"
+          :model-value="message?.content"
+          :max-length="editMaxLength"
+          @save="handleEditSave"
+          @cancel="editing = false"
         />
-        <div v-if="awaitingReply" class="eb-chat-message__loading">
-          <ChatLoading />
-        </div>
-        <template v-else-if="message?.status === 'error'">
-          <div class="eb-chat-message__error" role="alert">
-            <eb-icon name="warning-filled" />
-            <span>{{ message?.error || errorMessage }}</span>
+        <template v-else>
+          <ChatThinking 
+            v-if="showThinking && (message?.thinking || message?.thinkContent)"
+            :content="message?.thinkContent"
+            :thinking="message?.thinking"
+          />
+          <div v-if="awaitingReply" class="eb-chat-message__loading">
+            <ChatLoading />
           </div>
+          <template v-else-if="message?.status === 'error'">
+            <div class="eb-chat-message__error" role="alert">
+              <eb-icon name="warning-filled" />
+              <span>{{ message?.error || labels.message.error }}</span>
+            </div>
+          </template>
+          <template v-else-if="hasBody">
+            <div class="eb-chat-message__bubble">
+              <ChatMarkdown
+                v-if="renderMode === 'markdown'"
+                :content="message.content"
+                :streaming="isStreaming"
+              />
+              <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
+            </div>
+            <div v-if="message?.status === 'cancelled'" class="eb-chat-message__cancelled">
+              <eb-icon name="stop" />
+              <span>{{ labels.message.cancelled }}</span>
+            </div>
+          </template>
+          <ChatSuggestion
+            v-if="resolvedSuggestions.length"
+            :items="resolvedSuggestions"
+            @pick="handleSuggestionPick"
+          />
+          <ChatActionbar 
+            v-if="showActions"
+            :class="{ 'is-visible': hovered }"
+            :message="message"
+            :actions="actions"
+            :show-edit="editable && message?.role === 'user'"
+            @copy="handleCopy"
+            @regenerate="handleRegenerate"
+            @edit="editing = true"
+            @action="handleAction"
+          />
+          <ChatFeedback
+            v-if="showFeedback"
+            :value="message?.feedback || null"
+            :reasons="feedbackReasons"
+            @submit="handleFeedbackSubmit"
+          />
         </template>
-        <template v-else-if="hasBody">
-          <div class="eb-chat-message__bubble">
-            <ChatMarkdown
-              v-if="renderMode === 'markdown'"
-              :content="message.content"
-              :streaming="isStreaming"
-            />
-            <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
-          </div>
-          <div v-if="message?.status === 'cancelled'" class="eb-chat-message__cancelled">
-            <eb-icon name="stop" />
-            <span>{{ cancelledMessage }}</span>
-          </div>
-        </template>
-        <ChatActionbar 
-          v-if="showActions"
-          :class="{ 'is-visible': hovered }"
-          :message="message"
-          :actions="actions"
-          @copy="handleCopy"
-          @regenerate="handleRegenerate"
-          @action="handleAction"
-        />
       </div>
     </div>
   </div>
@@ -82,23 +105,31 @@ import ChatThinking from "./ChatThinking.vue";
 import ChatLoading from "./ChatLoading.vue";
 import ChatAttachments from "./ChatAttachments.vue";
 import ChatActionbar from "./ChatActionbar.vue";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import ChatSuggestion from "./ChatSuggestion.vue";
+import ChatFeedback from "./ChatFeedback.vue";
+import ChatMessageEdit from "./ChatMessageEdit.vue";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
   showThinking: { type: Boolean, required: false, default: true },
   avatarUser: { type: String, required: false, default: "" },
   avatarAssistant: { type: String, required: false, default: "" },
-  userName: { type: String, required: false, default: "\u6211" },
-  assistantName: { type: String, required: false, default: "AI\u52A9\u624B" },
+  userName: { type: String, required: false, default: labels.message.user },
+  assistantName: { type: String, required: false, default: labels.message.assistant },
   renderMode: { type: String, required: false, default: "markdown" },
-  actions: { type: Array, required: false, default: () => [] }
+  actions: { type: Array, required: false, default: () => [] },
+  /** 用户消息可原地编辑并重发 */
+  editable: { type: Boolean, required: false, default: false },
+  /** 编辑框输入上限，0 不限 */
+  editMaxLength: { type: Number, required: false, default: 0 },
+  /** 助手消息显示点赞点踩 */
+  feedback: { type: Boolean, required: false, default: false },
+  /** 点踩原因词汇表；不传用内置 */
+  feedbackReasons: { type: Array, required: false, default: () => [] }
 });
-const emit = defineEmits(["copy", "regenerate", "action"]);
-const WarningFilled = getIconByNameSync("warning-filled");
-const Stopwatch = getIconByNameSync("stopwatch");
-const errorMessage = "\u6D88\u606F\u53D1\u9001\u5931\u8D25";
-const cancelledMessage = "\u5DF2\u505C\u6B62\u751F\u6210";
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click"]);
 const hovered = ref(false);
+const editing = ref(false);
 const awaitingReply = computed(() => {
   const m = props.message;
   return m?.status === "pending" || (m?.thinking && !m?.content);
@@ -120,12 +151,24 @@ const showActions = computed(() => {
   const m = props.message;
   return m?.status === "done" && (m?.role === "assistant" || m?.role === "user");
 });
+const showFeedback = computed(() => props.feedback && props.message?.role === "assistant" && props.message?.status === "done");
+const resolvedSuggestions = computed(() => props.message?.suggestions || []);
+function handleEditSave(content) {
+  editing.value = false;
+  emit("edit", props.message, content);
+}
+function handleFeedbackSubmit(payload) {
+  emit("feedback", props.message, payload);
+}
+function handleSuggestionPick(s) {
+  emit("suggestion-click", s.prompt, s, props.message);
+}
 const avatarSrc = computed(() => {
   if (props.message?.role === "user") return props.avatarUser;
   return props.avatarAssistant;
 });
 const avatarText = computed(() => {
-  if (props.message?.role === "user") return props.userName?.[0] || "\u6211";
+  if (props.message?.role === "user") return props.userName?.[0] || labels.message.user;
   return props.assistantName?.[0] || "AI";
 });
 const displayName = computed(() => {
@@ -277,6 +320,11 @@ function handleAction(key, message) {
 
 .eb-chat-message--user .eb-chat-message__text {
   color: inherit;
+}
+
+.eb-chat-message__edited {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
 }
 
 .eb-chat-message__cancelled {

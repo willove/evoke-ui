@@ -1,21 +1,31 @@
 <template>
-  <div class="eb-chat-actionbar" role="group" :aria-label="groupLabel">
+  <div class="eb-chat-actionbar" role="group" :aria-label="labels.actionbar.group">
     <button 
       v-if="showCopy"
       class="eb-chat-actionbar__btn"
       type="button"
-      :title="copied ? copiedLabel : copyLabel"
-      :aria-label="copied ? copiedLabel : copyLabel"
+      :title="copied ? labels.actionbar.copied : labels.actionbar.copy"
+      :aria-label="copied ? labels.actionbar.copied : labels.actionbar.copy"
       @click="handleCopy"
     >
       <eb-icon :name="copied ? 'check' : 'copy-document'" />
     </button>
     <button 
+      v-if="showEdit && message?.role === 'user'"
+      class="eb-chat-actionbar__btn"
+      type="button"
+      :title="labels.actionbar.edit"
+      :aria-label="labels.actionbar.edit"
+      @click="handleEdit"
+    >
+      <eb-icon name="edit" />
+    </button>
+    <button 
       v-if="showRegenerate && message?.role === 'assistant'"
       class="eb-chat-actionbar__btn"
       type="button"
-      :title="regenerateLabel"
-      :aria-label="regenerateLabel"
+      :title="labels.actionbar.regenerate"
+      :aria-label="labels.actionbar.regenerate"
       @click="handleRegenerate"
     >
       <eb-icon name="refresh-right" />
@@ -39,25 +49,17 @@
 import EbIcon from "../icon/index.vue"
 import { ref } from "vue";
 import { copyToClipboard } from "./utils";
-import { getIconByNameSync } from "../icon/iconRegistry";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
   actions: { type: Array, required: false, default: () => [] },
   showCopy: { type: Boolean, required: false, default: true },
-  showRegenerate: { type: Boolean, required: false, default: true }
+  showRegenerate: { type: Boolean, required: false, default: true },
+  /** 用户消息的「编辑并重发」；role 收敛在模板里 */
+  showEdit: { type: Boolean, required: false, default: false }
 });
-const emit = defineEmits(["copy", "regenerate", "action"]);
-const Check = getIconByNameSync("check");
-const CopyDocument = getIconByNameSync("copy-document");
-const RefreshRight = getIconByNameSync("refresh-right");
-const groupLabel = "\u6D88\u606F\u52A8\u4F5C";
-const copyLabel = "\u590D\u5236";
-const copiedLabel = "\u5DF2\u590D\u5236";
-const regenerateLabel = "\u91CD\u65B0\u751F\u6210";
+const emit = defineEmits(["copy", "regenerate", "edit", "action"]);
 const copied = ref(false);
-function getIconComponent(iconName) {
-  return getIconByNameSync(iconName);
-}
 async function handleCopy() {
   if (!props.message) return;
   try {
@@ -68,6 +70,11 @@ async function handleCopy() {
       copied.value = false;
     }, 2e3);
   } catch {
+  }
+}
+function handleEdit() {
+  if (props.message) {
+    emit("edit", props.message);
   }
 }
 function handleRegenerate() {

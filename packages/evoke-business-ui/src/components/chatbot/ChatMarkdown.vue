@@ -11,6 +11,7 @@
 import { ref, watch, onBeforeUnmount } from "vue";
 import { renderChatMarkdown } from "./chatMarkdown";
 import { copyToClipboard } from "./utils";
+import { chatLabels as labels } from "./labels";
 const props = defineProps({
   content: { type: String, required: false, default: "" },
   /** 流式中：末尾补光标，且重解析按帧合并 */
@@ -20,7 +21,6 @@ const props = defineProps({
 const SHIMMER_TAIL = 16;
 // 可承载拖尾文字的块级收尾标签
 const TRAILING_BLOCK_RE = /<\/(?:p|li|h[1-6]|blockquote|td|th|pre)>/g;
-const copiedLabel = "\u5DF2\u590D\u5236";
 const out = ref("");
 let frame = 0;
 /**
@@ -95,7 +95,7 @@ function handleClick(e) {
     if (!label || label.dataset.copied === "1") return;
     label.dataset.copied = "1";
     const prev = label.textContent;
-    label.textContent = copiedLabel;
+    label.textContent = labels.markdown.copied;
     setTimeout(() => {
       label.textContent = prev;
       delete label.dataset.copied;
