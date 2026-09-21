@@ -1,4 +1,4 @@
-# ChatWidget 浮动挂件
+# EbChatWidget 浮动挂件
 
 网页右下角常驻的助手入口：收起时只有一颗悬浮球，点开是面板。**窄屏自动换成底部抽屉**（`EbDrawer direction="btt"`），桌面端是自持的浮层（自带焦点圈闭与滚动锁）。
 
@@ -34,7 +34,7 @@
 
 ## 用法
 
-`v-model` 管开合；内容完全由你放——常见就是一颗 `EbChatbot` 或 `EbAiConsole`：
+导出名为 `EbChatWidget`。`v-model` 管开合；内容完全由你放——常见就是一颗 `EbChatbot` 或 `EbAiConsole`：
 
 ```vue
 <eb-chat-widget v-model="open" title="智能助手" :badge="unread" disclaimer="…">

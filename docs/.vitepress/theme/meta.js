@@ -169,6 +169,7 @@ export const CATEGORIES = [
       { name: 'AuditTimeline', zh: '审计时间线', path: '/components/audit-timeline' },
       { name: 'ColumnSettings', zh: '列设置', path: '/components/column-settings' },
       { name: 'Chatbot', zh: '对话窗口', path: '/components/chatbot' },
+      { name: 'Chat 子组件', zh: '对话子组件', path: '/components/chat-subcomponents' },
     ],
   },
   {
