@@ -36,6 +36,7 @@
           <eb-icon name="stopwatch" />
           {{ formatDuration(message.duration) }}
         </span>
+        <ChatUsage v-if="message?.usage" :usage="message.usage" />
         <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
       </div>
       <div class="eb-chat-message__content">
@@ -184,6 +185,7 @@ import ChatPlan from "./ChatPlan.vue";
 import ChatConfirmation from "./ChatConfirmation.vue";
 import ChatArtifact from "./ChatArtifact.vue";
 import ChatFileTree from "./ChatFileTree.vue";
+import ChatUsage from "./ChatUsage.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },

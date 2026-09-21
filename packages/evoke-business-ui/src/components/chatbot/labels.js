@@ -145,6 +145,12 @@ export const chatLabels = {
     expiry30: '30 天',
     expiryNever: '永久',
   },
+  usage: {
+    tokens: (n) => `${n} tokens`,
+    prompt: (n) => `输入 ${n}`,
+    completion: (n) => `输出 ${n}`,
+    summary: (count, detail) => `近 ${count} 条合计，${detail}`,
+  },
   command: {
     group: '候选项',
     notFound: '没有匹配项',

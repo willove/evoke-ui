@@ -254,6 +254,12 @@ function useChatEngine(options = {}) {
     msg.confirmation = { ...current, status, responseKey: actionKey, respondedAt: Date.now() };
   }
 
+  // ── 用量 ──
+  // 只存不解析：成本要价目表，那是宿主的业务数据，引擎不猜
+  function setUsage(messageId, usage) {
+    updateMessage(messageId, { usage: usage || null });
+  }
+
   // ── 产物 ──
   function addArtifact(messageId, artifact = {}) {
     const msg = findMessage(messageId);
@@ -370,7 +376,8 @@ function useChatEngine(options = {}) {
     respondConfirmation,
     addArtifact,
     updateArtifact,
-    removeArtifact
+    removeArtifact,
+    setUsage
   };
 }
 export {

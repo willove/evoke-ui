@@ -396,6 +396,30 @@ function applyMenuItem(index) {
 
 `#sender-menu` 渲染在输入区**上方**（`sender-prepend` 是左右并排的，放不了这个）。
 
+## token 与成本计量
+
+`EbChatUsage` 只展示宿主给的用量——**成本要价目表，那是宿主的业务数据**，组件与引擎都不猜。
+
+```js
+engine.setUsage(msg.id, {
+  promptTokens: 120,
+  completionTokens: 380,
+  totalTokens: 500,
+  cost: 0.0032,        // 可选；不给就不显示成本位
+  currency: '$',       // 可选；混币种取第一个出现的，不做汇率换算
+})
+```
+
+消息带 `usage` 时元信息行自动出现一颗用量徽标（`1.2k tokens · $0.0032`），输入/输出的明细以读屏文本与悬浮提示给出、视觉上不占位。不带就完全不渲染。
+
+单条用 `usage`，按会话汇总用 `items`（多条累加，token 与成本都汇总）：
+
+```vue
+<eb-chat-usage :items="messages.map((m) => m.usage).filter(Boolean)" size="default" :bare="false" />
+```
+
+千与百万以上折算成 `12.4k` / `2.3M`，成本小额保留四位（`$0.0032`）常规两位（`¥1.24`）。
+
 ## 输入类
 
 ### EbChatSender
