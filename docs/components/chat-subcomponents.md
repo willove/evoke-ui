@@ -439,6 +439,48 @@ engine.setTrace(msg.id, { traceId: 'run_abc123' })   // 或直接给 traceUrl
 
 要完全自定义这块，用已有的 `#message` scoped 插槽整条接管即可，没有另开 `#trace` 插槽——那与 `#message` 能力重叠。
 
+## 测试结果与 stack trace
+
+`EbChatTestResults` · `EbChatStackTrace`。两张都是纯数据渲染，无额外依赖。
+
+### EbChatStackTrace
+
+吃 stack 字符串或已解析的 frames，认三种常见形态：
+
+| 形态 | 例 |
+| --- | --- |
+| Chrome / V8 | `at Object.fn (http://x/y.js:1:2)`、`at http://x/y.js:1:2` |
+| Node | `at fn (/path/file.js:1:2)` |
+| Firefox | `fn@http://x/y.js:1:2` |
+
+按 `node_modules` / `/vendor/` / `<anonymous>` / `node:internal` 把依赖帧**折叠成一行**——它们对定位业务问题没用。每帧点击抛 `frame-click(frame)` 让宿主跳源码。
+
+```vue
+<eb-chat-stack-trace :stack="err.stack" :max-app-frames="5" @frame-click="openInEditor" />
+```
+
+**不做 source map 映射**：那要拉 map 文件，宿主映射好再传 frames 进来（`stack` 也接受 frames 数组）。
+
+### EbChatTestResults
+
+```js
+message.testResults = {
+  summary: { passed: 12, failed: 2, skipped: 1, duration: 3400 },
+  cases: [{ name: 'parseDiff 单文件', suite: 'diff', status: 'failed', duration: 12, message: '期望 2 实际 1', stack: '…' }],
+}
+```
+
+汇总条给通过 / 失败 / 跳过与总耗时；**失败项默认展开**（报错信息是这条结果的全部意义），并可一键「只看失败」。`status` 的归一规则：`passed / pass / ok` → 通过；`skipped / skip / todo` → 跳过；**没给状态** → 按跳过（不猜，既不宣称通过也不宣称失败）；**报了但认不出** → 按失败（漏报失败比虚报通过安全）。
+
+`summary` 优先用宿主给的——跳过数这类信息组件自己数不出来。cases 里的 `stack` **组合** `EbChatStackTrace` 渲染，不内联解析：只看测试结果的宿主不该背上 stack 解析。
+
+<DemoBlock>
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <eb-chat-test-results :results="DEMO_TESTS" expand-stacks />
+    <eb-chat-stack-trace :stack="DEMO_STACK" :max-app-frames="3" />
+  </div>
+</DemoBlock>
+
 ## 输入类
 
 ### EbChatSender
@@ -503,6 +545,25 @@ engine.setTrace(msg.id, { traceId: 'run_abc123' })   // 或直接给 traceUrl
 
 <script setup>
 import { ref } from 'vue'
+
+// ─── 测试结果与 stack 演示数据 ───
+const DEMO_TESTS = {
+  summary: { passed: 12, failed: 2, skipped: 1, duration: 3420 },
+  cases: [
+    { name: 'parseDiff 单文件单 hunk', suite: 'diff', status: 'passed', duration: 2 },
+    { name: '触发边界：路径里的 / 不触发', suite: 'trigger', status: 'passed', duration: 1 },
+    {
+      name: 'ansi 换色时替换而不是叠加',
+      suite: 'ansi',
+      status: 'failed',
+      duration: 4,
+      message: '期望 is-fg-green，实际 is-fg-red is-fg-green',
+      stack: 'Error: 断言失败\n    at assertColor (http://app.example/ansi.spec.js:42:11)\n    at Object.next (node_modules/vitest/index.js:88:5)\n    at http://app.example/run.js:7:3',
+    },
+    { name: '空插槽回落默认渲染', suite: 'slots', status: 'skipped' },
+  ],
+}
+const DEMO_STACK = 'Error: boom\n    at doThing (http://app.example/main.js:10:5)\n    at Object.next (node_modules/lib/index.js:3:1)\n    at http://app.example/other.js:20:7\n    at process (node:internal/process/task_queues:95:5)'
 
 // ─── 语音演示 ───
 const speechSupported = typeof window !== 'undefined'

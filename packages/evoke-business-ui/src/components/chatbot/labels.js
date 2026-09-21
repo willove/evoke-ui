@@ -152,6 +152,18 @@ export const chatLabels = {
     completion: (n) => `输出 ${n}`,
     summary: (count, detail) => `近 ${count} 条合计，${detail}`,
   },
+  tests: {
+    passed: (n) => `${n} 通过`,
+    failed: (n) => `${n} 失败`,
+    skipped: (n) => `${n} 跳过`,
+    onlyFailed: '只看失败',
+    hidePassed: '显示全部',
+  },
+  stack: {
+    dependencies: (n) => `${n} 个依赖帧`,
+    hideDependencies: '收起依赖帧',
+    moreFrames: (n) => `还有 ${n} 帧`,
+  },
   command: {
     group: '候选项',
     notFound: '没有匹配项',

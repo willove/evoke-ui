@@ -162,6 +162,8 @@ import EbChatVoiceInput from './components/chatbot/ChatVoiceInput.vue'
 import EbChatQueue from './components/chatbot/ChatQueue.vue'
 import EbChatCommandMenu from './components/chatbot/ChatCommandMenu.vue'
 import EbChatUsage from './components/chatbot/ChatUsage.vue'
+import EbChatTestResults from './components/chatbot/ChatTestResults.vue'
+import EbChatStackTrace from './components/chatbot/ChatStackTrace.vue'
 export { useChatEngine } from './components/chatbot/useChatEngine'
 export { useChatSessions } from './components/chatbot/useChatSessions'
 export { useTriggerMenu } from './composables/useTriggerMenu'
@@ -440,6 +442,8 @@ const components = {
   EbChatQueue,
   EbChatCommandMenu,
   EbChatUsage,
+  EbChatTestResults,
+  EbChatStackTrace,
   EbStatusTag,
   EbCellStack,
   EbDetailDescriptions,
@@ -670,6 +674,8 @@ export {
   EbChatQueue,
   EbChatCommandMenu,
   EbChatUsage,
+  EbChatTestResults,
+  EbChatStackTrace,
   // 业务组件
   EbStatusTag,
   EbCellStack,
