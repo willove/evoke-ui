@@ -15,31 +15,35 @@
     </div>
     <div v-else class="eb-chat-list__messages">
       <slot name="header" />
-      <ChatMessage
-        v-for="msg in messages"
-        :key="msg.id"
-        :message="msg"
-        :show-thinking="showThinking"
-        :avatar-user="avatarUser"
-        :avatar-assistant="avatarAssistant"
-        :user-name="userName"
-        :assistant-name="assistantName"
-        :render-mode="renderMode"
-        :actions="actions"
-        :editable="editable"
-        :edit-max-length="editMaxLength"
-        :feedback="feedback"
-        :feedback-reasons="feedbackReasons"
-        @copy="handleCopy"
-        @regenerate="handleRegenerate"
-        @action="handleAction"
-        @edit="handleEdit"
-        @feedback="handleFeedback"
-        @suggestion-click="handleSuggestionClick"
-        @citation-click="handleCitationClick"
-        :tool-retryable="toolRetryable"
-        @tool-retry="handleToolRetry"
-      />
+      <template v-for="(msg, i) in messages" :key="msg.id">
+        <!--
+          #message  整条接管（默认内容就是下面这颗 ChatMessage）
+          #message-content  只接管正文，保留消息外壳；与 #message 同时给时以 #message 为准
+        -->
+        <slot
+          name="message"
+          :message="msg"
+          :index="i"
+          :isLast="i === messages.length - 1"
+          :itemProps="messagePropsFor(msg)"
+        >
+          <ChatMessage
+            v-bind="messagePropsFor(msg)"
+            @copy="handleCopy"
+            @regenerate="handleRegenerate"
+            @action="handleAction"
+            @edit="handleEdit"
+            @feedback="handleFeedback"
+            @suggestion-click="handleSuggestionClick"
+            @citation-click="handleCitationClick"
+            @tool-retry="handleToolRetry"
+          >
+            <template v-if="$slots['message-content']" #content="p">
+              <slot name="message-content" v-bind="p" />
+            </template>
+          </ChatMessage>
+        </slot>
+      </template>
       <div ref="bottomRef" class="eb-chat-list__bottom" />
     </div>
     <transition name="eb-chat-list__backtop-fade">
@@ -157,6 +161,27 @@ function handleCitationClick(id, message) {
 }
 function handleToolRetry(toolCall, message) {
   emit("tool-retry", toolCall, message);
+}
+/**
+ * 逐条消息的 props 束：默认渲染与 #message 接管态共用同一份，
+ * 宿主只画某几类消息时不必自己把头像/昵称/actions 重新接一遍
+ */
+function messagePropsFor(msg) {
+  return {
+    message: msg,
+    showThinking: props.showThinking,
+    avatarUser: props.avatarUser,
+    avatarAssistant: props.avatarAssistant,
+    userName: props.userName,
+    assistantName: props.assistantName,
+    renderMode: props.renderMode,
+    actions: props.actions,
+    editable: props.editable,
+    editMaxLength: props.editMaxLength,
+    feedback: props.feedback,
+    feedbackReasons: props.feedbackReasons,
+    toolRetryable: props.toolRetryable
+  };
 }
 // 单一深监听：内容增量与新增消息都覆盖（此前 length 与深监听双触发，逐 token 滚两次）
 watch(() => props.messages, () => {

@@ -365,6 +365,12 @@ function onToolRetry(toolCall, message) {
   toolHint.value = `tool-retry：准备重放 ${toolCall.name}（消息 ${message.id}）`
 }
 
+// ─── 消息级插槽 ───
+const msgSlotMsgs = ref([
+  { id: 'sl-u1', role: 'user', content: '这句走自定义', status: 'done' },
+  { id: 'sl-a1', role: 'assistant', content: '这条走**默认渲染**', status: 'done' },
+])
+
 // ─── 自定义区域与实例方法 ───
 const slotChatRef = ref(null)
 const slotMsgs = ref([])
@@ -470,6 +476,25 @@ const onSlotClear = () => {
     {{ toolHint }}
   </div>
 </DemoBlock>
+
+## 消息级插槽
+
+`message` 插槽接管整条消息的渲染，作用域参数给 `message` / `index` / `isLast` / `itemProps`（`itemProps` 就是 `ChatList` 本来要传给内部 `ChatMessage` 的全量 props）。只想让某几类消息长得不一样、其余照旧，用 `itemProps` 显式回落即可，不必自己重接头像与动作条：
+
+<DemoBlock>
+  <eb-chatbot v-model="msgSlotMsgs" height="300px" :show-tip="false">
+    <template #message="p">
+      <div v-if="p.message.role === 'user'" class="mine-user">
+        我自己说的：{{ p.message.content }}
+      </div>
+      <eb-chat-message v-else v-bind="p.itemProps" />
+    </template>
+  </eb-chatbot>
+</DemoBlock>
+
+只换正文、保留消息外壳（头像 / 思考块 / 工具卡 / 来源卡 / 动作条）用 `message-content`，作用域参数给 `message` / `content` / `renderMode` / `streaming`。两者同时给以 `message` 为准。`EbChatMessage` 单独使用时对应插槽名为 `content`。
+
+一点要注意：插槽**产出为空时 Vue 会回落默认渲染**（空模板、仅注释、`v-if` 为假都算空）。所以不能靠「把不想显示的行留空」来隐藏消息——那样得到的是默认渲染，不是空白。
 
 ## 附件与输入控制
 
@@ -579,6 +604,8 @@ const onSlotClear = () => {
   { name: 'message-header', desc: '消息区顶部（仅有消息时渲染）', type: '—', default: '—' },
   { name: 'sender-prepend / sender-append', desc: '输入区左右扩展位', type: '—', default: '—' },
   { name: 'sender-toolbar', desc: '输入框工具栏（附件按钮右侧）', type: '—', default: '—' },
+  { name: 'message', desc: '接管整条消息渲染；作用域参数 { message, index, isLast, itemProps }，用 itemProps 可回落默认 ChatMessage。产出为空时 Vue 回落默认渲染', type: '—', default: '—' },
+  { name: 'message-content', desc: '只替换气泡内正文，保留消息外壳；作用域参数 { message, content, renderMode, streaming }。与 message 同时给以 message 为准', type: '—', default: '—' },
   { name: 'tip', desc: '底部提示内容', type: '—', default: '内容由 AI 生成，仅供参考' },
 ]" />
 

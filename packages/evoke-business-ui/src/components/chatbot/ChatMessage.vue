@@ -68,13 +68,22 @@
           </template>
           <template v-else-if="hasBody">
             <div class="eb-chat-message__bubble">
-              <ChatMarkdown
-                v-if="renderMode === 'markdown'"
-                :content="message.content"
+              <!-- #content 只接管正文渲染：附件 / 思考 / 工具 / 来源 / 动作条仍由本组件负责 -->
+              <slot
+                name="content"
+                :message="message"
+                :content="message?.content"
+                :renderMode="renderMode"
                 :streaming="isStreaming"
-                @citation-click="handleCitationClick"
-              />
-              <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
+              >
+                <ChatMarkdown
+                  v-if="renderMode === 'markdown'"
+                  :content="message.content"
+                  :streaming="isStreaming"
+                  @citation-click="handleCitationClick"
+                />
+                <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
+              </slot>
             </div>
             <div v-if="message?.status === 'cancelled'" class="eb-chat-message__cancelled">
               <eb-icon name="stop" />

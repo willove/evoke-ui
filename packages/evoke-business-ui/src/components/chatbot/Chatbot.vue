@@ -23,6 +23,7 @@
       :edit-max-length="editMaxLength"
       :feedback="feedback"
       :feedback-reasons="feedbackReasons"
+      :tool-retryable="toolRetryable"
       @copy="handleCopy"
       @regenerate="handleRegenerate"
       @action="handleAction"
@@ -30,7 +31,6 @@
       @feedback="handleFeedback"
       @suggestion-click="handleSuggestionClick"
       @citation-click="handleCitationClick"
-      :tool-retryable="toolRetryable"
       @tool-retry="handleToolRetry"
     >
       <template v-if="$slots.empty" #empty>
@@ -38,6 +38,13 @@
       </template>
       <template v-if="$slots['message-header']" #header>
         <slot name="message-header" />
+      </template>
+      <!-- 只在宿主真的传了时才转发，否则 ChatList 走它自己的默认渲染 -->
+      <template v-if="$slots.message" #message="p">
+        <slot name="message" v-bind="p" />
+      </template>
+      <template v-if="$slots['message-content']" #message-content="p">
+        <slot name="message-content" v-bind="p" />
       </template>
     </ChatList>
     
