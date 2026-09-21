@@ -59,6 +59,12 @@ export const chatLabels = {
   suggestion: {
     group: '推荐追问',
   },
+  widget: {
+    expand: '打开助手',
+    collapse: '收起助手',
+    close: '关闭',
+    agree: '同意并开始',
+  },
   threads: {
     group: '会话列表',
     untitled: '新会话',

@@ -176,6 +176,7 @@ export const CATEGORIES = [
     key: 'ai',
     components: [
       { name: 'ChatThreads', zh: '会话列表', path: '/components/chat-threads' },
+      { name: 'ChatWidget', zh: '浮动挂件', path: '/components/chat-widget' },
       { name: 'AiPromptBox', zh: 'AI 输入台', path: '/components/ai-prompt-box' },
       { name: 'AiConsole', zh: 'AI 工作台', path: '/components/ai-console' },
     ],
