@@ -4,6 +4,7 @@
       v-for="file in attachments" 
       :key="file.id" 
       class="eb-chat-attachments__item"
+      :class="`is-${file.status || 'ready'}`"
     >
       <div class="eb-chat-attachments__preview" v-if="file.preview || isImage(file.type)">
         <img :src="file.preview || file.url" :alt="file.name" loading="lazy" referrerpolicy="no-referrer" />
@@ -14,6 +15,12 @@
       <div class="eb-chat-attachments__info">
         <span class="eb-chat-attachments__name">{{ file.name }}</span>
         <span v-if="file.size" class="eb-chat-attachments__size">{{ formatFileSize(file.size) }}</span>
+        <!-- 上传态由宿主回写附件对象驱动（组件不自己发请求）：uploading 走进度条，error 走红字 -->
+        <span v-if="file.status === 'uploading'" class="eb-chat-attachments__bar" role="progressbar" :aria-valuenow="clampProgress(file.progress)" aria-valuemin="0" aria-valuemax="100">
+          <span class="eb-chat-attachments__bar-fill" :style="{ width: `${clampProgress(file.progress)}%` }" />
+        </span>
+        <span v-else-if="file.status === 'error'" class="eb-chat-attachments__error">{{ file.error || labels.attachments.failed }}</span>
+        <span v-else-if="file.status === 'done' && file.progress != null" class="eb-chat-attachments__done">{{ labels.attachments.done }}</span>
       </div>
       <button
         v-if="removable"
@@ -42,6 +49,12 @@ function isImage(type) {
   // 附件数据来自宿主（LLM 结构不可控），type 缺失按非图片处理而非崩溃
   return typeof type === "string" && type.startsWith("image/");
 }
+function clampProgress(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(100, Math.max(0, n));
+}
+
 function handleRemove(file) {
   emit("remove", file);
 }
@@ -113,6 +126,39 @@ function handleRemove(file) {
 .eb-chat-attachments__size {
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-placeholder);
+}
+
+.eb-chat-attachments__item.is-error {
+  border-color: var(--eb-color-danger-light-7);
+  background: var(--eb-color-danger-light-9);
+}
+
+.eb-chat-attachments__bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin-top: 3px;
+  border-radius: 2px;
+  background: var(--eb-fill-color-dark);
+  overflow: hidden;
+}
+
+.eb-chat-attachments__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--eb-color-primary);
+  transition: width var(--eb-duration-base) var(--eb-ease-out);
+}
+
+.eb-chat-attachments__error {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-color-danger);
+}
+
+.eb-chat-attachments__done {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-color-success);
 }
 
 .eb-chat-attachments__remove {

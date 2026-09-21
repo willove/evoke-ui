@@ -146,6 +146,9 @@ md.use({ renderer });
  * 需要冷门语言时由宿主注册，返回 false 表示注册失败（如定义不是函数）
  */
 function registerHighlightLanguage(name, definition) {
+  // 自己先挡一层：hljs 对非函数定义会抛 TypeError 并往 stderr 打日志，
+  // 调用方拿到的只是 false，不该为此污染输出
+  if (typeof name !== "string" || !name || typeof definition !== "function") return false;
   try {
     hljs.registerLanguage(name, definition);
     return true;

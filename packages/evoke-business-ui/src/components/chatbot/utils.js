@@ -103,6 +103,36 @@ function simpleMarkdown(text) {
   html = html.replace(/@@CODEBLOCK_(\d+)@@/g, (_, idx) => codeBlocks[parseInt(idx)]);
   return html;
 }
+/**
+ * accept 匹配：支持 `.ext`、`mime/*`、`mime/type` 三种写法（逗号分隔）。
+ * 浏览器对 input[accept] 只是建议，拖拽与粘贴必须自己校验，否则宿主拿到的
+ * 是任意类型的 File。
+ */
+function matchesAccept(file, accept) {
+  if (!accept) return true;
+  if (typeof file?.name !== "string") return false;
+  const name = file.name.toLowerCase();
+  const type = (file.type || "").toLowerCase();
+  return String(accept).split(",").map((r) => r.trim().toLowerCase()).filter(Boolean).some((rule) => {
+    if (rule.startsWith(".")) return name.endsWith(rule);
+    if (rule.endsWith("/*")) return type.startsWith(rule.slice(0, -1));
+    return type === rule;
+  });
+}
+/** 附件校验：返回 null 表示通过，否则给出去原因（宿主据此提示） */
+function validateAttachment(file, options = {}) {
+  const { accept = "", maxFileSize = 0 } = options;
+  if (!file) return "empty";
+  if (accept && !matchesAccept(file, accept)) return "type";
+  if (maxFileSize > 0 && file.size > maxFileSize) return "size";
+  return null;
+}
+function formatBytes(bytes) {
+  if (!bytes || bytes < 0) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 function copyToClipboard(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     return navigator.clipboard.writeText(text);
@@ -126,6 +156,9 @@ function copyToClipboard(text) {
 }
 export {
   copyToClipboard,
+  matchesAccept,
+  validateAttachment,
+  formatBytes,
   escapeHtml,
   formatFileSize,
   generateId,

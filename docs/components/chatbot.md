@@ -512,7 +512,11 @@ const onSlotClear = () => {
 
 ## 附件与输入控制
 
-`max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量（图片自动生成预览）；`send-on-enter` 关闭后 Enter 只换行，需点击发送按钮提交。选中的附件经 `attachment-add` 事件通知页面，可在此做类型或大小校验：
+`max-length` 限制输入长度，`show-word-count` 显示字数；`max-attachments` 限制附件数量。附件投递支持点 `+` 选文件、**拖拽进输入区**、**直接粘贴剪贴板里的图片**三种方式（`allow-drop` 可关）。
+
+类型与体积由 `accept` / `max-file-size` 约束——浏览器对 `input[accept]` 只是建议，拖拽和粘贴路径组件会自己按同一套规则校验；不合格的文件经 `attachment-reject(file, reason)` 交回，`reason` 取 `type` / `size` / `limit` / `empty`，提示文案由你决定。
+
+上传状态由你回写附件对象驱动（组件不自己发请求）：`status: 'uploading'` + `progress` 显示进度条，`'error'` + `error` 显示失败原因，`'done'` 显示已上传；不写 `status` 的历史附件不出现任何状态位。
 
 <DemoBlock>
   <eb-chatbot
@@ -612,6 +616,9 @@ registerHighlightLanguage('cobol', cobol)
   { name: 'max-length / show-word-count', desc: '输入上限（真正约束 textarea，传 0 不限长）与字数统计', type: 'number / boolean', default: '2000 / false' },
   { name: 'stoppable', desc: '生成中发送钮切换为停止钮，点击抛 stop', type: 'boolean', default: 'false' },
   { name: 'allow-attachments / max-attachments', desc: '附件开关与上限', type: 'boolean / number', default: 'true / 5' },
+  { name: 'accept', desc: '附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；拖拽与粘贴路径同样按它校验', type: 'string', default: '—' },
+  { name: 'max-file-size', desc: '单个附件字节上限，0 为不限', type: 'number', default: '0' },
+  { name: 'allow-drop', desc: '允许拖拽与粘贴投递', type: 'boolean', default: 'true' },
   { name: 'show-thinking', desc: '是否展示消息的思考过程折叠块', type: 'boolean', default: 'true' },
   { name: 'actions', desc: '消息动作条自定义动作 { key, label, icon? }', type: 'array', default: '[]' },
   { name: 'editable', desc: '用户消息可原地编辑并重发（动作条加「编辑」）', type: 'boolean', default: 'false' },
@@ -637,7 +644,8 @@ registerHighlightLanguage('cobol', cobol)
   { name: 'suggestion-click', desc: '点击回答尾部的追问 chip', type: '(text: string, suggestion, message) => void', default: '—' },
   { name: 'citation-click', desc: '点击正文里的引用上标（来源卡会自动展开并高亮，此处供埋点或自定义跳转）', type: '(id: string, message) => void', default: '—' },
   { name: 'tool-retry', desc: '点击失败工具调用卡的重试钮', type: '(toolCall, message) => void', default: '—' },
-  { name: 'attachment-add', desc: '选择附件文件后触发，可在此做类型或大小校验', type: '(file: File) => void', default: '—' },
+  { name: 'attachment-add', desc: '附件通过校验后触发，第二个参数为组件生成的附件对象（回写 status / progress 用）', type: '(file: File, attachment) => void', default: '—' },
+  { name: 'attachment-reject', desc: '附件被拒；reason 取 type / size / limit / empty', type: '(file: File, reason: string) => void', default: '—' },
 ]" />
 
 <ApiTable title="Chatbot Slots" :rows="[

@@ -63,9 +63,13 @@
           :max-length="maxLength"
           :show-word-count="showWordCount"
           :send-on-enter="sendOnEnter"
+          :accept="accept"
+          :max-file-size="maxFileSize"
+          :allow-drop="allowDrop"
           @send="handleSend"
           @stop="handleStop"
           @attachment-add="handleAttachmentAdd"
+          @attachment-reject="handleAttachmentReject"
         >
           <template v-if="$slots['sender-toolbar']" #toolbar>
             <slot name="sender-toolbar" />
@@ -109,6 +113,12 @@ const props = defineProps({
   feedbackReasons: { type: Array, required: false, default: () => [] },
   /** 工具调用失败态是否给重试钮 */
   toolRetryable: { type: Boolean, required: false, default: true },
+  /** 附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；空为不限 */
+  accept: { type: String, required: false, default: "" },
+  /** 单个附件字节上限，0 为不限 */
+  maxFileSize: { type: Number, required: false, default: 0 },
+  /** 允许拖拽与粘贴投递 */
+  allowDrop: { type: Boolean, required: false, default: true },
   height: { type: [String, Number], required: false, default: "600px" },
   width: { type: [String, Number], required: false, default: "100%" },
   avatarUser: { type: String, required: false, default: "" },
@@ -122,7 +132,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "attachment-add", "attachment-reject"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -190,8 +200,11 @@ function handleCitationClick(id, message) {
 function handleToolRetry(toolCall, message) {
   emit("tool-retry", toolCall, message);
 }
-function handleAttachmentAdd(file) {
-  emit("attachment-add", file);
+function handleAttachmentAdd(file, attachment) {
+  emit("attachment-add", file, attachment);
+}
+function handleAttachmentReject(file, reason) {
+  emit("attachment-reject", file, reason);
 }
 function scrollToBottom(smooth) {
   listRef.value?.scrollToBottom(smooth);

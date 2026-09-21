@@ -11,6 +11,7 @@ export const chatLabels = {
     placeholder: '输入消息...',
     sendOnEnterPlaceholder: '输入消息，按 Enter 发送，Shift+Enter 换行',
     attach: '添加附件',
+    dropHint: '松开以上传文件',
     send: '发送',
     stop: '停止生成',
   },
@@ -41,6 +42,8 @@ export const chatLabels = {
     edit: '编辑',
   },
   attachments: {
+    done: '已上传',
+    failed: '上传失败',
     remove: (name) => (name ? `移除附件 ${name}` : '移除附件'),
   },
   markdown: {

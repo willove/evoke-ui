@@ -1,5 +1,14 @@
 <template>
-  <div class="eb-chat-sender" :aria-busy="loading ? 'true' : void 0">
+  <div
+    class="eb-chat-sender"
+    :class="{ 'is-dragover': dragOver }"
+    :aria-busy="loading ? 'true' : void 0"
+    @dragenter.prevent="onDragEnter"
+    @dragover.prevent="onDragEnter"
+    @dragleave.prevent="onDragLeave"
+    @drop.prevent="onDrop"
+  >
+    <div v-if="dragOver" class="eb-chat-sender__drop-hint" aria-hidden="true">{{ labels.sender.dropHint }}</div>
     <div v-if="showAttachments && attachments.length" class="eb-chat-sender__attachments">
       <ChatAttachments 
         :attachments="attachments" 
@@ -28,6 +37,7 @@
           type="file"
           class="eb-chat-sender__file-input"
           :multiple="maxAttachments > 1"
+          :accept="accept || undefined"
           @change="handleFileSelect"
         />
         <slot name="toolbar" />
@@ -44,6 +54,7 @@
           :aria-label="placeholder"
           @keydown="handleKeydown"
           @input="handleInput"
+          @paste="onPaste"
         />
       </div>
       <div class="eb-chat-sender__actions">
@@ -69,7 +80,7 @@
 <script setup>
 import EbIcon from "../icon/index.vue"
 import { ref, computed, watch, nextTick } from "vue";
-import { generateId } from "./utils";
+import { generateId, validateAttachment } from "./utils";
 import ChatAttachments from "./ChatAttachments.vue";
 import { isImeComposing } from "../../utils/events";
 import { chatLabels as labels } from "./labels";
@@ -86,9 +97,15 @@ const props = defineProps({
   maxRows: { type: Number, required: false, default: 6 },
   sendOnEnter: { type: Boolean, required: false, default: true },
   /** loading 时发送钮切换为停止钮（emit stop）；与 EbAiPromptBox 同名同义 */
-  stoppable: { type: Boolean, required: false, default: false }
+  stoppable: { type: Boolean, required: false, default: false },
+  /** 允许的附件类型（.ext / mime/* / mime/type，逗号分隔）；空为不限 */
+  accept: { type: String, required: false, default: "" },
+  /** 单个附件字节上限，0 为不限 */
+  maxFileSize: { type: Number, required: false, default: 0 },
+  /** 允许拖拽与粘贴投递 */
+  allowDrop: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add", "attachment-reject"]);
 const textareaRef = ref();
 const fileInputRef = ref();
 const inputValue = ref(props.modelValue);
@@ -164,31 +181,75 @@ function handleSend() {
 function triggerFileUpload() {
   fileInputRef.value?.click();
 }
-function handleFileSelect(e) {
-  const target = e.target;
-  const files = target.files;
-  if (!files) return;
+let dragDepth = 0;
+const dragOver = ref(false);
+function onDragEnter() {
+  if (!props.allowDrop || props.disabled) return;
+  dragDepth += 1;
+  dragOver.value = true;
+}
+function onDragLeave() {
+  if (!props.allowDrop) return;
+  dragDepth = Math.max(0, dragDepth - 1);
+  if (dragDepth === 0) dragOver.value = false;
+}
+function onDrop(e) {
+  dragDepth = 0;
+  dragOver.value = false;
+  if (!props.allowDrop || props.disabled) return;
+  addFiles(e.dataTransfer?.files);
+}
+function onPaste(e) {
+  if (!props.allowDrop || props.disabled) return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  const files = [];
+  for (const item of items) {
+    if (item.kind !== "file") continue;
+    const file = item.getAsFile();
+    if (file) files.push(file);
+  }
+  // 有文件才拦下默认行为，纯文本粘贴照常进输入框
+  if (files.length) {
+    e.preventDefault();
+    addFiles(files);
+  }
+}
+function addFiles(files) {
+  if (!files?.length) return;
   Array.from(files).forEach((file) => {
-    if (attachments.value.length >= props.maxAttachments) return;
+    if (attachments.value.length >= props.maxAttachments) {
+      emit("attachment-reject", file, "limit");
+      return;
+    }
+    const reason = validateAttachment(file, { accept: props.accept, maxFileSize: props.maxFileSize });
+    if (reason) {
+      emit("attachment-reject", file, reason);
+      return;
+    }
     const attachment = {
       id: generateId(),
       name: file.name,
       type: file.type || "application/octet-stream",
-      size: file.size
+      size: file.size,
+      status: "ready"
     };
+    attachments.value.push(attachment);
+    emit("attachment-add", file, attachment);
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e2) => {
-        attachment.preview = e2.target?.result;
-        attachments.value.push(attachment);
+        // 按 id 回填：期间可能已被移除，直接改闭包对象会写进已脱离的附件
+        const target = attachments.value.find((a) => a.id === attachment.id);
+        if (target) target.preview = e2.target?.result;
       };
       reader.readAsDataURL(file);
-    } else {
-      attachments.value.push(attachment);
     }
-    emit("attachment-add", file);
   });
-  target.value = "";
+}
+function handleFileSelect(e) {
+  addFiles(e.target.files);
+  e.target.value = "";
 }
 function handleRemoveAttachment(file) {
   const index = attachments.value.findIndex((a) => a.id === file.id);
@@ -227,6 +288,32 @@ watch(() => props.loading, () => {
 .eb-chat-sender:focus-within {
   border-color: var(--eb-color-primary);
   box-shadow: 0 0 0 3px var(--eb-color-primary-light-8);
+}
+
+/* 拖拽投放态：整块给一圈虚线，比只改边框色更能说明「可以丢这里」 */
+.eb-chat-sender {
+  position: relative;
+}
+
+.eb-chat-sender.is-dragover {
+  border-style: dashed;
+  border-color: var(--eb-color-primary);
+  background: var(--eb-color-primary-light-9);
+}
+
+.eb-chat-sender__drop-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--eb-color-primary-light-9);
+  color: var(--eb-color-primary);
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  pointer-events: none;
 }
 
 .eb-chat-sender__attachments {
