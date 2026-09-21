@@ -114,10 +114,10 @@ function stopGenerate() {
   { name: 'showSettings', desc: '工具行显示设置按钮', type: 'boolean', default: 'false' },
   { name: 'allowAttachments', desc: '允许附件', type: 'boolean', default: 'true' },
   { name: 'maxAttachments', desc: '附件数量上限', type: 'number', default: '5' },
-  { name: 'maxLength', desc: '文本长度上限', type: 'number', default: '2000' },
+  { name: 'maxLength', desc: '文本长度上限，真正约束 textarea；未传不限长', type: 'number', default: '—' },
   { name: 'showWordCount', desc: '显示字数统计', type: 'boolean', default: 'false' },
   { name: 'maxRows', desc: '输入区最大行数（超出滚动）', type: 'number', default: '8' },
-  { name: 'sendOnEnter', desc: 'Enter 发送、Shift+Enter 换行', type: 'boolean', default: 'true' },
+  { name: 'sendOnEnter', desc: 'Enter 发送、Shift+Enter 换行；输入法组字中的 Enter 交还输入法，不会误发', type: 'boolean', default: 'true' },
   { name: 'stoppable', desc: 'loading 时发送钮切换为停止钮', type: 'boolean', default: 'false' },
 ]" />
 

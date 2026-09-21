@@ -60,15 +60,24 @@ function getChatMarkdownConfig() {
 const md = new Marked();
 md.setOptions({ breaks: true, gfm: true });
 const renderer = new marked.Renderer();
+const copyCodeLabel = "\u590D\u5236\u4EE3\u7801";
 renderer.code = function({ text, lang }) {
   const language = lang && hljs.getLanguage(lang) ? lang : "plaintext";
+  let highlighted;
   try {
-    const highlighted = hljs.highlight(text, { language }).value;
-    return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+    highlighted = hljs.highlight(text, { language }).value;
   } catch {
-    const escaped = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return `<pre><code class="hljs language-${language}">${escaped}</code></pre>`;
+    highlighted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
+  // 代码工具条：语言标签 + 复制。复制文本由 ChatMarkdown 事件委托从 <code> 读，
+  // 不把原文塞进 data-* （大段代码会让 HTML 体积翻倍）
+  const bar = `<div class="eb-chat-code__bar">` +
+    `<span class="eb-chat-code__lang">${escapeHtml(language)}</span>` +
+    `<button type="button" class="eb-chat-code__copy" aria-label="${escapeHtml(copyCodeLabel)}">` +
+    `<span class="eb-chat-code__copy-text">${escapeHtml(copyCodeLabel)}</span>` +
+    `</button></div>`;
+  return `<div class="eb-chat-code">${bar}` +
+    `<pre><code class="hljs language-${language}">${highlighted}</code></pre></div>`;
 };
 // 原文 raw HTML 一律转义为纯文本展示：marked 默认放行内联/块级 HTML，聊天消息属不可信输入，
 // 不拦截等价于 v-html 直出 <img onerror>/<script> 注入

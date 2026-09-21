@@ -1,14 +1,107 @@
 <template>
-  <div class="eb-chat-markdown" v-html="renderedContent" />
+  <div
+    class="eb-chat-markdown"
+    :class="{ 'is-streaming': streaming }"
+    v-html="out"
+    @click="handleClick"
+  />
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { ref, watch, onBeforeUnmount } from "vue";
 import { renderChatMarkdown } from "./chatMarkdown";
+import { copyToClipboard } from "./utils";
 const props = defineProps({
-  content: { type: String, required: false, default: "" }
+  content: { type: String, required: false, default: "" },
+  /** 流式中：末尾补光标，且重解析按帧合并 */
+  streaming: { type: Boolean, required: false, default: false }
 });
-const renderedContent = computed(() => renderChatMarkdown(props.content || ""));
+// 拖尾样式在 styles/base.css（.eb-chat-shimmer），纯文本模式共用同一条规则
+const SHIMMER_TAIL = 16;
+// 可承载拖尾文字的块级收尾标签
+const TRAILING_BLOCK_RE = /<\/(?:p|li|h[1-6]|blockquote|td|th|pre)>/g;
+const copiedLabel = "\u5DF2\u590D\u5236";
+const out = ref("");
+let frame = 0;
+/**
+ * 把最后一个文字块末尾若干字套上拖尾。
+ * 倒着收字：别人的闭合标签（`</em>`）跳过继续收，撞到本元素的开标签
+ * （`<p>` / `<em>` / `<br>`）就停——否则文字不足 n 个时会越过边界把整段包进去。
+ */
+function wrapTail(html, endIdx, n) {
+  let i = endIdx;
+  let taken = 0;
+  while (i > 0 && taken < n) {
+    const ch = html[i - 1];
+    if (ch === ">") {
+      const open = html.lastIndexOf("<", i - 1);
+      if (open < 0) return null;
+      if (html[open + 1] !== "/") break;
+      i = open;
+      continue;
+    }
+    if (ch === "<") break;
+    i -= 1;
+    taken += 1;
+  }
+  let cut = i;
+  // 实体（&amp;）不能从中间切开
+  const amp = html.lastIndexOf("&", cut - 1);
+  const semi = amp >= 0 ? html.indexOf(";", amp) : -1;
+  if (amp >= 0 && semi !== -1 && semi < cut) cut = amp;
+  // 代理对（emoji）不能切开
+  const prev = html.charCodeAt(cut - 1);
+  if (prev >= 0xd800 && prev <= 0xdbff) cut += 1;
+  if (cut >= endIdx) return null;
+  return `${html.slice(0, cut)}<span class="eb-chat-shimmer">${html.slice(cut, endIdx)}</span>${html.slice(endIdx)}`;
+}
+function render() {
+  const raw = renderChatMarkdown(props.content || "");
+  if (!props.streaming) return raw;
+  let last = null;
+  for (const m of raw.matchAll(TRAILING_BLOCK_RE)) last = m;
+  // 以代码块/表格之外的结构收尾时没有可套的文字块，就不显示拖尾
+  return last ? wrapTail(raw, last.index, SHIMMER_TAIL) || raw : raw;
+}
+function dropFrame() {
+  if (!frame) return;
+  cancelAnimationFrame(frame);
+  frame = 0;
+}
+function schedule() {
+  // 非流式（历史消息、思考块收起）必须同步出结果，否则闪一下空
+  if (!props.streaming) {
+    dropFrame();
+    out.value = render();
+    return;
+  }
+  // 流式回写每个 token 都会进来；逐 token 整篇重解析的代价随文本长度平方增长，这里合并到帧
+  if (frame) return;
+  frame = requestAnimationFrame(() => {
+    frame = 0;
+    out.value = render();
+  });
+}
+watch(() => [props.content, props.streaming], schedule, { immediate: true });
+onBeforeUnmount(dropFrame);
+function handleClick(e) {
+  const btn = e.target?.closest?.(".eb-chat-code__copy");
+  if (!btn) return;
+  // 复制文本从渲染后的 <code> 读，避免把原文塞进 data-* 撑大 HTML
+  const code = btn.closest(".eb-chat-code")?.querySelector("code");
+  if (!code) return;
+  copyToClipboard(code.textContent ?? "").then(() => {
+    const label = btn.querySelector(".eb-chat-code__copy-text");
+    if (!label || label.dataset.copied === "1") return;
+    label.dataset.copied = "1";
+    const prev = label.textContent;
+    label.textContent = copiedLabel;
+    setTimeout(() => {
+      label.textContent = prev;
+      delete label.dataset.copied;
+    }, 2000);
+  }).catch(() => {});
+}
 
 </script>
 
@@ -33,6 +126,56 @@ const renderedContent = computed(() => renderChatMarkdown(props.content || ""));
   margin: 4px 0;
 }
 
+/* ── 代码块：工具条（语言标签 + 复制）+ 正文 ── */
+.eb-chat-markdown :deep(.eb-chat-code) {
+  margin: 8px 0;
+  border-radius: var(--eb-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--eb-border-color-lighter);
+  background: var(--eb-fill-color-light);
+}
+
+.eb-chat-markdown :deep(.eb-chat-code__bar) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eb-space-2);
+  padding: 4px 8px 4px 12px;
+  background: var(--eb-fill-color);
+  border-bottom: 1px solid var(--eb-border-color-lighter);
+}
+
+.eb-chat-markdown :deep(.eb-chat-code__lang) {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+  text-transform: lowercase;
+  letter-spacing: 0.2px;
+}
+
+.eb-chat-markdown :deep(.eb-chat-code__copy) {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  padding: 2px 8px;
+  border-radius: var(--eb-radius-sm);
+  background: transparent;
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s var(--eb-ease-out), color 0.15s var(--eb-ease-out);
+}
+
+.eb-chat-markdown :deep(.eb-chat-code__copy:hover) {
+  background: var(--eb-bg-color-overlay);
+  color: var(--eb-text-color-primary);
+}
+
+.eb-chat-markdown :deep(.eb-chat-code__copy:focus-visible) {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: -2px;
+}
+
 .eb-chat-markdown :deep(pre) {
   background: var(--eb-fill-color-light);
   border-radius: var(--eb-radius-md);
@@ -42,6 +185,14 @@ const renderedContent = computed(() => renderChatMarkdown(props.content || ""));
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: var(--eb-font-size-sm);
   line-height: 1.6;
+}
+
+/* 带工具条的代码块：卡片外壳交给 .eb-chat-code，pre 只留正文 */
+.eb-chat-markdown :deep(.eb-chat-code pre) {
+  background: transparent;
+  border-radius: 0;
+  padding: 12px 16px;
+  margin: 0;
 }
 
 .eb-chat-markdown :deep(code) {

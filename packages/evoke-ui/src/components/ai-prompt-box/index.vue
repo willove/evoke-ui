@@ -344,6 +344,9 @@ function focusInput() {
 }
 
 function handleKeydown(e) {
+  // 输入法组字中的 Enter / Esc 属于候选词操作，不是发送或关闭菜单
+  // （Safari 旧版不上报 isComposing，keyCode 229 兜底）
+  if (e.isComposing === true || e.keyCode === 229) return
   if (e.key === 'Escape' && modelMenuOpen.value) {
     e.preventDefault()
     modelMenuOpen.value = false

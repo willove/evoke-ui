@@ -21,10 +21,7 @@
         @input="onInput"
         @focus="onFocus"
         @blur="onBlur"
-        @keydown.up.prevent="moveHighlight(-1)"
-        @keydown.down.prevent="moveHighlight(1)"
-        @keydown.enter.prevent="onEnter"
-        @keydown.esc="hidePanel"
+        @keydown="onKeydown"
       />
     </template>
 
@@ -63,6 +60,7 @@ import { computed, ref, useAttrs, watch, onBeforeUnmount } from 'vue'
 import EbInput from '../input/index.vue'
 import EbPopper from '../popper/index.vue'
 import { useLocale } from '../../composables/useLocale'
+import { isImeComposing } from '../../utils/events'
 
 defineOptions({ name: 'EbAutoComplete', inheritAttrs: false })
 
@@ -188,9 +186,22 @@ function moveHighlight(delta) {
   highlightIndex.value = (highlightIndex.value + delta + len) % len
 }
 
-function onEnter() {
-  if (panelVisible.value && highlightIndex.value >= 0) {
-    select(suggestions.value[highlightIndex.value], highlightIndex.value)
+// 单一 keydown 入口：组字期间的按键全部交还输入法（.enter.prevent 会吃掉候选词上屏）
+function onKeydown(e) {
+  if (isImeComposing(e)) return
+  if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    moveHighlight(-1)
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    moveHighlight(1)
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    if (panelVisible.value && highlightIndex.value >= 0) {
+      select(suggestions.value[highlightIndex.value], highlightIndex.value)
+    }
+  } else if (e.key === 'Escape') {
+    hidePanel()
   }
 }
 

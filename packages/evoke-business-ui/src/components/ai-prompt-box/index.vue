@@ -75,7 +75,9 @@
         class="eb-ai-prompt-box__textarea"
         :placeholder="placeholder"
         :disabled="disabled"
+        :maxlength="maxLength"
         rows="2"
+        :aria-label="placeholder"
         @keydown="handleKeydown"
         @focus="focused = true"
         @blur="focused = false"
@@ -185,7 +187,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useClickOutside } from '../../composables/useClickOutside'
-import { useLocale } from '../../composables/useLocale'
+import { isImeComposing } from '../../utils/events'
 
 defineOptions({ name: 'EbAiPromptBox' })
 
@@ -214,7 +216,8 @@ const props = defineProps({
   showSettings: { type: Boolean, default: false },
   allowAttachments: { type: Boolean, default: true },
   maxAttachments: { type: Number, default: 5 },
-  maxLength: { type: Number, default: 2000 },
+  /** 文本长度上限；未传不限制（绑定 textarea maxlength，字数统计同源） */
+  maxLength: { type: Number, default: undefined },
   showWordCount: { type: Boolean, default: false },
   maxRows: { type: Number, default: 8 },
   sendOnEnter: { type: Boolean, default: true },
@@ -235,8 +238,6 @@ const emit = defineEmits([
   'quota-click',
   'settings-click',
 ])
-
-const { t } = useLocale()
 
 const textareaRef = ref(null)
 const fileInputRef = ref(null)
@@ -352,6 +353,8 @@ function focusInput() {
 }
 
 function handleKeydown(e) {
+  // 输入法组字中的 Enter / Esc 属于候选词操作，不是发送或关闭菜单
+  if (isImeComposing(e)) return
   if (e.key === 'Escape' && modelMenuOpen.value) {
     e.preventDefault()
     modelMenuOpen.value = false

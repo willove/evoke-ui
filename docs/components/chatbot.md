@@ -1,6 +1,6 @@
 # Chatbot 对话窗口
 
-开箱可用的 AI 对话窗口：消息流（Markdown 渲染、思考过程、附件）、输入区（Enter 发送 / Shift+Enter 换行、字数与附件上限）、动作条（复制 / 重新生成）。接口层完全由你承接——`send` 事件拿到输入，回写 `modelValue` 即完成闭环。
+开箱可用的 AI 对话窗口：消息流（Markdown 渲染、代码块复制、思考过程、附件、流式光标）、输入区（Enter 发送 / Shift+Enter 换行、输入法组字安全、字数与附件上限、停止生成）、动作条（复制 / 重新生成，键盘与触屏可达）。接口层完全由你承接——`send` 事件拿到输入，回写 `modelValue` 即完成闭环。
 
 ## 基础对话
 
@@ -12,10 +12,26 @@
 
 ## 流式输出与思考过程
 
-配合导出的 `useChatEngine` 组装流式会话：`appendContent` 逐段回写正文（状态自动进入 streaming），`appendThinkContent` 写入思考内容（消息上方出现可折叠的思考块），`completeMessage` 收尾并自动记录回答用时。`regenerate` 事件里删掉旧回复后按上文重新流式输出即可：
+配合导出的 `useChatEngine` 组装流式会话：`appendContent` 逐段回写正文（状态自动进入 streaming，正文末尾出现流式光标，重解析按帧合并），`appendThinkContent` 写入思考内容（消息上方出现可折叠的思考块，流式期间自动展开、结束后可收起），`completeMessage` 收尾并自动记录回答用时。`regenerate` 事件里删掉旧回复后按上文重新流式输出即可：
 
 <DemoBlock>
   <eb-chatbot v-model="streamMsgs" :loading="streamLoading" height="420px" :show-tip="false" @send="onStreamSend" @regenerate="onStreamRegen" />
+</DemoBlock>
+
+## 停止生成与中断态
+
+`stoppable` 让发送钮在 `loading` 期间变成停止钮，点击抛 `stop`（AbortController 由你自持）。中断时把该条消息置为 `cancelled` 而不是 `error`：已流出的正文原地保留，下面挂一行「已停止生成」灰标，而不是整段被红色错误块替换。生成中输入框保持可打字，便于准备下一句；Enter 既不并发投递也不会误触中断。
+
+<DemoBlock>
+  <eb-chatbot
+    v-model="cancelMsgs"
+    :loading="cancelLoading"
+    stoppable
+    height="300px"
+    :show-tip="false"
+    @send="onCancelSend"
+    @stop="onCancelStop"
+  />
 </DemoBlock>
 
 <script setup>
@@ -64,7 +80,14 @@ function streamReply(prompt) {
   const msg = createAssistantMessage()
   appendThinkContent(msg.id, `收到「${prompt}」，先拆解问题，再组织语言作答。`)
   streamLoading.value = true
-  const reply = `关于「${prompt}」：这是一段模拟流式回复。真实场景中，把服务端返回的增量片段依次传给 appendContent，全部结束后调用 completeMessage，消息会自动带上回答用时。`
+  const reply = `关于「${prompt}」：这是一段模拟流式回复。真实场景中，把服务端返回的增量片段依次传给 appendContent，全部结束后调用 completeMessage，消息会自动带上回答用时。
+代码块自带语言标签与复制按钮：
+
+\`\`\`js
+function greet(name) {
+  return \`hello \${name}\`
+}
+\`\`\``
   let i = 0
   const timer = setInterval(() => {
     appendContent(msg.id, reply.slice(i, i + 2))
@@ -90,6 +113,51 @@ const onStreamRegen = (message) => {
   const prompt = list[userIdx].content
   list.splice(userIdx + 1)
   streamReply(prompt)
+}
+
+// ─── 停止生成与中断态 ───
+const cancelMsgs = ref([])
+const cancelLoading = ref(false)
+let cancelTimer = null
+let cancelId = ''
+
+function onCancelSend(text) {
+  cancelLoading.value = true
+  cancelId = `cancel-${Date.now()}`
+  const reply = `关于「${text}」的模拟回答会一段一段输出，持续数秒，方便你点右侧的停止钮中断。中断后已流出的正文会原地保留，下方补一行「已停止生成」灰标，而不是整段被红色错误块替换；同时输入框仍可继续打字，Enter 不会误触中断。`
+  let i = 0
+  const patch = (idx, extra) => {
+    const next = [...cancelMsgs.value]
+    next[idx] = { ...next[idx], ...extra }
+    cancelMsgs.value = next
+  }
+  cancelMsgs.value = [
+    ...cancelMsgs.value,
+    { id: cancelId, role: 'assistant', content: '', status: 'pending' },
+  ]
+  cancelTimer = setInterval(() => {
+    const idx = cancelMsgs.value.findIndex((m) => m.id === cancelId)
+    if (idx < 0) return clearInterval(cancelTimer)
+    i += 5
+    patch(idx, { content: reply.slice(0, i), status: 'streaming' })
+    if (i >= reply.length) {
+      clearInterval(cancelTimer)
+      cancelTimer = null
+      patch(idx, { status: 'done' })
+      cancelLoading.value = false
+    }
+  }, 120)
+}
+
+function onCancelStop() {
+  if (cancelTimer) {
+    clearInterval(cancelTimer)
+    cancelTimer = null
+  }
+  cancelLoading.value = false
+  cancelMsgs.value = cancelMsgs.value.map((m) =>
+    m.id === cancelId && m.status === 'streaming' ? { ...m, status: 'cancelled' } : m,
+  )
 }
 
 // ─── 头像、名称与纯文本 ───
@@ -296,14 +364,15 @@ const onSlotClear = () => {
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments? }', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },
   { name: 'placeholder', desc: '输入框占位文案', type: 'string', default: '输入消息，按 Enter 发送，Shift+Enter 换行' },
   { name: 'height / width', desc: '容器尺寸', type: 'string | number', default: '600px / 100%' },
-  { name: 'send-on-enter', desc: 'Enter 发送、Shift+Enter 换行；关闭后 Enter 换行', type: 'boolean', default: 'true' },
-  { name: 'max-length / show-word-count', desc: '输入上限与字数统计', type: 'number / boolean', default: '2000 / false' },
+  { name: 'send-on-enter', desc: 'Enter 发送、Shift+Enter 换行；关闭后 Enter 换行。输入法组字中的 Enter 始终交还输入法，不会误发', type: 'boolean', default: 'true' },
+  { name: 'max-length / show-word-count', desc: '输入上限（真正约束 textarea，传 0 不限长）与字数统计', type: 'number / boolean', default: '2000 / false' },
+  { name: 'stoppable', desc: '生成中发送钮切换为停止钮，点击抛 stop', type: 'boolean', default: 'false' },
   { name: 'allow-attachments / max-attachments', desc: '附件开关与上限', type: 'boolean / number', default: 'true / 5' },
   { name: 'show-thinking', desc: '是否展示消息的思考过程折叠块', type: 'boolean', default: 'true' },
   { name: 'actions', desc: '消息动作条自定义动作 { key, label, icon? }', type: 'array', default: '[]' },
@@ -316,6 +385,7 @@ const onSlotClear = () => {
 
 <ApiTable title="Chatbot Events" :rows="[
   { name: 'send', desc: '发送消息（文本 + 附件），回写 modelValue 完成闭环', type: '(text: string, attachments: array) => void', default: '—' },
+  { name: 'stop', desc: '点击停止钮（stoppable 且生成中），在此中断请求并把该条消息置为 cancelled', type: '() => void', default: '—' },
   { name: 'copy', desc: '消息复制（动作条透传）', type: '(message) => void', default: '—' },
   { name: 'regenerate', desc: '重新生成（动作条透传，由页面删旧回复并重新请求）', type: '(message) => void', default: '—' },
   { name: 'action', desc: 'actions 自定义动作点击', type: '(key: string, message) => void', default: '—' },

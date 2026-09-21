@@ -1,5 +1,5 @@
 <template>
-  <div class="eb-chat-sender">
+  <div class="eb-chat-sender" :aria-busy="loading ? 'true' : void 0">
     <div v-if="showAttachments && attachments.length" class="eb-chat-sender__attachments">
       <ChatAttachments 
         :attachments="attachments" 
@@ -8,11 +8,16 @@
       />
     </div>
     <div class="eb-chat-sender__input-wrapper">
-      <div class="eb-chat-sender__toolbar">
+      <div
+        v-if="allowAttachments || $slots.toolbar"
+        class="eb-chat-sender__toolbar"
+      >
         <button 
           v-if="allowAttachments"
           class="eb-chat-sender__tool-btn"
-          title="添加附件"
+          type="button"
+          :title="attachLabel"
+          :aria-label="attachLabel"
           :disabled="disabled || attachments.length >= maxAttachments"
           @click="triggerFileUpload"
         >
@@ -34,7 +39,9 @@
           class="eb-chat-sender__textarea"
           :placeholder="placeholder"
           :disabled="disabled"
+          :maxlength="maxlengthAttr"
           rows="1"
+          :aria-label="placeholder"
           @keydown="handleKeydown"
           @input="handleInput"
         />
@@ -45,10 +52,14 @@
         </span>
         <button 
           class="eb-chat-sender__send-btn"
-          :disabled="disabled || !canSend"
-          @click="handleSend"
+          :class="{ 'is-stop': isStopping }"
+          type="button"
+          :title="isStopping ? stopLabel : sendLabel"
+          :aria-label="isStopping ? stopLabel : sendLabel"
+          :disabled="sendBtnDisabled"
+          @click="handleSendClick"
         >
-          <eb-icon name="promotion" />
+          <eb-icon :name="isStopping ? 'stop' : 'promotion'" />
         </button>
       </div>
     </div>
@@ -60,6 +71,7 @@ import EbIcon from "../icon/index.vue"
 import { ref, computed, watch, nextTick } from "vue";
 import { generateId } from "./utils";
 import ChatAttachments from "./ChatAttachments.vue";
+import { isImeComposing } from "../../utils/events";
 import { getIconByNameSync } from "../icon/iconRegistry";
 const props = defineProps({
   modelValue: { type: String, required: false, default: "" },
@@ -72,18 +84,31 @@ const props = defineProps({
   showWordCount: { type: Boolean, required: false, default: false },
   minRows: { type: Number, required: false, default: 1 },
   maxRows: { type: Number, required: false, default: 6 },
-  sendOnEnter: { type: Boolean, required: false, default: true }
+  sendOnEnter: { type: Boolean, required: false, default: true },
+  /** loading 时发送钮切换为停止钮（emit stop）；与 EbAiPromptBox 同名同义 */
+  stoppable: { type: Boolean, required: false, default: false }
 });
-const emit = defineEmits(["update:modelValue", "send", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add"]);
 const Plus = getIconByNameSync("plus");
 const Promotion = getIconByNameSync("promotion");
+const attachLabel = "\u6DFB\u52A0\u9644\u4EF6";
+const sendLabel = "\u53D1\u9001";
+const stopLabel = "\u505C\u6B62\u751F\u6210";
 const textareaRef = ref();
 const fileInputRef = ref();
 const inputValue = ref(props.modelValue);
 const attachments = ref([]);
 const showAttachments = computed(() => props.allowAttachments);
+const isStopping = computed(() => props.loading && props.stoppable);
 const canSend = computed(() => {
   return inputValue.value.trim().length > 0 || attachments.value.length > 0;
+});
+// maxLength=0/未传视为不限长，否则真正绑到 textarea（此前只展示字数、不约束）
+const maxlengthAttr = computed(() => props.maxLength > 0 ? props.maxLength : void 0);
+const sendBtnDisabled = computed(() => {
+  if (props.disabled) return true;
+  if (isStopping.value) return false;
+  return !canSend.value || props.loading;
 });
 watch(() => props.modelValue, (val) => {
   inputValue.value = val;
@@ -112,13 +137,24 @@ function autoResize() {
   }
 }
 function handleKeydown(e) {
+  // 输入法组字中的 Enter 是「上屏候选词」，不是发送
+  if (isImeComposing(e)) return;
   if (e.key === "Enter" && !e.shiftKey && props.sendOnEnter) {
     e.preventDefault();
+    // 生成中：Enter 既不并发投递也不触中断（中断只走停止钮点击）
+    if (props.loading) return;
     handleSend();
   }
 }
+function handleSendClick() {
+  if (isStopping.value) {
+    emit("stop");
+    return;
+  }
+  handleSend();
+}
 function handleSend() {
-  if (!canSend.value || props.disabled) return;
+  if (props.disabled || props.loading || !canSend.value) return;
   const content = inputValue.value.trim();
   const atts = [...attachments.value];
   inputValue.value = "";
@@ -315,5 +351,14 @@ watch(() => props.loading, () => {
   background: var(--eb-fill-color-dark);
   color: var(--eb-text-color-placeholder);
   cursor: not-allowed;
+}
+
+/* 生成中：同一颗钮变停止态 */
+.eb-chat-sender__send-btn.is-stop {
+  background: var(--eb-text-color-primary);
+}
+
+.eb-chat-sender__send-btn.is-stop:hover:not(:disabled) {
+  background: var(--eb-text-color-regular);
 }
 </style>

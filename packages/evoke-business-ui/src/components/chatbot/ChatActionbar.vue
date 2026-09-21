@@ -1,9 +1,11 @@
 <template>
-  <div class="eb-chat-actionbar">
+  <div class="eb-chat-actionbar" role="group" :aria-label="groupLabel">
     <button 
       v-if="showCopy"
       class="eb-chat-actionbar__btn"
-      :title="copied ? '已复制' : '复制'"
+      type="button"
+      :title="copied ? copiedLabel : copyLabel"
+      :aria-label="copied ? copiedLabel : copyLabel"
       @click="handleCopy"
     >
       <eb-icon :name="copied ? 'check' : 'copy-document'" />
@@ -11,7 +13,9 @@
     <button 
       v-if="showRegenerate && message?.role === 'assistant'"
       class="eb-chat-actionbar__btn"
-      title="重新生成"
+      type="button"
+      :title="regenerateLabel"
+      :aria-label="regenerateLabel"
       @click="handleRegenerate"
     >
       <eb-icon name="refresh-right" />
@@ -20,7 +24,9 @@
       v-for="action in actions" 
       :key="action.key"
       class="eb-chat-actionbar__btn"
+      type="button"
       :title="action.label"
+      :aria-label="action.label"
       @click="handleCustomAction(action)"
     >
       <eb-icon v-if="action.icon" :name="String(action.icon)" />
@@ -44,6 +50,10 @@ const emit = defineEmits(["copy", "regenerate", "action"]);
 const Check = getIconByNameSync("check");
 const CopyDocument = getIconByNameSync("copy-document");
 const RefreshRight = getIconByNameSync("refresh-right");
+const groupLabel = "\u6D88\u606F\u52A8\u4F5C";
+const copyLabel = "\u590D\u5236";
+const copiedLabel = "\u5DF2\u590D\u5236";
+const regenerateLabel = "\u91CD\u65B0\u751F\u6210";
 const copied = ref(false);
 function getIconComponent(iconName) {
   return getIconByNameSync(iconName);
@@ -92,6 +102,21 @@ function handleCustomAction(action) {
   pointer-events: auto;
 }
 
+/* 键盘用户 Tab 进来必须看得见；触屏没有 hover，常显 */
+.eb-chat-actionbar:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .eb-chat-actionbar {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
 .eb-chat-actionbar__btn {
   display: inline-flex;
   align-items: center;
@@ -112,5 +137,10 @@ function handleCustomAction(action) {
 .eb-chat-actionbar__btn:hover {
   background: var(--eb-fill-color);
   color: var(--eb-text-color-primary);
+}
+
+.eb-chat-actionbar__btn:focus-visible {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 1px;
 }
 </style>

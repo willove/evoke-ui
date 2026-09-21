@@ -24,8 +24,8 @@
 ## API
 
 <ApiTable title="AiConsole Props" :rows="[
-  { name: 'engine', desc: '外部 useChatEngine 实例（受控）；缺省内部创建', type: 'object', default: 'null' },
-  { name: 'transport', desc: '模型调用入口：流式回写经引擎方法驱动', type: '(content, attachments, context) => void | Promise', default: 'null' },
+  { name: 'engine', desc: '外部 useChatEngine 实例（受控）；缺省内部创建。注意：传外部 engine 时本组件的 transport 不参与调用，模型入口即引擎自身的 onSend', type: 'object', default: 'null' },
+  { name: 'transport', desc: '模型调用入口：流式回写经引擎方法驱动（仅内部自建引擎时生效）', type: '(content, attachments, context) => void | Promise', default: 'null' },
   { name: 'welcome', desc: '欢迎区：title / highlight（title 中的渐变高亮词）/ subtitle', type: 'object', default: 'null' },
   { name: 'examples', desc: '示例问题：string 或 { text, prompt? }', type: 'array', default: '[]' },
   { name: 'exampleAction', desc: '示例点击行为：send 直发 / fill 仅填充', type: 'send | fill', default: 'send' },
@@ -36,6 +36,9 @@
   { name: 'allowAttachments / maxAttachments / maxLength / sendOnEnter / stoppable', desc: '输入台行为，同 AiPromptBox', type: '—', default: '—' },
   { name: 'showThinking', desc: '会话消息展示思考过程', type: 'boolean', default: 'true' },
   { name: 'renderMode', desc: '消息渲染模式', type: 'markdown | text', default: 'markdown' },
+  { name: 'userName / assistantName', desc: '会话区双方显示名（同时决定默认头像首字）', type: 'string', default: '我 / AI助手' },
+  { name: 'avatarUser / avatarAssistant', desc: '会话区双方头像图片地址', type: 'string', default: '' },
+  { name: 'actions', desc: '消息动作条自定义动作 { key, label, icon? }', type: 'array', default: '[]' },
   { name: 'autoScroll', desc: '新消息自动滚动到底部', type: 'boolean', default: 'true' },
   { name: 'chatHeight', desc: '会话区最大高度', type: 'number | string', default: '420' },
   { name: 'showTip', desc: '展示「内容由 AI 生成」提示', type: 'boolean', default: 'true' },
@@ -45,7 +48,7 @@
   { name: 'send', desc: '发送（载荷同 AiPromptBox）', type: '(payload) => void', default: '—' },
   { name: 'stop', desc: '停止生成', type: '() => void', default: '—' },
   { name: 'example-click', desc: '点击示例问题', type: '(example) => void', default: '—' },
-  { name: 'copy / action', desc: '消息复制 / 自定义动作（转发自会话区）', type: '(payload) => void', default: '—' },
+  { name: 'copy / regenerate / action', desc: '消息复制 / 重新生成（内部已驱动引擎重发，此处仅供埋点）/ 自定义动作，均由会话区转发', type: '(message) => void / (key, message) => void', default: '—' },
   { name: 'quota-click / settings-click', desc: '额度 / 设置点击', type: '() => void', default: '—' },
 ]" />
 

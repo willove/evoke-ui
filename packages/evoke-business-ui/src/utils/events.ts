@@ -29,6 +29,15 @@ export function isEnter(e?: KeyboardEvent | null): boolean {
   return e?.key === 'Enter'
 }
 
+/**
+ * 该键盘事件是否来自输入法组字（composition）过程。
+ * Enter 提交路径必须过这一关：中文/日文输入法用 Enter 上屏候选词，
+ * 不拦截等价于「选词即发送」。Safari 旧版不上报 isComposing，用 keyCode 229 兜底。
+ */
+export function isImeComposing(e?: KeyboardEvent | null): boolean {
+  return !!e && (e.isComposing === true || e.keyCode === 229)
+}
+
 /** 判断键盘事件是否为 ESC */
 export function isEsc(e?: KeyboardEvent | null): boolean {
   return e?.key === 'Escape'

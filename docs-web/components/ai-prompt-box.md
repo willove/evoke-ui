@@ -99,7 +99,7 @@ const generating = ref(false)
 | allowAttachments / maxAttachments | 允许附件 / 数量上限 | boolean / number | `true` / `5` |
 | maxLength / showWordCount | 输入长度上限（绑到 textarea maxlength，字数统计同源）/ 字数统计；未传则不限长 | number / boolean | — / `false` |
 | maxRows | 输入区最大行数 | number | `8` |
-| sendOnEnter | Enter 发送、Shift+Enter 换行 | boolean | `true` |
+| sendOnEnter | Enter 发送、Shift+Enter 换行；输入法组字中的 Enter 交还输入法，不会误发 | boolean | `true` |
 | stoppable | loading 时发送钮切换为停止钮 | boolean | `false` |
 
 ### 事件

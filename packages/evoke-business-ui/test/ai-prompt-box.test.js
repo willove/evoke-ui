@@ -224,3 +224,30 @@ describe('EbAiPromptBox 额度与其他', () => {
     wrapper.unmount()
   })
 })
+
+// ── P0 回归：输入法组字与 maxLength ──
+
+describe('EbAiPromptBox 组字与限长', () => {
+  it('isComposing 中的 Enter 不发送', async () => {
+    const wrapper = mountBox({ modelValue: '' })
+    const textarea = wrapper.find('.eb-ai-prompt-box__textarea')
+    await textarea.setValue('中文输入')
+    await textarea.trigger('keydown', { key: 'Enter', isComposing: true })
+    expect(wrapper.emitted('send')).toBeUndefined()
+    await textarea.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('send')).toHaveLength(1)
+    wrapper.unmount()
+  })
+
+  it('maxLength 未传时不限长（与 evoke-ui 侧同语义）', () => {
+    const wrapper = mountBox({ modelValue: '' })
+    expect(wrapper.find('.eb-ai-prompt-box__textarea').attributes('maxlength')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('maxLength 传入后真正约束 textarea', () => {
+    const wrapper = mountBox({ modelValue: '', maxLength: 50 })
+    expect(wrapper.find('.eb-ai-prompt-box__textarea').attributes('maxlength')).toBe('50')
+    wrapper.unmount()
+  })
+})

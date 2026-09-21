@@ -5,6 +5,7 @@ import Chatbot from '../src/components/chatbot/Chatbot.vue'
 import ChatMessage from '../src/components/chatbot/ChatMessage.vue'
 import ChatAttachments from '../src/components/chatbot/ChatAttachments.vue'
 import ChatSender from '../src/components/chatbot/ChatSender.vue'
+import ChatMarkdown from '../src/components/chatbot/ChatMarkdown.vue'
 import { useChatEngine } from '../src/components/chatbot/useChatEngine'
 import {
   generateId,
@@ -348,9 +349,24 @@ describe('Chatbot 行为', () => {
     expect(w.emitted('send')[0][0]).toBe('帮我看下这份报表')
   })
 
-  it('loading 时发送区禁用', () => {
-    const w = mount(Chatbot, { props: { modelValue: [], loading: true } })
-    expect(w.find('.eb-chat-sender__textarea').attributes('disabled')).toBeDefined()
+  it('loading 时输入区仍可打字，发送钮变停止态', () => {
+    const w = mount(Chatbot, { props: { modelValue: [], loading: true, stoppable: true } })
+    expect(w.find('.eb-chat-sender__textarea').attributes('disabled')).toBeUndefined()
+    const btn = w.find('.eb-chat-sender__send-btn')
+    expect(btn.classes()).toContain('is-stop')
+    expect(btn.attributes('disabled')).toBeUndefined()
+  })
+
+  it('stop：点停止钮 emit stop，Enter 不触中断', async () => {
+    const w = mount(Chatbot, { props: { modelValue: [], loading: true, stoppable: true } })
+    await w.find('.eb-chat-sender__send-btn').trigger('click')
+    expect(w.emitted('stop')).toHaveLength(1)
+
+    const textarea = w.find('.eb-chat-sender__textarea')
+    await textarea.setValue('x')
+    await textarea.trigger('keydown', { key: 'Enter' })
+    expect(w.emitted('stop')).toHaveLength(1)
+    expect(w.emitted('send')).toBeUndefined()
   })
 
   it('assistant 完成态消息的动作条事件一路转发到根', async () => {
@@ -408,5 +424,169 @@ describe('ChatSender 行为', () => {
     expect(w.find('.eb-chat-sender__send-btn').attributes('disabled')).toBeDefined()
     await w.find('.eb-chat-sender__send-btn').trigger('click')
     expect(w.emitted('send')).toBeUndefined()
+  })
+})
+
+// ── P0 修补回归 ──
+
+describe('P0 回归：输入台', () => {
+  it('IME 组字中的 Enter 不发送（isComposing）', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '' } })
+    const textarea = w.find('.eb-chat-sender__textarea')
+    await textarea.setValue('中文输入')
+    await textarea.trigger('keydown', { key: 'Enter', isComposing: true })
+    expect(w.emitted('send')).toBeUndefined()
+  })
+
+  it('IME 组字中的 Enter 不发送（Safari keyCode 229 兜底）', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '' } })
+    const textarea = w.find('.eb-chat-sender__textarea')
+    await textarea.setValue('にほんご')
+    await textarea.trigger('keydown', { key: 'Enter', keyCode: 229 })
+    expect(w.emitted('send')).toBeUndefined()
+  })
+
+  it('maxLength 真正绑到 textarea；0 视为不限长', () => {
+    const w = mount(ChatSender, { props: { modelValue: '', maxLength: 30 } })
+    expect(w.find('.eb-chat-sender__textarea').attributes('maxlength')).toBe('30')
+    const w2 = mount(ChatSender, { props: { modelValue: '', maxLength: 0 } })
+    expect(w2.find('.eb-chat-sender__textarea').attributes('maxlength')).toBeUndefined()
+  })
+})
+
+describe('P0 回归：消息体', () => {
+  const userMsg = { id: 'u1', role: 'user', content: '你好 **世界**', status: 'done' }
+
+  it('markdown 模式下用户消息带气泡容器（此前只有纯文本模式有）', () => {
+    const w = mount(ChatMessage, { props: { message: userMsg, renderMode: 'markdown' } })
+    expect(w.find('.eb-chat-message__bubble').exists()).toBe(true)
+    expect(w.find('.eb-chat-message__bubble .eb-chat-markdown').exists()).toBe(true)
+  })
+
+  it('用户消息动作条只有复制，无重新生成', () => {
+    const w = mount(ChatMessage, { props: { message: userMsg } })
+    const btns = w.findAll('.eb-chat-actionbar__btn')
+    expect(btns.length).toBe(1)
+  })
+
+  it('streaming：拖尾套在最后一个文字块内，且不切断结构', async () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 's1', role: 'assistant', content: '正在输出这段回答', status: 'streaming' } },
+    })
+    // 流式路径按帧合并，等一帧
+    await new Promise((r) => requestAnimationFrame(() => r()))
+    await w.vm.$nextTick()
+    const shimmer = w.find('.eb-chat-shimmer')
+    expect(shimmer.exists()).toBe(true)
+    // 不再另起一行：拖尾的父节点就是正文 <p>
+    expect(shimmer.element.parentElement.tagName).toBe('P')
+    expect(w.find('.eb-chat-message__bubble').text()).toContain('正在输出这段回答')
+  })
+
+  it('streaming：拖尾不破坏行内结构（加粗/链接完整）', async () => {
+    const w = mount(ChatMessage, {
+      props: {
+        message: {
+          id: 's3', role: 'assistant', status: 'streaming',
+          content: '说明文字，后面是**加粗重点**和[链接](https://example.com)',
+        },
+      },
+    })
+    await new Promise((r) => requestAnimationFrame(() => r()))
+    await w.vm.$nextTick()
+    expect(w.find('strong').text()).toBe('加粗重点')
+    const link = w.find('.eb-chat-markdown a')
+    expect(link.attributes('href')).toBe('https://example.com')
+    expect(w.find('.eb-chat-shimmer').exists()).toBe(true)
+  })
+
+  it('streaming：纯文本模式也带拖尾', () => {
+    const w = mount(ChatMessage, {
+      props: {
+        message: { id: 's4', role: 'assistant', content: '纯文本模式的长回答内容一二三四五六七八', status: 'streaming' },
+        renderMode: 'text',
+      },
+    })
+    const shimmer = w.find('.eb-chat-shimmer')
+    expect(shimmer.exists()).toBe(true)
+    expect(w.find('.eb-chat-message__text').text()).toBe('纯文本模式的长回答内容一二三四五六七八')
+  })
+
+  it('非流式不带拖尾', async () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 's2', role: 'assistant', content: '已完成', status: 'done' } },
+    })
+    await w.vm.$nextTick()
+    expect(w.find('.eb-chat-shimmer').exists()).toBe(false)
+  })
+
+  it('cancelled：保留正文并显示已停止，不走 error 红块', () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 'c1', role: 'assistant', content: '已经输出的一半', status: 'cancelled' } },
+    })
+    expect(w.find('.eb-chat-message__error').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__bubble').text()).toContain('已经输出的一半')
+    expect(w.find('.eb-chat-message__cancelled').text()).toContain('已停止生成')
+  })
+
+  it('error 态挂 role=alert', () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 'e2', role: 'assistant', status: 'error', error: '超时' } },
+    })
+    expect(w.find('.eb-chat-message__error').attributes('role')).toBe('alert')
+  })
+})
+
+describe('P0 回归：代码块工具条与消息列表无障碍', () => {
+  it('代码块输出语言标签与复制按钮', () => {
+    const html = renderChatMarkdown('```js\nconst a = 1\n```')
+    expect(html).toContain('eb-chat-code__lang')
+    expect(html).toContain('eb-chat-code__copy')
+    expect(html).toContain('aria-label')
+  })
+
+  it('ChatMarkdown 点击复制按钮走 clipboard，且不把原文塞进 data-*', async () => {
+    const w = mount(ChatMarkdown, { props: { content: '```js\nconst a = 1\n```' } })
+    await w.vm.$nextTick()
+    expect(w.html()).not.toContain('data-code')
+    const desc = Object.getOwnPropertyDescriptor(navigator, 'clipboard')
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    try {
+      await w.find('.eb-chat-code__copy').trigger('click')
+      await new Promise((r) => setTimeout(r, 0))
+      expect(writeText).toHaveBeenCalledWith('const a = 1')
+    } finally {
+      if (desc) Object.defineProperty(navigator, 'clipboard', desc)
+      else delete navigator.clipboard
+    }
+  })
+
+  it('ChatList 暴露 role=log 与流式播报语义', () => {
+    const w = mount(Chatbot, {
+      props: { modelValue: [{ id: 'a1', role: 'assistant', content: 'hi', status: 'done' }], showTip: false },
+    })
+    const list = w.find('.eb-chat-list')
+    expect(list.attributes('role')).toBe('log')
+    expect(list.attributes('aria-live')).toBe('polite')
+    expect(list.attributes('aria-relevant')).toBe('additions')
+  })
+
+  it('autoScroll=false 时不自动播报', () => {
+    const w = mount(Chatbot, {
+      props: { modelValue: [{ id: 'a1', role: 'assistant', content: 'hi', status: 'done' }], autoScroll: false, showTip: false },
+    })
+    expect(w.find('.eb-chat-list').attributes('aria-live')).toBe('off')
+  })
+
+  it('思考块为 button 语义并带 aria-expanded', async () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 't1', role: 'assistant', content: '答', status: 'done', thinkContent: '因' } },
+    })
+    const header = w.find('.eb-chat-thinking__header')
+    expect(header.attributes('type')).toBe('button')
+    expect(header.attributes('aria-expanded')).toBeDefined()
+    await header.trigger('click')
+    expect(header.attributes('aria-expanded')).toBe('false')
   })
 })

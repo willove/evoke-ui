@@ -41,6 +41,7 @@
  */
 import { computed, ref } from 'vue'
 import { inBrowser } from '../../utils/dom'
+import { isImeComposing } from '../../utils/events'
 
 defineOptions({ name: 'EbMention' })
 
@@ -135,6 +136,8 @@ function onInput(e) {
 }
 
 function onKeydown(e) {
+  // 组字中的 Enter/方向键属于输入法，不能当成选中候选项
+  if (isImeComposing(e)) return
   if (!panelVisible.value || !filteredOptions.value.length) return
   if (e.key === 'ArrowDown') {
     e.preventDefault()

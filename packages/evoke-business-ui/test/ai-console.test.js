@@ -157,3 +157,72 @@ describe('EbAiConsole 引擎接线', () => {
     wrapper.unmount()
   })
 })
+
+// ── 会话区接线回归（此前无覆盖，三处缺陷因此漏过） ──
+
+describe('EbAiConsole 会话区接线', () => {
+  async function withConversation(extraProps = {}) {
+    const sent = []
+    const wrapper = mountConsole({
+      transport: (content) => { sent.push(content) },
+      ...extraProps,
+    })
+    const eng = wrapper.vm.engine
+    eng.addUserMessage('原始提问', [])
+    const a = eng.createAssistantMessage()
+    eng.appendContent(a.id, '回答')
+    eng.completeMessage(a.id)
+    await wrapper.vm.$nextTick()
+    return { eng, sent, wrapper }
+  }
+
+  it('重新生成：动作条点击真的重跑 transport（对象当 id 传曾是死按钮）', async () => {
+    const { eng, sent, wrapper } = await withConversation()
+    const assistant = wrapper.findAllComponents({ name: 'ChatMessage' })
+      .find((m) => m.props('message')?.role === 'assistant')
+    const btns = assistant.findAll('.eb-chat-actionbar__btn')
+    await btns[1].trigger('click')
+    await flush(wrapper, 30)
+    expect(sent).toEqual(['原始提问'])
+    // 截断后由引擎重新追加一轮用户提问
+    expect(eng.messages.value.at(-1).role).toBe('user')
+    expect(wrapper.emitted('regenerate')?.[0][0].content).toBe('回答')
+    wrapper.unmount()
+  })
+
+  it('action 转发保留 (key, message) 两参', async () => {
+    const { wrapper } = await withConversation({ actions: [{ key: 'collect', label: '收藏' }] })
+    const list = wrapper.findComponent({ name: 'ChatList' })
+    const target = { id: 'a', role: 'assistant', content: 'x', status: 'done' }
+    list.vm.$emit('action', 'collect', target)
+    await wrapper.vm.$nextTick()
+    const evt = wrapper.emitted('action')
+    expect(evt[0]).toEqual(['collect', target])
+    wrapper.unmount()
+  })
+
+  it('头像与昵称透传到会话区（此前 ChatList 未接这几个 prop）', async () => {
+    const { wrapper } = await withConversation({
+      userName: '王工',
+      assistantName: '小 Ev',
+      avatarAssistant: 'https://example.com/a.png',
+    })
+    const assistant = wrapper.findAllComponents({ name: 'ChatMessage' })
+      .find((m) => m.props('message')?.role === 'assistant')
+    expect(assistant.props('assistantName')).toBe('小 Ev')
+    expect(assistant.props('avatarAssistant')).toBe('https://example.com/a.png')
+    wrapper.unmount()
+  })
+
+  it('已知边界：传外部 engine 时 Console 的 transport 不参与（引擎自带 onSend 才生效）', async () => {
+    const external = useChatEngine({})
+    const onSend = vi.fn()
+    const wrapper = mountConsole({ engine: external, transport: onSend })
+    await flush(wrapper)
+    await wrapper.findAll('.eb-ai-console__example')[0].trigger('click')
+    await flush(wrapper)
+    expect(external.messages.value.length).toBe(1)
+    expect(onSend).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+})

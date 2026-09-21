@@ -34,9 +34,14 @@
         :show-thinking="showThinking"
         :render-mode="renderMode"
         :auto-scroll="autoScroll"
+        :avatar-user="avatarUser"
+        :avatar-assistant="avatarAssistant"
+        :user-name="userName"
+        :assistant-name="assistantName"
+        :actions="actions"
         @copy="emit('copy', $event)"
         @regenerate="handleRegenerate"
-        @action="emit('action', $event)"
+        @action="handleAction"
       >
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
       </ChatList>
@@ -88,7 +93,7 @@
  * 缺省内部创建；transport(content, attachments, context) 由使用方注入模型调用，
  * context = { scene, capabilities, model }（PromptBox 的完整上下文）。
  */
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import EbIcon from '../icon/index.vue'
 import EbAiPromptBox from '../ai-prompt-box/index.vue'
 import ChatList from '../chatbot/ChatList.vue'
@@ -127,6 +132,14 @@ const props = defineProps({
   showThinking: { type: Boolean, default: true },
   renderMode: { type: String, default: 'markdown' },
   autoScroll: { type: Boolean, default: true },
+  /** 双方显示名（同时决定默认头像首字） */
+  userName: { type: String, default: '我' },
+  assistantName: { type: String, default: 'AI助手' },
+  /** 头像图片地址 */
+  avatarUser: { type: String, default: '' },
+  avatarAssistant: { type: String, default: '' },
+  /** 消息动作条自定义动作 { key, label, icon? } */
+  actions: { type: Array, default: () => [] },
   /** 会话区最大高度（px 或 CSS 值） */
   chatHeight: { type: [Number, String], default: 420 },
   showTip: { type: Boolean, default: true },
@@ -136,6 +149,7 @@ const emit = defineEmits([
   'send',
   'stop',
   'copy',
+  'regenerate',
   'action',
   'quota-click',
   'settings-click',
@@ -190,20 +204,18 @@ function pickExample(ex) {
   })
 }
 
-function handleRegenerate(messageId) {
-  engineRef.value.regenerateMessage(messageId)
+// 会话区转发上来的是消息对象，引擎要的是 id——此前直接把对象当 id 传，
+// findIndex 永不命中，「重新生成」是个死按钮
+function handleRegenerate(message) {
+  engineRef.value.regenerateMessage(message?.id);
+  emit('regenerate', message);
+}
+// action 是 (key, message) 两参，$event 只接得住第一个
+function handleAction(key, message) {
+  emit('action', key, message);
 }
 
-// loading 结束后若最后一条是错误外的完成态，聚焦回输入台（轻微体验，可忽略）
-
 const listRef = ref(null)
-
-watch(
-  () => props.engine,
-  () => {
-    // 引擎替换（受控场景）后输入台上下文保持不变
-  }
-)
 
 defineExpose({
   engine: engineRef,

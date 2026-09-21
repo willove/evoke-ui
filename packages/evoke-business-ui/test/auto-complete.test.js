@@ -34,7 +34,7 @@ describe('EbAutoComplete default-active-first-option', () => {
     for (const o of options) expect(o.classList.contains('is-highlight')).toBe(false)
     // 输入本身会经 v-model 链回填一次，记录基线后再验证 Enter 无新增
     const updatesBefore = wrapper.emitted('update:modelValue')?.length ?? 0
-    await wrapper.find('input').trigger('keydown.enter')
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('select')).toBeUndefined()
     expect(wrapper.emitted('update:modelValue')).toHaveLength(updatesBefore)
     wrapper.unmount()
@@ -46,7 +46,7 @@ describe('EbAutoComplete default-active-first-option', () => {
     const options = menuOptions()
     expect(options[0].classList.contains('is-highlight')).toBe(true)
     expect(options[0].getAttribute('aria-selected')).toBe('true')
-    await wrapper.find('input').trigger('keydown.enter')
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('select')[0][0]).toEqual({ value: 'Apple' })
     expect(wrapper.emitted('select')[0][1]).toBe(0)
     // 最后一次回填来自 Enter 选中（输入链路先回填过 'a'）
@@ -113,7 +113,7 @@ describe('EbAutoComplete 空态与卸载清理', () => {
     expect(empty.textContent.trim()).toBe('无匹配数据')
     expect(menuOptions()).toHaveLength(0)
     // 空态下 Enter 不选中
-    await wrapper.find('input').trigger('keydown.enter')
+    await wrapper.find('input').trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('select')).toBeUndefined()
     // 改回有结果：空态消失
     await type(wrapper, 'App')
@@ -158,10 +158,31 @@ describe('EbAutoComplete a11y', () => {
     expect(options[0].getAttribute('role')).toBe('option')
     // 高亮未激活时无 aria-activedescendant
     expect(input.attributes('aria-activedescendant')).toBeUndefined()
-    await input.trigger('keydown.down')
+    await input.trigger('keydown', { key: 'ArrowDown' })
     await nextTick()
     expect(input.attributes('aria-activedescendant')).toBe(options[0].id)
     expect(options[0].classList.contains('is-highlight')).toBe(true)
+    wrapper.unmount()
+  })
+})
+
+// ── IME 组字守卫（原 .enter.prevent 会吃掉候选词上屏）──
+describe('EbAutoComplete 输入法组字', () => {
+  it('isComposing 中的 Enter 既不选中也不 preventDefault', async () => {
+    const wrapper = mountAC({ modelValue: '', suggestions: ['Apple', 'Banana'] })
+    await type(wrapper, 'a')
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    // 方向键导航先确认可用
+    expect(wrapper.find('input').attributes('aria-activedescendant')).toBeTruthy()
+
+    const before = wrapper.emitted('select')?.length ?? 0
+    const ev = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+    Object.defineProperty(ev, 'isComposing', { value: true })
+    wrapper.find('input').element.dispatchEvent(ev)
+    await new Promise((r) => setTimeout(r, 10))
+    expect(wrapper.emitted('select')?.length ?? 0).toBe(before)
+    expect(ev.defaultPrevented).toBe(false)
     wrapper.unmount()
   })
 })

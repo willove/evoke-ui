@@ -79,6 +79,13 @@ function useChatEngine(options = {}) {
   function setMessageError(id, error) {
     updateMessage(id, { status: "error", error, thinking: false });
   }
+  /**
+   * 中断生成：保留已流出的正文，状态记 cancelled。
+   * 走 setMessageError 会把半截回答整体换成红色错误块，那是错的表达。
+   */
+  function cancelMessage(id) {
+    updateMessage(id, { status: "cancelled", thinking: false });
+  }
   function removeMessage(id) {
     const index = messages.value.findIndex((m) => m.id === id);
     if (index > -1) {
@@ -134,6 +141,7 @@ function useChatEngine(options = {}) {
     stopThinking,
     completeMessage,
     setMessageError,
+    cancelMessage,
     removeMessage,
     clearMessages,
     sendMessage,

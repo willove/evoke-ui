@@ -38,14 +38,16 @@
           ref="senderRef"
           v-model="inputValue"
           :placeholder="placeholder"
-          :disabled="disabled || loading"
+          :disabled="disabled"
           :loading="loading"
+          :stoppable="stoppable"
           :allow-attachments="allowAttachments"
           :max-attachments="maxAttachments"
           :max-length="maxLength"
           :show-word-count="showWordCount"
           :send-on-enter="sendOnEnter"
           @send="handleSend"
+          @stop="handleStop"
           @attachment-add="handleAttachmentAdd"
         >
           <template v-if="$slots['sender-toolbar']" #toolbar>
@@ -90,9 +92,11 @@ const props = defineProps({
   renderMode: { type: String, required: false, default: "markdown" },
   autoScroll: { type: Boolean, required: false, default: true },
   showTip: { type: Boolean, required: false, default: true },
+  /** 生成中发送钮切换为停止钮（emit stop）；AbortController 由使用方自持 */
+  stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "copy", "regenerate", "action", "attachment-add"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "attachment-add"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -135,6 +139,9 @@ function handleSend(content, attachments) {
 }
 function handleCopy(message) {
   emit("copy", message);
+}
+function handleStop() {
+  emit("stop");
 }
 function handleRegenerate(message) {
   emit("regenerate", message);

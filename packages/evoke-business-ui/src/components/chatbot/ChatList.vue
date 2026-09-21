@@ -2,11 +2,15 @@
   <div 
     ref="listRef"
     class="eb-chat-list"
+    role="log"
+    :aria-live="autoScroll ? 'polite' : 'off'"
+    aria-relevant="additions"
+    :aria-label="listLabel"
     @scroll="handleScroll"
   >
     <div v-if="!messages || messages.length === 0" class="eb-chat-list__empty">
       <slot name="empty">
-        <EbEmpty description="暂无对话消息" />
+        <EbEmpty :description="emptyDescription" />
       </slot>
     </div>
     <div v-else class="eb-chat-list__messages">
@@ -32,6 +36,9 @@
       <button 
         v-show="showBackToBottom"
         class="eb-chat-list__backtop"
+        type="button"
+        :title="backToBottomLabel"
+        :aria-label="backToBottomLabel"
         @click="scrollToBottom(true)"
       >
         <eb-icon name="arrow-down" />
@@ -59,11 +66,15 @@ const props = defineProps({
 });
 const emit = defineEmits(["copy", "regenerate", "action", "scroll"]);
 const ArrowDown = getIconByNameSync("arrow-down");
+const listLabel = "\u5BF9\u8BDD\u6D88\u606F";
+const emptyDescription = "\u6682\u65E0\u5BF9\u8BDD\u6D88\u606F";
+const backToBottomLabel = "\u56DE\u5230\u5BF9\u8BDD\u5E95\u90E8";
 const listRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);
 const forceFollow = ref(false);
 const showBackToBottom = ref(false);
+let scrollScheduled = false;
 const isNearBottom = computed(() => {
   if (!listRef.value) return true;
   const { scrollTop, scrollHeight, clientHeight } = listRef.value;
@@ -100,7 +111,17 @@ function scrollToBottom(smooth = false) {
 function smartScroll() {
   if (!props.autoScroll) return;
   if (userPinned.value && !forceFollow.value) return;
-  scrollToBottom(false);
+  // 流式回写每来一片段就触发一次，这里按帧合并，避免逐 token 强制布局
+  if (scrollScheduled) return;
+  scrollScheduled = true;
+  nextTick(() => {
+    requestAnimationFrame(() => {
+      scrollScheduled = false;
+      if (!listRef.value) return;
+      listRef.value.scrollTop = listRef.value.scrollHeight;
+      userPinned.value = false;
+    });
+  });
 }
 function handleCopy(message) {
   emit("copy", message);
@@ -111,14 +132,10 @@ function handleRegenerate(message) {
 function handleAction(key, message) {
   emit("action", key, message);
 }
+// 单一深监听：内容增量与新增消息都覆盖（此前 length 与深监听双触发，逐 token 滚两次）
 watch(() => props.messages, () => {
   smartScroll();
 }, { deep: true });
-watch(() => props.messages?.length, () => {
-  nextTick(() => {
-    smartScroll();
-  });
-});
 onMounted(() => {
   nextTick(() => {
     scrollToBottom(false);

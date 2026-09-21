@@ -69,6 +69,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import EbIcon from '../icon/index.vue'
 import { useLockScroll } from '../../composables/useLockScroll'
+import { isImeComposing } from '../../utils/events'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -149,6 +150,8 @@ function scrollActiveIntoView() {
 }
 
 function onKeydown(e) {
+  // 组字中的 Enter 是上屏候选词，不是执行命令
+  if (isImeComposing(e)) return
   const n = flat.value.length
   if (e.key === 'ArrowDown') {
     e.preventDefault()

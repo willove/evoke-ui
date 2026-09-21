@@ -36,21 +36,31 @@
           :content="message?.thinkContent"
           :thinking="message?.thinking"
         />
-        <div v-if="message?.status === 'pending' || (message?.thinking && !message?.content)" class="eb-chat-message__loading">
+        <div v-if="awaitingReply" class="eb-chat-message__loading">
           <ChatLoading />
         </div>
         <template v-else-if="message?.status === 'error'">
-          <div class="eb-chat-message__error">
+          <div class="eb-chat-message__error" role="alert">
             <eb-icon name="warning-filled" />
-            <span>{{ message?.error || '消息发送失败' }}</span>
+            <span>{{ message?.error || errorMessage }}</span>
           </div>
         </template>
-        <template v-else-if="message?.content">
-          <ChatMarkdown v-if="renderMode === 'markdown'" :content="message.content" />
-          <div v-else class="eb-chat-message__text">{{ message.content }}</div>
+        <template v-else-if="hasBody">
+          <div class="eb-chat-message__bubble">
+            <ChatMarkdown
+              v-if="renderMode === 'markdown'"
+              :content="message.content"
+              :streaming="isStreaming"
+            />
+            <div v-else class="eb-chat-message__text">{{ textHead }}<span v-if="isStreaming" class="eb-chat-shimmer">{{ textTail }}</span></div>
+          </div>
+          <div v-if="message?.status === 'cancelled'" class="eb-chat-message__cancelled">
+            <eb-icon name="stop" />
+            <span>{{ cancelledMessage }}</span>
+          </div>
         </template>
         <ChatActionbar 
-          v-if="message?.role === 'assistant' && message?.status === 'done'"
+          v-if="showActions"
           :class="{ 'is-visible': hovered }"
           :message="message"
           :actions="actions"
@@ -86,7 +96,30 @@ const props = defineProps({
 const emit = defineEmits(["copy", "regenerate", "action"]);
 const WarningFilled = getIconByNameSync("warning-filled");
 const Stopwatch = getIconByNameSync("stopwatch");
+const errorMessage = "\u6D88\u606F\u53D1\u9001\u5931\u8D25";
+const cancelledMessage = "\u5DF2\u505C\u6B62\u751F\u6210";
 const hovered = ref(false);
+const awaitingReply = computed(() => {
+  const m = props.message;
+  return m?.status === "pending" || (m?.thinking && !m?.content);
+});
+const hasBody = computed(() => !!props.message?.content);
+const isStreaming = computed(() => props.message?.status === "streaming");
+// 纯文本模式没有 ChatMarkdown 那套 HTML 尾巴处理，这里按码点切出拖尾段
+const SHIMMER_TAIL = 16;
+const textParts = computed(() => {
+  const chars = Array.from(props.message?.content || "");
+  if (!isStreaming.value) return { head: chars.join(""), tail: "" };
+  const from = Math.max(0, chars.length - SHIMMER_TAIL);
+  return { head: chars.slice(0, from).join(""), tail: chars.slice(from).join("") };
+});
+const textHead = computed(() => textParts.value.head);
+const textTail = computed(() => textParts.value.tail);
+// user 也应有复制；regenerate 仍由 ChatActionbar 按 role 收敛到 assistant
+const showActions = computed(() => {
+  const m = props.message;
+  return m?.status === "done" && (m?.role === "assistant" || m?.role === "user");
+});
 const avatarSrc = computed(() => {
   if (props.message?.role === "user") return props.avatarUser;
   return props.avatarAssistant;
@@ -224,13 +257,35 @@ function handleAction(key, message) {
   white-space: pre-wrap;
 }
 
-.eb-chat-message--user .eb-chat-message__text {
-  background: var(--eb-color-primary);
-  color: white;
+.eb-chat-message__bubble {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.eb-chat-message--user .eb-chat-message__bubble {
+  width: fit-content;
+  max-width: 100%;
+  /* 用户气泡走浅色染色面：正文里的链接、行内码、代码块在纯主色底上都会糊掉，
+     ChatGPT / Claude 同样是 tinted surface 而非实心主色 */
+  background: var(--eb-color-primary-light-9);
+  color: var(--eb-text-color-primary);
   padding: var(--eb-space-2) var(--eb-space-4);
   border-radius: var(--eb-radius-lg);
   border-top-right-radius: var(--eb-radius-sm);
-  max-width: 100%;
+}
+
+.eb-chat-message--user .eb-chat-message__text {
+  color: inherit;
+}
+
+.eb-chat-message__cancelled {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eb-space-1);
+  margin-top: var(--eb-space-1);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
 }
 
 .eb-chat-message--error .eb-chat-message__text {

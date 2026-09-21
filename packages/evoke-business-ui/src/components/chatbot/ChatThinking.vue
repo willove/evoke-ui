@@ -1,19 +1,30 @@
 <template>
   <div class="eb-chat-thinking">
-    <div class="eb-chat-thinking__header" @click="expanded = !expanded">
+    <button
+      class="eb-chat-thinking__header"
+      type="button"
+      :aria-expanded="isOpen"
+      :aria-controls="panelId"
+      @click="expanded = !expanded"
+    >
       <div class="eb-chat-thinking__icon">
         <span v-if="thinking" class="eb-chat-thinking__dot"></span>
         <eb-icon v-else :name="expanded ? 'arrow-down' : 'arrow-right'" />
       </div>
       <span class="eb-chat-thinking__label">
-        {{ thinking ? '思考中...' : '已深度思考' }}
+        {{ thinking ? thinkingLabel : doneLabel }}
         <span v-if="duration" class="eb-chat-thinking__duration">（用时 {{ formatDuration(duration) }}）</span>
       </span>
-    </div>
+    </button>
     <transition name="eb-chat-thinking-collapse">
-      <div v-show="expanded || thinking" class="eb-chat-thinking__content">
-        <ChatMarkdown v-if="content" :content="content" />
-        <div v-else class="eb-chat-thinking__placeholder">正在思考中...</div>
+      <div
+        v-show="isOpen"
+        :id="panelId"
+        class="eb-chat-thinking__content"
+        :aria-busy="thinking ? 'true' : void 0"
+      >
+        <ChatMarkdown v-if="content" :content="content" :streaming="thinking" />
+        <div v-else class="eb-chat-thinking__placeholder">{{ placeholderLabel }}</div>
       </div>
     </transition>
   </div>
@@ -21,7 +32,7 @@
 
 <script setup>
 import EbIcon from "../icon/index.vue"
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import ChatMarkdown from "./ChatMarkdown.vue";
 import { getIconByNameSync } from "../icon/iconRegistry";
 const props = defineProps({
@@ -31,7 +42,13 @@ const props = defineProps({
 });
 const ArrowDown = getIconByNameSync("arrow-down");
 const ArrowRight = getIconByNameSync("arrow-right");
+const thinkingLabel = "\u601D\u8003\u4E2D...";
+const doneLabel = "\u5DF2\u6DF1\u5EA6\u601D\u8003";
+const placeholderLabel = "\u6B63\u5728\u601D\u8003\u4E2D...";
 const expanded = ref(true);
+// 思考进行中强制展开，结束后回到用户可控的折叠态
+const isOpen = computed(() => expanded.value || props.thinking);
+const panelId = `eb-chat-thinking-${Math.random().toString(36).slice(2, 9)}`;
 function formatDuration(ms) {
   if (ms < 1e3) return `${ms}ms`;
   return `${(ms / 1e3).toFixed(1)}s`;
@@ -52,10 +69,21 @@ function formatDuration(ms) {
   display: flex;
   align-items: center;
   gap: var(--eb-space-2);
+  width: 100%;
   padding: var(--eb-space-2) var(--eb-space-3);
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
   user-select: none;
   transition: background var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-chat-thinking__header:focus-visible {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: -2px;
 }
 
 .eb-chat-thinking__header:hover {
