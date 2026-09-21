@@ -481,6 +481,26 @@ message.testResults = {
   </div>
 </DemoBlock>
 
+## 长会话虚拟滚动
+
+`EbChatList`（以及 `EbChatbot`）加 `virtual` 后，超过 `virtualThreshold`（默认 60）条即启用虚拟滚动——只有可视窗口内的消息进 DOM。历史几千轮的会话不会因为"全渲染"而卡住。
+
+```vue
+<eb-chatbot v-model="messages" virtual :virtual-threshold="60" :estimated-item-size="120" />
+```
+
+- **只虚拟化，不拆容器**：整段对话仍是**一个滚动条**。方案里曾设计"末端活跃窗口不虚拟化"，实现时去掉了——那要求两个滚动容器，会破坏"一个滚动条看完整对话"的基本体验；而逐帧重测的代价本来就被"只渲染可视窗口"限住了（每帧测十几到二十个节点）
+- `role="log"` / `aria-live` / 回到底部钮 / `#message` 与 `#message-content` 插槽在虚拟模式下**全部保留**，语义落在虚拟列表的滚动容器上
+- `estimatedItemSize` 是估算行高：滚动中会按实测收敛，给个接近的值能少跳几次
+- 条数不到阈值时不启用（短会话白搭一层没有收益）
+
+<DemoBlock>
+  <eb-chatbot v-model="longMsgs" virtual :virtual-threshold="60" height="420px" :show-tip="false" />
+  <div style="margin-top: 8px; font-size: 12px; color: var(--eb-text-color-secondary);">
+    {{ longHint }}
+  </div>
+</DemoBlock>
+
 ## 输入类
 
 ### EbChatSender
@@ -564,6 +584,28 @@ const DEMO_TESTS = {
   ],
 }
 const DEMO_STACK = 'Error: boom\n    at doThing (http://app.example/main.js:10:5)\n    at Object.next (node_modules/lib/index.js:3:1)\n    at http://app.example/other.js:20:7\n    at process (node:internal/process/task_queues:95:5)'
+
+// ─── 长会话虚拟滚动演示 ───
+const LONG_COUNT = 300
+function buildLongMessages() {
+  const kinds = ['short', 'long', 'code', 'tools']
+  return Array.from({ length: LONG_COUNT }, (_, i) => {
+    const kind = kinds[i % kinds.length]
+    const base = { id: `L${i}`, role: i % 2 === 0 ? 'user' : 'assistant', status: 'done' }
+    if (kind === 'long') {
+      return { ...base, content: `第 ${i} 条：${'这是一段用来撑高行的说明文字，验证长消息下的虚拟滚动。'.repeat(6)}` }
+    }
+    if (kind === 'code') {
+      return { ...base, content: `第 ${i} 条：\n\n\`\`\`js\nconst n = ${i}\nfunction f() { return n * 2 }\n\`\`\`` }
+    }
+    if (kind === 'tools') {
+      return { ...base, content: `第 ${i} 条`, toolCalls: [{ id: `t${i}`, name: 'search', status: 'done', args: { q: `查询 ${i}` }, result: `命中 ${i} 条` }] }
+    }
+    return { ...base, content: `第 ${i} 条短消息` }
+  })
+}
+const longMsgs = ref(buildLongMessages())
+const longHint = ref(`${LONG_COUNT} 条消息：DOM 里只有可视窗口那十几条，滚动条长度按估算高度撑开`)
 
 // ─── 语音演示 ───
 const speechSupported = typeof window !== 'undefined'

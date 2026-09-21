@@ -26,6 +26,9 @@
       :tool-retryable="toolRetryable"
       :speech="speech"
       :trace-url="traceUrl"
+      :virtual="virtual"
+      :virtual-threshold="virtualThreshold"
+      :estimated-item-size="estimatedItemSize"
       @copy="handleCopy"
       @regenerate="handleRegenerate"
       @action="handleAction"
@@ -137,6 +140,10 @@ const props = defineProps({
   speech: { type: Boolean, required: false, default: false },
   /** 追踪链接模板，如 https://…/runs/{traceId}；消息自带 traceId 时渲染外链 */
   traceUrl: { type: String, required: false, default: "" },
+  /** 超过 virtualThreshold 条时启用虚拟滚动 */
+  virtual: { type: Boolean, required: false, default: false },
+  virtualThreshold: { type: Number, required: false, default: 60 },
+  estimatedItemSize: { type: Number, required: false, default: 120 },
   /** 附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；空为不限 */
   accept: { type: String, required: false, default: "" },
   /** 单个附件字节上限，0 为不限 */

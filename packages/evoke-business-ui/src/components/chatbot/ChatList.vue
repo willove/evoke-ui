@@ -6,13 +6,50 @@
     :aria-live="autoScroll ? 'polite' : 'off'"
     aria-relevant="additions"
     :aria-label="labels.list.label"
-    @scroll="handleScroll"
+    @scroll="handleScrollEvent"
   >
     <div v-if="!messages || messages.length === 0" class="eb-chat-list__empty">
       <slot name="empty">
         <EbEmpty :description="labels.list.empty" />
       </slot>
     </div>
+    <EbVirtualList
+      v-else-if="isVirtual"
+      ref="virtualRef"
+      class="eb-chat-list__virtual"
+      :items="messages"
+      item-key="id"
+      :estimated-size="estimatedItemSize"
+      height="100%"
+      :buffer="6"
+      role="log"
+      :aria-live="autoScroll ? 'polite' : 'off'"
+      aria-relevant="additions"
+      :aria-label="labels.list.label"
+      @scroll="handleVirtualScroll"
+    >
+      <template #default="{ item, index }">
+        <slot
+          name="message"
+          :message="item"
+          :index="index"
+          :isLast="index === messages.length - 1"
+          :itemProps="messagePropsFor(item)"
+        >
+          <ChatMessageRow v-bind="messagePropsFor(item)" v-on="rowListeners">
+            <template v-if="$slots['message-content']" #content="p">
+              <slot name="message-content" v-bind="p" />
+            </template>
+            <template v-if="$slots['tool-result']" #tool-result="p">
+              <slot name="tool-result" v-bind="p" />
+            </template>
+            <template v-if="$slots['tool-args']" #tool-args="p">
+              <slot name="tool-args" v-bind="p" />
+            </template>
+          </ChatMessageRow>
+        </slot>
+      </template>
+    </EbVirtualList>
     <div v-else class="eb-chat-list__messages">
       <slot name="header" />
       <template v-for="(msg, i) in messages" :key="msg.id">
@@ -27,23 +64,7 @@
           :isLast="i === messages.length - 1"
           :itemProps="messagePropsFor(msg)"
         >
-          <ChatMessage
-            v-bind="messagePropsFor(msg)"
-            @copy="handleCopy"
-            @regenerate="handleRegenerate"
-            @action="handleAction"
-            @edit="handleEdit"
-            @feedback="handleFeedback"
-            @suggestion-click="handleSuggestionClick"
-            @citation-click="handleCitationClick"
-            @tool-retry="handleToolRetry"
-            @plan-toggle="(p) => emit('plan-toggle', p)"
-            @plan-step-click="(step, i, m) => emit('plan-step-click', step, i, m)"
-            @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
-            @artifact-open="(a, m) => emit('artifact-open', a, m)"
-            @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
-            @file-select="(f, p, m) => emit('file-select', f, p, m)"
-          >
+          <ChatMessageRow v-bind="messagePropsFor(msg)" v-on="rowListeners">
             <template v-if="$slots['message-content']" #content="p">
               <slot name="message-content" v-bind="p" />
             </template>
@@ -53,7 +74,7 @@
             <template v-if="$slots['tool-args']" #tool-args="p">
               <slot name="tool-args" v-bind="p" />
             </template>
-          </ChatMessage>
+          </ChatMessageRow>
         </slot>
       </template>
       <div ref="bottomRef" class="eb-chat-list__bottom" />
@@ -77,7 +98,8 @@
 import EbIcon from "../icon/index.vue"
 import { ref, watch, nextTick, onMounted, computed } from "vue";
 import EbEmpty from "../empty/index.vue";
-import ChatMessage from "./ChatMessage.vue";
+import EbVirtualList from "../virtual-list/index.vue";
+import ChatMessageRow from "./ChatMessageRow.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   messages: { type: Array, required: false, default: () => [] },
@@ -95,24 +117,36 @@ const props = defineProps({
   feedbackReasons: { type: Array, required: false, default: () => [] },
   toolRetryable: { type: Boolean, required: false, default: true },
   speech: { type: Boolean, required: false, default: false },
-  traceUrl: { type: String, required: false, default: "" }
+  traceUrl: { type: String, required: false, default: "" },
+  /** 超过 virtualThreshold 条时启用虚拟滚动（万级历史只渲染可视窗口） */
+  virtual: { type: Boolean, required: false, default: false },
+  virtualThreshold: { type: Number, required: false, default: 60 },
+  /** 虚拟模式的估算行高（px）；滚动中会按实测收敛，给个接近的值能少跳几次 */
+  estimatedItemSize: { type: Number, required: false, default: 120 }
 });
 const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "scroll"]);
 const listRef = ref();
+const virtualRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);
 const forceFollow = ref(false);
 const showBackToBottom = ref(false);
 let scrollScheduled = false;
-const isNearBottom = computed(() => {
-  if (!listRef.value) return true;
-  const { scrollTop, scrollHeight, clientHeight } = listRef.value;
-  return scrollHeight - scrollTop - clientHeight < 100;
-});
-function handleScroll(e) {
+const isVirtual = computed(() => props.virtual && props.messages.length > props.virtualThreshold);
+/**
+ * 两个分支的滚动层：普通模式是组件根，虚拟模式是虚拟列表的根。
+ * 把它统一到一个取值口，贴底 / 近底判定 / 回到底部就都不必分叉。
+ */
+const scrollEl = computed(() => (isVirtual.value ? virtualRef.value?.$el : listRef.value) || null);
+
+function nearBottomOf(el) {
+  return el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+}
+function handleScrollEvent(e) {
   emit("scroll", e);
-  if (!listRef.value) return;
-  const nearBottom = isNearBottom.value;
+  const el = scrollEl.value;
+  if (!el) return;
+  const nearBottom = nearBottomOf(el);
   showBackToBottom.value = !nearBottom;
   if (nearBottom) {
     userPinned.value = false;
@@ -121,18 +155,22 @@ function handleScroll(e) {
     forceFollow.value = false;
   }
 }
+// 虚拟列表只抛 scrollTop，这里补上元素再走同一套判定
+function handleVirtualScroll() {
+  handleScrollEvent({ target: scrollEl.value });
+}
 function scrollToBottom(smooth = false) {
-  if (!listRef.value || !bottomRef.value) return;
   userPinned.value = false;
   forceFollow.value = false;
   nextTick(() => {
     requestAnimationFrame(() => {
       // rAF 触发时组件可能已卸载，refs 已置空
-      if (!listRef.value) return;
+      const el = scrollEl.value;
+      if (!el) return;
       if (smooth) {
-        bottomRef.value?.scrollIntoView({ behavior: "smooth", block: "end" });
+        el.scrollTo?.({ top: el.scrollHeight, behavior: "smooth" });
       } else {
-        listRef.value.scrollTop = listRef.value.scrollHeight;
+        el.scrollTop = el.scrollHeight;
       }
     });
   });
@@ -146,8 +184,9 @@ function smartScroll() {
   nextTick(() => {
     requestAnimationFrame(() => {
       scrollScheduled = false;
-      if (!listRef.value) return;
-      listRef.value.scrollTop = listRef.value.scrollHeight;
+      const el = scrollEl.value;
+      if (!el) return;
+      el.scrollTop = el.scrollHeight;
       userPinned.value = false;
     });
   });
@@ -176,6 +215,27 @@ function handleCitationClick(id, message) {
 function handleToolRetry(toolCall, message) {
   emit("tool-retry", toolCall, message);
 }
+/**
+ * 逐条消息的事件束：与 props 束一起交给 ChatMessageRow，
+ * 两个分支（普通 / 虚拟化）各一行即可，不重复列十几条绑定
+ */
+const rowListeners = {
+  copy: handleCopy,
+  regenerate: handleRegenerate,
+  action: handleAction,
+  edit: handleEdit,
+  feedback: handleFeedback,
+  "suggestion-click": handleSuggestionClick,
+  "citation-click": handleCitationClick,
+  "tool-retry": handleToolRetry,
+  "plan-toggle": (plan) => emit("plan-toggle", plan),
+  "plan-step-click": (step, i, m) => emit("plan-step-click", step, i, m),
+  "confirm-respond": (c, k, m) => emit("confirm-respond", c, k, m),
+  "artifact-open": (art, m) => emit("artifact-open", art, m),
+  "artifact-copy": (art, m) => emit("artifact-copy", art, m),
+  "file-select": (f, path, m) => emit("file-select", f, path, m)
+};
+
 /**
  * 逐条消息的 props 束：默认渲染与 #message 接管态共用同一份，
  * 宿主只画某几类消息时不必自己把头像/昵称/actions 重新接一遍
