@@ -11,13 +11,21 @@
 import { computed, ref } from "vue";
 import type { ComputedRef, Ref } from "vue";
 
+/** 候选项：给 key 与 label 即可，desc / icon 供弹层展示 */
+export interface TriggerItem {
+  key: string;
+  label: string;
+  desc?: string;
+  icon?: string;
+  [extra: string]: unknown;
+}
+
 export interface TriggerConfig {
   /** 触发字符 */
   char: string;
-  /** 候选项 [{ key, label, desc?, icon? }]；给 key 与 label 即可 */
-  items: unknown[];
-  /** 插入时用的模板；默认插入 label，{value} 为 label */
-  insert?: (item: any) => string;
+  items: TriggerItem[];
+  /** 插入时用的模板；默认插入 label */
+  insert?: (item: TriggerItem) => string;
 }
 
 export interface UseTriggerMenuOptions {
@@ -34,7 +42,7 @@ export function useTriggerMenu(options: UseTriggerMenuOptions): {
   caret: Ref<number>;
   active: ComputedRef<TriggerConfig | null>;
   query: ComputedRef<string>;
-  items: ComputedRef<any[]>;
+  items: ComputedRef<TriggerItem[]>;
   visible: ComputedRef<boolean>;
   highlight: Ref<number>;
   move: (delta: number) => void;
@@ -81,8 +89,8 @@ export function useTriggerMenu(options: UseTriggerMenuOptions): {
     if (!config) return [];
     const q = query.value.toLowerCase();
     const matched = q
-      ? config.items.filter((item: any) =>
-          `${item?.key ?? ""}${item?.label ?? ""}`.toLowerCase().includes(q),
+      ? config.items.filter((item) =>
+          `${item.key}${item.label}`.toLowerCase().includes(q),
         )
       : config.items;
     return matched.slice(0, limit);
@@ -105,7 +113,7 @@ export function useTriggerMenu(options: UseTriggerMenuOptions): {
     const item = items.value[index];
     const at = triggerAt.value;
     if (!config || !item || !at) return null;
-    const inserted = config.insert ? config.insert(item) : String(item.label ?? item.key ?? "");
+    const inserted = config.insert ? config.insert(item) : item.label;
     const from = at.index;
     const to = caret.value;
     const next = options.apply
