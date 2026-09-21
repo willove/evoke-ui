@@ -53,6 +53,8 @@
           rows="1"
           :aria-label="placeholder"
           @keydown="handleKeydown"
+          @keyup="emitCaret"
+          @click="emitCaret"
           @input="handleInput"
           @paste="onPaste"
         />
@@ -105,9 +107,14 @@ const props = defineProps({
   /** 允许拖拽与粘贴投递 */
   allowDrop: { type: Boolean, required: false, default: true },
   /** 生成中允许继续发出（宿主交给引擎即自动排队）；关掉则生成中拦下 */
-  queueable: { type: Boolean, required: false, default: false }
+  queueable: { type: Boolean, required: false, default: false },
+  /**
+   * 触发式弹层（斜杠命令 / @ 提及）是否打开。
+   * 为真时 Enter / ↑ / ↓ / Esc 归弹层：Enter 是选中而不是发送。
+   */
+  menuOpen: { type: Boolean, required: false, default: false }
 });
-const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add", "attachment-reject"]);
+const emit = defineEmits(["update:modelValue", "send", "stop", "attachment-add", "attachment-reject", "menu-key", "caret-change"]);
 const textareaRef = ref();
 const fileInputRef = ref();
 const inputValue = ref(props.modelValue);
@@ -130,7 +137,12 @@ watch(() => props.modelValue, (val) => {
 });
 function handleInput() {
   emit("update:modelValue", inputValue.value);
+  emitCaret();
   autoResize();
+}
+/** 触发词判定要看光标在哪：光有文本没法知道用户是否还在写这个词 */
+function emitCaret() {
+  emit("caret-change", textareaRef.value?.selectionStart ?? inputValue.value.length);
 }
 function autoResize() {
   if (!textareaRef.value) return;
@@ -150,9 +162,18 @@ function autoResize() {
     textarea.style.overflowY = newHeight >= maxHeight ? "auto" : "hidden";
   }
 }
+const MENU_KEYS = { ArrowUp: "up", ArrowDown: "down", Enter: "enter", Escape: "escape" };
+
 function handleKeydown(e) {
   // 输入法组字中的 Enter 是「上屏候选词」，不是发送
   if (isImeComposing(e)) return;
+  // 弹层打开时这几个键归弹层：Enter 是选中命令，不是发送。
+  // Shift+Enter 不在让出之列——那是换行，弹层开着也要能换行
+  if (props.menuOpen && MENU_KEYS[e.key] && !e.shiftKey) {
+    e.preventDefault();
+    emit("menu-key", MENU_KEYS[e.key]);
+    return;
+  }
   if (e.key === "Enter" && !e.shiftKey && props.sendOnEnter) {
     e.preventDefault();
     // 生成中：可排队时照常发出（引擎会入队），否则既不并发投递也不触中断
@@ -256,6 +277,14 @@ function handleRemoveAttachment(file) {
 }
 defineExpose({
   focus: () => textareaRef.value?.focus(),
+  /** 宿主在插入命令后调它把光标放回指定位置 */
+  setCaret: (pos) => {
+    const el = textareaRef.value;
+    if (!el) return;
+    const at = Math.max(0, Math.min(pos ?? el.value.length, el.value.length));
+    el.focus();
+    el.setSelectionRange?.(at, at);
+  },
   blur: () => textareaRef.value?.blur(),
   reset: () => {
     inputValue.value = "";

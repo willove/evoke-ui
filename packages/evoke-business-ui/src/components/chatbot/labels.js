@@ -145,6 +145,10 @@ export const chatLabels = {
     expiry30: '30 天',
     expiryNever: '永久',
   },
+  command: {
+    group: '候选项',
+    notFound: '没有匹配项',
+  },
   queue: {
     group: '待发送',
     lead: (n) => `生成中，${n} 条排队等待发送`,

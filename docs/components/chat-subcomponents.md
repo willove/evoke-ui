@@ -333,6 +333,69 @@ engine.sendMessage('补充一句')     // 返回 'steered'
 </eb-chatbot>
 ```
 
+## 斜杠命令与 @ 提及
+
+`useTriggerMenu`（判定）+ `EbChatCommandMenu`（渲染）+ 输入区让出键盘，三件拼起来。键盘不放在弹层里是刻意的——**焦点始终在输入框**，弹层不该抢走输入。
+
+`useTriggerMenu` 只做「从文本与光标位置算出该不该弹、弹什么、选中后文本变成什么」这件非平凡的事：
+
+```js
+const menu = useTriggerMenu({
+  triggers: [
+    { char: '/', items: COMMANDS },                                   // 命令
+    { char: '@', items: PEOPLE, insert: (p) => `<${p.label}>` },       // 提及
+  ],
+})
+menu.text.value = draft        // 与输入框同步
+menu.caret.value = caret       // 光标位置（ChatSender 会抛 caret-change）
+menu.visible.value             // 该不该弹
+menu.items.value               // 过滤后的候选
+menu.move(1) / menu.reset()    // 键盘移动
+menu.pick(i)                   // → { text, caret }，交给输入框
+```
+
+**触发边界**（都有用例钉）：触发符必须在词首——路径里的 `/`、邮箱里的 `@` 都不会误触发；查询词里出现空白或换行即视为这个词已写完；光标退到触发符之前也不再弹。
+
+输入区侧只需一条极窄的协作：`menuOpen` 为真时把 Enter / ↑ / ↓ / Esc 交出来（Enter 是选中而不是发送），Shift+Enter 与 IME 组字不受影响。
+
+```vue
+<eb-chatbot
+  v-model="messages"
+  v-model:input-value="draft"
+  :menu-open="menu.visible.value"
+  @caret-change="menu.caret.value = $event"
+  @menu-key="onMenuKey"
+>
+  <template #sender-menu>
+    <eb-chat-command-menu
+      :items="menu.items.value"
+      :highlight="menu.highlight.value"
+      :visible="menu.visible.value"
+      :title="menu.active.value?.char === '/' ? '命令' : '引用成员'"
+      @hover="menu.highlight.value = $event"
+      @select="applyMenuItem"
+    />
+  </template>
+</eb-chatbot>
+```
+
+```js
+function onMenuKey(key) {
+  if (key === 'up') menu.move(-1)
+  else if (key === 'down') menu.move(1)
+  else if (key === 'escape') menu.visible.value = false   // 由你的状态收口
+  else if (key === 'enter') applyMenuItem(menu.highlight.value)
+}
+function applyMenuItem(index) {
+  const out = menu.pick(index)
+  if (!out) return
+  draft.value = out.text
+  nextTick(() => senderRef.value?.setCaret(out.caret))   // 光标放回插入点之后
+}
+```
+
+`#sender-menu` 渲染在输入区**上方**（`sender-prepend` 是左右并排的，放不了这个）。
+
 ## 输入类
 
 ### EbChatSender

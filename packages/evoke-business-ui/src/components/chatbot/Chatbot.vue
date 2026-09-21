@@ -62,6 +62,8 @@
     </ChatList>
     
     <template #footer>
+      <!-- 触发式弹层（斜杠命令 / @ 提及）落在输入区上方 -->
+      <slot name="sender-menu" />
       <div class="eb-chatbot__sender-wrapper">
         <slot name="sender-prepend" />
         <ChatSender
@@ -80,10 +82,13 @@
           :max-file-size="maxFileSize"
           :allow-drop="allowDrop"
           :queueable="queueable"
+          :menu-open="menuOpen"
           @send="handleSend"
           @stop="handleStop"
           @attachment-add="handleAttachmentAdd"
           @attachment-reject="handleAttachmentReject"
+          @menu-key="emit('menu-key', $event)"
+          @caret-change="emit('caret-change', $event)"
         >
           <template v-if="$slots['sender-toolbar']" #toolbar>
             <slot name="sender-toolbar" />
@@ -137,6 +142,8 @@ const props = defineProps({
   allowDrop: { type: Boolean, required: false, default: true },
   /** 生成中允许继续发出（交给引擎即自动排队）；关掉则生成中拦下 */
   queueable: { type: Boolean, required: false, default: false },
+  /** 触发式弹层是否打开；打开时输入区的 Enter / 方向键 / Esc 归弹层 */
+  menuOpen: { type: Boolean, required: false, default: false },
   height: { type: [String, Number], required: false, default: "600px" },
   width: { type: [String, Number], required: false, default: "100%" },
   avatarUser: { type: String, required: false, default: "" },
@@ -150,7 +157,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject", "menu-key", "caret-change"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
