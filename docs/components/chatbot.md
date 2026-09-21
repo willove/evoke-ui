@@ -365,6 +365,14 @@ function onToolRetry(toolCall, message) {
   toolHint.value = `tool-retry：准备重放 ${toolCall.name}（消息 ${message.id}）`
 }
 
+// ─── 系统提示消息 ───
+const sysMsgs = ref([
+  { id: 'sy-1', role: 'system', content: '**以上为历史对话**，已自动摘要', status: 'done' },
+  { id: 'sy-2', role: 'user', content: '继续吧', status: 'done' },
+  { id: 'sy-3', role: 'assistant', content: '好的，接着上面的话题。', status: 'done' },
+  { id: 'sy-4', role: 'notice', content: '回答由演示服务生成，仅用于组件体验', status: 'done' },
+])
+
 // ─── 消息级插槽 ───
 const msgSlotMsgs = ref([
   { id: 'sl-u1', role: 'user', content: '这句走自定义', status: 'done' },
@@ -477,7 +485,13 @@ const onSlotClear = () => {
   </div>
 </DemoBlock>
 
-## 消息级插槽
+## 系统提示消息
+
+`role` 为 `system` 或 `notice` 的消息按系统提示呈现：居中一行、弱化底色，不带头像 / 昵称 / 动作条，也不参与复制、评价与编辑。适合「以上为历史对话」「已切换到某模型」这类分隔性说明。正文仍走 Markdown，`render-mode="text"` 时原样显示。
+
+<DemoBlock>
+  <eb-chatbot v-model="sysMsgs" height="280px" :show-tip="false" />
+</DemoBlock>
 
 `message` 插槽接管整条消息的渲染，作用域参数给 `message` / `index` / `isLast` / `itemProps`（`itemProps` 就是 `ChatList` 本来要传给内部 `ChatMessage` 的全量 props）。只想让某几类消息长得不一样、其余照旧，用 `itemProps` 显式回落即可，不必自己重接头像与动作条：
 
@@ -588,6 +602,7 @@ registerHighlightLanguage('cobol', cobol)
 
 <ApiTable title="Chatbot Props" :rows="[
   { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
+  { name: 'role 取值', desc: 'user / assistant 为对话双方；system 与 notice 是系统提示，居中弱化呈现、不给头像昵称与动作条，也不参与复制与评价', type: 'user | assistant | system | notice', default: '—' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
   { name: 'render-mode', desc: '消息渲染方式：markdown / 纯文本', type: 'markdown | text', default: 'markdown' },

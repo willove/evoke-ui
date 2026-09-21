@@ -668,3 +668,48 @@ describe('chatMarkdown 高亮瘦身到 lib/common', () => {
     expect(registerHighlightLanguage('bogus', null)).toBe(false)
   })
 })
+
+// ── system / notice 消息形态 ──
+
+describe('ChatMessage 系统提示形态', () => {
+  const sys = (role) => ({ id: 's1', role, content: '以上为历史对话', status: 'done' })
+
+  for (const role of ['system', 'notice']) {
+    it(`${role}：居中弱化，无头像 / 昵称 / 动作条`, () => {
+      const w = mount(ChatMessage, { props: { message: sys(role), feedback: true, editable: true } })
+      expect(w.classes()).toContain(`eb-chat-message--${role}`)
+      expect(w.find('.eb-chat-message__system').text()).toBe('以上为历史对话')
+      expect(w.find('.eb-chat-message__avatar').exists()).toBe(false)
+      expect(w.find('.eb-chat-message__name').exists()).toBe(false)
+      expect(w.find('.eb-chat-actionbar').exists()).toBe(false)
+      expect(w.find('.eb-chat-feedback').exists()).toBe(false)
+      expect(w.find('.eb-chat-message__bubble').exists()).toBe(false)
+    })
+  }
+
+  it('system 走 markdown 渲染（可放粗体说明），text 模式退回纯文本', () => {
+    const md = mount(ChatMessage, { props: { message: { ...sys('system'), content: '**已切换模型**' } } })
+    expect(md.find('.eb-chat-message__system strong').text()).toBe('已切换模型')
+    const t = mount(ChatMessage, {
+      props: { message: { ...sys('system'), content: '**原样**' }, renderMode: 'text' },
+    })
+    expect(t.find('.eb-chat-message__system').text()).toBe('**原样**')
+    // 系统提示不用对话气泡，text 模式下也不挂 __text（那是 user/assistant 的容器）
+    expect(t.find('.eb-chat-message__text').exists()).toBe(false)
+  })
+
+  it('流式中的 system 也带正文拖尾', async () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 's2', role: 'system', content: '正在同步', status: 'streaming' } },
+    })
+    await new Promise((r) => requestAnimationFrame(() => r()))
+    await w.vm.$nextTick()
+    expect(w.find('.eb-chat-shimmer').exists()).toBe(true)
+  })
+
+  it('user / assistant 不受影响（回归钉）', () => {
+    const u = mount(ChatMessage, { props: { message: { id: 'u1', role: 'user', content: 'x', status: 'done' } } })
+    expect(u.find('.eb-chat-message__avatar').exists()).toBe(true)
+    expect(u.find('.eb-chat-message__system').exists()).toBe(false)
+  })
+})

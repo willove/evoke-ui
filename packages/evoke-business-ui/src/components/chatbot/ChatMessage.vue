@@ -8,6 +8,17 @@
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
   >
+    <template v-if="isSystem">
+      <div class="eb-chat-message__system">
+        <ChatMarkdown
+          v-if="renderMode === 'markdown'"
+          :content="message.content"
+          :streaming="isStreaming"
+        />
+        <span v-else>{{ message?.content }}</span>
+      </div>
+    </template>
+    <template v-else>
     <div class="eb-chat-message__avatar">
       <eb-avatar 
         :size="36" 
@@ -120,6 +131,7 @@
         </template>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -167,6 +179,11 @@ function handleCitationClick(id) {
   sourcesRef.value?.highlight?.(id);
   emit("citation-click", id, props.message);
 }
+// system / notice 是「系统提示」而非对话方发言：不给头像、昵称、动作条，居中弱化呈现
+const isSystem = computed(() => {
+  const role = props.message?.role;
+  return role === "system" || role === "notice";
+});
 const awaitingReply = computed(() => {
   const m = props.message;
   return m?.status === "pending" || (m?.thinking && !m?.content);
@@ -379,6 +396,28 @@ function handleAction(key, message) {
   margin: 0 0 2px;
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-placeholder);
+}
+
+/* system 与 notice 同族：根类按 role 生成，两个都要钉住 */
+.eb-chat-message--system,
+.eb-chat-message--notice {
+  justify-content: center;
+  padding: var(--eb-space-2) 0;
+}
+
+.eb-chat-message__system {
+  max-width: 88%;
+  padding: 2px var(--eb-space-3);
+  border-radius: var(--eb-radius-md);
+  background: var(--eb-fill-color-lighter);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-sm);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.eb-chat-message__system :deep(p) {
+  margin: 0;
 }
 
 .eb-chat-message__cancelled {
