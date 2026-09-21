@@ -7,6 +7,51 @@
   width: 100%;
 }
 
+/* sessions 模式：左侧会话列表 + 右侧会话区；未传 sessions 时是今天的单栏 */
+.eb-ai-console.has-threads {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid var(--eb-border-color-light);
+  border-radius: var(--eb-radius-lg);
+  overflow: hidden;
+}
+
+.eb-ai-console__threads {
+  flex: 0 0 var(--eb-ai-console-threads-width, 240px);
+  width: var(--eb-ai-console-threads-width, 240px);
+  min-width: 0;
+  border-right: 1px solid var(--eb-border-color-lighter);
+}
+
+.eb-ai-console__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--eb-space-6);
+  padding: var(--eb-space-4) 0 0;
+}
+
+/* 窄屏放不下侧栏：让列表退到上方一行，避免两侧都挤成不可用 */
+@media (max-width: 720px) {
+  .eb-ai-console.has-threads {
+    flex-direction: column;
+  }
+
+  .eb-ai-console__threads {
+    flex: 0 0 auto;
+    width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--eb-border-color-lighter);
+  }
+
+  .eb-ai-console__main {
+    padding: 0;
+  }
+}
+
 /* ─── 欢迎区 ─── */
 .eb-ai-console__welcome {
   display: flex;

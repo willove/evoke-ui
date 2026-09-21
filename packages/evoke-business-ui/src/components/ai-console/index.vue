@@ -1,5 +1,21 @@
 <template>
-  <div class="eb-ai-console">
+  <div class="eb-ai-console" :class="{ 'has-threads': hasThreads }">
+    <aside v-if="hasThreads" class="eb-ai-console__threads">
+      <slot name="threads">
+        <ChatThreads
+          :threads="sessionThreads"
+          :active="sessionActiveId"
+          :streaming="sessionStreamingIds"
+          @select="sessions.select"
+          @create="sessions.create"
+          @rename="sessions.rename"
+          @remove="sessions.remove"
+          @pin="sessions.pin"
+          @archive="sessions.archive"
+        />
+      </slot>
+    </aside>
+    <div class="eb-ai-console__main">
     <!-- 欢迎区（会话开始后收起） -->
     <div v-if="!hasMessages" class="eb-ai-console__welcome">
       <h2 v-if="welcome?.title" class="eb-ai-console__title">
@@ -92,6 +108,7 @@
         </slot>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -107,6 +124,7 @@ import { computed, ref } from 'vue'
 import EbIcon from '../icon/index.vue'
 import EbAiPromptBox from '../ai-prompt-box/index.vue'
 import ChatList from '../chatbot/ChatList.vue'
+import ChatThreads from '../chatbot/ChatThreads.vue'
 import { useChatEngine } from '../chatbot/useChatEngine'
 
 defineOptions({ name: 'EbAiConsole' })
@@ -114,6 +132,8 @@ defineOptions({ name: 'EbAiConsole' })
 const props = defineProps({
   /** 外部引擎（useChatEngine 返回值）；缺省内部创建 */
   engine: { type: Object, default: null },
+  /** useChatSessions 返回值：传了即渲染左侧会话列表并接管引擎与发送 */
+  sessions: { type: Object, default: null },
   /** transport(content, attachments, context)：流式回写由使用方驱动引擎。
    *  刻意不叫 onSend——该名会与 emit('send') 的监听器约定撞车被二次调用 */
   transport: { type: Function, default: null },
@@ -180,7 +200,14 @@ const emit = defineEmits([
 
 // ─── 引擎（外部受控 / 内部自建） ───
 const internalEngine = useChatEngine({ onSend: (...args) => props.transport?.(...args) })
-const engineRef = computed(() => props.engine || internalEngine)
+// sessions 模式下引擎属于各 thread，Console 只做展示
+const hasThreads = computed(() => !!props.sessions)
+const sessionThreads = computed(() => props.sessions?.threads?.value ?? [])
+const sessionActiveId = computed(() => props.sessions?.activeId?.value ?? '')
+const sessionStreamingIds = computed(() => props.sessions?.streamingIds?.value ?? [])
+const engineRef = computed(
+  () => props.sessions?.activeEngine?.value || props.engine || internalEngine
+)
 const messages = computed(() => engineRef.value.messages.value)
 // 引擎态与外部强制 loading 合并（stoppable 停止钮、输入禁用都吃这个）
 const loading = computed(() => props.loading || engineRef.value.loading.value)
@@ -203,11 +230,17 @@ const chatStyle = computed(() => {
 
 function handleSend(payload) {
   boxText.value = ''
-  engineRef.value.sendMessage(payload.text, payload.attachments, {
+  const context = {
     scene: payload.scene,
     capabilities: payload.capabilities,
     model: payload.model,
-  })
+  }
+  // 走 sessions.send 才能拿到自动起标题、并发上限这些编排行为
+  if (props.sessions) {
+    props.sessions.send(payload.text, payload.attachments, context)
+  } else {
+    engineRef.value.sendMessage(payload.text, payload.attachments, context)
+  }
   emit('send', payload)
 }
 
@@ -257,7 +290,7 @@ const listRef = ref(null)
 
 defineExpose({
   engine: engineRef,
-  clear: () => engineRef.value.clearMessages(),
+  clear: () => (props.sessions ? props.sessions.clear() : engineRef.value.clearMessages()),
   listRef,
 })
 </script>
