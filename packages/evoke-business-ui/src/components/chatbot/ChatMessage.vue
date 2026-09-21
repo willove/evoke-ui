@@ -77,7 +77,14 @@
               :tool-call="tc"
               :retryable="toolRetryable"
               @retry="handleToolRetry"
-            />
+            >
+              <template v-if="$slots['tool-result']" #result="p">
+                <slot name="tool-result" v-bind="p" />
+              </template>
+              <template v-if="$slots['tool-args']" #args="p">
+                <slot name="tool-args" v-bind="p" />
+              </template>
+            </ChatToolCall>
           </div>
           <div v-if="awaitingReply" class="eb-chat-message__loading">
             <ChatLoading />
@@ -121,6 +128,12 @@
               :artifacts="message.artifacts"
               @open="(a) => emit('artifact-open', a, message)"
               @copy="(a) => emit('artifact-copy', a, message)"
+            />
+            <!-- 改动集汇总：与 artifacts 并列的消息级字段，不是单个 tool 的产物 -->
+            <ChatFileTree
+              v-if="message?.fileTree?.length"
+              :files="message.fileTree"
+              @select="(f, p) => emit('file-select', f, p, message)"
             />
           </template>
           <ChatSuggestion
@@ -169,6 +182,7 @@ import ChatToolCall from "./ChatToolCall.vue";
 import ChatPlan from "./ChatPlan.vue";
 import ChatConfirmation from "./ChatConfirmation.vue";
 import ChatArtifact from "./ChatArtifact.vue";
+import ChatFileTree from "./ChatFileTree.vue";
 import { chatLabels as labels } from "./labels";
 const props = defineProps({
   message: { type: null, required: false },
@@ -190,7 +204,7 @@ const props = defineProps({
   /** 工具调用失败态是否给重试钮 */
   toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select"]);
 const hovered = ref(false);
 const editing = ref(false);
 const sourcesRef = ref(null);

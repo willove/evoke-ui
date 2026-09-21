@@ -37,6 +37,7 @@
       @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
       @artifact-open="(a, m) => emit('artifact-open', a, m)"
       @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
+      @file-select="(f, p, m) => emit('file-select', f, p, m)"
     >
       <template v-if="$slots.empty" #empty>
         <slot name="empty" />
@@ -50,6 +51,12 @@
       </template>
       <template v-if="$slots['message-content']" #message-content="p">
         <slot name="message-content" v-bind="p" />
+      </template>
+      <template v-if="$slots['tool-result']" #tool-result="p">
+        <slot name="tool-result" v-bind="p" />
+      </template>
+      <template v-if="$slots['tool-args']" #tool-args="p">
+        <slot name="tool-args" v-bind="p" />
       </template>
     </ChatList>
     
@@ -137,7 +144,7 @@ const props = defineProps({
   stoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "attachment-add", "attachment-reject"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);

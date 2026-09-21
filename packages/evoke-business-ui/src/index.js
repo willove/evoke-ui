@@ -153,6 +153,9 @@ import EbChatWidget from './components/chatbot/ChatWidget.vue'
 import EbChatPlan from './components/chatbot/ChatPlan.vue'
 import EbChatConfirmation from './components/chatbot/ChatConfirmation.vue'
 import EbChatArtifact from './components/chatbot/ChatArtifact.vue'
+import EbChatDiff from './components/chatbot/ChatDiff.vue'
+import EbChatTerminal from './components/chatbot/ChatTerminal.vue'
+import EbChatFileTree from './components/chatbot/ChatFileTree.vue'
 export { useChatEngine } from './components/chatbot/useChatEngine'
 export { useChatSessions } from './components/chatbot/useChatSessions'
 // 对话正文渲染的配置面：协议白名单 / 主题色 / 追加高亮语言
@@ -421,6 +424,9 @@ const components = {
   EbChatPlan,
   EbChatConfirmation,
   EbChatArtifact,
+  EbChatDiff,
+  EbChatTerminal,
+  EbChatFileTree,
   EbStatusTag,
   EbCellStack,
   EbDetailDescriptions,
@@ -642,6 +648,9 @@ export {
   EbChatPlan,
   EbChatConfirmation,
   EbChatArtifact,
+  EbChatDiff,
+  EbChatTerminal,
+  EbChatFileTree,
   // 业务组件
   EbStatusTag,
   EbCellStack,

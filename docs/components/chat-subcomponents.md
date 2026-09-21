@@ -125,6 +125,81 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 | --- | --- |
 | `item-click` | `(item, index)` |
 
+## 代码 agent 三卡
+
+`EbChatDiff` · `EbChatTerminal` · `EbChatFileTree`
+
+三者都**零额外依赖**：diff 是纯解析 + CSS，终端自己解最小 ANSI（8/16 色 + 加粗），文件树是嵌套列表。
+
+<DemoBlock>
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <eb-chat-diff :diff="DEMO_DIFF" :max-height="200" />
+    <eb-chat-terminal
+      command="npm run test -- --reporter=dot"
+      :output="DEMO_TERMINAL"
+      :exit-code="0"
+      :max-height="160"
+    />
+    <eb-chat-file-tree :files="DEMO_FILES" style="max-width: 420px" />
+  </div>
+</DemoBlock>
+
+### EbChatDiff
+
+吃标准统一 diff 文本（`git diff` 与各家 agent 输出的那种），按文件分组，头部给路径与 `+N −M`，行按增/删/上下文着色，带 old/new 双行号栅格。
+
+`{ diff, showLineNumbers, collapsible, defaultOpen, maxHeight }`，抛 `toggle(index, open)` / `copy(rawDiff)`。**复制出去的是原始 diff 文本**，不是渲染结果（行号在 `aria-hidden` 的独立栅格里，不会被选进复制内容）。
+
+认不出的行按上下文处理——宁可少染一点色，也不猜错语义。
+
+### EbChatTerminal
+
+命令输出卡：头部给命令与退出码，正文等宽渲染，`status: 'running'` 时末尾有光标。**长输出只渲染尾部**（默认 40 行），给省略数与展开入口——命令输出动辄上千行，全渲染会拖垮消息列。
+
+ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可不染）。安全性上先把文本转义、再只把解析器自己构造的 `span` 拼进去，原文里的任何字符都不会被当标记透传。
+
+`{ command, output, status, exitCode, collapsible, defaultOpen, maxHeight, tailLines }`，抛 `toggle(open)` / `copy(纯文本)`。
+
+### EbChatFileTree
+
+扁平路径列表 → 嵌套树。目录在前、名称升序；文件带类型图标、状态徽标（新增/修改/删除/重命名）与增删行数。目录默认展开，折叠状态 `aria-expanded` 完整。
+
+`{ files: [{ path, status?, additions?, deletions? }], defaultExpandAll }`，抛 `select(file, path)` / `toggle(path, open)`。
+
+### 怎么接到消息上
+
+**diff 与终端不加消息字段**——`EbChatToolCall` 的 `#result` 插槽就是为它们留的扩展点：
+
+```vue
+<eb-chatbot v-model="messages">
+  <template #message="p">
+    <eb-chat-message v-bind="p.itemProps">
+      <template #content>
+        <component :is="renderBody(p.message)" />
+      </template>
+    </eb-chat-message>
+  </template>
+</eb-chatbot>
+```
+
+更直接的写法是逐条接管工具卡的结果区：
+
+```vue
+<eb-chat-message :message="msg">
+  <template #tool-result="{ toolCall }">
+    <eb-chat-terminal
+      v-if="toolCall.name === 'run_tests'"
+      :command="toolCall.label"
+      :output="toolCall.result"
+      :exit-code="toolCall.exitCode"
+    />
+    <eb-chat-diff v-else-if="toolCall.resultType === 'diff'" :diff="toolCall.result" />
+  </template>
+</eb-chat-message>
+```
+
+**文件树**是改动集汇总、不属于单个工具，所以给了消息级字段 `message.fileTree`，渲染在产物之后，抛 `file-select(file, path, message)`。
+
 ## 输入类
 
 ### EbChatSender
@@ -186,3 +261,44 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 ### EbChatAttachments
 
 附件卡片列表：图片预览或类型图标、文件名、体积、移除钮；宿主回写 `status` 时显示进度条（`uploading` + `progress`）、失败原因（`error`）或已上传（`done`）。`{ attachments, removable }`，抛 `remove(file)`。
+
+<script setup>
+
+// ─── 代码 agent 三卡演示数据 ───
+const DEMO_DIFF = [
+  'diff --git a/src/utils/parse.ts b/src/utils/parse.ts',
+  'index a1b2c3d..d4e5f6a 100644',
+  '--- a/src/utils/parse.ts',
+  '+++ b/src/utils/parse.ts',
+  '@@ -12,6 +12,7 @@ export function parse(input: string) {',
+  '   const lines = input.split("\\n")',
+  '-  return lines.map((l) => l.trim())',
+  '+  // 保留缩进：下游靠它判断层级',
+  '+  return lines.map((l) => l.replace(/\\s+$/, ""))',
+  ' }',
+  '',
+  'diff --git a/README.md b/README.md',
+  '--- a/README.md',
+  '+++ b/README.md',
+  '@@ -1,2 +1,3 @@',
+  ' # 项目说明',
+  '+新增了代码 agent 三卡的用法章节。',
+  ' 见 docs。',
+].join('\n')
+
+const DEMO_TERMINAL = [
+  '\u001b[32m✓\u001b[0m parseDiff 单文件单 hunk\n',
+  '\u001b[32m✓\u001b[0m parseDiff 多文件各自归组\n',
+  '\u001b[31m✗\u001b[0m ansi 换行内序列\n',
+  '\u001b[1mTests \u001b[0m 2130 passed\n',
+  'Time: 18.2s',
+].join('')
+
+const DEMO_FILES = [
+  { path: 'docs/components/chat-subcomponents.md', status: 'modified', additions: 42, deletions: 3 },
+  { path: 'src/utils/parse.ts', status: 'modified', additions: 2, deletions: 1 },
+  { path: 'src/components/ChatDiff.vue', status: 'added', additions: 186 },
+  { path: 'src/legacy/old-diff.vue', status: 'deleted', deletions: 88 },
+  { path: 'src/ansi.js', status: 'renamed' },
+]
+</script>

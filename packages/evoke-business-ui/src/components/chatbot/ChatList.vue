@@ -42,9 +42,16 @@
             @confirm-respond="(c, k, m) => emit('confirm-respond', c, k, m)"
             @artifact-open="(a, m) => emit('artifact-open', a, m)"
             @artifact-copy="(a, m) => emit('artifact-copy', a, m)"
+            @file-select="(f, p, m) => emit('file-select', f, p, m)"
           >
             <template v-if="$slots['message-content']" #content="p">
               <slot name="message-content" v-bind="p" />
+            </template>
+            <template v-if="$slots['tool-result']" #tool-result="p">
+              <slot name="tool-result" v-bind="p" />
+            </template>
+            <template v-if="$slots['tool-args']" #tool-args="p">
+              <slot name="tool-args" v-bind="p" />
             </template>
           </ChatMessage>
         </slot>
@@ -88,7 +95,7 @@ const props = defineProps({
   feedbackReasons: { type: Array, required: false, default: () => [] },
   toolRetryable: { type: Boolean, required: false, default: true }
 });
-const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "scroll"]);
+const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "scroll"]);
 const listRef = ref();
 const bottomRef = ref();
 const userPinned = ref(false);
