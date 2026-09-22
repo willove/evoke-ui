@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [chat 0.1.0 / business-ui 0.9.0 / ui 0.11.0] — 2026-09-22
+
 ### @wil-works/evoke-chat — 新包：对话家族整族迁出（0.1.0）
 
 - **新包 `@wil-works/evoke-chat`**：`chatbot/` 家族（对话窗口、消息体、Markdown 管线、

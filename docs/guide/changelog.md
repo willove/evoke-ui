@@ -20,10 +20,21 @@ evoke-business-ui 的版本演进，最新在上。完整的变更明细（含�
 <script setup>
 const releases = [
   {
+    version: 'v0.9.0',
+    date: '2026-09-22',
+    title: '对话家族独立成包 + 文档独立分区',
+    latest: true,
+    bullets: [
+      'AI 对话家族（对话窗口 / 消息体 / 各类卡片 / 工具调用 / 沙箱预览等 35 个组件）整族迁出到新包 @wil-works/evoke-chat，按需安装——不用对话能力的项目不再带 marked 与 highlight.js',
+      '底座补 ./locale 子路径导出与 useLocale / usePlatform / isImeComposing / inBrowser 四个公共接缝；注册组件 182 → 147',
+      '对话文档从组件侧栏独立成顶栏「AI 对话」分区（/chat/*），旧地址留跳转桩；子组件页补齐 17 个示例',
+      '一批交互修复：消息控制行并排、时间戳移到消息下方且悬浮显示、头像昵称可分侧隐藏、输入区 130 → 96px、工作台撑满容器、回底按钮固定可视区底部、长会话虚拟滚动不再叠压、附件图标按类型匹配并配色',
+    ],
+  },
+  {
     version: 'v0.8.0',
     date: '2026-09-17',
     title: 'EbContextMenu 右键菜单',
-    latest: true,
     bullets: [
       '新增 EbContextMenu：区域右键在光标处弹出，items 配置驱动，支持图标、禁用、分隔线、危险色与一级子菜单',
       '子菜单独立挂载不被父菜单裁切，视口边缘自动翻边并钳位，超长菜单内部滚动',

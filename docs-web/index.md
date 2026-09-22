@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.10.1</EvTag>
+      <EvTag size="small">v0.11.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.10.1 发布：EvSection width 定宽档——narrow / default / wide 超宽居中不撑边；与 Container 同令牌整站可调</span>
+      <span>v0.11.0 发布：a11y 与暗桩批——Tabs 方向键巡历、Modal 焦点圈闭修复、图标集补 npm 标（共 77 枚）</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.10.1</EvTag>
+        <EvTag tone="primary" size="small">v0.11.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>

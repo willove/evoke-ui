@@ -13,6 +13,7 @@ on:
           - both
           - business-ui
           - ui
+          - chat
           - charts
 
   # 发布 GitHub Release 时自动发布全部包
@@ -29,6 +30,7 @@ jobs:
       matrix:
         include:
           - { name: business-ui, pkg: "@wil-works/evoke-business-ui", dir: packages/evoke-business-ui }
+          - { name: chat, pkg: "@wil-works/evoke-chat", dir: packages/evoke-chat }
           - { name: ui, pkg: "@wil-works/evoke-ui", dir: packages/evoke-ui }
           - { name: charts, pkg: "@wil-works/evoke-charts", dir: packages/evoke-charts }
       # 手动选择单个包时跳过另一个

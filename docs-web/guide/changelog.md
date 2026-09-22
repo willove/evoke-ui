@@ -14,6 +14,17 @@ evoke-ui 的版本演进，最新在上。完整的变更明细（含行为变�
 <script setup>
 const releases = [
   {
+    tag: 'v0.11.0',
+    date: '2026-09-22',
+    title: 'a11y 与暗桩批 · 图标集补 npm 标',
+    bullets: [
+      'EvTabs 方向键 / Home / End 巡历（roving tabindex）；EvModal Tab 焦点圈闭，并修复 modelValue 初始为 true 时焦点管理与滚动锁静默失效',
+      'EvIcon 属性透传去重（此前传 class 会在根节点重复挂一次）；核心图标集补 npmjs 标，共 77 枚',
+      'ConfigProvider 卸载还原已写入的主题令牌；useThemeConfig 三个 setter 补 SSR 守卫；ContactForm 改 useId 消除多实例 id 冲突',
+      'AiPromptBox maxLength 真正约束输入；LoadMore 动态解除 disabled 后自动建观察者；FeatureGrid 动态换数据不再丢入场动效；Input 暴露的 focused 真实反映焦点态',
+    ],
+  },
+  {
     tag: 'v0.10.1',
     date: '2026-09-16',
     title: 'EvSection 定宽档',
