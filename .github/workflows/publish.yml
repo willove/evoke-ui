@@ -75,9 +75,11 @@ jobs:
         if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
         run: pnpm install --frozen-lockfile
 
+      # 带上工作区依赖一起构建（`pkg...`）：全新 checkout 里 peer 包没有 dist，
+      # evoke-chat 的类型检查需要底座的 d.ts，只建自己会报 TS2307
       - name: Build
         if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
-        run: pnpm --filter ${{ matrix.pkg }} build
+        run: pnpm --filter "${{ matrix.pkg }}..." build
 
       - name: Configure npm auth
         if: steps.gate.outputs.skip == 'false' && steps.published.outputs.skip != 'true'
