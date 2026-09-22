@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+defineOptions({ inheritAttrs: false })
 /**
  * EvIcon — 图标组件
  * 根节点挂 ev-icon class；name 支持 kebab-case 语义名（核心集）

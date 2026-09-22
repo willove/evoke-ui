@@ -1,0 +1,51 @@
+/* ============================================
+   Evoke Chat — 全局样式入口
+
+   import '@wil-works/evoke-chat/styles'
+
+   只放**必须全局生效**的规则：v-html 出来的内容（Markdown 正文）拿不到
+   scoped 的 data 属性，写给它的样式放不进 SFC。
+   ============================================ */
+
+/* ══════ 流式拖尾（最新吐出的几个字带一层柔光扫过）══════
+   不画独立图形：竖线、波浪贴在正文尾巴上都会有异物感。
+   这里只给尾部若干字套一层 alpha mask，让一条柔光带左右扫过，
+   mask 吃形状、文字本体颜色不动，因此暗色模式与气泡底色天然跟随。 */
+
+.eb-chat-shimmer {
+  --eb-chat-shimmer-mask: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    rgba(0, 0, 0, 0.28) 18%,
+    #000 50%,
+    rgba(0, 0, 0, 0.28) 82%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  -webkit-mask-image: var(--eb-chat-shimmer-mask);
+  mask-image: var(--eb-chat-shimmer-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 220% 100%;
+  mask-size: 220% 100%;
+  animation: eb-chat-shimmer-sweep 2.5s ease-in-out infinite;
+}
+
+/* 100% → 0% 时柔光带自左向右扫过（mask-size 220% 决定了这个方向） */
+@keyframes eb-chat-shimmer-sweep {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eb-chat-shimmer {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}

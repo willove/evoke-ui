@@ -179,7 +179,7 @@
 
 .ev-ai-prompt-box__file-state {
   font-size: var(--ev-font-size-xs);
-  color: var(--ev-text-color-secondary);
+  color: var(--ev-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 

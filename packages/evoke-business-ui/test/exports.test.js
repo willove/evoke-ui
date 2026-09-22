@@ -13,7 +13,8 @@ const NO_SUBPATH_OK = new Set(['EbChart', 'EbListy'])
 
 describe('按需子路径导出契约', () => {
   it('入口清单非空、子路径名 kebab-case 且唯一', () => {
-    expect(entries.length).toBeGreaterThanOrEqual(150)
+    // 2026-09-22 对话家族整体拆去 @wil-works/evoke-chat，本包入口从 183 降到 148
+    expect(entries.length).toBeGreaterThanOrEqual(140)
     const names = entries.map((e) => e.name)
     expect(new Set(names).size).toBe(names.length)
     for (const name of names) expect(name).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)

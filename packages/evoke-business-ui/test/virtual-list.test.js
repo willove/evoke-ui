@@ -54,6 +54,42 @@ describe('EbVirtualList', () => {
     expect(wrapper.findAll('.eb-virtual-list__item').length).toBe(0)
     wrapper.unmount()
   })
+  it('动态行高：窗口变化后重测，新条目按实测高度排布（防叠压）', async () => {
+    const wrapper = mount(EbVirtualList, {
+      props: { items: makeItems(200), itemKey: 'id', height: 300, buffer: 1, estimatedSize: 40 },
+    })
+    await wrapper.vm.$nextTick()
+
+    // jsdom 量不出真实高度：容器给个可视高度，条目高度走原型桩（新渲染的节点也要能量到）
+    const container = wrapper.find('.eb-virtual-list')
+    Object.defineProperty(container.element, 'clientHeight', { value: 300, configurable: true })
+    const origin = Element.prototype.getBoundingClientRect
+    Element.prototype.getBoundingClientRect = () => ({ height: 100, top: 0, bottom: 100, left: 0, right: 100, width: 100, x: 0, y: 0, toJSON: () => ({}) })
+    try {
+      // 滚到远处：新进窗口的条目此前只有 40px 估算值，重测后应按 100 排布
+      container.element.scrollTop = 4000
+      container.element.dispatchEvent(new Event('scroll'))
+      // 动态测高是逐帧收敛的（测得变高 → 窗口变小 → 再测），等它稳定
+      for (let i = 0; i < 10; i++) await wrapper.vm.$nextTick()
+    } finally {
+      Element.prototype.getBoundingClientRect = origin
+    }
+
+    const rows = wrapper.findAll('.eb-virtual-list__item')
+    expect(rows.length).toBeGreaterThan(2)
+    const offsets = rows.map((n) => Number(/translateY\((-?\d+(?:\.\d+)?)px\)/.exec(n.element.style.transform)?.[1] ?? NaN))
+    const idxs = rows.map((n) => Number(n.attributes('data-eb-vl-index')))
+    let checked = 0
+    for (let i = 1; i < rows.length; i++) {
+      if (idxs[i] !== idxs[i - 1] + 1) continue
+      // 相邻条目偏移差 = 实测高度 100；仍是 40 就说明没重测（真实场景里表现为条目互相叠压）
+      expect(offsets[i] - offsets[i - 1]).toBe(100)
+      checked += 1
+    }
+    expect(checked).toBeGreaterThan(1)
+    wrapper.unmount()
+  })
+
 })
 
 describe('EbListy（EbVirtualList 别名）', () => {

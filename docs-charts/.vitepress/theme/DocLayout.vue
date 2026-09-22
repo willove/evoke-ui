@@ -81,10 +81,11 @@
             href="https://www.npmjs.com/package/@wil-works/evoke-charts"
             target="_blank"
             rel="noopener"
-            aria-label="下载"
-            title="npm 下载"
+            aria-label="在 npm 上查看"
+            title="在 npm 上查看"
           >
-            <Icon name="download" :size="16" />
+            <!-- npm 标（Remix Logos/npmjs-line）：下载箭头与「跳到包页」语义不符 -->
+            <Icon name="npmjs" :size="16" />
           </a>
           <button class="cd-header__btn" type="button" :aria-label="isDark ? '切换到浅色' : '切换到深色'" @click="toggleDark">
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />

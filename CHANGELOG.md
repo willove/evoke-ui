@@ -4,6 +4,60 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-chat — 新包：对话家族整族迁出（0.1.0）
+
+- **新包 `@wil-works/evoke-chat`**：`chatbot/` 家族（对话窗口、消息体、Markdown 管线、
+  Agent 三件套、代码 agent 三卡、语音、排队、触发菜单、计量、测试结果、沙箱与网页预览）
+  连同 `EbAiConsole` / `EbAiPromptBox` 整体从 `@wil-works/evoke-business-ui` 迁出，
+  版本独立演进；
+- 底座是 **peer 依赖**（`vue` + `@wil-works/evoke-business-ui`）：基础组件、`--eb-*`
+  设计令牌、`EbConfigProvider` 的语言/主题上下文都来自底座，宿主需安装两侧并各自
+  `app.use` + 引 `styles`；
+- **随包依赖只有 `marked` + `highlight.js`**：不用对话能力的宿主不再把它们带进依赖树；
+- **多语言**：文案随包走（`@wil-works/evoke-chat/locale`），**英文全量**；语言名由底座
+  决定（`EbConfigProvider` 的 `locale`），没译文的语言或缺失的键回退 `zh-CN`；
+- 组件对底座的引用走子路径（`@wil-works/evoke-business-ui/icon` 等），按需解析。
+
+### @wil-works/evoke-chat — 高度与布局协调
+
+- **EbChatSender**：工具行（附件 + `#toolbar` 插槽）与发送行并作一行（三行 → 两行），输入区 130px → 96px——小高度窗口里正文不再被输入区挤没；插槽位置仍在附件按钮右侧，只是挪到底部行；
+- **EbAiConsole**：父容器给了确定高度就**撑满**——会话区 `flex:1` 吃掉剩余空间、输入区贴底（`chat-height` 仍为上限）；欢迎态整块垂直居中；**输入区与容器左右边框留 16px 间距**（此前与边框贴死，会话区也给同样的水平内边距）；
+- 文档示例统一抬高（对话窗口 460~520px、工作台 560px、挂件 440px），一屏可见完整往复。
+- 文档：`chat-subcomponents` 补 17 个案例（DemoBlock 7 → 24，覆盖结构类 / 过程类 / 输入类与计量、队列、命令菜单）；`chat-agent` 三例高度 300~340px → 520px。
+- **思考模式**：`show-avatar` / `show-name` 支持传对象**分侧控制**（`{ user: false }` / `{ assistant: false }`）；引擎新增 `thinkDuration`（`appendThinkContent` / `stopThinking` / `completeMessage` 自动结算思考耗时，思考块标题右侧显示「（用时 X）」）；
+- **消息控制行**：追问 chips / 评价 / 时间与动作条改为**并排一行**（此前是三行堆叠），chips 占剩余宽度并可换行、评价与动作条靠右；点踩展开原因面板时评价块整行铺开（面板宽度不再被挤）；
+- **EbChatMessage**：新增 `show-avatar` / `show-name` / `show-time`；**时间戳从头部挪到消息下方**，与动作条同排、悬浮（或键盘聚焦 / 触屏）时一起出现；
+- **EbChatList 回底按钮**：从 `position: absolute`（会随内容一起滚走，看着像没悬浮）改为 **0 高 sticky 锚点**——滚动时钉在可视区底部居中，点它滚回底部后自动隐藏；
+- **EbChatActionbar**：每颗按钮的悬浮提示改用**库内 Tooltip**（Teleport 到 body，滚动容器里不会被裁切；此前是原生 `title`，慢且不可控）；自定义动作新增 `desc`（更长的说明，工具提示与 `aria-label` 都用它，不给退回 `label`）。
+- **EbChatAttachments**：附件图标**默认按类型染色**（pdf 红 / word 蓝 / excel 绿 / ppt 橙 / zip 灰蓝 / code 蓝 / image 绿 / video 红），全部走 `--eb-*` 语义令牌随主题与暗色自动适配；新增 `colored` 开关（`colored="false"` 统一跟随正文色）。
+- **EbChatAttachments**：附件图标改为**按后缀匹配专用图标**（pdf / word / excel / ppt / zip / image / music / video / code / text，认不出退 MIME 大类再退通用文档图标；`fileIcons.js` 可单测）；文档示例覆盖多种类型。
+- **EbChatActionbar**：自定义动作的图标回落行为写进文档——给了 `icon` 是图标按钮，没给就是文字按钮（此前示例没给 icon，看起来像"图标没渲染"）。
+- **EbChatThinking**：结束后**默认收起**（此前的初值是展开，与文档里「结束后回到折叠态」自相矛盾；流式期间仍强制展开，用户手动点开过就不自动收）；
+- **EbChatMarkdown**：SSR 安全——无 `requestAnimationFrame` 的环境（Node / SSR）退化为同步渲染。此前在 SSR 里渲染流式消息（如 `EbChatThinking` 的思考块）会直接抛 `ReferenceError`；
+- **EbVirtualList（动态行高）**：窗口滑动后**重测新进窗口的条目**——此前只在挂载与占位块尺寸变化时测一次，新窗口的条目按估算高度（默认 40px / 聊天侧 120px）排布，实测更高的条目（代码块、工具卡、长文本）会与下一条**互相叠压**（实测最多叠 114px）；顺带按「窗口首条偏移」补偿 `scrollTop`，避免上面行变高把可视内容整体推走。`EbChatList` 的 `virtual` 长会话直接受益；
+- 会话滚动容器加 `scrollbar-gutter: stable`：滚动条出现时不再重排正文（此前一出滚动条内容横向挤一下）；
+- **EbAiConsole**：会话区改成 flex 列容器——内层 `ChatList` 吃满高度后成为**唯一滚动元素**，修掉「新消息不自动滚到底」（此前外层 `.eb-ai-console__chat` 在滚、内层列表滚不动，而跟随逻辑驱动的是内层）；
+- 文档示例修掉「发出消息后出现两条用户记录」：`EbChatbot` 本就会追加用户消息并回写 `v-model`，示例里又手动 push 了一次（6 处 + 挂件示例）。
+
+### @wil-works/evoke-chat — 确认门按钮改用 EbButton
+
+- `actions[].icon` 新增支持（库内图标名，如 `check-circle` / `close-circle`），走 `EbButton` 的 `icon`；**响应后那颗挑中的自动换成对勾**；
+- `EbChatConfirmation` 的动作按钮从自绘 `<button>` 换成**库内 `EbButton`**（`size="small"`，`type` 直接透传 `actions[].type`）——外观、焦点环、禁用态与全库按钮一致，卡片侧只保留「已选中」标记（响应后挑中的那颗留主色描边 + 对勾）；选择器 `eb-chat-confirmation__btn`（含 `is-chosen`）保持不变，消费方与测试无需改动。
+- 家族其余按钮（图标钮 / chips / 整行可点卡片）**维持原设计**：那些是 24–28px 密集控件与整行热区，套 `EbButton` 的尺寸档位与间距规则反而要逐个覆写；口径差异写在文档里。
+
+### 文档站 — 顶栏 npm 入口换图标
+
+- business / charts 两站顶栏跳 npm 的按钮此前用的是**下载箭头**（`download`），与「跳到包页」语义不符；改为 **npm 标**（Remix `Logos/npmjs-line`），`aria-label` / `title` 也由「下载」改为「在 npm 上查看」；
+- 两套图标集各补一个 `npmjs`（business 437 → 438、evoke-ui 核心集 76 → 77），仍走生成器 MAPPING，不手写路径；ui 站图标总览页计数同步到 77。
+
+### @wil-works/evoke-business-ui — 拆包配套
+
+- 新增 `./locale` 子路径导出（`zhCN` / `en` / `ja` / `zhTW` / `ko` / `es` / `pt`），
+  此前宿主拿不到语言包对象；
+- 新增公共接缝导出：`useLocale` / `usePlatform` / `isImeComposing` / `inBrowser`；
+- 卸载 `marked` / `highlight.js` 依赖；`.eb-chat-shimmer`（流式拖尾）随家族迁走；
+  注册组件数 182 → 147。
+
 ### @wil-works/evoke-business-ui — 对齐 antd 能力第二批
 
 - **EbSelect / EbTreeSelect**：`label-in-value` 让值携带 `{ value, label }`（多选为数组，
@@ -46,6 +100,13 @@
 
 ### 破坏性变更（Breaking）
 
+- **evoke-business-ui → evoke-chat**：`EbChat*`（33 个）与 `EbAiConsole` / `EbAiPromptBox`
+  不再由 `@wil-works/evoke-business-ui` 注册与导出，改由 `@wil-works/evoke-chat` 提供；
+  `useChatEngine` / `useChatSessions` / `useTriggerMenu` / `useSpeech` / `useSpeechInput` /
+  `configureChatMarkdown` / `renderChatMarkdown` / `chatLabels` 的导入路径同步改为新包；
+  样式需额外引入 `@wil-works/evoke-chat/styles`；
+- **语言包**：`eb.chat` 命名空间从底座语言包移除，对话文案改由
+  `@wil-works/evoke-chat/locale` 提供；
 - **evoke-business-ui**：`EbTable` 的 `expand-change` 事件统一为
   `(expandedKeys[], row, expanded)` 三参（原平铺/树两种形态分裂）；
 - **evoke-ui**：内部标识符 `ewSvgPaths` / `ewShowcasePaths` / `ewIconGrid` 及 tabbar

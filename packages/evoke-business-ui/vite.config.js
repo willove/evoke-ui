@@ -23,6 +23,8 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.js'),
         // 完整图标库入口：Remix 全量 3229 图标，独立产物按需引入
         'full-icons': resolve(__dirname, 'src/full-icons.js'),
+        // 语言包入口：宿主自己指定语言时用（7 个语言包）
+        locale: resolve(__dirname, 'src/locale/index.js'),
         ...Object.fromEntries(
           componentEntries.map((c) => [c.name, resolve(__dirname, 'src', c.file)]),
         ),
@@ -33,15 +35,13 @@ export default defineConfig({
     rollupOptions: {
       // external：vue + 图表独立包（EbChart 别名重导出，样式由消费端单独引入 charts 包）
       // 运行时依赖全部外置（正则覆盖 dayjs/plugin/* 等子路径导入），消费端按
-      // dependencies 解析，避免 dayjs/highlight.js 等被整体内联造成双份运行时
+      // dependencies 解析，避免 dayjs 等被整体内联造成双份运行时
       external: [
         /^vue($|\/)/,
         /^@wil-works\/evoke-charts($|\/)/,
         /^@floating-ui\//,
         /^async-validator($|\/)/,
         /^dayjs($|\/)/,
-        /^highlight\.js($|\/)/,
-        /^marked($|\/)/,
       ],
       output: {
         globals: {

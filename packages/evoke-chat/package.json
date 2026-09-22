@@ -1,0 +1,75 @@
+{
+  "name": "@wil-works/evoke-chat",
+  "version": "0.1.0",
+  "description": "Evoke Chat — AI 对话与 Agent UI（对话窗口、消息体、卡片、工具调用、沙箱预览），底座为 @wil-works/evoke-business-ui",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./styles": "./dist/evoke-chat.css",
+    "./locale": {
+      "types": "./dist/types/locale/index.d.ts",
+      "default": "./dist/locale.mjs"
+    },
+    "./*": {
+      "types": "./dist/types/entries/*.d.ts",
+      "default": "./dist/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs && vue-tsc --project tsconfig.build.json && node scripts/post-types.mjs",
+    "typecheck": "vue-tsc --noEmit",
+    "compat:check": "node scripts/compat-check.mjs",
+    "lint:tokens": "node scripts/check-token-rule.mjs",
+    "publish:pkg": "pnpm publish --access public --no-git-checks"
+  },
+  "dependencies": {
+    "highlight.js": "^11.12.0",
+    "marked": "^18.0.11"
+  },
+  "peerDependencies": {
+    "@wil-works/evoke-business-ui": "workspace:^",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/compiler-sfc": "^3.5.42",
+    "@wil-works/evoke-business-ui": "workspace:*",
+    "typescript": "^5.9.2",
+    "vite": "^8.0.10",
+    "vue": "^3.5.42",
+    "vue-tsc": "^3.3.11"
+  },
+  "keywords": [
+    "vue3",
+    "component-library",
+    "chat",
+    "chatbot",
+    "ai",
+    "agent",
+    "evoke-chat"
+  ],
+  "author": "willove",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willove/evoke-ui.git",
+    "directory": "packages/evoke-chat"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -9,17 +9,21 @@ import Icon from './Icon.vue'
 import ThemeCustomizer from './ThemeCustomizer.vue'
 import EvokeBusinessUI from '@wil-works/evoke-business-ui'
 import '@wil-works/evoke-business-ui/styles'
+import EvokeChat from '@wil-works/evoke-chat'
+import '@wil-works/evoke-chat/styles'
 import { EvokeCharts } from '@wil-works/evoke-charts'
 import './style.css'
 
 /**
  * 自定义主题 — 文档站布局
- * 组件库源码级全局注册（源码改动即时反映到演示）
+ * 组件库源码级全局注册（源码改动即时反映到演示）；
+ * 对话家族 2026-09-22 拆去 @wil-works/evoke-chat，单独注册与引样式
  */
 export default {
   Layout: DocLayout,
   enhanceApp({ app }) {
     app.use(EvokeBusinessUI)
+    app.use(EvokeChat)
     app.use(EvokeCharts)
     app.component('DemoBlock', DemoBlock)
     app.component('DocExample', DocExample)

@@ -27,10 +27,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # 包构建自带 check-token-rule 铁律与 compat-check（Ew ⊂ Ev）校验
+      # 顺序有依赖：evoke-chat 的类型检查读底座的 d.ts，必须在 build:ebui 之后
       - name: Build packages
         run: |
           pnpm build:eui
           pnpm build:ebui
+          pnpm build:chat
           pnpm build:charts
 
       # 编辑器同口径类型检查（vue-tsc --noEmit）；构建期的 d.ts 生成是第二道类型关
@@ -44,12 +46,15 @@ jobs:
       - name: Coverage
         run: pnpm test:coverage
 
-      # 文档站从本地脚本部署上线，部署前先在 CI 验证两侧构建（含 SSR）可通过
+      # 文档站从本地脚本部署上线（scripts/deploy-docs.sh），部署前先在 CI 验证三站构建（含 SSR）可通过
       - name: Build docs (business)
         run: pnpm docs:build
 
       - name: Build docs (ui)
         run: pnpm docs-web:build
+
+      - name: Build docs (charts)
+        run: pnpm docs-charts:build
 
       - name: Upload coverage
         if: always()

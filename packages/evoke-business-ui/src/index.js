@@ -132,51 +132,6 @@ import EbCarousel from './components/carousel/index.vue'
 import EbCarouselItem from './components/carousel/item.vue'
 import EbCascaderPanel from './components/cascader-panel/index.vue'
 import EbCommandPalette from './components/command-palette/index.vue'
-// Chatbot 家族
-import EbChatbot from './components/chatbot/Chatbot.vue'
-import EbChatList from './components/chatbot/ChatList.vue'
-import EbChatMessage from './components/chatbot/ChatMessage.vue'
-import EbChatSender from './components/chatbot/ChatSender.vue'
-import EbChatContent from './components/chatbot/ChatContent.vue'
-import EbChatMarkdown from './components/chatbot/ChatMarkdown.vue'
-import EbChatThinking from './components/chatbot/ChatThinking.vue'
-import EbChatLoading from './components/chatbot/ChatLoading.vue'
-import EbChatActionbar from './components/chatbot/ChatActionbar.vue'
-import EbChatAttachments from './components/chatbot/ChatAttachments.vue'
-import EbChatSuggestion from './components/chatbot/ChatSuggestion.vue'
-import EbChatFeedback from './components/chatbot/ChatFeedback.vue'
-import EbChatMessageEdit from './components/chatbot/ChatMessageEdit.vue'
-import EbChatSources from './components/chatbot/ChatSources.vue'
-import EbChatToolCall from './components/chatbot/ChatToolCall.vue'
-import EbChatThreads from './components/chatbot/ChatThreads.vue'
-import EbChatWidget from './components/chatbot/ChatWidget.vue'
-import EbChatPlan from './components/chatbot/ChatPlan.vue'
-import EbChatConfirmation from './components/chatbot/ChatConfirmation.vue'
-import EbChatArtifact from './components/chatbot/ChatArtifact.vue'
-import EbChatDiff from './components/chatbot/ChatDiff.vue'
-import EbChatTerminal from './components/chatbot/ChatTerminal.vue'
-import EbChatFileTree from './components/chatbot/ChatFileTree.vue'
-import EbChatShare from './components/chatbot/ChatShare.vue'
-import EbChatSpeak from './components/chatbot/ChatSpeak.vue'
-import EbChatVoiceInput from './components/chatbot/ChatVoiceInput.vue'
-import EbChatQueue from './components/chatbot/ChatQueue.vue'
-import EbChatCommandMenu from './components/chatbot/ChatCommandMenu.vue'
-import EbChatUsage from './components/chatbot/ChatUsage.vue'
-import EbChatTestResults from './components/chatbot/ChatTestResults.vue'
-import EbChatStackTrace from './components/chatbot/ChatStackTrace.vue'
-import EbChatSandbox from './components/chatbot/ChatSandbox.vue'
-import EbChatWebPreview from './components/chatbot/ChatWebPreview.vue'
-export { useChatEngine } from './components/chatbot/useChatEngine'
-export { useChatSessions } from './components/chatbot/useChatSessions'
-export { useTriggerMenu } from './composables/useTriggerMenu'
-// 对话正文渲染的配置面：协议白名单 / 主题色 / 追加高亮语言
-export {
-  configureChatMarkdown,
-  getChatMarkdownConfig,
-  renderChatMarkdown,
-  registerHighlightLanguage,
-} from './components/chatbot/chatMarkdown'
-export { chatLabels } from './components/chatbot/labels'
 // 业务组件
 import EbStatusTag from './components/status-tag/index.vue'
 import EbCellStack from './components/cell-stack/index.vue'
@@ -196,13 +151,13 @@ import EbQrcode from './components/qrcode/index.vue'
 import EbMention from './components/mention/index.vue'
 import EbStatistic from './components/statistic/index.vue'
 import EbCountdown from './components/countdown/index.vue'
-import EbAiPromptBox from './components/ai-prompt-box/index.vue'
-import EbAiConsole from './components/ai-console/index.vue'
 import EbFloatButton from './components/float-button/index.vue'
 import EbFloatButtonGroup from './components/float-button/group.vue'
 import EbComment from './components/comment/index.vue'
 import EbAuth from './components/auth/index.vue'
 import { encodeQR, QRCODE_MAX_BYTES } from './components/qrcode/qrcode'
+import { isImeComposing } from './utils/events'
+import { inBrowser } from './utils/dom'
 // 排版与锚点
 import EbTitle from './components/typography/title.vue'
 import EbParagraph from './components/typography/paragraph.vue'
@@ -249,6 +204,8 @@ import { useFloating } from './composables/useFloating'
 import { useClickOutside } from './composables/useClickOutside'
 import { useFocusTrap } from './composables/useFocusTrap'
 import { useLockScroll } from './composables/useLockScroll'
+import { useLocale } from './composables/useLocale'
+import { usePlatform } from './composables/usePlatform'
 import { useFormItem } from './composables/useFormItem'
 import { usePermission, setPermissions } from './composables/usePermission'
 import { useTable } from './composables/useTable'
@@ -415,39 +372,6 @@ const components = {
   EbCarouselItem,
   EbCascaderPanel,
   EbCommandPalette,
-  EbChatbot,
-  EbChatList,
-  EbChatMessage,
-  EbChatSender,
-  EbChatContent,
-  EbChatMarkdown,
-  EbChatThinking,
-  EbChatLoading,
-  EbChatActionbar,
-  EbChatAttachments,
-  EbChatSuggestion,
-  EbChatFeedback,
-  EbChatMessageEdit,
-  EbChatSources,
-  EbChatToolCall,
-  EbChatThreads,
-  EbChatWidget,
-  EbChatPlan,
-  EbChatConfirmation,
-  EbChatArtifact,
-  EbChatDiff,
-  EbChatTerminal,
-  EbChatFileTree,
-  EbChatShare,
-  EbChatSpeak,
-  EbChatVoiceInput,
-  EbChatQueue,
-  EbChatCommandMenu,
-  EbChatUsage,
-  EbChatTestResults,
-  EbChatStackTrace,
-  EbChatSandbox,
-  EbChatWebPreview,
   EbStatusTag,
   EbCellStack,
   EbDetailDescriptions,
@@ -462,8 +386,6 @@ const components = {
   EbListy: EbVirtualList,
   EbStatistic,
   EbCountdown,
-  EbAiPromptBox,
-  EbAiConsole,
   EbAutoComplete,
   EbTour,
   EbQrcode,
@@ -648,40 +570,6 @@ export {
   EbCascaderPanel,
   // 命令面板
   EbCommandPalette,
-  // Chatbot 家族
-  EbChatbot,
-  EbChatList,
-  EbChatMessage,
-  EbChatSender,
-  EbChatContent,
-  EbChatMarkdown,
-  EbChatThinking,
-  EbChatLoading,
-  EbChatActionbar,
-  EbChatAttachments,
-  EbChatSuggestion,
-  EbChatFeedback,
-  EbChatMessageEdit,
-  EbChatSources,
-  EbChatToolCall,
-  EbChatThreads,
-  EbChatWidget,
-  EbChatPlan,
-  EbChatConfirmation,
-  EbChatArtifact,
-  EbChatDiff,
-  EbChatTerminal,
-  EbChatFileTree,
-  EbChatShare,
-  EbChatSpeak,
-  EbChatVoiceInput,
-  EbChatQueue,
-  EbChatCommandMenu,
-  EbChatUsage,
-  EbChatTestResults,
-  EbChatStackTrace,
-  EbChatSandbox,
-  EbChatWebPreview,
   // 业务组件
   EbStatusTag,
   EbCellStack,
@@ -697,8 +585,6 @@ export {
   EbVirtualList as EbListy,
   EbStatistic,
   EbCountdown,
-  EbAiPromptBox,
-  EbAiConsole,
   EbAutoComplete,
   EbTour,
   EbQrcode,
@@ -747,6 +633,9 @@ export {
   useClickOutside,
   useFocusTrap,
   useLockScroll,
+  // 供 evoke-chat 等衍生包消费的公共接缝
+  useLocale,
+  usePlatform,
   useFormItem,
   usePermission,
   setPermissions,
@@ -756,6 +645,10 @@ export {
   // Composables — 移动端安全区
   useSafeArea,
   ensureViewportFit,
+  // IME 组字判定（chat 输入区与联想类组件同源）
+  isImeComposing,
+  // 环境判定（SSR 安全；capability 检测类组件与衍生包共用）
+  inBrowser,
   // QRCode 底层编码器
   encodeQR,
   QRCODE_MAX_BYTES,

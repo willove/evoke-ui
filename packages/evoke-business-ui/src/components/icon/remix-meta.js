@@ -750,6 +750,10 @@ export const REMIX_ICON_META = {
   "category": "Document",
   "remix": "file-text-line"
  },
+ "npmjs": {
+  "category": "Logos",
+  "remix": "npmjs-line"
+ },
  "wechat": {
   "category": "Logos",
   "remix": "wechat-line"

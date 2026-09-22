@@ -88,7 +88,8 @@ const pkg = JSON.parse(readFileSync(PKG, 'utf8'))
 // devDependencies 同入白名单：构建链依赖也须显式登记，防止从 dev 侧溜进第三方组件库
 const depKeys = Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies, ...pkg.devDependencies })
 // 依赖白名单：新增依赖必须显式登记，第三方组件库永远进不来
-const DEP_ALLOWLIST = /^(@floating-ui\/dom|@wil-works\/evoke-charts|async-validator|dayjs|highlight\.js|marked|vue|vite|@vitejs\/plugin-vue|@vue\/compiler-sfc|remixicon|typescript|vue-tsc)$/
+// 对话家族拆去 @wil-works/evoke-chat 后，marked / highlight.js 已不属本库
+const DEP_ALLOWLIST = /^(@floating-ui\/dom|@wil-works\/evoke-charts|async-validator|dayjs|vue|vite|@vitejs\/plugin-vue|@vue\/compiler-sfc|remixicon|typescript|vue-tsc)$/
 for (const key of depKeys) {
   if (!DEP_ALLOWLIST.test(key)) violations.push(`package.json  依赖不在白名单（禁止引入第三方组件库）: ${key}`)
 }

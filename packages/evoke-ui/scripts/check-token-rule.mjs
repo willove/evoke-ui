@@ -26,6 +26,14 @@ const PKG = resolve(__dirname, '../package.json')
 const EXTS = new Set(['.vue', '.js', '.mjs', '.ts', '.css', '.scss'])
 const SKIP_DIRS = new Set(['node_modules', 'dist', 'coverage'])
 
+/**
+ * 跨库提及的豁免标记（`isolation:allow-cross-package`）：
+ * 写在违规行上，或写在它正上方那一行（注释形式）。
+ * 用途只有一个——跨包 API 奇偶守卫与它的同步说明，它们必须点名兄弟库才能比对。
+ * 运行时与源码不许用；带着这个标记的每一行都应当在 review 里被看见。
+ */
+const CROSS_PKG_MARKER = 'isolation:allow-cross-package'
+
 function walk(dir) {
   const out = []
   for (const name of readdirSync(dir)) {
@@ -44,11 +52,12 @@ const files = ROOTS.flatMap(walk)
 for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n')
   lines.forEach((line, i) => {
+    const crossPkgExempt = line.includes(CROSS_PKG_MARKER) || (lines[i - 1] || '').includes(CROSS_PKG_MARKER)
     if (/--el-/.test(line)) violations.push(`${file}:${i + 1}  出现 --el-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
     if (/--ew-/.test(line)) violations.push(`${file}:${i + 1}  出现旧 --ew-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
     if (/--eb-/.test(line)) violations.push(`${file}:${i + 1}  出现兄弟库 --eb-* 令牌（应使用 --ev-*）: ${line.trim().slice(0, 100)}`)
     if (/\bel-[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(line)) violations.push(`${file}:${i + 1}  出现第三方 el-* 类名: ${line.trim().slice(0, 100)}`)
-    if (/evoke-business-ui/i.test(line)) violations.push(`${file}:${i + 1}  出现 evoke-business-ui 引用（两库完全隔离）: ${line.trim().slice(0, 100)}`)
+    if (/evoke-business-ui/i.test(line) && !crossPkgExempt) violations.push(`${file}:${i + 1}  出现 evoke-business-ui 引用（两库完全隔离）: ${line.trim().slice(0, 100)}`)
   })
 }
 

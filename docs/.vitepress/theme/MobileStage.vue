@@ -24,7 +24,7 @@
       <!-- 应用导航栏 -->
       <div v-if="title || $slots.action" class="mob-stage__navbar">
         <span class="mob-stage__back" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+          <eb-icon name="arrow-left" :size="18" />
         </span>
         <span class="mob-stage__title">{{ title }}</span>
         <span class="mob-stage__action"><slot name="action" /></span>

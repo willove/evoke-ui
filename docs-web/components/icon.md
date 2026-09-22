@@ -2,7 +2,7 @@
 
 形状源自 [Remix Icon](https://remixicon.com/)（Remix Icon License v1.0，免费商用），生成期静态快照，运行时零依赖。
 
-- **核心集**：72 个语义命名图标（`search`、`close`、`arrow-right`…），随包内置、零加载
+- **核心集**：77 个语义命名图标（`search`、`close`、`arrow-right`…），随包内置、零加载
 - **展示集**：900+ Remix 原生命名图标（`brush-line`…），`loadShowcaseIcons()` 按需加载（独立 chunk，不占主包体积）
 - 需要全量 Remix Icon 时调大生成脚本的 `SHOWCASE_PER_CATEGORY` 重新生成，见下方[扩展到全量](#扩展到全量-remix-icon)
 
@@ -33,9 +33,9 @@
 
 ## 核心集一览
 
-全部 72 个语义图标，名称即语义，覆盖官网组件的常用表达：
+全部 77 个语义图标，名称即语义，覆盖官网组件的常用表达：
 
-<DemoBlock title="内置核心集（72）" center>
+<DemoBlock title="内置核心集（77）" center>
 
 <div class="icon-core-grid">
   <figure v-for="(paths, name) in coreIcons" :key="name" class="icon-core-cell">

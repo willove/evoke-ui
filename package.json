@@ -8,6 +8,7 @@
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
     "build:ebui": "pnpm --filter @wil-works/evoke-business-ui build",
+    "build:chat": "pnpm --filter @wil-works/evoke-chat build",
     "build:eui": "pnpm --filter @wil-works/evoke-ui build",
     "build:charts": "pnpm --filter @wil-works/evoke-charts build",
     "demo:charts3d": "pnpm --filter @wil-works/evoke-charts-3d-playground dev",

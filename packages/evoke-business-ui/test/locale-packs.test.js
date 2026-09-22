@@ -31,6 +31,7 @@ function flatten(obj, prefix = '') {
 const packs = { 'zh-CN': zhCN, en, ja, 'zh-TW': zhTW, ko, es, pt }
 const basePaths = flatten(zhCN)
 
+
 describe('locale 语言包键位奇偶', () => {
   it('基准包 zh-CN 结构完整', () => {
     expect(zhCN.name).toBe('zh-cn')

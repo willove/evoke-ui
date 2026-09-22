@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+defineOptions({ inheritAttrs: false })
 /**
  * EbIcon — 图标组件
  * 根节点挂 eb-icon class

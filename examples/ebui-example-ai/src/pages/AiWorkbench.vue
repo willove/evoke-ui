@@ -60,7 +60,8 @@
 
 <script setup>
 import { onBeforeUnmount, ref } from 'vue'
-import { useDarkMode, useChatEngine } from '@wil-works/evoke-business-ui'
+import { useDarkMode } from '@wil-works/evoke-business-ui'
+import { useChatEngine } from '@wil-works/evoke-chat'
 import { SCENES, CAPABILITIES, MODELS, EXAMPLES, buildReply } from '../mock.js'
 
 const { isDark, toggleDark } = useDarkMode()

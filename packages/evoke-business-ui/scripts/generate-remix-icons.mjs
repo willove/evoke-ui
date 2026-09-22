@@ -219,6 +219,8 @@ const MAPPING = {
   md: ['Document', 'file-text-line'],
   'type-md': ['Document', 'file-text-line'],
   // ─── Logo / 品牌（支付、社交、开发常用）───
+  // npm 包入口（文档站顶栏跳转用）
+  npmjs: ['Logos', 'npmjs-line'],
   wechat: ['Logos', 'wechat-line'],
   'wechat-filled': ['Logos', 'wechat-fill'],
   'wechat-pay': ['Logos', 'wechat-pay-line'],

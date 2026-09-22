@@ -41,6 +41,9 @@ importers:
       '@wil-works/evoke-charts':
         specifier: workspace:*
         version: link:../packages/evoke-charts
+      '@wil-works/evoke-chat':
+        specifier: workspace:*
+        version: link:../packages/evoke-chat
       vue:
         specifier: ^3.5.0
         version: 3.5.42(typescript@5.9.2)
@@ -133,6 +136,9 @@ importers:
       '@wil-works/evoke-business-ui':
         specifier: workspace:*
         version: link:../../packages/evoke-business-ui
+      '@wil-works/evoke-chat':
+        specifier: workspace:*
+        version: link:../../packages/evoke-chat
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@5.9.2)
@@ -305,12 +311,6 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.23
-      highlight.js:
-        specifier: ^11.12.0
-        version: 11.12.0
-      marked:
-        specifier: ^18.0.11
-        version: 18.0.11
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.8
@@ -348,6 +348,37 @@ importers:
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@5.9.2)
+
+  packages/evoke-chat:
+    dependencies:
+      highlight.js:
+        specifier: ^11.12.0
+        version: 11.12.0
+      marked:
+        specifier: ^18.0.11
+        version: 18.0.11
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.8
+        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
+      '@vue/compiler-sfc':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@wil-works/evoke-business-ui':
+        specifier: workspace:*
+        version: link:../evoke-business-ui
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+      vite:
+        specifier: ^8.0.10
+        version: 8.2.2
+      vue:
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@5.9.2)
+      vue-tsc:
+        specifier: ^3.3.11
+        version: 3.3.11(typescript@5.9.2)
 
   packages/evoke-mcp:
     dependencies:

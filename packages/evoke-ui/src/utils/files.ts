@@ -1,7 +1,7 @@
 /**
  * 文件投递校验（AI 输入台用）
  *
- * 与 @wil-works/evoke-business-ui 的 utils/files 同实现：两包没有共享模块，
+ * 与 @wil-works/evoke-business-ui 的 utils/files 同实现：两包没有共享模块， <!-- isolation:allow-cross-package -->
  * 各留一份。改一处要同步另一处——ai-prompt-box 的跨包 API 奇偶守卫会拦名单漂移，
  * 但拦不到这里的实现漂移，故改动请两边一起过。
  *

@@ -168,19 +168,6 @@ export const CATEGORIES = [
       { name: 'ImportExportPanel', zh: '导入导出面板', path: '/components/import-export-panel' },
       { name: 'AuditTimeline', zh: '审计时间线', path: '/components/audit-timeline' },
       { name: 'ColumnSettings', zh: '列设置', path: '/components/column-settings' },
-      { name: 'Chatbot', zh: '对话窗口', path: '/components/chatbot' },
-      { name: 'Chat 子组件', zh: '对话子组件', path: '/components/chat-subcomponents' },
-      { name: 'Chat 三件套', zh: '计划/确认/产物', path: '/components/chat-agent' },
-    ],
-  },
-  {
-    name: 'AI',
-    key: 'ai',
-    components: [
-      { name: 'ChatThreads', zh: '会话列表', path: '/components/chat-threads' },
-      { name: 'ChatWidget', zh: '浮动挂件', path: '/components/chat-widget' },
-      { name: 'AiPromptBox', zh: 'AI 输入台', path: '/components/ai-prompt-box' },
-      { name: 'AiConsole', zh: 'AI 工作台', path: '/components/ai-console' },
     ],
   },
   {
@@ -191,6 +178,34 @@ export const CATEGORIES = [
       { name: 'Format', zh: '格式化工具', path: '/utils/format' },
       { name: 'Theme & Color', zh: '主题与颜色', path: '/utils/theme-color' },
       { name: 'Hooks', zh: '组合式函数', path: '/utils/hooks' },
+    ],
+  },
+]
+
+/**
+ * AI 对话分区导航 — 侧栏在 /chat 路由下展示
+ *
+ * 对话家族 2026-09-22 拆去独立包 @wil-works/evoke-chat，文档也随之从组件侧栏
+ * 独立成顶栏分区：读者不是「查某个组件」，而是「接一套 AI 对话能力」。
+ */
+export const CHAT_NAV = [
+  {
+    name: '对话窗口',
+    key: 'chat-core',
+    components: [
+      { name: 'Chatbot', zh: '对话窗口', path: '/chat/chatbot' },
+      { name: 'Chat 子组件', zh: '对话子组件', path: '/chat/chat-subcomponents' },
+      { name: 'Chat 三件套', zh: '计划/确认/产物', path: '/chat/chat-agent' },
+    ],
+  },
+  {
+    name: '工作台与外层',
+    key: 'chat-console',
+    components: [
+      { name: 'AiConsole', zh: 'AI 工作台', path: '/chat/ai-console' },
+      { name: 'AiPromptBox', zh: 'AI 输入台', path: '/chat/ai-prompt-box' },
+      { name: 'ChatThreads', zh: '会话列表', path: '/chat/chat-threads' },
+      { name: 'ChatWidget', zh: '浮动挂件', path: '/chat/chat-widget' },
     ],
   },
 ]
@@ -308,6 +323,11 @@ export const ALL_EXAMPLES = EXAMPLES_NAV.flatMap((c) =>
 /** 扁平图表章节清单（搜索用） */
 export const ALL_CHART_PAGES = CHART_NAV.flatMap((c) =>
   c.components.map((comp) => ({ ...comp, category: '图表' })),
+)
+
+/** 扁平 AI 对话清单（搜索用） */
+export const ALL_CHAT_PAGES = CHAT_NAV.flatMap((c) =>
+  c.components.map((comp) => ({ ...comp, category: 'AI 对话' })),
 )
 
 /** 扁平组件清单 */

@@ -12,6 +12,10 @@
       "default": "./dist/index.mjs"
     },
     "./styles": "./dist/evoke-business-ui.css",
+    "./locale": {
+      "types": "./dist/types/locale/index.d.ts",
+      "default": "./dist/locale.mjs"
+    },
     "./full-icons": {
       "types": "./dist/types/full-icons.d.ts",
       "default": "./dist/full-icons.mjs"
@@ -41,9 +45,7 @@
     "@floating-ui/dom": "^1.8.0",
     "@wil-works/evoke-charts": "workspace:^",
     "async-validator": "^4.2.5",
-    "dayjs": "^1.11.13",
-    "highlight.js": "^11.12.0",
-    "marked": "^18.0.11"
+    "dayjs": "^1.11.13"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

@@ -6,6 +6,12 @@
 pnpm add @wil-works/evoke-business-ui
 ```
 
+AI 对话 / Agent 能力（对话窗口、消息体、卡片、工具调用、沙箱预览）在**同族的独立包**里，按需单独安装——不装它就不会把 `marked` / `highlight.js` 带进依赖树：
+
+```bash
+pnpm add @wil-works/evoke-chat
+```
+
 ## 引入
 
 完整引入（注册全部组件与命令式 API）：
@@ -17,6 +23,15 @@ import '@wil-works/evoke-business-ui/styles'
 
 const app = createApp(App)
 app.use(EvokeBusinessUI)
+```
+
+用到对话家族时，再叠一层（它 peer 依赖本库，样式与设计令牌都来自本库）：
+
+```js
+import EvokeChat from '@wil-works/evoke-chat'
+import '@wil-works/evoke-chat/styles'
+
+app.use(EvokeChat)
 ```
 
 ## 使用示例

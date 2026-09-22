@@ -90,10 +90,11 @@
             href="https://www.npmjs.com/package/@wil-works/evoke-business-ui"
             target="_blank"
             rel="noopener"
-            aria-label="下载"
-            title="npm 下载"
+            aria-label="在 npm 上查看"
+            title="在 npm 上查看"
           >
-            <Icon name="download" :size="16" />
+            <!-- npm 标（Remix Logos/npmjs-line）：下载箭头与「跳到包页」语义不符 -->
+            <Icon name="npmjs" :size="16" />
           </a>
           <button class="bd-header__btn" type="button" :aria-label="isDark ? '切换到浅色' : '切换到深色'" @click="toggleDark">
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
@@ -109,7 +110,7 @@
     <div class="bd-body">
       <!-- 侧栏：窄屏抽屉承载主导航（首页也要能打开），非首页再追加目录 -->
       <aside class="bd-sidebar" :class="[{ 'is-open': mobileOpen }, { 'is-home': isHome }]">
-        <input v-if="!isHome && !isGuide && !isChart && !isExamples && !isMobileDocs" v-model="filter" class="bd-sidebar__filter" type="text" placeholder="筛选组件" autocomplete="off">
+        <input v-if="!isHome && !isGuide && !isChart && !isChat && !isExamples && !isMobileDocs" v-model="filter" class="bd-sidebar__filter" type="text" placeholder="筛选组件" autocomplete="off">
         <nav class="bd-sidebar__nav">
           <div class="bd-sidebar__group bd-sidebar__group--nav">
             <div class="bd-sidebar__group-title">导航</div>
@@ -158,7 +159,7 @@ import { useRoute, useRouter, Content } from 'vitepress'
 import Icon from './Icon.vue'
 import ExampleLiveBar from './ExampleLiveBar.vue'
 import PlatformCompat from './PlatformCompat.vue'
-import { CATEGORIES, ALL_COMPONENTS, BRAND, GUIDE_NAV, CHART_NAV, ALL_CHART_PAGES, EXAMPLES_NAV, ALL_EXAMPLES, MOBILE_NAV, ALL_MOBILE_PAGES } from './meta.js'
+import { CATEGORIES, ALL_COMPONENTS, BRAND, GUIDE_NAV, CHART_NAV, ALL_CHART_PAGES, CHAT_NAV, ALL_CHAT_PAGES, EXAMPLES_NAV, ALL_EXAMPLES, MOBILE_NAV, ALL_MOBILE_PAGES } from './meta.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -175,6 +176,7 @@ const isHome = computed(() => route.path === '/' || route.path === '/index.html'
 const isGuide = computed(() => route.path.startsWith('/guide'))
 const isChart = computed(() => route.path.startsWith('/chart'))
 const isMobileDocs = computed(() => route.path.startsWith('/mobile'))
+const isChat = computed(() => route.path.startsWith('/chat'))
 const isExamples = computed(() => route.path.startsWith('/examples') && !route.path.startsWith('/examples/live/'))
 const isExampleLive = computed(() => route.path.startsWith('/examples/live/'))
 const liveCurrent = computed(() => route.path.match(/\/examples\/live\/([^/.]+)/)?.[1] ?? '')
@@ -191,6 +193,12 @@ const sidebarGroups = computed(() => {
     return CHART_NAV.map((cat) => ({
       ...cat,
       components: cat.components.map((c) => ({ ...c, label: c.name, suffix: c.zh })),
+    }))
+  }
+  if (isChat.value) {
+    return CHAT_NAV.map((cat) => ({
+      ...cat,
+      components: cat.components.map((c) => ({ ...c, label: c.zh, suffix: c.name })),
     }))
   }
   if (isExamples.value) {
@@ -224,6 +232,7 @@ const navItems = computed(() => [
   { key: 'home', label: '首页', icon: 'home', path: '/', active: isHome.value },
   { key: 'guide', label: '指南', icon: 'book', path: '/guide/getting-started', active: isGuide.value },
   { key: 'components', label: '组件', icon: 'box', path: '/components/overview', active: route.path.startsWith('/components') },
+  { key: 'chat', label: 'AI 对话', icon: 'chat', path: '/chat/chatbot', active: isChat.value },
   { key: 'charts', label: '图表', icon: 'chart', path: '/chart', active: isChart.value },
   { key: 'mobile', label: '移动端', icon: 'smartphone', path: '/mobile/', active: isMobileDocs.value },
   { key: 'examples', label: '示例', icon: 'play', path: '/examples/', active: isExamples.value },
@@ -241,7 +250,7 @@ const navItems = computed(() => [
 const results = computed(() => {
   const q = keyword.value.trim().toLowerCase()
   if (!q) return []
-  const pool = [...ALL_COMPONENTS, ...ALL_CHART_PAGES, ...ALL_EXAMPLES, ...ALL_MOBILE_PAGES]
+  const pool = [...ALL_COMPONENTS, ...ALL_CHART_PAGES, ...ALL_CHAT_PAGES, ...ALL_EXAMPLES, ...ALL_MOBILE_PAGES]
   return pool.filter(
     (c) => c.name.toLowerCase().includes(q) || c.zh.includes(q) || c.category.includes(q),
   ).slice(0, 8)

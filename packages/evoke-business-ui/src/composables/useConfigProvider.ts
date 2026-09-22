@@ -7,9 +7,14 @@ import { zhCN } from '../locale'
 
 export const configProviderContextKey = Symbol('evConfigProviderContext')
 
-/** 文案树：嵌套对象、叶子为字符串（部分条目为字符串数组） */
+/**
+ * 文案树：嵌套对象，叶子为字符串 / 字符串数组，或带参文案函数（如 `chat.markdown.citation(n)`）。
+ * 函数叶子让插值走参数而不是 `{name}` 占位，翻译时语序可以自由调整。
+ */
+export type LocaleMessage = string | ((...args: never[]) => string) | LocaleMessages | readonly string[]
+
 export interface LocaleMessages {
-  [key: string]: LocaleMessages | string | readonly string[]
+  [key: string]: LocaleMessage
 }
 
 export type Size = '' | 'default' | 'small' | 'large'

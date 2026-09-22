@@ -23,20 +23,11 @@
         aria-label="向前折叠"
         @click.stop="onCollapseStart"
       >
-        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-          <path
-            v-if="ctx.layout.value === 'horizontal'"
-            d="M10 3L5 8L10 13"
-            stroke="currentColor" stroke-width="1.5" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"
-          />
-          <path
-            v-else
-            d="M3 10L8 5L13 10"
-            stroke="currentColor" stroke-width="1.5" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"
-          />
-        </svg>
+        <!-- 方向随布局轴：横排用左右箭头，竖排用上下箭头（形状取自库内 Remix 图标集） -->
+        <eb-icon
+          :name="ctx.layout.value === 'horizontal' ? 'arrow-left' : 'arrow-up'"
+          :size="12"
+        />
       </button>
       <button
         v-if="collapsibleConfig.end"
@@ -45,20 +36,10 @@
         aria-label="向后折叠"
         @click.stop="onCollapseEnd"
       >
-        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-          <path
-            v-if="ctx.layout.value === 'horizontal'"
-            d="M6 3L11 8L6 13"
-            stroke="currentColor" stroke-width="1.5" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"
-          />
-          <path
-            v-else
-            d="M3 6L8 11L13 6"
-            stroke="currentColor" stroke-width="1.5" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"
-          />
-        </svg>
+        <eb-icon
+          :name="ctx.layout.value === 'horizontal' ? 'arrow-right' : 'arrow-down'"
+          :size="12"
+        />
       </button>
     </div>
   </div>
@@ -70,6 +51,7 @@
  * inject 父级上下文，自渲染面板内容与拖拽条；size 受控 / defaultSize 非受控 / min / max / collapsible
  */
 import { computed, inject, onMounted, onBeforeUnmount, watch, ref } from 'vue'
+import EbIcon from '../icon/index.vue'
 
 defineOptions({ name: 'EbSplitterPanel' })
 

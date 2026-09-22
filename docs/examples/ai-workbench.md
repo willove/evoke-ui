@@ -5,7 +5,7 @@ import aiSource from '../../examples/ebui-example-ai/src/pages/AiWorkbench.vue?r
 
 # AI 运营助手工作台
 
-面向「运营问答、报告与文案」的 AI 助手场景：[AiConsole](/components/ai-console) 工作台嵌入
+面向「运营问答、报告与文案」的 AI 助手场景：[AiConsole](/chat/ai-console) 工作台嵌入
 AppLayout 后台骨架，演示大模型调用的完整接线——场景路由、深度思考流、联网检索引用、
 模型切换、停止生成。transport 为 mock 实现（无真实网络），换成你的 fetch / SSE 即是生产形态。
 

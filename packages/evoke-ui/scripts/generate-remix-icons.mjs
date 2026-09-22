@@ -47,7 +47,10 @@ const MAPPING = {
   music: ['Media', 'music-line'],
   'play-fill': ['Media', 'play-fill'],
   folder: ['Document', 'folder-line'],
+  box: ['Others', 'box-3-line'],
   'folder-open': ['Document', 'folder-open-line'],
+  'line-chart': ['Business', 'line-chart-line'],
+  global: ['Business', 'global-line'],
   heart: ['Health & Medical', 'heart-line'],
   star: ['System', 'star-line'],
   'star-fill': ['System', 'star-fill'],
@@ -68,6 +71,7 @@ const MAPPING = {
   moon: ['Weather', 'moon-line'],
   // ─── 品牌（社交/生态，展示官网语境常用）───
   github: ['Logos', 'github-fill'],
+  npmjs: ['Logos', 'npmjs-line'],
   x: ['Logos', 'twitter-x-fill'],
   discord: ['Logos', 'discord-fill'],
   wechat: ['Logos', 'wechat-fill'],
@@ -95,6 +99,7 @@ const MAPPING = {
   desktop: ['Device', 'computer-line'],
   'shield-check': ['System', 'shield-check-line'],
   'file-list': ['Document', 'file-list-3-line'],
+  book: ['Document', 'book-2-line'],
   refund: ['Finance', 'refund-line'],
   history: ['System', 'history-line'],
 }

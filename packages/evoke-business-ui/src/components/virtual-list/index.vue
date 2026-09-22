@@ -140,6 +140,17 @@ watch(
   { immediate: true },
 )
 
+// 窗口变化后重测：新进窗口的条目此前只有估算高度，不重测就会按估算偏移排布，
+// 实测高度更大的条（代码块 / 工具卡 / 长文本）会与下一条互相叠压
+watch(
+  () => [range.value.start, range.value.end],
+  () => {
+    // post 阶段 DOM 已更新，直接量，不必再等一帧
+    if (props.itemSize == null && inBrowser()) applyMeasure()
+  },
+  { flush: 'post' },
+)
+
 // ─── 滚动 ───
 let bottomFired = false
 function onScroll(e) {
@@ -157,12 +168,20 @@ function onScroll(e) {
 }
 
 // ─── 动态模式：渲染后实测高度回填 ───
-async function measureRendered() {
-  if (props.itemSize != null || !inBrowser()) return
-  await nextTick()
+/**
+ * 同步测量当前 DOM 里的条目并回填 sizes。
+ * 只对**已渲染**的条目负责：窗口滑动后由 range 的 post 监听立即调一次，
+ * 新进窗口的条才不会再按估算高度排布（那是叠压的来源）。
+ */
+function applyMeasure() {
   const el = containerRef.value
   if (!el) return
   const nodes = el.querySelectorAll('[data-eb-vl-index]')
+  if (!nodes.length) return
+  // 锚点：窗口内第一条的偏移。它上方的行被实测改写时，累计高度会变，
+  // 不补偿 scrollTop 的话可视内容会整体跳一下（上面的行变高把下面的推走）
+  const firstIdx = Number(nodes[0].getAttribute('data-eb-vl-index'))
+  const beforeTop = offsets.value[firstIdx] ?? 0
   let changed = false
   const next = sizes.value.slice()
   for (const node of nodes) {
@@ -173,7 +192,20 @@ async function measureRendered() {
       changed = true
     }
   }
-  if (changed) sizes.value = next
+  if (!changed) return
+  sizes.value = next
+  if (firstIdx > 0) {
+    nextTick(() => {
+      const delta = (offsets.value[firstIdx] ?? 0) - beforeTop
+      if (delta) el.scrollTop += delta
+    })
+  }
+}
+
+async function measureRendered() {
+  if (props.itemSize != null || !inBrowser()) return
+  await nextTick()
+  applyMeasure()
 }
 
 function syncSizes() {
