@@ -6,7 +6,7 @@
 
 ### @wil-works/evoke-business-ui — 激活涟漪改为向内收拢（input / select / textarea 等输入家族）
 
-- **聚焦涟漪反向**：激活瞬间一圈实体色环贴在输入框外缘，随后**向内收拢进边框并消散**（0.7s，曲线与 evoke-ui 新版对齐）；此前是向四周荡开约 6px 再消散；
+- **聚焦涟漪反向**：激活瞬间一圈实体色环贴在输入框外缘，随后**向内收拢进边框并消散**（1.2s，`--eb-ease-in-out` 铺满全程，前 55% 保持不透明地收拢、末段收尾淡出）；此前是向四周荡开约 6px 再消散（0.7s ease-out，回缩/扩散动作全压在前三分之一，看着「一闪而过」）；
 - **渲染实现换轨**：涟漪层由「`::before` + `box-shadow` 扩散」改为「`::before` + 实体色环（`inset` + 边框宽度）」——颜色静态解析、全程不参与插值，只插值长度与透明度，任何引擎都是连续缓动（此前 `color-mix()` 写进 `box-shadow` 关键帧，在不支持对 `color-mix` 做插值的引擎里会退化成跳变，表现为「闪一下」而非缓动）；色环为正层级，也不再被祖先容器的底色遮住；
 - **错误态**：`is-error` 色环跟随 danger 色不变；`--eb-field-ring-color` 覆盖口不变；`html[data-eb-ripple='off']` 全局关闭与 `prefers-reduced-motion` 停用不变；
 - **修复**：组件级 `:ripple="false"` 与 Form 级 `<eb-form :ripple="false">` 此前特异性压不过聚焦触发规则，聚焦时涟漪照播——关闭规则已修为严格高一级，三档开关（组件 / Form / 全局 `setRipple`）均即时生效。
