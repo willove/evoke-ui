@@ -1,7 +1,7 @@
 <template>
   <div
     class="eb-textarea eb-textarea"
-    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'eb-ripple-off': ripple === false }, sizeClass, attrs.class]"
+    :class="[{ 'is-disabled': isDisabled, 'is-exceed': isExceed, 'is-focus': isFocused, 'eb-ripple-off': ripple === false }, sizeClass, attrs.class]"
     :style="attrs.style"
   >
     <textarea
@@ -58,7 +58,7 @@ const props = defineProps({
   name: { type: String, default: undefined },
   autocomplete: { type: String, default: 'off' },
   validateEvent: { type: Boolean, default: true },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 
@@ -66,6 +66,7 @@ const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'change', 'input
 
 const attrs = useAttrs()
 const textareaRef = ref(null)
+const isFocused = ref(false)
 
 const inputAttrs = computed(() => {
   const { class: _c, style: _s, ...rest } = attrs
@@ -99,11 +100,13 @@ function handleInput(e) {
 }
 
 function handleBlur(e) {
+  isFocused.value = false
   emit('blur', e)
   if (props.validateEvent) triggerFormValidate(formItem, 'blur')
 }
 
 function handleFocus(e) {
+  isFocused.value = true
   emit('focus', e)
 }
 

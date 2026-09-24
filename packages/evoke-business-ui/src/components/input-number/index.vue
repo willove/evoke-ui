@@ -27,7 +27,7 @@
     >
       <eb-icon :name="decreaseIcon" />
     </span>
-    <div class="eb-input__wrapper">
+    <div class="eb-input__wrapper" :class="{ 'is-focus': isFocused }">
       <input
         ref="inputRef"
         class="eb-input__inner"
@@ -114,7 +114,7 @@ const props = defineProps({
   valueOnClear: { type: [Number, null], default: null },
   size: { type: String, default: '' },
   name: { type: String, default: undefined },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
   /** 展示格式化（如千分位），传入后输入框切换为文本输入 */
   formatter: { type: Function, default: undefined },
@@ -130,6 +130,7 @@ const emit = defineEmits(['update:modelValue', 'change', 'blur', 'focus'])
 
 const inputRef = ref(null)
 const userInput = ref(null)
+const isFocused = ref(false)
 const slots = useSlots()
 
 const hasFormatter = computed(() => typeof props.formatter === 'function')
@@ -248,6 +249,7 @@ function handleChange(e) {
 }
 
 function handleBlur(e) {
+  isFocused.value = false
   // 丢弃未提交的编辑态，回显格式化值（change 已在 blur 前完成提交）
   if (userInput.value !== null) userInput.value = null
   emit('blur', e)
@@ -255,6 +257,7 @@ function handleBlur(e) {
 }
 
 function handleFocus(e) {
+  isFocused.value = true
   // formatter 无 parser 时聚焦显原始数值串，便于编辑（antd 同款行为）
   if (hasFormatter.value && !hasParser.value && props.modelValue !== undefined && props.modelValue !== null) {
     userInput.value = toPrecision(props.modelValue)

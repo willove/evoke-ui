@@ -263,7 +263,8 @@
   background-color: var(--eb-button-active-bg-color);
   border-color: var(--eb-button-active-border-color);
   color: var(--eb-button-active-text-color);
-  transform: scale(0.96);
+  /* 按压缩放刻意保持微弱：一排并排按钮同时按下时，缩放大了会出现明显的宽窄跳动 */
+  transform: scale(0.98);
 }
 .eb-button.eb-button:focus-visible {
   box-shadow: var(--eb-focus-ring);

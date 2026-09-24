@@ -1,5 +1,5 @@
 <template>
-  <div class="eb-mention eb-mention" :class="{ 'is-disabled': disabled }">
+  <div class="eb-mention eb-mention" :class="{ 'is-disabled': disabled, 'is-focus': isFocused, 'eb-ripple-off': !ripple }">
     <textarea
       ref="textareaRef"
       class="eb-mention__inner"
@@ -9,6 +9,7 @@
       :rows="rows"
       @input="onInput"
       @keydown="onKeydown"
+      @focus="onFocus"
       @blur="onBlur"
     />
     <div
@@ -56,6 +57,8 @@ const props = defineProps({
   placeholder: { type: String, default: '' },
   rows: { type: Number, default: 3 },
   disabled: { type: Boolean, default: false },
+  /** 激活涟漪动效开关（聚焦时实体色环荡开-收拢）；Form 上可批量关闭，全局见 setRipple */
+  ripple: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'search', 'select'])
@@ -64,6 +67,7 @@ const textareaRef = ref(null)
 const panelVisible = ref(false)
 const highlightIndex = ref(0)
 const caretPos = ref({ x: 0, y: 0 })
+const isFocused = ref(false)
 let triggerStart = -1
 
 const filteredOptions = computed(() => {
@@ -174,10 +178,15 @@ function select(opt) {
 }
 
 function onBlur() {
+  isFocused.value = false
   // 延迟关闭，给选项 mousedown 留时间
   setTimeout(() => {
     panelVisible.value = false
   }, 120)
+}
+
+function onFocus() {
+  isFocused.value = true
 }
 
 defineExpose({

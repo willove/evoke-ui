@@ -4,7 +4,9 @@
    边框并消散（1.2s 单次，inset / 边框宽度驱动，圆角同步涨落；色值静态
    解析、全程不参与插值，任何引擎都是缓动）。布局高度不变，不覆盖输入面与内容。
    覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
-   input-number / time-select / time-picker）、eb-textarea 与 eb-select__wrapper。
+   input-number / time-select / time-picker）、eb-textarea、eb-mention
+   与 eb-select__wrapper。auto-complete / search-filter / transfer 走内部
+   的 eb-input，无需另列。
    错误态色环跟随 danger 色（--eb-field-ring-color 可覆盖）；
    全局关闭：html[data-eb-ripple='off']；
    prefers-reduced-motion 下自动停用。
@@ -12,14 +14,16 @@
 
 .eb-input__wrapper,
 .eb-select__wrapper,
-.eb-textarea {
+.eb-textarea,
+.eb-mention {
   position: relative;
 }
 
 /* 定位锚点：涟漪环静态就位在框体外 4px，默认透明不占视觉 */
 .eb-input__wrapper::before,
 .eb-select__wrapper::before,
-.eb-textarea::before {
+.eb-textarea::before,
+.eb-mention::before {
   content: '';
   position: absolute;
   inset: -4px;
@@ -43,17 +47,21 @@ html:not([data-eb-ripple='off']) .eb-ripple-off .eb-input__wrapper.is-focus::bef
 html:not([data-eb-ripple='off']) .eb-ripple-off.eb-input__wrapper.is-focus::before,
 html:not([data-eb-ripple='off']) .eb-ripple-off .eb-select__wrapper.is-focused::before,
 html:not([data-eb-ripple='off']) .eb-ripple-off.eb-select__wrapper.is-focused::before,
+html:not([data-eb-ripple='off']) .eb-ripple-off .eb-textarea.is-focus::before,
 html:not([data-eb-ripple='off']) .eb-ripple-off.eb-textarea.is-focus::before,
+html:not([data-eb-ripple='off']) .eb-ripple-off.eb-mention.is-focus::before,
 html:not([data-eb-ripple='off']) .eb-form--ripple-off .eb-input__wrapper.is-focus::before,
 html:not([data-eb-ripple='off']) .eb-form--ripple-off .eb-select__wrapper.is-focused::before,
-html:not([data-eb-ripple='off']) .eb-form--ripple-off .eb-textarea.is-focus::before {
+html:not([data-eb-ripple='off']) .eb-form--ripple-off .eb-textarea.is-focus::before,
+html:not([data-eb-ripple='off']) .eb-form--ripple-off.eb-mention.is-focus::before {
   animation: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html:not([data-eb-ripple='off']) .eb-input__wrapper.is-focus::before,
   html:not([data-eb-ripple='off']) .eb-select__wrapper.is-focused::before,
-  html:not([data-eb-ripple='off']) .eb-textarea.is-focus::before {
+  html:not([data-eb-ripple='off']) .eb-textarea.is-focus::before,
+  html:not([data-eb-ripple='off']) .eb-mention.is-focus::before {
     animation: eb-field-ring 1.2s var(--eb-ease-in-out) 1;
   }
 }
