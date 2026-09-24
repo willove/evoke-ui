@@ -23,7 +23,7 @@
   content: '';
   position: absolute;
   inset: -4px;
-  border: 4px solid color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 30%, transparent);
+  border: 4px solid color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 20%, transparent);
   border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px);
   opacity: 0;
   pointer-events: none;
@@ -58,21 +58,26 @@ html:not([data-eb-ripple='off']) .eb-form--ripple-off .eb-textarea.is-focus::bef
   }
 }
 
-/* 收拢两段式：色环自边框向外荡开至 4px（约四成时长），再贴着边框向内收拢回 0 并淡出；
-   环内缘全程钉在边框上（inset 与环宽等幅反向），荡开时从边框长出、收拢时缩回边框消失；
-   只插值长度与透明度，不走颜色插值 */
+/* 两段式：色环自边框向外荡开至 4px（约四成时长）再贴着边框收拢回 0 并淡出；
+   两段都用 ease-out 型曲线——荡开/收拢都是起手即动、落点轻柔，没有 ease-in-out
+   起手那一下的死帧（激活后像隔了几帧才动）；
+   环内缘全程钉在边框上（inset 与环宽等幅反向），只插值长度与透明度，不走颜色插值。
+   注意：keyframe 内 animation-timing-function 写 var(--eb-*) 会被引擎丢弃（实测回退成
+   动画级曲线），故此处用与 --eb-ease-out 同值的字面量；改令牌需同步这里。 */
 @keyframes eb-field-ring {
   0% {
     opacity: 0;
     inset: 0;
     border-width: 0px;
     border-radius: var(--eb-input-border-radius, var(--eb-radius-md));
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   40% {
     opacity: 1;
     inset: -4px;
     border-width: 4px;
     border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   100% {
     opacity: 0;
