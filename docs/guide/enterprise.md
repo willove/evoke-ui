@@ -64,7 +64,7 @@ toggle()                          // 缺省作用于 documentElement
 
 ## setRipple — 全局关闭激活涟漪
 
-输入类组件（输入框 / 选择器 / 级联 / 日期时间 / 树选择 / 数字输入等）聚焦时会播放实体色影涟漪。三档关闭入口，按需选用：
+输入类组件（输入框 / 选择器 / 级联 / 日期时间 / 树选择 / 数字输入等）聚焦时会紧贴边框荡开一圈激活色。三档关闭入口，按需选用：
 
 ```js
 import { setRipple, getRipple } from '@wil-works/evoke-business-ui'

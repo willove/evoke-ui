@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### @wil-works/evoke-business-ui — 激活涟漪改为向内收拢（input / select / textarea 等输入家族）
+
+- **聚焦涟漪反向**：激活瞬间一圈实体色环贴在输入框外缘，随后**向内收拢进边框并消散**（0.7s，曲线与 evoke-ui 新版对齐）；此前是向四周荡开约 6px 再消散；
+- **渲染实现换轨**：涟漪层由「`::before` + `box-shadow` 扩散」改为「`::before` + 实体色环（`inset` + 边框宽度）」——颜色静态解析、全程不参与插值，只插值长度与透明度，任何引擎都是连续缓动（此前 `color-mix()` 写进 `box-shadow` 关键帧，在不支持对 `color-mix` 做插值的引擎里会退化成跳变，表现为「闪一下」而非缓动）；色环为正层级，也不再被祖先容器的底色遮住；
+- **错误态**：`is-error` 色环跟随 danger 色不变；`--eb-field-ring-color` 覆盖口不变；`html[data-eb-ripple='off']` 全局关闭与 `prefers-reduced-motion` 停用不变；
+- **修复**：组件级 `:ripple="false"` 与 Form 级 `<eb-form :ripple="false">` 此前特异性压不过聚焦触发规则，聚焦时涟漪照播——关闭规则已修为严格高一级，三档开关（组件 / Form / 全局 `setRipple`）均即时生效。
+
+### @wil-works/evoke-ui — 激活涟漪同步改为向内收拢（input / select / textarea / search-box）
+
+- 同一反向改动落在 evoke-ui 侧四个组件：涟漪层改为出现在框体外缘后向内收拢进边框并消散（0.7s），颜色静态、只插值 `inset` / `border-radius` / 透明度。
+
 ## [chat 0.1.0 / business-ui 0.9.0 / ui 0.11.0] — 2026-09-22
 
 ### @wil-works/evoke-chat — 新包：对话家族整族迁出（0.1.0）

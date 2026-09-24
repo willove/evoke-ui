@@ -57,7 +57,7 @@
   pointer-events: none;
 }
 
-/* ─── 聚焦涟漪：聚焦瞬间一块与输入体同形状的实体色层自框体向外扩展约 4px 后消散（单次）；
+/* ─── 聚焦涟漪：聚焦瞬间一块与输入体同形状的实体色层出现在框体外缘，随即向内收拢进边框并消散（单次）；
    错误态色层跟随 danger 色；全局关闭 html[data-ev-ripple='off']；
    prefers-reduced-motion 自动停用 ─── */
 
@@ -82,9 +82,8 @@
   }
 }
 
-/* 扩散时圆角同步放大，保证外扩后边角仍是圆弧 */
+/* 收拢时圆角同步回落，与边框圆角衔接 */
 @keyframes ev-field-ring {
-  0% { opacity: 1; inset: 0; border-radius: var(--ev-radius-md); }
-  55% { opacity: 1; inset: -4px; border-radius: calc(var(--ev-radius-md) + 4px); }
-  100% { opacity: 0; inset: -4px; border-radius: calc(var(--ev-radius-md) + 4px); }
+  0% { opacity: 1; inset: -4px; border-radius: calc(var(--ev-radius-md) + 4px); }
+  100% { opacity: 0; inset: 0; border-radius: var(--ev-radius-md); }
 }

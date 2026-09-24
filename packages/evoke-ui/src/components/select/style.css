@@ -218,7 +218,7 @@
   border-radius: var(--ev-radius-sm);
 }
 
-/* ─── 聚焦涟漪：聚焦/展开瞬间一块与选择器同形状的实体色层自框体向外扩展约 4px 后消散（单次）；
+/* ─── 聚焦/展开涟漪：聚焦/展开瞬间一块与选择器同形状的实体色层出现在框体外缘，随即向内收拢进边框并消散（单次）；
    错误态色层跟随 danger 色；全局关闭 html[data-ev-ripple='off']；
    prefers-reduced-motion 自动停用 ─── */
 
@@ -245,9 +245,8 @@
 }
 
 @keyframes ev-field-ring {
-  0% { opacity: 1; inset: 0; }
-  55% { opacity: 1; inset: -4px; }
-  100% { opacity: 0; inset: -4px; }
+  0% { opacity: 1; inset: -4px; }
+  100% { opacity: 0; inset: 0; }
 }
 
 /* ─── 磨砂（glass）：ConfigProvider 全局开关（html[data-ev-glass]）或组件 glass prop，
