@@ -141,7 +141,7 @@ const props = defineProps({
   autocomplete: { type: String, default: 'off' },
   /** 表单校验触发开关 */
   validateEvent: { type: Boolean, default: true },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

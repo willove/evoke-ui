@@ -116,6 +116,6 @@ const options = [
 | props | Object | `{}` | 自定义字段名 `{ label, value, children }` |
 | lazy | Boolean | `false` | 懒加载开关（配合 load-data） |
 | load-data | Function | `null` | 懒加载函数 `(option) => Promise`，展开 leaf 为 false 且无 children 的节点时调用，子级并入后可继续逐级选择 |
-| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 `setRipple(false)` |
+| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 `setRipple(false)` |
 
 事件：`change(value)`、`visible-change(visible)`、`clear`。

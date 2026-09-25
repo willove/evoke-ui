@@ -177,7 +177,7 @@ const onEvtVisible = (visible) => pushEvtLog(`visible-change：${visible ? '展�
   { name: 'clearable', desc: '可清空', type: 'boolean', default: 'false' },
   { name: 'disabled', desc: '禁用', type: 'boolean', default: 'false' },
   { name: 'lazy / load', desc: '懒加载开关与加载函数 load(node, resolve)', type: 'boolean / function', default: 'false / null' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="TreeSelect Events" :rows="[

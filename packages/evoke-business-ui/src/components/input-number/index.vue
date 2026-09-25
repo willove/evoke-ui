@@ -8,7 +8,6 @@
         'is-controls-right': controlsPosition === 'right',
         'is-without-controls': !controls,
         'is-with-addon': addonBeforeVisible || addonAfterVisible,
-        'eb-ripple-off': ripple === false,
       },
     ]"
   >
@@ -114,8 +113,6 @@ const props = defineProps({
   valueOnClear: { type: [Number, null], default: null },
   size: { type: String, default: '' },
   name: { type: String, default: undefined },
-  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
-  ripple: { type: Boolean, default: true },
   /** 展示格式化（如千分位），传入后输入框切换为文本输入 */
   formatter: { type: Function, default: undefined },
   /** 把输入文本解析回数值；缺省时去千分位逗号后解析 */

@@ -115,7 +115,7 @@ help 在输入框下方展示灰色辅助说明；error 优先级更高并呈红
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
   { name: 'autocomplete', desc: '原生 autocomplete 属性', type: 'string', default: 'off' },
   { name: 'validate-event', desc: '是否在 input / blur 时触发表单项校验', type: 'boolean', default: 'true' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="Input Events" :rows="[

@@ -233,7 +233,7 @@ const props = defineProps({
   /** 虚拟滚动（需配合 options）：万级选项只渲染可视窗口 */
   virtual: { type: Boolean, default: false },
   name: { type: String, default: undefined },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

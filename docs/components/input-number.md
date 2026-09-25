@@ -119,7 +119,6 @@ disabled 整体禁用（含步进按钮）；readonly 只读，输入与步进�
   { name: 'parser', desc: '把输入文本解析回数值，缺省去千分位逗号后解析', type: '(text: string) => number', default: '—' },
   { name: 'addon-before', desc: '框外前缀块文案，与 addon-before 插槽二选一（插槽优先）', type: 'string', default: '' },
   { name: 'addon-after', desc: '框外后缀块文案，与 addon-after 插槽二选一（插槽优先）', type: 'string', default: '' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="InputNumber Events" :rows="[

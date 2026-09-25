@@ -173,7 +173,7 @@ const props = defineProps({
   emptyText: { type: String, default: '' },
   lazy: { type: Boolean, default: false },
   load: { type: Function, default: null },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

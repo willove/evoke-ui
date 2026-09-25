@@ -18,6 +18,7 @@ import { setRipple, getRipple } from '../src/utils/theme'
 
 /**
  * 激活涟漪开关三档：组件级 :ripple="false" / Form 级批量 / 全局 setRipple
+ * 注意：EbInputNumber 不做激活动效（无 ripple prop、无 eb-ripple-off 类），不在此列
  */
 
 describe('组件级 ripple 开关', () => {
@@ -29,7 +30,6 @@ describe('组件级 ripple 开关', () => {
     ['EbDatePicker', EbDatePicker, {}, '.eb-date-editor'],
     ['EbTimePicker', EbTimePicker, {}, '.eb-time-picker'],
     ['EbTimeSelect', EbTimeSelect, {}, '.eb-time-select'],
-    ['EbInputNumber', EbInputNumber, {}, '.eb-input-number'],
     ['EbTreeSelect', EbTreeSelect, { data: [] }, '.eb-tree-select'],
   ]
 
@@ -55,6 +55,17 @@ describe('组件级 ripple 开关', () => {
     const wrapper = mount(EbAutoComplete, { props: { ripple: false } })
     expect(wrapper.find('.eb-input').classes()).toContain('eb-ripple-off')
     wrapper.unmount()
+  })
+
+  it('EbInputNumber 不做激活动效：无 ripple prop、无 eb-ripple-off 类', () => {
+    const on = mount(EbInputNumber, { props: {} })
+    expect(on.find('.eb-input-number').classes()).not.toContain('eb-ripple-off')
+    on.unmount()
+
+    // 移除 prop 后传入只落到 attrs，不应再产生关闭类
+    const off = mount(EbInputNumber, { props: { ripple: false } })
+    expect(off.find('.eb-input-number').classes()).not.toContain('eb-ripple-off')
+    off.unmount()
   })
 })
 

@@ -65,7 +65,7 @@ const disableEarlyHours = () => [0, 1, 2, 3, 4, 5, 6, 7]
   { name: 'disabled-hours', desc: '禁用的小时集合，当前值落在禁用集内自动让位到最近可用值', type: '() => number[]', default: 'null' },
   { name: 'disabled-minutes', desc: '禁用的分钟集合（入参当前 hour）', type: '(hour) => number[]', default: 'null' },
   { name: 'disabled-seconds', desc: '禁用的秒集合（入参当前 hour 与 minute）', type: '(hour, minute) => number[]', default: 'null' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="TimePicker Events" :rows="[

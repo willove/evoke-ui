@@ -178,7 +178,7 @@ const props = defineProps({
   lazy: { type: Boolean, default: false },
   /** 懒加载函数 (option) => Promise，resolve 后子级并入该节点（可返回子级数组或在 option.children 就地写入） */
   loadData: { type: Function, default: null },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

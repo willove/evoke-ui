@@ -96,7 +96,7 @@ const props = defineProps({
   size: { type: String, default: '' },
   name: { type: String, default: undefined },
   prefixIcon: { type: String, default: 'clock' },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

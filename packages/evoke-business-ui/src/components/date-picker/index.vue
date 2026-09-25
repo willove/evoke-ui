@@ -248,7 +248,7 @@ const props = defineProps({
   defaultTime: { type: [String, Array], default: '' },
   unlinkPanels: { type: Boolean, default: false },
   prefixIcon: { type: String, default: 'calendar' },
-  /** 激活涟漪动效开关（聚焦时实体色影向外扩展）；Form 上可批量关闭，全局见 setRipple */
+  /** 激活涟漪动效开关（聚焦时实体色影向内收拢消散）；Form 上可批量关闭，全局见 setRipple */
   ripple: { type: Boolean, default: true },
 })
 

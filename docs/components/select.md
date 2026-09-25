@@ -229,7 +229,7 @@ size 支持 large / small；disabled 禁用整个选择器，单个 option 设�
   { name: 'field-names', desc: '数据模式字段映射 { label, value, disabled }，默认取同名字段，与 Cascader / Tree 的 props 映射能力对齐', type: 'object', default: 'null' },
   { name: 'virtual', desc: '虚拟滚动（需配合 options），万级选项只渲染可视窗口', type: 'boolean', default: 'false' },
   { name: 'name', desc: '原生 name 属性', type: 'string', default: '—' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="Select Events" :rows="[

@@ -3,7 +3,7 @@ layout: home
 ---
 
 <div class="cd-hero">
-  <p class="cd-hero__badge">v0.6.0 · 零依赖 Canvas 图表库 · 键盘巡历 · 大数据抽稀 · 29 种图表</p>
+  <p class="cd-hero__badge">v0.7.0 · 零依赖 Canvas 图表库 · 键盘巡历 · 大数据抽稀 · 29 种图表</p>
   <h1 class="cd-hero__title">
     Evoke <span class="accent">Charts</span>
   </h1>

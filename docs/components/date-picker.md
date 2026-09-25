@@ -148,7 +148,7 @@ dayjs 驱动的日期选择器，`type` 覆盖日期、日期时间、月份、�
   { name: 'defaultTime', desc: '选中日期后默认时间（HH:mm:ss），区间传数组', type: 'string | array', default: '' },
   { name: 'unlinkPanels', desc: '区间双面板独立切换年月', type: 'boolean', default: 'false' },
   { name: 'prefixIcon', desc: '前缀图标名', type: 'string', default: 'calendar' },
-  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
+  { name: 'ripple', desc: '激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 setRipple(false)', type: 'boolean', default: 'true' },
 ]" />
 
 <ApiTable title="Events" :rows="[

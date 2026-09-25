@@ -2,27 +2,24 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [Unreleased]
+## [business-ui 0.9.1 / ui 0.11.1] — 2026-09-25
 
-### @wil-works/evoke-business-ui — 激活涟漪改为向内收拢（input / select / textarea 等输入家族）
+### @wil-works/evoke-business-ui — 激活涟漪体验修正与覆盖面收口（0.9.1）
 
-- **聚焦涟漪反向**：激活时色环**先从边框向外荡开至 4px（约四成时长），再贴着边框向内收拢回 0 并淡出**（1.2s）。两段均用 ease-out 型曲线（字面量，见下条注意）——荡开/收拢起手即动、落点轻柔，没有 ease-in-out 起手的死帧感；色环比此前浅一档（主色 30% → 20% 透明）。此前是向四周荡开约 6px 且一边扩散一边消散（0.7s ease-out，动作全压在前三分之一，看着「一闪而过」）；
-- **实现注意**：`@keyframes` 内的 `animation-timing-function` 写 `var(--eb-*)` 会被引擎静默丢弃（实测回退成动画级曲线），故 keyframe 里用与 `--eb-ease-out` 同值的字面量贝塞尔；改动该令牌时记得同步 keyframe；
-- **涟漪覆盖面补齐**：`EbTextarea` 原本有 `--eb-*` 涟漪样式但组件未维护聚焦类，涟漪从不触发——补 `is-focus` 绑定；`EbMention` 整套接入（新增 `ripple` prop、聚焦态类、CSS 选择器与三档开关）。`EbAutoComplete` / `EbSearchFilter` / `EbTransfer` 内部就是 `EbInput`，无需另列；**`EbInputNumber` 不做光环**（步进器的激活反馈只要加减键，避免光环框住一整个加减输入组）；
+- **聚焦涟漪改两段式**：激活时色环**先从边框向外荡开至 `--eb-field-ring-spread`（约四成时长），再贴着边框向内收拢回 0 并淡出**（1.2s）。两段均用 ease-out 型曲线（字面量，见下条注意）——荡开/收拢起手即动、落点轻柔，没有 ease-in-out 起手的死帧感；色环比此前浅一档（主色 30% → 20% 透明）。此前是向四周荡开约 6px 且一边扩散一边消散（0.7s ease-out，动作全压在前三分之一，看着「一闪而过」）；
+- **实现注意**：`@keyframes` 内的 `animation-timing-function` 写 `var(--eb-*)` 会被引擎静默丢弃（实测回退成动画级曲线），故 keyframe 里用与 `--eb-ease-out` 同值的字面量贝塞尔；改动该令牌时记得同步 keyframe。`spread` 走 `var()` 可正常替换（已实测），故辐射量按尺寸分化；
+- **涟漪覆盖面补齐**：`EbTextarea` 原本有 `--eb-*` 涟漪样式但组件未维护聚焦类，涟漪从不触发——补 `is-focus` 绑定；`EbMention` 整套接入（新增 `ripple` prop、聚焦态类、CSS 选择器与三档开关）。`EbAutoComplete` / `EbSearchFilter` / `EbTransfer` 内部就是 `EbInput`，无需另列；
+- **`EbInputNumber` 不做激活动效**：撤掉聚焦光环，激活反馈只保留加减键。**随之移除其 `ripple` prop 与 `eb-ripple-off` 类**（已空转）——宿主持 `:ripple` 传参会落到 attrs，无副作用；
 - **修复校验态涟漪不跟随边框色**：表单 `validate` 失败/通过时，红/绿框由 `.eb-form-item.is-error/.is-success` 的后代规则施加，组件自身未必带 `is-error`（非 `error` prop 触发时），导致聚焦时「蓝环配红框」。涟漪色改为跟随同一状态；**`select` 此前连校验态的红/绿边框都没有**（item.css 未覆盖 `.eb-select__wrapper`），本次一并补上——`select` / `tree-select` 共用该类名，边框与涟漪现在都跟随校验态。宿主范围与边框规则一致（`.eb-input__wrapper` / `.eb-select__wrapper` / `.eb-textarea`）；`mention` 不参与表单校验，无需覆盖；
-- **辐射量随尺寸分化**：large 6px / 默认 4px / small 3px（此前统一 4px，大框光环显小、小框显大）。spread 抽成 `--eb-field-ring-spread`（默认值走 var fallback，避免写在宿主元素上把尺寸覆写压掉），`inset` / 环宽 / 圆角三处同步引用——`var()` 在 keyframes 里对普通属性可正常替换（已实测）；
-- **按钮按压缩放缓**：`:active` 缩放 0.96 → 0.98——一排并排按钮同时按下时，4% 的宽窄跳动非常明显；与 evoke-ui 的 0.98 对齐。
+- **辐射量随尺寸分化**：large 6px / 默认 4px / small 3px（此前统一 4px，大框光环显小、小框显大）。spread 抽成 `--eb-field-ring-spread`（默认值走 var fallback，避免写在宿主元素上把尺寸覆写压掉），`inset` / 环宽 / 圆角三处同步引用；
+- **按钮按压缩放缓**：`:active` 缩放 0.96 → 0.98——一排并排按钮同时按下时，4% 的宽窄跳动非常明显；与 evoke-ui 的 0.98 对齐；
+- **修复组件级/Form 级 ripple 开关失效**：`:ripple="false"` 与 `<eb-form :ripple="false">` 此前特异性压不过聚焦触发规则，聚焦时涟漪照播——关闭规则已修为严格高一级，三档开关（组件 / Form / 全局 `setRipple`）均即时生效。
 
-### @wil-works/evoke-ui — 激活涟漪辐射量随尺寸分化
+### @wil-works/evoke-ui — 聚焦涟漪反向 + 辐射量随尺寸分化（0.11.1）
 
-- input / select 的聚焦涟漪 spread 抽成 `--ev-field-ring-spread`：**large 6px / 默认 4px / small 3px**（此前统一 4px）。textarea / search-box 无尺寸变体，维持 4px；动效行为不变。
-- **渲染实现换轨**：涟漪层由「`::before` + `box-shadow` 扩散」改为「`::before` + 实体色环（`inset` + 边框宽度）」——颜色静态解析、全程不参与插值，只插值长度与透明度，任何引擎都是连续缓动（此前 `color-mix()` 写进 `box-shadow` 关键帧，在不支持对 `color-mix` 做插值的引擎里会退化成跳变，表现为「闪一下」而非缓动）；色环为正层级，也不再被祖先容器的底色遮住；
-- **错误态**：`is-error` 色环跟随 danger 色不变；`--eb-field-ring-color` 覆盖口不变；`html[data-eb-ripple='off']` 全局关闭与 `prefers-reduced-motion` 停用不变；
-- **修复**：组件级 `:ripple="false"` 与 Form 级 `<eb-form :ripple="false">` 此前特异性压不过聚焦触发规则，聚焦时涟漪照播——关闭规则已修为严格高一级，三档开关（组件 / Form / 全局 `setRipple`）均即时生效。
-
-### @wil-works/evoke-ui — 激活涟漪同步改为向内收拢（input / select / textarea / search-box）
-
-- 同一反向改动落在 evoke-ui 侧四个组件：涟漪层改为出现在框体外缘后向内收拢进边框并消散（0.7s），颜色静态、只插值 `inset` / `border-radius` / 透明度。
+- **渲染实现换轨**：涟漪层由「`::before` + `box-shadow` 扩散」改为「背景层 + `inset`」——颜色静态解析、全程不参与插值，只插值 `inset` / `border-radius` / 透明度，任何引擎都是连续缓动（此前 `color-mix()` 写进 `box-shadow` 关键帧，在不支持对 `color-mix` 做插值的引擎里会退化成跳变，表现为「闪一下」而非缓动）；色环为正层级，也不再被祖先容器的底色遮住。四个组件（input / select / textarea / search-box）同步反向：色环出现在框体外缘后向内收拢进边框并消散；
+- **辐射量随尺寸分化**：input / select 的 spread 抽成 `--ev-field-ring-spread`——**large 6px / 默认 4px / small 3px**（此前统一 4px）。textarea / search-box 无尺寸变体，维持 4px；
+- **错误态**：`is-error` 色环跟随 danger 色不变；`--eb-field-ring-color` 覆盖口不变；`html[data-eb-ripple='off']` 全局关闭与 `prefers-reduced-motion` 停用不变。
 
 ## [chat 0.1.0 / business-ui 0.9.0 / ui 0.11.0] — 2026-09-22
 

@@ -94,7 +94,7 @@ const firstOptionValue = ref('')
 | default-active-first-option | Boolean | `false` | 结果更新自动高亮第一条（antd 默认 true），Enter 直接选中 |
 | value-on-select | Boolean | `true` | 选中后回填输入框 |
 | input-props | Object | `{}` | 透传内部 EbInput（placeholder / size / disabled…） |
-| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向外扩展；也可在 Form 上批量关闭或全局 `setRipple(false)` |
+| ripple | Boolean | `true` | 激活涟漪动效开关：聚焦时实体色影向内收拢消散；也可在 Form 上批量关闭或全局 `setRipple(false)` |
 
 ### 事件
 
