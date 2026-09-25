@@ -1,0 +1,242 @@
+/* 工作台装配示例的壳样式（演示 layouts，不是组件库样式）
+   chrome 各带高度一律引用 --et-chrome-* 令牌：示例本身就是预算的活样本 */
+
+.demo {
+  min-height: 100vh;
+  background: var(--eb-bg-color-page);
+  font-family: var(--eb-font-family);
+}
+
+/* ─── 演示控制面（非产品 chrome） ─── */
+.demo__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-4);
+  padding: var(--eb-space-2) var(--eb-space-4);
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+  background: var(--eb-bg-color);
+}
+
+.demo__title {
+  font-size: var(--eb-font-size-sm);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
+}
+
+.demo__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-4);
+  margin-left: auto;
+}
+
+.demo__control {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+}
+
+.demo__control-label {
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+}
+
+/* ─── 工作台骨架（预览用；M2 的 EtWorkbench 将把这块运行时化） ─── */
+.wb {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--eb-space-12));
+}
+
+.wb__titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+  height: var(--et-chrome-titlebar-height);
+  padding: 0 var(--et-space-band-inline);
+  background: var(--et-chrome-band-bg);
+  /* 分隔线用 inset box-shadow 不用 border：border 会吃掉 1px 内容盒，
+     工具区内容就比 --et-chrome-toolarea-height 少 1px，组标题行 y 会漂 */
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-regular);
+  -webkit-app-region: drag;
+}
+
+.wb__doc {
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-primary);
+}
+
+.wb__spacer {
+  flex: 1 1 auto;
+}
+
+.wb__win {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--et-size-toolbtn-small);
+  height: var(--et-size-toolbtn-small);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.wb__win:hover {
+  background: var(--et-state-hover-bg);
+}
+
+/* tab 条（下划线由 EtTabStrip 自己画，这里只给底色与分隔） */
+.wb__tabstrip {
+  background: var(--et-chrome-band-bg);
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+}
+
+/* 工具区：预算 156px 的实体（标题栏 32 + tab 条 26 + 工具区 72 + 辅助栏 26） */
+.wb__toolarea {
+  display: flex;
+  align-items: stretch;
+  height: var(--et-chrome-toolarea-height);
+  padding: 0 var(--et-space-band-inline);
+  background: var(--et-chrome-bg);
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+  overflow: hidden;
+}
+
+.wb__toolarea > .et-toolgroup {
+  margin-inline-end: var(--et-space-group-gap);
+}
+
+/* 辅助栏位（办公产品用它承载公式栏） */
+.wb__auxbar {
+  display: flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+  height: var(--et-chrome-auxbar-height);
+  padding: 0 var(--et-space-band-inline);
+  background: var(--et-chrome-band-bg);
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+}
+
+.wb__auxbar-fx {
+  font-style: italic;
+  color: var(--eb-text-color-regular);
+}
+
+.wb__auxbar-formula {
+  color: var(--eb-text-color-regular);
+}
+
+/* 画布占位：网格由产品层（--ot-*）提供，这里只用中性色画个示意 */
+.wb__canvas {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  background: var(--eb-bg-color);
+}
+
+/* 空态：一句引导 + 一个主按钮（frontend-ui-ux §3「空态即首屏」） */
+.wb__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--eb-space-3);
+  pointer-events: none;
+}
+
+.wb__empty-line {
+  margin: 0;
+  font-size: var(--eb-font-size-sm);
+  color: var(--eb-text-color-secondary);
+}
+
+.wb__empty-cta {
+  pointer-events: auto;
+  padding: var(--eb-space-2) var(--eb-space-5);
+  border: none;
+  border-radius: var(--et-radius-md);
+  background: var(--eb-color-primary);
+  color: var(--eb-color-white);
+  font-size: var(--eb-font-size-sm);
+  cursor: pointer;
+}
+
+.wb__empty-cta:hover {
+  background: var(--eb-color-primary-dark-2);
+}
+
+.wb__empty-hint {
+  margin: 0;
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
+}
+
+.wb__grid {
+  height: 100%;
+  background-image: linear-gradient(var(--et-chrome-separator) var(--et-divider-size), transparent var(--et-divider-size)),
+    linear-gradient(90deg, var(--et-chrome-separator) var(--et-divider-size), transparent var(--et-divider-size));
+  background-size: var(--eb-space-8) var(--eb-space-8);
+  opacity: 0.6;
+}
+
+/* 状态栏 */
+.wb__statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--et-statusbar-item-gap);
+  height: var(--et-chrome-statusbar-height);
+  padding: 0 var(--et-space-band-inline);
+  background: var(--et-chrome-band-bg);
+  box-shadow: inset 0 var(--et-divider-size) 0 var(--et-chrome-separator);
+  font-size: var(--et-density-caption-font);
+  color: var(--eb-text-color-secondary);
+}
+
+/* ─── 图标对比视图 ─── */
+.cmp {
+  padding: var(--eb-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--eb-space-6);
+}
+
+.cmp__row {
+  border: var(--et-divider-size) solid var(--et-chrome-separator);
+  border-radius: var(--et-radius-lg);
+  background: var(--eb-bg-color);
+  overflow: hidden;
+}
+
+.cmp__title {
+  margin: 0;
+  padding: var(--eb-space-2) var(--eb-space-4);
+  font-size: var(--eb-font-size-xs);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-secondary);
+  background: var(--et-chrome-band-bg);
+  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+}
+
+.cmp__toolarea {
+  display: flex;
+  align-items: stretch;
+  height: var(--et-chrome-toolarea-height);
+  padding: 0 var(--et-space-band-inline);
+  overflow: hidden;
+}
+
+.cmp__note {
+  margin: 0;
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-secondary);
+}

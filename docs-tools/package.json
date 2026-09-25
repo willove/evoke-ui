@@ -1,0 +1,20 @@
+{
+  "name": "@wil-works/evoke-tools-ui-docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evoke Tools UI 文档站（--et-* 设计语言 / 三档密度 / 命令契约 / 工作台配方）",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "dependencies": {
+    "@wil-works/evoke-business-ui": "workspace:*",
+    "@wil-works/evoke-tools-ui": "workspace:*",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.0"
+  }
+}

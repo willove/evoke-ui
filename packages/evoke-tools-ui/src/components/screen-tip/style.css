@@ -1,0 +1,51 @@
+/* EtScreenTip — 富提示（替代 title 的工具级提示，tools-ui 计划 05 §四）
+
+   分层：浮层骨架与暗色底来自 EbTooltip（.eb-tooltip__popper.is-dark），本文件只加
+   产品级细节 —— 圆角 / 内边距 / 两行间距 / 键帽在暗底上的取色。 */
+
+/* 触发器包装层：display: contents 让它不生成布局盒 —— 包裹层对宿主布局完全透明。
+   EtToolGroup 的控件行是 flex 行，多一层盒子就多一个 flex item，按钮的尺寸与间距
+   语义都会变（tools-atoms-a 的小钮即包在本层里）。
+   副作用：无盒元素没有命中区，收不到 mouseenter / mouseleave（这两个事件不冒泡、
+   按命中边界派发），故 hover 改用冒泡的 mouseover / mouseout + relatedTarget 判定
+   进出，语义与 enter / leave 等价；focusin / focusout 本来就冒泡，不受影响。 */
+.et-screentip__trigger {
+  display: contents;
+}
+
+/* 浮层本体（popper-class 把 et-screentip 挂在 EbPopper 的浮层元素上） */
+.et-screentip.et-screentip {
+  max-width: var(--et-screentip-max-width);
+  padding: var(--et-space-block);
+  border-radius: var(--et-radius-md);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+}
+
+.et-screentip__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--et-screentip-gap);
+}
+
+/* 标题行：名称 + 快捷键后缀 */
+.et-screentip__title {
+  display: flex;
+  align-items: center;
+  gap: var(--et-screentip-gap);
+  white-space: nowrap;
+}
+
+.et-screentip__name {
+  font-weight: var(--eb-font-weight-medium);
+}
+
+/* 键帽取暗底文字色：EtKeyHint 默认取次级文字色，暗底上对比不足 */
+.et-screentip__combo.et-screentip__combo {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.et-screentip__desc {
+  opacity: 0.85;
+}

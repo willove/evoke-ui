@@ -1,0 +1,128 @@
+/* EtToolButton — 工具区按钮（大钮：图标行 + caption；小钮：图标 + ScreenTip）
+
+   密度纪律（03 §3.1）：尺寸/间距/字号只引用 --et-* 令牌，本文件不出现 px 字面量；
+   size prop 只切形态，不实现密度分支（三档由根级 data-density 整组切换）。
+   动效纪律：只过渡背景/边框/颜色，无位移无缩放（transition 在 styles/base.css 统一定义）。 */
+
+.et-toolbtn.et-toolbtn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--et-toolbtn-gap);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--et-toolbtn-radius);
+  background-color: transparent;
+  color: var(--et-toolbtn-fg);
+  font-family: var(--et-font-family);
+  /* caption 允许比钮体略宽（--et-toolbtn-caption-max-width 带一个 inline 余量），
+     裁切保持在钮体内，不越界压到邻组 */
+  overflow: hidden;
+  cursor: pointer;
+  appearance: none;
+}
+
+/* ─── 形态尺寸（见方；密度三档下由令牌整组切换） ─── */
+.et-toolbtn.et-toolbtn--large {
+  width: var(--et-size-toolbtn-large);
+  height: var(--et-size-toolbtn-large);
+}
+
+.et-toolbtn.et-toolbtn--small {
+  width: var(--et-size-toolbtn-small);
+  height: var(--et-size-toolbtn-small);
+}
+
+/* ─── 大钮图标盒：固定方形（et-icon-box 提供盒内居中，见 styles/base.css） ─── */
+.et-toolbtn__icon {
+  width: var(--et-toolbtn-icon-box);
+  height: var(--et-toolbtn-icon-box);
+}
+
+.et-toolbtn__icon .et-icon {
+  font-size: var(--et-icon-lg);
+}
+
+/* ─── 小钮：只渲染图标，按钮自身即图标盒 ─── */
+.et-toolbtn--small .et-icon {
+  font-size: var(--et-icon-sm);
+}
+
+/* ─── caption 行：文本 + 下拉指示（文本禁换行，超出省略） ─── */
+.et-toolbtn__caption {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--et-toolbtn-caption-gap);
+  max-width: var(--et-toolbtn-caption-max-width);
+  min-width: 0;
+}
+
+.et-toolbtn__text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--et-toolbtn-caption-font);
+  line-height: var(--et-toolbtn-caption-line-height);
+  color: var(--et-toolbtn-caption-fg);
+}
+
+/* 下拉指示：caption 行右侧小箭头（默认 line 风格，与图标同源） */
+.et-toolbtn__caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.et-toolbtn__caret .et-icon {
+  font-size: var(--et-toolbtn-caret-size);
+}
+
+/* ─── 交互态（只做底色/颜色差；hover 禁跳强调色，03 §五） ─── */
+.et-toolbtn.et-toolbtn:hover:not(:disabled) {
+  background-color: var(--et-state-hover-bg);
+}
+
+/* 按下：瞬时反馈，同样只换一档底色 */
+.et-toolbtn.et-toolbtn:active:not(:disabled) {
+  background-color: var(--et-state-active-bg);
+}
+
+/* active：命令激活/选中态（盖过 hover，选中可见性不丢） */
+.et-toolbtn.et-toolbtn.is-active,
+.et-toolbtn.et-toolbtn.is-active:hover:not(:disabled),
+.et-toolbtn.et-toolbtn.is-active:active:not(:disabled) {
+  background-color: var(--et-state-selected-bg);
+}
+
+.et-toolbtn.et-toolbtn.is-active,
+.et-toolbtn.et-toolbtn.is-active .et-toolbtn__text {
+  color: var(--et-state-selected-fg);
+}
+
+/* disabled：禁交互、去对比 */
+.et-toolbtn.et-toolbtn.is-disabled,
+.et-toolbtn.et-toolbtn:disabled,
+.et-toolbtn.et-toolbtn.is-disabled:hover,
+.et-toolbtn.et-toolbtn:disabled:hover {
+  background-color: var(--et-state-disabled-bg);
+  color: var(--et-state-disabled-fg);
+  cursor: not-allowed;
+}
+
+.et-toolbtn.et-toolbtn.is-disabled .et-toolbtn__text,
+.et-toolbtn.et-toolbtn:disabled .et-toolbtn__text {
+  color: var(--et-state-disabled-fg);
+}
+
+/* 焦点环：键盘可见性是工具界面硬要求（base.css 的 button 焦点重置之后生效，
+   按 tools-ui 规格补回；鼠标点击不出现） */
+.et-toolbtn.et-toolbtn:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}

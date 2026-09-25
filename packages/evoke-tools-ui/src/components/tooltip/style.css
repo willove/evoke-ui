@@ -1,0 +1,11 @@
+/* EtTooltip ── 工具界面提示的度量适配（tools-ui 计划 05 §三）
+ *
+ * 浮层已由本件注入 et-tooltip 类（见 index.vue），且底座暗/亮气泡的底色与箭头色
+ * 仍由 .is-dark / .is-light 承担。这里只覆盖工具界面口径的圆角与内边距，
+ * 全部引用 --et-radius-md / --et-space-* 令牌（G7），随密度档切换。 */
+
+.eb-popper.et-tooltip {
+  border-radius: var(--et-radius-md);
+  padding-block: var(--et-space-block);
+  padding-inline: calc(var(--et-space-block) + var(--et-space-inline));
+}

@@ -2,16 +2,25 @@ import { defineConfig } from 'vitest/config'
 import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import { getComponentEntries } from './packages/evoke-business-ui/scripts/component-entries.mjs'
+import { getEtComponentEntries } from './packages/evoke-tools-ui/scripts/component-entries.mjs'
 
 /**
  * 衍生包（@wil-works/evoke-chat）从源码里 import 底座：`@wil-works/evoke-business-ui`
  * 与它的组件子路径。测试里若让裸名走 node_modules → dist，而测试自己又用相对路径
  * 引了底座源码，就会同时存在两份底座实例——ConfigProvider 的 inject key 是模块级
  * Symbol，两实例互不相认，locale/主题会静默失效。这里统一指回源码，单实例。
+ *
+ * evoke-tools-ui 同理（它 import 底座的 config-provider / popper / select 等子路径，
+ * 且自身被测试与示例以裸名引用）：底座与 tools-ui 都按源码单实例解析。
  */
 const BASE_ROOT = path.join(__dirname, 'packages/evoke-business-ui')
 const baseEntries = new Map(
   getComponentEntries().map((e) => [e.name, path.join(BASE_ROOT, 'src', e.file)]),
+)
+
+const TOOLS_ROOT = path.join(__dirname, 'packages/evoke-tools-ui')
+const toolsEntries = new Map(
+  getEtComponentEntries().map((e) => [e.name, path.join(TOOLS_ROOT, 'src', e.file)]),
 )
 
 function baseSourceAlias() {
@@ -29,8 +38,24 @@ function baseSourceAlias() {
   }
 }
 
+function toolsSourceAlias() {
+  return {
+    name: 'evoke-tools-source-alias',
+    enforce: 'pre',
+    resolveId(source) {
+      if (source === '@wil-works/evoke-tools-ui') return path.join(TOOLS_ROOT, 'src/index.js')
+      if (source === '@wil-works/evoke-tools-ui/styles') return path.join(TOOLS_ROOT, 'src/styles/index.css')
+      if (source === '@wil-works/evoke-tools-ui/runtime') return path.join(TOOLS_ROOT, 'src/runtime/index.js')
+      if (source === '@wil-works/evoke-tools-ui/icons') return path.join(TOOLS_ROOT, 'src/icons/index.js')
+      const m = /^@wil-works\/evoke-tools-ui\/(.+)$/.exec(source)
+      if (m && toolsEntries.has(m[1])) return toolsEntries.get(m[1])
+      return null
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [vue(), baseSourceAlias()],
+  plugins: [vue(), baseSourceAlias(), toolsSourceAlias()],
   resolve: {
     alias: [
       // 组件挂载测试需要单份 Vue runtime，统一别名到根目录副本
@@ -64,6 +89,7 @@ export default defineConfig({
         'packages/evoke-business-ui/src/**',
         'packages/evoke-chat/src/**',
         'packages/evoke-charts/src/**',
+        'packages/evoke-tools-ui/src/**',
       ],
       // 纯样式/纯常量与构建辅助不计入
       exclude: [

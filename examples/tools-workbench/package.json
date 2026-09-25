@@ -1,0 +1,22 @@
+{
+  "name": "@wil-works/etui-example-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Evoke Tools UI 示例 — 工作台装配（标题栏 + tab 条 + 工具区 + 画布 + 状态栏，三档密度可切）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@wil-works/evoke-business-ui": "workspace:*",
+    "@wil-works/evoke-tools-ui": "workspace:*",
+    "vue": "^3.5.42"
+  },
+  "devDependencies": {
+    "@fluentui/svg-icons": "1.1.342",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.0.10"
+  }
+}

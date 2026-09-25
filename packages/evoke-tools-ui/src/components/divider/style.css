@@ -1,0 +1,26 @@
+/* EtDivider — 工具区分隔线（1px 描边白名单；长度随控件档位令牌） */
+
+.et-divider.et-divider {
+  flex: none;
+  background-color: var(--et-chrome-separator);
+}
+
+/* 默认（工具区）：竖线，高度 = 大钮 */
+.et-divider.et-divider--vertical {
+  width: var(--et-divider-size);
+  height: var(--et-size-toolbtn-large);
+}
+
+.et-divider.et-divider--vertical.et-divider--small {
+  height: var(--et-size-toolbtn-small);
+}
+
+.et-divider.et-divider--vertical.et-divider--row {
+  height: var(--et-size-row);
+}
+
+/* 横线（面板内分区等）：宽度撑开，高度 = 描边 */
+.et-divider.et-divider--horizontal {
+  width: 100%;
+  height: var(--et-divider-size);
+}

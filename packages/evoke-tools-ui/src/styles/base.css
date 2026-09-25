@@ -1,0 +1,39 @@
+/* ============================================
+   Evoke Tools UI — 基础样式（工具界面骨架）
+   只放"工具界面必须、基础层没有"的最小集合；
+   reset / 全局字体 / 暗色由 business-ui 的 styles 入口负责，本库不重复。
+   ============================================ */
+
+/* 工具界面元素盒模型统一（chrome 横带、面板、控件都参与固定高度计算） */
+.et-provider,
+.et-provider *,
+.et-provider *::before,
+.et-provider *::after {
+  box-sizing: border-box;
+}
+
+/* 焦点环：键盘可见性是工具界面的硬要求（focus-visible 才出现，鼠标不打扰） */
+.et-provider :focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+/* 默认动效纪律：无位移、无缩放；动效由使用方按需叠加 */
+.et-toolbtn,
+.et-tabstrip__item,
+.et-divider,
+.et-toolspacer,
+.et-screentip,
+.et-splitter__bar {
+  transition: background-color var(--et-duration-fast) var(--et-ease-out),
+    border-color var(--et-duration-fast) var(--et-ease-out),
+    color var(--et-duration-fast) var(--et-ease-out);
+}
+
+/* 图标盒：固定方形、盒内居中——避免同一排按钮图标大小不一（04 §三 硬规则 1） */
+.et-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}

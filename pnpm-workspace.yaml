@@ -3,6 +3,9 @@ packages:
   - 'docs'
   - 'docs-web'
   - 'docs-charts'
+  - 'docs-tools'
   - 'examples/*'
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@fluentui/svg-icons@1.1.342'

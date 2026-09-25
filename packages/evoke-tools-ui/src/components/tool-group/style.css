@@ -1,0 +1,38 @@
+/* EtToolGroup — 工具区分组（控件行 + 组标题行）
+
+   G7 组件契约（scripts/check-geometry.mjs 规则 ③/④，缺一则构建红）：
+   · 组标题行高度引用 --et-chrome-group-label-height：固定一条基线，不随内容撑开
+     （上一代组名行三个基线的缺陷门）；
+   · 控件行声明 flex-wrap: nowrap：工具区宽度不足走溢出折叠，禁换行。
+   度量全部来自 --et-* 令牌，本文件无 px 字面量。 */
+
+.et-toolgroup.et-toolgroup {
+  display: inline-flex;
+  flex-direction: column;
+  flex: none;
+}
+
+/* 控件行：条目横排，间距同类元素同屏同值。
+   flex: none：父容器内容盒被 1px 分隔线吃掉时（带 border 的 chrome 横带常见），
+   行高也不许被压缩 —— 一压缩组标题行的 y 就漂，"同排同基线"不变量破掉。 */
+.et-toolgroup__row {
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--et-toolgroup-item-gap);
+  height: var(--et-chrome-toolarea-row-height);
+}
+
+/* 组标题行：高度与行高同钉一个令牌，y 与同排其它组天然对齐 */
+.et-toolgroup__label {
+  flex: none;
+  height: var(--et-chrome-group-label-height);
+  line-height: var(--et-chrome-group-label-height);
+  font-size: var(--et-chrome-group-label-font-size);
+  color: var(--et-chrome-group-label-color);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,0 +1,15 @@
+/* EtSelect ── 工具密度菜单（tools-ui 计划 05 §三）
+ *
+ * 触发器（.eb-select__wrapper）的高度由底座 size 驱动：EtSelect 已把密度档映射成
+ * small/large 传给 EbSelect，控件高随之落到 24/32/40 阶梯，故不在此重复覆盖。
+ * 浮层菜单（选项列表）的密度与 EtDropdown 同口径——也经 <Teleport to="body"> 渲染，
+ * .et-select 作用域选不中 body 下的浮层，故 --et-menu-* 覆盖写在 .eb-select__dropdown 上。
+ *
+ * 度量全部引用 --et-menu-* 令牌（G7）：高度 / 内边距 / 圆角。 */
+
+.eb-select__dropdown .eb-select-dropdown__item.eb-select-option {
+  height: var(--et-menu-item-height);
+  line-height: var(--et-menu-item-height);
+  padding-inline: var(--et-menu-item-padding-inline);
+  border-radius: var(--et-menu-radius);
+}

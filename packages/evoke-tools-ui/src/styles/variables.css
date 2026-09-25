@@ -1,0 +1,192 @@
+/* ============================================
+   Evoke Tools UI — 产品级 GUI 框架设计令牌（--et-*）
+
+   定位：介于基础层（--eb-* business-ui / --ew-* evoke-ui）与办公语义层
+   （--ot-* office-works）之间的工具框架层。上层只准引用下层，禁止反向回流
+   （门禁：scripts/check-token-rule.mjs，规则 4 —— 本文件不得出现
+   cell / sheet / formula / canvas-grid 等办公语义名）。
+
+   双层架构：
+   - 语义层（主题 API 入口，产品可覆盖）：--et-chrome-* / --et-density-* /
+     --et-focus-* / --et-z-* / --et-state-*
+   - 设计层（度量常量，一般不覆盖）：--et-size-* / --et-space-* / --et-radius-* /
+     --et-duration-* / --et-icon-* / --et-menu-* / --et-panel-* / --et-statusbar-*
+
+   三档密度：根级属性（<html data-density>，由 EtProvider 写入），组件只引用
+   令牌、不得用 size prop 分支实现密度。默认档数值 = 计划 03 §3.2 / §四 / §五。
+
+   本文件是 --et-* 的单一事实源；design-tokens/evoke-tools-ui.*.json 由
+   `pnpm tokens:export` 从本文件 + dark.css 生成，两边必须一致。
+   ============================================ */
+
+:root {
+  /* ══════ 一、chrome 度量与预算（语义层）══════
+     默认档：标题栏 32 + tab 条 26 + 工具区 72 + 辅助栏 26 = 顶部 156；
+     加状态栏 24 = 合计 180；折叠后顶部 32+26+26 = 84。预算与分量同源，
+     改任何一个分量，预算自动跟随（calc 派生，不写第二个数字）。 */
+  --et-chrome-titlebar-height: 32px;
+  --et-chrome-tabstrip-height: 26px;
+  --et-chrome-tabstrip-underline-height: 2px;
+  --et-chrome-auxbar-height: 26px; /* 辅助栏位（办公产品用它承载公式栏） */
+  --et-chrome-statusbar-height: 24px;
+  --et-chrome-group-label-height: 16px; /* 组标题行固定高度，不随内容撑开 */
+  --et-chrome-toolarea-collapsed: 0px; /* 折叠态工具区高度 */
+  /* 工具区分量：控件行 + 组标题行。控件行高度 = 大钮高度（默认 56） */
+  --et-chrome-toolarea-row-height: var(--et-size-toolbtn-large);
+  --et-chrome-toolarea-height: calc(
+    var(--et-chrome-toolarea-row-height) + var(--et-chrome-group-label-height)
+  );
+  --et-chrome-top-budget: calc(
+    var(--et-chrome-titlebar-height) + var(--et-chrome-tabstrip-height) +
+      var(--et-chrome-toolarea-height) + var(--et-chrome-auxbar-height)
+  );
+  --et-chrome-total-budget: calc(var(--et-chrome-top-budget) + var(--et-chrome-statusbar-height));
+  --et-chrome-collapsed-top-budget: calc(
+    var(--et-chrome-titlebar-height) + var(--et-chrome-tabstrip-height) + var(--et-chrome-auxbar-height)
+  );
+
+  /* ══════ 二、密度三档（语义层；本块 = 默认档）══════
+     紧凑 / 默认 / 宽松 的取值见文件末尾两个 data-density 覆盖块。
+     出处：控件高 24/32/40 对齐 Fluent small/medium/large 实测阶梯。 */
+  --et-density-base-font: 13px;
+  --et-density-caption-font: 12px;
+  --et-density-control-height: 32px;
+  --et-density-line-height: 1.4;
+
+  /* 控件与行尺寸（设计层） */
+  --et-size-toolbtn-large: 56px; /* 大钮：图标行 + caption，正方形 */
+  --et-size-toolbtn-small: 28px; /* 小钮：图标 + ScreenTip，正方形 */
+  --et-size-row: 24px; /* 工具界面列表行（非表格行；表格行属 --ot-*） */
+
+  /* 工具界面专用间距（4px 网格子集；inline = 控件内左右，block = 控件内上下） */
+  --et-space-inline: 4px;
+  --et-space-block: 8px;
+  --et-space-group-gap: var(--et-space-block); /* 组与组之间 */
+  --et-space-band-inline: var(--et-space-block); /* chrome 横带左右内边距 */
+
+  /* 图标规格（04 §三 档位；sm/lg 随密度，xs/md/xl 固定档） */
+  --et-icon-xs: 14px; /* 状态栏、密集列表行内 */
+  --et-icon-sm: 16px; /* 默认档：菜单项、面板标题、小钮 */
+  --et-icon-md: 20px; /* 次级工具区按钮、对话框标题 */
+  --et-icon-lg: 24px; /* 默认档：工具区大钮图标行 */
+  --et-icon-xl: 28px; /* 特大：空态插画、backstage 入口 */
+  --et-icon-gap-sm: var(--et-space-inline); /* 图标与文字间距（小） */
+  --et-icon-gap-md: var(--et-space-block); /* 图标与文字间距（中） */
+
+  /* ══════ 三、控件尺寸与状态（语义层）══════ */
+  /* 大钮 */
+  --et-toolbtn-icon-box: var(--et-icon-lg); /* 图标盒 = 图标档，固定方形 */
+  --et-toolbtn-caption-font: var(--et-density-caption-font);
+  --et-toolbtn-caption-line-height: 16px; /* 整数钉死：污染画布几何的上一代踩坑 */
+  --et-toolbtn-caption-max-width: calc(var(--et-size-toolbtn-large) + var(--et-space-inline));
+  --et-toolbtn-caption-weight: var(--eb-font-weight-regular);
+  --et-toolbtn-caret-size: var(--et-icon-xs); /* 「按钮+下拉」指示（14px 档） */
+  --et-toolbtn-gap: var(--et-space-inline); /* 大钮图标行与 caption 间距 */
+  --et-toolbtn-caption-gap: var(--et-icon-gap-sm); /* caption 与下拉指示的间距 */
+  --et-toolbtn-radius: var(--et-radius-sm);
+  /* 组内条目间距 / tab 条条目间距 / 提示内部间距（同类元素同屏同值） */
+  --et-toolgroup-item-gap: var(--et-space-inline);
+  --et-tabstrip-item-gap: var(--et-space-inline);
+  --et-screentip-gap: var(--et-space-inline);
+  /* 菜单 / 右键菜单项（高度随密度，与控件高一致） */
+  --et-menu-item-height: var(--et-density-control-height);
+  --et-menu-item-padding-inline: var(--et-space-block);
+  --et-menu-icon-gutter: 20px; /* 图标位固定宽：无图标也留位，文字左对齐 */
+  --et-menu-radius: var(--et-radius-sm);
+  /* 面板 / 状态栏 / tab 条 */
+  --et-panel-header-height: 28px;
+  --et-statusbar-item-gap: 12px;
+  --et-tabstrip-item-padding-inline: var(--et-space-block);
+  --et-tabstrip-close-hit-area: 24px; /* 关闭钮命中区（WCAG 2.5.8 AA：24px；tab 条 26px 内放得下） */
+  /* 分隔条（浮层容器内的分隔与弹性占位；视觉分隔沿用 1px 描边白名单） */
+  --et-divider-size: 1px;
+  --et-toolspacer-size: var(--et-space-block);
+  /* 分隔面板（EtSplitter 在 EbSplitter 基元上的工具度量） */
+  --et-splitter-thickness: 4px;
+  --et-splitter-hit-area: 8px; /* 拖拽热区 > 可视条，抓手不顶光标 */
+  --et-splitter-handle-length: 24px;
+  /* 屏幕提示（EtScreenTip 延迟契约） */
+  --et-screentip-delay-first: 400ms;
+  --et-screentip-delay-hot: 120ms;
+  --et-screentip-delay-hide: 200ms;
+  --et-screentip-max-width: 240px; /* 说明行再长也在这个跨度内换行，不拉成横幅 */
+
+  /* 状态视觉（只做底色/文字色差异；hover 禁跳强调色） */
+  --et-state-hover-bg: var(--eb-fill-color-light);
+  --et-state-active-bg: var(--eb-fill-color);
+  --et-state-selected-fg: var(--eb-color-primary);
+  --et-state-selected-bg: var(--eb-color-primary-light-9);
+  --et-state-disabled-fg: var(--eb-text-color-disabled);
+  --et-state-disabled-bg: var(--eb-fill-color-light);
+
+  /* 焦点环规格（焦点漫游与键盘可达的可见性保证） */
+  --et-focus-ring-color: var(--eb-color-primary);
+  --et-focus-ring-width: 2px;
+  --et-focus-ring-offset: 1px;
+  /* 复合形态（盒阴影型）是规格面；实现用 base.css 的 outline 三段式 ——
+     outline 不进盒模型、不撑布局，且 Windows 高对比度模式下仍可见 */
+  --et-focus-ring: 0 0 0 var(--et-focus-ring-width) var(--et-focus-ring-color);
+
+  /* chrome 表面（引用基础层语义色，本层不新增色板） */
+  --et-chrome-bg: var(--eb-bg-color);
+  --et-chrome-band-bg: var(--eb-bg-color-page);
+  --et-chrome-separator: var(--eb-border-color-light);
+  --et-chrome-group-label-color: var(--eb-text-color-secondary);
+  --et-chrome-group-label-font-size: var(--eb-font-size-xs);
+  --et-toolbtn-fg: var(--eb-text-color-regular);
+  --et-toolbtn-caption-fg: var(--eb-text-color-regular);
+
+  /* ══════ 四、层级阶梯（语义层）══════
+     所有浮层走同一阶梯；组件内禁写 z-index: 9999。
+     popover 与业务中后台共用 2000 基准，保证工具区浮层盖在 chrome 之上。 */
+  --et-z-chrome: 100;
+  --et-z-panel: 200;
+  --et-z-popover: var(--eb-z-index-popper);
+  --et-z-peek: 2100;
+  --et-z-modal: 3000;
+  --et-z-notify: 4000;
+
+  /* ══════ 五、圆角 / 动效（设计层）══════ */
+  --et-radius-sm: 2px; /* 工具界面圆角比中后台小一档 */
+  --et-radius-md: 4px;
+  --et-radius-lg: 6px;
+  --et-radius-full: 9999px;
+  --et-duration-fast: var(--eb-duration-fast);
+  --et-duration-base: var(--eb-duration-base);
+  --et-duration-slow: var(--eb-duration-slow);
+  --et-ease-out: var(--eb-ease-out);
+
+  /* ══════ 六、版式基线（引用基础层字阶，供工具界面复用）══════ */
+  --et-font-family: var(--eb-font-family);
+  --et-line-height: var(--et-density-line-height);
+}
+
+/* ══════ 紧凑档：控件高 24 / 大钮 48 / 图标 sm 14 lg 20 ══════ */
+[data-density='compact'] {
+  --et-density-base-font: 12px;
+  --et-density-caption-font: 11px;
+  --et-density-control-height: 24px;
+  --et-density-line-height: 1.35;
+  --et-size-toolbtn-large: 48px;
+  --et-size-toolbtn-small: 24px;
+  --et-size-row: 20px;
+  --et-space-inline: 2px;
+  --et-space-block: 6px;
+  --et-icon-sm: 14px;
+  --et-icon-lg: 20px;
+}
+
+/* ══════ 宽松档：控件高 40 / 大钮 64 / 图标 sm 20 lg 28 ══════ */
+[data-density='relaxed'] {
+  --et-density-base-font: 14px;
+  --et-density-caption-font: 13px;
+  --et-density-control-height: 40px;
+  --et-density-line-height: 1.45;
+  --et-size-toolbtn-large: 64px;
+  --et-size-toolbtn-small: 36px;
+  --et-size-row: 28px;
+  --et-space-inline: 6px;
+  --et-space-block: 12px;
+  --et-icon-sm: 20px;
+  --et-icon-lg: 28px;
+}

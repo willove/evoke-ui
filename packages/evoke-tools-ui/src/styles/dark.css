@@ -1,0 +1,20 @@
+/* ============================================
+   Evoke Tools UI — Dark Mode
+   html.dark 触发。工具层不新增色板：绝大多数 --et-* 令牌引用 --eb-* 语义层，
+   已随 business-ui 的暗色重映射自动跟随；此处只声明"需要与亮色不同映射"的项。
+   ============================================ */
+
+html.dark {
+  /* 暗色下 band 分隔需要比重色底更亮一档才可见（亮色用 light，暗色换常规） */
+  --et-chrome-separator: var(--eb-border-color-hover);
+
+  /* hover 底色在暗色下提一档：fill-color-dark，避免与 band 底糊在一起 */
+  --et-state-hover-bg: var(--eb-fill-color);
+  --et-state-active-bg: var(--eb-fill-color-dark);
+
+  /* 选中态浅底在暗色下用 primary-light-7（亮色为 light-9），保证可分辨 */
+  --et-state-selected-bg: var(--eb-color-primary-light-7);
+
+  /* 禁用态：暗色下禁用文字提一档，避免不可见 */
+  --et-state-disabled-fg: var(--eb-text-color-placeholder);
+}

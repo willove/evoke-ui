@@ -80,6 +80,22 @@ importers:
         specifier: ^1.14.0
         version: 1.14.0
 
+  docs-tools:
+    dependencies:
+      '@wil-works/evoke-business-ui':
+        specifier: workspace:*
+        version: link:../packages/evoke-business-ui
+      '@wil-works/evoke-tools-ui':
+        specifier: workspace:*
+        version: link:../packages/evoke-tools-ui
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.42(typescript@5.9.2)
+    devDependencies:
+      vitepress:
+        specifier: ^1.6.0
+        version: 1.6.0(@algolia/client-search@5.57.0)(async-validator@4.2.5)(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(typescript@5.9.2)
+
   docs-web:
     dependencies:
       '@wil-works/evoke-ui':
@@ -297,6 +313,28 @@ importers:
         specifier: ^8.0.10
         version: 8.2.2
 
+  examples/tools-workbench:
+    dependencies:
+      '@wil-works/evoke-business-ui':
+        specifier: workspace:*
+        version: link:../../packages/evoke-business-ui
+      '@wil-works/evoke-tools-ui':
+        specifier: workspace:*
+        version: link:../../packages/evoke-tools-ui
+      vue:
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@5.9.2)
+    devDependencies:
+      '@fluentui/svg-icons':
+        specifier: 1.1.342
+        version: 1.1.342
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.8
+        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
+      vite:
+        specifier: ^8.0.10
+        version: 8.2.2
+
   packages/evoke-business-ui:
     dependencies:
       '@floating-ui/dom':
@@ -391,6 +429,30 @@ importers:
       zod:
         specifier: ^3.25.76
         version: 3.25.76
+
+  packages/evoke-tools-ui:
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.8
+        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
+      '@vue/compiler-sfc':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@wil-works/evoke-business-ui':
+        specifier: workspace:*
+        version: link:../evoke-business-ui
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+      vite:
+        specifier: ^8.0.10
+        version: 8.2.2
+      vue:
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@5.9.2)
+      vue-tsc:
+        specifier: ^3.3.11
+        version: 3.3.11(typescript@5.9.2)
 
   packages/evoke-ui:
     devDependencies:
@@ -752,6 +814,9 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fluentui/svg-icons@1.1.342':
+    resolution: {integrity: sha512-v7PVYMoTWStm4tGQcPecfZypsVm63MILyfp9aJ5jVjjf7iR+iaUjkBymyc9mbiamClnihRJzSa673p9B2LZZAg==}
 
   '@hono/node-server@2.1.1':
     resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
@@ -2912,6 +2977,8 @@ snapshots:
       '@floating-ui/utils': 0.2.12
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fluentui/svg-icons@1.1.342': {}
 
   '@hono/node-server@2.1.1(hono@4.13.7)':
     dependencies:

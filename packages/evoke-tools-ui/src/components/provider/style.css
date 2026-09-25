@@ -1,0 +1,7 @@
+/* EtProvider — 全局提供者（密度 + 底座配置透传） */
+
+/* display: contents：提供者只写根级 data-density 与 provide，不引入布局盒
+   （EbConfigProvider 根节点是 fragment，class 直接挂它会被 Vue 判为游离属性） */
+.et-provider {
+  display: contents;
+}

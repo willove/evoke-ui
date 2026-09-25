@@ -1,0 +1,23 @@
+/* EtDropdown ── 工具密度菜单（tools-ui 计划 05 §三）
+ *
+ * 为什么用全局底座浮层类而非 .et-dropdown 作用域：
+ * EbDropdown 的浮层经 <Teleport to="body"> 挂到 body，浮层不是 .et-dropdown 的后代，
+ * `.et-dropdown .eb-dropdown-menu__item` 永远选不中；而且底座 popper 容器类固定、
+ * 不接受 popper-class 注入（探针实测）。故把 --et-menu-* 覆盖写在 .eb-dropdown__popper
+ * 上——tools-ui 样式只在产品侧加载，business-ui 原生用法不受影响。
+ *
+ * 度量全部引用 --et-menu-* 令牌（G7）：高度 / 内边距 / 圆角 / 图标位随密度档切换。 */
+
+/* 菜单项：条目高、圆角、左右内边距 */
+.eb-dropdown__popper .eb-dropdown-menu__item.eb-dropdown-item {
+  height: var(--et-menu-item-height);
+  line-height: var(--et-menu-item-height);
+  padding-inline: var(--et-menu-item-padding-inline);
+  border-radius: var(--et-menu-radius);
+}
+
+/* 图标位：固定宽（无图标时也由底座占位逻辑保证文字左对齐一致） */
+.eb-dropdown__popper .eb-dropdown-menu__item .eb-dropdown-menu__icon {
+  width: var(--et-menu-icon-gutter);
+  flex-shrink: 0;
+}

@@ -5,8 +5,12 @@
  *   1. import EbButton from './components/button/index.vue'   （SFC，含子件 group/item 等）
  *   2. import { EbMessage } from './components/message'       （命令式 API 目录桶，单具名绑定）
  *
- * 子路径命名规则：Eb 前缀去除后 PascalCase → kebab-case，
+ * 子路径命名规则：组件前缀去除后 PascalCase → kebab-case，
  * 如 EbInputNumber → input-number、EbDropdownMenu → dropdown-menu。
+ *
+ * 解析器按参数通用化（本库默认 Eb / 自身 src/index.js，行为与参数化前完全一致）：
+ * 姐妹库（如 evoke-tools-ui，前缀 Et）以 { prefix: 'Et', pkgRoot } 复用同一实现，
+ * 避免四库各写一份解析逻辑后规则漂移（tools-ui 计划 02 §五）。
  */
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -26,30 +30,40 @@ export function toKebab(name) {
 
 /**
  * 解析 index.js 中的组件 / 命令式 API 入口表
+ * @param {string} [source] index.js 源码（缺省读本库 src/index.js）
+ * @param {{ prefix?: string, pkgRoot?: string }} [options]
+ *   prefix 组件名前缀（'Eb' / 'Et'…）；pkgRoot 包根（决定目录桶 index.ts/index.js 探测位置）
  * @returns {Array<{ exportName: string, name: string, file: string }>}
  *   exportName 如 "EbInputNumber"；name 为子路径名 "input-number"；file 为 src 下相对路径
  */
-export function getComponentEntries(source = readFileSync(SRC_INDEX, 'utf8')) {
+export function getComponentEntries(source = readFileSync(SRC_INDEX, 'utf8'), options = {}) {
+  const { prefix = 'Eb', pkgRoot: root = pkgRoot } = options
+  const strip = prefix.length
   const seen = new Map()
   const add = (exportName, file) => {
-    const name = toKebab(exportName.slice(2))
+    const name = toKebab(exportName.slice(strip))
     if (seen.has(name)) throw new Error(`[component-entries] 子路径名冲突: ${name}`)
     seen.set(name, { exportName, name, file })
   }
 
-  for (const m of source.matchAll(/^import (Eb\w+) from '\.\/(components\/[^']+\.vue)'$/gm)) {
+  const sfcRe = new RegExp(`^import (${prefix}\\w+) from '\\./(components/[^']+\\.vue)'$`, 'gm')
+  for (const m of source.matchAll(sfcRe)) {
     add(m[1], m[2])
   }
-  // 命令式 API 目录桶（无扩展名）：取绑定中的 Eb* 名（可为多绑定，如
+  // 命令式 API 目录桶（无扩展名）：取绑定中的本前缀名（可为多绑定，如
   // `import { EbLoading, createLoadingDirective } from './components/loading'`）
-  for (const m of source.matchAll(/^import \{ ([^}]+) \} from '\.\/(components\/[a-z0-9-]+)'$/gm)) {
-    const ebNames = m[1].split(',').map((s) => s.trim()).filter((s) => /^Eb[A-Z]/.test(s))
-    if (ebNames.length === 1) {
-      // 目录桶实现已迁 TS（index.ts），仍兼容残留 index.js
-      const entryFile = existsSync(resolve(pkgRoot, 'src', m[2], 'index.ts'))
+  const bucketRe = new RegExp(`^import \\{ ([^}]+) \\} from '\\./(components/[a-z0-9-]+)'$`, 'gm')
+  for (const m of source.matchAll(bucketRe)) {
+    const prefixedNames = m[1]
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => new RegExp(`^${prefix}[A-Z]`).test(s))
+    if (prefixedNames.length === 1) {
+      // 目录桶实现可能已迁 TS（index.ts），仍兼容残留 index.js
+      const entryFile = existsSync(resolve(root, 'src', m[2], 'index.ts'))
         ? `${m[2]}/index.ts`
         : `${m[2]}/index.js`
-      add(ebNames[0], entryFile)
+      add(prefixedNames[0], entryFile)
     }
   }
 

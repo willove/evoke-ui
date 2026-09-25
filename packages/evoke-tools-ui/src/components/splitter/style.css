@@ -1,0 +1,58 @@
+/* EtSplitter / EtSplitterPanel ── 分隔面板的工具度量（tools-ui 计划 05 §三；M0）
+ *
+ * 底座渲染 .eb-splitter__bar，配色与折叠按钮沿用底座；本文件只按工具口径覆盖
+ * 拖拽条的几何度量，全部走 --et-splitter-* / --et-divider-size 令牌（G7），
+ * 且 z-index 走 --et-z-* 阶梯（提拉拖拽条到面板之上，热区两侧都吃得到）。
+ *
+ * 布局：可视厚度 < 热区 > 把手长——细条不抢版面，热区大便于抓手命中。 */
+
+/* 拖拽条提到面板之上，并把可视条压到工具厚度（默认档 4px） */
+.et-splitter .eb-splitter__bar {
+  z-index: var(--et-z-panel);
+}
+.et-splitter .eb-splitter__bar.is-horizontal {
+  width: var(--et-splitter-thickness);
+}
+.et-splitter .eb-splitter__bar.is-vertical {
+  height: var(--et-splitter-thickness);
+}
+
+/* 把手：沿拖拽轴的短条，长度走令牌；颜色用底座语义色，hover / 拖动时转主色 */
+.et-splitter .eb-splitter__bar::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--eb-text-color-secondary);
+  border-radius: var(--et-radius-full);
+  transition: background-color var(--et-duration-fast) var(--et-ease-out);
+}
+.et-splitter .eb-splitter__bar.is-horizontal::before {
+  width: var(--et-divider-size);
+  height: var(--et-splitter-handle-length);
+}
+.et-splitter .eb-splitter__bar.is-vertical::before {
+  width: var(--et-splitter-handle-length);
+  height: var(--et-divider-size);
+}
+.et-splitter .eb-splitter__bar.is-draggable:hover::before,
+.et-splitter .eb-splitter__bar.is-dragging::before {
+  background: var(--eb-color-primary);
+}
+
+/* 热区：大于可视条。伪元素负 inset 向外扩（沿拖拽轴），inset 用 calc 包令牌、禁字面量 */
+.et-splitter .eb-splitter__bar::after {
+  content: '';
+  position: absolute;
+}
+.et-splitter .eb-splitter__bar.is-horizontal::after {
+  top: 0;
+  bottom: 0;
+  inset-inline: calc((var(--et-splitter-hit-area) - var(--et-splitter-thickness)) / -2);
+}
+.et-splitter .eb-splitter__bar.is-vertical::after {
+  left: 0;
+  right: 0;
+  inset-block: calc((var(--et-splitter-hit-area) - var(--et-splitter-thickness)) / -2);
+}

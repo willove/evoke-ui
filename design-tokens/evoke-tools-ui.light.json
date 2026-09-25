@@ -1,0 +1,370 @@
+{
+  "$description": "@wil-works/evoke-tools-ui（--et-*） 设计令牌 — light（:root）",
+  "chrome": {
+    "titlebar-height": {
+      "$value": "32px",
+      "$type": "dimension"
+    },
+    "tabstrip-height": {
+      "$value": "26px",
+      "$type": "dimension"
+    },
+    "tabstrip-underline-height": {
+      "$value": "2px",
+      "$type": "dimension"
+    },
+    "auxbar-height": {
+      "$value": "26px",
+      "$type": "dimension"
+    },
+    "statusbar-height": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "group-label-height": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "toolarea-collapsed": {
+      "$value": "0px",
+      "$type": "dimension"
+    },
+    "toolarea-row-height": {
+      "$value": "var(--et-size-toolbtn-large)"
+    },
+    "toolarea-height": {
+      "$value": "calc( var(--et-chrome-toolarea-row-height) + var(--et-chrome-group-label-height) )"
+    },
+    "top-budget": {
+      "$value": "calc( var(--et-chrome-titlebar-height) + var(--et-chrome-tabstrip-height) + var(--et-chrome-toolarea-height) + var(--et-chrome-auxbar-height) )"
+    },
+    "total-budget": {
+      "$value": "calc(var(--et-chrome-top-budget) + var(--et-chrome-statusbar-height))"
+    },
+    "collapsed-top-budget": {
+      "$value": "calc( var(--et-chrome-titlebar-height) + var(--et-chrome-tabstrip-height) + var(--et-chrome-auxbar-height) )"
+    },
+    "bg": {
+      "$value": "var(--eb-bg-color)"
+    },
+    "band-bg": {
+      "$value": "var(--eb-bg-color-page)"
+    },
+    "separator": {
+      "$value": "var(--eb-border-color-light)"
+    },
+    "group-label-color": {
+      "$value": "var(--eb-text-color-secondary)"
+    },
+    "group-label-font-size": {
+      "$value": "var(--eb-font-size-xs)"
+    }
+  },
+  "density": {
+    "base-font": {
+      "$value": "13px",
+      "$type": "dimension"
+    },
+    "caption-font": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "control-height": {
+      "$value": "32px",
+      "$type": "dimension"
+    },
+    "line-height": {
+      "$value": "1.4",
+      "$type": "number"
+    }
+  },
+  "size": {
+    "toolbtn-large": {
+      "$value": "56px",
+      "$type": "dimension"
+    },
+    "toolbtn-small": {
+      "$value": "28px",
+      "$type": "dimension"
+    },
+    "row": {
+      "$value": "24px",
+      "$type": "dimension"
+    }
+  },
+  "space": {
+    "inline": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "block": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "group-gap": {
+      "$value": "var(--et-space-block)"
+    },
+    "band-inline": {
+      "$value": "var(--et-space-block)"
+    }
+  },
+  "icon": {
+    "xs": {
+      "$value": "14px",
+      "$type": "dimension"
+    },
+    "sm": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "md": {
+      "$value": "20px",
+      "$type": "dimension"
+    },
+    "lg": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "xl": {
+      "$value": "28px",
+      "$type": "dimension"
+    },
+    "gap-sm": {
+      "$value": "var(--et-space-inline)"
+    },
+    "gap-md": {
+      "$value": "var(--et-space-block)"
+    }
+  },
+  "toolbtn": {
+    "icon-box": {
+      "$value": "var(--et-icon-lg)"
+    },
+    "caption-font": {
+      "$value": "var(--et-density-caption-font)"
+    },
+    "caption-line-height": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "caption-max-width": {
+      "$value": "calc(var(--et-size-toolbtn-large) + var(--et-space-inline))"
+    },
+    "caption-weight": {
+      "$value": "var(--eb-font-weight-regular)"
+    },
+    "caret-size": {
+      "$value": "var(--et-icon-xs)"
+    },
+    "gap": {
+      "$value": "var(--et-space-inline)"
+    },
+    "caption-gap": {
+      "$value": "var(--et-icon-gap-sm)"
+    },
+    "radius": {
+      "$value": "var(--et-radius-sm)"
+    },
+    "fg": {
+      "$value": "var(--eb-text-color-regular)"
+    },
+    "caption-fg": {
+      "$value": "var(--eb-text-color-regular)"
+    }
+  },
+  "toolgroup": {
+    "item-gap": {
+      "$value": "var(--et-space-inline)"
+    }
+  },
+  "tabstrip": {
+    "item-gap": {
+      "$value": "var(--et-space-inline)"
+    },
+    "item-padding-inline": {
+      "$value": "var(--et-space-block)"
+    },
+    "close-hit-area": {
+      "$value": "24px",
+      "$type": "dimension"
+    }
+  },
+  "screentip": {
+    "gap": {
+      "$value": "var(--et-space-inline)"
+    },
+    "delay-first": {
+      "$value": "400ms",
+      "$type": "duration"
+    },
+    "delay-hot": {
+      "$value": "120ms",
+      "$type": "duration"
+    },
+    "delay-hide": {
+      "$value": "200ms",
+      "$type": "duration"
+    },
+    "max-width": {
+      "$value": "240px",
+      "$type": "dimension"
+    }
+  },
+  "menu": {
+    "item-height": {
+      "$value": "var(--et-density-control-height)"
+    },
+    "item-padding-inline": {
+      "$value": "var(--et-space-block)"
+    },
+    "icon-gutter": {
+      "$value": "20px",
+      "$type": "dimension"
+    },
+    "radius": {
+      "$value": "var(--et-radius-sm)"
+    }
+  },
+  "panel": {
+    "header-height": {
+      "$value": "28px",
+      "$type": "dimension"
+    }
+  },
+  "statusbar": {
+    "item-gap": {
+      "$value": "12px",
+      "$type": "dimension"
+    }
+  },
+  "divider": {
+    "size": {
+      "$value": "1px",
+      "$type": "dimension"
+    }
+  },
+  "toolspacer": {
+    "size": {
+      "$value": "var(--et-space-block)"
+    }
+  },
+  "splitter": {
+    "thickness": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "hit-area": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "handle-length": {
+      "$value": "24px",
+      "$type": "dimension"
+    }
+  },
+  "state": {
+    "hover-bg": {
+      "$value": "var(--eb-fill-color-light)"
+    },
+    "active-bg": {
+      "$value": "var(--eb-fill-color)"
+    },
+    "selected-fg": {
+      "$value": "var(--eb-color-primary)"
+    },
+    "selected-bg": {
+      "$value": "var(--eb-color-primary-light-9)"
+    },
+    "disabled-fg": {
+      "$value": "var(--eb-text-color-disabled)"
+    },
+    "disabled-bg": {
+      "$value": "var(--eb-fill-color-light)"
+    }
+  },
+  "focus": {
+    "ring-color": {
+      "$value": "var(--eb-color-primary)"
+    },
+    "ring-width": {
+      "$value": "2px",
+      "$type": "dimension"
+    },
+    "ring-offset": {
+      "$value": "1px",
+      "$type": "dimension"
+    },
+    "ring": {
+      "$value": "0 0 0 var(--et-focus-ring-width) var(--et-focus-ring-color)"
+    }
+  },
+  "z": {
+    "chrome": {
+      "$value": "100",
+      "$type": "number"
+    },
+    "panel": {
+      "$value": "200",
+      "$type": "number"
+    },
+    "popover": {
+      "$value": "var(--eb-z-index-popper)"
+    },
+    "peek": {
+      "$value": "2100",
+      "$type": "number"
+    },
+    "modal": {
+      "$value": "3000",
+      "$type": "number"
+    },
+    "notify": {
+      "$value": "4000",
+      "$type": "number"
+    }
+  },
+  "radius": {
+    "sm": {
+      "$value": "2px",
+      "$type": "dimension"
+    },
+    "md": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "lg": {
+      "$value": "6px",
+      "$type": "dimension"
+    },
+    "full": {
+      "$value": "9999px",
+      "$type": "dimension"
+    }
+  },
+  "duration": {
+    "fast": {
+      "$value": "var(--eb-duration-fast)"
+    },
+    "base": {
+      "$value": "var(--eb-duration-base)"
+    },
+    "slow": {
+      "$value": "var(--eb-duration-slow)"
+    }
+  },
+  "ease": {
+    "out": {
+      "$value": "var(--eb-ease-out)"
+    }
+  },
+  "font": {
+    "family": {
+      "$value": "var(--eb-font-family)"
+    }
+  },
+  "line": {
+    "height": {
+      "$value": "var(--et-density-line-height)"
+    }
+  }
+}

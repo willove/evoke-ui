@@ -1,0 +1,7 @@
+/* EtToolSpacer — 弹性占位（吃掉行内剩余空间，把后续组推到行尾） */
+
+.et-toolspacer.et-toolspacer {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}

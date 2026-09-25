@@ -1,0 +1,12 @@
+/* EtKeyHint — 快捷键文本（键帽形态，与 12px caption 同基线） */
+
+.et-keyhint.et-keyhint {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--et-font-family);
+  font-size: var(--et-density-caption-font);
+  line-height: 1;
+  color: var(--eb-text-color-secondary);
+  white-space: nowrap;
+  vertical-align: middle;
+}

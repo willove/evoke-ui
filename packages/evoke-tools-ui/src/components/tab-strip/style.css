@@ -1,0 +1,126 @@
+/* EtTabStrip — 下划线式 tab 条（纯文字，对齐 Excel/WPS；tools-ui 计划 05 §四 + 04 §六）
+
+   度量全部走令牌：条目高度 / 内边距 / 间距 / 字号来自 --et-chrome-tabstrip-* 与
+   --et-tabstrip-*，指示条高度来自 --et-chrome-tabstrip-underline-height。 */
+
+.et-tabstrip.et-tabstrip {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--et-tabstrip-item-gap);
+  height: var(--et-chrome-tabstrip-height);
+  padding-inline: var(--et-tabstrip-item-padding-inline);
+  /* 收起条目用绝对定位退出文档流，给它一个包含块 */
+  position: relative;
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+  color: var(--et-toolbtn-fg);
+}
+
+/* 条目：flex: none 保证实测宽 = 内容自然宽（条目一旦被压窄，溢出规划就失真） */
+.et-tabstrip__item {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--et-tabstrip-item-gap);
+  height: 100%;
+  padding-inline: var(--et-tabstrip-item-padding-inline);
+  border: none;
+  background: none;
+  color: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* hover 只加深一档底色，不跳强调色（03 §五 状态规则） */
+.et-tabstrip__item:hover {
+  background: var(--et-state-hover-bg);
+}
+
+/* 激活项：文字选中色 + 底部指示条。内阴影不占布局 —— 换 2px border 会把条目盒
+   撑高，chrome 预算的 26px 就被吃掉了 */
+.et-tabstrip__item.is-active {
+  color: var(--et-state-selected-fg);
+  box-shadow: inset 0 calc(-1 * var(--et-chrome-tabstrip-underline-height)) 0
+    var(--et-state-selected-fg);
+}
+
+.et-tabstrip__item.is-disabled {
+  color: var(--et-state-disabled-fg);
+  cursor: default;
+}
+
+/* 焦点环画在内侧：条目撑满条高，外侧环会被相邻条目切掉 */
+.et-tabstrip__item:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: calc(-1 * var(--et-focus-ring-offset));
+}
+
+/* 溢出的条目：退出文档流但保留可测宽度，同时从焦点树 / 读屏树摘掉
+   （改由「更多」菜单代理，见模板 aria-hidden） */
+.et-tabstrip__item.is-collapsed {
+  position: absolute;
+  visibility: hidden;
+}
+
+/* 关闭钮：小号图标钮（aria-label 在模板上，G4）。
+   命中区外扩到 --et-tabstrip-close-hit-area（24px，WCAG 2.5.8 AA）：
+   可视仍是 16px 图标盒，热区用透明伪元素负 inset 撑开，不吃行高。 */
+.et-tabstrip__close {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--et-icon-sm);
+  height: var(--et-icon-sm);
+  padding: 0;
+  border: none;
+  border-radius: var(--et-radius-full);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.et-tabstrip__close::before {
+  content: '';
+  position: absolute;
+  inset: calc((var(--et-tabstrip-close-hit-area) - var(--et-icon-sm)) / -2);
+}
+
+.et-tabstrip__close:hover {
+  background: var(--et-state-active-bg);
+}
+
+/* ─── 「更多」溢出入口 ───
+   选择器带父级前缀：要盖过底座 .eb-dropdown.eb-dropdown 的同分属性（字号 / 取色），
+   两层样式表的注入顺序由消费方决定，不能靠先后手 */
+.et-tabstrip .et-tabstrip__more.et-tabstrip__more {
+  flex: none;
+  align-items: center;
+  gap: var(--et-tabstrip-item-gap);
+  font-size: inherit;
+  color: inherit;
+}
+
+.et-tabstrip__more.is-hidden {
+  position: absolute;
+  visibility: hidden;
+}
+
+.et-tabstrip .et-tabstrip__more-label {
+  white-space: nowrap;
+}
+
+.et-tabstrip .et-tabstrip__more-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--et-icon-sm);
+  padding-inline: var(--et-space-inline);
+  border-radius: var(--et-radius-full);
+  background: var(--et-state-selected-bg);
+  color: var(--et-state-selected-fg);
+  font-size: var(--et-density-caption-font);
+}

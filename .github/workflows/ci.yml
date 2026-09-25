@@ -34,6 +34,8 @@ jobs:
           pnpm build:ebui
           pnpm build:chat
           pnpm build:charts
+          # tools-ui 排最后：它的 vue-tsc 要读底座 d.ts（peer 走 workspace:*）
+          pnpm build:tools
 
       # 编辑器同口径类型检查（vue-tsc --noEmit）；构建期的 d.ts 生成是第二道类型关
       - name: Typecheck
@@ -55,6 +57,10 @@ jobs:
 
       - name: Build docs (charts)
         run: pnpm docs-charts:build
+
+      # 第四站：docs-tools（M0 起交付，guide/design 全量令牌页）
+      - name: Build docs (tools)
+        run: pnpm docs-tools:build
 
       - name: Upload coverage
         if: always()

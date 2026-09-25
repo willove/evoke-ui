@@ -36,6 +36,15 @@ const SOURCES = [
       'packages/evoke-business-ui/src/styles/dark.css',
     ],
   },
+  {
+    pkg: 'evoke-tools-ui',
+    label: '@wil-works/evoke-tools-ui（--et-*）',
+    ns: 'et',
+    files: [
+      'packages/evoke-tools-ui/src/styles/variables.css',
+      'packages/evoke-tools-ui/src/styles/dark.css',
+    ],
+  },
 ]
 
 /** 抽取某选择器块内本包命名空间的自定义属性声明（按出现顺序，后块覆盖前块）。

@@ -2,6 +2,40 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 0.1.0] — 2026-09-25
+
+### @wil-works/evoke-tools-ui — 新包：产品级 GUI 框架（0.1.0，M0 内测）
+
+- **第四个库开仓**：命名空间 `--et-*`、组件前缀 `Et*`、包名 `@wil-works/evoke-tools-ui`。
+  定位是 business-ui 语境下不存在的「产品外壳层 + 运行时契约」——工具区 / 停靠 / 外壳件，
+  外加两件组件库给不了的东西：**布局运行时**与**数据契约**（命令表 / 菜单 schema / 折叠溢出状态机）。
+  能复用底座的一律复用（浮层 / 菜单列表 / 命令面板 / 分隔基元），M0 交付 12 个 L1 原子件；
+  依赖白名单制：peer 只有 `vue` + `@wil-works/evoke-business-ui`，零第三方 UI 库；
+- **`--et-*` 令牌双层架构**：语义层（`--et-chrome-*` 外壳度量 / `--et-density-*` 三档密度 /
+  `--et-focus-*` / `--et-z-*` 层级阶梯 / `--et-state-*`）+ 设计层（尺寸 / 间距 / 圆角 / 动效 / 图标规格）。
+  工具层**不新增色板**，状态色一律引用 `--eb-*` 语义层，暗色只声明少数不同映射项；
+- **三档密度**（紧凑 24 / 默认 32 / 宽松 40，对齐 Fluent UI 字段高阶梯）：密度是根级属性
+  （`<html data-density>`，`EtProvider` 写入），组件只引用令牌、不用 `size` prop 分支；
+- **chrome 预算 calc 派生**：各带高度与合计预算由分量推导（默认档顶部 156 = 32+26+72+26、
+  合计 180、折叠后 84），改分量预算自动跟随；G7 门（布局属性禁字面量 px）构建期强制；
+- **五道质量门 + 一道密度对照**：G1 令牌（纯度 / 回流禁令 / 引用完整 / 依赖白名单）、
+  G2 图标名（悬空名 = 构建失败）、G4 可访问名（图标按钮必须 `aria-label`）、
+  G5 输入法（window/document 级 keydown 必过组字守卫）、G7 几何预算；
+  `check-density.mjs` 把三档密度 / chrome 预算 / 控件尺寸与设计文档表格逐项自动对照；
+- **图标机制**：三层命名（Remix 原生名 / 组件语义名 / 领域语义名）+ 领域别名注册 API；
+  未命中**禁渲染空白**——回落显式兜底图标 + dev warn（上一代「38×24 纯白方块」缺陷的制度化解法）；
+- **12 个 L1 原子件**：`EtProvider` / `EtToolButton`（大钮图标行+caption / 小钮图标+ScreenTip）/
+  `EtToolGroup`（组标题行固定一条基线）/ `EtTabStrip`（纯文字 tab 条 + 键盘漫游 + 窄屏溢出）/
+  `EtScreenTip`（替代 title：名称 + 说明 + 快捷键后缀，单例 + 首显/热显延迟契约）/
+  `EtKeyHint` / `EtDivider` / `EtToolSpacer` / `EtDropdown` / `EtSelect` / `EtTooltip` / `EtSplitter`；
+- **运行时契约（L0）**：键位表（解析 / 平台符号化 ⌘⌃⌥⇧ vs Ctrl/Alt/Shift / 事件匹配）+
+  焦点漫游（roving tabindex + 组字守卫），全部纯函数可单测，走 `./runtime` 子路径导出；
+- **测试与文档**：148 个 vitest 用例（一组件一测试 + 契约纯函数 + index.js↔package.json↔vite 入口
+  三门一致守卫）；`DESIGN.md` 设计语言白皮书 + `docs-tools` 文档站 `guide/design.md` 全量令牌页；
+  工作台装配示例（`examples/tools-workbench`，三档密度 × 明暗 × 态 12 条视觉基线与不变量断言）；
+- 已知限制（M1 解）：Dropdown/Select 浮层挂不上 `et-*` 类（底座 teleport 类固定）、
+  `EbTooltip` trigger 校验集缺 `'manual'`、`EtSplitter` 键盘 resize 随 M2 面板树落地。
+
 ## [business-ui 0.9.1 / ui 0.11.1] — 2026-09-25
 
 ### @wil-works/evoke-business-ui — 激活涟漪体验修正与覆盖面收口（0.9.1）
