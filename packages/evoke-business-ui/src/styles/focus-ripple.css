@@ -43,14 +43,16 @@
    表单校验失败/通过时，红/绿框由 .eb-form-item.is-error / .is-success 的后代规则
    施加（组件自身未必带 is-error——纯 validate 触发而非 error prop 时就没有），
    涟漪色须跟随同一状态，否则出现「聚焦时蓝环配红框」。
-   宿主范围与 item.css 的边框规则保持一致（.eb-input__wrapper 与 .eb-textarea）；
-   select 在 form-item 下本就没有校验边框，不单给环上色。 */
+   宿主范围与 item.css 的边框规则保持一致（.eb-input__wrapper / .eb-select__wrapper /
+   .eb-textarea）；mention 不参与表单校验，无需覆盖。 */
 .eb-form-item.is-error .eb-input__wrapper,
+.eb-form-item.is-error .eb-select__wrapper,
 .eb-form-item.is-error .eb-textarea {
   --eb-field-ring-color: var(--eb-color-danger);
 }
 
 .eb-form-item.is-success .eb-input__wrapper,
+.eb-form-item.is-success .eb-select__wrapper,
 .eb-form-item.is-success .eb-textarea {
   --eb-field-ring-color: var(--eb-color-success);
 }

@@ -9,7 +9,7 @@
 - **聚焦涟漪反向**：激活时色环**先从边框向外荡开至 4px（约四成时长），再贴着边框向内收拢回 0 并淡出**（1.2s）。两段均用 ease-out 型曲线（字面量，见下条注意）——荡开/收拢起手即动、落点轻柔，没有 ease-in-out 起手的死帧感；色环比此前浅一档（主色 30% → 20% 透明）。此前是向四周荡开约 6px 且一边扩散一边消散（0.7s ease-out，动作全压在前三分之一，看着「一闪而过」）；
 - **实现注意**：`@keyframes` 内的 `animation-timing-function` 写 `var(--eb-*)` 会被引擎静默丢弃（实测回退成动画级曲线），故 keyframe 里用与 `--eb-ease-out` 同值的字面量贝塞尔；改动该令牌时记得同步 keyframe；
 - **涟漪覆盖面补齐**：`EbTextarea` 原本有 `--eb-*` 涟漪样式但组件未维护聚焦类，涟漪从不触发——补 `is-focus` 绑定；`EbMention` 整套接入（新增 `ripple` prop、聚焦态类、CSS 选择器与三档开关）。`EbAutoComplete` / `EbSearchFilter` / `EbTransfer` 内部就是 `EbInput`，无需另列；**`EbInputNumber` 不做光环**（步进器的激活反馈只要加减键，避免光环框住一整个加减输入组）；
-- **修复校验态涟漪不跟随边框色**：表单 `validate` 失败时红/绿框由 `.eb-form-item.is-error/.is-success` 的后代规则施加，组件自身未必带 `is-error`（非 `error` prop 触发时），导致聚焦时「蓝环配红框」。涟漪色改为跟随同一状态，宿主范围与 item.css 边框规则一致（`.eb-input__wrapper` 与 `.eb-textarea`；`select` 在 form-item 下本就没有校验边框，不单给环上色）；
+- **修复校验态涟漪不跟随边框色**：表单 `validate` 失败/通过时，红/绿框由 `.eb-form-item.is-error/.is-success` 的后代规则施加，组件自身未必带 `is-error`（非 `error` prop 触发时），导致聚焦时「蓝环配红框」。涟漪色改为跟随同一状态；**`select` 此前连校验态的红/绿边框都没有**（item.css 未覆盖 `.eb-select__wrapper`），本次一并补上——`select` / `tree-select` 共用该类名，边框与涟漪现在都跟随校验态。宿主范围与边框规则一致（`.eb-input__wrapper` / `.eb-select__wrapper` / `.eb-textarea`）；`mention` 不参与表单校验，无需覆盖；
 - **辐射量随尺寸分化**：large 6px / 默认 4px / small 3px（此前统一 4px，大框光环显小、小框显大）。spread 抽成 `--eb-field-ring-spread`（默认值走 var fallback，避免写在宿主元素上把尺寸覆写压掉），`inset` / 环宽 / 圆角三处同步引用——`var()` 在 keyframes 里对普通属性可正常替换（已实测）；
 - **按钮按压缩放缓**：`:active` 缩放 0.96 → 0.98——一排并排按钮同时按下时，4% 的宽窄跳动非常明显；与 evoke-ui 的 0.98 对齐。
 

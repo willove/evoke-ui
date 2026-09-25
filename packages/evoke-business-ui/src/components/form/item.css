@@ -110,13 +110,16 @@
   padding-top: 0;
 }
 
-/* 校验态视觉（错误反馈给内嵌控件：.eb-input__wrapper 红框） */
+/* 校验态视觉（错误反馈给内嵌控件：.eb-input__wrapper / .eb-select__wrapper 红框）。
+   .eb-select__wrapper 同时覆盖 select 与 tree-select；cascader 走 .eb-input__wrapper 无需另列。 */
 .eb-form-item.eb-form-item.is-error .eb-input__wrapper,
+.eb-form-item.eb-form-item.is-error .eb-select__wrapper,
 .eb-form-item.eb-form-item.is-error .eb-textarea__inner,
 .eb-form-item.eb-form-item.is-error .eb-input-number .eb-input__wrapper {
   box-shadow: 0 0 0 1px var(--eb-color-danger) inset !important;
 }
 .eb-form-item.eb-form-item.is-success .eb-input__wrapper,
+.eb-form-item.eb-form-item.is-success .eb-select__wrapper,
 .eb-form-item.eb-form-item.is-success .eb-textarea__inner {
   box-shadow: 0 0 0 1px var(--eb-color-success) inset;
 }
