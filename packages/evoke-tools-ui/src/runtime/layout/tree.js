@@ -14,6 +14,9 @@
 /** 停靠区允许的方向（bottom 独占底部，left/right 分列） */
 export const DOCK_SIDES = ['left', 'right', 'bottom']
 
+/** 停靠区呈现：stack = 同屏多面板并列（默认，尺寸分摊）；tabs = 单渲染位 tab 化 */
+export const DOCK_PRESENTATIONS = ['stack', 'tabs']
+
 const ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
 
 /** 深拷（布局树是纯数据；所有操作返回新树，输入不被改） */
@@ -77,6 +80,9 @@ function assertDock(dock, errors, seenIds) {
     errors.push(`dock(${id}).side 必须是 ${DOCK_SIDES.join(' / ')}：${String(side)}`)
     return null
   }
+  if (dock.presentation !== undefined && !DOCK_PRESENTATIONS.includes(dock.presentation)) {
+    errors.push(`dock(${id}).presentation 必须是 ${DOCK_PRESENTATIONS.join(' / ')}：${String(dock.presentation)}`)
+  }
   if (!Array.isArray(dock.panels)) {
     errors.push(`dock(${id}).panels 必须是数组`)
     return null
@@ -86,7 +92,14 @@ function assertDock(dock, errors, seenIds) {
     const panel = assertPanel(raw, `dock(${id}).panels[${i}]`, errors)
     if (panel) panels.push(panel)
   }
-  return { id, side, collapsed: !!dock.collapsed, panels }
+  // presentation 进树：tabs 档是产品/用户选择的呈现方式，要过持久化（不进 = 刷新丢）
+  return {
+    id,
+    side,
+    collapsed: !!dock.collapsed,
+    presentation: dock.presentation === 'tabs' ? 'tabs' : 'stack',
+    panels,
+  }
 }
 
 /**
@@ -241,7 +254,7 @@ function withPanel(tree, panelId, updater) {
   }
 }
 
-/** 面板折叠切换（内容折叠成标题条；dock 内其它面板吃满剩余空间） */
+/** 面板折叠切换（位宽收成标题条、声明宽保留——展开即还原，不回写冲洗过的宽） */
 export function togglePanelCollapsed(tree, panelId) {
   if (!findPanel(tree, panelId)) return tree
   return withPanel(tree, panelId, (panel) => ({ ...panel, collapsed: !panel.collapsed }))

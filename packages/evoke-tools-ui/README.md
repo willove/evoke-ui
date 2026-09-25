@@ -56,13 +56,31 @@ app.use(EvokeToolsUI)
 - 真折叠（Ctrl+F1 / ⌥⌘R / 双击）与 peek 浮层；分量降级与溢出「更多」禁换行；
 - 同一命令表再驱动 `<et-command-palette>`（⌘K）与 `<et-context-menu>`（右键）。
 
+## L3 工作台（M2）
+
+```vue
+<et-workbench v-model:layout="layout" :default-layout="DEFAULT" persist-key="my-app"
+  @layout-corrupted="onCorrupted">
+  <template #toolbar><et-ribbon-bar :schema="..." :registry="..." /></template>
+  <template #panel="{ panel }"><my-panel :id="panel.id" /></template>
+  <template #documents><et-document-tabs v-model="doc" :documents="docs" /></template>
+  <main>画布</main>
+  <template #statusbar>就绪</template>
+</et-workbench>
+```
+
+- 布局即数据：`createLayoutTree` / `togglePanelCollapsed` / `hidePanel` / `maximizePanel`（纯函数，
+  `./runtime` 出口）；`EtWorkbench` 是唯一写树处；
+- `EtDock`（stack 并列分摊尺寸 / tabs 档）+ `EtPanel`（28px 标题栏 + 折叠/最大化/关闭）+
+  `EtScrollArea` + `EtEmptyState`（一句引导 + 一个主钮）+ `EtDocumentTabs`（脏标记/关闭/溢出）。
+
 ## 子路径导出
 
 | 入口 | 内容 |
 | --- | --- |
 | `.` | 全部组件 + 运行时契约 + 图标机制 |
 | `./styles` | `--et-*` 令牌 + 暗色 + 基础样式 |
-| `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 |
+| `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 / 布局树 |
 | `./icons` | 图标解析兜底 + 领域别名注册 API |
 | `./<component>` | 按需引入，如 `@wil-works/evoke-tools-ui/tool-button` |
 

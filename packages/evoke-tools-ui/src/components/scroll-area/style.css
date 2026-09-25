@@ -1,0 +1,26 @@
+/* EtScrollArea — 工具界面滚动内容区（tools-ui 计划 05 §四 L3 / M2）
+
+   度量纪律：尺寸/间距只引用 --et-* 令牌，本文件不出现一个字面量 px
+   （0 与 1px 描边属 G7 白名单，这里也没有）。方向只切 overflow 轴，
+   不动版式——同一内容在三个方向下排版一致。 */
+
+.et-scroll-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* 空内容也保一行：列表位塌成 0 会让空态闪烁（行高 = 工具界面列表行令牌） */
+  min-height: var(--et-size-row);
+  overflow: auto;
+  /* 嵌套滚动不链到外壳：面板内容滚到底不带动工作台滚（05 §四 验收点） */
+  overscroll-behavior: contain;
+}
+
+.et-scroll-area--vertical {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.et-scroll-area--horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+}

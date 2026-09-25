@@ -37,6 +37,28 @@
   ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
   `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
 
+## [tools-ui 0.3.0] — 2026-09-25
+
+### @wil-works/evoke-tools-ui — M2：工作台布局运行时（0.3.0）
+
+- **布局树契约（`./runtime`）**：`createLayoutTree` / `normalizeLayout`（id 命名空间全局唯一、
+  docks 至少一个）/ `serializeLayout` / `deserializeLayout` / `loadLayout` / `saveLayout`
+  （<1ms、异常静默）；**损坏数据不白屏**——JSON 坏档/结构坏档/半坏树一律降级默认布局并回
+  errors；`presentation`（stack 并列 / tabs 档）进树，刷新不丢；
+  变更全函数式（折叠/整列折叠/尺寸 min-max 夹角/隐藏显式可恢复/最大化同刻一个/增删 dock）；
+  `layoutEquals` 供写盘前比对；
+- **L3 七件**：`EtWorkbench`（区域槽 titlebar/documents/toolbar/canvas/statusbar/panel；
+  **唯一写树处**：EtDock 七个 emit 全走纯函数并经 normalizeLayout 复核；持久化读回 + 变更写盘；
+  三级损坏降级 + v-model 自愈 + **修好的树覆写存储**（损坏只提示一次）；resetLayout/saveNow/getLayout
+  暴露；全屏 grid 让位）/ `EtDock`（stack 并列 = 每面板一位、尺寸分摊、resize 按位次换算回 px
+  过 setPanelSize 夹角、120ms 落定；tabs 档 opt-in；折叠把手 hover 可感）/
+  `EtPanel`（28px 标题栏 + tools 槽 + 三钮 + 状态全 props）+ `EtPanelGroup`（tab 化档）+
+  `EtScrollArea`（防嵌套滚动链）+ `EtEmptyState`（一句引导 + 一个主钮）+
+  `EtDocumentTabs`（脏标记 aria 双通道、关闭确认可选、planOverflow 溢出列表 + roving）；
+- **复用检验通过**：非办公域（日志分析器）用同一套框架零改逻辑搭出完整工作台；
+- **视觉回归**：`visual/tools.spec.mjs` 23 例（M2 五条：装配+两档宽度无溢出 / 持久化刷新恢复 /
+  损坏不白屏且自愈 / 面板全屏让位 / 脏标记与不可关文档）。
+
 ## [tools-ui 0.2.1] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — EtProvider 运行时切档修复（0.2.1）

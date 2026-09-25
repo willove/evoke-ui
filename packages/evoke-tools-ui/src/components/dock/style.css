@@ -1,0 +1,103 @@
+/* EtDock — 停靠区（tools-ui 计划 05 §四 L3 / M2；TD-4：EbSplitter 基元上的面板树）
+
+   尺寸口径与 EtWorkbench 的 grid 对齐：轨道列 auto = "停靠面板声明宽"——本件
+   把激活面板的 size 钉在内层的主轴尺寸上（left/right → width，bottom →
+   height），dock 的宽/高即面板声明宽/高，画布吃剩余。折叠/展开的过渡只发生在
+   这一层的 width / height（禁位移缩放）。度量全部走令牌，无字面量 px（G7），
+   z-index 走 --et-z-* 阶梯。 */
+
+.et-dock {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* 交叉轴撑满停靠轨道（轨道自身的高度/宽度由 EtWorkbench 的 grid 给） */
+.et-dock--left,
+.et-dock--right {
+  height: 100%;
+}
+
+.et-dock--bottom {
+  width: 100%;
+}
+
+/* ─── 内层：主轴尺寸 + 折叠/展开过渡的唯一载体 ─── */
+.et-dock__inner {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  /* 只过渡主轴几何：折叠/展开是"收成一条/展开成一列"，不做位移缩放 */
+  transition: width var(--et-duration-fast) var(--et-ease-out),
+    height var(--et-duration-fast) var(--et-ease-out);
+  /* 收起过程中内容被裁掉（把手条之外不露），避免宽度在过渡中溢出轨道 */
+  overflow: hidden;
+}
+
+.et-dock--left .et-dock__inner,
+.et-dock--right .et-dock__inner {
+  height: 100%;
+}
+
+.et-dock--bottom .et-dock__inner {
+  width: 100%;
+}
+
+/* 折叠态：整列收成一条可点把手——厚度取面板标题栏高度令牌（同族件一档厚度） */
+.et-dock.is-collapsed.et-dock--left .et-dock__inner,
+.et-dock.is-collapsed.et-dock--right .et-dock__inner {
+  width: var(--et-panel-header-height);
+}
+
+.et-dock.is-collapsed.et-dock--bottom .et-dock__inner {
+  height: var(--et-panel-header-height);
+}
+
+/* 全屏态：不钉声明尺寸，撑满让位后的停靠位（EtWorkbench 的 rail 此时跨满
+   grid 行列）；否则面板会被按在声明宽上、让位失败 */
+.et-dock.is-maximized .et-dock__inner {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── 折叠把手 ─── */
+.et-dock__handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  /* 收起的停靠区退成背景带：与展开态的面板表面有色阶差，可点性看得见 */
+  background: var(--et-chrome-band-bg);
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+}
+
+/* hover 取 active 档（一档更深）：默认表面已是 chrome 带色，再叠 hover 档
+   是同值不可感——28px 的细条目标必须让"可点"看得见（不跳强调色，仍是中性阶） */
+.et-dock__handle:hover {
+  background: var(--et-state-active-bg);
+  color: var(--eb-text-color-regular);
+}
+
+.et-dock__handle:active {
+  background: var(--et-state-active-bg);
+}
+
+.et-dock__handle:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: calc(-1 * var(--et-focus-ring-offset));
+}
+
+/* ─── 底座作用域修正 ───
+   滚动统一由 EtPanel 的内容区管（bodyScroll）：底座面板内容容器的 auto 在这里
+   关掉，nesting 滚动不叠两层——"滚到底"的判定与双滚动条都来自第二层。 */
+.et-dock .eb-splitter-panel__content {
+  overflow: hidden;
+}

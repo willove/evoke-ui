@@ -12,7 +12,8 @@
  *
  * 分层：能复用 business-ui 的一律复用（浮层 / 菜单列表 / 命令面板 / 分隔基元），
  * 本库只新建"产品外壳"组件与运行时契约（tools-ui 计划 01 §二）。
- * M0 射程：L0 键位表 + 焦点漫游基座；L1 原子件 12 个（含兜底机制载体 EtIcon）。
+ * 分层：M0 的 L0 键位表/焦点漫游 + L1 原子件 12 个；M1 的 L2 工具区（命令/schema/
+ * RibbonBar/命令面板/右键/键位表）；M2 的 L3 工作台（Dock/Panel/Workbench/DocumentTabs）。
  */
 
 // ══════ CSS — 设计变量（--et-*）+ 暗色重映射 + 工具界面基础样式 ══════
@@ -41,11 +42,13 @@ import EtContextMenu from './components/context-menu/index.vue'
 import EtShortcutPanel from './components/shortcut-panel/index.vue'
 import EtShortcutHint from './components/shortcut-hint/index.vue'
 // ─── L3 工作台（M2） ───
-// 组件尚未落地：dock / panel / panel-group / scroll-area / empty-state / workbench /
-// document-tabs 的源文件还没入库（plans/tools-ui M2 是「先契约后组件」），
-// 注册进来会让 vite 入口解析与 exports 契约（19 件）当场失败。等组件入库时
-// 在这里连同 components 表与 install 函数一起补回。
-
+import EtDock from './components/dock/index.vue'
+import EtPanel from './components/panel/index.vue'
+import EtPanelGroup from './components/panel/group.vue'
+import EtScrollArea from './components/scroll-area/index.vue'
+import EtEmptyState from './components/empty-state/index.vue'
+import EtWorkbench from './components/workbench/index.vue'
+import EtDocumentTabs from './components/document-tabs/index.vue'
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
 import {
@@ -100,6 +103,7 @@ import {
   detectKeyConflicts,
   findCommandByCombo,
   DOCK_SIDES,
+  DOCK_PRESENTATIONS,
   createLayoutTree,
   normalizeLayout,
   serializeLayout,
@@ -149,7 +153,14 @@ const components = {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
-  // L3 工作台（M2）的 7 件组件未落地，见文件顶部说明
+  // L3 工作台（M2）
+  EtDock,
+  EtPanel,
+  EtPanelGroup,
+  EtScrollArea,
+  EtEmptyState,
+  EtWorkbench,
+  EtDocumentTabs,
   // 图标机制
   EtIcon,
 }
@@ -186,7 +197,14 @@ export {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
-  // L3 工作台（M2）的 7 件组件未落地，见文件顶部说明
+  // L3 工作台（M2）
+  EtDock,
+  EtPanel,
+  EtPanelGroup,
+  EtScrollArea,
+  EtEmptyState,
+  EtWorkbench,
+  EtDocumentTabs,
   // 图标机制
   EtIcon,
   registerDomainIcons,

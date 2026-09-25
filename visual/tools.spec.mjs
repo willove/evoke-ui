@@ -15,8 +15,8 @@ import { settle } from './helpers.mjs'
  * 默认态即测试态：不给测试留"展开全部"类逃生口（上一代 93/117 spec 走逃生口的教训）。
  */
 
-const TOP_BUDGET = 156 // 默认档组成分之和（紧凑 148 / 宽松 164，预算随分量派生）
-const FIXED = { titlebar: 32, tabstrip: 26, auxbar: 26, statusbar: 24, groupLabel: 16 }
+const TOP_BUDGET = 156 // 功能区顶带（标题栏 + tab 条 + 工具区 72 + 辅助栏；M2 起文档位另算）
+const FIXED = { titlebar: 32, tabstrip: 26, auxbar: 26, statusbar: 24, groupLabel: 16, doctabs: 30 }
 
 /** 高度实测封装（元素盒高，含边框）。
  *  M1 起 tab 条与工具区都由 EtRibbonBar 承担，合成一个 .wb__ribbon 带：
@@ -31,6 +31,7 @@ async function chromeHeights(page) {
     }
     return {
       titlebar: row('.wb__titlebar'),
+      documents: row('.et-doctabs'),
       ribbon: row('.wb__ribbon'),
       auxbar: row('.wb__auxbar'),
       statusbar: row('.wb__statusbar'),
@@ -43,7 +44,10 @@ async function resetWorkbench(page) {
   await page.goto('/')
   await settle(page)
   await setDensity(page, 'default')
-  await page.evaluate(() => localStorage.removeItem('demo-ribbon-collapsed'))
+  await page.evaluate(() => {
+    localStorage.removeItem('demo-ribbon-collapsed')
+    localStorage.removeItem('demo-layout')
+  })
   await page.reload({ waitUntil: 'networkidle' })
   await settle(page)
 }
@@ -297,4 +301,117 @@ test('tools 基线 · 折叠态 peek（hover tab 条）', async ({ page }) => {
   await page.locator('.wb__ribbon').first().hover()
   await settle(page, { extraMs: 500 })
   await expect(page.locator('.et-ribbonbar__peek').first()).toHaveScreenshot('tools-state-peek.png')
+})
+
+// ─── M2 出口断言（工作台装配 / 持久化 / 损坏降级 / 全屏 / 文档标签）────────────
+
+test('M2 出口 · 工作台装配：三停靠 + 面板内容进链 + 两档宽度无横向溢出', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 400 })
+
+  // ① 三个停靠位都在，且面板内容产品映射进得来（内容槽全链路）
+  const panels = await page.evaluate(() => ({
+    rails: document.querySelectorAll('.et-workbench__rail').length,
+    panelItems: document.querySelectorAll('.wb__panel-item').length,
+    left: document.querySelectorAll('.et-workbench__rail--left .et-panel').length,
+    right: document.querySelectorAll('.et-workbench__rail--right .et-panel').length,
+    bottom: document.querySelectorAll('.et-workbench__rail--bottom .et-panel').length,
+  }))
+  expect(panels.rails).toBeGreaterThanOrEqual(3)
+  expect(panels.left).toBeGreaterThanOrEqual(1)
+  expect(panels.right).toBeGreaterThanOrEqual(1)
+  expect(panels.bottom).toBeGreaterThanOrEqual(1)
+  expect(panels.panelItems, '停靠面板内容没进链（#panel 槽断在哪一层）').toBeGreaterThanOrEqual(8)
+
+  // ② 1280 与 1920 两档无页面级横向溢出
+  for (const width of [1280, 1920]) {
+    await page.setViewportSize({ width, height: 860 })
+    await settle(page, { extraMs: 300 })
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    expect(overflow, `${width}px 下出现横向溢出`).toBeLessThanOrEqual(0)
+  }
+})
+
+test('M2 出口 · 布局持久化：折叠面板 → 刷新 → 状态恢复', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 400 })
+
+  // 用户操作：折叠右停靠的属性面板（真实点击，禁测试逃生口）
+  await page.locator('.et-workbench__rail--right .et-panel__btn[aria-label="折叠面板"]').first().click()
+  await settle(page, { extraMs: 400 })
+  const collapsedBefore = await page.evaluate(
+    () => document.querySelectorAll('.et-workbench__rail--right .et-panel.is-collapsed').length,
+  )
+  expect(collapsedBefore).toBeGreaterThanOrEqual(1)
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await settle(page, { extraMs: 500 })
+  const collapsedAfter = await page.evaluate(
+    () => document.querySelectorAll('.et-workbench__rail--right .et-panel.is-collapsed').length,
+  )
+  expect(collapsedAfter, '刷新后面板折叠态丢了（持久化断链）').toBeGreaterThanOrEqual(1)
+})
+
+test('M2 出口 · 损坏持久化不白屏：坏 JSON → 降级默认布局 + 提示，chrome 照常渲染', async ({ page }) => {
+  await resetWorkbench(page)
+  // 写坏布局再刷新（消费者的真实事故形态）
+  await page.evaluate(() => localStorage.setItem('demo-layout', '{"docks": "broken"'))
+  await page.reload({ waitUntil: 'networkidle' })
+  await settle(page, { extraMs: 600 })
+
+  // ① 不白屏：工作台壳与功能区仍在
+  await expect(page.locator('.et-workbench')).toBeVisible()
+  await expect(page.locator('.wb__ribbon .et-toolbtn').first()).toBeVisible()
+  // ② 有提示（消费者把 layout-corrupted 翻成用户语言）
+  await expect(page.locator('.wb__empty-hint')).toHaveText('布局已重置为默认')
+  // ③ 停靠位仍可用（降级到默认布局 = 四个面板全在）
+  const items = await page.evaluate(() => document.querySelectorAll('.wb__panel-item').length)
+  expect(items).toBeGreaterThanOrEqual(8)
+  // ④ 损坏数据被自愈后的干净树覆盖：再刷新应无提示
+  await page.reload({ waitUntil: 'networkidle' })
+  await settle(page, { extraMs: 600 })
+  await expect(page.locator('.wb__empty-hint')).toHaveCount(0)
+})
+
+test('M2 出口 · 面板全屏：目标停靠整幅、其余区域让位', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 400 })
+
+  await page.locator('.et-workbench__rail--right .et-panel__btn[aria-label="最大化面板"]').first().click()
+  await settle(page, { extraMs: 500 })
+  const state = await page.evaluate(() => {
+    const rail = (sel) => {
+      const el = document.querySelector(sel)
+      if (!el) return null
+      return { display: getComputedStyle(el).display, w: Math.round(el.getBoundingClientRect().width) }
+    }
+    return { right: rail('.et-workbench__rail--right'), left: rail('.et-workbench__rail--left') }
+  })
+  expect(state.right.w, '全屏的停靠位没撑满').toBeGreaterThanOrEqual(1200)
+  expect(state.left.display, '其余区域没让位').toBe('none')
+})
+
+test('M2 出口 · 文档标签：脏标记双通道 a11y + 不可关文档无关闭钮', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 300 })
+
+  const dirty = await page.evaluate(() => {
+    const tab = [...document.querySelectorAll('.et-doctabs [role="tab"]')].find((el) =>
+      (el.getAttribute('aria-label') || '').includes('未保存'),
+    )
+    return { found: !!tab, label: tab && tab.getAttribute('aria-label') }
+  })
+  expect(dirty.found, '脏标记没有进可访问名').toBe(true)
+  expect(dirty.label).toContain('未保存')
+
+  // 备注 = closable:false：没有关闭钮（G4：有关闭钮的都有 aria-label）
+  const closable = await page.evaluate(() => {
+    const tabs = [...document.querySelectorAll('.et-doctabs [role="tab"]')]
+    const notes = tabs.find((el) => (el.getAttribute('aria-label') || '').includes('备注'))
+    return { found: !!notes, closeBtns: notes ? notes.querySelectorAll('button[aria-label]').length : -1 }
+  })
+  expect(closable.found).toBe(true)
+  expect(closable.closeBtns).toBe(0)
 })

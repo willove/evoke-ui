@@ -62,6 +62,10 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 5. **声明式工具区 + 分量降级**。tab/组/条目是一棵树（`gridLayout` 声明形态：rowSpan=2 大钮、
    1×1 小钮、width 输入类控件），产品只 merge 补丁；每个组声明降级终点
    （FULL → 小图标 → 整组变下拉），任意宽度可渲染，**禁换行**（G7 + 视觉断言双锁）。
+5. **布局即数据**。停靠区/面板/尺寸/折叠/隐藏/全屏是一棵可序列化的树（`createLayoutTree`），
+   **EtWorkbench 是唯一写树处**（与 M1 命令状态同源）；持久化坏档一律降级默认布局
+   （不白屏）并把修好的树覆写回存储——损坏只发生一次，提示不重复刷屏。
+   隐藏 ≠ 不可达：`hidden` 是显式状态，"重置布局 / 显示面板"找得回来。
 6. **图标纪律**。三层命名（Remix 原生名 / 组件语义名 / 领域语义名）跨层引用即违规；
    同容器尺寸档 ≤2；line 风格为默认、fill 仅用于激活/选中；未命中禁渲染空白——
    回落显式兜底图标 + dev warn（G2 门把悬空名做成构建期失败）。
@@ -107,10 +111,12 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 
 - **M0（已交付，0.1.0）**：令牌（三档密度 + chrome 预算）+ G1/G2/G4/G5/G7 五门 + 图标解析兜底与
   领域别名 API + 12 个 L1 原子件 + 键位表/焦点漫游基座 + `DESIGN.md` 与文档站设计规范页。
-- **M1（本版交付，0.2.0）**：L0 全套契约（命令注册表 / 菜单 schema merge+剪枝 / 工具区状态机 /
+- **M1（0.2.0）**：L0 全套契约（命令注册表 / 菜单 schema merge+剪枝 / 工具区状态机 /
   键位表构建与冲突检测）+ G3 命令面门 + G6 文案门 + L2 六个组件（RibbonBar / OverflowMenu /
   CommandPalette / ContextMenu / ShortcutPanel / ShortcutHint）。
-- **M2 起**：面板树与停靠、外壳件、主题桥接（M3）、v1.0 冻结（M4）。
+- **M2（本版交付，0.3.0）**：布局树契约（dock/面板/序列化/持久化/损坏降级）+ L3 七件
+  （EtWorkbench / EtDock / EtPanel / EtPanelGroup / EtScrollArea / EtEmptyState / EtDocumentTabs）；
+  **复用检验已过**：非办公域（日志分析器）用同一套框架零改逻辑搭出完整工作台。
 
 令牌（三档密度 + chrome 预算）+ G1/G2/G4/G5/G7 五道门 + 图标解析兜底与领域别名 API +
 12 个 L1 原子件 + 键位表/焦点漫游基座 + 本白皮书与文档站设计规范页。

@@ -1,6 +1,7 @@
 /** 布局树契约统一出口（L0，M2） */
 export {
   DOCK_SIDES,
+  DOCK_PRESENTATIONS,
   createLayoutTree,
   normalizeLayout,
   serializeLayout,

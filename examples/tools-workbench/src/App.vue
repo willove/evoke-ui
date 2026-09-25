@@ -21,6 +21,8 @@
         <button type="button" class="demo__btn" @click="showKeys = !showKeys">
           {{ showKeys ? '收起键位' : '键位表' }}
         </button>
+        <button type="button" class="demo__btn" @click="onResetLayout">重置布局</button>
+        <button type="button" class="demo__btn" @click="onCorruptDemo">损坏演示</button>
         <label class="demo__control demo__control--inline">
           <span class="demo__control-label">暗色</span>
           <eb-switch v-model="isDark" size="small" />
@@ -32,62 +34,95 @@
       <et-shortcut-panel :registry="demoRegistry" class="demo__keys-panel" />
     </div>
 
-    <!-- ═══ 视图一：工作台骨架（M1：schema 驱动的功能区） ═══ -->
+    <!-- ═══ 视图一：工作台骨架（M2：EtWorkbench 区域槽 + 停靠/文档/空态） ═══ -->
     <template v-if="view === 'workbench'">
-      <div class="wb">
-        <div class="wb__titlebar">
-          <span class="wb__doc">季度报表.xlsx</span>
-          <span class="wb__spacer" />
-          <button type="button" class="wb__win" aria-label="最小化">
-            <et-icon name="minus" :size="16" />
-          </button>
-          <button type="button" class="wb__win" aria-label="最大化">
-            <et-icon name="fullscreen" :size="16" />
-          </button>
-          <button type="button" class="wb__win" aria-label="关闭">
-            <et-icon name="close" :size="16" />
-          </button>
-        </div>
+      <et-workbench
+        ref="workbenchRef"
+        v-model:layout="layout"
+        class="wb"
+        :default-layout="DEMO_DEFAULT_LAYOUT"
+        persist-key="demo-layout"
+        @layout-corrupted="onLayoutCorrupted"
+      >
+        <template #titlebar>
+          <div class="wb__titlebar">
+            <span class="wb__doc">季度报表.xlsx</span>
+            <span class="wb__spacer" />
+            <button type="button" class="wb__win" aria-label="最小化">
+              <et-icon name="minus" :size="16" />
+            </button>
+            <button type="button" class="wb__win" aria-label="最大化">
+              <et-icon name="fullscreen" :size="16" />
+            </button>
+            <button type="button" class="wb__win" aria-label="关闭">
+              <et-icon name="close" :size="16" />
+            </button>
+          </div>
+        </template>
 
-        <!-- 功能区：tab 条 + 组 + 条目 + 真折叠/溢出/上下文 tab（M0 手工版 → M1 声明式） -->
-        <et-ribbon-bar
-          v-model="activeTab"
-          v-model:collapsed="collapsed"
-          class="wb__ribbon"
-          :schema="DEMO_RIBBON_SCHEMA"
-          :registry="demoRegistry"
-          :context-tabs="DEMO_CONTEXT_TABS"
-          :ctx="ctx"
-          persist-key="demo-ribbon-collapsed"
-          @command="onCommand"
-        />
+        <template #documents>
+          <et-document-tabs
+            v-model="activeDoc"
+            :documents="DEMO_DOCUMENTS"
+            @change="onDocChange"
+            @close="onDocClose"
+          />
+        </template>
 
-        <div class="wb__auxbar">
-          <span class="wb__auxbar-fx">fx</span>
-          <span class="wb__auxbar-formula">=SUM(B2:B14)</span>
-          <span class="wb__spacer" />
-          <span class="wb__auxbar-hint">Ctrl+F1 折叠功能区</span>
-        </div>
+        <template #toolbar>
+          <!-- 功能区：tab 条 + 组 + 条目 + 真折叠/溢出/上下文 tab（M1 声明式） -->
+          <et-ribbon-bar
+            v-model="activeTab"
+            v-model:collapsed="collapsed"
+            class="wb__ribbon"
+            :schema="DEMO_RIBBON_SCHEMA"
+            :registry="demoRegistry"
+            :context-tabs="DEMO_CONTEXT_TABS"
+            :ctx="ctx"
+            persist-key="demo-ribbon-collapsed"
+            @command="onCommand"
+          />
+          <div class="wb__auxbar">
+            <span class="wb__auxbar-fx">fx</span>
+            <span class="wb__auxbar-formula">=SUM(B2:B14)</span>
+            <span class="wb__spacer" />
+            <span class="wb__auxbar-hint">Ctrl+F1 折叠功能区</span>
+          </div>
+        </template>
 
-        <!-- 画布满区右键菜单（与工具区同一命令表） -->
+        <!-- 停靠面板内容：按 panel.id 映射（消费方的真实组件位） -->
+        <template #panel="{ panel }">
+          <ul class="wb__panel-list">
+            <li v-for="line in DEMO_PANEL_CONTENT[panel.id] ?? []" :key="line" class="wb__panel-item">
+              {{ line }}
+            </li>
+          </ul>
+        </template>
+
+        <!-- 中列画布：右键菜单 + 网格 + 空态 -->
         <et-context-menu :registry="demoRegistry" :schema="DEMO_CONTEXT_SCHEMA" :ctx="ctx" class="wb__ctx">
           <main class="wb__canvas">
-            <div class="wb__empty">
-              <p class="wb__empty-line">从粘贴一段数据开始</p>
-              <button type="button" class="wb__empty-cta" @click="onEmptyCta">新建表格</button>
-              <p v-if="canvasHint" class="wb__empty-hint">{{ canvasHint }}</p>
-            </div>
+            <et-empty-state
+              v-if="!canvasHint"
+              icon="table"
+              title="从粘贴一段数据开始"
+              action-label="新建表格"
+              @action="onEmptyCta"
+            />
+            <p v-if="canvasHint" class="wb__empty-hint">{{ canvasHint }}</p>
             <div class="wb__grid" />
           </main>
         </et-context-menu>
 
-        <footer class="wb__statusbar">
-          <span class="wb__status">就绪</span>
-          <span class="wb__spacer" />
-          <span class="wb__status">{{ ctx.hasSelection ? '有选区' : '无选区' }}</span>
-          <span class="wb__status">100%</span>
-        </footer>
-      </div>
+        <template #statusbar>
+          <footer class="wb__statusbar">
+            <span class="wb__status">就绪</span>
+            <span class="wb__spacer" />
+            <span class="wb__status">{{ ctx.hasSelection ? '有选区' : '无选区' }}</span>
+            <span class="wb__status">100%</span>
+          </footer>
+        </template>
+      </et-workbench>
     </template>
 
     <!-- ═══ 视图二：图标底座对比（M0 留档面） ═══ -->
@@ -143,6 +178,8 @@ import {
   DEMO_RIBBON_SCHEMA,
   demoRegistry,
 } from './commands'
+import { DEMO_DEFAULT_LAYOUT, DEMO_DOCUMENTS, DEMO_PANEL_CONTENT } from './layouts'
+import { createLayoutTree } from '@wil-works/evoke-tools-ui/runtime'
 import { FLUENT_ICON_PATHS } from './fluent-icons'
 
 // ─── Fluent 对比资产（M0 留档） ───
@@ -187,7 +224,11 @@ const ctx = computed(() => ({
 }))
 
 const activeTab = ref('home')
+const activeDoc = ref('sheet-1')
 const collapsed = ref(false)
+// 布局树：EtWorkbench 是唯一写树处；这里只持 v-model 与默认布局
+const layout = ref(createLayoutTree(DEMO_DEFAULT_LAYOUT))
+const workbenchRef = ref(null)
 const paletteOpen = ref(false)
 const showKeys = ref(false)
 const canvasHint = ref('')
@@ -198,6 +239,35 @@ function onCommand(id) {
 
 function onEmptyCta() {
   canvasHint.value = '已新建（演示）'
+}
+
+function onDocChange(id) {
+  activeDoc.value = id
+}
+
+function onDocClose(id) {
+  canvasHint.value = `关闭文档：${id}`
+}
+
+/** 损坏降级演示：写坏 JSON 再刷新——EtWorkbench 应降级到默认布局而不是白屏 */
+function onCorruptDemo() {
+  try {
+    localStorage.setItem('demo-layout', '{"docks": "broken"')
+  } catch {
+    /* 隐私模式下降级路径走同一个 catch，忽略 */
+  }
+  location.reload()
+}
+
+/** 重置布局（EtWorkbench 暴露的能力；backstage/命令面板在真实产品里提供入口） */
+function onResetLayout() {
+  workbenchRef.value?.resetLayout()
+  canvasHint.value = '已重置布局'
+}
+
+/** 持久化损坏时的消费者提示（框架已降级，不改白屏） */
+function onLayoutCorrupted() {
+  canvasHint.value = '布局已重置为默认'
 }
 
 // ⌘K 开命令面板（产品级全局键位；组字期不抢）

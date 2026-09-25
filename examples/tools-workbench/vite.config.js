@@ -48,7 +48,9 @@ export default defineConfig({
   preview: {
     // 视觉回归的伺服端口（playwright webServer 指向这里）；
     // 显式绑 127.0.0.1：localhost 在本机解析到 ::1，Playwright 的 URL 探测会连不上
-    port: 4177,
+    // 4180：勿改回 4177——office-works 的 sheets-playground 占着 4177，
+    // playwright 的 reuseExistingServer 会撞上并测成对方的 app（M2 踩过）
+    port: 4180,
     strictPort: true,
     host: '127.0.0.1',
   },

@@ -67,7 +67,7 @@ export default defineConfig({
       // M0 的视觉回归吃工作台装配示例（真实 chrome 装配 = 预算/不变量断言面）；
       // M2 起补 docs-tools 的 recipe 页（4176）
       command: 'pnpm visual:preview:tools-example',
-      url: 'http://127.0.0.1:4177',
+      url: 'http://127.0.0.1:4180',
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
@@ -76,6 +76,6 @@ export default defineConfig({
     { name: 'ui', testMatch: /visual\/ui\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4173' } },
     { name: 'business', testMatch: /visual\/business\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4174' } },
     { name: 'charts', testMatch: /visual\/charts\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4175' } },
-    { name: 'tools', testMatch: /visual\/tools\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4177' } },
+    { name: 'tools', testMatch: /visual\/tools\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4180' } },
   ],
 })

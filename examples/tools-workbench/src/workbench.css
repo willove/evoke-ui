@@ -69,7 +69,9 @@
 }
 
 /* ─── 工作台骨架（预览用；M2 的 EtWorkbench 将把这块运行时化） ─── */
-.wb {
+/* 双 class 特异性：组件根是 .et-workbench.et-workbench（0,2,0，仓库惯例），
+   单类 .wb 压不过它的 height:100%——画布曾因此塌成内容高 */
+.et-workbench.wb {
   display: flex;
   flex-direction: column;
   height: calc(100vh - var(--eb-space-12));
@@ -167,10 +169,12 @@
   color: var(--eb-text-color-regular);
 }
 
-/* 画布占位：网格由产品层（--ot-*）提供，这里只用中性色画个示意 */
+/* 画布占位：网格由产品层（--ot-*）提供，这里只用中性色画个示意。
+   M2 起画布在 EtWorkbench 的 grid cell（.et-workbench__canvas，块级非 flex）里：
+   高度取 100% 而不是 flex:1——父级不是 flex 容器，flex 增长不生效（实测塌成 0 高）。 */
 .wb__canvas {
   position: relative;
-  flex: 1 1 auto;
+  height: 100%;
   min-height: 0;
   overflow: auto;
   background: var(--eb-bg-color);
@@ -273,4 +277,56 @@
   margin: 0;
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
+}
+
+
+/* ─── M2：停靠面板内容（演示列表） ─── */
+.wb__panel-list {
+  margin: 0;
+  padding: var(--et-space-inline) 0;
+  list-style: none;
+}
+
+.wb__panel-item {
+  min-height: var(--et-size-row);
+  padding: 0 var(--et-space-band-inline);
+  display: flex;
+  align-items: center;
+  font-size: var(--et-density-base-font);
+  color: var(--eb-text-color-regular);
+}
+
+.wb__panel-item:hover {
+  background: var(--et-state-hover-bg);
+}
+
+/* EtEmptyState 在画布区中央（workbench 的 canvas 槽是定位上下文） */
+.wb__canvas .et-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--eb-space-3);
+  pointer-events: none;
+}
+
+.wb__canvas .et-empty-state :is(button) {
+  pointer-events: auto;
+}
+
+/* 画布提示（命令执行/损坏降级） */
+.wb__empty-hint {
+  position: absolute;
+  bottom: var(--et-space-block);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0 var(--et-space-block);
+  border-radius: var(--et-radius-full);
+  background: var(--et-state-selected-bg);
+  color: var(--et-state-selected-fg);
+  font-size: var(--et-density-caption-font);
+  line-height: calc(var(--et-size-row) - var(--et-space-inline));
 }

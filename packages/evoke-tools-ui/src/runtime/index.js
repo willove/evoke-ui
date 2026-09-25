@@ -52,6 +52,7 @@ export { buildShortcutTable, detectKeyConflicts, findCommandByCombo } from './sh
 // ─── 布局树契约（M2：停靠 / 面板 / 持久化 / 损坏降级） ───
 export {
   DOCK_SIDES,
+  DOCK_PRESENTATIONS,
   createLayoutTree,
   normalizeLayout,
   serializeLayout,

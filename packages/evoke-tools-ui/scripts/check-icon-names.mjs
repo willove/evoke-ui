@@ -90,7 +90,10 @@ const dangling = []
 
 for (const file of walk(SRC)) {
   const src = readFileSync(file, 'utf8')
-  src.split('\n').forEach((line, i) => {
+  src.split('\n').forEach((rawLine, i) => {
+    // <slot name="documents"> 之类：slot 的 name 与图标 name 同名不同义，
+    // 先把整行里的 slot 标签剥掉再抽候选（槽名不是图标名）
+    const line = rawLine.replace(/<slot\b[^>]*>/g, '').replace(/<\/slot>/g, '')
     for (const pattern of ICON_ATTR_PATTERNS) {
       for (const m of line.matchAll(pattern)) {
         const value = m[1]

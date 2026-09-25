@@ -1,0 +1,128 @@
+/* EtPanel — 侧/底停靠面板（tools-ui 计划 05 §四 L3 / M2）
+
+   标题栏高度钉死 --et-panel-header-height（28px，03 §五）：面板是 chrome
+   附属面，不随标题长短撑高。动效纪律：本件默认态无过渡（位置/尺寸都不动），
+   折叠/展开的过渡由 EtDock 的停靠位负责。 */
+
+.et-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  /* 面板表面 = chrome 表面（引用语义层令牌，本层不新增色板） */
+  background: var(--et-chrome-bg);
+  color: var(--eb-text-color-regular);
+  font-family: var(--et-font-family);
+  overflow: hidden;
+}
+
+.et-panel__header {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--et-space-inline);
+  height: var(--et-panel-header-height);
+  padding-inline: var(--et-space-inline);
+  border-bottom: var(--et-divider-size) solid var(--et-chrome-separator);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+  user-select: none;
+}
+
+.et-panel__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 工具位与动作组：不吃剩余空间（标题才是弹性项），放不下时各自内部处理 */
+.et-panel__tools,
+.et-panel__actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--et-space-inline);
+}
+
+/* 标题栏图标钮：可视 16 见方（--et-icon-sm），命中区用透明伪元素外扩到
+   WCAG 2.5.8 AA 的 24px（同 EtTabStrip 关闭钮范式，热区不吃行高） */
+.et-panel__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--et-icon-sm);
+  height: var(--et-icon-sm);
+  padding: 0;
+  border: none;
+  border-radius: var(--et-radius-sm);
+  background: none;
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+}
+
+.et-panel__btn::before {
+  content: '';
+  position: absolute;
+  inset: calc((var(--et-tabstrip-close-hit-area) - var(--et-icon-sm)) / -2);
+}
+
+/* 交互态只做一档底色差：hover 禁跳强调色（03 §五 状态规则） */
+.et-panel__btn:hover {
+  background: var(--et-state-hover-bg);
+  color: var(--eb-text-color-regular);
+}
+
+.et-panel__btn:active {
+  background: var(--et-state-active-bg);
+}
+
+.et-panel__btn:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+.et-panel__body {
+  flex: 1;
+  min-height: 0;
+}
+
+/* 内容区滚动（bodyScroll 默认开）：滚动只发生在内容区，外壳不动 */
+.et-panel__body.is-scroll {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* ─── 全屏态 ───
+   层级选型：calc(chrome + panel) —— 盖过停靠面板（--et-z-panel）与外壳横带
+   （--et-z-chrome），仍留在 popover / peek / modal 既有阶梯之下（全屏面板
+   不该盖住命令面板与对话框）。不做 position: fixed：EtWorkbench 的全屏是
+   让位重排（对应 rail 跨满 grid 行列），面板在本停靠位内撑满即整幅；fixed
+   反而把面板提出工作台文档流、盖住标题栏，与外壳的让位语义重复。脱离工作台
+   单用时表现为"撑满停靠位 + 层级抬升"，产品要贴 chrome 可用容器约束补足。 */
+.et-panel.is-maximized {
+  position: relative;
+  z-index: calc(var(--et-z-chrome) + var(--et-z-panel));
+}
+
+/* ─── EtPanelGroup（同目录族子件，共用本样式表） ───
+   结构 = tab 条 + 激活面板：tab 条是 chrome 高的导航带（EtTabStrip 自带
+   --et-chrome-tabstrip-height），内容区吃满剩余。滚动统一由 EtPanel 的内容区
+   管，本件不再套一层 overflow——嵌套滚动双层会让"滚到底"的判定漂移。 */
+
+.et-panelgroup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* 激活面板吃满 tab 条之外的全部空间（flex: 1 比 height: 100% 稳：tab 条
+   在/不在都会改变 flex 列剩余空间的算法） */
+.et-panelgroup .et-panel {
+  flex: 1;
+  min-height: 0;
+}

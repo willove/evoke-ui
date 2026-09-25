@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   DOCK_SIDES,
+  DOCK_PRESENTATIONS,
   createLayoutTree,
   normalizeLayout,
   serializeLayout,
@@ -226,5 +227,19 @@ describe('变更（返回新树、输入不改）', () => {
 
   it('DOCK_SIDES 契约', () => {
     expect(DOCK_SIDES).toEqual(['left', 'right', 'bottom'])
+  })
+
+  it('presentation 进树并过持久化（tabs 档刷新不丢），非法值记 error', () => {
+    const tree = createLayoutTree({
+      docks: [{ id: 'left', side: 'left', presentation: 'tabs', panels: [{ id: 'p', title: 'P' }] }],
+    })
+    expect(tree.docks[0].presentation).toBe('tabs')
+    const back = deserializeLayout(serializeLayout(tree), null)
+    expect(back.tree.docks[0].presentation).toBe('tabs')
+
+    const errors = []
+    const fallback = normalizeLayout({ docks: [{ id: 'l', side: 'left', presentation: 'nope', panels: [] }] }, null, errors)
+    expect(errors.join(' ')).toMatch(/presentation 必须是/)
+    expect(fallback.docks[0].presentation).toBe('stack') // 未声明 = 默认档
   })
 })

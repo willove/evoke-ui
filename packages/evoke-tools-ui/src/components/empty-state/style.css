@@ -1,0 +1,45 @@
+/* EtEmptyState — 工具界面空态（tools-ui 计划 05 §四 / 06 §三：空态即首屏）
+
+   结构 = 图标盒 + 标题一行 + desc 一行（可选）+ 唯一主操作。度量走令牌：
+   图标 lg 档、间距 --et-space-*、字号 --et-density-*；图标取中性次级色
+   （不占强调色——强调色只给那个主钮，frontend-ui-ux 每屏主操作 ≤ 2）。 */
+
+.et-emptystate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--et-space-block);
+  padding: var(--et-space-block);
+  text-align: center;
+  color: var(--eb-text-color-regular);
+}
+
+/* 图标盒：裸图标不进圆底/彩底（反公式化——同色系浅底是允许的上限，这里取更安静的一档） */
+.et-emptystate__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--eb-text-color-secondary);
+}
+
+.et-emptystate__title {
+  margin: 0;
+  font-size: var(--et-density-base-font);
+  font-weight: var(--eb-font-weight-medium);
+  line-height: var(--et-density-line-height);
+  color: var(--eb-text-color-primary);
+}
+
+/* desc 一行补充：caption 档 + 次级色（层级 = 字号 + 颜色两通道，不靠加粗） */
+.et-emptystate__desc {
+  margin: 0;
+  font-size: var(--et-density-caption-font);
+  line-height: var(--et-density-line-height);
+  color: var(--eb-text-color-secondary);
+}
+
+/* 主钮：组件不画按钮形（禁绕开底座手写一次性样式），这里只收纵向节奏 */
+.et-emptystate__action {
+  margin: 0;
+}

@@ -134,7 +134,32 @@ registry.register({
 - **键位表**：`buildShortcutTable(registry)` 从命令表生成（不手写列表），`detectKeyConflicts`
   登记期报冲突。
 
-## 已知限制（M0/M1）
+## 工作台契约（M2）
+
+布局是一棵可序列化的树（dock left/right/bottom + 面板），**`EtWorkbench` 是唯一写树处**：
+
+```js
+import { createLayoutTree, togglePanelCollapsed } from '@wil-works/evoke-tools-ui/runtime'
+
+const layout = ref(createLayoutTree({
+  docks: [
+    { id: 'left', side: 'left', panels: [{ id: 'files', title: '文件', size: 300, min: 220 }] },
+    { id: 'bottom', side: 'bottom', panels: [{ id: 'log', title: '日志', size: 180 }] },
+  ],
+}))
+```
+
+- **区域槽**：`titlebar` / `documents` / `toolbar`（放 `EtRibbonBar`）/ `canvas`（默认槽）/
+  `statusbar` / `panel`（作用域槽 `{ panel, dock }`，按 id 映射内容组件）；
+- **持久化**：`persistKey` 非空即读回 + 变更写盘（`layoutEquals` 无变更不写；异常静默）；
+- **损坏降级**：坏 prop / 坏 JSON / 半坏树 → 默认布局 + `layout-corrupted` 事件 + dev warn，
+  **不白屏**；降级后修好的树覆写存储（损坏只提示一次）；
+- **停靠呈现**：`presentation`（默认 `stack` 同屏并列、尺寸分摊；`tabs` 单渲染位 tab 化）进树，
+  刷新不丢；面板 `hidden` 是显式状态，重置布局可恢复；
+- **`EtDocumentTabs`**：脏标记（圆点 + aria 双通道）、关闭确认可选、溢出列表复用
+  `planOverflow`；**复用检验**：非办公域（日志分析器）同一套框架零改逻辑搭出完整工作台。
+
+## 已知限制（M0/M1/M2）
 
 - **Dropdown / Select 的浮层挂不上 `et-*` 类**：底座 `EbDropdown` / `EbSelect` 的浮层经
   `<Teleport to="body">` 渲染，popper 容器类固定、不接受外部注入（`EbTooltip` 可以）。
