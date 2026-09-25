@@ -34,7 +34,7 @@ jobs:
           - { name: chat, pkg: "@wil-works/evoke-chat", dir: packages/evoke-chat }
           - { name: ui, pkg: "@wil-works/evoke-ui", dir: packages/evoke-ui }
           - { name: charts, pkg: "@wil-works/evoke-charts", dir: packages/evoke-charts }
-        - { name: tools-ui, pkg: "@wil-works/evoke-tools-ui", dir: packages/evoke-tools-ui }
+          - { name: tools-ui, pkg: "@wil-works/evoke-tools-ui", dir: packages/evoke-tools-ui }
       # 手动选择单个包时跳过另一个
       max-parallel: 1
     steps:
