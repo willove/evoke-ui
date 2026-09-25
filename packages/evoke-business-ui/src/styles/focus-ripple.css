@@ -1,8 +1,9 @@
 /* ============================================
    Evoke Business UI — 边框激活涟漪（focus ripple）
-   实体涟漪：聚焦时色环先从边框向外荡开至 4px，再贴着边框向内收拢回
-   边框并消散（1.2s 单次，inset / 边框宽度驱动，圆角同步涨落；色值静态
-   解析、全程不参与插值，任何引擎都是缓动）。布局高度不变，不覆盖输入面与内容。
+   实体涟漪：聚焦时色环先从边框向外荡开至 --eb-field-ring-spread，
+   再贴着边框向内收拢回边框并消散（1.2s 单次，inset / 边框宽度驱动，
+   圆角同步涨落；色值静态解析、全程不参与插值，任何引擎都是缓动）。
+   布局高度不变，不覆盖输入面与内容。
    覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
    input-number / time-select / time-picker）、eb-textarea、eb-mention
    与 eb-select__wrapper。auto-complete / search-filter / transfer 走内部
@@ -19,16 +20,38 @@
   position: relative;
 }
 
-/* 定位锚点：涟漪环静态就位在框体外 4px，默认透明不占视觉 */
+/* ─── 辐射量随尺寸分化 ───
+   默认（中号）4px 写在下方用法的 fallback 里；此处只覆写大/小号。
+   变量落在涟漪层宿主（wrapper / textarea 自身）上，避免写在组件根上
+   被宿主的继承值压过。 */
+.eb-input--large .eb-input__wrapper,
+.eb-select--large .eb-select__wrapper,
+.eb-input-number--large .eb-input__wrapper,
+.eb-cascader--large .eb-input__wrapper,
+.eb-textarea--large {
+  --eb-field-ring-spread: 6px;
+}
+
+.eb-input--small .eb-input__wrapper,
+.eb-select--small .eb-select__wrapper,
+.eb-input-number--small .eb-input__wrapper,
+.eb-cascader--small .eb-input__wrapper,
+.eb-textarea--small {
+  --eb-field-ring-spread: 3px;
+}
+
+/* 定位锚点：涟漪环静态就位在框体外 spread，默认透明不占视觉 */
 .eb-input__wrapper::before,
 .eb-select__wrapper::before,
 .eb-textarea::before,
 .eb-mention::before {
   content: '';
   position: absolute;
-  inset: -4px;
-  border: 4px solid color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 20%, transparent);
-  border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px);
+  inset: calc(var(--eb-field-ring-spread, 4px) * -1);
+  border-style: solid;
+  border-width: var(--eb-field-ring-spread, 4px);
+  border-color: color-mix(in srgb, var(--eb-field-ring-color, var(--eb-color-primary)) 20%, transparent);
+  border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + var(--eb-field-ring-spread, 4px));
   opacity: 0;
   pointer-events: none;
 }
@@ -66,12 +89,13 @@ html:not([data-eb-ripple='off']) .eb-form--ripple-off.eb-mention.is-focus::befor
   }
 }
 
-/* 两段式：色环自边框向外荡开至 4px（约四成时长）再贴着边框收拢回 0 并淡出；
-   两段都用 ease-out 型曲线——荡开/收拢都是起手即动、落点轻柔，没有 ease-in-out
+/* 两段式：色环自边框向外荡开（约四成时长）再贴着边框收拢回 0 并淡出；
+   两段都用 ease-out 型曲线——荡开/收拢起手即动、落点轻柔，没有 ease-in-out
    起手那一下的死帧（激活后像隔了几帧才动）；
    环内缘全程钉在边框上（inset 与环宽等幅反向），只插值长度与透明度，不走颜色插值。
    注意：keyframe 内 animation-timing-function 写 var(--eb-*) 会被引擎丢弃（实测回退成
-   动画级曲线），故此处用与 --eb-ease-out 同值的字面量；改令牌需同步这里。 */
+   动画级曲线），故此处用与 --eb-ease-out 同值的字面量；改令牌需同步这里。
+   spread 走 var() 可正常替换（已实测），故辐射量按尺寸分化。 */
 @keyframes eb-field-ring {
   0% {
     opacity: 0;
@@ -82,9 +106,9 @@ html:not([data-eb-ripple='off']) .eb-form--ripple-off.eb-mention.is-focus::befor
   }
   40% {
     opacity: 1;
-    inset: -4px;
-    border-width: 4px;
-    border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + 4px);
+    inset: calc(var(--eb-field-ring-spread, 4px) * -1);
+    border-width: var(--eb-field-ring-spread, 4px);
+    border-radius: calc(var(--eb-input-border-radius, var(--eb-radius-md)) + var(--eb-field-ring-spread, 4px));
     animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   100% {

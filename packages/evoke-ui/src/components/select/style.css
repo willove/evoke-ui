@@ -226,6 +226,14 @@
   --ev-field-ring-color: var(--ev-color-danger);
 }
 
+/* large 6px / small 3px（中号 4px 为下方 fallback） */
+.ev-select.is-large {
+  --ev-field-ring-spread: 6px;
+}
+.ev-select.is-small {
+  --ev-field-ring-spread: 3px;
+}
+
 .ev-select::after {
   content: '';
   position: absolute;
@@ -245,7 +253,7 @@
 }
 
 @keyframes ev-field-ring {
-  0% { opacity: 1; inset: -4px; }
+  0% { opacity: 1; inset: calc(var(--ev-field-ring-spread, 4px) * -1); }
   100% { opacity: 0; inset: 0; }
 }
 
