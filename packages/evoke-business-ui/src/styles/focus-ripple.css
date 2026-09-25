@@ -5,9 +5,9 @@
    圆角同步涨落；色值静态解析、全程不参与插值，任何引擎都是缓动）。
    布局高度不变，不覆盖输入面与内容。
    覆盖 eb-input__wrapper 家族（input / cascader / date-picker /
-   input-number / time-select / time-picker）、eb-textarea、eb-mention
-   与 eb-select__wrapper。auto-complete / search-filter / transfer 走内部
-   的 eb-input，无需另列。
+   time-select / time-picker）、eb-textarea、eb-mention 与 eb-select__wrapper。
+   eb-input-number 不做光环（数字步进器的激活反馈只要加减键）。
+   auto-complete / search-filter / transfer 走内部的 eb-input，无需另列。
    错误态色环跟随 danger 色（--eb-field-ring-color 可覆盖）；
    全局关闭：html[data-eb-ripple='off']；
    prefers-reduced-motion 下自动停用。
@@ -23,10 +23,10 @@
 /* ─── 辐射量随尺寸分化 ───
    默认（中号）4px 写在下方用法的 fallback 里；此处只覆写大/小号。
    变量落在涟漪层宿主（wrapper / textarea 自身）上，避免写在组件根上
-   被宿主的继承值压过。 */
+   被宿主的继承值压过。
+   不含 eb-input-number：步进器不做光环，激活反馈交给加减键。 */
 .eb-input--large .eb-input__wrapper,
 .eb-select--large .eb-select__wrapper,
-.eb-input-number--large .eb-input__wrapper,
 .eb-cascader--large .eb-input__wrapper,
 .eb-textarea--large {
   --eb-field-ring-spread: 6px;
@@ -34,10 +34,25 @@
 
 .eb-input--small .eb-input__wrapper,
 .eb-select--small .eb-select__wrapper,
-.eb-input-number--small .eb-input__wrapper,
 .eb-cascader--small .eb-input__wrapper,
 .eb-textarea--small {
   --eb-field-ring-spread: 3px;
+}
+
+/* ─── 校验态配色跟随 ───
+   表单校验失败/通过时，红/绿框由 .eb-form-item.is-error / .is-success 的后代规则
+   施加（组件自身未必带 is-error——纯 validate 触发而非 error prop 时就没有），
+   涟漪色须跟随同一状态，否则出现「聚焦时蓝环配红框」。
+   宿主范围与 item.css 的边框规则保持一致（.eb-input__wrapper 与 .eb-textarea）；
+   select 在 form-item 下本就没有校验边框，不单给环上色。 */
+.eb-form-item.is-error .eb-input__wrapper,
+.eb-form-item.is-error .eb-textarea {
+  --eb-field-ring-color: var(--eb-color-danger);
+}
+
+.eb-form-item.is-success .eb-input__wrapper,
+.eb-form-item.is-success .eb-textarea {
+  --eb-field-ring-color: var(--eb-color-success);
 }
 
 /* 定位锚点：涟漪环静态就位在框体外 spread，默认透明不占视觉 */
@@ -56,6 +71,7 @@
   pointer-events: none;
 }
 
+/* 组件自身 error prop 驱动的错误态（表单校验态的跟随见上方 .eb-form-item 规则） */
 .eb-input__wrapper.is-error {
   --eb-field-ring-color: var(--eb-color-danger);
 }
