@@ -103,7 +103,38 @@ G7 门把"布局属性禁字面量 px"做成构建期硬检查；真实装配下
 （`src/styles/dark.css`）。品牌换色继承 `setPrimaryColor()`；画布侧调色板桥接（`EtThemeBridge`，
 M3）由产品层 `--ot-*` 提供语义名。
 
-## 已知限制（M0）
+## 命令契约（M1）
+
+命令是单一事实源：id / title / desc / icon / keys / enabled(ctx) / active(ctx) / run(ctx)。
+
+```js
+import { createCommandRegistry } from '@wil-works/evoke-tools-ui/runtime'
+
+const registry = createCommandRegistry()
+registry.register({
+  id: 'bold',
+  title: '加粗',
+  keys: 'mod+b',                                   // 登记期校验拼写
+  surfaces: ['toolbar', 'menu', 'context', 'palette'],
+  enabled: (ctx) => !!ctx.hasSelection,             // 唯一一处推演
+  active: (ctx) => !!ctx.format?.bold,
+  run: () => {},
+})
+```
+
+- **状态一处实现**：`registry.state(id, ctx)` 是唯一出口；工具区 / 右键 / 命令面板三处同源
+  （G3 门在构建期禁组件本地推演 `enabled`/`active`）。
+- **四处可达**：`buildReachabilityReport({ registry, schemas })` 自动核对每条命令至少在一个可达面。
+- **schema 驱动工具区**：tab → 组 → 条目；条目形态由 `grid.rowSpan = 2`（大钮）/ `width`（输入类控件）
+  声明；产品用 `mergeSchema` 在默认 schema 上打补丁，`pruneSchema` 剪空节点。
+- **分量降级**：`scaleGroup` 三档（FULL → 小图标 → 整组变下拉），`planGroupScaleTiers` 按实测宽度
+  逐组降档，仍放不下整组收进行尾「更多」——禁换行。
+- **真折叠**：`Ctrl+F1` / `⌥⌘R` / 双击 tab 条；折叠后高度 0，命令经 peek 浮层可达（用户操作，
+  非测试逃生口）；`persistKey` 按产品持久化。
+- **键位表**：`buildShortcutTable(registry)` 从命令表生成（不手写列表），`detectKeyConflicts`
+  登记期报冲突。
+
+## 已知限制（M0/M1）
 
 - **Dropdown / Select 的浮层挂不上 `et-*` 类**：底座 `EbDropdown` / `EbSelect` 的浮层经
   `<Teleport to="body">` 渲染，popper 容器类固定、不接受外部注入（`EbTooltip` 可以）。
@@ -120,6 +151,8 @@ M3）由产品层 `--ot-*` 提供语义名。
   M2 的面板树运行时（框架自有代码面）再做。
 - **组标题行 y 对齐的前提是同排组都有 label**（label 为空不渲染标题行，计划契约如此）；
   混排场景的等高占位由 L2 `EtToolArea` 负责。
+- **EtCommandPalette 的执行体归消费方**（`runOnSelect` 默认 false，与工具区/右键的 `@command`
+  约定一致；true 为便捷模式：选中即 `registry.run`）。
 - **chrome 横带的分隔线不要用 `border`**：border 会吃掉 1px 内容盒，工具区内容就比
   `--et-chrome-toolarea-height` 少 1px，组标题行的 y 会漂（示例用
   `box-shadow: inset …` 画分隔，视觉断言"组标题行同一 y"因此成立）。

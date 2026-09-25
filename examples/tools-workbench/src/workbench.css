@@ -36,6 +36,33 @@
   gap: var(--eb-space-2);
 }
 
+/* M1：命令面板/键位表按钮（演示控制面内的次级操作，描边钮） */
+.demo__btn {
+  padding: var(--eb-space-1) var(--eb-space-3);
+  border: 1px solid var(--eb-border-color);
+  border-radius: var(--et-radius-md);
+  background: var(--eb-bg-color);
+  color: var(--eb-text-color-regular);
+  font-size: var(--eb-font-size-xs);
+  cursor: pointer;
+}
+
+.demo__btn:hover {
+  border-color: var(--eb-border-color-hover);
+  color: var(--eb-text-color-primary);
+}
+
+.demo__keys {
+  padding: var(--eb-space-3) var(--eb-space-4);
+  border-bottom: var(--et-divider-size) solid var(--et-chrome-separator);
+  background: var(--eb-bg-color);
+}
+
+.demo__keys-panel {
+  max-width: calc(var(--et-size-toolbtn-large) * 12);
+  margin: 0 auto;
+}
+
 .demo__control-label {
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
@@ -90,10 +117,17 @@
   background: var(--et-state-hover-bg);
 }
 
-/* tab 条（下划线由 EtTabStrip 自己画，这里只给底色与分隔） */
-.wb__tabstrip {
+/* tab 条（M0 手工版）与功能区（M1 EtRibbonBar）共用的横带底 */
+.wb__tabstrip,
+.wb__ribbon {
   background: var(--et-chrome-band-bg);
-  box-shadow: inset 0 calc(var(--et-divider-size) * -1) 0 var(--et-chrome-separator);
+}
+
+/* 右键菜单包裹层对布局透明（display: contents：画布仍是 .wb 的直接 flex 项）。
+   选择器带上底座类：底座根是 .eb-context-menu.eb-context-menu 双类（0,2,0），
+   单类 .wb__ctx 压不过它——这是仓库的双类特异性范式 */
+.eb-context-menu.wb__ctx {
+  display: contents;
 }
 
 /* 工具区：预算 156px 的实体（标题栏 32 + tab 条 26 + 工具区 72 + 辅助栏 26） */

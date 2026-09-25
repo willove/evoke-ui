@@ -37,13 +37,32 @@ app.use(EvokeToolsUI)
 
 紧凑 24 / 默认 32 / 宽松 40 的控件高对齐 Fluent UI 的 small/medium/large 阶梯。
 
+## L2 工具区（M1）
+
+```vue
+<et-ribbon-bar
+  v-model="activeTab"
+  v-model:collapsed="collapsed"
+  :schema="ribbonSchema"
+  :registry="commandRegistry"
+  :context-tabs="contextTabs"
+  :ctx="{ hasSelection: true }"
+  persist-key="my-app-ribbon"
+  @command="onCommand"
+/>
+```
+
+- 命令表驱动：`createCommandRegistry()` + schema（tab→组→条目），`mergeSchema` 打补丁；
+- 真折叠（Ctrl+F1 / ⌥⌘R / 双击）与 peek 浮层；分量降级与溢出「更多」禁换行；
+- 同一命令表再驱动 `<et-command-palette>`（⌘K）与 `<et-context-menu>`（右键）。
+
 ## 子路径导出
 
 | 入口 | 内容 |
 | --- | --- |
 | `.` | 全部组件 + 运行时契约 + 图标机制 |
 | `./styles` | `--et-*` 令牌 + 暗色 + 基础样式 |
-| `./runtime` | L0 契约：键位表（解析/平台符号化/事件匹配）+ 焦点漫游（roving tabindex） |
+| `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 |
 | `./icons` | 图标解析兜底 + 领域别名注册 API |
 | `./<component>` | 按需引入，如 `@wil-works/evoke-tools-ui/tool-button` |
 
@@ -56,6 +75,8 @@ app.use(EvokeToolsUI)
 | G2 | 悬空图标名 = 失败 | `scripts/check-icon-names.mjs` |
 | G4 | 图标按钮必须 aria-label | `scripts/a11y-names.mjs` |
 | G5 | window/document 级 keydown 必过组字守卫 | `scripts/ime-guard.mjs` |
+| G3 | 命令引用已注册 / surfaces 合法 / 状态单点实现 | `scripts/check-command-surface.mjs` |
+| G6 | 模板禁 § 引用、禁成段说明、禁开发说明字样 | `scripts/check-copy.mjs` |
 | —— | 三档密度 / chrome 预算与设计文档表格逐项一致 | `scripts/check-density.mjs` |
 
 ## 开发

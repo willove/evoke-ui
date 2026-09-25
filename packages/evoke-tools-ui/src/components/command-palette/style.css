@@ -1,0 +1,7 @@
+/* EtCommandPalette — 命令面板适配器（tools-ui 计划 05 §三 / M1）
+
+   数据驱动 EbCommandPalette：条目 = 命令表映射（label / hint / hotkey / group）。
+   浮层（面板 / 列表 / 页脚）、分组渲染与键盘导航（方向 / Enter / Esc + 组字守卫）
+   全部由底座 EbCommandPalette 负责——底座把浮层 Teleport 到 body、popper 类固定，
+   密度与调色板跟随底座的 --eb-*（经两侧令牌管线统一）。本包装不新增 DOM、不覆写
+   底座样式，故此处无布局规则（几何预算 G7：无从新增 px / z-index 字面量）。 */

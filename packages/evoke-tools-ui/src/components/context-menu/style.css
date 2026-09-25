@@ -1,0 +1,7 @@
+/* EtContextMenu — 右键菜单包装（tools-ui 计划 05 §三 / M1）
+
+   分区（divided）/ 子菜单（children）/ 条目禁用（disabled）由底座 EbContextMenu 渲染——
+   底座把主浮层与子菜单都 Teleport 到 body、容器类固定（.eb-context-menu__popper /
+   .eb-context-menu__submenu），密度与调色板跟随底座的 --eb-*。键盘漫游只做焦点管理：
+   打开后给浮层根设 tabindex / 聚焦、方向键移动交给底座条目的 :focus-visible 高亮，
+   不另设描边、不覆写底座样式，故此处无布局规则（几何预算 G7：无 px / z-index 字面量）。 */

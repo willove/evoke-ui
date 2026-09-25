@@ -1,0 +1,71 @@
+/* EtShortcutPanel — 快捷键一览（按域分组 + 冲突展示） */
+
+.et-shortcutpanel.et-shortcutpanel {
+  padding: var(--et-space-block);
+  border: var(--et-divider-size) solid var(--et-chrome-separator);
+  border-radius: var(--et-radius-md);
+  background: var(--eb-bg-color);
+  font-family: var(--et-font-family);
+}
+
+.et-shortcutpanel:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+.et-shortcutpanel__group + .et-shortcutpanel__group {
+  margin-top: var(--et-space-block);
+}
+
+.et-shortcutpanel__group-name {
+  margin: 0 0 var(--et-space-inline);
+  font-size: var(--et-chrome-group-label-font-size);
+  font-weight: var(--eb-font-weight-medium);
+  color: var(--eb-text-color-secondary);
+}
+
+.et-shortcutpanel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 行高与 --et-size-row 同源：工具界面列表行的统一节奏 */
+.et-shortcutpanel__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--et-space-block);
+  min-height: var(--et-size-row);
+  font-size: var(--et-density-base-font);
+  color: var(--eb-text-color-regular);
+}
+
+.et-shortcutpanel__conflicts {
+  margin-top: var(--et-space-block);
+  padding-top: var(--et-space-inline);
+  border-top: var(--et-divider-size) solid var(--et-chrome-separator);
+}
+
+.et-shortcutpanel__conflict-tag {
+  display: inline-block;
+  margin-inline-end: var(--et-space-inline);
+  padding: 0 var(--et-space-inline);
+  border-radius: var(--et-radius-full);
+  background: var(--eb-color-warning-light-9);
+  color: var(--eb-color-warning-dark-2);
+  font-size: var(--et-density-caption-font);
+}
+
+.et-shortcutpanel__conflict-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--et-space-inline);
+  margin-inline-end: var(--et-space-block);
+  font-size: var(--et-density-caption-font);
+  color: var(--eb-text-color-secondary);
+}
+
+.et-shortcutpanel__conflict-ids {
+  color: var(--eb-text-color-placeholder);
+}

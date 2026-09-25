@@ -18,7 +18,9 @@ import { settle } from './helpers.mjs'
 const TOP_BUDGET = 156 // 默认档组成分之和（紧凑 148 / 宽松 164，预算随分量派生）
 const FIXED = { titlebar: 32, tabstrip: 26, auxbar: 26, statusbar: 24, groupLabel: 16 }
 
-/** 高度实测封装（元素盒高，含边框） */
+/** 高度实测封装（元素盒高，含边框）。
+ *  M1 起 tab 条与工具区都由 EtRibbonBar 承担，合成一个 .wb__ribbon 带：
+ *  展开 = tab 条 26 + 工具区 72 = 98；折叠（Ctrl+F1）= 只剩 tab 条 26。 */
 async function chromeHeights(page) {
   return page.evaluate(() => {
     const row = (sel) => {
@@ -29,12 +31,21 @@ async function chromeHeights(page) {
     }
     return {
       titlebar: row('.wb__titlebar'),
-      tabstrip: row('.wb__tabstrip'),
-      toolarea: row('.wb__toolarea'),
+      ribbon: row('.wb__ribbon'),
       auxbar: row('.wb__auxbar'),
       statusbar: row('.wb__statusbar'),
     }
   })
+}
+
+/** 把 chrome 置回默认密度 + 展开态（每个不变量用例的起点，禁测试逃生口） */
+async function resetWorkbench(page) {
+  await page.goto('/')
+  await settle(page)
+  await setDensity(page, 'default')
+  await page.evaluate(() => localStorage.removeItem('demo-ribbon-collapsed'))
+  await page.reload({ waitUntil: 'networkidle' })
+  await settle(page)
 }
 
 /** 切密度：直接写 <html data-density>（与 EtProvider 同机制；示例控件也走这条） */
@@ -65,17 +76,14 @@ async function toolbtnHeights(page) {
 
 for (const density of ['compact', 'default', 'relaxed']) {
   test(`tools 不变量 · ${density}`, async ({ page }) => {
-    await page.goto('/')
-    await settle(page)
+    await resetWorkbench(page)
     await setDensity(page, density)
 
     const h = await chromeHeights(page)
     // 预算断言（G7 的浏览器侧落点）。预算 = 分量之和（calc 派生，不是第二个手写数字）：
-    // 固定带 32+26+26 不随密度变，工具区 = 控件行(大钮高) + 组标题行 16 ——
-    // 默认档恰为 156（紧凑 148 / 宽松 164，随分量派生）。
+    // 固定带 32+26+26 不随密度变，功能区 = tab 条 26 + 工具区(控件行+组标题行)。
     // 断言"没有任何一带超過自己的组成分"：换行、多余留白、额外的带都会在这里红。
     expect(h.titlebar, `标题栏 ${h.titlebar} ≠ ${FIXED.titlebar}`).toBe(FIXED.titlebar)
-    expect(h.tabstrip, `tab 条 ${h.tabstrip} ≠ ${FIXED.tabstrip}`).toBe(FIXED.tabstrip)
     expect(h.auxbar, `辅助栏 ${h.auxbar} ≠ ${FIXED.auxbar}`).toBe(FIXED.auxbar)
     expect(h.statusbar, `状态栏 ${h.statusbar} ≠ ${FIXED.statusbar}`).toBe(FIXED.statusbar)
 
@@ -86,22 +94,23 @@ for (const density of ['compact', 'default', 'relaxed']) {
     expect(sizes.large, `大钮高度 ${sizes.large} ≠ ${expectedLarge}`).toBe(expectedLarge)
     expect(sizes.small, `小钮高度 ${sizes.small} ≠ ${expectedSmall}`).toBe(expectedSmall)
 
-    const expectedToolarea = expectedLarge + FIXED.groupLabel
-    expect(h.toolarea, `工具区 ${h.toolarea} ≠ ${expectedToolarea}（控件行+组标题行）`).toBe(expectedToolarea)
-    const top = h.titlebar + h.tabstrip + h.toolarea + h.auxbar
-    const expectedTop = FIXED.titlebar + FIXED.tabstrip + expectedToolarea + FIXED.auxbar
+    // 功能区 = tab 条 26 + 控件行(大钮高) + 组标题行 16
+    const expectedRibbon = FIXED.tabstrip + expectedLarge + FIXED.groupLabel
+    expect(h.ribbon, `功能区 ${h.ribbon} ≠ ${expectedRibbon}（tab 条+控件行+组标题行）`).toBe(expectedRibbon)
+    const top = h.titlebar + h.ribbon + h.auxbar
+    const expectedTop = FIXED.titlebar + expectedRibbon + FIXED.auxbar
     expect(top, `顶部 chrome ${top}px > 组成分 ${expectedTop}px`).toBeLessThanOrEqual(expectedTop)
     const total = top + h.statusbar
     expect(total, `合计 chrome ${total}px > 组成分 ${expectedTop + FIXED.statusbar}px`).toBeLessThanOrEqual(
       expectedTop + FIXED.statusbar,
     )
 
-    // 单行不变量：工具区不换行（flex-wrap: nowrap + 溢出测量，禁换行撑高）
+    // 单行不变量：功能区不换行（flex-wrap: nowrap + 溢出测量，禁换行撑高）
     const single = await page.evaluate(() => {
-      const el = document.querySelector('.wb__toolarea')
+      const el = document.querySelector('.wb__ribbon')
       return el ? el.scrollHeight <= el.clientHeight + 1 : true
     })
-    expect(single, '工具区必须单行（scrollHeight ≤ clientHeight + 1）').toBe(true)
+    expect(single, '功能区必须单行（scrollHeight ≤ clientHeight + 1）').toBe(true)
 
     // 组标题行同一条基线（上一代"组名三基线"缺陷门）
     const labelTops = await page.evaluate(() =>
@@ -127,8 +136,7 @@ for (const density of ['compact', 'default', 'relaxed']) {
 // 早期版本用 locator.screenshot({path}) 会把 PNG 落到仓库根，已废弃。
 
 async function shootWorkbench(page, name, { density = 'default', dark = false } = {}) {
-  await page.goto('/')
-  await settle(page)
+  await resetWorkbench(page)
   await setDensity(page, density)
   await setDark(page, dark)
   await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true })
@@ -160,8 +168,10 @@ test('tools 基线 · hover 态', async ({ page }) => {
 })
 
 test('tools 基线 · 选中态', async ({ page }) => {
-  await page.goto('/')
-  await settle(page)
+  await resetWorkbench(page)
+  // 命令激活态由选区推演（计划 01：状态由选区与焦点推演）：切到"图片"后 bold 激活
+  await page.getByRole('tab', { name: '图片', exact: true }).click()
+  await settle(page, { extraMs: 300 })
   await expect(page.locator('.et-toolbtn.is-active').first()).toHaveScreenshot('tools-state-active.png')
 })
 
@@ -172,10 +182,10 @@ test('tools 基线 · 禁用态', async ({ page }) => {
 })
 
 test('tools 基线 · ScreenTip（键盘聚焦）', async ({ page }) => {
-  await page.goto('/')
-  await settle(page)
-  await page.locator('.et-toolbtn--small').first().focus()
-  await settle(page, { extraMs: 550 })
+  await resetWorkbench(page)
+  // M1 功能区满档全是大钮；大钮 caption 可见 ≠ 快捷键可见——富提示补 desc/keys
+  await page.locator('.et-toolbtn--large').nth(3).focus()
+  await settle(page, { extraMs: 650 })
   await expect(page.locator('.et-screentip__popper').first()).toHaveScreenshot('tools-state-screentip.png')
 })
 
@@ -188,4 +198,103 @@ test('tools 基线 · 图标底座对比 Remix vs Fluent', async ({ page }) => {
   await page.getByRole('tab', { name: '图标对比', exact: true }).click()
   await settle(page, { extraMs: 300 })
   await expect(page).toHaveScreenshot('tools-icons-compare.png', { fullPage: true })
+})
+
+// ─── M1 出口断言（07-里程碑 M1）────────────────────────────────────────
+
+/** 折叠快捷键 mod+alt+r：按浏览器所在平台发对应物理键
+ *  （mac = ⌥⌘R 用 metaKey；Win/Linux = Ctrl+Alt+R 用 ctrlKey——comboMatchesEvent 的 mod 平台语义） */
+async function pressCollapseHotkey(page) {
+  await page.evaluate(() => {
+    const isMac = /Mac/i.test(navigator.platform || navigator.userAgent)
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'r',
+        code: 'KeyR',
+        metaKey: isMac,
+        ctrlKey: !isMac,
+        altKey: true,
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+  })
+}
+
+for (const width of [1280, 1024, 800]) {
+  test(`M1 不变量 · ${width}px 宽度下功能区不换行不撑高`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 })
+    await resetWorkbench(page)
+    await settle(page, { extraMs: 400 })
+
+    // ① 单行不变量：任一条目换行都会让根 scrollHeight 超过 clientHeight
+    const single = await page.evaluate(() => {
+      const el = document.querySelector('.wb__ribbon')
+      return el ? el.scrollHeight <= el.clientHeight + 1 : true
+    })
+    expect(single, `功能区在 ${width}px 下换行了（溢出应走「更多」，禁换行）`).toBe(true)
+
+    // ② 不撑高：功能区带高度 = tab 条 + 控件行 + 组标题行（与 width 无关）
+    const h = await chromeHeights(page)
+    const expectedRibbon = FIXED.tabstrip + FIXED.groupLabel + (width >= 800 ? 56 : 56)
+    expect(h.ribbon, `功能区在 ${width}px 下高度漂移`).toBe(expectedRibbon)
+
+    // ③ 组标题行同一 y（降档/收起都不许破坏基线）
+    const labelTops = await page.evaluate(() =>
+      [...document.querySelectorAll('.et-toolgroup__label')].map((el) =>
+        Math.round(el.getBoundingClientRect().top),
+      ),
+    )
+    if (labelTops.length) {
+      expect(new Set(labelTops).size, `组标题行 y 不一致：${labelTops.join('/')}`).toBe(1)
+    }
+  })
+}
+
+test('M1 出口 · 折叠后顶部 chrome ≤ 84 且命令只经用户操作可达', async ({ page }) => {
+  await resetWorkbench(page)
+
+  const before = await chromeHeights(page)
+  const topBefore = before.titlebar + before.ribbon + before.auxbar
+  expect(topBefore).toBeLessThanOrEqual(156)
+
+  // Ctrl+F1 语义（ctrl+alt+r 与 ctrl+f1 同一组键；演示数据用前者触发）
+  await pressCollapseHotkey(page)
+  await settle(page, { extraMs: 400 })
+
+  const after = await chromeHeights(page)
+  const topAfter = after.titlebar + after.ribbon + after.auxbar
+  // 折叠后顶部 = 标题栏 32 + tab 条 26 + 辅助栏 26 = 84（预算随分量派生）
+  expect(topAfter, `折叠后顶部 ${topAfter}px > 84px`).toBeLessThanOrEqual(84)
+
+  // 禁测试逃生口：折叠后命令不在 DOM 里平铺，必须经用户操作（peek）才出现
+  const exposed = await page.evaluate(() => document.querySelectorAll('.et-toolbtn').length)
+  expect(exposed, '折叠后仍有命令平铺在工具栏（逃生口）').toBe(0)
+
+  await page.locator('.wb__ribbon [role="tab"]').first().hover()
+  await settle(page, { extraMs: 600 })
+  const peeked = await page.evaluate(() => document.querySelectorAll('.et-toolbtn').length)
+  expect(peeked, 'peek 浮层里应出现被折叠的命令').toBeGreaterThan(0)
+
+  // 用户在 peek 里真的能执行命令（点一个可用大钮 → 演示回调写提示）。
+  // 不用 first()：默认无选区时第一个是禁用的 copy（enabled 由 ctx 推演）
+  await page.locator('.et-toolbtn--large:not(:disabled)').first().click()
+  await settle(page, { extraMs: 200 })
+  await expect(page.locator('.wb__empty-hint')).toContainText('执行命令')
+})
+
+test('tools 基线 · 功能区折叠（Ctrl+F1）', async ({ page }) => {
+  await resetWorkbench(page)
+  await pressCollapseHotkey(page)
+  await settle(page, { extraMs: 400 })
+  await expect(page).toHaveScreenshot('tools-workbench-collapsed.png', { fullPage: true })
+})
+
+test('tools 基线 · 折叠态 peek（hover tab 条）', async ({ page }) => {
+  await resetWorkbench(page)
+  await pressCollapseHotkey(page)
+  await settle(page, { extraMs: 300 })
+  await page.locator('.wb__ribbon').first().hover()
+  await settle(page, { extraMs: 500 })
+  await expect(page.locator('.et-ribbonbar__peek').first()).toHaveScreenshot('tools-state-peek.png')
 })

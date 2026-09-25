@@ -13,8 +13,8 @@ const entries = getEtComponentEntries()
 const NO_SUBPATH_OK = new Set(['EtIcon'])
 
 describe('M0 入口与导出契约', () => {
-  it('入口清单 = M0 的 13 个组件（12 原子件 + EtSplitterPanel 子件）', () => {
-    expect(entries.length).toBe(13)
+  it('入口清单 = M0 的 13 件 + M1 的 6 件 L2 组件', () => {
+    expect(entries.length).toBe(19)
     const names = entries.map((e) => e.name)
     expect(new Set(names).size).toBe(names.length)
     for (const name of names) expect(name).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)

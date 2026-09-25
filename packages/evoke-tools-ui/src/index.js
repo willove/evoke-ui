@@ -33,6 +33,13 @@ import EtSelect from './components/select/index.vue'
 import EtTooltip from './components/tooltip/index.vue'
 import EtSplitter from './components/splitter/index.vue'
 import EtSplitterPanel from './components/splitter/panel.vue'
+// ─── L2 工具区（M1） ───
+import EtRibbonBar from './components/ribbon-bar/index.vue'
+import EtOverflowMenu from './components/ribbon-bar/overflow.vue'
+import EtCommandPalette from './components/command-palette/index.vue'
+import EtContextMenu from './components/context-menu/index.vue'
+import EtShortcutPanel from './components/shortcut-panel/index.vue'
+import EtShortcutHint from './components/shortcut-hint/index.vue'
 
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
@@ -50,7 +57,7 @@ import {
   pickFallbackIconName,
 } from './icons/index.js'
 
-// ─── 运行时契约（L0：键位表 / 焦点漫游）──
+// ─── 运行时契约（L0：键位表 / 焦点漫游 / 命令 / 菜单 schema / 工具区状态机）──
 import {
   normalizeCombo,
   formatCombo,
@@ -62,6 +69,31 @@ import {
   nextRovingIndex,
   rovingTabindex,
   useRovingTabindex,
+  COMMAND_SURFACES,
+  assertCommand,
+  resolveCommandState,
+  createCommandRegistry,
+  buildReachabilityReport,
+  collectSchemaCommandIds,
+  SCHEMA_NODE_TYPES,
+  assertSchemaNode,
+  mergeSchema,
+  pruneSchema,
+  collectCommandRefs,
+  findDanglingCommandRefs,
+  flattenSchema,
+  checkVisibleBudget,
+  RIBBON_SCALE_TIERS,
+  nextCollapsed,
+  toolAreaHeight,
+  scaleGroup,
+  planGroupScaleTiers,
+  planContextTabs,
+  loadCollapsed,
+  saveCollapsed,
+  buildShortcutTable,
+  detectKeyConflicts,
+  findCommandByCombo,
 } from './runtime/index.js'
 
 // ─── Composables ───
@@ -82,6 +114,14 @@ const components = {
   EtTooltip,
   EtSplitter,
   EtSplitterPanel,
+  // L2 工具区（M1）
+  EtRibbonBar,
+  EtOverflowMenu,
+  EtCommandPalette,
+  EtContextMenu,
+  EtShortcutPanel,
+  EtShortcutHint,
+  // 图标机制
   EtIcon,
 }
 
@@ -110,6 +150,13 @@ export {
   EtTooltip,
   EtSplitter,
   EtSplitterPanel,
+  // L2 工具区（M1）
+  EtRibbonBar,
+  EtOverflowMenu,
+  EtCommandPalette,
+  EtContextMenu,
+  EtShortcutPanel,
+  EtShortcutHint,
   // 图标机制
   EtIcon,
   registerDomainIcons,
@@ -123,7 +170,7 @@ export {
   isDanglingIconName,
   findDanglingIconNames,
   pickFallbackIconName,
-  // 运行时契约（L0）
+  // 运行时契约（L0：键位表 / 焦点漫游）
   normalizeCombo,
   formatCombo,
   comboFromEvent,
@@ -134,6 +181,32 @@ export {
   nextRovingIndex,
   rovingTabindex,
   useRovingTabindex,
+  // 运行时契约（L0：命令 / 菜单 schema / 工具区状态机 / 键位表）
+  COMMAND_SURFACES,
+  assertCommand,
+  resolveCommandState,
+  createCommandRegistry,
+  buildReachabilityReport,
+  collectSchemaCommandIds,
+  SCHEMA_NODE_TYPES,
+  assertSchemaNode,
+  mergeSchema,
+  pruneSchema,
+  collectCommandRefs,
+  findDanglingCommandRefs,
+  flattenSchema,
+  checkVisibleBudget,
+  RIBBON_SCALE_TIERS,
+  nextCollapsed,
+  toolAreaHeight,
+  scaleGroup,
+  planGroupScaleTiers,
+  planContextTabs,
+  loadCollapsed,
+  saveCollapsed,
+  buildShortcutTable,
+  detectKeyConflicts,
+  findCommandByCombo,
   // Composables
   useDensity,
   ET_DENSITY_KEY,

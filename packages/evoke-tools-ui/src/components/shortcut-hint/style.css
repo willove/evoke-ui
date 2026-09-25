@@ -1,0 +1,13 @@
+/* EtShortcutHint — 助记键内联提示（键帽与文案同基线） */
+
+.et-shortcuthint.et-shortcuthint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--et-screentip-gap);
+  white-space: nowrap;
+}
+
+.et-shortcuthint__label {
+  font-size: var(--et-density-base-font);
+  color: var(--eb-text-color-regular);
+}

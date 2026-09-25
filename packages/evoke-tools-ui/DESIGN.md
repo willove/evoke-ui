@@ -44,7 +44,7 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 | Univer Sheets | **布局数据模型** | 条目布局用 `gridLayout`（row/column/rowSpan/columnSpan/width/showLabel），不用散落的 size prop；命令/菜单接口形状对齐 `ICommand`/`IMenuItem`/`IRibbonService`，状态流用 Vue `Ref`/`computed` 表达 |
 | 上一代 office-suite（自家） | **教训清单** | 一个功能区混 5 种按钮形态；组名行 3 个基线（y=153/167/257）；150 个功能区按钮 71 个无图标、2 个渲染成 38×24 纯白方块；93/117 个 e2e 走"展开全部"逃生口 |
 
-## 三、设计语言（五条）
+## 三、设计语言（六条）
 
 1. **三档密度，令牌切片**。密度是根级属性（`<html data-density>`，EtProvider 写入），
    不是组件 prop。组件只引用令牌（`--et-density-*` / `--et-size-*`），密度切换 = 换一组令牌值，
@@ -52,12 +52,17 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 2. **chrome 预算是可检查的约束**。各带高度与合计预算都是 calc 派生（改分量、预算自动跟随）：
    顶部 156px = 标题栏 32 + tab 条 26 + 工具区 72 + 辅助栏 26；合计 180px；折叠后顶部 84px。
    G7 门把"布局属性禁字面量 px"做成构建期硬检查。
-3. **命令驱动**。每个可点控件绑命令 id，`enabled/active` 只有一处实现（推演自选区与焦点），
-   "加一个功能 = 加一行数据"，不是改一个 2556 行文件。同一命令在菜单/快捷键/右键/命令面板
-   四处可达且状态一致（M1 出口条件）。
+3. **命令驱动**。每个可点控件绑命令 id，`enabled/active` 只有一处实现（`registry.state()`，
+   推演自选区与焦点），"加一个功能 = 加一行数据"，不是改一个 2556 行文件。
+   同一命令在**工具区 / 菜单 / 右键 / 命令面板**四处可达且状态一致——三处渲染路径
+   共用同一份 schema 与同一个状态出口（M1 出口条件，`buildReachabilityReport` 自动核对）。
 4. **键盘优先，组字安全**。焦点漫游 roving tabindex、Enter/Esc 提交路径必过组字守卫
-   （G5 门）；快捷键平台符号化（macOS ⌘/⌥/⇧，Windows Ctrl/Alt/Shift）。
-5. **图标纪律**。三层命名（Remix 原生名 / 组件语义名 / 领域语义名）跨层引用即违规；
+   （G5 门）；快捷键平台符号化（macOS ⌘/⌥/⇧，Windows Ctrl/Alt/Shift）；键位冲突在命令
+   登记期检测（`detectKeyConflicts`），不在用户手里随机触发。
+5. **声明式工具区 + 分量降级**。tab/组/条目是一棵树（`gridLayout` 声明形态：rowSpan=2 大钮、
+   1×1 小钮、width 输入类控件），产品只 merge 补丁；每个组声明降级终点
+   （FULL → 小图标 → 整组变下拉），任意宽度可渲染，**禁换行**（G7 + 视觉断言双锁）。
+6. **图标纪律**。三层命名（Remix 原生名 / 组件语义名 / 领域语义名）跨层引用即违规；
    同容器尺寸档 ≤2；line 风格为默认、fill 仅用于激活/选中；未命中禁渲染空白——
    回落显式兜底图标 + dev warn（G2 门把悬空名做成构建期失败）。
 
@@ -98,7 +103,14 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 | `EtWorkbench` / `EtPanel` / `EtDock` / `EtDocumentTabs` | 面板树、停靠、布局持久化 | M2 |
 | `EtTitleBar` / `EtStatusBar` / `EtBackstage` / `EtThemeBridge` / `EtDialog` | 产品外壳件与主题桥接 | M3 |
 
-## 六、M0 边界（本版交付）
+## 六、里程碑边界
+
+- **M0（已交付，0.1.0）**：令牌（三档密度 + chrome 预算）+ G1/G2/G4/G5/G7 五门 + 图标解析兜底与
+  领域别名 API + 12 个 L1 原子件 + 键位表/焦点漫游基座 + `DESIGN.md` 与文档站设计规范页。
+- **M1（本版交付，0.2.0）**：L0 全套契约（命令注册表 / 菜单 schema merge+剪枝 / 工具区状态机 /
+  键位表构建与冲突检测）+ G3 命令面门 + G6 文案门 + L2 六个组件（RibbonBar / OverflowMenu /
+  CommandPalette / ContextMenu / ShortcutPanel / ShortcutHint）。
+- **M2 起**：面板树与停靠、外壳件、主题桥接（M3）、v1.0 冻结（M4）。
 
 令牌（三档密度 + chrome 预算）+ G1/G2/G4/G5/G7 五道门 + 图标解析兜底与领域别名 API +
 12 个 L1 原子件 + 键位表/焦点漫游基座 + 本白皮书与文档站设计规范页。

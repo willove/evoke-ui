@@ -2,6 +2,29 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 0.2.0] — 2026-09-25
+
+### @wil-works/evoke-tools-ui — M1：工具区框架（0.2.0）
+
+- **L0 契约（`./runtime`）**：命令注册表（登记期校验 id/run/surfaces/快捷键拼写；`state()` 是
+  `enabled/active` 的唯一实现处）；菜单/工具区 schema（按 key 路径 `mergeSchema`、空节点 `pruneSchema`、
+  悬空引用检查、`flattenSchema`、可见量守约 ≤70/≤7/≤6）；工具区状态机（`nextCollapsed`、
+  `scaleGroup` 三档降级、`planGroupScaleTiers` 贪心溢出、`planContextTabs` 声明式上下文 tab、
+  持久化异常静默降级）；键位表 `buildShortcutTable` 与 `detectKeyConflicts`（登记期报冲突）；
+  `buildReachabilityReport` 自动核对「一次操作四处可达」；
+- **L2 六件**：`EtRibbonBar`（schema 驱动 tab/组/条目；真折叠 Ctrl+F1 / ⌥⌘R / 双击 tab + peek 浮层；
+  ResizeObserver 实测 → 逐组降档 → 溢出「更多」，禁换行；persistKey 按产品持久化）、
+  `EtOverflowMenu`（分组下拉 + 计数角标）、`EtCommandPalette`（⌘K，命令表驱动 items：desc/keywords/
+  快捷键列/最近使用置顶；禁用命令不过滤；`runOnSelect` 默认 false——执行体归消费方）、
+  `EtContextMenu`（分区/子菜单 + 方向键/Home/End/子菜单进出键盘漫游 + 焦点归还）、
+  `EtShortcutPanel` / `EtShortcutHint`；
+- **两道新门**：G3 命令面门（引用已注册 / surfaces 合法 / 禁组件本地推演状态）、
+  G6 文案门（禁 § 引用、禁默认态成段说明、禁开发说明字样）；
+- **状态同源**：工具区 / 右键 / 命令面板三处渲染共用同一 schema 与 `registry.state()`，
+  M1 出口「四处可达且状态一致」由 `test/m1-exit.test.js` 与视觉用例共同锁定；
+- **视觉回归**：`visual/tools.spec.mjs` 18 例（三档密度 × 明暗 × hover/选中/禁用/ScreenTip/peek/折叠
+  + 1280/1024/800 三档宽度不换行不撑高 + 折叠后顶部 ≤84 且命令只经用户操作可达）。
+
 ## [tools-ui 0.1.0] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — 新包：产品级 GUI 框架（0.1.0，M0 内测）

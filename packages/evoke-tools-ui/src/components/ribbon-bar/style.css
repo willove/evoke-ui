@@ -1,0 +1,140 @@
+/* EtRibbonBar — 工具区主体（tab 条 + 组控件行；tools-ui 计划 05 §四 L2 / M1 交付物 3）
+
+   G7 三项不变量：
+   ① 折叠态高度 = --et-chrome-toolarea-collapsed（0）；展开态 = tab 条 + 工具区分量
+      （calc 派生，不写第二个数字）；
+   ② 控件行 flex-wrap: nowrap + overflow: hidden —— 宽度不足走溢出折叠，禁换行撑高
+      （三档宽度 1280/1024/800 下 bar 不换行、不撑高）；
+   ③ 度量一律走令牌；peek 浮层走 --et-z-peek 层级阶梯（组件内禁写 z-index 字面量）。 */
+
+.et-ribbonbar.et-ribbonbar {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  height: calc(var(--et-chrome-tabstrip-height) + var(--et-chrome-toolarea-height));
+  overflow: hidden;
+  background: var(--et-chrome-bg);
+  color: var(--et-toolbtn-fg);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+}
+
+/* 折叠态：只剩 tab 条（peek 的锚点）。overflow 放开是为了让 peek 浮层伸到条外；
+   展开态禁换行的保证在控件行自己身上（nowrap + hidden） */
+.et-ribbonbar.et-ribbonbar.is-collapsed {
+  height: calc(var(--et-chrome-tabstrip-height) + var(--et-chrome-toolarea-collapsed));
+  overflow: visible;
+}
+
+/* tab 条带：双击折叠与 peek 的命中区（tab 条组件自身撑高） */
+.et-ribbonbar__tabs {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: var(--et-chrome-tabstrip-height);
+}
+
+/* 控件行：组 + 组间分隔 + 行尾「更多」。居中 aligning 让同排所有组的标题行 y 相同
+   （组自身高度 = 控件行 + 组标题行，天然填满；短组（无标题）垂直居中不抢基线） */
+.et-ribbonbar__body {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--et-space-group-gap);
+  height: var(--et-chrome-toolarea-height);
+  padding-inline: var(--et-space-band-inline);
+  overflow: hidden;
+}
+
+/* 组间分隔（竖线，长度随档位令牌；间距由行的 gap 负责，同类元素同屏同值） */
+.et-ribbonbar__sep {
+  flex: none;
+}
+
+/* 整组退化的下拉钮：与普通组同处一行 */
+.et-ribbonbar__groupmenu {
+  flex: none;
+}
+
+/* 行尾「更多」：无溢出时退出文档流但保留可测宽度（规划要知道它占多宽） */
+.et-ribbonbar__more {
+  flex: none;
+}
+
+.et-ribbonbar__more.is-hidden {
+  position: absolute;
+  visibility: hidden;
+}
+
+/* peek 浮层：tab 条下方、绝对定位、--et-z-peek 层级；不改持久态（移出/失焦即收） */
+.et-ribbonbar__peek {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: var(--et-z-peek);
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--et-space-group-gap);
+  height: var(--et-chrome-toolarea-height);
+  padding-inline: var(--et-space-band-inline);
+  overflow: hidden;
+  border-top: var(--et-divider-size) solid var(--et-chrome-separator);
+  background: var(--et-chrome-bg);
+}
+
+/* 输入类控件（字号选择等）：schema 给宽，别的跟组内条目同纪律 */
+.et-ribbonbar__select {
+  flex: none;
+}
+
+/* ═══════════ EtOverflowMenu — 溢出容器（同目录内部件，范式同 splitter/panel.vue）═══════════
+
+   收起的组与条目按组分区呈现：组名做分组标题，条目 = 命令按钮行（名称 + 快捷键
+   提示 + 禁用态）。入口 = 小钮 + 计数角标（藏 = 不占视野，不是不可达）。
+   浮层基座是 EbDropdown（#trigger / #dropdown 两槽），这里只补度量与呈现；
+   字号/取色显式引用令牌（不靠继承猜，两层样式表注入顺序不确定时也稳定）。 */
+
+.et-overflow__entry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--et-toolgroup-item-gap);
+  font-size: var(--et-density-base-font);
+  color: var(--et-toolbtn-fg);
+}
+
+/* 计数角标：收起条目数（数值本身对读屏隐藏，入口钮的可访问名由 label 承担） */
+.et-overflow__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--et-icon-sm);
+  padding-inline: var(--et-space-inline);
+  border-radius: var(--et-radius-full);
+  background: var(--et-state-selected-bg);
+  color: var(--et-state-selected-fg);
+  font-size: var(--et-density-caption-font);
+}
+
+/* 分组标题：组名小字（与组标题行同色同一档） */
+.et-overflow__title {
+  padding-inline: var(--et-menu-item-padding-inline);
+  padding-block: var(--et-space-inline);
+  color: var(--et-chrome-group-label-color);
+  font-size: var(--et-density-caption-font);
+  white-space: nowrap;
+}
+
+/* 命令按钮行：名称 + 快捷键提示（右侧对齐） */
+.et-overflow__label {
+  flex: none;
+}
+
+.et-overflow__combo {
+  margin-inline-start: auto;
+}
