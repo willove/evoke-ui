@@ -40,6 +40,10 @@ import EbChatWidget from './components/chatbot/ChatWidget.vue'
 // ══════ Agent 卡与过程 ══════
 import EbChatPlan from './components/chatbot/ChatPlan.vue'
 import EbChatConfirmation from './components/chatbot/ChatConfirmation.vue'
+import EbChatApproval from './components/chatbot/ChatApproval.vue'
+import EbChatQuestion from './components/chatbot/ChatQuestion.vue'
+import EbChatContextMeter from './components/chatbot/ChatContextMeter.vue'
+import EbChatChanges from './components/chatbot/ChatChanges.vue'
 import EbChatArtifact from './components/chatbot/ChatArtifact.vue'
 import EbChatDiff from './components/chatbot/ChatDiff.vue'
 import EbChatTerminal from './components/chatbot/ChatTerminal.vue'
@@ -63,6 +67,9 @@ import EbAiConsole from './components/ai-console/index.vue'
 // ══════ 组合式 API ══════
 export { useChatEngine } from './components/chatbot/useChatEngine'
 export { useChatSessions } from './components/chatbot/useChatSessions'
+// 会话日志层：接真实流式后端的推荐接法（游标/缺口补齐/幂等发送），纯逻辑内核可单独用
+export { createSessionLog, isEnvelope, isTransient } from './components/chatbot/sessionLog'
+export { useChatSession, applySessionEvent } from './components/chatbot/useChatSession'
 export { useTriggerMenu } from './composables/useTriggerMenu'
 export { useSpeech } from './composables/useSpeech'
 export { useSpeechInput } from './composables/useSpeechInput'
@@ -74,6 +81,9 @@ export {
   registerHighlightLanguage,
 } from './components/chatbot/chatMarkdown'
 export { chatLabels, useChatLabels } from './components/chatbot/labels'
+// 适配层：OpenAI / Anthropic 消息接入（纯映射，零 SDK 依赖）
+export { createChatTransport, openai, anthropic } from './components/chatbot/adapters/createChatTransport'
+export { readSseFrames, sseFramesOf, parseSseText, parseSseFrame, streamChunks } from './components/chatbot/adapters/sse'
 
 const components = {
   EbChatbot,
@@ -95,6 +105,10 @@ const components = {
   EbChatWidget,
   EbChatPlan,
   EbChatConfirmation,
+  EbChatApproval,
+  EbChatQuestion,
+  EbChatContextMeter,
+  EbChatChanges,
   EbChatArtifact,
   EbChatDiff,
   EbChatTerminal,
@@ -142,6 +156,10 @@ export {
   // Agent 卡与过程
   EbChatPlan,
   EbChatConfirmation,
+  EbChatApproval,
+  EbChatQuestion,
+  EbChatContextMeter,
+  EbChatChanges,
   EbChatArtifact,
   EbChatDiff,
   EbChatTerminal,

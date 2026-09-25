@@ -86,7 +86,23 @@
 
     <!-- 输入台 -->
     <div class="eb-ai-console__input">
+      <div v-if="context" class="eb-ai-console__context">
+        <EbChatContextMeter v-bind="context" />
+      </div>
+      <!-- 审批接管输入区：待审批时输入台让位给审批面板（Enter 允许一次 / Esc 拒绝） -->
+      <EbChatApproval
+        v-if="approval"
+        :request="approval"
+        @respond="(outcome, request) => emit('approval-respond', outcome, request)"
+      />
+      <!-- 待回答：提问面板接管输入区；审批优先（越权动作必须先答） -->
+      <EbChatQuestion
+        v-else-if="question"
+        :request="question"
+        @respond="(answer, request) => emit('question-respond', answer, request)"
+      />
       <EbAiPromptBox
+        v-else
         v-model="boxText"
         v-model:scene="sceneState"
         v-model:active-capabilities="capabilityState"
@@ -134,6 +150,9 @@
 import { computed, ref } from 'vue'
 import EbIcon from "@wil-works/evoke-business-ui/icon"
 import EbAiPromptBox from '../ai-prompt-box/index.vue'
+import EbChatApproval from '../chatbot/ChatApproval.vue'
+import EbChatQuestion from '../chatbot/ChatQuestion.vue'
+import EbChatContextMeter from '../chatbot/ChatContextMeter.vue'
 import ChatList from '../chatbot/ChatList.vue'
 import ChatThreads from '../chatbot/ChatThreads.vue'
 import { useChatEngine } from '../chatbot/useChatEngine'
@@ -172,6 +191,12 @@ const props = defineProps({
   maxLength: { type: Number, default: 2000 },
   sendOnEnter: { type: Boolean, default: true },
   stoppable: { type: Boolean, default: false },
+  /** 待审批请求 { id, toolName, reason?, detail?, status? }：有值时审批面板接管输入区 */
+  approval: { type: Object, default: null },
+  /** 待回答请求 { id, items: [...] }：审批缺席时提问面板接管输入区 */
+  question: { type: Object, default: null },
+  /** 上下文占用 { used, capacity, breakdown? }：给了就在输入台上方显示占用环 */
+  context: { type: Object, default: null },
   /** 会话区 */
   showThinking: { type: Boolean, default: true },
   renderMode: { type: String, default: 'markdown' },
@@ -205,6 +230,8 @@ const props = defineProps({
 const emit = defineEmits([
   'send',
   'stop',
+  'approval-respond',
+  'question-respond',
   'copy',
   'regenerate',
   'action',

@@ -56,6 +56,7 @@
             :content="message?.thinkContent"
             :thinking="message?.thinking"
             :duration="message?.thinkDuration || 0"
+            :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
           />
           <ChatPlan
             v-if="message?.plan?.steps?.length"
@@ -70,7 +71,7 @@
           />
           <div v-if="resolvedToolCalls.length" class="eb-chat-message__tools">
             <p v-if="resolvedToolCalls.length > 1" class="eb-chat-message__tools-heading">
-              {{ labels.tool.group(resolvedToolCalls.length) }}
+              <span :class="{ 'eb-chat-shimmer': toolsLive }">{{ toolsHeading }}</span>
             </p>
             <ChatToolCall
               v-for="tc in resolvedToolCalls"
@@ -94,6 +95,13 @@
             <div class="eb-chat-message__error" role="alert">
               <eb-icon name="warning-filled" />
               <span>{{ message?.error || labels.message.error }}</span>
+            </div>
+          </template>
+          <template v-else-if="message?.status === 'cancelled' && !hasBody">
+            <!-- 思考阶段就被中断：还没有正文，但中断反馈不能缺席 -->
+            <div class="eb-chat-message__cancelled">
+              <eb-icon name="stop" />
+              <span>{{ labels.message.cancelled }}</span>
             </div>
           </template>
           <template v-else-if="hasBody">
@@ -135,6 +143,13 @@
               v-if="message?.fileTree?.length"
               :files="message.fileTree"
               @select="(f, p) => emit('file-select', f, p, message)"
+            />
+            <!-- 本轮改了哪些文件：收尾可见，+a -r 直接给数 -->
+            <ChatChanges
+              v-if="message?.changes?.files?.length"
+              :files="message.changes.files"
+              :summary="message.changes"
+              @select="(f) => emit('file-select', f, f.path, message)"
             />
           </template>
           <!-- 消息控制行：追问建议 / 评价 / 时间与动作条（动作条仍随悬浮出现）并排一行 -->
@@ -199,6 +214,7 @@ import ChatPlan from "./ChatPlan.vue";
 import ChatConfirmation from "./ChatConfirmation.vue";
 import ChatArtifact from "./ChatArtifact.vue";
 import ChatFileTree from "./ChatFileTree.vue";
+import ChatChanges from "./ChatChanges.vue";
 import ChatUsage from "./ChatUsage.vue";
 import { useChatLabels } from "./labels";
 const labels = useChatLabels();
@@ -272,6 +288,15 @@ const showActions = computed(() => {
 const showFeedback = computed(() => props.feedback && props.message?.role === "assistant" && props.message?.status === "done");
 const resolvedSuggestions = computed(() => props.message?.suggestions || []);
 const resolvedToolCalls = computed(() => props.message?.toolCalls || []);
+// 运行过程标题：跑着就说「正在执行 N 个步骤」（带流光），跑完才结算「执行了 N 个步骤（用时 X）」
+const toolsLive = computed(() => resolvedToolCalls.value.some((t) => t.status === "running" || t.status === "pending"));
+const toolsHeading = computed(() => {
+  const count = resolvedToolCalls.value.length;
+  if (toolsLive.value) return labels.tool.groupRunning(count);
+  const total = resolvedToolCalls.value.reduce((sum, t) => sum + (t.duration || 0), 0);
+  const text = labels.tool.group(count);
+  return total > 0 ? `${text}${labels.message.duration(formatDuration(total))}` : text;
+});
 function handleToolRetry(toolCall) {
   emit("tool-retry", toolCall, props.message);
 }

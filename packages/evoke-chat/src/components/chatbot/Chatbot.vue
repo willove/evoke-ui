@@ -71,9 +71,25 @@
     <template #footer>
       <!-- 触发式弹层（斜杠命令 / @ 提及）落在输入区上方 -->
       <slot name="sender-menu" />
+      <div v-if="context" class="eb-chatbot__context">
+        <ChatContextMeter v-bind="context" />
+      </div>
       <div class="eb-chatbot__sender-wrapper">
         <slot name="sender-prepend" />
+        <!-- 待审批：审批面板接管输入区（输入台暂时让位），Enter 允许一次 / Esc 拒绝 -->
+        <ChatApproval
+          v-if="approval"
+          :request="approval"
+          @respond="(outcome, request) => emit('approval-respond', outcome, request)"
+        />
+        <!-- 待回答：提问面板接管输入区；审批优先（越权动作必须先答） -->
+        <ChatQuestion
+          v-else-if="question"
+          :request="question"
+          @respond="(answer, request) => emit('question-respond', answer, request)"
+        />
         <ChatSender
+          v-else
           ref="senderRef"
           v-model="inputValue"
           :placeholder="placeholder ?? labels.sender.sendOnEnterPlaceholder"
@@ -119,6 +135,9 @@ import { useChatLabels } from "./labels";
 import ChatContent from "./ChatContent.vue";
 import ChatList from "./ChatList.vue";
 import ChatSender from "./ChatSender.vue";
+import ChatApproval from "./ChatApproval.vue";
+import ChatQuestion from "./ChatQuestion.vue";
+import ChatContextMeter from "./ChatContextMeter.vue";
 const labels = useChatLabels();
 const props = defineProps({
   modelValue: { type: Array, required: false, default: () => [] },
@@ -174,9 +193,15 @@ const props = defineProps({
   showTip: { type: Boolean, required: false, default: true },
   /** 生成中发送钮切换为停止钮（emit stop）；AbortController 由使用方自持 */
   stoppable: { type: Boolean, required: false, default: false },
+  /** 待审批请求 { id, toolName, reason?, detail?, status? }：有值时审批面板接管输入区 */
+  approval: { type: Object, required: false, default: null },
+  /** 待回答请求 { id, items: [...] }：审批缺席时提问面板接管输入区 */
+  question: { type: Object, required: false, default: null },
+  /** 上下文占用 { used, capacity, breakdown? }：给了就在输入区上方显示占用环 */
+  context: { type: Object, required: false, default: null },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject", "menu-key", "caret-change"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "approval-respond", "question-respond", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject", "menu-key", "caret-change"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);
@@ -275,6 +300,12 @@ defineExpose({
 
 .eb-chatbot {
   display: flex;
+}
+
+.eb-chatbot__context {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--eb-space-3) var(--eb-space-1);
 }
 
 .eb-chatbot__sender-wrapper {

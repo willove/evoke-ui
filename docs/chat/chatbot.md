@@ -40,11 +40,11 @@ app.use(EvokeChat)
   <eb-chatbot v-model="thinkMsgs" height="520px" :show-tip="false" :show-time="false" />
 </DemoBlock>
 
-消息项上的思考字段：`thinking: true` 表示正在思考（流式期间强制展开），`thinkContent` 是思考正文，`thinkDuration`（毫秒）是思考耗时——由引擎的 `appendThinkContent` / `stopThinking` / `completeMessage` 自动结算，宿主手写静态数据时也可直接给。
+消息项上的思考字段：`thinking: true` 表示正在思考（流式期间强制展开），`thinkContent` 是思考正文，`thinkDuration`（毫秒）是思考耗时——由引擎的 `appendThinkContent` / `stopThinking` / `completeMessage` / `cancelMessage` 自动结算，宿主手写静态数据时也可直接给；`thinkInterrupted: true` 表示思考阶段就被停止，思考块标题据此改说「思考已中断」。
 
 ## 停止生成与中断态
 
-`stoppable` 让发送钮在 `loading` 期间变成停止钮，点击抛 `stop`（AbortController 由你自持）。中断时把该条消息置为 `cancelled` 而不是 `error`：已流出的正文原地保留，下面挂一行「已停止生成」灰标，而不是整段被红色错误块替换。生成中输入框保持可打字，便于准备下一句；Enter 既不并发投递也不会误触中断。
+`stoppable` 让发送钮在 `loading` 期间变成停止钮，点击抛 `stop`（AbortController 由你自持）。中断时用 `cancelMessage` 把该条消息置为 `cancelled` 而不是 `error`：已流出的正文原地保留，下面挂一行「已停止生成」灰标，而不是整段被红色错误块替换；若停的时候还在思考，思考块标题改说「思考已中断」并补上思考用时，不会谎报「已深度思考」。生成中输入框保持可打字，便于准备下一句；Enter 既不并发投递也不会误触中断。
 
 <DemoBlock>
   <eb-chatbot
@@ -576,9 +576,9 @@ const onSlotClear = () => {
 
 ## 工具调用卡
 
-消息带 `toolCalls` 数组即在正文之前渲染执行轨迹（先执行再作答）：每步一行，带状态标记、状态文案与耗时，有参数或结果时可展开。多个步骤自动归到「执行了 N 个步骤」组标题下。失败态给重试钮，点击抛 `tool-retry`（工具调用 + 消息两参）。
+消息带 `toolCalls` 数组即在正文之前渲染执行轨迹（先执行再作答）：每步一行，带状态标记、状态文案与耗时，有参数或结果时可展开。多个步骤自动归到组标题下——跑着说「正在执行 N 个步骤」（带流光），跑完结算成「执行了 N 个步骤（用时 X）」。失败态给重试钮并在折叠行露出错误首行，点击抛 `tool-retry`（工具调用 + 消息两参）。
 
-配合 `useChatEngine` 的状态机驱动：`startToolCall(msgId, { name, args })` 新建并转执行中（传已存在的 `id` 则复用），`completeToolCall(msgId, callId, result)` 收尾并自动记耗时，`failToolCall(msgId, callId, error)` 转失败。参数与结果默认走带环检测的 JSON `<pre>`，宿主可用 `#args` / `#result` 插槽换成 `EbJsonViewer` 等。
+配合 `useChatEngine` 的状态机驱动：`startToolCall(msgId, { name, args })` 新建并转执行中（传已存在的 `id` 则复用），`addSubToolCall(msgId, parentCallId, { name, args })` 给某个调用挂子调用（返回子调用 id，与 `startToolCall` 一致；父不存在或超过 16 层返回 null），这三个写操作都按 id **递归**作用到子调用上；`appendToolCallResult(msgId, callId, chunk)` 逐片回写工具输出（状态自动转执行中并打上 `streaming`，卡片露出光标、自动展开并贴底），`completeToolCall(msgId, callId, result)` 收尾并自动记耗时（**省略 `result` 时保留已流出的输出**），`failToolCall(msgId, callId, error)` 转失败。整轮被 `cancelMessage` 中断时，还在跑/等待的调用会落 `cancelled`（「已停止」），且不再接收迟到的增量或收尾。参数与结果默认走带环检测的 JSON `<pre>`，宿主可用 `#args` / `#result` 插槽换成 `EbJsonViewer` 等。
 
 <DemoBlock>
   <eb-chatbot v-model="toolMsgs" height="520px" :show-tip="false" @tool-retry="onToolRetry" />
@@ -729,6 +729,90 @@ configureChatMarkdown({
 
 Mermaid 的图是点击后直接改 `v-html` 出来的 DOM——流式期间重渲染会覆盖它，所以按钮只在已经渲染完成的块上有意义。
 
+## 接真实后端：会话日志层
+
+默认接法（`onSend` 里自己回写引擎）在**断线、重连、补历史**时会丢状态——没有东西记得"读到哪了"。`useChatSession` 补的就是这一层：宿主只提供一个窄适配器，游标、缺口、幂等发送由它管。
+
+```js
+import { useChatSession } from '@wil-works/evoke-chat'
+
+const session = useChatSession({
+  sessionId: 's-1',
+  transport: {
+    open: ({ cursor, onEvent }) => subscribeMyStream({ from: cursor + 1 }, onEvent), // 返回 unsubscribe
+    page: ({ from, to }) => fetchEvents({ from, to }),                              // 补页：返回持久事件数组
+    send: ({ requestId, content, mode }) => rpc('session/prompt', { requestId, content, mode }),
+    cancel: ({ sessionId }) => rpc('session/cancel', { sessionId }),                 // 协作式中止
+  },
+})
+
+session.open({ cursor, records })            // 打开/重开：装快照并订阅
+session.submit('帮我看下这个报错')            // 幂等：requestId 关联乐观气泡，失败可 retrySend 同 id 重发
+session.stop()                               // 停止（本层不持 AbortController）
+session.messages                             // 折叠后的消息数组，直接喂 <eb-chatbot v-model>
+```
+
+事件契约（宿主把自家 wire 数据映射成这几类，其余类型按 `ignorable` 处理）：
+
+| 事件 | 数据 | 折叠成 |
+| --- | --- | --- |
+| `user/message` | `{ requestId?, message: { content, attachments? } }` | 用户消息（同 `requestId` 的乐观气泡自动摘除） |
+| `assistant/delta`（瞬时） | `{ messageId, text?, think? }` | `appendContent` / `appendThinkContent` |
+| `assistant/message` | `{ messageId, message: { content, thinkContent?, usage? }, interrupted? }` | 落定；`interrupted` 走中断态 |
+| `tool/call` | `{ messageId, callId, name, args? }` | 工具卡转执行中 |
+| `tool/result` | `{ messageId, callId, result?, error?, duration? }` | 完成 / 失败；`error.code === 'interrupted'` 落「已停止」 |
+| `turn/end` | `{ messageId, reason: { kind } }` | `completed` 收尾、`max-tokens` 截断保留、`aborted`/`blocked` 中断、`error` 红块 |
+
+三条不变量（违反即上报 `onViolation`，绝不静默硬接）：
+
+- **连续性**：`seq` 必须等于上一条 +1；跳号就挂起后到事件并请宿主补页（`transport.page`），补平才继续——事件顺序永不倒置。
+- **游标只被持久事件推进**：瞬时通知要显式标 `transient: true`，不碰游标、不进窗口；没有 `seq` 又没这个标记的按坏信封上报。
+- **恢复不倒退**：`open()` 之后服务端若从更早的 `seq` 重放，判 `stale-replay` 违规——静默接受会让窗口出现重影。
+
+不认识的类型：`ignorable: true` 可安全跳过；否则标记 `state.degraded` 并回调 `onDegraded`，由宿主决定是否重拉整窗（不认识的事件可能携带视图状态，跳过会画错）。
+
+> 纯逻辑内核 `createSessionLog()` 与折叠函数 `applySessionEvent(engine, event)` 都单独导出：不用 Vue、不接网络，可以只取日志层，或只在测试里复用折叠规则。
+
+## 接入 OpenAI / Anthropic
+
+两家模型服务各一个适配器（`openai` / `anthropic`），**纯映射、零 SDK 依赖**：请求体、SSE 解析、wire → 本库事件三件事都在里面，接上 `useChatSession` 就能跑。
+
+```js
+import { createChatTransport, useChatSession } from '@wil-works/evoke-chat'
+
+const transport = createChatTransport({
+  provider: 'anthropic',        // 'openai' | 'anthropic'
+  apiKey: '...',                // 浏览器直连不安全：生产走你自己的后端代理（url 换成代理地址）
+  model: 'claude-sonnet-4-5',
+  system: '你是运营助手',
+  tools: [{ name: 'web_search', description: '联网检索', parameters: { type: 'object', properties: { query: { type: 'string' } } } }],
+  contextWindow: 32000,         // 给了才会报上下文占用
+  getMessages: () => session.messages.value,   // 历史来源（本库消息数组）
+})
+
+const session = useChatSession({ transport })
+session.open({ cursor: 0, records: [] })
+session.submit('帮我诊断渠道下滑')
+```
+
+**映射表**（各家差异都在适配器里吸收，宿主不用管）：
+
+| 环节 | OpenAI | Anthropic |
+| --- | --- | --- |
+| 正文 | `choices[0].delta.content` | `content_block_delta.text_delta` |
+| 思考 | `delta.reasoning_content`（非官方字段，有则透传） | `content_block_delta.thinking_delta` |
+| 工具参数 | `delta.tool_calls[].function.arguments`：**分片 JSON**，按 index 拼完再 parse | `content_block_delta.input_json_delta.partial_json`：同理 |
+| 工具交卡时机 | 流结束 `finalize` 时一次性交（参数必须拼完） | `content_block_stop` 时交 |
+| 结束语义 | `finish_reason`：`stop`→完成、`length`→截断（保留已产出）、`content_filter`→失败 | `stop_reason`：`end_turn`→完成、`max_tokens`→截断、`refusal`→失败 |
+| 用量 | `usage.prompt_tokens / completion_tokens / total_tokens` | `message_start.input_tokens` + `message_delta.output_tokens`（分两处，适配器合并） |
+| 工具 schema | `tools[].function.{name,description,parameters}` | `tools[].{name,description,input_schema}` |
+| 历史回灌 | `role:'tool'` + `tool_call_id` | `tool_result` 内容块 |
+| 中断 | 客户端 `AbortController`；abort 后统一补一条 `turn/end(aborted)` | 同 |
+
+**边界（刻意不做的事）**：这两家**没有** follow 流与补页协议，所以适配出来的 transport `open` 只登记事件出口、`page` 返回空——**历史要宿主自己存**（刷新后从你的后端拿）；`approve` / `answerQuestion` 是应用级交互，不属于 provider 适配。想用完整的会话日志层（游标/缺口补齐/断线恢复），把 `open` / `page` 接到你自己的后端即可，其余照旧。
+
+单测用录制的流式 fixture 覆盖：纯文本、思考、分片工具参数、用量、截断、HTTP 错误、中断保留已流出正文（见 `test/chat-adapters.test.js`）。
+
 ## 多语言
 
 对话家族的文案只有一份，住在**本包**的语言包里（`src/locale/zh-CN.js` 与 `en.js`）。**语言名由底座决定**：组件读 `EbConfigProvider` 的 `locale`（或全局默认），拿到 `name`（`zh-cn` / `en` …）后在本包语言表里取译文，因此切换后已挂载的消息、动作条、输入区就地更新，不必重建组件。
@@ -750,7 +834,7 @@ Mermaid 的图是点击后直接改 `v-html` 出来的 DOM——流式期间重�
 ## API
 
 <ApiTable title="Chatbot Props" :rows="[
-  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls? }，status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
+  { name: 'modelValue', desc: '消息数组，配合 v-model 使用；项为 { id, role, content, status, thinking?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls? }（toolCalls 项可带 subCalls 形成子调用树；changes 为本轮改动汇总 { files, total?, added?, deleted? }），status 取 pending / streaming / done / error / cancelled', type: 'array', default: '[]' },
   { name: 'role 取值', desc: 'user / assistant 为对话双方；system 与 notice 是系统提示，居中弱化呈现、不给头像昵称与动作条，也不参与复制与评价', type: 'user | assistant | system | notice', default: '—' },
   { name: 'input-value', desc: '受控输入框内容，配合 v-model:input-value 使用', type: 'string', default: '—' },
   { name: 'loading', desc: '回复生成中（ assistant 打字态）', type: 'boolean', default: 'false' },
@@ -760,6 +844,9 @@ Mermaid 的图是点击后直接改 `v-html` 出来的 DOM——流式期间重�
   { name: 'send-on-enter', desc: 'Enter 发送、Shift+Enter 换行；关闭后 Enter 换行。输入法组字中的 Enter 始终交还输入法，不会误发', type: 'boolean', default: 'true' },
   { name: 'max-length / show-word-count', desc: '输入上限（真正约束 textarea，传 0 不限长）与字数统计', type: 'number / boolean', default: '2000 / false' },
   { name: 'stoppable', desc: '生成中发送钮切换为停止钮，点击抛 stop', type: 'boolean', default: 'false' },
+  { name: 'approval', desc: '待审批请求 { id, toolName, reason?, detail?, status? }；非空时审批面板接管输入区（Enter 允许一次 / Esc 拒绝）', type: 'object | null', default: 'null' },
+  { name: 'question', desc: '待回答请求 { id, items: [...] }；审批缺席时提问面板接管输入区（Enter 前进 / Esc 取消），审批优先', type: 'object | null', default: 'null' },
+  { name: 'context', desc: '上下文占用 { used, capacity, breakdown? }；给了就在输入区上方显示占用环', type: 'object | null', default: 'null' },
   { name: 'allow-attachments / max-attachments', desc: '附件开关与上限', type: 'boolean / number', default: 'true / 5' },
   { name: 'accept', desc: '附件类型白名单（.ext / mime/* / mime/type，逗号分隔）；拖拽与粘贴路径同样按它校验', type: 'string', default: '—' },
   { name: 'max-file-size', desc: '单个附件字节上限，0 为不限', type: 'number', default: '0' },
@@ -783,6 +870,8 @@ Mermaid 的图是点击后直接改 `v-html` 出来的 DOM——流式期间重�
 <ApiTable title="Chatbot Events" :rows="[
   { name: 'send', desc: '发送消息（文本 + 附件），回写 modelValue 完成闭环', type: '(text: string, attachments: array) => void', default: '—' },
   { name: 'stop', desc: '点击停止钮（stoppable 且生成中），在此中断请求并把该条消息置为 cancelled', type: '() => void', default: '—' },
+  { name: 'approval-respond', desc: '审批结论，两参 (outcome, request)；outcome 取 allowed-once / rejected', type: '(outcome, request) => void', default: '—' },
+  { name: 'question-respond', desc: '提问结论，两参 (answer, request)；answer.status 取 answered / cancelled', type: '(answer, request) => void', default: '—' },
   { name: 'copy', desc: '消息复制（动作条透传）', type: '(message) => void', default: '—' },
   { name: 'regenerate', desc: '重新生成（动作条透传，由页面删旧回复并重新请求）', type: '(message) => void', default: '—' },
   { name: 'action', desc: 'actions 自定义动作点击', type: '(key: string, message) => void', default: '—' },

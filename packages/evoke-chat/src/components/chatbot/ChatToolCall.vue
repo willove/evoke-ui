@@ -13,10 +13,13 @@
     >
       <span class="eb-chat-tool-call__marker" :class="{ 'is-spinning': running }">
         <eb-icon v-if="failed" name="warning-filled" :size="12" />
+        <eb-icon v-else-if="cancelled" name="stop" :size="12" />
         <eb-icon v-else-if="succeeded" name="check" :size="12" />
         <span v-else class="eb-chat-tool-call__dot" />
       </span>
       <span class="eb-chat-tool-call__name">{{ toolCall?.label || toolCall?.name || labels.tool.fallback }}</span>
+      <span v-if="subCount" class="eb-chat-tool-call__subcount" :title="labels.tool.subCalls(subCount)">{{ subCount }}</span>
+      <span v-if="errorHint" class="eb-chat-tool-call__hint">{{ errorHint }}</span>
       <span class="eb-chat-tool-call__status">{{ statusText }}</span>
       <span v-if="succeeded && toolCall?.duration" class="eb-chat-tool-call__duration">{{ formatDuration(toolCall.duration) }}</span>
       <eb-icon
@@ -45,8 +48,22 @@
       <section v-else-if="hasResult" class="eb-chat-tool-call__section">
         <p class="eb-chat-tool-call__section-title">{{ labels.tool.result }}</p>
         <slot name="result" :tool-call="toolCall">
-          <pre class="eb-chat-tool-call__pre">{{ stringify(toolCall.result) }}</pre>
+          <pre ref="resultRef" class="eb-chat-tool-call__pre">{{ stringify(toolCall.result) }}<span v-if="streaming" class="eb-chat-tool-call__caret" aria-hidden="true" /></pre>
         </slot>
+      </section>
+      <!-- 子调用（并行派发 / PTC 子步）：同一种卡递归渲染，深度到顶就停 -->
+      <section v-if="subCalls.length" class="eb-chat-tool-call__section">
+        <p class="eb-chat-tool-call__section-title">{{ labels.tool.subCalls(subCalls.length) }}</p>
+        <div class="eb-chat-tool-call__subcalls">
+          <ChatToolCall
+            v-for="child in subCalls"
+            :key="child.id"
+            :tool-call="child"
+            :depth="depth + 1"
+            :retryable="retryable"
+            @retry="(call) => emit('retry', call)"
+          />
+        </div>
       </section>
       <div v-if="retryable && failed" class="eb-chat-tool-call__actions">
         <button type="button" class="eb-chat-tool-call__retry" @click="emit('retry', toolCall)">
@@ -59,26 +76,64 @@
 
 <script setup>
 import EbIcon from "@wil-works/evoke-business-ui/icon"
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useChatLabels } from "./labels";
+
+/** 子调用嵌套上限：挡住异常/自引用数据造成的无限递归（引擎侧同样设了 16 层） */
+const MAX_TOOL_DEPTH = 16;
+
 const labels = useChatLabels();
 const props = defineProps({
-  /** { id, name, label?, args?, result?, status, duration?, error? } */
+  /** { id, name, label?, args?, result?, status, duration?, error?, streaming?, subCalls? } */
   toolCall: { type: Object, required: false, default: () => ({}) },
   /** 未显式指定时，有参数或结果才允许展开 */
   expanded: { type: Boolean, required: false, default: undefined },
   /** 失败态是否给重试钮 */
-  retryable: { type: Boolean, required: false, default: true }
+  retryable: { type: Boolean, required: false, default: true },
+  /** 嵌套深度：由父级传入，达上限不再往下渲染 */
+  depth: { type: Number, required: false, default: 0 }
 });
 const emit = defineEmits(["toggle", "retry"]);
 const open = ref(props.expanded ?? false);
+// 用户手动开合过就尊重用户：流式结束不再自动收起
+let userToggled = false;
+const resultRef = ref(null);
 const panelId = `eb-chat-tool-call-${Math.random().toString(36).slice(2, 9)}`;
 const running = computed(() => props.toolCall?.status === "running");
+const streaming = computed(() => props.toolCall?.streaming === true);
 const succeeded = computed(() => props.toolCall?.status === "done");
 const failed = computed(() => props.toolCall?.status === "error");
+const cancelled = computed(() => props.toolCall?.status === "cancelled");
+/**
+ * 失败时把错误首行提到折叠态：不展开也能看见为什么失败
+ * （DSH 同款：错误态用结果首行替换折叠摘要）。
+ */
+const errorHint = computed(() => {
+  if (!failed.value) return "";
+  const text = String(props.toolCall?.error || "").trim();
+  if (!text) return "";
+  const firstLine = text.split("\n")[0].trim();
+  return firstLine.length > 60 ? `${firstLine.slice(0, 60)}…` : firstLine;
+});
 const hasArgs = computed(() => props.toolCall?.args !== undefined && props.toolCall?.args !== null);
 const hasResult = computed(() => props.toolCall?.result !== undefined && props.toolCall?.result !== null);
-const expandable = computed(() => hasArgs.value || hasResult.value || failed.value);
+/** 子调用：深度到顶就不再往下渲染（数据里若递归自引用，也不会无限展开） */
+const subCalls = computed(() => (props.depth < MAX_TOOL_DEPTH ? (props.toolCall?.subCalls || []) : []));
+const subCount = computed(() => props.toolCall?.subCalls?.length || 0);
+const expandable = computed(() => hasArgs.value || hasResult.value || failed.value || subCalls.value.length > 0);
+// 与计划卡同一约定：流式输出期间自动展开（盯着跑），结束后回到用户可控的折叠态。
+// immediate 是为了「挂载时就已在流式」的历史/重连场景也能展开。
+watch(streaming, (on) => {
+  if (props.expanded !== undefined) return;
+  if (on) open.value = true;
+  else if (!userToggled) open.value = false;
+}, { immediate: true });
+// 流式输出贴底：命令边跑边出，新内容不能被折在下面
+watch(() => props.toolCall?.result, () => {
+  if (!streaming.value) return;
+  const el = resultRef.value;
+  if (el) el.scrollTop = el.scrollHeight;
+});
 const statusText = computed(() => {
   const s = props.toolCall?.status || "pending";
   return labels.tool[s] || s;
@@ -106,6 +161,7 @@ function formatDuration(ms) {
 function toggle() {
   if (!expandable.value) return;
   open.value = !open.value;
+  userToggled = true;
   emit("toggle", props.toolCall, open.value);
 }
 
@@ -168,6 +224,11 @@ function toggle() {
   color: var(--eb-color-danger);
 }
 
+.eb-chat-tool-call.is-cancelled .eb-chat-tool-call__marker,
+.eb-chat-tool-call.is-cancelled .eb-chat-tool-call__status {
+  color: var(--eb-text-color-placeholder);
+}
+
 .eb-chat-tool-call__dot {
   width: 7px;
   height: 7px;
@@ -202,6 +263,38 @@ function toggle() {
   flex-shrink: 0;
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
+}
+
+/* 失败首行：折叠态就能看见失败原因，不抢标题的伸缩位 */
+/* 子调用：收进一层缩进 + 左侧细轨，一眼看出从属关系 */
+.eb-chat-tool-call__subcalls {
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--eb-space-3);
+  border-left: 1px solid var(--eb-border-color-lighter);
+}
+
+/* 头部计数：折叠时也知道里面还挂了几个 */
+.eb-chat-tool-call__subcount {
+  flex-shrink: 0;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: var(--eb-radius-sm);
+  background: var(--eb-fill-color);
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.eb-chat-tool-call__hint {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-color-danger);
 }
 
 .eb-chat-tool-call.is-error .eb-chat-tool-call__status {
@@ -263,6 +356,23 @@ function toggle() {
   color: var(--eb-color-danger);
 }
 
+/* 流式结果光标：与 EbChatTerminal 的同款闪烁，夹在已流出的文本末尾 */
+.eb-chat-tool-call__caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: eb-chat-tool-caret-blink 1s steps(2, start) infinite;
+}
+
+@keyframes eb-chat-tool-caret-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
 .eb-chat-tool-call__actions {
   display: flex;
   justify-content: flex-end;
@@ -295,7 +405,8 @@ function toggle() {
 
 @media (prefers-reduced-motion: reduce) {
   .eb-chat-tool-call__dot,
-  .eb-chat-tool-call__marker.is-spinning .eb-chat-tool-call__dot {
+  .eb-chat-tool-call__marker.is-spinning .eb-chat-tool-call__dot,
+  .eb-chat-tool-call__caret {
     animation: none;
   }
 }

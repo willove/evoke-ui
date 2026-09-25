@@ -12,7 +12,7 @@
         <eb-icon v-else :name="expanded ? 'arrow-down' : 'arrow-right'" />
       </div>
       <span class="eb-chat-thinking__label">
-        {{ thinking ? labels.thinking.pending : labels.thinking.done }}
+        {{ statusLabel }}
         <span v-if="duration" class="eb-chat-thinking__duration">{{ labels.message.duration(formatDuration(duration)) }}</span>
       </span>
     </button>
@@ -39,12 +39,18 @@ const labels = useChatLabels();
 const props = defineProps({
   content: { type: String, required: false, default: "" },
   thinking: { type: Boolean, required: false, default: false },
-  duration: { type: Number, required: false, default: 0 }
+  duration: { type: Number, required: false, default: 0 },
+  /** 思考阶段就被中断（消息 status 为 cancelled 且引擎记了 thinkInterrupted）：标题改说「思考已中断」 */
+  interrupted: { type: Boolean, required: false, default: false }
 });
 // 初值收起：思考中由 isOpen 强制展开，结束后自然收回折叠态（与文档一致）；
 // 用户手动点开过就尊重用户的选择，不再自动收
 const expanded = ref(false);
 const isOpen = computed(() => expanded.value || props.thinking);
+const statusLabel = computed(() => {
+  if (props.thinking) return labels.thinking.pending;
+  return props.interrupted ? labels.thinking.interrupted : labels.thinking.done;
+});
 const panelId = `eb-chat-thinking-${Math.random().toString(36).slice(2, 9)}`;
 function formatDuration(ms) {
   if (ms < 1e3) return `${ms}ms`;

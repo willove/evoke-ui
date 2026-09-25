@@ -44,6 +44,10 @@ describe('ChatThinking / ChatLoading', () => {
     const done = mount(ChatThinking, { props: { thinking: false, duration: 1200 } })
     expect(done.find('.eb-chat-thinking__dot').exists()).toBe(false)
     expect(done.text()).toContain('已深度思考')
+    // 思考阶段被中断：不能说「已深度思考」（谎报思考完成）
+    const stopped = mount(ChatThinking, { props: { thinking: false, interrupted: true, content: '半截推理', duration: 800 } })
+    expect(stopped.text()).toContain('思考已中断')
+    expect(stopped.text()).not.toContain('已深度思考')
   })
 
   it('loading 态渲染', () => {

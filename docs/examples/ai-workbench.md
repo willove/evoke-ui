@@ -36,12 +36,18 @@ AiConsole；transport 里拿 `context`（`{ scene, capabilities, model }`）路�
 
 - 按场景选回复模板（诊断 / 报告 / 文案 / 数据解读四套）；
 - 「深度思考」开启时先 `appendThinkContent` 流思考段，再 `stopThinking` 转正文；
-- 「联网检索」开启时正文前插入资料引用（引用块渲染）；
-- 全程 `setInterval` 打字模拟流，真实接入换成 fetch/SSE 读取循环即可。
+- 「联网检索」开启时正文前插入资料引用（引用块渲染）——先弹**审批面板**接管输入区（Enter 允许一次 /
+  Esc 拒绝），批准后跑两只工具卡演示运行过程：一只用 `appendToolCallResult` 流式出结果（自动展开 +
+  光标 + 贴底），一只直接完成，组标题从「正在执行 2 个步骤」结算到「执行了 2 个步骤（用时 X）」；
+  拒绝则基于已有上下文作答并写明未授权；批准后再补一次**澄清提问**（对比口径，Enter 前进 / Esc 取消），
+  选中的口径写进回答前缀——两次接管串在一条链上，演示「审批优先于提问」；
+- 全程 `setInterval` 打字模拟流，**transport 返回 Promise 直到流结束**——提前 resolve 会让
+  `loading` 立刻回落、停止钮不出现；真实接入换成 fetch/SSE 读取循环即可。
 
 **停止生成**。组件侧 `stoppable` 让发送钮在 loading 中变停止钮；页面在 `@stop` 里清掉计时器，
-并 `setMessageError` 把当前助手消息标记为「已停止生成」——AbortController 版本只需把
-「清计时器」换成 `controller.abort()`。
+再调 `cancelMessage` 把消息置为 `cancelled`：已流出的正文原地保留，底部补一行「已停止生成」灰标。
+中断不是失败态——`setMessageError` 会把半截回答换成红色错误块，只留给真出错。真实接入把
+「清计时器」换成 `controller.abort()` 即可。
 
 **附件上下文**。transport 收到 attachments 后在正文前加一句「已读取 N 个附件」，真实场景
 在此处把文件上传 / 解析为多模态输入。

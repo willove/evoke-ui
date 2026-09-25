@@ -167,6 +167,21 @@ function autoResize() {
   }
 }
 const MENU_KEYS = { ArrowUp: "up", ArrowDown: "down", Enter: "enter", Escape: "escape" };
+// 连按两次 Esc 停止生成（200ms~500ms 窗口内），与 DSH 的同款手势一致：
+// 单次 Esc 留给弹层/其它层，只有「生成中 + 有停止钮」时才认这个序列
+const STOP_SEQUENCE_MS = 500;
+let lastEscapeAt = 0;
+
+function handleEscapeStop() {
+  const now = Date.now();
+  if (now - lastEscapeAt <= STOP_SEQUENCE_MS) {
+    lastEscapeAt = 0;
+    emit("stop");
+    return true;
+  }
+  lastEscapeAt = now;
+  return false;
+}
 
 function handleKeydown(e) {
   // 输入法组字中的 Enter 是「上屏候选词」，不是发送
@@ -176,6 +191,16 @@ function handleKeydown(e) {
   if (props.menuOpen && MENU_KEYS[e.key] && !e.shiftKey) {
     e.preventDefault();
     emit("menu-key", MENU_KEYS[e.key]);
+    return;
+  }
+  // 双击 Esc 停止：不带修饰键、不在组字、不抢弹层的 Esc
+  if (
+    e.key === "Escape"
+    && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey
+    && props.loading && props.stoppable
+  ) {
+    e.preventDefault();
+    handleEscapeStop();
     return;
   }
   if (e.key === "Enter" && !e.shiftKey && props.sendOnEnter) {

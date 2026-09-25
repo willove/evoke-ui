@@ -96,7 +96,7 @@ Props 与 `ChatList` 的透传面一致，外加 `message` 本身；其中 `show
 | --- | --- |
 | `content` | 只换气泡内正文；作用域 `{ message, content, renderMode, streaming }` |
 
-消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算）。
+消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。
 
 ### EbChatMarkdown
 
@@ -121,12 +121,13 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 
 ### EbChatThinking
 
-思考过程折叠块。流式期间强制展开，结束后回到用户可控的折叠态。`{ content, thinking, duration }`（`duration` 为思考耗时，显示成「（用时 X）」；消息上下文里取 `message.thinkDuration`），无事件。
+思考过程折叠块。流式期间强制展开，结束后回到用户可控的折叠态。`{ content, thinking, duration, interrupted }`（`duration` 为思考耗时，显示成「（用时 X）」；消息上下文里取 `message.thinkDuration`；`interrupted` 为真时标题说「思考已中断」，用于思考阶段就被停止的那一轮），无事件。
 
 <DemoBlock>
   <div style="display: flex; flex-direction: column; gap: 12px">
     <eb-chat-thinking :content="DEMO_THINK" :thinking="true" />
     <eb-chat-thinking :content="DEMO_THINK" :duration="2400" />
+    <eb-chat-thinking :content="DEMO_THINK" :interrupted="true" :duration="800" />
   </div>
 </DemoBlock>
 
@@ -140,7 +141,7 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 
 ### EbChatToolCall
 
-工具调用卡：状态标记（等待/执行/失败/完成）、耗时、参数与结果的折叠展开，失败态给重试钮。
+工具调用卡：状态标记（等待/执行/失败/完成/已停止）、耗时、参数与结果的折叠展开，失败态给重试钮。**支持子调用**：`toolCall.subCalls` 是同一形状的数组（并行派发 / PTC 子步），展开后按层级递归渲染、左侧细轨标出从属关系，折叠时头部给子调用计数；嵌套上限 16 层（引擎与组件两侧都设了，异常自引用数据也不会炸）。`toolCall.streaming` 为真时结果区末尾补光标并自动展开盯跑（收尾后回到用户可控的折叠态）；失败态在折叠行直接给**错误首行**，不展开也知道为什么失败；`status: 'cancelled'`（运行中被停止）用停止标记与「已停止」，不给重试钮、也不再转圈。
 
 | Props | 类型 | 默认 | 说明 |
 | --- | --- | --- | --- |
@@ -167,7 +168,80 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
   </div>
 </DemoBlock>
 
+### EbChatApproval
+
+审批面板：agent 要执行越权动作（跑命令、联网、改文件）时**接管输入区**——待审批期间发送台让位，用户只需做一个决定。`{ id, toolName, reason?, detail?, status? }`：给了 `reason` 就用它当标题，否则显示「工具 X 请求越权执行」；`detail` 常放被拦命令原文（等宽、限高可滚）。键位 **Enter = 允许一次 / Esc = 拒绝**（组字中、带修饰键、焦点在输入控件里时都不抢）。结论只有 `allowed-once | rejected` 两种——「总是允许」属于会话级权限模式，不塞进单次审批。
+
+<DemoBlock>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 620px">
+    <eb-chat-approval :request="{ id: 'a1', toolName: 'run_tests', reason: '需要执行测试命令', detail: 'pnpm test -- --run' }" />
+    <eb-chat-approval :request="{ id: 'a2', toolName: 'web_search', status: 'rejected' }" />
+  </div>
+</DemoBlock>
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `request` | object | `{}` | `{ id, toolName, reason?, detail?, status? }`；`status` 取 `pending / approved / rejected` |
+| `answered` | boolean | — | 受控的已响应态；不传则组件自己记（点完立即禁用，等宿主持久态覆盖） |
+
+| Events | 载荷 |
+| --- | --- |
+| `respond` | `(outcome, request)`，`outcome` 取 `allowed-once` / `rejected` |
+
+`EbChatbot` 与 `EbAiConsole` 都有 `approval` prop：传了就接管输入区，响应经 `approval-respond` 抛给宿主（`(outcome, request)` 两参）。`useChatSession` 的 `approval` + `respondApproval(outcome)` 已经把这条链路接好（事件的 `approval/request` → 待审批，`approval/decided` → 收起）。
+
+### EbChatQuestion
+
+提问面板：agent 需要澄清时**接管输入区**（审批优先——越权动作必须先答）。`{ id, items: [{ id, question, header?, multiSelect?, allowCustom?, options: [{ key, label, recommended?, description? }] }], status? }`：逐题作答，单选互斥、多选累加；每题可写自定义答案（默认给输入框，`allowCustom: false` 关掉）；**跳过**算已作答（`skipped: true`），**取消**则整批作废。键位 **Enter 逐题前进、最后一题提交 / Esc 取消**（组字中、带修饰键时不抢）。
+
+<DemoBlock>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 620px">
+    <eb-chat-question :request="{
+      id: 'q1',
+      items: [
+        { id: 'i1', question: '按哪个口径对比？', options: [
+          { key: 'mom', label: '环比', recommended: true },
+          { key: 'yoy', label: '同比', description: '与去年同期比' },
+        ] },
+      ],
+    }" />
+    <eb-chat-question :request="{ id: 'q2', status: 'answered', items: [{ id: 'i1', question: '覆盖哪些渠道？', options: [{ key: 'feed', label: '信息流' }] }] }" />
+  </div>
+</DemoBlock>
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `request` | object | `{}` | 见上；`status` 取 `pending / answered / cancelled` |
+| `answered` | boolean | — | 受控的已响应态；不传则组件自己记 |
+
+| Events | 载荷 |
+| --- | --- |
+| `respond` | `(answer, request)`；`answer = { status: 'answered' \| 'cancelled', answers: [{ id, question, selected, custom, skipped }] }` |
+
+`EbChatbot` / `EbAiConsole` 的 `question` prop 传了就接管输入区，响应经 `question-respond(answer, request)` 抛出；`useChatSession` 的 `question` + `respondQuestion(answer)` 已把链路接好（`question/request` → 待回答，`question/decided` → 收起）。
+
 ### EbChatSources
+
+### EbChatChanges
+
+本轮改动汇总卡：标题给「已编辑 N 个文件」（单文件时直接给文件名），右侧 `+A -R`；展开后逐行列文件，每行带自己的增删数，二进制 / 过大不给行数只给标记。超出 `collapsedRows`（默认 4）折叠，给「全部 N 个文件」。路径等宽、**不折行**（保住目录层级），过长省略并留 `title`；点行抛 `select`（宿主接侧边栏预览）。
+
+<DemoBlock>
+  <eb-chat-changes :files="DEMO_CHANGES" style="max-width: 560px" />
+</DemoBlock>
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `files` | array | `[]` | `[{ path, display?, added?, deleted?, binary?, oversized? }]` |
+| `summary` | object | `null` | `{ total?, added?, deleted? }`；缺了按文件列表自己加 |
+| `collapsedRows` | number | `4` | 折叠时先露几行 |
+| `defaultOpen` | boolean | `false` | 初始是否展开列表 |
+
+| Events | 载荷 |
+| --- | --- |
+| `select` | `(file)` |
+
+消息带 `changes`（`{ files, total?, added?, deleted? }`）时 `EbChatMessage` 自动渲染；引擎侧 `setChanges(messageId, changes)` 写入，`useChatSession` 认 `workspace/changes` 事件（带 `messageId` 精确挂，不带则挂最后一条助手消息）。
 
 来源引用卡列表：序号 / favicon / 标题 / 域名 / 摘要，可折叠。点击上标会自动展开并高亮对应卡片——该联动由 `ChatMessage` 内部接好，单独用时可调 `highlight(id)`（经 `defineExpose`）。
 
@@ -214,7 +288,7 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 
 ### EbChatTerminal
 
-命令输出卡：头部给命令与退出码，正文等宽渲染，`status: 'running'` 时末尾有光标。**长输出只渲染尾部**（默认 40 行），给省略数与展开入口——命令输出动辄上千行，全渲染会拖垮消息列。
+命令输出卡：头部给命令与退出码，正文等宽渲染且**不折行**（保住终端列结构，横向滚动交给容器），`status: 'running'` 时末尾有光标。**长输出只渲染尾部**（默认 40 行），给省略数与展开入口——命令输出动辄上千行，全渲染会拖垮消息列。
 
 ANSI 只认 8/16 色前景与加粗，其余码忽略（不认识的样式宁可不染）。安全性上先把文本转义、再只把解析器自己构造的 `span` 拼进去，原文里的任何字符都不会被当标记透传。
 
@@ -477,6 +551,28 @@ function applyMenuItem(index) {
 
 `#sender-menu` 渲染在输入区**上方**（`sender-prepend` 是左右并排的，放不了这个）。
 
+## 上下文占用
+
+### EbChatContextMeter
+
+输入区上方的占用环：`{ used, capacity, breakdown? }`，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。**两侧缺一就不显示**——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 75% 转警告色、90% 转危险色，动画在 `prefers-reduced-motion` 下关掉。`capacity` 与三段都是宿主的业务口径（模型窗口、提示词预算），组件只做占比与呈现。
+
+<DemoBlock>
+  <div style="display: flex; gap: 16px; align-items: center">
+    <eb-chat-context-meter :used="9600" :capacity="32000" />
+    <eb-chat-context-meter :used="25600" :capacity="32000" :breakdown="{ system: 6200, tools: 4100, messages: 15300 }" />
+    <eb-chat-context-meter :used="30400" :capacity="32000" />
+  </div>
+</DemoBlock>
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `used` | number | `0` | 已用 token（压力值 / 预估值） |
+| `capacity` | number | `0` | 上下文窗口容量；为 0 或 `used` 为 0 时不渲染 |
+| `breakdown` | object | `null` | `{ system?, tools?, messages? }`，三者都是 token 数；缺的段不画 |
+
+`EbChatbot` / `EbAiConsole` 的 `context` prop 直接 `v-bind` 这三个字段；`useChatSession` 用 `context` + `setContext({ used, capacity, breakdown })` 维护，也可由 `context/usage` 事件驱动（瞬时或持久形态都认，且不污染会话日志）。
+
 ## token 与成本计量
 
 `EbChatUsage` 只展示宿主给的用量——**成本要价目表，那是宿主的业务数据**，组件与引擎都不猜。
@@ -636,6 +732,17 @@ iframe + 截图双模式。**有一个绕不过去的硬限制**：目标站返�
   />
 </DemoBlock>
 
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `src` | string | `''` | 预览地址（iframe 用） |
+| `screenshot` | string | `''` | 静态截图地址；目标站禁嵌时回退到它 |
+| `embeddable` | boolean \| null | `null` | 宿主在服务端 HEAD 判定：`true` 直用 iframe、`false` 有截图就用截图、不传先试 iframe |
+| `title` | string | `''` | 卡片标题（通常写域名） |
+| `screenshotAlt` | string | `''` | 截图的替代文本；不传时退回 `title` |
+| `height` | string \| number | `320` | 预览区高度 |
+| `extraSandbox` | array | `[]` | 追加的 sandbox 白名单项（白名单外的忽略） |
+| `allow` | string | `''` | iframe `allow` 特性串（如 `clipboard-write`） |
+
 ## 输入类
 
 ### EbChatSender
@@ -655,7 +762,7 @@ iframe + 截图双模式。**有一个绕不过去的硬限制**：目标站返�
 | `maxLength` / `showWordCount` | number / boolean | `2000` / `false` | 真正约束 textarea，传 `0` 不限 |
 | `minRows` / `maxRows` | number | `1` / `6` | 自增高范围 |
 | `sendOnEnter` | boolean | `true` | 关掉后 Enter 只换行 |
-| `stoppable` | boolean | `false` | loading 时发送钮变停止钮 |
+| `stoppable` | boolean | `false` | loading 时发送钮变停止钮；此时**连按两次 Esc**（500ms 内、不带修饰键）也抛 `stop` |
 | `accept` / `maxFileSize` | string / number | — / `0` | 附件类型与体积；拖拽粘贴同样校验 |
 | `allowDrop` | boolean | `true` | 允许拖拽与粘贴投递 |
 
@@ -816,6 +923,15 @@ const DEMO_SOURCES = [
   { id: 's1', index: 1, title: '深海热泉口微生物固碳研究', url: 'https://example.com/paper/1', source: 'Nature', snippet: '热泉口化能合成速率约为光合作用的 0.1% 量级。' },
   { id: 's2', index: 2, title: '化能合成能量通量估算方法', url: 'https://example.com/paper/2', source: 'Science' },
   { id: 's3', index: 3, title: '内部知识库 · 生物能量学', source: '知识库', snippet: '按 10 ㎡ 口径估算，年通量约 1.2×10⁶ kJ。' },
+]
+
+const DEMO_CHANGES = [
+  { path: 'examples/ebui-example-ai/src/pages/AiWorkbench.vue', display: 'AiWorkbench.vue', added: 88, deleted: 12 },
+  { path: 'packages/evoke-chat/src/components/chatbot/useChatEngine.js', display: 'useChatEngine.js', added: 42, deleted: 3 },
+  { path: 'packages/evoke-chat/test/chat-changes.test.js', display: 'chat-changes.test.js', added: 120 },
+  { path: 'assets/logo.png', binary: true },
+  { path: 'dist/bundle.js', oversized: true },
+  { path: 'README.md', added: 6, deleted: 2 },
 ]
 
 const DEMO_EDIT_TEXT = '帮我把这句改得更口语一点'

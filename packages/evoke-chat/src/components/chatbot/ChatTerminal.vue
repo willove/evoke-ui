@@ -202,8 +202,8 @@ async function copyOutput() {
   font-size: var(--eb-font-size-xs);
   line-height: 1.7;
   color: var(--eb-text-color-regular);
-  white-space: pre-wrap;
-  word-break: break-word;
+  /* 终端输出不折行：折行会毁掉对齐的列结构（同 DSH web-styling 规则），横向滚动交给容器 */
+  white-space: pre;
 }
 
 .eb-chat-terminal__caret {

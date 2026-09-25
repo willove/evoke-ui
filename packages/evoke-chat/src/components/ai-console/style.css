@@ -143,6 +143,12 @@
 }
 
 /* 输入区与容器左右边框留出间距（此前与边框贴死），并始终贴底 */
+.eb-ai-console__context {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--eb-space-1);
+}
+
 .eb-ai-console__input {
   display: flex;
   flex-direction: column;

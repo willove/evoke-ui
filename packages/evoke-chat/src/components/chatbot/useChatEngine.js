@@ -58,6 +58,8 @@ function useChatEngine(options = {}) {
     }
   }
   function markThinkStart(msg) {
+    // 重新开始思考：上一次的「被打断」不再成立
+    if (msg.thinkInterrupted) msg.thinkInterrupted = false;
     if (!thinkStartMap.has(toRaw(msg))) thinkStartMap.set(toRaw(msg), Date.now());
   }
   /** 结束思考：把起点折成 thinkDuration（毫秒），思考块据此显示「（用时 X）」 */
@@ -108,9 +110,27 @@ function useChatEngine(options = {}) {
   /**
    * 中断生成：保留已流出的正文，状态记 cancelled。
    * 走 setMessageError 会把半截回答整体换成红色错误块，那是错的表达。
+   * 若中断发生在思考阶段，额外记 thinkInterrupted——思考块据此说「思考已中断」，
+   * 不能继续显示「已深度思考」（那等于谎报思考已完成）。
    */
   function cancelMessage(id) {
-    updateMessage(id, { status: "cancelled", thinking: false });
+    const msg = messages.value.find((m) => m.id === id);
+    if (!msg) return;
+    if (msg.thinking) msg.thinkInterrupted = true;
+    msg.thinking = false;
+    // 与 completeMessage 同款收尾：思考起点折成 thinkDuration（没思考过则不动）
+    settleThinkDuration(msg);
+    // 还在跑的工具调用不能继续转圈：与消息同一终态语义（cancelled），
+    // 并停止接收后续增量。DSH 把被中断的调用映射成 stopped，取意相同。
+    if (msg.toolCalls?.length) {
+      const cancelTree = (list) => (list || []).map((t) => ({
+        ...t,
+        ...(t.status === "running" || t.status === "pending" ? { status: "cancelled", streaming: false } : {}),
+        ...(t.subCalls?.length ? { subCalls: cancelTree(t.subCalls) } : {})
+      }));
+      msg.toolCalls = cancelTree(msg.toolCalls);
+    }
+    msg.status = "cancelled";
   }
   function removeMessage(id) {
     const index = messages.value.findIndex((m) => m.id === id);
@@ -281,6 +301,10 @@ function useChatEngine(options = {}) {
   function setUsage(messageId, usage) {
     updateMessage(messageId, { usage: usage || null });
   }
+  /** 本轮改动汇总 { files: [{ path, display?, added?, deleted?, binary?, oversized? }], total?, added?, deleted? } */
+  function setChanges(messageId, changes) {
+    updateMessage(messageId, { changes: changes || null });
+  }
 
   // ── 调用链追踪 ──
   // 只记 id / 地址，不拼 URL：各家追踪平台路径不同，模板由宿主给
@@ -311,14 +335,42 @@ function useChatEngine(options = {}) {
   }
 
   // ── 工具调用状态机 ──
-  // 工具调用挂在具体的 assistant 消息上，宿主 transport 里按消息 id 驱动
+  // 工具调用挂在具体的 assistant 消息上，宿主 transport 里按消息 id 驱动；
+  // 调用可以带 subCalls（并行/嵌套派发），所有按 id 的操作都递归到子层。
+  /** 子调用最大嵌套层数：挡住异常数据造成的无限递归（DSH 同样设了上限） */
+  const MAX_TOOL_DEPTH = 16;
   function findMessage(id) {
     return messages.value.find((m) => m.id === id);
   }
-  function addToolCall(messageId, call = {}) {
-    const msg = findMessage(messageId);
-    if (!msg) return null;
-    const tc = {
+  /** 在树里按 id 定位，同时带回深度（供嵌套上限判断） */
+  function locateToolCall(list, callId, depth = 0) {
+    for (const t of list || []) {
+      if (t.id === callId) return { call: t, depth };
+      const hit = locateToolCall(t.subCalls, callId, depth + 1);
+      if (hit) return hit;
+    }
+    return null;
+  }
+  /** 递归替换命中的节点；没命中就原样返回（引用不变，宿主可据此跳过重渲染） */
+  function mapToolCalls(list, callId, fn) {
+    let changed = false;
+    const next = (list || []).map((t) => {
+      if (t.id === callId) {
+        changed = true;
+        return fn(t);
+      }
+      const sub = mapToolCalls(t.subCalls, callId, fn);
+      if (sub !== t.subCalls) {
+        changed = true;
+        return { ...t, subCalls: sub };
+      }
+      return t;
+    });
+    return changed ? next : list;
+  }
+  /** 递归生成一个工具调用节点（含空的 subCalls，供宿主直接 push） */
+  function makeToolCall(call = {}) {
+    return {
       id: call.id || generateId(),
       name: call.name || "tool",
       label: call.label || "",
@@ -327,35 +379,89 @@ function useChatEngine(options = {}) {
       status: call.status || "pending",
       duration: 0,
       error: "",
-      startedAt: 0
+      streaming: false,
+      startedAt: 0,
+      subCalls: []
     };
+  }
+  function addToolCall(messageId, call = {}) {
+    const msg = findMessage(messageId);
+    if (!msg) return null;
+    const tc = makeToolCall(call);
     msg.toolCalls = [...(msg.toolCalls || []), tc];
     return tc;
+  }
+  /** 给某个调用挂一个子调用（并行派发/PTC 子步）；返回子调用 id（与 startToolCall 一致），父不存在或超深返回 null */
+  function addSubToolCall(messageId, parentCallId, call = {}) {
+    const msg = findMessage(messageId);
+    if (!msg) return null;
+    const hit = locateToolCall(msg.toolCalls, parentCallId);
+    if (!hit || hit.depth >= MAX_TOOL_DEPTH) return null;
+    const child = makeToolCall(call);
+    msg.toolCalls = mapToolCalls(msg.toolCalls, parentCallId, (t) => ({
+      ...t,
+      subCalls: [...(t.subCalls || []), child]
+    }));
+    return child.id;
   }
   function updateToolCall(messageId, callId, updates) {
     const msg = findMessage(messageId);
     if (!msg?.toolCalls) return;
-    msg.toolCalls = msg.toolCalls.map((t) => t.id === callId ? { ...t, ...updates } : t);
+    msg.toolCalls = mapToolCalls(msg.toolCalls, callId, (t) => ({ ...t, ...updates }));
+  }
+  function findToolCall(messageId, callId) {
+    const msg = findMessage(messageId);
+    return msg ? locateToolCall(msg.toolCalls, callId)?.call || null : null;
   }
   /** 开始一次工具调用：给了已存在的 id 就复用，否则新建。返回调用 id。 */
   function startToolCall(messageId, call = {}) {
     const msg = findMessage(messageId);
     if (!msg) return null;
-    const existing = call.id && (msg.toolCalls || []).find((t) => t.id === call.id);
+    const existing = call.id ? locateToolCall(msg.toolCalls, call.id)?.call : null;
     const tc = existing || addToolCall(messageId, call);
     if (!tc) return null;
-    updateToolCall(messageId, tc.id, { status: "running", startedAt: Date.now() });
+    updateToolCall(messageId, tc.id, { status: "running", streaming: false, startedAt: Date.now() });
     return tc.id;
   }
+  /**
+   * 工具输出的流式增量：命令与检索类工具边跑边出结果，宿主逐片回写即可。
+   * 复用同一张卡（不新建），状态自动转 running 并打上 streaming（卡片据此显示光标、贴底滚动）。
+   * 无 id 时返回 null；已 done / error 的调用不再接收增量，避免回填把终态改回去。
+   */
+  function appendToolCallResult(messageId, callId, chunk) {
+    const msg = findMessage(messageId);
+    const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
+    if (!tc || tc.status === "done" || tc.status === "error" || tc.status === "cancelled") return null;
+    const text = String(chunk ?? "");
+    const base = tc.result === undefined || tc.result === null ? "" : String(tc.result);
+    updateToolCall(messageId, callId, {
+      result: base + text,
+      status: "running",
+      streaming: true,
+      startedAt: tc.startedAt || Date.now()
+    });
+    return tc.id;
+  }
+  /**
+   * 收尾工具调用。`result` 省略时保留流式累积的输出——流式接法下调用方
+   * 往往没有完整结果可给，不能因为没传就把已流出的内容抹掉。
+   */
   function completeToolCall(messageId, callId, result) {
     const msg = findMessage(messageId);
-    const tc = (msg?.toolCalls || []).find((t) => t.id === callId);
+    const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
+    // 已被中断的调用是终态：迟到的 complete 不能把它改回「已完成」
+    if (!tc || tc.status === "cancelled") return;
     const duration = tc?.startedAt ? Date.now() - tc.startedAt : 0;
-    updateToolCall(messageId, callId, { status: "done", result, duration });
+    const patch = { status: "done", streaming: false, duration };
+    if (result !== undefined) patch.result = result;
+    updateToolCall(messageId, callId, patch);
   }
   function failToolCall(messageId, callId, error) {
+    const msg = findMessage(messageId);
+    const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
+    if (!tc || tc.status === "cancelled") return;
     const text = error instanceof Error ? error.message : error;
-    updateToolCall(messageId, callId, { status: "error", error: text || labels.tool.error });
+    updateToolCall(messageId, callId, { status: "error", streaming: false, error: text || labels.tool.error });
   }
   /** 记录一条消息的点赞点踩与结构化原因 */
   function setFeedback(messageId, value, payload = {}) {
@@ -395,6 +501,9 @@ function useChatEngine(options = {}) {
     addToolCall,
     updateToolCall,
     startToolCall,
+    addSubToolCall,
+    findToolCall,
+    appendToolCallResult,
     completeToolCall,
     failToolCall,
     setPlan,
@@ -409,6 +518,7 @@ function useChatEngine(options = {}) {
     updateArtifact,
     removeArtifact,
     setUsage,
+    setChanges,
     setTrace
   };
 }

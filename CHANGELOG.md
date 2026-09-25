@@ -2,6 +2,41 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [chat 0.2.0] — 2026-09-26
+
+### @wil-works/evoke-chat — 会话层 + 审批/提问接管 + 接入适配层（0.2.0）
+
+- **会话日志层（可修复）**：`createSessionLog` 提供连续 seq、游标只进不退、缺口缓冲与
+  `stale-replay` 判定的纯核心；`useChatSession` 把它折进引擎——`open / receive / submit /
+  retrySend / stop / respondApproval / respondQuestion` 一把接住，客户端铸 `requestId` 并
+  摘除乐观回声（持久与瞬时两条路径同源折叠，未知持久事件判降级）；
+- **审批 / 提问接管**：新组件 `EbChatApproval`（Enter 允许一次 / Esc 拒绝）与 `EbChatQuestion`
+  （逐题作答、单选互斥、多选累加、自定义、跳过算已作答、Esc 取消整批；单选圈/多选方标记），
+  `EbChatbot` / `EbAiConsole` 按 **审批 > 提问 > 输入台** 的优先级接管；示例工作台把
+  「审批 → 澄清 → 工具执行」串成一条链，选中的口径写进回答前缀；
+- **工具调用树**：`toolCall.subCalls` 递归渲染（自引用组件 + 左侧细轨 + 折叠计数），引擎
+  `addSubToolCall` / `findToolCall` 与 `appendToolCallResult` / `completeToolCall` /
+  `failToolCall` 全按 id 递归作用到子层，`cancelMessage` 递归中断；深度上限 16 层（两侧都设，
+  异常自引用数据不会炸）；
+- **上下文占用环**：`EbChatContextMeter` 环 + 百分比（缺 used/capacity 不渲染，75% 警告 /
+  90% 危险），点开给「已用 / 窗口」与三段构成；`useChatSession` 由 `context/usage` 驱动；
+- **改动汇总卡**：`EbChatChanges` 收尾给「已编辑 N 个文件 +A -R」，先露 4 行、超出折叠，
+  二进制/过大只给标记；消息字段 `changes` 由引擎 `setChanges` 与 `workspace/changes` 事件写入；
+- **消息接入适配层（新）**：`createChatTransport({ provider: 'openai' | 'anthropic', … })`
+  纯映射、零 SDK——SSE 解析（帧跨 chunk 边界 / 多行 data / 心跳 / `[DONE]`）、分片 JSON 工具参数
+  按 index 拼完再 parse、用量分段合并、`length`/`max_tokens` 视作截断（保留已产出）、
+  中止统一补 `turn/end(aborted)`；两家映射差异与边界（无 follow 流：历史归宿主）写进文档；
+- **两道新门**：`check-api-docs`（导出组件的 props/emits 必须出现在文档里，首跑揪出
+  `EbChatWebPreview.screenshotAlt` 未记录并补齐 Props 表）、`check-artifacts`（构建后校验
+  入口 `.mjs`、类型存根与包根导出齐全，防「有 JS 没类型」的包流出）；
+- **流式与中断语义补齐**：`appendContent` 自动转 streaming、`cancelMessage` 标记思考中断与
+  工具调用 `cancelled`（不再转圈、拒收迟到增量）、`ChatToolCall` 流式光标与贴底、
+  `ChatSender` 双击 Esc 停机、`ChatTerminal` 不折行、错误首行摘要、分组标题「正在执行 N 个步骤」；
+- **测试与文档**：对话家族 32 文件 613 例全绿（新增审批 9 / 提问 9 / 会话 15 / 改动 8 / 占用 7 /
+  适配 17 / 嵌套工具 5 / Markdown 成本 2）；文档补 4 页（chatbot / chat-subcomponents /
+  ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
+  `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
+
 ## [tools-ui 0.2.1] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — EtProvider 运行时切档修复（0.2.1）

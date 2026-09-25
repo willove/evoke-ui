@@ -42,6 +42,9 @@
   { name: 'loading', desc: '强制 loading（与引擎态取或）', type: 'boolean', default: 'false' },
   { name: 'scenes / capabilities / models / quota / showSettings', desc: '输入台配置面，同 AiPromptBox 同名参数', type: '—', default: '—' },
   { name: 'allowAttachments / maxAttachments / maxLength / sendOnEnter / stoppable', desc: '输入台行为，同 AiPromptBox', type: '—', default: '—' },
+  { name: 'approval', desc: '待审批请求 { id, toolName, reason?, detail?, status? }；非空时审批面板接管输入台（Enter 允许一次 / Esc 拒绝）', type: 'object | null', default: 'null' },
+  { name: 'question', desc: '待回答请求 { id, items: [...] }；审批缺席时提问面板接管输入台（Enter 前进 / Esc 取消），审批优先', type: 'object | null', default: 'null' },
+  { name: 'context', desc: '上下文占用 { used, capacity, breakdown? }；给了就在输入台上方显示占用环', type: 'object | null', default: 'null' },
   { name: 'showThinking', desc: '会话消息展示思考过程', type: 'boolean', default: 'true' },
   { name: 'renderMode', desc: '消息渲染模式', type: 'markdown | text', default: 'markdown' },
   { name: 'userName / assistantName', desc: '会话区双方显示名（同时决定默认头像首字）；不传时取当前语言包', type: 'string', default: '我 / AI助手（随语言包）' },
@@ -55,6 +58,8 @@
 <ApiTable title="AiConsole Events" :rows="[
   { name: 'send', desc: '发送（载荷同 AiPromptBox）', type: '(payload) => void', default: '—' },
   { name: 'stop', desc: '停止生成', type: '() => void', default: '—' },
+  { name: 'approval-respond', desc: '审批结论，两参 (outcome, request)；outcome 取 allowed-once / rejected', type: '(outcome, request) => void', default: '—' },
+  { name: 'question-respond', desc: '提问结论，两参 (answer, request)；answer.status 取 answered / cancelled', type: '(answer, request) => void', default: '—' },
   { name: 'example-click', desc: '点击示例问题', type: '(example) => void', default: '—' },
   { name: 'copy / regenerate / action', desc: '消息复制 / 重新生成（内部已驱动引擎重发，此处仅供埋点）/ 自定义动作，均由会话区转发', type: '(message) => void / (key, message) => void', default: '—' },
   { name: 'quota-click / settings-click', desc: '额度 / 设置点击', type: '() => void', default: '—' },

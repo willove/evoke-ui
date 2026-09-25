@@ -96,6 +96,78 @@ describe('useChatEngine', () => {
     }
   })
 
+  it('cancelMessage：中断保留已流出正文，状态记 cancelled 而非 error', () => {
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    engine.appendContent(msg.id, '已经输出的')
+    engine.appendContent(msg.id, '一半')
+    expect(msg.status).toBe('streaming')
+
+    engine.cancelMessage(msg.id)
+    expect(msg.status).toBe('cancelled')
+    expect(msg.content).toBe('已经输出的一半')
+    // 中断走 cancelled，不落 error / error 文案：那是真出错才用的红块
+    expect(msg.error).toBeUndefined()
+    // 中断不结算回答用时
+    expect(msg.duration).toBeUndefined()
+    // 中断后不再被当作进行中的 assistant 消息，下一次发送不会被误判成“还在生成”
+    expect(engine.assistantMessage.value).toBeUndefined()
+  })
+
+  it('cancelMessage：思考中中断收住思考态，半截思考内容保留', () => {
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    engine.appendThinkContent(msg.id, '正在推理')
+    expect(msg.thinking).toBe(true)
+
+    engine.cancelMessage(msg.id)
+    expect(msg.status).toBe('cancelled')
+    expect(msg.thinking).toBe(false)
+    expect(msg.thinkContent).toBe('正在推理')
+  })
+
+  it('cancelMessage：思考中中断记 thinkInterrupted 并结算思考用时', () => {
+    const realNow = Date.now
+    let now = 2_000_000
+    Date.now = () => now
+    try {
+      const engine = useChatEngine()
+      const msg = engine.createAssistantMessage()
+      engine.appendThinkContent(msg.id, '推理到一半')
+      now = 2_002_600
+      engine.cancelMessage(msg.id)
+
+      expect(msg.status).toBe('cancelled')
+      expect(msg.thinkInterrupted).toBe(true)
+      expect(msg.thinking).toBe(false)
+      // 与 completeMessage 同款收尾：思考起点折成用时
+      expect(msg.thinkDuration).toBe(2600)
+    } finally {
+      Date.now = realNow
+    }
+  })
+
+  it('cancelMessage：思考已结束的答复被中断，不算「思考被中断」', () => {
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    engine.appendThinkContent(msg.id, '想完了')
+    engine.stopThinking(msg.id)
+    engine.appendContent(msg.id, '正文一半')
+
+    engine.cancelMessage(msg.id)
+    expect(msg.status).toBe('cancelled')
+    // 思考阶段已正常结束：思考块仍说「已深度思考」，不能误标为中断
+    expect(msg.thinkInterrupted).toBeUndefined()
+    expect(msg.content).toBe('正文一半')
+  })
+
+  it('cancelMessage：未知 id 不抛，也不动其他消息', () => {
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    expect(() => engine.cancelMessage('missing')).not.toThrow()
+    expect(msg.status).toBe('pending')
+  })
+
   it('regenerateMessage：截断到目标提问之后并以原内容重发', async () => {
     const onSend = vi.fn((content) => {
       const m = engine.createAssistantMessage()
@@ -603,6 +675,38 @@ describe('P0 回归：输入台', () => {
     const w2 = mount(ChatSender, { props: { modelValue: '', maxLength: 0 } })
     expect(w2.find('.eb-chat-sender__textarea').attributes('maxlength')).toBeUndefined()
   })
+
+  it('生成中连按两次 Esc 停止；单次 Esc 不误触', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '草稿', loading: true, stoppable: true } })
+    const ta = w.find('.eb-chat-sender__textarea')
+    await ta.trigger('keydown', { key: 'Escape' })
+    expect(w.emitted('stop')).toBeUndefined()
+    await ta.trigger('keydown', { key: 'Escape' })
+    expect(w.emitted('stop')).toHaveLength(1)
+
+    // 带修饰键的 Esc 不算这个手势
+    const mod = mount(ChatSender, { props: { modelValue: '草稿', loading: true, stoppable: true } })
+    const modTa = mod.find('.eb-chat-sender__textarea')
+    await modTa.trigger('keydown', { key: 'Escape', ctrlKey: true })
+    await modTa.trigger('keydown', { key: 'Escape', ctrlKey: true })
+    expect(mod.emitted('stop')).toBeUndefined()
+
+    // 没在生成、或没有停止钮：Esc 完全留给别人
+    const idle = mount(ChatSender, { props: { modelValue: '草稿' } })
+    const idleTa = idle.find('.eb-chat-sender__textarea')
+    await idleTa.trigger('keydown', { key: 'Escape' })
+    await idleTa.trigger('keydown', { key: 'Escape' })
+    expect(idle.emitted('stop')).toBeUndefined()
+  })
+
+  it('弹层打开时 Esc 归弹层，不触发停止', async () => {
+    const w = mount(ChatSender, { props: { modelValue: '', loading: true, stoppable: true, menuOpen: true } })
+    const ta = w.find('.eb-chat-sender__textarea')
+    await ta.trigger('keydown', { key: 'Escape' })
+    await ta.trigger('keydown', { key: 'Escape' })
+    expect(w.emitted('stop')).toBeUndefined()
+    expect(w.emitted('menu-key')).toHaveLength(2)
+  })
 })
 
 describe('P0 回归：消息体', () => {
@@ -678,6 +782,37 @@ describe('P0 回归：消息体', () => {
     expect(w.find('.eb-chat-message__error').exists()).toBe(false)
     expect(w.find('.eb-chat-message__bubble').text()).toContain('已经输出的一半')
     expect(w.find('.eb-chat-message__cancelled').text()).toContain('已停止生成')
+  })
+
+  it('cancelled：引擎中断管线端到端——半截正文 + 灰标，无红块无拖尾', () => {
+    // 锁住示例页 @stop 的接线：appendContent 流到一半 → cancelMessage
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    engine.appendContent(msg.id, '已经输出的一半')
+    engine.cancelMessage(msg.id)
+
+    const w = mount(ChatMessage, { props: { message: engine.messages.value[0] } })
+    expect(w.find('.eb-chat-message__error').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__bubble').text()).toContain('已经输出的一半')
+    expect(w.find('.eb-chat-message__cancelled').text()).toContain('已停止生成')
+    // 中断后不再显示流式拖尾
+    expect(w.find('.eb-chat-shimmer').exists()).toBe(false)
+  })
+
+  it('cancelled：思考阶段中断（尚无正文）也给出「已停止生成」，不留空窗', () => {
+    const engine = useChatEngine()
+    const msg = engine.createAssistantMessage()
+    engine.appendThinkContent(msg.id, '正在推理')
+    engine.cancelMessage(msg.id)
+
+    const w = mount(ChatMessage, { props: { message: engine.messages.value[0] } })
+    // 中断已收尾：既不是三点加载态，也不是红块；中断反馈必须出现
+    expect(w.find('.eb-chat-message__loading').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__error').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__cancelled').text()).toContain('已停止生成')
+    // 思考块改说「思考已中断」，不再谎报「已深度思考」
+    expect(w.find('.eb-chat-thinking__label').text()).toContain(chatLabels.thinking.interrupted)
+    expect(w.find('.eb-chat-thinking__label').text()).not.toContain(chatLabels.thinking.done)
   })
 
   it('error 态挂 role=alert', () => {

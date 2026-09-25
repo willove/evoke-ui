@@ -25,6 +25,18 @@ const SHIMMER_TAIL = 16;
 const TRAILING_BLOCK_RE = /<\/(?:p|li|h[1-6]|blockquote|td|th|pre)>/g;
 const out = ref("");
 let frame = 0;
+// 同内容幂等：一帧内 schedule 与语言变化两条路径可能都触发，重复整篇解析没有意义
+// （DSH 的渲染器同样按 text 幂等缓存）。键里带上烘进 HTML 的两条文案，切语言自然失效。
+let cacheKey = null;
+let cacheHtml = "";
+function baseHtml() {
+  const content = props.content || "";
+  const key = `${labels.markdown.copyCode}\u0000${labels.markdown.renderDiagram}\u0000${content}`;
+  if (key === cacheKey) return cacheHtml;
+  cacheKey = key;
+  cacheHtml = renderChatMarkdown(content, labels);
+  return cacheHtml;
+}
 // SSR（Node）没有 requestAnimationFrame：直接同步渲染，绝不把「按帧合并」当成硬依赖
 const hasRaf = typeof requestAnimationFrame === "function";
 /**
@@ -60,7 +72,7 @@ function wrapTail(html, endIdx, n) {
   return `${html.slice(0, cut)}<span class="eb-chat-shimmer">${html.slice(cut, endIdx)}</span>${html.slice(endIdx)}`;
 }
 function render() {
-  const raw = renderChatMarkdown(props.content || "", labels);
+  const raw = baseHtml();
   if (!props.streaming) return raw;
   let last = null;
   for (const m of raw.matchAll(TRAILING_BLOCK_RE)) last = m;
