@@ -40,6 +40,14 @@ import EtCommandPalette from './components/command-palette/index.vue'
 import EtContextMenu from './components/context-menu/index.vue'
 import EtShortcutPanel from './components/shortcut-panel/index.vue'
 import EtShortcutHint from './components/shortcut-hint/index.vue'
+// ─── L3 工作台（M2） ───
+import EtDock from './components/dock/index.vue'
+import EtPanel from './components/panel/index.vue'
+import EtPanelGroup from './components/panel/group.vue'
+import EtScrollArea from './components/scroll-area/index.vue'
+import EtEmptyState from './components/empty-state/index.vue'
+import EtWorkbench from './components/workbench/index.vue'
+import EtDocumentTabs from './components/document-tabs/index.vue'
 
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
@@ -94,6 +102,29 @@ import {
   buildShortcutTable,
   detectKeyConflicts,
   findCommandByCombo,
+  DOCK_SIDES,
+  createLayoutTree,
+  normalizeLayout,
+  serializeLayout,
+  deserializeLayout,
+  loadLayout,
+  saveLayout,
+  findPanel,
+  findDock,
+  dockOf,
+  allPanelIds,
+  visiblePanels,
+  togglePanelCollapsed,
+  toggleDockCollapsed,
+  setPanelSize,
+  hidePanel,
+  showPanel,
+  maximizePanel,
+  restorePanel,
+  addDock,
+  removeDock,
+  resetLayout,
+  layoutEquals,
 } from './runtime/index.js'
 
 // ─── Composables ───
@@ -121,6 +152,14 @@ const components = {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
+  // L3 工作台（M2）
+  EtDock,
+  EtPanel,
+  EtPanelGroup,
+  EtScrollArea,
+  EtEmptyState,
+  EtWorkbench,
+  EtDocumentTabs,
   // 图标机制
   EtIcon,
 }
@@ -157,6 +196,14 @@ export {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
+  // L3 工作台（M2）
+  EtDock,
+  EtPanel,
+  EtPanelGroup,
+  EtScrollArea,
+  EtEmptyState,
+  EtWorkbench,
+  EtDocumentTabs,
   // 图标机制
   EtIcon,
   registerDomainIcons,
@@ -181,7 +228,7 @@ export {
   nextRovingIndex,
   rovingTabindex,
   useRovingTabindex,
-  // 运行时契约（L0：命令 / 菜单 schema / 工具区状态机 / 键位表）
+  // 运行时契约（L0：命令 / 菜单 schema / 工具区状态机 / 键位表 / 布局树）
   COMMAND_SURFACES,
   assertCommand,
   resolveCommandState,

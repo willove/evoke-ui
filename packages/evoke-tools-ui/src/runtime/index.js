@@ -48,3 +48,30 @@ export {
 
 // ─── 键位表构建与冲突检测 ───
 export { buildShortcutTable, detectKeyConflicts, findCommandByCombo } from './shortcuts/index.js'
+
+// ─── 布局树契约（M2：停靠 / 面板 / 持久化 / 损坏降级） ───
+export {
+  DOCK_SIDES,
+  createLayoutTree,
+  normalizeLayout,
+  serializeLayout,
+  deserializeLayout,
+  loadLayout,
+  saveLayout,
+  findPanel,
+  findDock,
+  dockOf,
+  allPanelIds,
+  visiblePanels,
+  togglePanelCollapsed,
+  toggleDockCollapsed,
+  setPanelSize,
+  hidePanel,
+  showPanel,
+  maximizePanel,
+  restorePanel,
+  addDock,
+  removeDock,
+  resetLayout,
+  layoutEquals,
+} from './layout/index.js'
