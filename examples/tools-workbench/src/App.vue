@@ -1,5 +1,6 @@
 <template>
-  <div class="demo">
+  <et-provider :density="density">
+    <div class="demo">
     <!-- 演示控制面（不是产品 chrome：密度/视图/选区/命令/键位/暗色） -->
     <header class="demo__bar">
       <span class="demo__title">工作台装配示例</span>
@@ -120,7 +121,8 @@
       recent-key="demo-recent-commands"
       @command="onCommand"
     />
-  </div>
+    </div>
+  </et-provider>
 </template>
 
 <script setup>
@@ -131,7 +133,7 @@
  * EtCommandPalette（⌘K）与 EtContextMenu（右键）。enabled/active 由
  * ctx（选区/焦点）推演——工具区、右键、命令面板三处状态同源。
  */
-import { computed, h, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, h, onBeforeUnmount, onMounted, ref } from 'vue'
 import { isImeComposing } from '@wil-works/evoke-business-ui'
 import { EbSegmented, EbSwitch, registerIcons, useDarkMode } from '@wil-works/evoke-business-ui'
 import { comboMatchesEvent } from '@wil-works/evoke-tools-ui/runtime'
@@ -157,10 +159,8 @@ registerIcons(fluentIcons)
 
 const { isDark } = useDarkMode()
 
-// 密度开关直接写 <html data-density>（与 EtProvider 同一机制）
+// 密度开关交给 EtProvider（A-19 修复后：prop 变 → <html data-density> 即时跟随）
 const density = ref('default')
-watch(density, (v) => document.documentElement.setAttribute('data-density', v))
-onMounted(() => document.documentElement.setAttribute('data-density', density.value))
 
 const densityOptions = [
   { label: '紧凑', value: 'compact' },

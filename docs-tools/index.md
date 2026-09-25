@@ -11,7 +11,7 @@ hero:
       link: /guide/design
 ---
 
-<p class="td-hero__badge">v0.2.0 · 内测版</p>
+<p class="td-hero__badge">v0.2.1 · 内测版</p>
 
 # 这是什么
 

@@ -1,6 +1,6 @@
 {
   "name": "@wil-works/evoke-tools-ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Evoke Tools UI — 纯 JS Vue3 产品级 GUI 框架（工具区 / 停靠 / 外壳件 + 运行时契约，命名空间 --et-*，底座 @wil-works/evoke-business-ui）",
   "type": "module",
   "main": "./dist/index.mjs",

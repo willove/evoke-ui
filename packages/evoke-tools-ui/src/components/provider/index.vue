@@ -18,7 +18,7 @@
  * 密度必须对整个文档生效；只包一层 div 的话画布侧的 --ot-* 取值拿不到档位。
  * 嵌套 EtProvider 以最后挂载者为准（一个产品一个密度，与计划一致）。
  */
-import { computed, provide, onMounted, onBeforeUnmount } from 'vue'
+import { computed, provide, watch, onMounted, onBeforeUnmount } from 'vue'
 import EbConfigProvider from '@wil-works/evoke-business-ui/config-provider'
 import { ET_DENSITY_KEY, ET_DENSITIES } from '../../composables/useDensity'
 
@@ -46,9 +46,24 @@ onMounted(() => {
   root.setAttribute('data-density', props.density)
 })
 
+/**
+ * 运行时切档（A-19 回路）：density 是 prop，消费者改它必须即时换档——
+ * 设置页里拖一下"界面密度"不该要刷新页面。令牌层按 [data-density] 选择器
+ * 整组切换，这里只负责把新档位同步到根属性。
+ */
+watch(
+  () => props.density,
+  (value) => {
+    if (!owned || typeof document === 'undefined') return
+    document.documentElement.setAttribute('data-density', value)
+  },
+)
+
 onBeforeUnmount(() => {
   if (!owned || typeof document === 'undefined') return
   const root = document.documentElement
+  // 还原的是挂载时的外部值——运行时切档不改写这个"前任"，否则卸载后
+  // 留下的是最后一次 prop 而不是环境原本的状态
   if (previous === null) root.removeAttribute('data-density')
   else root.setAttribute('data-density', previous)
 })

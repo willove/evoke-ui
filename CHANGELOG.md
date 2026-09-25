@@ -2,6 +2,18 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 0.2.1] — 2026-09-25
+
+### @wil-works/evoke-tools-ui — EtProvider 运行时切档修复（0.2.1）
+
+- **A-19 回路**：`EtProvider` 此前只在 `onMounted` 写一次 `<html data-density>`，运行时可改的
+  `density` prop（设置页里拖"界面密度"）不会生效，必须刷新页面。补 `watch` 后 prop 变即同步根属性，
+  令牌按 `[data-density]` 选择器整组切换（浏览器实测：大钮 56 → 48 → 64 无刷新）；
+- 卸载还原逻辑不变，且仍还原**挂载时**的外部值（运行时切档不改写"前任"）；
+- 回归测试：`test/provider.test.js` 补 3 例（运行时切档即时生效 / 切档后卸载还原外部值 /
+  `useDensity` 随 provider prop 联动）；演示工程的密度开关改走 `EtProvider` 本身
+  （此前手写 html 属性，绕过了被修的路径）。
+
 ## [tools-ui 0.2.0] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — M1：工具区框架（0.2.0）
