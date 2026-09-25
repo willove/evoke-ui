@@ -41,13 +41,10 @@ import EtContextMenu from './components/context-menu/index.vue'
 import EtShortcutPanel from './components/shortcut-panel/index.vue'
 import EtShortcutHint from './components/shortcut-hint/index.vue'
 // ─── L3 工作台（M2） ───
-import EtDock from './components/dock/index.vue'
-import EtPanel from './components/panel/index.vue'
-import EtPanelGroup from './components/panel/group.vue'
-import EtScrollArea from './components/scroll-area/index.vue'
-import EtEmptyState from './components/empty-state/index.vue'
-import EtWorkbench from './components/workbench/index.vue'
-import EtDocumentTabs from './components/document-tabs/index.vue'
+// 组件尚未落地：dock / panel / panel-group / scroll-area / empty-state / workbench /
+// document-tabs 的源文件还没入库（plans/tools-ui M2 是「先契约后组件」），
+// 注册进来会让 vite 入口解析与 exports 契约（19 件）当场失败。等组件入库时
+// 在这里连同 components 表与 install 函数一起补回。
 
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
@@ -152,14 +149,7 @@ const components = {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
-  // L3 工作台（M2）
-  EtDock,
-  EtPanel,
-  EtPanelGroup,
-  EtScrollArea,
-  EtEmptyState,
-  EtWorkbench,
-  EtDocumentTabs,
+  // L3 工作台（M2）的 7 件组件未落地，见文件顶部说明
   // 图标机制
   EtIcon,
 }
@@ -196,14 +186,7 @@ export {
   EtContextMenu,
   EtShortcutPanel,
   EtShortcutHint,
-  // L3 工作台（M2）
-  EtDock,
-  EtPanel,
-  EtPanelGroup,
-  EtScrollArea,
-  EtEmptyState,
-  EtWorkbench,
-  EtDocumentTabs,
+  // L3 工作台（M2）的 7 件组件未落地，见文件顶部说明
   // 图标机制
   EtIcon,
   registerDomainIcons,
