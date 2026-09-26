@@ -45,6 +45,7 @@
   position: absolute;
   bottom: calc(100% + 6px);
   left: 0;
+  transform-origin: bottom left;
   border: 0;
   box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset, var(--eb-shadow-3);
   z-index: calc(var(--eb-z-index-popper, 2000) + 1);
@@ -95,8 +96,14 @@
 
 .eb-ai-prompt-box-menu-enter-from,
 .eb-ai-prompt-box-menu-leave-to {
+  /*
+   * 菜单向上开、左对齐 pill，所以进出场锚点在**左下角**：
+   * 从下方 6px 处淡入上滑。此前继承了"居中 + 向下弹"那套
+   * `translateX(-50%) translateY(-4px)`，会让菜单从左边半个宽度处平移过来（观感突兀）。
+   */
   opacity: 0;
-  transform: translateX(-50%) translateY(-4px);
+  transform: translateY(6px) scale(0.98);
+  transform-origin: bottom left;
 }
 
 /* ─── 输入台 ─── */
