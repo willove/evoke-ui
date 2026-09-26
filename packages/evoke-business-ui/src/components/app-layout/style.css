@@ -2,7 +2,12 @@
 
 .eb-layout {
   display: flex;
-  height: 100vh;
+  /*
+   * 默认整屏（100vh）。宿主页面自带顶栏/底栏时，整屏会把页面顶出多余滚动条
+   * （实测：45px 顶栏 → 页面多出 45px 滚动条）——在祖先上覆盖这个令牌即可
+   * 让它填满父容器：`--eb-app-layout-height: 100%`。
+   */
+  height: var(--eb-app-layout-height, 100vh);
   overflow: hidden;
   background: var(--eb-bg-color-page);
 }

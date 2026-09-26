@@ -21,10 +21,14 @@ const { isDark, toggleDark } = useDarkMode()
 
 <style scoped>
 .example-app {
-  min-height: 100vh;
+  /* 顶栏 + 舞台用 flex 分配，不再写 calc(100vh - 45px) 这类魔法数 */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background: var(--eb-bg-color-page, #f5f6f8);
 }
 .example-app__bar {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -37,6 +41,9 @@ const { isDark, toggleDark } = useDarkMode()
   color: var(--eb-text-color-secondary);
 }
 .example-app__stage {
-  height: calc(100vh - 45px);
+  flex: 1;
+  min-height: 0;
+  /* 让应用壳填满舞台，而不是自己按 100vh 定高（否则整屏高度会多出顶栏那一段） */
+  --eb-app-layout-height: 100%;
 }
 </style>
