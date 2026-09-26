@@ -1,0 +1,15 @@
+{
+  "name": "dev-wil-works-ui-design",
+  "plugins": [
+    {
+      "name": "ui-design-craft",
+      "source": "./ui-design-craft",
+      "version": "0.1.0",
+      "description": "UI/文案设计规范与视觉自验证闭环：防公式化模板脸与功能堆砌，截图自查。",
+      "displayName": "UI Design Craft",
+      "displayName_i18n": { "zh-CN": "UI 设计手艺规范" },
+      "description_i18n": { "zh-CN": "AI 产 UI 两大病（模板脸、功能堆砌）的作业规程：定调三问、渐进披露、卖点提炼、说明五档下沉、截图自验证闭环。含 frontend-ui-ux 与 minimal-copy-disclosure 两套技能。" },
+      "category": "productivity"
+    }
+  ]
+}

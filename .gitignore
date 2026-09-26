@@ -26,3 +26,9 @@ coverage/
 # 内部开发文档（路线图 / 迁移计划等，不随仓库发布）
 .dev-docs/
 .zcode/
+
+.agents/
+plans/
+
+# pnpm 本地 store（自建 store-dir 时不要入库）
+.pnpm-store/

@@ -1,0 +1,7 @@
+{
+  "name": "ui-design-craft",
+  "version": "0.1.0",
+  "description": "UI/文案设计规范与视觉自验证闭环：定调三问防公式化模板脸、渐进披露防功能堆砌、卖点提炼与说明五档下沉、浏览器截图自查清单。",
+  "author": { "name": "willove" },
+  "skills": "./skills"
+}
