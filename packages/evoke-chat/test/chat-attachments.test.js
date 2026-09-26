@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import ChatSender from '../src/components/chatbot/ChatSender.vue'
@@ -16,6 +16,22 @@ import EbIcon from '../../evoke-business-ui/src/components/icon/index.vue'
 
 // size 要真的反映到 File.size 上，否则体积校验的用例是空跑
 const file = (name, type, size = 1024) => new File(['x'.repeat(size)], name, { type })
+
+/**
+ * 图片附件会走 FileReader 读预览。jsdom 29 + @exodus/bytes 在这条路径上对
+ * 「字符串 Blob」会抛 `TypeError: Expected an Uint8Array`，而且抛在异步回调里——
+ * 逃逸成 uncaught 后 vitest 会整轮 exit 1（CI 上 2897 例全过却红，就是这么来的）。
+ * 这里用桩替掉宿主实现的这条有问题的路径：确定性回一个最小 data URL，
+ * 顺带让「preview 异步回填」这个分支变成可断言的行为。
+ */
+class StubFileReader {
+  readAsDataURL(file) {
+    this.result = `data:${file?.type || 'application/octet-stream'};base64,AA==`
+    queueMicrotask(() => this.onload?.({ target: this }))
+  }
+}
+beforeEach(() => vi.stubGlobal('FileReader', StubFileReader))
+afterEach(() => vi.unstubAllGlobals())
 
 describe('accept 与体积校验', () => {
   it('.ext / mime/* / 精确 mime 三种写法都认', () => {
@@ -372,5 +388,25 @@ describe('附件图标按后缀匹配', () => {
   it('后缀优先于 MIME：MIME 缺失或写错也能认对', () => {
     expect(fileIconFor({ name: '报表.pdf', type: '' })).toBe('file-pdf')
     expect(fileIconFor({ name: '报表.pdf', type: 'application/octet-stream' })).toBe('file-pdf')
+  })
+})
+
+describe('图片附件预览', () => {
+  it('图片读成 data URL 回填 preview；非图片不读（也不产生额外开销）', async () => {
+    vi.useFakeTimers()
+    const w = mount(ChatSender, { props: { modelValue: '' } })
+    const input = w.find('.eb-chat-sender__file-input').element
+    const img = file('a.png', 'image/png', 64)
+    const doc = file('a.pdf', 'application/pdf', 64)
+    Object.defineProperty(input, 'files', { value: [img, doc] })
+    await w.find('.eb-chat-sender__file-input').trigger('change')
+    await nextTick()
+    vi.useRealTimers()
+    await new Promise((r) => setTimeout(r, 0))
+    const added = w.emitted('attachment-add') || []
+    const imageEntry = added.find(([f]) => f === img)
+    expect(imageEntry, '图片应已投递').toBeTruthy()
+    expect(imageEntry[1].preview, '图片附件应回填 preview').toMatch(/^data:image\/png;base64,/)
+    expect(added.find(([f]) => f === doc)?.[1].preview).toBeUndefined()
   })
 })

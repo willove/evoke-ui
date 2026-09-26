@@ -290,6 +290,12 @@ function addFiles(files) {
         const target = attachments.value.find((a) => a.id === attachment.id);
         if (target) target.preview = e2.target?.result;
       };
+      // 读失败（或环境不支持 FileReader）就当没有预览：附件本身照常可用，
+      // 也不把错误抛成 uncaught——jsdom/无头环境里这条路径并不总是可靠
+      reader.onerror = () => {
+        const target = attachments.value.find((a) => a.id === attachment.id);
+        if (target) target.preview = "";
+      };
       reader.readAsDataURL(file);
     }
   });
