@@ -39,6 +39,10 @@ case "$TARGET" in
     pnpm docs-charts:build
     deploy "Evoke Charts 文档站" "docs-charts/.vitepress/dist" "$DEPLOY_CHARTS_DIR"
     ;;
+  tools)
+    pnpm docs-tools:build
+    deploy "Evoke Tools UI 文档站" "docs-tools/.vitepress/dist" "$DEPLOY_TOOLS_DIR"
+    ;;
   all)
     pnpm docs:build
     deploy "Evoke Business UI 文档站" "docs/.vitepress/dist" "$DEPLOY_BUSINESS_DIR"
@@ -46,9 +50,11 @@ case "$TARGET" in
     deploy "Evoke UI 文档站" "docs-web/.vitepress/dist" "$DEPLOY_UI_DIR"
     pnpm docs-charts:build
     deploy "Evoke Charts 文档站" "docs-charts/.vitepress/dist" "$DEPLOY_CHARTS_DIR"
+    pnpm docs-tools:build
+    deploy "Evoke Tools UI 文档站" "docs-tools/.vitepress/dist" "$DEPLOY_TOOLS_DIR"
     ;;
   *)
-    echo "用法: $0 [all|business|ui|charts]"
+    echo "用法: $0 [all|business|ui|charts|tools]"
     exit 1
     ;;
 esac
