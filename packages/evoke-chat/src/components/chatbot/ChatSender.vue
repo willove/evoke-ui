@@ -334,15 +334,20 @@ watch(() => props.loading, () => {
 
 .eb-chat-sender {
   background: var(--eb-bg-color-overlay);
-  border: 1px solid var(--eb-border-color);
+  /* 与底座 EbInput / 工作台输入台同一套：1px 发丝环 + focus 不外发光 */
+  border: 1px solid transparent;
   border-radius: var(--eb-radius-xl);
-  transition: border-color var(--eb-duration-base) var(--eb-ease-out),
-              box-shadow var(--eb-duration-base) var(--eb-ease-out);
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  transition: box-shadow var(--eb-transition-duration-fast) var(--eb-ease-out),
+              background-color var(--eb-duration-fast) var(--eb-ease-out);
+}
+
+.eb-chat-sender:hover {
+  box-shadow: 0 0 0 1px var(--eb-border-color-hover) inset;
 }
 
 .eb-chat-sender:focus-within {
-  border-color: var(--eb-color-primary);
-  box-shadow: 0 0 0 3px var(--eb-color-primary-light-8);
+  box-shadow: 0 0 0 1px var(--eb-input-focus-border-color, var(--eb-color-primary)) inset;
 }
 
 /* 拖拽投放态：整块给一圈虚线，比只改边框色更能说明「可以丢这里」 */
@@ -353,6 +358,7 @@ watch(() => props.loading, () => {
 .eb-chat-sender.is-dragover {
   border-style: dashed;
   border-color: var(--eb-color-primary);
+  box-shadow: none;
   background: var(--eb-color-primary-light-9);
 }
 

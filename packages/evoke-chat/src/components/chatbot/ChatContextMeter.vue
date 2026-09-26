@@ -107,9 +107,10 @@ function format(value) {
   align-items: center;
   gap: 6px;
   padding: 2px 8px 2px 4px;
-  border: 1px solid var(--eb-border-color-lighter);
+  border: 0;
   border-radius: 999px;
   background: var(--eb-fill-color-blank);
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
   color: var(--eb-text-color-secondary);
   font-family: inherit;
   font-size: var(--eb-font-size-xs);
@@ -118,7 +119,7 @@ function format(value) {
 }
 
 .eb-chat-context:hover {
-  border-color: var(--eb-color-primary-light-5);
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
   color: var(--eb-color-primary);
 }
 

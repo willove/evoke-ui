@@ -23,14 +23,16 @@
   font-weight: var(--eb-font-weight-medium);
   color: var(--eb-text-color-primary);
   background: var(--eb-bg-color);
-  border: 1px solid var(--eb-border-color-light);
+  /* 与底座输入框同语言：真边框置 0，1px 环写进 box-shadow（hover 只加深一档） */
+  border: 0;
   border-radius: var(--eb-radius-full);
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
   cursor: pointer;
-  transition: border-color var(--eb-duration-fast) var(--eb-ease-out);
+  transition: box-shadow var(--eb-transition-duration-fast) var(--eb-ease-out);
 }
 
 .eb-ai-prompt-box__model-pill:hover:not(:disabled) {
-  border-color: var(--eb-border-color);
+  box-shadow: 0 0 0 1px var(--eb-border-color-hover) inset;
 }
 
 .eb-ai-prompt-box__model-pill:disabled {
@@ -102,21 +104,27 @@
   flex-direction: column;
   padding: var(--eb-space-3) var(--eb-space-4);
   background: var(--eb-bg-color);
-  border: 1px solid var(--eb-border-color-light);
+  /*
+   * 与底座 EbInput 对齐：无真边框，1px 发丝环走 box-shadow（不占布局、动效只动 box-shadow、
+   * focus 不外发光）。border 留 transparent 占位，拖拽投放态要切成虚线。
+   */
+  border: 1px solid transparent;
   border-radius: var(--eb-radius-xl);
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
   transition:
-    border-color var(--eb-duration-fast) var(--eb-ease-out),
-    box-shadow var(--eb-duration-base) var(--eb-ease-out);
+    box-shadow var(--eb-transition-duration-fast) var(--eb-ease-out),
+    background-color var(--eb-duration-fast) var(--eb-ease-out);
   cursor: text;
 }
 
-.eb-ai-prompt-box__board:hover:not(.is-disabled) {
-  border-color: var(--eb-border-color);
+/* 排除 .is-focus：鼠标点进输入台时 hover 与 focus 同时命中，若不排除，
+ * hover 的颜色会盖掉聚焦环（实测踩到：聚焦时显示的是 hover 灰） */
+.eb-ai-prompt-box__board:hover:not(.is-focus):not(.is-disabled) {
+  box-shadow: 0 0 0 1px var(--eb-border-color-hover) inset;
 }
 
 .eb-ai-prompt-box__board.is-focus {
-  border-color: var(--eb-color-primary);
-  box-shadow: 0 0 0 3px var(--eb-color-primary-light-9);
+  box-shadow: 0 0 0 1px var(--eb-input-focus-border-color, var(--eb-color-primary)) inset;
 }
 
 .eb-ai-prompt-box__board.is-disabled {
@@ -136,6 +144,7 @@
 .eb-ai-prompt-box__board.is-dragover {
   border-style: dashed;
   border-color: var(--eb-color-primary);
+  box-shadow: none;
   background: var(--eb-color-primary-light-9);
 }
 

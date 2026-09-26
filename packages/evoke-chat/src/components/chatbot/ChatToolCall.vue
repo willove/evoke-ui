@@ -171,10 +171,16 @@ function toggle() {
 
 .eb-chat-tool-call {
   margin-top: var(--eb-space-2);
-  border: 1px solid var(--eb-border-color-lighter);
+  /* 卡片类容器：真边框置 0，最浅一档发丝环写进 box-shadow（不占布局、不叠用边框） */
+  border: 0;
   border-radius: var(--eb-radius-md);
   background: var(--eb-fill-color-lighter);
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
   overflow: hidden;
+}
+
+.eb-chat-tool-call:hover {
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
 }
 
 .eb-chat-tool-call__header {
@@ -341,7 +347,8 @@ function toggle() {
   padding: var(--eb-space-2);
   border-radius: var(--eb-radius-sm);
   background: var(--eb-bg-color-overlay);
-  border: 1px solid var(--eb-border-color-lighter);
+  border: 0;
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
   color: var(--eb-text-color-regular);
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: var(--eb-font-size-xs);
@@ -384,9 +391,10 @@ function toggle() {
   align-items: center;
   gap: var(--eb-space-1);
   padding: 2px var(--eb-space-3);
-  border: 1px solid var(--eb-border-color-light);
+  border: 0;
   border-radius: var(--eb-radius-sm);
   background: transparent;
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
   color: var(--eb-text-color-regular);
   font-size: var(--eb-font-size-sm);
   font-family: inherit;

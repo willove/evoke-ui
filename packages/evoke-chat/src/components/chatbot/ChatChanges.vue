@@ -87,9 +87,10 @@ function toggle() {
 
 <style scoped>
 .eb-chat-changes {
-  border: 1px solid var(--eb-border-color-lighter);
+  border: 0;
   border-radius: var(--eb-radius-md);
   background: var(--eb-fill-color-blank);
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
   overflow: hidden;
 }
 
@@ -123,6 +124,9 @@ function toggle() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* 标题是扫读锚点：字重 + 主色，比加边框更省视觉预算 */
+  color: var(--eb-text-color-primary);
+  font-weight: var(--eb-font-weight-medium);
 }
 
 .eb-chat-changes__chevron {
@@ -148,7 +152,7 @@ function toggle() {
   margin: 0;
   padding: 0 0 var(--eb-space-1);
   list-style: none;
-  border-top: 1px solid var(--eb-border-color-lighter);
+  border-top: 1px solid var(--eb-border-color-extra-light);
 }
 
 .eb-chat-changes__row {

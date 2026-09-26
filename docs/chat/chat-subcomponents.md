@@ -743,6 +743,20 @@ iframe + 截图双模式。**有一个绕不过去的硬限制**：目标站返�
 | `extraSandbox` | array | `[]` | 追加的 sandbox 白名单项（白名单外的忽略） |
 | `allow` | string | `''` | iframe `allow` 特性串（如 `clipboard-write`） |
 
+## 边框与强调的档位（对话家族）
+
+对话家族的容器**默认没有真边框**，一律用 `box-shadow: 0 0 0 1px <色> inset` 画**发丝环**（不占布局、hover 只动环、动效只动 `box-shadow`）。按容器性质分三档，与底座 `EbInput` 同一套语言：
+
+| 档 | resting | hover | focus / 激活 |
+| --- | --- | --- | --- |
+| 输入类（`EbAiPromptBox` / `EbChatSender`） | `--eb-border-color-lighter` | `--eb-border-color-hover` | `--eb-input-focus-border-color`（**1px，不外发光**），`transition: box-shadow var(--eb-transition-duration-fast)` |
+| 卡片类（`EbChatToolCall` / `EbChatChanges` / `EbChatContextMeter`） | `--eb-border-color-extra-light` | `--eb-border-color-lighter` | 展开/激活时才用 primary |
+| 状态类（`EbChatApproval` / `EbChatQuestion` / 拖拽投放态） | **保留真边框 + 状态色**（虚线投放态需要真边框） | — | — |
+
+注意：输入类的 hover 选择器要**排除 `.is-focus`**——鼠标点进输入台时 hover 与 focus 同时命中，不排除的话 hover 的灰色会盖掉聚焦环（实测踩过）。
+
+强调不靠边框：标题走**字重（`--eb-font-weight-medium`）+ 主色**，数值走 `tabular-nums` + 语义色（`--eb-color-success` / `--eb-color-danger`），图标只补信息位不加装饰。
+
 ## 输入类
 
 ### EbChatSender
