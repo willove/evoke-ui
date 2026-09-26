@@ -141,6 +141,8 @@
           <slot name="toolbar-extra" />
         </div>
         <div class="eb-ai-prompt-box__toolbar-right">
+          <!-- 工具栏右侧插槽：上下文占用、统计读数这类"贴着输入台内部"的信息 -->
+          <slot name="toolbar-meta" />
           <span v-if="showWordCount && maxLength" class="eb-ai-prompt-box__word-count">
             {{ inputText.length }}/{{ maxLength }}
           </span>

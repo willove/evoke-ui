@@ -142,5 +142,6 @@ function stopGenerate() {
 
 <ApiTable title="AiPromptBox Slots" :rows="[
   { name: 'toolbar-extra', desc: '工具行左侧追加内容', type: '—', default: '—' },
+  { name: 'toolbar-meta', desc: '工具行右侧追加内容（上下文占用、统计读数这类贴输入台的读数）', type: '—', default: '—' },
   { name: 'scenes-append', desc: '场景 chips 行末尾追加', type: '—', default: '—' },
 ]" />

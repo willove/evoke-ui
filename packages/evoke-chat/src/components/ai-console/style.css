@@ -143,19 +143,6 @@
 }
 
 /* 输入区与容器左右边框留出间距（此前与边框贴死），并始终贴底 */
-.eb-ai-console__context {
-  /*
-   * 悬浮件：绝对定位，**不占布局高度**（此前独占一行把输入台往下顶）。
-   * 骑在输入区上沿右侧，状态条存在时二者同一视觉带（状态条右侧留出它的位置）。
-   */
-  position: absolute;
-  top: -2px;
-  right: var(--eb-space-3);
-  z-index: 2;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .eb-ai-console__input {
   position: relative;
   display: flex;
@@ -165,10 +152,6 @@
   padding: 0 var(--eb-space-4) var(--eb-space-4);
 }
 
-/* 状态条右侧给悬浮环让位，避免叠字 */
-.eb-ai-console__input :deep(.eb-chat-status) {
-  padding-right: 72px;
-}
 
 .eb-ai-console__tip {
   font-size: var(--eb-font-size-xs);

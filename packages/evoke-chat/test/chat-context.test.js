@@ -105,7 +105,11 @@ describe('占用环接线', () => {
       props: { showTip: false, context: { used: 12800, capacity: 128000 } },
     })
     expect(console_.findComponent(ChatContextMeter).exists()).toBe(true)
-    expect(console_.find('.eb-ai-console__context').text()).toContain('10%')
+    // 占用环不再占输入区一行：它经 #toolbar-meta 渲染在输入台工具栏右侧
+    expect(console_.find('.eb-ai-console__context').exists()).toBe(false)
+    const toolbarRight = console_.find('.eb-ai-prompt-box__toolbar-right')
+    expect(toolbarRight.findComponent(ChatContextMeter).exists()).toBe(true)
+    expect(toolbarRight.text()).toContain('10%')
   })
 
   it('useChatSession：context/usage 遥测更新占用且不污染日志', () => {

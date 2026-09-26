@@ -88,9 +88,6 @@
     <div class="eb-ai-console__input">
       <!-- 贴着输入台的宿主内容（待发送队列、附件条…） -->
       <slot name="input-prepend" />
-      <div v-if="context" class="eb-ai-console__context">
-        <EbChatContextMeter v-bind="context" />
-      </div>
       <!-- 状态条：空态不渲染；审批/提问接管时它仍可见（说明当前卡在哪一步） -->
       <EbChatStatusBar
         v-if="status"
@@ -139,6 +136,10 @@
       >
         <template v-if="$slots['toolbar-extra']" #toolbar-extra>
           <slot name="toolbar-extra" />
+        </template>
+        <!-- 上下文占用放输入台内部（工具栏右侧），不再占输入区一行 -->
+        <template v-if="context" #toolbar-meta>
+          <EbChatContextMeter v-bind="context" />
         </template>
       </EbAiPromptBox>
       <div v-if="showTip" class="eb-ai-console__tip">

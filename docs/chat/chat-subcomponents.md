@@ -581,7 +581,7 @@ function applyMenuItem(index) {
 
 ### EbChatContextMeter
 
-输入区上方的占用环：`{ used, capacity, breakdown? }`，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。**两侧缺一就不显示**——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 **65% 转警告色、85% 转危险色**（竞品文档里最常见的口径），hover 直接给一行摘要「~已用 / 窗口 · 系统 · 工具 · 消息」，点击才开面板，动画在 `prefers-reduced-motion` 下关掉。`capacity` 与三段都是宿主的业务口径（模型窗口、提示词预算），组件只做占比与呈现。
+输入台工具栏右侧的占用环（`EbAiConsole` 经 `#toolbar-meta` 传进输入台，不再占输入区一行）：`{ used, capacity, breakdown? }`，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。**两侧缺一就不显示**——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 **65% 转警告色、85% 转危险色**（竞品文档里最常见的口径），hover 直接给一行摘要「~已用 / 窗口 · 系统 · 工具 · 消息」，点击才开面板，动画在 `prefers-reduced-motion` 下关掉。`capacity` 与三段都是宿主的业务口径（模型窗口、提示词预算），组件只做占比与呈现。
 
 <DemoBlock>
   <div style="display: flex; gap: 16px; align-items: center">

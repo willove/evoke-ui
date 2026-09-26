@@ -656,7 +656,7 @@ EbChatPlan · EbChatConfirmation · EbChatArtifact
 
 ### EbChatContextMeter
 
-输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 65% 转警告色、85% 转危险色（竞品文档里最常见的口径），ho
+输入台工具栏右侧的占用环（EbAiConsole 经 #toolbar-meta 传进输入台，不再占输入区一行）：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导
 
 - 入口：`@wil-works/evoke-chat/chat-context-meter`　源码：`src/components/chatbot/ChatContextMeter.vue`　文档：https://evoke-business-ui.wil-works.com/chat/chat-subcomponents
 
@@ -830,7 +830,7 @@ EbChatTestResults · EbChatStackTrace。两张都是纯数据渲染，无额外�
 
 ### EbChatQueue
 
-input-prepend | 输入区顶部（占用环、状态条之上） | 待发送队列（EbChatQueue）、附件条这类贴着输入台的内容 |
+input-prepend | 输入区顶部（状态条之上） | 待发送队列（EbChatQueue）、附件条这类贴着输入台的内容 |
 
 - 入口：`@wil-works/evoke-chat/chat-queue`　源码：`src/components/chatbot/ChatQueue.vue`　文档：https://evoke-business-ui.wil-works.com/chat/chat-subcomponents
 
@@ -910,7 +910,7 @@ iframe + 截图双模式。有一个绕不过去的硬限制：目标站返回 X
 EbAiPromptBox 侧同理走 #toolbar-extra。
 
 - 入口：`@wil-works/evoke-chat/ai-prompt-box`　源码：`src/components/ai-prompt-box/index.vue`　文档：https://evoke-business-ui.wil-works.com/chat/ai-prompt-box
-- 插槽：`toolbar-extra`、`scenes-append`
+- 插槽：`toolbar-extra`、`toolbar-meta`、`scenes-append`
 - 实例方法（ref 调用）：`focus`、`clear`
 
 | prop | 类型 | 默认 |
