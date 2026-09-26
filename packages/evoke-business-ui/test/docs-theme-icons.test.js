@@ -58,6 +58,47 @@ function usedNames() {
   return used
 }
 
+/**
+ * 文档页（.md）里用到的图标名 —— 主题之外的另一半用法。
+ * 此前只扫主题模板，于是首页特性卡的 grid / zap / shield（库内当时没有这三个名）
+ * 长期渲染成空白而无人发现。代码围栏里的示例不算真实用法，先剔除。
+ */
+function mdUsedNames() {
+  const used = new Map()
+  const files = []
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (['dist', 'node_modules', 'cache', 'public'].includes(e.name)) continue
+      const p = join(dir, e.name)
+      if (e.isDirectory()) walk(p)
+      else if (e.name.endsWith('.md')) files.push(p)
+    }
+  }
+  walk(join(repoRoot, 'docs'))
+  for (const f of files) {
+    const body = readFileSync(f, 'utf8').replace(/```[\s\S]*?```/g, '')
+    for (const m of body.matchAll(/<(?:BdIcon|EbIcon)\b[^>]*(?<!:)name="([a-z0-9-]+)"/g)) {
+      if (!used.has(m[1])) used.set(m[1], f.replace(`${repoRoot}/`, ''))
+    }
+  }
+  return used
+}
+
+/** 文档里写死的图标计数 —— 生成器一跑就会漂，只有断言钉得住 */
+function docCounts() {
+  const pick = (file, re) => {
+    const m = readFileSync(join(repoRoot, file), 'utf8').match(re)
+    expect(m, `${file} 里应能找到计数（正则 ${re}）`).toBeTruthy()
+    return Number(m[1])
+  }
+  return {
+    '首页 hero 统计': pick('docs/index.md', /<strong>(\d+)<\/strong><span>内置图标/),
+    '图标总览页': pick('docs/components/icon-gallery.md', /全部内置图标（\*\*(\d+) 个\*\*/),
+    '图标页 · 正文': pick('docs/components/icon.md', /共 \*\*(\d+) 个单色图标\*\*/),
+    '图标页 · 链接': pick('docs/components/icon.md', /全部内置图标（(\d+) 个）/),
+  }
+}
+
 describe('文档站图标：全部来自库内 Remix 集', () => {
   const lib = libraryNames()
   const map = siteMap()
@@ -84,6 +125,21 @@ describe('文档站图标：全部来自库内 Remix 集', () => {
   it('转发表的目标名都真实存在', () => {
     const bad = Object.entries(map).filter(([, target]) => !lib.has(target))
     expect(bad.map(([k, v]) => `${k} → ${v}`), '转发表指向了不存在的图标').toEqual([])
+  })
+
+  it('文档页（.md）用到的每个名转发后都能解析', () => {
+    const used = mdUsedNames()
+    expect(used.size).toBeGreaterThan(8)
+    const broken = [...used]
+      .filter(([n]) => !lib.has(map[n] || n))
+      .map(([n, f]) => `${n} → ${map[n] || n}（${f}）`)
+    expect(broken, `以下图标名解析不到（会渲染成空白）: ${broken.join(', ')}`).toEqual([])
+  })
+
+  it('文档里写死的图标计数与生成集一致', () => {
+    for (const [where, n] of Object.entries(docCounts())) {
+      expect(n, `${where} 的计数落后于生成集（应为 ${lib.size}）`).toBe(lib.size)
+    }
   })
 
   it('docs/ 下不存在旧的手写图标文件残留', () => {

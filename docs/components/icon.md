@@ -12,7 +12,7 @@ const LogoMark = () =>
 registerIcons({ 'logo-mark': LogoMark })
 </script>
 
-语义图标组件。图标体系基于 [Remix Icon](https://remixicon.com/)（Remix Icon License v1.0，可免费商用）静态内置，共 **438 个单色图标**，键名为 kebab-case 语义命名，运行时零依赖。覆盖方向/状态/操作/数据展示、商务与财务（支付、购物、图表）、Logo 品牌（微信/支付宝/钉钉/GitHub 等）、开发、设备、媒体、地图出行等常用类目。
+语义图标组件。图标体系基于 [Remix Icon](https://remixicon.com/)（Remix Icon License v1.0，可免费商用）静态内置，共 **441 个单色图标**，键名为 kebab-case 语义命名，运行时零依赖。覆盖方向/状态/操作/数据展示、商务与财务（支付、购物、图表）、Logo 品牌（微信/支付宝/钉钉/GitHub 等）、开发、设备、媒体、地图出行等常用类目。
 
 解析优先级：**custom（运行时注册）→ 内置 SVG（Remix 单色，含文件类型别名）→ 完整图标库**。SVG 填充使用 currentColor，颜色自动跟随上下文文字色，可用 `color` 覆盖；`size` 控制大小，渲染在行内 `i` 元素上。
 

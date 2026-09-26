@@ -1757,5 +1757,17 @@ export const REMIX_ICON_META = {
  "emotion": {
   "category": "User & Faces",
   "remix": "emotion-line"
+ },
+ "grid": {
+  "category": "Design",
+  "remix": "grid-line"
+ },
+ "zap": {
+  "category": "Weather",
+  "remix": "flashlight-line"
+ },
+ "shield": {
+  "category": "System",
+  "remix": "shield-line"
  }
 }

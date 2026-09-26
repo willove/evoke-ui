@@ -23,7 +23,7 @@ layout: home
     <div class="bd-hero__stat"><strong>145+</strong><span>通用与业务组件</span></div>
     <div class="bd-hero__stat"><strong>29</strong><span>图表类型（Canvas 自绘）</span></div>
     <div class="bd-hero__stat"><strong>9 套</strong><span>场景示例工程</span></div>
-    <div class="bd-hero__stat"><strong>438</strong><span>内置图标（可按需扩展）</span></div>
+    <div class="bd-hero__stat"><strong>441</strong><span>内置图标（可按需扩展）</span></div>
   </div>
 </div>
 

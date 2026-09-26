@@ -49,6 +49,32 @@ function usedNames() {
   return used
 }
 
+/**
+ * 文档页（.md）里用到的图标名 —— 主题之外的另一半用法。
+ * 此前只扫主题模板，首页特性卡的 zap / layers / shield（核心集当时没有这三个名）
+ * 长期渲染成空白而无人发现。代码围栏里的示例不算真实用法，先剔除。
+ */
+function mdUsedNames() {
+  const used = new Map()
+  const files = []
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (['dist', 'node_modules', 'cache', 'public'].includes(e.name)) continue
+      const p = join(dir, e.name)
+      if (e.isDirectory()) walk(p)
+      else if (e.name.endsWith('.md')) files.push(p)
+    }
+  }
+  walk(join(repoRoot, 'docs-charts'))
+  for (const f of files) {
+    const body = readFileSync(f, 'utf8').replace(/```[\s\S]*?```/g, '')
+    for (const m of body.matchAll(/<(?:CdIcon|EvIcon|Icon)\b[^>]*(?<!:)name="([a-z0-9-]+)"/g)) {
+      if (!used.has(m[1])) used.set(m[1], f.replace(`${repoRoot}/`, ''))
+    }
+  }
+  return used
+}
+
 describe('图表文档站图标：全部来自库内 Remix 集', () => {
   const lib = libraryNames()
   const map = siteMap()
@@ -75,5 +101,14 @@ describe('图表文档站图标：全部来自库内 Remix 集', () => {
   it('转发表的目标名都真实存在', () => {
     const bad = Object.entries(map).filter(([, target]) => !lib.has(target))
     expect(bad.map(([k, v]) => `${k} → ${v}`), '转发表指向了不存在的图标').toEqual([])
+  })
+
+  it('文档页（.md）用到的每个名转发后都能解析', () => {
+    const used = mdUsedNames()
+    expect(used.size).toBeGreaterThan(4)
+    const broken = [...used]
+      .filter(([n]) => !lib.has(map[n] || n))
+      .map(([n, f]) => `${n} → ${map[n] || n}（${f}）`)
+    expect(broken, `以下图标名解析不到（会渲染成空白）: ${broken.join(', ')}`).toEqual([])
   })
 })

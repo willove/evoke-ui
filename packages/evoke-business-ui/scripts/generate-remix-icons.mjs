@@ -495,6 +495,10 @@ const MAPPING = {
   'user-follow': ['User & Faces', 'user-follow-line'],
   'user-search': ['User & Faces', 'user-search-line'],
   emotion: ['User & Faces', 'emotion-line'],
+  // ─── 文档站首页特性卡与移动端页在用（2026-09-22 补：此前名不存在，卡片图标渲染空白）───
+  grid: ['Design', 'grid-line'],
+  zap: ['Weather', 'flashlight-line'],
+  shield: ['System', 'shield-line'],
 }
 
 function parseSvg(xml) {

@@ -102,6 +102,10 @@ const MAPPING = {
   book: ['Document', 'book-2-line'],
   refund: ['Finance', 'refund-line'],
   history: ['System', 'history-line'],
+  // ─── 文档站首页特性卡在用（2026-09-22 补：此前名不存在，卡片图标渲染空白）───
+  zap: ['Weather', 'flashlight-line'],
+  layers: ['Business', 'stack-line'],
+  shield: ['System', 'shield-line'],
 }
 
 /** 分类中文名（文档与图标网格分组标题用） */
