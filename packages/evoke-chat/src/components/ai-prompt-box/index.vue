@@ -1,39 +1,5 @@
 <template>
   <div class="eb-ai-prompt-box">
-    <!-- 模型选择 pill（输入台上方居中） -->
-    <div v-if="models.length" ref="modelBarRef" class="eb-ai-prompt-box__model-bar">
-      <button
-        type="button"
-        class="eb-ai-prompt-box__model-pill"
-        aria-haspopup="menu"
-        :aria-expanded="modelMenuOpen"
-        :disabled="disabled"
-        @click="modelMenuOpen = !modelMenuOpen"
-      >
-        <eb-icon :name="currentModel?.icon || 'magic'" :size="14" />
-        <span class="eb-ai-prompt-box__model-label">{{ currentModel?.label || model || modelFallbackLabel }}</span>
-        <eb-icon name="swap" :size="12" />
-      </button>
-      <Transition name="eb-ai-prompt-box-menu">
-        <ul v-if="modelMenuOpen" class="eb-ai-prompt-box__model-menu" role="menu" :aria-label="modelMenuLabel">
-          <li v-for="m in models" :key="m.key" role="none">
-            <button
-              type="button"
-              class="eb-ai-prompt-box__model-item"
-              :class="{ 'is-active': m.key === model }"
-              role="menuitemradio"
-              :aria-checked="m.key === model"
-              @click="pickModel(m)"
-            >
-              <eb-icon v-if="m.icon" :name="m.icon" :size="14" />
-              <span>{{ m.label }}</span>
-              <eb-icon v-if="m.key === model" name="check" :size="14" />
-            </button>
-          </li>
-        </ul>
-      </Transition>
-    </div>
-
     <!-- 输入台 -->
     <div
       class="eb-ai-prompt-box__board"
@@ -97,6 +63,39 @@
       <!-- 底部工具行 -->
       <div class="eb-ai-prompt-box__toolbar">
         <div class="eb-ai-prompt-box__toolbar-left">
+            <!-- 模型选择：贴着输入台左下角，与能力开关同一行 -->
+      <div v-if="models.length" ref="modelBarRef" class="eb-ai-prompt-box__model-bar">
+        <button
+          type="button"
+          class="eb-ai-prompt-box__model-pill"
+          aria-haspopup="menu"
+          :aria-expanded="modelMenuOpen"
+          :disabled="disabled"
+          @click="modelMenuOpen = !modelMenuOpen"
+        >
+          <eb-icon :name="currentModel?.icon || 'magic'" :size="14" />
+          <span class="eb-ai-prompt-box__model-label">{{ currentModel?.label || model || modelFallbackLabel }}</span>
+          <eb-icon name="swap" :size="12" />
+        </button>
+        <Transition name="eb-ai-prompt-box-menu">
+          <ul v-if="modelMenuOpen" class="eb-ai-prompt-box__model-menu" role="menu" :aria-label="modelMenuLabel">
+            <li v-for="m in models" :key="m.key" role="none">
+              <button
+                type="button"
+                class="eb-ai-prompt-box__model-item"
+                :class="{ 'is-active': m.key === model }"
+                role="menuitemradio"
+                :aria-checked="m.key === model"
+                @click="pickModel(m)"
+              >
+                <eb-icon v-if="m.icon" :name="m.icon" :size="14" />
+                <span>{{ m.label }}</span>
+                <eb-icon v-if="m.key === model" name="check" :size="14" />
+              </button>
+            </li>
+          </ul>
+        </Transition>
+      </div>
           <template v-if="allowAttachments">
             <button
               type="button"

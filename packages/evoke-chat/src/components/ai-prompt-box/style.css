@@ -41,10 +41,12 @@
 }
 
 .eb-ai-prompt-box__model-menu {
+  /* pill 已在输入台工具栏（底部）→ 菜单向上开、左对齐 pill，不再居中下弹 */
   position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: calc(100% + 6px);
+  left: 0;
+  border: 0;
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset, var(--eb-shadow-3);
   z-index: calc(var(--eb-z-index-popper, 2000) + 1);
   min-width: 180px;
   margin: 0;
