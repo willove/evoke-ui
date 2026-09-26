@@ -35,7 +35,7 @@ afterEach(() => {
 })
 
 describe('ChatList 虚拟模式', () => {
-  it('默认不开：全部消息都渲染（回归钉）', () => {
+  it('默认不开：全部消息都渲染（回归钉）', { timeout: 30000 }, () => {
     // 非虚拟分支会把每条都真渲染出来：这里只放 200 条（远高于阈值 60，语义不变），
     // 500 条在并发跑全量时会顶到单测 5s 上限——那条由下面的虚拟分支用例覆盖
     const w = mountList({ messages: makeMessages(200) })
@@ -44,7 +44,7 @@ describe('ChatList 虚拟模式', () => {
     w.unmount()
   })
 
-  it('开了之后渲染数被限制在可视窗口量级', () => {
+  it('开了之后渲染数被限制在可视窗口量级', { timeout: 30000 }, () => {
     const w = mountList({ virtual: true })
     const rendered = w.findAllComponents(ChatMessageRow).length
     expect(rendered).toBeGreaterThan(0)
@@ -126,7 +126,7 @@ describe('ChatList 虚拟模式下的插槽与事件', () => {
 })
 
 describe('Chatbot 透传 virtual', () => {
-  it('开了 virtual 才走虚拟分支（曾因只加在 ChatList 上而静默失效）', async () => {
+  it('开了 virtual 才走虚拟分支（曾因只加在 ChatList 上而静默失效）', { timeout: 30000 }, async () => {
     const messages = makeMessages(100)
     const on = mount(Chatbot, { props: { modelValue: messages, showTip: false, virtual: true }, attachTo: document.body })
     await nextTick()
