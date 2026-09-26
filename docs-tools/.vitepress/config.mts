@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { resolve } from 'node:path'
 import llmstxt from 'vitepress-plugin-llms'
 import { demoSourcePlugin } from './demo-source.mjs'
+import toolsPkg from '../../packages/evoke-tools-ui/package.json'
 import { getComponentEntries } from '../../packages/evoke-business-ui/scripts/component-entries.mjs'
 import { getEtComponentEntries } from '../../packages/evoke-tools-ui/scripts/component-entries.mjs'
 
@@ -59,6 +60,9 @@ export default defineConfig({
     },
   },
   themeConfig: {
+    // 顶栏版本展示点：构建期从包读取（不硬编码——G8 版本守卫扫的是本文件里的
+    // 字面版本串，程序化读入不会造成假阳性，也不会与 npm 包版本漂移）
+    toolsVersion: toolsPkg.version,
     sidebar: [
       {
         text: '指南',

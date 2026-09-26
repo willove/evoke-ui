@@ -1,4 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
+import TdLayout from './TdLayout.vue'
 import DemoBlock from './DemoBlock.vue'
 import DocExample from './DocExample.vue'
 import ApiTable from './ApiTable.vue'
@@ -21,6 +22,9 @@ import './style.css'
  */
 export default {
   ...DefaultTheme,
+  // 家族一致性：tools 站用与 business / charts 同构的自写外壳
+  // （devwarn + logo/版本顶栏 + 图标导航 + 站内搜索 + 定制侧栏）
+  Layout: TdLayout,
   enhanceApp({ app }) {
     app.use(EvokeToolsUI)
     // 演示里会直接用底座件（eb-button / eb-segmented…）——与消费方同路径全注册
