@@ -49,6 +49,14 @@ import EtScrollArea from './components/scroll-area/index.vue'
 import EtEmptyState from './components/empty-state/index.vue'
 import EtWorkbench from './components/workbench/index.vue'
 import EtDocumentTabs from './components/document-tabs/index.vue'
+// ─── L4 外壳件（M3） ───
+import EtTitleBar from './components/title-bar/index.vue'
+import EtStatusBar from './components/status-bar/index.vue'
+import EtBackstage from './components/backstage/index.vue'
+import EtThemeBridge from './components/theme-bridge/index.vue'
+import EtDialog from './components/dialog/index.vue'
+import EtToast from './components/toast/index.vue'
+import EtBanner from './components/banner/index.vue'
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
 import {
@@ -126,6 +134,18 @@ import {
   removeDock,
   resetLayout,
   layoutEquals,
+  CANVAS_PALETTE,
+  resolveCanvasPalette,
+  applyCanvasPalette,
+  observeThemeChanges,
+  FOCUSABLE_SELECTOR,
+  getFocusableElements,
+  nextFocusableInTrap,
+  resolveFocusReturnTarget,
+  HOSTS,
+  windowControlPlacement,
+  detectPlatform,
+  WINDOW_CONTROLS,
 } from './runtime/index.js'
 
 // ─── Composables ───
@@ -161,6 +181,14 @@ const components = {
   EtEmptyState,
   EtWorkbench,
   EtDocumentTabs,
+  // L4 外壳件（M3）
+  EtTitleBar,
+  EtStatusBar,
+  EtBackstage,
+  EtThemeBridge,
+  EtDialog,
+  EtToast,
+  EtBanner,
   // 图标机制
   EtIcon,
 }
@@ -205,6 +233,14 @@ export {
   EtEmptyState,
   EtWorkbench,
   EtDocumentTabs,
+  // L4 外壳件（M3）
+  EtTitleBar,
+  EtStatusBar,
+  EtBackstage,
+  EtThemeBridge,
+  EtDialog,
+  EtToast,
+  EtBanner,
   // 图标机制
   EtIcon,
   registerDomainIcons,

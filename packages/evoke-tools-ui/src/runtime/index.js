@@ -76,3 +76,27 @@ export {
   resetLayout,
   layoutEquals,
 } from './layout/index.js'
+
+// ─── 主题 → 画布调色板桥接（M3） ───
+export {
+  CANVAS_PALETTE,
+  resolveCanvasPalette,
+  applyCanvasPalette,
+  observeThemeChanges,
+} from './theme/index.js'
+
+// ─── 焦点管理（M3：Dialog/Backstage/Palette 同一套） ───
+export {
+  FOCUSABLE_SELECTOR,
+  getFocusableElements,
+  nextFocusableInTrap,
+  resolveFocusReturnTarget,
+} from './focus/index.js'
+
+// ─── 宿主与平台探测（M3：标题栏窗口控制位双宿主适配） ───
+export {
+  HOSTS,
+  windowControlPlacement,
+  detectPlatform,
+  WINDOW_CONTROLS,
+} from './window/index.js'
