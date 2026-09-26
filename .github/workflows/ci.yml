@@ -87,8 +87,14 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Install Playwright chromium
         run: pnpm exec playwright install --with-deps chromium
-      - name: Build tools packages
-        run: pnpm build:ebui && pnpm build:tools
+      # 与 test 作业同链：示例的 alias 直连两库源码，business-ui 源码又引用
+      # charts/ui——少构建一个包就会在 example 构建期解析失败
+      - name: Build packages
+        run: |
+          pnpm build:eui
+          pnpm build:ebui
+          pnpm build:charts
+          pnpm build:tools
       - name: Build tools example
         run: pnpm build:tools-example
       - name: Visual regression (tools)
