@@ -18,7 +18,7 @@ const layout = ref(createLayoutTree({
 
 | 字段 | 说明 |
 | --- | --- |
-| `docks[].id` | kebab-case，与面板 id 共用一个命名空间，全局唯一 |
+| `docks[].id` | kebab-case 或点号式（与命令 id 同命名域），与面板 id 共用一个命名空间，全局唯一 |
 | `docks[].side` | `left` / `right` / `bottom` |
 | `docks[].collapsed` | 整列收成把手条，点击 emit `dock-toggle` |
 | `docks[].presentation` | `stack`（默认，同屏并列）/ `tabs`（单渲染位 tab 化） |

@@ -17,7 +17,11 @@ export const DOCK_SIDES = ['left', 'right', 'bottom']
 /** 停靠区呈现：stack = 同屏多面板并列（默认，尺寸分摊）；tabs = 单渲染位 tab 化 */
 export const DOCK_PRESENTATIONS = ['stack', 'tabs']
 
-const ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
+/**
+ * 布局 id 命名空间：与命令 id 同域（kebab 段与点号段可混排——产品用点号命令 id 时
+ * 面板/dock id 自然同构；正则是防垃圾 id，不是定命名风格）。
+ */
+const ID_RE = /^[a-z][a-z0-9]*([.-][a-z0-9]+)*$/
 
 /** 深拷（布局树是纯数据；所有操作返回新树，输入不被改） */
 function clone(value) {

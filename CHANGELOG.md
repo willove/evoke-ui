@@ -62,6 +62,24 @@
   ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
   `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
 
+## [tools-ui 1.1.0] — 2026-09-26
+
+### @wil-works/evoke-tools-ui — 消费者审计两条回路 + 平台默认修复（1.1.0）
+
+- **命令 id 接受点号式**（消费方 04 §3 / Univer 契约）：`registry.js` 的 id 正则放宽为
+  kebab 段与点号段混排（`office.command.undo` / `sheets.view.zoom-in` 均合法，错误信息同步）；
+  **G3 命令面门 4 处收集正则同步放宽**——只改 registry 不改门，点号 id 的定义与引用都进不了核对集
+  （消费者审计定位到的"容易漏的点"）。适配层不再需要 `toUiId()` 这类 id 翻译；
+- **符号键令牌化**：`comboFromEvent` 补符号→令牌反查表（`+`/`-`/`,`/`.`/`/`/`\`/`[`/`]`），
+  `Shift+=` 按 US 布局物理事实解析为 `plus`——此前提取不出 `mod+plus`，消费者为此写了
+  `LAYOUT_COMBO_ALIASES` 适配层，现在可删；
+- **`comboMatchesEvent` 默认平台改为 `currentPlatform()`**：默认钉死 `'win'` 会让 mac 上
+  不传参的调用把 `mod` 映射到 ctrl，⌘Z 类匹配静默失效（默认值即陷阱，修复后按运行平台判定）；
+- **布局树 id 同域放宽**：面板/dock id 与命令 id 同一命名规则（kebab 段 + 点号段混排），
+  docs-tools 的 commands/workbench 两页契约行同步。
+
+消费者侧可删的适配：`toUiId()` / `adaptDottedRegistry()` / `LAYOUT_COMBO_ALIASES` / `comboOf()`。
+
 ## [tools-ui 1.0.0] — 2026-09-26
 
 ### @wil-works/evoke-tools-ui — v1.0：API 冻结 + 文档站全站（M4 收官）

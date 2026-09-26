@@ -26,7 +26,7 @@ registry.registerAll([
 
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
-| `id` | 是 | kebab-case；重复注册即抛 |
+| `id` | 是 | kebab-case 或点号式（`<形态>.<域>.<动作>`，对齐消费方 04 §3 / Univer：`office.command.undo`、`sheets.view.zoom-in`，两式可混排）；重复注册即抛 |
 | `title` | 否 | 可读名，进按钮 caption 与命令面板 |
 | `desc` | 否 | 一行说明，进命令面板与 ScreenTip |
 | `icon` | 否 | 第 ② 层语义名，交 EtIcon 解析与兜底 |

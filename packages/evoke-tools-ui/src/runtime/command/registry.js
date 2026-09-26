@@ -16,7 +16,12 @@ import { normalizeCombo } from '../keys/keys'
 /** 命令可达面（四处：工具区 / 菜单 / 右键 / 命令面板） */
 export const COMMAND_SURFACES = ['toolbar', 'menu', 'context', 'palette']
 
-const ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
+/**
+ * 命令 id：kebab 段与点号段可混排（office-works 04 §3 / Univer 的点号契约：
+ * `sheets.view.zoom-in` / `office.command.undo`）。点号表达式在真实产品里就是
+ * 形态.域.动作的命名空间，框架若不认，消费方就得在自家门口做 id 翻译层。
+ */
+const ID_RE = /^[a-z][a-z0-9]*([.-][a-z0-9]+)*$/
 
 /**
  * 校验命令定义（登记期即炸，不把错误留给用户）
@@ -29,7 +34,7 @@ export function assertCommand(command) {
   }
   const { id, title, run } = command
   if (typeof id !== 'string' || !ID_RE.test(id)) {
-    throw new TypeError(`[command] id 必须是非空 kebab-case 字符串：${String(id)}`)
+    throw new TypeError(`[command] id 必须是非空 kebab-case 或点号式（<形态>.<域>.<动作>）：${String(id)}`)
   }
   if (title !== undefined && typeof title !== 'string') {
     throw new TypeError(`[command] ${id} 的 title 必须是字符串`)

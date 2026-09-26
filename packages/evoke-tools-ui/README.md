@@ -1,6 +1,6 @@
 # @wil-works/evoke-tools-ui
 
-![npm version](https://img.shields.io/npm/v/%40wil-works%2Fevoke-tools-ui) ![npm version](https://img.shields.io/badge/version-v1.0.0-blue)
+![npm version](https://img.shields.io/npm/v/%40wil-works%2Fevoke-tools-ui) ![npm version](https://img.shields.io/badge/version-v1.1.0-blue)
 
 Evoke Tools UI —— 纯 JS Vue3 **产品级 GUI 框架**（命名空间 `--et-*`）。
 

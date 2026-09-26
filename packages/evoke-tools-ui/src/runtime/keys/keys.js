@@ -143,12 +143,30 @@ export function formatCombo(combo, platform = 'win') {
   return platform === 'mac' ? parts.join('') : parts.join('+')
 }
 
+/**
+ * 符号键 → 命名令牌（NAMED_KEYS 只有 token→符号的显示方向，缺这条反向：
+ * KeyboardEvent.key 上报的是符号本身（'+'、'-'、'.'），没有它就提取不出
+ * mod+plus 这类令牌化组合键——消费者为此在自家写了 LAYOUT_COMBO_ALIASES 适配层）。
+ * US 布局下 '+' 需要 shift，事件按 '=' + shiftKey 上报——这是物理事实，不是猜测。
+ */
+const SYMBOL_KEY_TOKENS = {
+  '+': 'plus',
+  '-': 'minus',
+  ',': 'comma',
+  '.': 'period',
+  '/': 'slash',
+  '\\': 'backslash',
+  '[': 'bracketleft',
+  ']': 'bracketright',
+}
+
 /** 从 KeyboardEvent 提取规范组合键（用于运行时匹配与自定义键位） */
 export function comboFromEvent(event) {
   const key = event.key
   let main
   if (key === ' ') main = 'space'
-  else if (key.length === 1) main = key.toLowerCase()
+  else if (key === '=' && event.shiftKey) main = 'plus' // US 布局 Shift+= 即 '+' 的物理键
+  else if (key.length === 1) main = SYMBOL_KEY_TOKENS[key] ?? key.toLowerCase()
   else main = MODIFIER_SYNONYMS[key.toLowerCase()] ?? key.toLowerCase()
   if (!isKnownKeyToken(main)) return null
   const mods = []
@@ -167,9 +185,11 @@ export function comboFromEvent(event) {
  * 完全相等（多按一个都不算命中），主键逐一对应。
  * @param {string} combo 已规范化的组合键
  * @param {KeyboardEvent} event
- * @param {'mac'|'win'} [platform] 平台决定 mod 的物理落点
+ * @param {'mac'|'win'} [platform] 平台决定 mod 的物理落点。默认取当前平台——
+ *   钉死 'win' 会让 mac 上不传参的调用把 mod 映射到 ctrl，⌘Z 类匹配静默失效
+ *   （消费者实测踩到：默认值就是陷阱，宁可每调用显式传）。
  */
-export function comboMatchesEvent(combo, event, platform = 'win') {
+export function comboMatchesEvent(combo, event, platform = currentPlatform()) {
   const tokens = normalizeCombo(combo).split('+')
   const main = tokens[tokens.length - 1]
   const wantMods = tokens.slice(0, -1)

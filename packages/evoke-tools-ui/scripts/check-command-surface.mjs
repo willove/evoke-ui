@@ -54,7 +54,7 @@ const definedIds = new Set()
 
 if (existsSync(COMMAND_DEFS)) {
   const src = readFileSync(COMMAND_DEFS, 'utf8')
-  for (const m of src.matchAll(/\bid\s*:\s*['"]([a-z][a-z0-9-]*)['"]/g)) definedIds.add(m[1])
+  for (const m of src.matchAll(/\bid\s*:\s*['"]([a-z][a-z0-9.-]*)['"]/g)) definedIds.add(m[1])
   // ② surfaces 取值域
   for (const m of src.matchAll(/surfaces\s*:\s*\[([^\]]*)\]/g)) {
     for (const s of m[1].split(',').map((x) => x.trim().replace(/['"]/g, '')).filter(Boolean)) {
@@ -66,10 +66,15 @@ if (existsSync(COMMAND_DEFS)) {
 }
 
 /** 引用形态：command="x" / :command="'x'" / command: 'x' */
+// id 字符类与 runtime/command/registry.js 的 ID_RE 同域（kebab 段 + 点号段混排）：
+// 只放宽 registry 不放宽这里，点号 id 的定义与引用都进不了 G3 的核对集。
+// 第 1 条的 (?<!:) 负向后探是**动态绑定豁免**：`:command="doc.id"` / `:command="tab.id"`
+// 是 Vue 的绑定形态（值是表达式不是字面量），旧正则因字符类无 '.' 恰好吃不到它们；
+// 放宽后不吃掉这层区分就会把动态绑定的左值（doc.id/tab.id）当悬空命令引用误报。
 const REF_PATTERNS = [
-  /\bcommand\s*=\s*['"]([a-z][a-z0-9-]*)['"]/g,
-  /\bcommand\s*=\s*['"]\s*['"]([a-z][a-z0-9-]*)['"]\s*['"]/g,
-  /\bcommand\s*:\s*['"]([a-z][a-z0-9-]*)['"]/g,
+  /(?<!:)\bcommand\s*=\s*['"]([a-z][a-z0-9.-]*)['"]/g,
+  /\bcommand\s*=\s*['"]\s*['"]([a-z][a-z0-9.-]*)['"]\s*['"]/g,
+  /\bcommand\s*:\s*['"]([a-z][a-z0-9.-]*)['"]/g,
 ]
 
 for (const file of files) {
