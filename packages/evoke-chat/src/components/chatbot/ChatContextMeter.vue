@@ -10,7 +10,7 @@
       class="eb-chat-context"
       :class="toneClass"
       :aria-label="labels.context.aria(percent)"
-      :title="labels.context.aria(percent)"
+      :title="summaryText"
     >
       <svg class="eb-chat-context__ring" viewBox="0 0 16 16" aria-hidden="true">
         <circle class="eb-chat-context__track" cx="8" cy="8" r="6.5" />
@@ -76,9 +76,12 @@ const percent = computed(() => {
 const dashOffset = computed(() => +(circumference.value * (1 - percent.value / 100)).toFixed(2));
 /** 两侧缺一就不出现：拿不到窗口容量时画个环只会误导 */
 const visible = computed(() => props.used > 0 && props.capacity > 0);
+// 阈值取竞品文档里最常见的口径（assistant-ui / ContextBreakdown 65-85；Claude Code 官方示例 70-90）
+const WARN_AT = 65;
+const DANGER_AT = 85;
 const toneClass = computed(() => {
-  if (percent.value >= 90) return "is-danger";
-  if (percent.value >= 75) return "is-warn";
+  if (percent.value >= DANGER_AT) return "is-danger";
+  if (percent.value >= WARN_AT) return "is-warn";
   return "";
 });
 
@@ -90,6 +93,13 @@ const segments = computed(() => {
   return SEGMENT_KEYS
     .filter((key) => Number(source[key]) > 0)
     .map((key) => ({ key, value: Number(source[key]), width: (Number(source[key]) / total) * 100 }));
+});
+
+/** hover 摘要：一行给总量与三段构成，不用点开也能看个大概 */
+const summaryText = computed(() => {
+  const head = `~${format(props.used)} / ${format(props.capacity)}`
+  const segs = segments.value.map((seg) => `${labels.context[seg.key]} ${format(seg.value)}`)
+  return segs.length ? `${head} · ${segs.join(' · ')}` : head
 });
 
 /** 一千 / 一百万以上折算，保留一位小数 */

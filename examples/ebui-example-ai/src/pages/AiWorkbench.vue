@@ -62,7 +62,20 @@
         @question-respond="onQuestionRespond"
         :chat-height="360"
         style="max-width: 860px; margin: 0 auto"
-      />
+      >
+        <!-- 队列条：贴着输入台上方（input-prepend 插槽）；「立即发送」的编排见 onQueueSendNow -->
+        <template #input-prepend>
+          <eb-chat-queue
+            v-if="engine.pending.value.length"
+            :items="engine.pending.value"
+            @remove="engine.dequeue"
+            @clear="engine.clearQueue"
+            @recall="onQueueRecall"
+            @send-now="onQueueSendNow"
+          />
+        </template>
+      </eb-ai-console>
+
     </div>
   </eb-app-layout>
 </template>
@@ -80,6 +93,35 @@ const activeMenu = ref('assistant')
 const scene = ref('diagnose')
 const activeCapabilities = ref([])
 const model = ref('qwen-max')
+
+const consoleRef = ref(null)
+
+/** 取回编辑：出队 + 回填草稿并聚焦（用户接着改字） */
+function onQueueRecall(id) {
+  const item = engine.pending.value.find((i) => i.id === id)
+  if (!item) return
+  engine.dequeue(id)
+  consoleRef.value?.setDraft(item.content || '')
+  consoleRef.value?.focus?.()
+}
+
+/**
+ * 立即发送：队列语义是「排队等下一轮」，而「立即」意味着插到当前轮之前——
+ * 宿主必须自己串两步：先协作中断当前轮（等它落地），再走与输入台同一条发送路径。
+ * 引擎会在本轮结束时 flush 队列，所以这里先出队再 send，避免同一条被发两次。
+ */
+async function onQueueSendNow(id) {
+  const item = engine.pending.value.find((i) => i.id === id)
+  if (!item) return
+  engine.dequeue(id)
+  const streaming = engine.messages.value.find((m) => m.status === 'streaming' || m.status === 'pending')
+  if (streaming) {
+    engine.cancelMessage(streaming.id)
+    await transport.cancel?.()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  }
+  consoleRef.value?.send?.(item.content || '')
+}
 
 /**
  * 状态条：把「现在在做什么」交给 EbChatStatusBar

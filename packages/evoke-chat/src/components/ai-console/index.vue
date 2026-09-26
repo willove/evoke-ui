@@ -86,6 +86,8 @@
 
     <!-- 输入台 -->
     <div class="eb-ai-console__input">
+      <!-- 贴着输入台的宿主内容（待发送队列、附件条…） -->
+      <slot name="input-prepend" />
       <div v-if="context" class="eb-ai-console__context">
         <EbChatContextMeter v-bind="context" />
       </div>
@@ -111,6 +113,7 @@
       />
       <EbAiPromptBox
         v-else
+        ref="boxRef"
         v-model="boxText"
         v-model:scene="sceneState"
         v-model:active-capabilities="capabilityState"
@@ -285,6 +288,7 @@ const hasMessages = computed(() => messages.value.length > 0)
 
 // ─── 输入台状态（v-model 中转） ───
 const boxText = ref('')
+const boxRef = ref(null)
 const sceneState = ref('')
 const capabilityState = ref([])
 const modelState = ref('')
@@ -362,6 +366,14 @@ defineExpose({
   engine: engineRef,
   clear: () => (props.sessions ? props.sessions.clear() : engineRef.value.clearMessages()),
   listRef,
+  /** 取回/预填草稿：队列的「取回编辑」、外部按钮都用它 */
+  setDraft: (text) => {
+    boxText.value = String(text ?? '')
+  },
+  /** 程序化发送：与输入台走同一条路径（队列的「立即发送」用它） */
+  send: (text, attachments = []) => handleSend({ text, scene: sceneState.value, capabilities: [...capabilityState.value], model: modelState.value, attachments }),
+  /** 聚焦输入框 */
+  focus: () => boxRef.value?.focus?.(),
 })
 </script>
 

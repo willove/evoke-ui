@@ -30,7 +30,17 @@ describe('EbChatContextMeter', () => {
     expect(Number(arc.attributes('stroke-dashoffset'))).toBeCloseTo(CIRC / 2, 1)
   })
 
-  it('超过窗口封顶 100%，并按阈值换语义色（75% 警告 / 90% 危险）', () => {
+  it('阈值 65 / 85：64% 安静、65% 警告、85% 危险；hover 摘要给总量与三段构成', () => {
+    const at = (used) => mount(ChatContextMeter, { props: { used, capacity: 100000, breakdown: { system: 1000, tools: 500, messages: 500 } } })
+    expect(at(64000).find('.eb-chat-context').classes()).toEqual(expect.not.arrayContaining(['is-warn', 'is-danger']))
+    expect(at(65000).find('.eb-chat-context').classes()).toContain('is-warn')
+    expect(at(84000).find('.eb-chat-context').classes()).toContain('is-warn')
+    expect(at(85000).find('.eb-chat-context').classes()).toContain('is-danger')
+    expect(at(64000).find('.eb-chat-context').attributes('title')).toContain('~64.0k / 100.0k')
+    expect(at(64000).find('.eb-chat-context').attributes('title')).toContain(chatLabels.context.system)
+  })
+
+  it('超过窗口封顶 100%，并按阈值换语义色', () => {
     const over = mount(ChatContextMeter, { props: { used: 200000, capacity: 128000 } })
     expect(over.find('.eb-chat-context__percent').text()).toBe('100%')
     expect(over.find('.eb-chat-context').classes()).toContain('is-danger')

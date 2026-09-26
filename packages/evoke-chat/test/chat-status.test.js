@@ -125,6 +125,15 @@ describe('状态条接线', () => {
     await bar.find('.eb-chat-status__queue').exists() // 无排队时不渲染计数
     expect(w.emitted('stop')).toHaveLength(1)
 
+    // 队列编排需要的命令式接口（「取回编辑」回填草稿、「立即发送」走同一条发送路径）
+    const box = mount(EbAiConsole, { props: { showTip: false } })
+    expect(typeof box.vm.setDraft).toBe('function')
+    expect(typeof box.vm.send).toBe('function')
+    expect(typeof box.vm.focus).toBe('function')
+    box.vm.setDraft('取回的内容')
+    await w.vm.$nextTick()
+    expect(box.find('.eb-ai-prompt-box__textarea').element.value).toBe('取回的内容')
+
     const console_ = mount(EbAiConsole, { props: { showTip: false, status: { phase: 'queued', queue: 1 } } })
     const bar2 = console_.findComponent(ChatStatusBar)
     expect(bar2.exists()).toBe(true)

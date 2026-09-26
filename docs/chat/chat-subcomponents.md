@@ -469,17 +469,39 @@ engine.sendMessage('补充一句')     // 返回 'steered'
 队列不是只读列表：每条还能**立刻插队发送**（`send-now`）与**取回编辑**（`recall`）——Claude Code 的 `↑` 取回、Codex 的 `Esc` 立即发送是同一诉求，不然用户只能删了重打。
 
 ```vue
-<eb-chatbot v-model="messages" queueable @send="onSend">
-  <template #sender-prepend>
-    <eb-chat-queue
-      :items="engine.pending.value"
-      @remove="engine.dequeue"
-      @clear="engine.clearQueue"
-      @send-now="(id) => onSend(engine.takeFromQueue(id))"
-      @recall="(id) => (draft = engine.takeFromQueue(id).content)"
-    />
-  </template>
-</eb-chatbot>
+<eb-chat-queue
+  v-if="engine.pending.value.length"
+  :items="engine.pending.value"
+  @remove="engine.dequeue"
+  @clear="engine.clearQueue"
+  @recall="onQueueRecall"
+  @send-now="onQueueSendNow"
+/>
+```
+
+「取回编辑」是两步：出队 + 回填草稿。**「立即发送」要宿主自己串**——队列语义是"排队等下一轮"，而"立即"意味着插到当前轮之前：
+
+```js
+function onQueueRecall(id) {
+  const item = engine.pending.value.find((i) => i.id === id)
+  if (!item) return
+  engine.dequeue(id)
+  consoleRef.value.setDraft(item.content)   // EbAiConsole 暴露的方法
+  consoleRef.value.focus()
+}
+
+async function onQueueSendNow(id) {
+  const item = engine.pending.value.find((i) => i.id === id)
+  if (!item) return
+  engine.dequeue(id)                        // 先出队：引擎在本轮结束时会 flush 队列
+  const streaming = engine.messages.value.find((m) => m.status === 'streaming')
+  if (streaming) {
+    engine.cancelMessage(streaming.id)      // 1) 协作中断当前轮
+    await transport.cancel?.()
+    await new Promise((r) => setTimeout(r, 0))
+  }
+  consoleRef.value.send(item.content)       // 2) 再走与输入台同一条发送路径
+}
 ```
 
 ## 斜杠命令与 @ 提及
@@ -559,7 +581,7 @@ function applyMenuItem(index) {
 
 ### EbChatContextMeter
 
-输入区上方的占用环：`{ used, capacity, breakdown? }`，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。**两侧缺一就不显示**——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 75% 转警告色、90% 转危险色，动画在 `prefers-reduced-motion` 下关掉。`capacity` 与三段都是宿主的业务口径（模型窗口、提示词预算），组件只做占比与呈现。
+输入区上方的占用环：`{ used, capacity, breakdown? }`，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。**两侧缺一就不显示**——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 **65% 转警告色、85% 转危险色**（竞品文档里最常见的口径），hover 直接给一行摘要「~已用 / 窗口 · 系统 · 工具 · 消息」，点击才开面板，动画在 `prefers-reduced-motion` 下关掉。`capacity` 与三段都是宿主的业务口径（模型窗口、提示词预算），组件只做占比与呈现。
 
 <DemoBlock>
   <div style="display: flex; gap: 16px; align-items: center">

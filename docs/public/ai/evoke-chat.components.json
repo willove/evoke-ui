@@ -1387,7 +1387,7 @@
       "name": "EbChatContextMeter",
       "entry": "@wil-works/evoke-chat/chat-context-meter",
       "source": "src/components/chatbot/ChatContextMeter.vue",
-      "summary": "输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 75% 转警告色、90% 转危险色，动画在 prefers-red",
+      "summary": "输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 65% 转警告色、85% 转危险色（竞品文档里最常见的口径），ho",
       "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
       "props": [
         {
@@ -1845,7 +1845,7 @@
       "name": "EbChatQueue",
       "entry": "@wil-works/evoke-chat/chat-queue",
       "source": "src/components/chatbot/ChatQueue.vue",
-      "summary": "EbChatQueue 是待发送队列那条窄带，宿主放在输入区上方即可（#sender-prepend 或自己排布）：",
+      "summary": "input-prepend | 输入区顶部（占用环、状态条之上） | 待发送队列（EbChatQueue）、附件条这类贴着输入台的内容 |",
       "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
       "props": [
         {
@@ -2518,12 +2518,16 @@
       "slots": [
         "threads",
         "empty",
+        "input-prepend",
         "toolbar-extra",
         "tip"
       ],
       "expose": [
         "engine",
-        "clear"
+        "clear",
+        "setDraft",
+        "send",
+        "focus"
       ]
     }
   ],

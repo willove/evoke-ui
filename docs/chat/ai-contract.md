@@ -656,7 +656,7 @@ EbChatPlan · EbChatConfirmation · EbChatArtifact
 
 ### EbChatContextMeter
 
-输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 75% 转警告色、90% 转危险色，动画在 prefers-red
+输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 65% 转警告色、85% 转危险色（竞品文档里最常见的口径），ho
 
 - 入口：`@wil-works/evoke-chat/chat-context-meter`　源码：`src/components/chatbot/ChatContextMeter.vue`　文档：https://evoke-business-ui.wil-works.com/chat/chat-subcomponents
 
@@ -830,7 +830,7 @@ EbChatTestResults · EbChatStackTrace。两张都是纯数据渲染，无额外�
 
 ### EbChatQueue
 
-EbChatQueue 是待发送队列那条窄带，宿主放在输入区上方即可（#sender-prepend 或自己排布）：
+input-prepend | 输入区顶部（占用环、状态条之上） | 待发送队列（EbChatQueue）、附件条这类贴着输入台的内容 |
 
 - 入口：`@wil-works/evoke-chat/chat-queue`　源码：`src/components/chatbot/ChatQueue.vue`　文档：https://evoke-business-ui.wil-works.com/chat/chat-subcomponents
 
@@ -946,8 +946,8 @@ EbAiPromptBox 侧同理走 #toolbar-extra。
 EbChatbot / EbAiConsole 的 question prop 传了就接管输入区，响应经 question-respond(answer, request) 抛出；useChatSession 的 question + respondQuestion(answer) 已把链路接好（question/re
 
 - 入口：`@wil-works/evoke-chat/ai-console`　源码：`src/components/ai-console/index.vue`　文档：https://evoke-business-ui.wil-works.com/chat/ai-console
-- 插槽：`threads`、`empty`、`toolbar-extra`、`tip`
-- 实例方法（ref 调用）：`engine`、`clear`
+- 插槽：`threads`、`empty`、`input-prepend`、`toolbar-extra`、`tip`
+- 实例方法（ref 调用）：`engine`、`clear`、`setDraft`、`send`、`focus`
 
 | prop | 类型 | 默认 |
 | --- | --- | --- |
