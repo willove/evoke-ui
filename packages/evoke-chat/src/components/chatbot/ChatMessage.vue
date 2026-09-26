@@ -160,7 +160,12 @@
             v-if="showTime || showActions || message?.duration || message?.usage || message?.edited"
             class="eb-chat-message__foot"
           >
-            <span v-if="showTime && message?.createdAt" class="eb-chat-message__time">{{ formatTime(message.createdAt) }}</span>
+            <!-- 时间随悬浮出现（同动作条）；耗时与 tokens 用量是读数，常显 -->
+            <span
+              v-if="showTime && message?.createdAt"
+              class="eb-chat-message__time"
+              :class="{ 'is-visible': hovered }"
+            >{{ formatTime(message.createdAt) }}</span>
             <!-- 用量与耗时与动作条同一行：信息常显，复制/重试等动作随悬浮淡入 -->
             <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
               <eb-icon name="stopwatch" :size="14" />
@@ -487,10 +492,25 @@ function handleAction(key, message) {
   justify-content: flex-end;
 }
 
+/* 触屏没有 hover：时间直接常显，避免"永远看不见" */
+@media (hover: none) {
+  .eb-chat-message__time {
+    opacity: 1;
+  }
+}
+
 .eb-chat-message__time {
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
   font-variant-numeric: tabular-nums;
+  /* 时间属"悬浮才出现"的那组（同动作条）：opacity 而非 display，隐藏时仍占位，悬浮不位移 */
+  opacity: 0;
+  transition: opacity 0.15s var(--eb-ease-out);
+}
+
+.eb-chat-message__time.is-visible,
+.eb-chat-message:focus-within .eb-chat-message__time {
+  opacity: 1;
 }
 
 .eb-chat-message__duration {
