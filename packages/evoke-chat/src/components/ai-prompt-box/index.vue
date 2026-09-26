@@ -150,6 +150,8 @@
             v-if="quota != null"
             type="button"
             class="eb-ai-prompt-box__quota"
+            :aria-label="quotaTitle"
+            :title="quotaTitle"
             @click.stop="emit('quota-click')"
           >
             <eb-icon name="wallet" :size="14" />
@@ -402,9 +404,21 @@ function removeAttachment(item) {
 }
 
 // ─── 输入与发送 ───
-const quotaLabel = computed(() =>
-  typeof props.quota === 'string' ? props.quota : props.quota?.label ?? ''
-)
+const quotaLabel = computed(() => {
+  const q = props.quota
+  if (typeof q === 'string') return q
+  if (!q) return ''
+  // 只显示数值：给了 percent 就渲染 N%，完整说明（如「本月额度剩余 82%」）下沉到 aria/title
+  if (typeof q.percent === 'number') return `${q.percent}%`
+  return q.label ?? ''
+})
+
+/** 额度的完整说明：鼠标悬停与读屏仍能拿到全文 */
+const quotaTitle = computed(() => {
+  const q = props.quota
+  if (q && typeof q === 'object' && q.label) return q.label
+  return quotaLabel.value
+})
 
 function autoResize() {
   const el = textareaRef.value

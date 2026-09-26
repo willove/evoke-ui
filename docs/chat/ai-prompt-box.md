@@ -114,7 +114,7 @@ function stopGenerate() {
   { name: 'v-model:activeCapabilities', desc: '激活的能力 key 集合', type: 'string[]', default: '[]' },
   { name: 'models', desc: '模型注册表；非空时工具栏右侧（上下文长度之后）显示模型 pill', type: '{ key, label, icon? }[]', default: '[]' },
   { name: 'v-model:model', desc: '当前模型 key', type: 'string', default: '' },
-  { name: 'quota', desc: '额度展示；传 null 不渲染', type: 'string | { label, percent }', default: 'null' },
+  { name: 'quota', desc: '额度展示；传 null 不渲染。给了 percent 只渲染数值（如 `82%`），label 全文下沉到 aria/title', type: 'string | { label, percent }', default: 'null' },
   { name: 'showSettings', desc: '工具行显示设置按钮', type: 'boolean', default: 'false' },
   { name: 'allowAttachments', desc: '允许附件', type: 'boolean', default: 'true' },
   { name: 'maxAttachments', desc: '附件数量上限', type: 'number', default: '5' },
@@ -142,6 +142,7 @@ function stopGenerate() {
 
 <ApiTable title="AiPromptBox Slots" :rows="[
   { name: 'toolbar-extra', desc: '工具行左侧追加内容', type: '—', default: '—' },
+  { name: '（窄容器降级，非 prop）', desc: '输入台宽度 ≤560px 时（容器查询）能力项只留图标、额度只留数值；模型 pill 文本保留', type: '—', default: '—' },
   { name: 'toolbar-meta', desc: '工具行右侧追加内容（上下文占用、统计读数这类贴输入台的读数）', type: '—', default: '—' },
   { name: 'scenes-append', desc: '场景 chips 行末尾追加', type: '—', default: '—' },
 ]" />

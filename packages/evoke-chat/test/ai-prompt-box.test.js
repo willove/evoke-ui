@@ -181,15 +181,26 @@ describe('EbAiPromptBox 发送与停止', () => {
 })
 
 describe('EbAiPromptBox 额度与其他', () => {
-  it('quota 字符串渲染 + 点击事件；对象形态取 label', async () => {
+  it('quota 字符串原样渲染；对象形态给 percent 时只显示数值，全文下沉到 aria/title', async () => {
     const wrapper = mountBox({ quota: '剩余免费额度：100%' })
     await wrapper.find('.eb-ai-prompt-box__quota').trigger('click')
     expect(wrapper.emitted('quota-click')).toBeTruthy()
+    expect(wrapper.find('.eb-ai-prompt-box__quota').text()).toContain('剩余免费额度：100%')
     wrapper.unmount()
 
+    // 给了 percent：只渲染数值（窄输入台里不必挤成长文案），完整说明给悬停与读屏
     const w2 = mountBox({ quota: { label: '剩余 20%', percent: 20 } })
-    expect(w2.find('.eb-ai-prompt-box__quota').text()).toContain('剩余 20%')
+    const btn = w2.find('.eb-ai-prompt-box__quota')
+    expect(btn.text()).toBe('20%')
+    expect(btn.attributes('title')).toBe('剩余 20%')
+    expect(btn.attributes('aria-label')).toBe('剩余 20%')
     w2.unmount()
+
+    // 只给 label（无 percent）：保持原样渲染字符串
+    const w3 = mountBox({ quota: { label: '按量计费' } })
+    expect(w3.find('.eb-ai-prompt-box__quota').text()).toContain('按量计费')
+    expect(w3.find('.eb-ai-prompt-box__quota').attributes('title')).toBe('按量计费')
+    w3.unmount()
   })
 
   it('附件选择渲染 tag 并进入 send 载荷', async () => {

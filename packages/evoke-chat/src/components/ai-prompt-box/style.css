@@ -236,6 +236,8 @@
   --eb-pb-chip-ring: none;
   --eb-pb-chip-ring-hover: none;
   --eb-pb-chip-hover-bg: var(--eb-fill-color-light);
+  /* 供容器查询用：窄容器（聊天面板/小窗）里自动降级为图标 */
+  container-type: inline-size;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -398,4 +400,26 @@
 .eb-ai-prompt-box__model-pill:hover:not(:disabled),
 .eb-ai-prompt-box__quota:hover {
   background: var(--eb-pb-chip-hover-bg);
+}
+
+/*
+ * 窄容器降级：能力项（深度思考 / 联网检索）只留图标，额度只留数值（组件层已做）。
+ * 用容器查询而不是媒体查询——输入台常在宽窗口里的窄面板中，媒体查询量不到它。
+ */
+@container (max-width: 560px) {
+  .eb-ai-prompt-box__capability {
+    /* 图标态做成与「+」一致的正方形（22px 太窄，点不准） */
+    justify-content: center;
+    min-width: var(--eb-pb-chip-h);
+    padding: 0 var(--eb-space-1);
+  }
+
+  .eb-ai-prompt-box__capability > span {
+    display: none;
+  }
+
+  .eb-ai-prompt-box__toolbar-left,
+  .eb-ai-prompt-box__toolbar-right {
+    gap: 2px;
+  }
 }
