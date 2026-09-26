@@ -157,11 +157,17 @@
             @pick="handleSuggestionPick"
           />
           <div
-            v-if="showTime || showActions"
+            v-if="showTime || showActions || message?.duration || message?.usage || message?.edited"
             class="eb-chat-message__foot"
-            :class="{ 'is-visible': hovered }"
           >
             <span v-if="showTime && message?.createdAt" class="eb-chat-message__time">{{ formatTime(message.createdAt) }}</span>
+            <!-- 用量与耗时与动作条同一行：信息常显，复制/重试等动作随悬浮淡入 -->
+            <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
+              <eb-icon name="stopwatch" />
+              {{ formatDuration(message.duration) }}
+            </span>
+            <ChatUsage v-if="message?.usage" :usage="message.usage" />
+            <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
             <ChatActionbar 
               v-if="showActions"
               :class="{ 'is-visible': hovered }"
@@ -184,18 +190,6 @@
           />
           </div>
         </template>
-      </div>
-      <!-- 消息页脚：tokens 用量 / 耗时 / 已编辑贴在本条回答底部（动作条仍在 controls 行） -->
-      <div
-        v-if="message?.duration || message?.usage || message?.edited"
-        class="eb-chat-message__footer"
-      >
-        <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
-          <eb-icon name="stopwatch" />
-          {{ formatDuration(message.duration) }}
-        </span>
-        <ChatUsage v-if="message?.usage" :usage="message.usage" />
-        <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
       </div>
     </div>
     </template>
@@ -425,20 +419,6 @@ function handleAction(key, message) {
   justify-content: flex-end;
 }
 
-/* 消息页脚：用量读数贴在本条回答底部（内容之后、控制行之前） */
-.eb-chat-message__footer {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--eb-space-2);
-  margin-top: var(--eb-space-1);
-  color: var(--eb-text-color-secondary);
-}
-
-.eb-chat-message--user .eb-chat-message__footer {
-  justify-content: flex-end;
-}
-
 .eb-chat-message__name {
   font-size: var(--eb-font-size-sm);
   font-weight: var(--eb-font-weight-medium);
@@ -477,14 +457,17 @@ function handleAction(key, message) {
   margin-top: 0;
 }
 
-/* 消息底部行：时间 + 动作条，悬浮/键盘聚焦/触屏常显 */
+/*
+ * 消息底部行：时间 / 耗时 / tokens 用量 / 动作条同一行。
+ * 信息（时间·耗时·用量）**常显**——它们是读数，不该等悬浮；只有动作条随悬浮淡入
+ * （动作条自身 opacity 门控 + pointer-events，行高不变，hover 不会位移）。
+ */
 .eb-chat-message__foot {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--eb-space-2);
   margin-top: var(--eb-space-1);
-  opacity: 0;
-  transition: opacity 0.15s var(--eb-ease-out);
 }
 
 .eb-chat-message__foot > .eb-chat-actionbar {
@@ -497,9 +480,6 @@ function handleAction(key, message) {
 }
 
 @media (hover: none) {
-  .eb-chat-message__foot {
-    opacity: 1;
-  }
 }
 
 .eb-chat-message--user .eb-chat-message__foot {

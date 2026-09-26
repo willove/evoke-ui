@@ -602,8 +602,8 @@ function applyMenuItem(index) {
 ## token 与成本计量
 
 `EbChatUsage` 只展示宿主给的用量——**成本要价目表，那是宿主的业务数据**，组件与引擎都不猜。
-消息里的位置：`EbChatMessage` 把 `message.usage`（与 `duration`）渲染在**本条消息的页脚**——
-内容之下、动作条旁，而不是头部行（头部只留发送者名字）。
+消息里的位置：`EbChatMessage` 把 `message.usage`（与 `duration`、时间）渲染在**本条消息的底部行**——
+**与复制 / 重试等动作条同一行**，不在头部行（头部只留发送者名字）。读数常显、动作随悬浮淡入，行高不变。
 
 <DemoBlock>
   <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
