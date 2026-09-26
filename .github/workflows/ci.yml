@@ -155,9 +155,11 @@ jobs:
   # 录过 darwin 基线，CI（ubuntu）上 28 例快照全红"A snapshot doesn't exist"。
   # 本作业由 workflow_dispatch 手动触发：重录 → 自动回推 → 普通推送的守卫随即可用。
   visual-baseline:
+    # workflow_dispatch 的 boolean 输入在 inputs 上下文里就是布尔值——与字符串
+    # 'true' 比较恒为 false（首次触发踩过：作业整段 skipped）。直接用真值判断。
     if: >-
       github.event_name == 'workflow_dispatch' &&
-      inputs.update_visual_baselines == 'true'
+      inputs.update_visual_baselines
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
