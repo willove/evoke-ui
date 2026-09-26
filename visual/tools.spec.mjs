@@ -30,11 +30,11 @@ async function chromeHeights(page) {
       return Math.round(r.height * 100) / 100
     }
     return {
-      titlebar: row('.wb__titlebar'),
+      titlebar: row('.et-titlebar'),
       documents: row('.et-doctabs'),
       ribbon: row('.wb__ribbon'),
       auxbar: row('.wb__auxbar'),
-      statusbar: row('.wb__statusbar'),
+      statusbar: row('.et-statusbar'),
     }
   })
 }
@@ -283,8 +283,9 @@ test('M1 出口 · 折叠后顶部 chrome ≤ 84 且命令只经用户操作可�
   // 用户在 peek 里真的能执行命令（点一个可用大钮 → 演示回调写提示）。
   // 不用 first()：默认无选区时第一个是禁用的 copy（enabled 由 ctx 推演）
   await page.locator('.et-toolbtn--large:not(:disabled)').first().click()
-  await settle(page, { extraMs: 200 })
-  await expect(page.locator('.wb__empty-hint')).toContainText('执行命令')
+  await settle(page, { extraMs: 400 })
+  // 命令反馈 M3 起走 EtToast（原 .wb__empty-hint 已由 EtBanner/EtToast 接管）
+  await expect(page.locator('.et-toast')).toContainText('执行命令')
 })
 
 test('tools 基线 · 功能区折叠（Ctrl+F1）', async ({ page }) => {
@@ -364,15 +365,15 @@ test('M2 出口 · 损坏持久化不白屏：坏 JSON → 降级默认布局 + 
   // ① 不白屏：工作台壳与功能区仍在
   await expect(page.locator('.et-workbench')).toBeVisible()
   await expect(page.locator('.wb__ribbon .et-toolbtn').first()).toBeVisible()
-  // ② 有提示（消费者把 layout-corrupted 翻成用户语言）
-  await expect(page.locator('.wb__empty-hint')).toHaveText('布局已重置为默认')
+  // ② 有提示（消费者把 layout-corrupted 翻成用户语言：M3 起走 EtBanner）
+  await expect(page.locator('.et-banner')).toContainText('布局已重置为默认')
   // ③ 停靠位仍可用（降级到默认布局 = 四个面板全在）
   const items = await page.evaluate(() => document.querySelectorAll('.wb__panel-item').length)
   expect(items).toBeGreaterThanOrEqual(8)
   // ④ 损坏数据被自愈后的干净树覆盖：再刷新应无提示
   await page.reload({ waitUntil: 'networkidle' })
   await settle(page, { extraMs: 600 })
-  await expect(page.locator('.wb__empty-hint')).toHaveCount(0)
+  await expect(page.locator('.et-banner')).toHaveCount(0)
 })
 
 test('M2 出口 · 面板全屏：目标停靠整幅、其余区域让位', async ({ page }) => {
@@ -414,4 +415,132 @@ test('M2 出口 · 文档标签：脏标记双通道 a11y + 不可关文档无�
   })
   expect(closable.found).toBe(true)
   expect(closable.closeBtns).toBe(0)
+})
+
+// ─── M3 出口断言（外壳件 / 主题桥 / 焦点三处一致）────────────────────────────
+
+test('M3 出口 · 画布调色板随主题联动（--ot-* 由主题令牌解析，非硬编码）', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 300 })
+
+  const readPalette = () =>
+    page.evaluate(() => {
+      const cs = getComputedStyle(document.documentElement)
+      return {
+        bg: cs.getPropertyValue('--ot-canvas-bg').trim(),
+        line: cs.getPropertyValue('--ot-canvas-grid-line').trim(),
+        selection: cs.getPropertyValue('--ot-canvas-selection-bg').trim(),
+      }
+    })
+  const light = await readPalette()
+  expect(light.bg, 'ThemeBridge 没把 --ot-canvas-bg 写进 :root').not.toBe('')
+
+  // 切暗色：主题令牌变 → 画布令牌必须跟着变（联动 = 出口条件）
+  await setDark(page, true)
+  await settle(page, { extraMs: 400 })
+  const dark = await readPalette()
+  expect(dark.bg).not.toBe(light.bg)
+  expect(dark.line).not.toBe(light.line)
+
+  // 回亮色再验一次（双向联动，且值稳定）
+  await setDark(page, false)
+  await settle(page, { extraMs: 400 })
+  expect((await readPalette()).bg).toBe(light.bg)
+})
+
+test('M3 出口 · 双宿主标题栏：Web 无控制位；桌面 mac 左序 / Win 右序', async ({ page, browser }) => {
+  await resetWorkbench(page)
+
+  // 控制位实测（.et-titlebar__ctrl：契约里的窗口控制钮）
+  const measure = (p) =>
+    p.evaluate(() => {
+      const bar = document.querySelector('.et-titlebar')
+      const ctrls = [...document.querySelectorAll('.et-titlebar__ctrl')]
+      const r = bar.getBoundingClientRect()
+      return {
+        count: ctrls.length,
+        labels: ctrls.map((el) => el.getAttribute('aria-label')),
+        leftCount: ctrls.filter((el) => el.getBoundingClientRect().left - r.left < r.width / 2).length,
+      }
+    })
+
+  // ① Web 宿主（默认档）：不渲染窗口控制位——浏览器的 chrome 管窗口
+  expect((await measure(page)).count).toBe(0)
+
+  // ② 桌面宿主 + mac（headless 走 mac UA）：用户点演示条的"桌面"分段 → 控制位居左、close 先
+  await page.locator('.eb-segmented__item').filter({ hasText: '桌面' }).first().click()
+  await settle(page, { extraMs: 300 })
+  const mac = await measure(page)
+  expect(mac.count).toBe(3)
+  expect(mac.leftCount, 'mac 控制位应居左').toBe(3)
+  expect(mac.labels[0]).toContain('关闭')
+
+  // ③ 桌面宿主 + Windows UA：控制位居右、minimize 先
+  const ctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120' })
+  const winPage = await ctx.newPage()
+  await winPage.goto('http://127.0.0.1:4180/')
+  await winPage.evaluate(() => localStorage.clear())
+  await winPage.locator('.eb-segmented__item').filter({ hasText: '桌面' }).first().click()
+  await settle(winPage, { extraMs: 300 })
+  const win = await measure(winPage)
+  expect(win.count).toBe(3)
+  expect(win.leftCount, 'Win 控制位应居右').toBe(0)
+  expect(win.labels[0]).toContain('最小化')
+  await ctx.close()
+})
+
+test('M3 出口 · backstage 开关不引发画布尺寸跳动', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 300 })
+  const size = () =>
+    page.evaluate(() => {
+      const c = document.querySelector('.wb__canvas')
+      const r = c.getBoundingClientRect()
+      return { w: Math.round(r.width), h: Math.round(r.height) }
+    })
+  const before = await size()
+
+  await page.getByRole('button', { name: '文件' }).click()
+  await settle(page, { extraMs: 500 })
+  await expect(page.locator('.et-backstage')).toBeVisible()
+  const during = await size()
+
+  await page.keyboard.press('Escape')
+  await settle(page, { extraMs: 500 })
+  const after = await size()
+
+  expect(during).toEqual(before)
+  expect(after).toEqual(before)
+})
+
+test('M3 出口 · 焦点管理三处一致：Dialog 的 Tab 循环与 Esc 归还', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 300 })
+
+  const cta = page.locator('.et-emptystate button').first()
+  await cta.click()
+  await settle(page, { extraMs: 300 })
+  const panel = page.locator('.et-dialog__panel')
+  await expect(panel).toBeVisible()
+
+  // 焦点在陷阱内：连续 Tab 不逃出面板
+  for (let i = 0; i < 6; i += 1) {
+    await page.keyboard.press('Tab')
+    await page.waitForTimeout(60)
+    const inside = await page.evaluate(() => {
+      const p = document.querySelector('.et-dialog__panel')
+      return p && document.activeElement ? p.contains(document.activeElement) : false
+    })
+    expect(inside, `第 ${i + 1} 次 Tab 后焦点逃出陷阱`).toBe(true)
+  }
+
+  // Esc 收敛 + 焦点归还触发器（空态 CTA）
+  await page.keyboard.press('Escape')
+  await settle(page, { extraMs: 300 })
+  await expect(panel).toHaveCount(0)
+  const restored = await page.evaluate(() => {
+    const active = document.activeElement
+    return active ? active.className || '' : ''
+  })
+  expect(restored).toContain('et-emptystate')
 })

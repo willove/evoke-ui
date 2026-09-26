@@ -117,6 +117,9 @@
   --et-state-selected-fg: var(--eb-color-primary);
   --et-state-selected-bg: var(--eb-color-primary-light-9);
   --et-state-disabled-fg: var(--eb-text-color-disabled);
+  /* 危险位（关闭钮 hover 等）：语义令牌，值引用底座 danger 阶梯（明暗各自定义） */
+  --et-state-danger-bg: var(--eb-color-danger-light-9);
+  --et-state-danger-fg: var(--eb-color-danger);
   --et-state-disabled-bg: var(--eb-fill-color-light);
 
   /* 焦点环规格（焦点漫游与键盘可达的可见性保证） */
@@ -143,6 +146,8 @@
   --et-z-panel: 200;
   --et-z-popover: var(--eb-z-index-popper);
   --et-z-peek: 2100;
+    /* 遮罩：低于 modal 一阶（Dialog 的面板在遮罩之上） */
+  --et-z-mask: 2900;
   --et-z-modal: 3000;
   --et-z-notify: 4000;
 

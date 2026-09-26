@@ -1,0 +1,100 @@
+/* EtStatusBar — 状态栏（tools-ui 计划 05 §四 L4 / M3 交付物 2）
+
+   高度钉死 --et-chrome-statusbar-height（chrome 预算不变量）：overflow 隐藏
+   兜底 + 条目省略号 + 左区弹性压缩——条目再多也不换行、不撑高。与
+   EtWorkbench 的 statusbar 横带配合时分隔线由横带给（本件不画边线）。
+   字号用 caption 档（chrome 底带比内容区低一档），间距走 --et-statusbar-item-gap。 */
+
+.et-statusbar.et-statusbar {
+  display: flex;
+  align-items: center;
+  height: var(--et-chrome-statusbar-height);
+  padding-inline: var(--et-space-band-inline);
+  background: var(--et-chrome-bg);
+  font-family: var(--et-font-family);
+  font-size: var(--et-density-caption-font);
+  line-height: var(--et-density-line-height);
+  color: var(--eb-text-color-secondary);
+  user-select: none;
+  /* chrome 预算不变量：溢出隐藏兜底（条目禁换行，禁撑高） */
+  overflow: hidden;
+}
+
+.et-statusbar__side {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* 左区弹性：条目多先压左区（label 省略号），中/右区固定 */
+.et-statusbar__side--left {
+  flex: 1;
+  gap: var(--et-statusbar-item-gap);
+  overflow: hidden;
+}
+
+.et-statusbar__side--center {
+  flex: none;
+}
+
+.et-statusbar__side--right {
+  flex: none;
+  gap: var(--et-statusbar-item-gap);
+}
+
+/* 条目：原生 button 包壳（键盘可达）+ 一档 hover 底色；label  secondary、
+   value 主文本色 + 等宽数字（统计值跳动不位移） */
+.et-statusbar__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--et-space-inline);
+  flex: none;
+  min-width: 0;
+  padding-inline: var(--et-space-inline);
+  border: none;
+  border-radius: var(--et-radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+}
+
+.et-statusbar__item:hover {
+  background: var(--et-state-hover-bg);
+  color: var(--eb-text-color-regular);
+}
+
+.et-statusbar__item:active {
+  background: var(--et-state-active-bg);
+}
+
+.et-statusbar__item:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+.et-statusbar__label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-secondary);
+}
+
+.et-statusbar__value {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 内置工具位：缩放显示（right 槽优先，有槽不渲染） */
+.et-statusbar__zoom {
+  flex: none;
+  white-space: nowrap;
+  color: var(--eb-text-color-secondary);
+  font-variant-numeric: tabular-nums;
+}

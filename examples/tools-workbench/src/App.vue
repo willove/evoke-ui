@@ -16,6 +16,8 @@
         <label class="demo__control">
           <span class="demo__control-label">选区</span>
           <eb-segmented v-model="selection" :options="selectionOptions" size="small" />
+          <span class="demo__control-label">宿主</span>
+          <eb-segmented v-model="hostMode" :options="hostOptions" size="small" />
         </label>
         <button type="button" class="demo__btn" @click="paletteOpen = true">命令面板</button>
         <button type="button" class="demo__btn" @click="showKeys = !showKeys">
@@ -45,19 +47,16 @@
         @layout-corrupted="onLayoutCorrupted"
       >
         <template #titlebar>
-          <div class="wb__titlebar">
-            <span class="wb__doc">季度报表.xlsx</span>
-            <span class="wb__spacer" />
-            <button type="button" class="wb__win" aria-label="最小化">
-              <et-icon name="minus" :size="16" />
-            </button>
-            <button type="button" class="wb__win" aria-label="最大化">
-              <et-icon name="fullscreen" :size="16" />
-            </button>
-            <button type="button" class="wb__win" aria-label="关闭">
-              <et-icon name="close" :size="16" />
-            </button>
-          </div>
+          <et-title-bar
+            :host="hostMode"
+            title="工作台装配示例"
+            doc-title="季度报表.xlsx"
+            @window-control="onWindowControl"
+          >
+            <template #quick>
+              <button type="button" class="demo__btn" @click="backstageOpen = true">文件</button>
+            </template>
+          </et-title-bar>
         </template>
 
         <template #documents>
@@ -99,9 +98,11 @@
           </ul>
         </template>
 
-        <!-- 中列画布：右键菜单 + 网格 + 空态 -->
+        <!-- 中列画布：主题桥 + 横幅 + 右键菜单 + 网格 + 空态 -->
+        <et-theme-bridge class="wb__bridge" />
         <et-context-menu :registry="demoRegistry" :schema="DEMO_CONTEXT_SCHEMA" :ctx="ctx" class="wb__ctx">
           <main class="wb__canvas">
+            <et-banner v-if="canvasHint" type="info" :title="canvasHint" @close="canvasHint = ''" />
             <et-empty-state
               v-if="!canvasHint"
               icon="table"
@@ -109,20 +110,35 @@
               action-label="新建表格"
               @action="onEmptyCta"
             />
-            <p v-if="canvasHint" class="wb__empty-hint">{{ canvasHint }}</p>
             <div class="wb__grid" />
           </main>
         </et-context-menu>
 
         <template #statusbar>
-          <footer class="wb__statusbar">
-            <span class="wb__status">就绪</span>
-            <span class="wb__spacer" />
-            <span class="wb__status">{{ ctx.hasSelection ? '有选区' : '无选区' }}</span>
-            <span class="wb__status">100%</span>
-          </footer>
+          <et-status-bar
+            :items="statusItems"
+            zoom="100%"
+            @item-click="onStatusItemClick"
+          />
         </template>
       </et-workbench>
+
+      <!-- 后台页（ M3 ：全屏骨架不参与文档流，开关不引发画布尺寸跳动） -->
+      <et-backstage v-model="backstageOpen" title="文件">
+        <template #nav>
+          <button type="button" class="demo__btn" @click="toast.value = { open: true, message: '新建（演示）' }">新建</button>
+          <button type="button" class="demo__btn" @click="toast.value = { open: true, message: '打开（演示）' }">打开</button>
+        </template>
+        <p class="wb__backstage-body">最近文档（演示数据）：季度报表.xlsx / 预算表.xlsx / 复盘.md</p>
+      </et-backstage>
+
+      <!-- 轻提示（命令/窗口控制/状态栏的反馈位） -->
+      <et-toast v-model="toast.open" :message="toast.message" type="success" :duration="2400" />
+
+      <!-- 模态（新建表格）：焦点陷阱 + Esc 收敛 + 焦点归还触发器 -->
+      <et-dialog v-model="dialogOpen" title="新建表格" confirm-text="创建" cancel-text="取消" @confirm="onDialogConfirm">
+        <p class="wb__dialog-body">演示模态：Tab 在陷阱内循环，Esc 收敛并归还焦点。</p>
+      </et-dialog>
     </template>
 
     <!-- ═══ 视图二：图标底座对比（M0 留档面） ═══ -->
@@ -234,11 +250,12 @@ const showKeys = ref(false)
 const canvasHint = ref('')
 
 function onCommand(id) {
-  canvasHint.value = `执行命令：${id}`
+  canvasHint.value = ''
+  toast.value = { open: true, message: `执行命令：${id}` }
 }
 
 function onEmptyCta() {
-  canvasHint.value = '已新建（演示）'
+  dialogOpen.value = true
 }
 
 function onDocChange(id) {
@@ -268,6 +285,34 @@ function onResetLayout() {
 /** 持久化损坏时的消费者提示（框架已降级，不改白屏） */
 function onLayoutCorrupted() {
   canvasHint.value = '布局已重置为默认'
+}
+
+const backstageOpen = ref(false)
+// 宿主演示：'auto' 走探测；这里给产品一个显式钉死的入口（M3 双宿主验收面）
+const hostMode = ref('web')
+const hostOptions = [
+  { label: 'Web', value: 'web' },
+  { label: '桌面', value: 'desktop' },
+]
+const dialogOpen = ref(false)
+const toast = ref({ open: false, message: '' })
+
+const statusItems = [
+  { key: 'ready', label: '就绪' },
+  { key: 'selection', label: ctx.value.hasSelection ? '有选区' : '无选区' },
+]
+
+function onDialogConfirm() {
+  dialogOpen.value = false
+  toast.value = { open: true, message: '已新建（演示）' }
+}
+
+function onStatusItemClick(key) {
+  toast.value = { open: true, message: `状态栏条目：${key}` }
+}
+
+function onWindowControl(name) {
+  toast.value = { open: true, message: `窗口控制：${name}（Web 宿主不渲染，此为桌面壳路径）` }
 }
 
 // ⌘K 开命令面板（产品级全局键位；组字期不抢）

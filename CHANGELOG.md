@@ -37,6 +37,27 @@
   ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
   `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
 
+## [tools-ui 0.4.0] — 2026-09-25
+
+### @wil-works/evoke-tools-ui — M3：产品外壳件与主题桥接（0.4.0）
+
+- **L0 契约（`./runtime`）**：`runtime/theme/palette.js`（主题 → 画布调色板：登记表只含令牌名、
+  零颜色字面量、缺令牌显式不写、`observeThemeChanges` 订阅+去重+退订）、
+  `runtime/focus/trap.js`（焦点管理纯函数：可聚焦查询/陷阱内循环/归还目标——Dialog/Backstage/
+  CommandPalette 三处共用）、`runtime/window/host.js`（宿主×平台探测 UAHP 优先 + `data-host`
+  覆盖 + 窗口控制位布局矩阵）；
+- **L4 外壳件**：`EtTitleBar`（双宿主×平台全矩阵：Web 无控制位；mac 左置 close-first；
+  Win/Linux 右置；拖拽区与可点区零重叠；brand/quick/center 槽）、`EtStatusBar`（高度令牌钉死、
+  items 配置 + 左中右槽、条目可键盘聚焦）、`EtBackstage`（全屏骨架；**打开/关闭不引发画布尺寸
+  跳动**：fixed+inset 0 不进文档流、零尺寸锚点、滚动锁**模块级计数** + scrollbar-gutter 预留槽位）、
+  `EtDialog`（Teleport + 遮罩/面板分档 z-index + **焦点陷阱 + Esc 收敛 + 焦点归还**，confirm/cancel）、
+  `EtToast`（aria-live、自动关定时器随卸载清理、duration=0 不挂）、`EtBanner`（内联横条、type 三档、
+  closable 只 emit 不自毁）、`EtThemeBridge`（零 DOM、订阅式写 `--ot-*`）；
+- **令牌**：补 `--et-state-danger-bg/fg`（关闭钮危险位，值引用底座 danger 阶梯）、`--et-z-mask`；
+- **两道门的误报修复**：G2 不再把 `<slot name>`/`<Transition name>` 当悬空图标名；
+- **质量**：429 个 vitest 用例；视觉回归 **27 例**（M3 四条出口：画布调色板随明暗双向联动 /
+  双宿主标题栏矩阵 / backstage 开关零尺寸跳动 / Dialog 焦点循环+Esc 归还）；七道门 + `build:tools` 全绿。
+
 ## [tools-ui 0.3.0] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — M2：工作台布局运行时（0.3.0）

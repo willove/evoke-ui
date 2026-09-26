@@ -74,13 +74,31 @@ app.use(EvokeToolsUI)
 - `EtDock`（stack 并列分摊尺寸 / tabs 档）+ `EtPanel`（28px 标题栏 + 折叠/最大化/关闭）+
   `EtScrollArea` + `EtEmptyState`（一句引导 + 一个主钮）+ `EtDocumentTabs`（脏标记/关闭/溢出）。
 
+## L4 外壳件（M3）
+
+```vue
+<et-title-bar title="我的工具" doc-title="报表.xlsx" @window-control="onWinCtl" />
+<et-workbench ...>…</et-workbench>
+<et-status-bar :items="[{ key: 'ready', label: '就绪' }]" zoom="100%" />
+<et-theme-bridge />   <!-- 零 DOM：主题 → 画布 --ot-* 调色板 -->
+<et-dialog v-model="open" title="新建" confirm-text="创建" @confirm="onConfirm" />
+<et-backstage v-model="backstage"><template #nav>…</template>…</et-backstage>
+<et-toast v-model="toastOpen" message="已保存" />
+<et-banner type="warn" title="有未保存改动" />
+```
+
+- **主题桥**：`EtThemeBridge` 零 DOM，把主题令牌解析成画布 `--ot-*`（登记表无硬编码色值）；
+- **双宿主**：`EtTitleBar` 的窗口控制位 Web 不渲染 / 桌面 mac 左序 / Win·Linux 右序（`host` prop 可钉死）；
+- **焦点三处一致**：Dialog / Backstage / 命令面板共用 `runtime/focus/trap`（Tab 循环 + Esc 收敛 +
+  焦点归还触发器）；backstage 开关不引发画布尺寸跳动。
+
 ## 子路径导出
 
 | 入口 | 内容 |
 | --- | --- |
 | `.` | 全部组件 + 运行时契约 + 图标机制 |
 | `./styles` | `--et-*` 令牌 + 暗色 + 基础样式 |
-| `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 / 布局树 |
+| `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 / 布局树 / 画布调色板 / 焦点陷阱 / 宿主探测 |
 | `./icons` | 图标解析兜底 + 领域别名注册 API |
 | `./<component>` | 按需引入，如 `@wil-works/evoke-tools-ui/tool-button` |
 

@@ -1,0 +1,128 @@
+/* EtTitleBar — 产品外壳标题栏（tools-ui 计划 05 §四 L4 / M3 交付物 1）
+
+   高度钉死 --et-chrome-titlebar-height（chrome 预算不变量：不随内容、不随密度
+   撑高；密度只影响内部图标档）。与 EtWorkbench 的 titlebar 横带配合使用时
+   分隔线由横带给（本件不画边线，避免双线）；单独使用由产品自定。度量 /
+   间距 / 颜色只引用令牌，无 px 字面量（G7），层级走既有阶梯。 */
+
+.et-titlebar.et-titlebar {
+  display: flex;
+  align-items: center;
+  height: var(--et-chrome-titlebar-height);
+  padding-inline: var(--et-space-band-inline);
+  background: var(--et-chrome-bg);
+  font-family: var(--et-font-family);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+  color: var(--eb-text-color-regular);
+  user-select: none;
+}
+
+/* 左组 / 控制位：不抢剩余空间（弹性只给拖拽带；放不下各自内部省略） */
+.et-titlebar__group,
+.et-titlebar__controls {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--et-space-inline);
+}
+
+/* 控制位内部间距用大一档：16 钮 + 24 命中区不互相重叠 */
+.et-titlebar__controls {
+  gap: var(--et-space-block);
+}
+
+/* ─── 拖拽带（桌面壳）──
+   -webkit-app-region: drag 只加在纯空白条带上：标题、按钮、快捷位全部可点，
+   拖拽命中区与可点区零重叠（M3 验收点）。两条带分居文档名位两侧，flex 均分
+   剩余宽度，文档名视觉居中；H5 宿主无此属性，声明无害。 */
+.et-titlebar__drag {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  -webkit-app-region: drag;
+}
+
+/* 交互区显式 no-drag：产品把标题栏嵌进可拖拽宿主容器时按钮仍然可点 */
+.et-titlebar__controls,
+.et-titlebar__quick {
+  -webkit-app-region: no-drag;
+}
+
+/* 产品名位：主文本色 + 中字重（层级靠字重与颜色双通道，不全场加粗） */
+.et-titlebar__brand {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-primary);
+  font-weight: var(--eb-font-weight-medium);
+}
+
+/* 快捷访问位：产品按钮容器；宽度可压缩，不顶破标题栏 */
+.et-titlebar__quick {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* 文档名位：常规文本色；超长省略（chrome 不换行、不撑高） */
+.et-titlebar__doc {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-regular);
+}
+
+/* ─── 窗口控制位钮 ───
+   可视 16 见方（--et-icon-sm），命中区用透明伪元素外扩到 WCAG 2.5.8 AA 的
+   24px（同 EtPanel 标题栏钮范式，热区不吃 32px 行高）。hover 只换一档底色
+   加一档文字色；close 是唯一的语义色钮（危险位，桌面壳惯例），其余中性阶。 */
+.et-titlebar__ctrl {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--et-icon-sm);
+  height: var(--et-icon-sm);
+  padding: 0;
+  border: none;
+  border-radius: var(--et-radius-sm);
+  background: none;
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+  appearance: none;
+}
+
+.et-titlebar__ctrl::before {
+  content: '';
+  position: absolute;
+  inset: calc((var(--et-tabstrip-close-hit-area) - var(--et-icon-sm)) / -2);
+}
+
+.et-titlebar__ctrl:hover {
+  background: var(--et-state-hover-bg);
+  color: var(--eb-text-color-regular);
+}
+
+.et-titlebar__ctrl:active {
+  background: var(--et-state-active-bg);
+}
+
+/* close（危险位）：hover / 按下进危险色阶（--et-state-danger-* 语义令牌，
+   值走底座 danger 阶梯，明暗联动）。令牌集里危险位只有一档，按下与 hover 同阶。 */
+.et-titlebar__ctrl.is-danger:hover,
+.et-titlebar__ctrl.is-danger:active {
+  background: var(--et-state-danger-bg);
+  color: var(--et-state-danger-fg);
+}
+
+/* 焦点环：键盘可见性硬要求（鼠标点击不出现；base.css 只覆盖 EtProvider 内） */
+.et-titlebar__ctrl:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}

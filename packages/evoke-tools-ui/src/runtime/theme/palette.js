@@ -38,17 +38,30 @@ export function resolveCanvasPalette(themeStyle, palette = CANVAS_PALETTE) {
 }
 
 /**
- * 把调色板写进宿主（默认 document.documentElement）：只写有值的角色，
- * 空值角色**不碰**已存在的 --ot-*（避免下游拿到空串色）。
+ * 拿 target 的样式写入面：传 Element 用它的 inline style（Custom Property 必须落
+ * inline style 才生效于该元素及其子树）；传 CSSStyleDeclaration 直接用。
+ * 两者都兜不住返回 null（调用方据此降级，不静默）。
+ */
+function styleOf(target) {
+  if (!target) return null
+  if (typeof target.setProperty === 'function') return target
+  if (target.style && typeof target.style.setProperty === 'function') return target.style
+  return null
+}
+
+/**
+ * 把调色板写进宿主：只写有值的角色，空值角色**不碰**已存在的 --ot-*
+ * （避免下游拿到空串色）。
  * @returns {string[]} 实际写入的角色名（调用方可断点/测试）
  */
 export function applyCanvasPalette(target, palette) {
-  if (!target || typeof target.setProperty !== 'function') return []
+  const style = styleOf(target)
+  if (!style) return []
   const written = []
   for (const [role, entry] of Object.entries(palette)) {
     const value = entry && typeof entry === 'object' ? entry.value : entry
     if (!value) continue
-    target.setProperty(`--ot-${role}`, value)
+    style.setProperty(`--ot-${role}`, value)
     written.push(role)
   }
   return written
@@ -60,7 +73,7 @@ export function applyCanvasPalette(target, palette) {
  * @param {(palette: object) => void} onChange 每次刷新后的调色板
  */
 export function observeThemeChanges(target, getThemeStyle, onChange, palette = CANVAS_PALETTE) {
-  if (typeof MutationObserver === 'undefined' || !target) {
+  if (typeof MutationObserver === 'undefined' || !target || typeof target !== 'object') {
     return () => {}
   }
   let last = ''

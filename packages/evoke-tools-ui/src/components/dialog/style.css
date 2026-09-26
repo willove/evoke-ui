@@ -1,0 +1,124 @@
+/* EtDialog — 模态对话框（tools-ui 计划 05 §三 / M3 交付物）
+
+   分工：焦点/Esc/归还在 index.vue + useModalFocus.js（runtime/focus/trap 纯函数），
+   本文件只放表面与层级。遮罩与面板同走 --et-z-modal（阶梯无 mask 档，面板在
+   遮罩之后渲染，同档后者居上）。度量一律走令牌，禁字面量 px（G7），动效只做
+   透明度渐隐（无位移、无缩放）。 */
+
+.et-dialog__mask {
+  position: fixed;
+  inset: 0;
+  z-index: var(--et-z-mask);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--eb-mask-color);
+  /* 视口过小时遮罩自身滚（面板不破顶），不把页面滚动带给 body */
+  overflow: auto;
+}
+
+.et-dialog__panel {
+  position: relative;
+  z-index: var(--et-z-modal);
+  display: flex;
+  flex-direction: column;
+  /* 宽由 width prop 经内联样式给出；max-width 防小视口破界 */
+  max-width: calc(100% - var(--eb-space-8));
+  margin-top: var(--eb-dialog-margin-top);
+  background: var(--et-chrome-bg);
+  border-radius: var(--et-radius-lg);
+  box-shadow: var(--eb-shadow-4);
+  color: var(--eb-text-color-regular);
+  font-family: var(--et-font-family);
+}
+
+.et-dialog__header {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--et-space-inline);
+  padding: var(--et-space-block);
+  padding-bottom: var(--et-space-inline);
+  color: var(--eb-text-color-primary);
+  font-size: var(--et-density-base-font);
+  font-weight: var(--eb-font-weight-medium);
+}
+
+.et-dialog__title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.et-dialog__body {
+  flex: 1;
+  padding: var(--et-space-block);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+  overflow: auto;
+}
+
+.et-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: none;
+  gap: var(--et-space-inline);
+  padding: var(--et-space-block);
+  padding-top: var(--et-space-inline);
+}
+
+/* 页脚钮：中性描边 + 一个主操作（强调色每屏只落在 confirm 上） */
+.et-dialog__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: var(--et-density-control-height);
+  padding-inline: var(--et-space-block);
+  border: var(--et-divider-size) solid var(--eb-border-color);
+  border-radius: var(--et-radius-md);
+  background: var(--et-chrome-bg);
+  color: var(--eb-text-color-regular);
+  font-size: var(--et-density-caption-font);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--et-duration-fast) var(--et-ease-out),
+    border-color var(--et-duration-fast) var(--et-ease-out),
+    color var(--et-duration-fast) var(--et-ease-out);
+}
+
+.et-dialog__btn:hover {
+  background: var(--et-state-hover-bg);
+  border-color: var(--eb-border-color-hover);
+  color: var(--eb-text-color-primary);
+}
+
+.et-dialog__btn--confirm {
+  background: var(--eb-color-primary);
+  border-color: var(--eb-color-primary);
+  color: var(--eb-color-white);
+}
+
+.et-dialog__btn--confirm:hover {
+  background: var(--eb-color-primary-dark-2);
+  border-color: var(--eb-color-primary-dark-2);
+  color: var(--eb-color-white);
+}
+
+/* 焦点环：浮层 Teleport 到 body，不在 .et-provider 作用域内，需自带 */
+.et-dialog__btn:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+.et-dialog-enter-active,
+.et-dialog-leave-active {
+  transition: opacity var(--et-duration-base) var(--et-ease-out);
+}
+
+.et-dialog-enter-from,
+.et-dialog-leave-to {
+  opacity: 0;
+}

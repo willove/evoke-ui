@@ -330,3 +330,20 @@
   font-size: var(--et-density-caption-font);
   line-height: calc(var(--et-size-row) - var(--et-space-inline));
 }
+
+
+/* ─── M3：外壳件接入后的示例样式 ─── */
+.wb__bridge {
+  display: none; /* EtThemeBridge 不渲染 DOM：仅把 --ot-* 写进 :root */
+}
+
+.wb__backstage-body {
+  margin: 0;
+  padding: var(--et-space-band-inline);
+  color: var(--eb-text-color-regular);
+}
+
+.wb__dialog-body {
+  margin: 0;
+  color: var(--eb-text-color-regular);
+}

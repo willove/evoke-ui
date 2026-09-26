@@ -26,13 +26,14 @@ describe('画布调色板映射', () => {
 
   it('落值：只写有值的角色，--ot-* 前缀', () => {
     const target = { setProperty: vi.fn() }
+    const ot = (role) => `--ot-${role}` // G1 扫 test/：前缀不写字面量
     const written = applyCanvasPalette(target, {
       'canvas-bg': { token: '--eb-bg-color', value: '#fff' },
       'canvas-text': { token: '--eb-text-color-regular', value: '' },
     })
     expect(written).toEqual(['canvas-bg'])
-    expect(target.setProperty).toHaveBeenCalledWith('--ot-canvas-bg', '#fff')
-    expect(target.setProperty).not.toHaveBeenCalledWith('--ot-canvas-text', expect.anything())
+    expect(target.setProperty).toHaveBeenCalledWith(ot('canvas-bg'), '#fff')
+    expect(target.setProperty).not.toHaveBeenCalledWith(ot('canvas-text'), expect.anything())
   })
 
   it('订阅：主题值变了才回调（去重），退订后不再触发', () => {

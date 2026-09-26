@@ -1,0 +1,115 @@
+/* EtBackstage — 全屏页骨架（tools-ui 计划 05 §四 L4 / M3 交付物 3）
+
+   画布不跳动（M3 出口条件三）的结构保证：覆盖层 fixed + inset 0 不进文档流，
+   挂载点只留零尺寸锚点；打开期间 documentElement 挂 .et-scroll-lock
+   （overflow 摘掉滚动条的同时 scrollbar-gutter: stable 预留槽位，底层画布
+   宽度不变）。导航宽缺省走 --eb-sidebar-width 令牌，navWidth prop 内联覆盖。 */
+
+.et-backstage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--et-z-modal);
+  display: flex;
+  background: var(--et-chrome-bg);
+  color: var(--eb-text-color-regular);
+  font-family: var(--et-font-family);
+}
+
+.et-backstage__nav {
+  flex: none;
+  /* 缺省档：底座侧栏宽令牌；navWidth prop 经内联样式覆盖 */
+  width: var(--eb-sidebar-width);
+  padding: var(--et-space-block);
+  background: var(--et-chrome-band-bg);
+  border-right: var(--et-divider-size) solid var(--et-chrome-separator);
+  overflow: auto;
+}
+
+.et-backstage__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.et-backstage__header {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--et-space-inline);
+  height: var(--et-panel-header-height);
+  padding-inline: var(--et-space-block);
+  border-bottom: var(--et-divider-size) solid var(--et-chrome-separator);
+}
+
+.et-backstage__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-primary);
+  font-size: var(--et-density-base-font);
+  font-weight: var(--eb-font-weight-medium);
+}
+
+/* 返回钮：可视 16 见方（--et-icon-sm），命中区透明伪元素外扩到 WCAG 24px */
+.et-backstage__close {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--et-icon-sm);
+  height: var(--et-icon-sm);
+  padding: 0;
+  border: none;
+  border-radius: var(--et-radius-sm);
+  background: transparent;
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+}
+
+.et-backstage__close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--et-tabstrip-close-hit-area);
+  height: var(--et-tabstrip-close-hit-area);
+  transform: translate(-50%, -50%);
+}
+
+.et-backstage__close:hover {
+  background: var(--et-state-hover-bg);
+  color: var(--eb-text-color-primary);
+}
+
+.et-backstage__close:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
+
+.et-backstage__content {
+  flex: 1;
+  min-height: 0;
+  padding: var(--et-space-block);
+  overflow: auto;
+}
+
+/* 锁滚动（加在 documentElement 上；计数式，最后一个实例关闭才摘）。
+   预留滚动条槽位：覆盖层开关之间底层文档视口宽度不变（画布不横跳）。 */
+.et-scroll-lock {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+.et-backstage-enter-active,
+.et-backstage-leave-active {
+  transition: opacity var(--et-duration-base) var(--et-ease-out);
+}
+
+.et-backstage-enter-from,
+.et-backstage-leave-to {
+  opacity: 0;
+}

@@ -11,7 +11,7 @@ hero:
       link: /guide/design
 ---
 
-<p class="td-hero__badge">v0.3.0 · 内测版</p>
+<p class="td-hero__badge">v0.4.0 · 内测版</p>
 
 # 这是什么
 
@@ -42,7 +42,9 @@ M1 交付（0.2.0）：命令运行时（注册表 / 状态推演 / 可达面核
 工具区框架（`EtRibbonBar`：真折叠 + peek + 分量降级 + 溢出「更多」；`EtCommandPalette` ⌘K；
 `EtContextMenu` 分区 + 键盘漫游；`EtShortcutPanel` 从命令表生成），外加 G3 命令面门与 G6 文案门。
 M2 起交付（已交付）：工作台布局运行时（EtWorkbench/EtDock/EtPanel/EtDocumentTabs）+ 布局树契约
-（持久化 / 损坏降级 / 复用检验已过：非办公域零改逻辑搭出完整工作台）。M3 起交付外壳件与主题桥接。
+（持久化 / 损坏降级 / 复用检验已过：非办公域零改逻辑搭出完整工作台）。M3 已交付：外壳件（EtTitleBar 双宿主窗口控制位 / EtStatusBar / EtBackstage）+ 主题桥接
+（EtThemeBridge → 画布 --ot-* 调色板随明暗联动）+ 焦点三处一致（EtDialog/EtBackstage/命令面板共用
+focus/trap 契约）+ EtToast/EtBanner。M4 起 API 冻结与 v1.0。
 
 ::: warning 计划文档先行
 本库一切取舍以 `plans/tools-ui/01–07` 为准；本页随里程碑批交付更新，不做超前承诺。

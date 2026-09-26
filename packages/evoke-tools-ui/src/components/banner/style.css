@@ -1,0 +1,100 @@
+/* EtBanner — 内联横条通知（tools-ui 计划 05 §四 L4 / M3 交付物 5）
+
+   类型差异 = 浅底（--eb-color-*-light-9）+ 细描边（light-7）+ 图标语义色；
+   标题走主文字色、正文走常规文字色（层级靠中性阶，不靠加彩色）。
+   尺寸经 et-icon 的 size prop 走 --et-icon-sm；圆角与钮同一档（--et-radius-md）。 */
+
+.et-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--et-space-inline);
+  padding: var(--et-space-block);
+  border: var(--et-divider-size) solid var(--eb-color-info-light-7);
+  border-radius: var(--et-radius-md);
+  background: var(--eb-color-info-light-9);
+  color: var(--eb-text-color-regular);
+  font-family: var(--et-font-family);
+}
+
+.et-banner--warn {
+  border-color: var(--eb-color-warning-light-7);
+  background: var(--eb-color-warning-light-9);
+}
+
+.et-banner--error {
+  border-color: var(--eb-color-error-light-7);
+  background: var(--eb-color-error-light-9);
+}
+
+.et-banner__icon {
+  flex: none;
+  color: var(--eb-color-info);
+}
+
+.et-banner--warn .et-banner__icon {
+  color: var(--eb-color-warning);
+}
+
+.et-banner--error .et-banner__icon {
+  color: var(--eb-color-error);
+}
+
+.et-banner__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: var(--et-space-inline);
+}
+
+.et-banner__title {
+  color: var(--eb-text-color-primary);
+  font-size: var(--et-density-base-font);
+  font-weight: var(--eb-font-weight-medium);
+}
+
+.et-banner__text {
+  font-size: var(--et-density-caption-font);
+  line-height: var(--et-density-line-height);
+}
+
+.et-banner__action {
+  flex: none;
+}
+
+/* 关闭钮：可视 16 见方，命中区透明伪元素外扩到 WCAG 24px（同 Backstage 返回钮） */
+.et-banner__close {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--et-icon-sm);
+  height: var(--et-icon-sm);
+  padding: 0;
+  border: none;
+  border-radius: var(--et-radius-sm);
+  background: transparent;
+  color: var(--eb-text-color-secondary);
+  cursor: pointer;
+}
+
+.et-banner__close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--et-tabstrip-close-hit-area);
+  height: var(--et-tabstrip-close-hit-area);
+  transform: translate(-50%, -50%);
+}
+
+.et-banner__close:hover {
+  background: var(--et-state-hover-bg);
+  color: var(--eb-text-color-primary);
+}
+
+.et-banner__close:focus-visible {
+  outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
+  outline-offset: var(--et-focus-ring-offset);
+}
