@@ -18,6 +18,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { kebab, callBody, keysOf } from './lib/sfc-api.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgRoot = resolve(__dirname, '..')
@@ -33,77 +34,6 @@ function componentEntries() {
     out.push({ name: m[1], file: join(pkgRoot, 'src', m[2].replace(/^\.\//, '')) })
   }
   return out
-}
-
-function kebab(name) {
-  return name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
-}
-
-/** 取 `defineXxx(` 的括号内容（按括号配对，跳过字符串里的括号） */
-function callBody(source, callee) {
-  const start = source.indexOf(`${callee}(`)
-  if (start < 0) return ''
-  let i = start + callee.length + 1
-  let depth = 1
-  let quote = null
-  for (; i < source.length; i += 1) {
-    const ch = source[i]
-    if (quote) {
-      if (ch === '\\') i += 1
-      else if (ch === quote) quote = null
-      continue
-    }
-    if (ch === '"' || ch === "'" || ch === '`') { quote = ch; continue }
-    if (ch === '(' || ch === '[' || ch === '{') depth += 1
-    else if (ch === ')' || ch === ']' || ch === '}') {
-      depth -= 1
-      if (depth === 0) return source.slice(start + callee.length + 1, i)
-    }
-  }
-  return ''
-}
-
-/** 对象字面量里的一层键（或数组字面量里的字符串） */
-function keysOf(body) {
-  const trimmed = body.trim()
-  if (!trimmed.startsWith('{')) {
-    return [...trimmed.matchAll(/["']([A-Za-z_$][\w$]*)["']/g)].map((m) => m[1])
-  }
-  const keys = []
-  let depth = 0
-  let quote = null
-  let line = ''
-  for (let i = 0; i < trimmed.length; i += 1) {
-    const ch = trimmed[i]
-    if (quote) {
-      line += ch
-      if (ch === '\\') { line += trimmed[i + 1] ?? ''; i += 1; continue }
-      if (ch === quote) quote = null
-      continue
-    }
-    if (ch === '"' || ch === "'" || ch === '`') { quote = ch; line += ch; continue }
-    if (ch === '{' || ch === '[' || ch === '(') {
-      depth += 1
-      if (depth === 1) { line = ''; continue }
-    }
-    if (ch === '}' || ch === ']' || ch === ')') {
-      depth -= 1
-      if (depth === 0) {
-        const hit = /^\s*([A-Za-z_$][\w$]*)\s*:/.exec(line)
-        if (hit) keys.push(hit[1])
-        line = ''
-      }
-      continue
-    }
-    if (ch === ',' && depth === 1) {
-      const hit = /^\s*([A-Za-z_$][\w$]*)\s*:/.exec(line)
-      if (hit) keys.push(hit[1])
-      line = ''
-      continue
-    }
-    if (depth === 1) line += ch
-  }
-  return keys
 }
 
 function docsText() {

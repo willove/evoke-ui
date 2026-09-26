@@ -30,13 +30,15 @@
   ],
   "scripts": {
     "dev": "vite build --watch",
-    "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs && vue-tsc --project tsconfig.build.json && node scripts/post-types.mjs && node scripts/check-artifacts.mjs && node scripts/check-api-docs.mjs",
+    "build": "node scripts/check-token-rule.mjs && vite build && node scripts/compat-check.mjs && vue-tsc --project tsconfig.build.json && node scripts/post-types.mjs && node scripts/check-artifacts.mjs && node scripts/check-api-docs.mjs && node scripts/gen-ai-docs.mjs --check",
     "typecheck": "vue-tsc --noEmit",
     "compat:check": "node scripts/compat-check.mjs",
     "lint:tokens": "node scripts/check-token-rule.mjs",
     "publish:pkg": "pnpm publish --access public --no-git-checks",
     "lint:api-docs": "node scripts/check-api-docs.mjs",
-    "check:artifacts": "node scripts/check-artifacts.mjs"
+    "check:artifacts": "node scripts/check-artifacts.mjs",
+    "gen:ai-docs": "node scripts/gen-ai-docs.mjs",
+    "check:ai-docs": "node scripts/gen-ai-docs.mjs --check"
   },
   "dependencies": {
     "highlight.js": "^11.12.0",

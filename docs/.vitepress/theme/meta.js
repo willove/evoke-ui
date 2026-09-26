@@ -196,6 +196,7 @@ export const CHAT_NAV = [
       { name: 'Chatbot', zh: '对话窗口', path: '/chat/chatbot' },
       { name: 'Chat 子组件', zh: '对话子组件', path: '/chat/chat-subcomponents' },
       { name: 'Chat 三件套', zh: '计划/确认/产物', path: '/chat/chat-agent' },
+      { name: 'AI Contract', zh: 'AI 契约与配方', path: '/chat/ai-contract' },
     ],
   },
   {

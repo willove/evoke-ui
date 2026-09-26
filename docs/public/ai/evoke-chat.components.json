@@ -1,0 +1,2714 @@
+{
+  "name": "@wil-works/evoke-chat",
+  "version": "0.2.0",
+  "generatedBy": "packages/evoke-chat/scripts/gen-ai-docs.mjs",
+  "docs": "https://evoke-business-ui.wil-works.com/chat/chatbot",
+  "components": [
+    {
+      "name": "EbChatbot",
+      "entry": "@wil-works/evoke-chat/chatbot",
+      "source": "src/components/chatbot/Chatbot.vue",
+      "summary": "EbChatbot 之外的家族成员。绝大多数场景不需要直接用它们——EbChatbot 已经把这些组装好了。它们用于两种情形：只想要其中一块（比如独立渲染一段 Markdown），或要自己编排（ChatList + 自定义发送区）。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chatbot",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "placeholder",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "loading",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "showThinking",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "allowAttachments",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxAttachments",
+          "type": "Number",
+          "default": "5",
+          "required": false
+        },
+        {
+          "name": "maxLength",
+          "type": "Number",
+          "default": "2e3",
+          "required": false
+        },
+        {
+          "name": "showWordCount",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "sendOnEnter",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "actions",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "editable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "editMaxLength",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "feedback",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "feedbackReasons",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "toolRetryable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "speech",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "traceUrl",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "virtual",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "virtualThreshold",
+          "type": "Number",
+          "default": "60",
+          "required": false
+        },
+        {
+          "name": "estimatedItemSize",
+          "type": "Number",
+          "default": "120",
+          "required": false
+        },
+        {
+          "name": "accept",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "maxFileSize",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "allowDrop",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "queueable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "menuOpen",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "height",
+          "type": "[String",
+          "default": "\"600px\"",
+          "required": false
+        },
+        {
+          "name": "width",
+          "type": "[String",
+          "default": "\"100%\"",
+          "required": false
+        },
+        {
+          "name": "avatarUser",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "avatarAssistant",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "userName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "assistantName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "showAvatar",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showName",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showTime",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "renderMode",
+          "type": "String",
+          "default": "\"markdown\"",
+          "required": false
+        },
+        {
+          "name": "autoScroll",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showTip",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "stoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "approval",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "question",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "context",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "inputValue",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [
+        "send",
+        "stop",
+        "copy",
+        "regenerate",
+        "action",
+        "edit",
+        "feedback"
+      ],
+      "slots": [
+        "header",
+        "empty",
+        "message-header",
+        "message",
+        "message-content",
+        "tool-result",
+        "tool-args",
+        "sender-menu",
+        "sender-prepend",
+        "sender-toolbar",
+        "sender-append",
+        "tip"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatList",
+      "entry": "@wil-works/evoke-chat/chat-list",
+      "source": "src/components/chatbot/ChatList.vue",
+      "summary": "消息滚动容器。负责自动贴底、role=\"log\" 流式播报、回到底部钮、空态；不负责发送。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "messages",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "showThinking",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "avatarUser",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "avatarAssistant",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "userName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "assistantName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "showAvatar",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showName",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showTime",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "renderMode",
+          "type": "String",
+          "default": "\"markdown\"",
+          "required": false
+        },
+        {
+          "name": "actions",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "autoScroll",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "editable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "editMaxLength",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "feedback",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "feedbackReasons",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "toolRetryable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "speech",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "traceUrl",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "virtual",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "virtualThreshold",
+          "type": "Number",
+          "default": "60",
+          "required": false
+        },
+        {
+          "name": "estimatedItemSize",
+          "type": "Number",
+          "default": "120",
+          "required": false
+        }
+      ],
+      "events": [
+        "copy",
+        "regenerate",
+        "action",
+        "edit",
+        "feedback",
+        "scroll"
+      ],
+      "slots": [
+        "empty",
+        "message",
+        "message-content",
+        "tool-result",
+        "tool-args",
+        "header"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatMessage",
+      "entry": "@wil-works/evoke-chat/chat-message",
+      "source": "src/components/chatbot/ChatMessage.vue",
+      "summary": "单条消息。按 role 分流：user / assistant 是对话气泡，system / notice 是居中弱化的系统提示（无头像、昵称、动作条）。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "message",
+          "type": "null",
+          "default": "",
+          "required": false
+        },
+        {
+          "name": "showThinking",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "avatarUser",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "avatarAssistant",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "userName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "assistantName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "renderMode",
+          "type": "String",
+          "default": "\"markdown\"",
+          "required": false
+        },
+        {
+          "name": "showAvatar",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showName",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showTime",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "actions",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "editable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "editMaxLength",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "feedback",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "feedbackReasons",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "toolRetryable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "speech",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "traceUrl",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [
+        "copy",
+        "regenerate",
+        "action",
+        "edit",
+        "feedback"
+      ],
+      "slots": [
+        "tool-result",
+        "tool-args",
+        "content"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatSender",
+      "entry": "@wil-works/evoke-chat/chat-sender",
+      "source": "src/components/chatbot/ChatSender.vue",
+      "summary": "输入区：自增高、Enter 发送、IME 组字安全、附件（点选 / 拖拽 / 粘贴）、字数限制、发送↔停止变形。EbChatbot 内部用它。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "placeholder",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "loading",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "allowAttachments",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxAttachments",
+          "type": "Number",
+          "default": "5",
+          "required": false
+        },
+        {
+          "name": "maxLength",
+          "type": "Number",
+          "default": "2e3",
+          "required": false
+        },
+        {
+          "name": "showWordCount",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "minRows",
+          "type": "Number",
+          "default": "1",
+          "required": false
+        },
+        {
+          "name": "maxRows",
+          "type": "Number",
+          "default": "6",
+          "required": false
+        },
+        {
+          "name": "sendOnEnter",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "stoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "accept",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "maxFileSize",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "allowDrop",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "queueable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "menuOpen",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "send",
+        "stop"
+      ],
+      "slots": [
+        "toolbar"
+      ],
+      "expose": [
+        "focus",
+        "setCaret",
+        "blur",
+        "reset"
+      ]
+    },
+    {
+      "name": "EbChatContent",
+      "entry": "@wil-works/evoke-chat/chat-content",
+      "source": "src/components/chatbot/ChatContent.vue",
+      "summary": "面板外壳：固定尺寸、可选边框、头部/底部槽位。EbChatbot 用它包住消息区与输入区。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "height",
+          "type": "[String",
+          "default": "\"100%\"",
+          "required": false
+        },
+        {
+          "name": "width",
+          "type": "[String",
+          "default": "\"100%\"",
+          "required": false
+        },
+        {
+          "name": "bordered",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [
+        "header",
+        "__default",
+        "footer"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatMarkdown",
+      "entry": "@wil-works/evoke-chat/chat-markdown",
+      "source": "src/components/chatbot/ChatMarkdown.vue",
+      "summary": "Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标签 + 复制）、自定义协议引用芯片、source: 行内引用上标、流式拖尾。原文 HTML 一律转义为纯文本；图片 src 只放行 http / https / data。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "content",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "streaming",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatThinking",
+      "entry": "@wil-works/evoke-chat/chat-thinking",
+      "source": "src/components/chatbot/ChatThinking.vue",
+      "summary": "思考过程折叠块。流式期间强制展开，结束后回到用户可控的折叠态。{ content, thinking, duration, interrupted }（duration 为思考耗时，显示成「（用时 X）」；消息上下文里取 message.thinkDuration；interrupted 为真时标题说「思考已中断」，用",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "content",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "thinking",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "duration",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "interrupted",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatLoading",
+      "entry": "@wil-works/evoke-chat/chat-loading",
+      "source": "src/components/chatbot/ChatLoading.vue",
+      "summary": "三点起伏的打字指示。可选 text 文案。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "text",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatActionbar",
+      "entry": "@wil-works/evoke-chat/chat-actionbar",
+      "source": "src/components/chatbot/ChatActionbar.vue",
+      "summary": "消息动作条：复制（内置，含已复制回执）、重新生成（仅 assistant）、编辑（仅 user）、自定义动作。默认悬停显示，:focus-within 与触屏常显。自定义动作给了 icon 就是图标按钮，没给则回落成文字按钮；每颗按钮悬浮都出库内 Tooltip（Teleport 到 body，消息列表滚动时不会被裁切",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "message",
+          "type": "null",
+          "default": "",
+          "required": false
+        },
+        {
+          "name": "actions",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "showCopy",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showRegenerate",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showEdit",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "showSpeech",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "traceUrl",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [
+        "copy",
+        "regenerate",
+        "edit",
+        "action"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatAttachments",
+      "entry": "@wil-works/evoke-chat/chat-attachments",
+      "source": "src/components/chatbot/ChatAttachments.vue",
+      "summary": "附件卡片列表：图片预览或按后缀匹配的专用图标（pdf / word / excel / ppt / zip / image / music / video / code / text，认不出退 MIME 大类、再退通用文档图标）、文件名、体积、移除钮；图标默认按类型染色（pdf 红 / word 蓝 / excel 绿",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "attachments",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "removable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "colored",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "remove"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatSuggestion",
+      "entry": "@wil-works/evoke-chat/chat-suggestion",
+      "source": "src/components/chatbot/ChatSuggestion.vue",
+      "summary": "追问 chips。items 接受 string 或 { text, prompt? }；layout 取 row（消息尾部）或 column（欢迎区）；icon 传图标名则每枚前置。抛 pick({ text, prompt })。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "items",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "layout",
+          "type": "String",
+          "default": "\"row\"",
+          "required": false
+        },
+        {
+          "name": "icon",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "pick"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatFeedback",
+      "entry": "@wil-works/evoke-chat/chat-feedback",
+      "source": "src/components/chatbot/ChatFeedback.vue",
+      "summary": "点赞点踩。点赞立即提交；点踩展开结构化原因面板与备注。取消评价也会交出 { value: null }——否则宿主存下来的评价清不掉。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "value",
+          "type": "String",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "reasons",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "showNote",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "submit"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatMessageEdit",
+      "entry": "@wil-works/evoke-chat/chat-message-edit",
+      "source": "src/components/chatbot/ChatMessageEdit.vue",
+      "summary": "用户消息的原地编辑器。Esc 取消、Enter 保存、IME 安全、maxlength 生效。{ modelValue, placeholder, maxLength, sendOnEnter }，抛 save(text) / cancel。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "placeholder",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "maxLength",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "sendOnEnter",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "save",
+        "cancel"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatSources",
+      "entry": "@wil-works/evoke-chat/chat-sources",
+      "source": "src/components/chatbot/ChatSources.vue",
+      "summary": "EbChatSources",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "items",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "collapsible",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "defaultOpen",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatToolCall",
+      "entry": "@wil-works/evoke-chat/chat-tool-call",
+      "source": "src/components/chatbot/ChatToolCall.vue",
+      "summary": "工具调用卡：状态标记（等待/执行/失败/完成/已停止）、耗时、参数与结果的折叠展开，失败态给重试钮。支持子调用：toolCall.subCalls 是同一形状的数组（并行派发 / PTC 子步），展开后按层级递归渲染、左侧细轨标出从属关系，折叠时头部给子调用计数；嵌套上限 16 层（引擎与组件两侧都设了，异常自引用数据",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "toolCall",
+          "type": "Object",
+          "default": "() => ({})",
+          "required": false
+        },
+        {
+          "name": "expanded",
+          "type": "Boolean",
+          "default": "undefined",
+          "required": false
+        },
+        {
+          "name": "retryable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "depth",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        }
+      ],
+      "events": [
+        "toggle",
+        "retry"
+      ],
+      "slots": [
+        "args",
+        "result"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatThreads",
+      "entry": "@wil-works/evoke-chat/chat-threads",
+      "source": "src/components/chatbot/ChatThreads.vue",
+      "summary": "不想要 Console 那套编排时，EbChatThreads 可以单独用；#item 插槽整条接管，itemProps 用于回落默认渲染（与 ChatList#message 同款约定）：",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-threads",
+      "props": [
+        {
+          "name": "threads",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "active",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "streaming",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "searchable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showCreate",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "groupByDate",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "renamable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "removable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "select",
+        "create",
+        "rename",
+        "remove",
+        "pin",
+        "archive",
+        "search"
+      ],
+      "slots": [
+        "header",
+        "empty",
+        "item",
+        "footer"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatWidget",
+      "entry": "@wil-works/evoke-chat/chat-widget",
+      "source": "src/components/chatbot/ChatWidget.vue",
+      "summary": "导出名为 EbChatWidget。v-model 管开合；内容完全由你放——常见就是一颗 EbChatbot 或 EbAiConsole：",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-widget",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "icon",
+          "type": "String",
+          "default": "\"customer-service\"",
+          "required": false
+        },
+        {
+          "name": "launcherTooltip",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "badge",
+          "type": "Number",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "placement",
+          "type": "String",
+          "default": "\"bottom-right\"",
+          "required": false
+        },
+        {
+          "name": "width",
+          "type": "[String",
+          "default": "380",
+          "required": false
+        },
+        {
+          "name": "height",
+          "type": "[String",
+          "default": "560",
+          "required": false
+        },
+        {
+          "name": "mobileMode",
+          "type": "String",
+          "default": "\"drawer\"",
+          "required": false
+        },
+        {
+          "name": "drawerSize",
+          "type": "[String",
+          "default": "\"80%\"",
+          "required": false
+        },
+        {
+          "name": "disclaimer",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "defaultConsented",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "appendToBody",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "open",
+        "close",
+        "consent"
+      ],
+      "slots": [
+        "__default",
+        "disclaimer-actions",
+        "title",
+        "launcher"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatPlan",
+      "entry": "@wil-works/evoke-chat/chat-plan",
+      "source": "src/components/chatbot/ChatPlan.vue",
+      "summary": "EbChatPlan · EbChatConfirmation · EbChatArtifact",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "plan",
+          "type": "Object",
+          "default": "() => ({ steps: [] })",
+          "required": false
+        },
+        {
+          "name": "expanded",
+          "type": "Boolean",
+          "default": "undefined",
+          "required": false
+        }
+      ],
+      "events": [
+        "toggle"
+      ],
+      "slots": [
+        "step"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatConfirmation",
+      "entry": "@wil-works/evoke-chat/chat-confirmation",
+      "source": "src/components/chatbot/ChatConfirmation.vue",
+      "summary": "EbChatPlan · EbChatConfirmation · EbChatArtifact",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "confirmation",
+          "type": "Object",
+          "default": "() => ({})",
+          "required": false
+        }
+      ],
+      "events": [
+        "respond"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatApproval",
+      "entry": "@wil-works/evoke-chat/chat-approval",
+      "source": "src/components/chatbot/ChatApproval.vue",
+      "summary": "审批面板：agent 要执行越权动作（跑命令、联网、改文件）时接管输入区——待审批期间发送台让位，用户只需做一个决定。{ id, toolName, reason?, detail?, status? }：给了 reason 就用它当标题，否则显示「工具 X 请求越权执行」；detail 常放被拦命令原文（等宽、限高可",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "request",
+          "type": "Object",
+          "default": "() => ({})",
+          "required": false
+        },
+        {
+          "name": "answered",
+          "type": "Boolean",
+          "default": "undefined",
+          "required": false
+        }
+      ],
+      "events": [
+        "respond"
+      ],
+      "slots": [
+        "__default"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatQuestion",
+      "entry": "@wil-works/evoke-chat/chat-question",
+      "source": "src/components/chatbot/ChatQuestion.vue",
+      "summary": "提问面板：agent 需要澄清时接管输入区（审批优先——越权动作必须先答）。{ id, items: [{ id, question, header?, multiSelect?, allowCustom?, options: [{ key, label, recommended?, description? }] }",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "request",
+          "type": "Object",
+          "default": "() => ({})",
+          "required": false
+        },
+        {
+          "name": "answered",
+          "type": "Boolean",
+          "default": "undefined",
+          "required": false
+        }
+      ],
+      "events": [
+        "respond"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatContextMeter",
+      "entry": "@wil-works/evoke-chat/chat-context-meter",
+      "source": "src/components/chatbot/ChatContextMeter.vue",
+      "summary": "输入区上方的占用环：{ used, capacity, breakdown? }，环 + 百分比，点开给「已用 / 窗口」与三段构成（系统提示词 / 工具定义 / 对话消息）。两侧缺一就不显示——拿不到窗口容量时画个环只会误导；百分比封顶 100%，到 75% 转警告色、90% 转危险色，动画在 prefers-red",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "used",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "capacity",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "breakdown",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatChanges",
+      "entry": "@wil-works/evoke-chat/chat-changes",
+      "source": "src/components/chatbot/ChatChanges.vue",
+      "summary": "本轮改动汇总卡：标题给「已编辑 N 个文件」（单文件时直接给文件名），右侧 +A -R；展开后逐行列文件，每行带自己的增删数，二进制 / 过大不给行数只给标记。超出 collapsedRows（默认 4）折叠，给「全部 N 个文件」。路径等宽、不折行（保住目录层级），过长省略并留 title；点行抛 select（宿主",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "files",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "summary",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "collapsedRows",
+          "type": "Number",
+          "default": "4",
+          "required": false
+        },
+        {
+          "name": "defaultOpen",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "select"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatArtifact",
+      "entry": "@wil-works/evoke-chat/chat-artifact",
+      "source": "src/components/chatbot/ChatArtifact.vue",
+      "summary": "EbChatPlan · EbChatConfirmation · EbChatArtifact",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "artifacts",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "copyable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "open",
+        "copy"
+      ],
+      "slots": [
+        "artifact"
+      ],
+      "expose": []
+    },
+    {
+      "name": "EbChatDiff",
+      "entry": "@wil-works/evoke-chat/chat-diff",
+      "source": "src/components/chatbot/ChatDiff.vue",
+      "summary": "吃标准统一 diff 文本（git diff 与各家 agent 输出的那种），按文件分组，头部给路径与 +N −M，行按增/删/上下文着色，带 old/new 双行号栅格。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "diff",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "showLineNumbers",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "collapsible",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "defaultOpen",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxHeight",
+          "type": "[String",
+          "default": "\"360px\"",
+          "required": false
+        }
+      ],
+      "events": [
+        "toggle",
+        "copy"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatTerminal",
+      "entry": "@wil-works/evoke-chat/chat-terminal",
+      "source": "src/components/chatbot/ChatTerminal.vue",
+      "summary": "命令输出卡：头部给命令与退出码，正文等宽渲染且不折行（保住终端列结构，横向滚动交给容器），status: 'running' 时末尾有光标。长输出只渲染尾部（默认 40 行），给省略数与展开入口——命令输出动辄上千行，全渲染会拖垮消息列。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "command",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "output",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "default": "\"done\"",
+          "required": false
+        },
+        {
+          "name": "exitCode",
+          "type": "[Number",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "collapsible",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "defaultOpen",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxHeight",
+          "type": "[String",
+          "default": "\"320px\"",
+          "required": false
+        },
+        {
+          "name": "tailLines",
+          "type": "Number",
+          "default": "40",
+          "required": false
+        }
+      ],
+      "events": [
+        "toggle",
+        "copy"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatFileTree",
+      "entry": "@wil-works/evoke-chat/chat-file-tree",
+      "source": "src/components/chatbot/ChatFileTree.vue",
+      "summary": "扁平路径列表 → 嵌套树。目录在前、名称升序；文件带类型图标、状态徽标（新增/修改/删除/重命名）与增删行数。目录默认展开，折叠状态 aria-expanded 完整。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "files",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "defaultExpandAll",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "select",
+        "toggle"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatTestResults",
+      "entry": "@wil-works/evoke-chat/chat-test-results",
+      "source": "src/components/chatbot/ChatTestResults.vue",
+      "summary": "EbChatTestResults · EbChatStackTrace。两张都是纯数据渲染，无额外依赖。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "results",
+          "type": "Object",
+          "default": "() => ({})",
+          "required": false
+        },
+        {
+          "name": "cases",
+          "type": "Array",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "expandStacks",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatStackTrace",
+      "entry": "@wil-works/evoke-chat/chat-stack-trace",
+      "source": "src/components/chatbot/ChatStackTrace.vue",
+      "summary": "吃 stack 字符串或已解析的 frames，认三种常见形态：",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "stack",
+          "type": "[String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "collapseDependencies",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxAppFrames",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatShare",
+      "entry": "@wil-works/evoke-chat/chat-share",
+      "source": "src/components/chatbot/ChatShare.vue",
+      "summary": "收集「可见范围 + 有效期」，链接的生成与权限校验由你的服务端负责——组件不发请求；link 为空是配置态、非空是已创建态。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "link",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "creating",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "scopes",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "scope",
+          "type": "String",
+          "default": "\"anyone\"",
+          "required": false
+        },
+        {
+          "name": "expiries",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "expiry",
+          "type": "String",
+          "default": "\"7d\"",
+          "required": false
+        },
+        {
+          "name": "appendToBody",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "create",
+        "revoke",
+        "copy"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatSpeak",
+      "entry": "@wil-works/evoke-chat/chat-speak",
+      "source": "src/components/chatbot/ChatSpeak.vue",
+      "summary": "### 朗读（useSpeech · EbChatSpeak）",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "text",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "lang",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "rate",
+          "type": "Number",
+          "default": "1",
+          "required": false
+        }
+      ],
+      "events": [
+        "start",
+        "stop",
+        "end"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatVoiceInput",
+      "entry": "@wil-works/evoke-chat/chat-voice-input",
+      "source": "src/components/chatbot/ChatVoiceInput.vue",
+      "summary": "### 口述（useSpeechInput · EbChatVoiceInput）",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "lang",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "continuous",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "emitInterim",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "interim",
+        "result",
+        "error",
+        "start",
+        "end"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatQueue",
+      "entry": "@wil-works/evoke-chat/chat-queue",
+      "source": "src/components/chatbot/ChatQueue.vue",
+      "summary": "EbChatQueue 是待发送队列那条窄带，宿主放在输入区上方即可（#sender-prepend 或自己排布）：",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "items",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        }
+      ],
+      "events": [
+        "remove",
+        "clear"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatCommandMenu",
+      "entry": "@wil-works/evoke-chat/chat-command-menu",
+      "source": "src/components/chatbot/ChatCommandMenu.vue",
+      "summary": "useTriggerMenu（判定）+ EbChatCommandMenu（渲染）+ 输入区让出键盘，三件拼起来。键盘不放在弹层里是刻意的——焦点始终在输入框，弹层不该抢走输入。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "items",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "highlight",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "visible",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [
+        "select",
+        "hover"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatUsage",
+      "entry": "@wil-works/evoke-chat/chat-usage",
+      "source": "src/components/chatbot/ChatUsage.vue",
+      "summary": "EbChatUsage 只展示宿主给的用量——成本要价目表，那是宿主的业务数据，组件与引擎都不猜。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "usage",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "items",
+          "type": "Array",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "size",
+          "type": "String",
+          "default": "\"compact\"",
+          "required": false
+        },
+        {
+          "name": "bare",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatSandbox",
+      "entry": "@wil-works/evoke-chat/chat-sandbox",
+      "source": "src/components/chatbot/ChatSandbox.vue",
+      "summary": "组件不执行代码，只把一个隔离 iframe 管起来：宿主给 HTML → 组件拼 bootstrap → srcdoc + sandbox 属性 → iframe；console 与错误经 postMessage 上来，组件只转发不解析。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "html",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "src",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "height",
+          "type": "[String",
+          "default": "260",
+          "required": false
+        },
+        {
+          "name": "autoHeight",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "extraSandbox",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "allow",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "bootConsole",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "console",
+        "error",
+        "ready",
+        "resize"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbChatWebPreview",
+      "entry": "@wil-works/evoke-chat/chat-web-preview",
+      "source": "src/components/chatbot/ChatWebPreview.vue",
+      "summary": "iframe + 截图双模式。有一个绕不过去的硬限制：目标站返回 X-Frame-Options: DENY 或 frame-ancestors 时浏览器显示空白错误页，而跨域下脚本无法可靠区分「禁嵌的空白页」与「真的空白内容」——load 两种情况都触发。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "src",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "screenshot",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "embeddable",
+          "type": "Boolean",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "screenshotAlt",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "height",
+          "type": "[String",
+          "default": "320",
+          "required": false
+        },
+        {
+          "name": "extraSandbox",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "allow",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        }
+      ],
+      "events": [],
+      "slots": [],
+      "expose": []
+    },
+    {
+      "name": "EbAiPromptBox",
+      "entry": "@wil-works/evoke-chat/ai-prompt-box",
+      "source": "src/components/ai-prompt-box/index.vue",
+      "summary": "EbAiPromptBox 侧同理走 #toolbar-extra。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/ai-prompt-box",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "placeholder",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "loading",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "scenes",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "scene",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "capabilities",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "activeCapabilities",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "models",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "model",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "quota",
+          "type": "[String",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "showSettings",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "allowAttachments",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxAttachments",
+          "type": "Number",
+          "default": "5",
+          "required": false
+        },
+        {
+          "name": "accept",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "maxFileSize",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "allowDrop",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxLength",
+          "type": "Number",
+          "default": "undefined",
+          "required": false
+        },
+        {
+          "name": "showWordCount",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "maxRows",
+          "type": "Number",
+          "default": "8",
+          "required": false
+        },
+        {
+          "name": "sendOnEnter",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "stoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "send",
+        "stop"
+      ],
+      "slots": [
+        "toolbar-extra",
+        "scenes-append"
+      ],
+      "expose": [
+        "focus",
+        "clear"
+      ]
+    },
+    {
+      "name": "EbAiConsole",
+      "entry": "@wil-works/evoke-chat/ai-console",
+      "source": "src/components/ai-console/index.vue",
+      "summary": "EbChatbot / EbAiConsole 的 question prop 传了就接管输入区，响应经 question-respond(answer, request) 抛出；useChatSession 的 question + respondQuestion(answer) 已把链路接好（question/re",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/ai-console",
+      "props": [
+        {
+          "name": "engine",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "sessions",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "transport",
+          "type": "Function",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "welcome",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "examples",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "exampleAction",
+          "type": "String",
+          "default": "'send'",
+          "required": false
+        },
+        {
+          "name": "placeholder",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "disabled",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "loading",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "scenes",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "capabilities",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "models",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "quota",
+          "type": "[String",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "showSettings",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "allowAttachments",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "maxAttachments",
+          "type": "Number",
+          "default": "5",
+          "required": false
+        },
+        {
+          "name": "maxLength",
+          "type": "Number",
+          "default": "2000",
+          "required": false
+        },
+        {
+          "name": "sendOnEnter",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "stoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "approval",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "question",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "context",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "showThinking",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "renderMode",
+          "type": "String",
+          "default": "'markdown'",
+          "required": false
+        },
+        {
+          "name": "autoScroll",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "userName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "assistantName",
+          "type": "String",
+          "default": "void 0",
+          "required": false
+        },
+        {
+          "name": "showAvatar",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showName",
+          "type": "[Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "showTime",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "avatarUser",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "avatarAssistant",
+          "type": "String",
+          "default": "''",
+          "required": false
+        },
+        {
+          "name": "actions",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "editable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "editMaxLength",
+          "type": "Number",
+          "default": "0",
+          "required": false
+        },
+        {
+          "name": "feedback",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "feedbackReasons",
+          "type": "Array",
+          "default": "() => []",
+          "required": false
+        },
+        {
+          "name": "toolRetryable",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        },
+        {
+          "name": "speech",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "traceUrl",
+          "type": "String",
+          "default": "\"\"",
+          "required": false
+        },
+        {
+          "name": "chatHeight",
+          "type": "[Number",
+          "default": "420",
+          "required": false
+        },
+        {
+          "name": "showTip",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
+        }
+      ],
+      "events": [
+        "send",
+        "stop",
+        "copy",
+        "regenerate",
+        "action",
+        "edit",
+        "feedback"
+      ],
+      "slots": [
+        "threads",
+        "empty",
+        "toolbar-extra",
+        "tip"
+      ],
+      "expose": [
+        "engine",
+        "clear"
+      ]
+    }
+  ],
+  "composables": [
+    {
+      "name": "useChatEngine",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usechatengine"
+    },
+    {
+      "name": "useChatSessions",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usechatsessions"
+    },
+    {
+      "name": "createSessionLog",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#createsessionlog"
+    },
+    {
+      "name": "isEnvelope",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#isenvelope"
+    },
+    {
+      "name": "isTransient",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#istransient"
+    },
+    {
+      "name": "useChatSession",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usechatsession"
+    },
+    {
+      "name": "applySessionEvent",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#applysessionevent"
+    },
+    {
+      "name": "useTriggerMenu",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usetriggermenu"
+    },
+    {
+      "name": "useSpeech",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usespeech"
+    },
+    {
+      "name": "useSpeechInput",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usespeechinput"
+    },
+    {
+      "name": "chatLabels",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#chatlabels"
+    },
+    {
+      "name": "useChatLabels",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usechatlabels"
+    },
+    {
+      "name": "createChatTransport",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#createchattransport"
+    },
+    {
+      "name": "openai",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#openai"
+    },
+    {
+      "name": "anthropic",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#anthropic"
+    },
+    {
+      "name": "readSseFrames",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#readsseframes"
+    },
+    {
+      "name": "sseFramesOf",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#sseframesof"
+    },
+    {
+      "name": "parseSseText",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#parsessetext"
+    },
+    {
+      "name": "parseSseFrame",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#parsesseframe"
+    },
+    {
+      "name": "streamChunks",
+      "entry": "@wil-works/evoke-chat",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#streamchunks"
+    }
+  ],
+  "recipes": [
+    {
+      "task": "流式回写模型输出",
+      "apis": [
+        "useChatEngine.createAssistantMessage",
+        "appendContent",
+        "appendThinkContent",
+        "completeMessage"
+      ],
+      "code": "const engine = useChatEngine()\nconst msg = engine.createAssistantMessage()\n// 逐片回写：appendContent 自动把消息转成 streaming 态（卡片露出光标）\nengine.appendContent(msg.id, chunk)\nengine.appendThinkContent(msg.id, reasoningChunk)   // 思维链与正文分开\nengine.completeMessage(msg.id)                      // 收尾：settle 耗时、转 done",
+      "pitfalls": [
+        "不要自己拼字符串后 setMessageContent——那样没有 streaming 光标与贴底",
+        "正文与思维链必须分开两个 API，混写会串行渲染"
+      ]
+    },
+    {
+      "task": "停止生成（用户点停止 / 双击 Esc）",
+      "apis": [
+        "cancelMessage"
+      ],
+      "code": "// 组件侧：EbAiPromptBox / EbChatSender 的 stop 事件\nfunction onStop() {\n  engine.cancelMessage(msg.id)\n  transport.cancel()      // 后端协作式中断\n}",
+      "pitfalls": [
+        "取消是 cancelled，不是 error：不要用 setMessageError 表达用户主动停止",
+        "cancelMessage 会把思考态标记为「思考已中断」，并把在跑/等待的工具调用落 cancelled",
+        "中断后迟到的增量与收尾会被拒绝（appendContent / completeToolCall 返回空）"
+      ]
+    },
+    {
+      "task": "渲染工具调用（含流式输出）",
+      "apis": [
+        "startToolCall",
+        "appendToolCallResult",
+        "completeToolCall",
+        "failToolCall"
+      ],
+      "code": "const callId = engine.startToolCall(msg.id, { name: 'web_search', label: '联网检索', args: { query } })\nengine.appendToolCallResult(msg.id, callId, '命中 3 条…')   // 边跑边出，卡片自动展开并贴底\nengine.completeToolCall(msg.id, callId)                     // 省略 result：保留已流出的输出",
+      "pitfalls": [
+        "completeToolCall 第三参省略时保留流式输出，传空串才会清空",
+        "失败用 failToolCall（错误首行会摘要显示），不要走 completeToolCall"
+      ]
+    },
+    {
+      "task": "工具调用里挂子步骤（并行派发 / PTC）",
+      "apis": [
+        "addSubToolCall",
+        "findToolCall"
+      ],
+      "code": "const parent = engine.startToolCall(msg.id, { name: 'fetch_page' })\nconst child = engine.addSubToolCall(msg.id, parent, { name: 'parse_html' })  // 返回子调用 id\nengine.completeToolCall(msg.id, child, '解析出 3 个小节')",
+      "pitfalls": [
+        "append/complete/fail 都按 id 递归作用到子层，无需手动找父节点",
+        "嵌套上限 16 层，超深返回 null"
+      ]
+    },
+    {
+      "task": "审批接管（危险操作前问一句）",
+      "apis": [
+        "EbChatApproval",
+        "useChatSession.respondApproval"
+      ],
+      "code": "<eb-chatbot :approval=\"approval\" @approval-respond=\"onApprovalRespond\" />\n\n// 宿主侧\nconst answer = await askApproval({ id, toolName: 'web_search', reason: '需要联网' })\n// answer: 'allowed-once' | 'rejected'\nsession.respondApproval('allowed-once')",
+      "pitfalls": [
+        "只有两种结论：allowed-once / rejected（没有「总是允许」——那属于会话级权限模式）",
+        "审批非空时输入台让位给审批面板，优先级高于提问"
+      ]
+    },
+    {
+      "task": "提问接管（干活前澄清口径）",
+      "apis": [
+        "EbChatQuestion",
+        "useChatSession.respondQuestion"
+      ],
+      "code": "<eb-chatbot :question=\"question\" @question-respond=\"onQuestionRespond\" />\n\nconst answer = await askQuestion({\n  id, items: [{ id: 'scope', question: '按哪个口径对比？', options: [{ key: 'mom', label: '环比', recommended: true }] }],\n})\n// answer: { status: 'answered' | 'cancelled', answers: [{ selected: ['mom'], custom, skipped }] }",
+      "pitfalls": [
+        "跳过算「已回答」（skipped: true），取消是整批作废（status: cancelled）",
+        "单选互斥、多选累加、自定义输入同题互斥"
+      ]
+    },
+    {
+      "task": "显示上下文占用",
+      "apis": [
+        "EbChatContextMeter",
+        "useChatSession.setContext"
+      ],
+      "code": "<eb-ai-console :context=\"{ used, capacity: 32000, breakdown: { system, tools, messages } }\" />\n\n// 或由事件驱动\nsession.setContext({ used: 12800, capacity: 32000 })",
+      "pitfalls": [
+        "used 与 capacity 缺一不渲染——拿不到窗口容量时画环只会误导",
+        "百分比封顶 100%，75% 警告 / 90% 危险"
+      ]
+    },
+    {
+      "task": "展示本轮改了哪些文件",
+      "apis": [
+        "EbChatChanges",
+        "useChatEngine.setChanges"
+      ],
+      "code": "engine.setChanges(msg.id, {\n  total: 3, added: 96, deleted: 18,\n  files: [{ path: 'src/a.vue', display: 'a.vue', added: 88, deleted: 12 }, { path: 'assets/logo.png', binary: true }],\n})",
+      "pitfalls": [
+        "单文件时标题直接给文件名；二进制/过大不给行数只给标记",
+        "列表默认露 4 行，超出收在「全部 N 个文件」"
+      ]
+    },
+    {
+      "task": "接真实后端（会话日志层：断线可恢复）",
+      "apis": [
+        "useChatSession",
+        "createSessionLog",
+        "applySessionEvent"
+      ],
+      "code": "const transport = {\n  open: ({ cursor, onEvent, onGap }) => subscribe({ cursor, onEvent, onGap }),  // 长连/轮询均可\n  page: ({ from, limit }) => fetchRecords({ from, limit }),                    // 补页\n  send: (payload) => post(payload), cancel: () => abort(),                     // 发送与中断\n  approve: (outcome, request) => postApproval(outcome, request),\n  answerQuestion: (answer, request) => postAnswer(answer, request),\n}\nconst session = useChatSession({ transport })\nsession.open({ cursor: 0, records: [] })",
+      "pitfalls": [
+        "事件信封 { type, seq, time, data, ignorable?, surfaceOp? }；seq 必须连续，缺口会缓冲并回调 onGap",
+        "游标只被持久事件推进；瞬时事件（审批/提问/占用）不会推进也不会造成缺口",
+        "不可忽略的未知事件会标记 degraded，宿主应重拉整窗"
+      ]
+    },
+    {
+      "task": "直接接 OpenAI / Anthropic",
+      "apis": [
+        "createChatTransport"
+      ],
+      "code": "const transport = createChatTransport({\n  provider: 'anthropic',            // 'openai' | 'anthropic'\n  apiKey, model: 'claude-sonnet-4-5', system: '你是运营助手',\n  tools: [{ name: 'web_search', description: '联网检索', parameters: {…} }],\n  contextWindow: 32000,\n  getMessages: () => session.messages.value,\n})",
+      "pitfalls": [
+        "浏览器直连会暴露 key：生产走自己的后端代理（url 指到代理）",
+        "这两家没有 follow/补页协议，历史要宿主自己存",
+        "工具参数是分片 JSON，适配层已按 index 拼完再 parse"
+      ]
+    },
+    {
+      "task": "自定义工具卡的参数/结果渲染",
+      "apis": [
+        "EbChatToolCall 的 #args / #result 插槽"
+      ],
+      "code": "<eb-chat-tool-call :tool-call=\"call\">\n  <template #result=\"{ toolCall }\"><eb-json-viewer :data=\"toolCall.result\" /></template>\n</eb-chat-tool-call>",
+      "pitfalls": [
+        "默认是带环检测的 JSON <pre>；只要换成插槽就不会丢默认的折叠/状态语义"
+      ]
+    },
+    {
+      "task": "多语言",
+      "apis": [
+        "chatLabels",
+        "useChatLabels",
+        "@wil-works/evoke-chat/locale"
+      ],
+      "code": "import zhCN from '@wil-works/evoke-chat/locale/zh-CN'\napp.use(EvokeChat, { locale: zhCN })",
+      "pitfalls": [
+        "文案随包走，中英键位必须同构（有测试守）",
+        "宿主自定义文案用 chatLabels 覆盖，不要 fork 组件"
+      ]
+    }
+  ]
+}

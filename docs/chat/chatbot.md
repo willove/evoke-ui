@@ -773,6 +773,17 @@ session.messages                             // 折叠后的消息数组，直�
 
 > 纯逻辑内核 `createSessionLog()` 与折叠函数 `applySessionEvent(engine, event)` 都单独导出：不用 Vue、不接网络，可以只取日志层，或只在测试里复用折叠规则。
 
+## 给 AI 读的契约
+
+文档站除了 prose 版的 `llms.txt` / `llms-full.txt`，还随站发布两份**结构化契约**：
+
+| 文件 | 内容 |
+| --- | --- |
+| [/chat/ai-contract](/chat/ai-contract) | 硬规则 → 任务配方（含代码与坑）→ 逐组件的 props / 事件 / 插槽 / 实例方法表 |
+| [/ai/evoke-chat.components.json](https://evoke-business-ui.wil-works.com/ai/evoke-chat.components.json) | 同一份契约的机器可读版（组件 + 具名导出 + 配方） |
+
+两份产物由 `packages/evoke-chat/scripts/gen-ai-docs.mjs` 从源码抽取，`--check` 已进构建链：源码改了没重新生成，构建即失败（与文档 API 门同一思路）。
+
 ## 接入 OpenAI / Anthropic
 
 两家模型服务各一个适配器（`openai` / `anthropic`），**纯映射、零 SDK 依赖**：请求体、SSE 解析、wire → 本库事件三件事都在里面，接上 `useChatSession` 就能跑。
