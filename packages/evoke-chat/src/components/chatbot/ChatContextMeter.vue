@@ -131,7 +131,9 @@ function format(value) {
 }
 
 .eb-chat-context:hover {
-  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  /* hover 不画药丸边框：浅底 + 提亮文字（与工具栏其余 chip 同一表达） */
+  box-shadow: none;
+  background: var(--eb-fill-color-light);
   color: var(--eb-color-primary);
 }
 

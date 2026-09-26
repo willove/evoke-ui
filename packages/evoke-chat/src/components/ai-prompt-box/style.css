@@ -33,7 +33,8 @@
 }
 
 .eb-ai-prompt-box__model-pill:hover:not(:disabled) {
-  box-shadow: 0 0 0 1px var(--eb-border-color-hover) inset;
+  /* hover 也不画药丸边框：底色由工具栏统一 hover 规则给 */
+  box-shadow: none;
 }
 
 .eb-ai-prompt-box__model-pill:disabled {
