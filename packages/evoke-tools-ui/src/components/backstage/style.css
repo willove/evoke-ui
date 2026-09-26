@@ -2,7 +2,7 @@
 
    画布不跳动（M3 出口条件三）的结构保证：覆盖层 fixed + inset 0 不进文档流，
    挂载点只留零尺寸锚点；打开期间 documentElement 挂 .et-scroll-lock
-   （overflow 摘掉滚动条的同时 scrollbar-gutter: stable 预留槽位，底层画布
+   （overflow 摘滚动条；实测缺口由 scroll-lock.js 补 padding-right，底层画布
    宽度不变）。导航宽缺省走 --eb-sidebar-width 令牌，navWidth prop 内联覆盖。 */
 
 .et-backstage {
@@ -101,7 +101,6 @@
    预留滚动条槽位：覆盖层开关之间底层文档视口宽度不变（画布不横跳）。 */
 .et-scroll-lock {
   overflow: hidden;
-  scrollbar-gutter: stable;
 }
 
 .et-backstage-enter-active,

@@ -7,7 +7,7 @@ import HomeStage from './demos/HomeStage.vue'
 </script>
 
 <div class="td-hero">
-  <p class="td-hero__badge">v1.2.0 · 内测版 · 33 个组件入口 · 七道构建门 · Vue 3 纯 JS</p>
+  <p class="td-hero__badge">v1.2.1 · 内测版 · 33 个组件入口 · 七道构建门 · Vue 3 纯 JS</p>
   <h1 class="td-hero__title">Evoke <span class="accent">Tools UI</span></h1>
   <p class="td-hero__desc">
     把界面做成<strong>一个软件</strong>的 Vue 3 框架：命令驱动、三档密度、可停靠工作台、键盘优先。

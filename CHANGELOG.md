@@ -69,6 +69,19 @@
 - 测试：site.test.js 默认档断言更新（默认挂 `is-width-default`，显式 `full` 不带档位类），
   evoke-ui 30 文件 347 项全过；docs-web SSR 全站构建通过。
 
+## [tools-ui 1.2.1] — 2026-09-26
+
+### @wil-works/evoke-tools-ui — backstage 滚动锁修复（1.2.1）
+
+- **M3 出口条件三的反向回归**：锁滚动原用 `scrollbar-gutter: stable` 预留槽位，
+  但该属性在**本来没有滚动条**的页面会凭空造出 ~5px 槽位——覆盖层一开画布就窄
+  5px（视觉用例实测抓到：canvas 436 → 431，自己写的门禁抓到了自己的实现）；
+- 改为**实测补偿**：开锁前测 `innerWidth - clientWidth`，有滚动条才把缺口写成
+  `padding-right`，没有就是 0；卸载连同补偿一起还原；无布局环境（clientWidth=0，
+  jsdom/SSR）跳过；
+- 回归测试 2 例（无滚动条零补偿 / 有滚动条 15px 且卸载还原）；视觉 backstage
+  用例恢复绿；全量 437 单测 + 28 视觉全过。
+
 ## [business-ui 0.11.0 / tools-ui 1.2.0] — 2026-09-26
 
 ### @wil-works/evoke-business-ui — EbSplitter 拖拽条键盘 resize（0.11.0，增量）

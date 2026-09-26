@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount , flushPromises } from '@vue/test-utils'
 import EtBackstage from '../src/components/backstage/index.vue'
 
 /**
@@ -140,5 +140,29 @@ describe('EtBackstage（M3 交付物 3：全屏页骨架）', () => {
     expect(document.activeElement).toBe(trigger)
     trigger.remove()
     wrapper.unmount()
+  })
+})
+
+describe('EtBackstage 滚动锁不造槽位（M3 出口条件三的反向回归）', () => {
+  it('无滚动条的页面：开关前后 canvas 宽度一致（stable gutter 会凭空造 5px 槽位）', async () => {
+    // jsdom 下 clientWidth/innerWidth 都是 0 → gutter 0 → 不写 paddingRight
+    const wrapper = await mountBackstage({ modelValue: true })
+    await flushPromises()
+    expect(document.documentElement.style.paddingRight).toBe('')
+    expect(document.documentElement.classList.contains('et-scroll-lock')).toBe(true)
+    wrapper.unmount()
+    expect(document.documentElement.style.paddingRight).toBe('')
+  })
+
+  it('有滚动条时：实测缺口补 padding-right，卸载还原', async () => {
+    const spy = vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1280)
+    const spyClient = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1265)
+    const wrapper = await mountBackstage({ modelValue: true })
+    await flushPromises()
+    expect(document.documentElement.style.paddingRight).toBe('15px')
+    wrapper.unmount()
+    expect(document.documentElement.style.paddingRight).toBe('')
+    spy.mockRestore()
+    spyClient.mockRestore()
   })
 })

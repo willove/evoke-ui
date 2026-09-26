@@ -14,15 +14,31 @@ const LOCK_CLASS = 'et-scroll-lock'
 
 let lockCount = 0
 
-/** 打开一个全屏页：首个实例挂 class */
+/**
+ * 打开一个全屏页：首个实例挂 class。
+ *
+ * 滚动条缺口的补偿必须**实测**：锁之前 documentElement 有滚动条时（innerWidth >
+ * clientWidth），overflow:hidden 会摘掉它、内容突然变宽 = 画布横跳；没有滚动条时
+ * 补偿必须是 0——\`scrollbar-gutter: stable\` 看着能解决，实测会**凭空造** 5px 槽位
+ * （M3 视觉用例抓到过：没有滚动条的页面加 stable 反而跳 5px），所以不用它，
+ * 改用把实测缺口写成 padding-right（有则补、无则 0）。
+ */
 export function lockRootScroll() {
   lockCount += 1
-  if (lockCount === 1) document.documentElement.classList.add(LOCK_CLASS)
+  if (lockCount !== 1) return
+  const root = document.documentElement
+  // clientWidth 为 0 = 无布局环境（jsdom / SSR）：没有滚动条可摘，也不补
+  const gutter = root.clientWidth ? Math.max(0, window.innerWidth - root.clientWidth) : 0
+  if (gutter > 0) root.style.paddingRight = `${gutter}px`
+  root.classList.add(LOCK_CLASS)
 }
 
-/** 关闭一个全屏页：最后一个实例归 0 才摘 class */
+/** 关闭一个全屏页：最后一个实例归 0 才摘 class（连同补偿一起还原） */
 export function unlockRootScroll() {
   if (lockCount === 0) return
   lockCount -= 1
-  if (lockCount === 0) document.documentElement.classList.remove(LOCK_CLASS)
+  if (lockCount !== 0) return
+  const root = document.documentElement
+  root.classList.remove(LOCK_CLASS)
+  root.style.removeProperty('padding-right')
 }

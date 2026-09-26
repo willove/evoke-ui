@@ -42,7 +42,7 @@
  *   ① 覆盖层 position: fixed + inset 0（Teleport 到 body，不参与文档流）；
  *   ② 挂载点只留 Teleport 锚点注释（零尺寸），开/关都不占位；
  *   ③ 打开期间 documentElement 挂锁滚动 class（计数式，多实例最后一个
- *      卸载的才摘；scrollbar-gutter: stable 预留滚动条槽位，画布不横跳）。
+ *      卸载的才摘；滚动条缺口由 scroll-lock 实测后补 padding-right，画布不横跳）。
  * 焦点陷阱 / Esc 收敛 / 焦点归还与 EtDialog 共用 useModalFocus（同一套契约）。
  * 过渡名走 TRANSITION_NAME 常量绑定（G2 图标名提取器会把过渡名的字面属性
  * 当图标名）。
