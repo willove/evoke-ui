@@ -604,8 +604,9 @@ function applyMenuItem(index) {
 `EbChatUsage` 只展示宿主给的用量——**成本要价目表，那是宿主的业务数据**，组件与引擎都不猜。
 消息里的位置：`EbChatMessage` 把 `message.usage`（与 `duration`、时间）渲染在**本条消息的底部行**——
 **与复制 / 重试等动作条同一行**，不在头部行（头部只留发送者名字）。
-常显与悬浮的分工：耗时、tokens 用量是读数**常显**；时间与动作条**随悬浮淡入**（触屏常显），
-靠 opacity 而非 display 门控，隐藏时仍占位——悬浮不会引起任何位移。
+显隐口径：底部读数（时间 / 耗时 / tokens 用量）与动作条**整组随悬浮出现**（触屏常显），
+靠 opacity + `pointer-events` 门控——隐藏时仍占位，悬浮出现不引起任何位移，
+也不会出现"看不见却能点"。
 
 <DemoBlock>
   <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start">

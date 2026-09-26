@@ -160,18 +160,27 @@
             v-if="showTime || showActions || message?.duration || message?.usage || message?.edited"
             class="eb-chat-message__foot"
           >
-            <!-- 时间随悬浮出现（同动作条）；耗时与 tokens 用量是读数，常显 -->
+            <!-- 底部读数整组随悬浮显隐（时间 / 耗时 / tokens 用量，与动作条同一机制） -->
             <span
               v-if="showTime && message?.createdAt"
-              class="eb-chat-message__time"
+              class="eb-chat-message__time eb-chat-message__reveal"
               :class="{ 'is-visible': hovered }"
             >{{ formatTime(message.createdAt) }}</span>
-            <!-- 用量与耗时与动作条同一行：信息常显，复制/重试等动作随悬浮淡入 -->
-            <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
+            <span
+              v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'"
+              class="eb-chat-message__duration eb-chat-message__reveal"
+              :class="{ 'is-visible': hovered }"
+            >
               <eb-icon name="stopwatch" :size="14" />
               {{ formatDuration(message.duration) }}
             </span>
-            <ChatUsage v-if="message?.usage" :usage="message.usage" />
+            <span
+              v-if="message?.usage"
+              class="eb-chat-message__usage eb-chat-message__reveal"
+              :class="{ 'is-visible': hovered }"
+            >
+              <ChatUsage :usage="message.usage" />
+            </span>
             <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
             <ChatActionbar 
               v-if="showActions"
@@ -492,25 +501,37 @@ function handleAction(key, message) {
   justify-content: flex-end;
 }
 
-/* 触屏没有 hover：时间直接常显，避免"永远看不见" */
+/* 触屏没有 hover：底部读数整组常显，避免"永远看不见" */
 @media (hover: none) {
-  .eb-chat-message__time {
+  .eb-chat-message__reveal {
     opacity: 1;
+    pointer-events: auto;
   }
+}
+
+/*
+ * 悬浮才出现的一组：时间 / 耗时 / tokens 用量 / 动作条。
+ * 用 opacity 而非 display —— 隐藏时仍占位，悬浮出现不引起任何位移。
+ * 同时门控 pointer-events：隐藏时不可点（否则会出现"看不见却能点"）。
+ */
+.eb-chat-message__reveal {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--eb-ease-out);
+}
+
+.eb-chat-message__reveal.is-visible,
+.eb-chat-message:focus-within .eb-chat-message__reveal {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .eb-chat-message__time {
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
   font-variant-numeric: tabular-nums;
-  /* 时间属"悬浮才出现"的那组（同动作条）：opacity 而非 display，隐藏时仍占位，悬浮不位移 */
-  opacity: 0;
-  transition: opacity 0.15s var(--eb-ease-out);
-}
-
-.eb-chat-message__time.is-visible,
-.eb-chat-message:focus-within .eb-chat-message__time {
-  opacity: 1;
 }
 
 .eb-chat-message__duration {
