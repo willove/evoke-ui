@@ -213,6 +213,8 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   /** 请求进行中（配合 stoppable 显示停止钮） */
   loading: { type: Boolean, default: false },
+  /** 生成中是否允许继续投递（交给引擎入队等下一轮）；关掉则生成中拦下 */ 
+  queueable: { type: Boolean, default: false },
   /** 场景定义 [{ key, label, icon? }] */
   scenes: { type: Array, default: () => [] },
   /** 当前场景 key（v-model:scene） */
@@ -431,6 +433,8 @@ function handleKeydown(e) {
   }
   if (e.key === 'Enter' && !e.shiftKey && props.sendOnEnter) {
     e.preventDefault()
+    // 生成中：可排队时照常发出（引擎会入队），否则既不并发投递也不触中断
+    if (props.loading && !props.queueable) return
     doSend()
   }
 }
@@ -444,7 +448,8 @@ function onSendClick() {
 }
 
 function doSend() {
-  if (props.disabled || props.loading || !canSend.value) return
+  if (props.disabled || !canSend.value) return
+  if (props.loading && !props.queueable) return
   emit('send', {
     text: inputText.value.trim(),
     scene: props.scene,

@@ -4,6 +4,25 @@
     <span v-for="(item, i) in items" :key="item.id" class="eb-chat-queue__item">
       <span class="eb-chat-queue__index" aria-hidden="true">{{ i + 1 }}</span>
       <span class="eb-chat-queue__text">{{ item.content || labels.queue.attachmentOnly }}</span>
+      <!-- 排队不是只读列表：能立刻插队发送，也能取回改一改（Claude Code / Codex 同口径） -->
+      <button
+        type="button"
+        class="eb-chat-queue__act"
+        :title="labels.queue.sendNow"
+        :aria-label="labels.queue.sendNow"
+        @click="emit('send-now', item.id)"
+      >
+        <eb-icon name="promotion" :size="12" />
+      </button>
+      <button
+        type="button"
+        class="eb-chat-queue__act"
+        :title="labels.queue.recall"
+        :aria-label="labels.queue.recall"
+        @click="emit('recall', item.id)"
+      >
+        <eb-icon name="edit" :size="12" />
+      </button>
       <button
         type="button"
         class="eb-chat-queue__remove"
@@ -28,7 +47,7 @@ defineProps({
   /** 排队中的待发送项 [{ id, content, attachments? }] */
   items: { type: Array, required: false, default: () => [] }
 });
-const emit = defineEmits(["remove", "clear"]);
+const emit = defineEmits(["remove", "clear", "send-now", "recall"]);
 
 </script>
 
@@ -75,6 +94,30 @@ const emit = defineEmits(["remove", "clear"]);
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--eb-text-color-regular);
+}
+
+.eb-chat-queue__act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--eb-radius-sm);
+  background: transparent;
+  color: var(--eb-text-color-placeholder);
+  cursor: pointer;
+}
+
+.eb-chat-queue__act:hover {
+  background: var(--eb-fill-color);
+  color: var(--eb-color-primary);
+}
+
+.eb-chat-queue__act:focus-visible {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 1px;
 }
 
 .eb-chat-queue__remove {

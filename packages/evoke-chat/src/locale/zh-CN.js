@@ -189,6 +189,8 @@ export default {
     lead: (n) => `生成中，${n} 条排队等待发送`,
     attachmentOnly: '（仅附件）',
     remove: '移出队列',
+    sendNow: '立即发送',
+    recall: '取回编辑',
     clear: '全部清空',
   },
   speech: {
@@ -242,6 +244,19 @@ export default {
     args: '参数',
     result: '结果',
     retry: '重试',
+  },
+  status: {
+    thinking: '思考中',
+    running: '执行中',
+    runningTool: (tool) => `正在执行 ${tool}`,
+    approval: '待你确认',
+    question: '等你回答',
+    queued: (n) => `已排队 ${n} 条`,
+    retrying: '重试中',
+    compacting: '压缩上下文中',
+    error: '出错了',
+    stop: '停止',
+    viewQueue: '查看队列',
   },
   changes: {
     title: (n) => `已编辑 ${n} 个文件`,

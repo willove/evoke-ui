@@ -49,7 +49,11 @@
         v-model:model="model"
         :quota="{ label: '本月额度剩余 82%', percent: 82 }"
         :context="contextUsage"
+        :status="statusInfo"
+        :status-stoppable="engine.loading.value"
+        @status-queue="onStatusQueue"
         :transport="transport"
+        queueable
         stoppable
         @stop="onStop"
         :approval="approval"
@@ -76,6 +80,40 @@ const activeMenu = ref('assistant')
 const scene = ref('diagnose')
 const activeCapabilities = ref([])
 const model = ref('qwen-max')
+
+/**
+ * 状态条：把「现在在做什么」交给 EbChatStatusBar
+ * 优先级：审批 > 提问 > 流式中（思考/执行工具）> 排队。elapsed 靠 500ms 心跳推进——
+ * 它在状态条里是 aria-hidden 的，跳秒不会变成屏幕阅读器噪音。
+ */
+const demoPhase = ref('')
+const demoPhaseAt = ref(0)
+const now = ref(Date.now())
+let tickTimer = null
+
+function markPhase(next) {
+  demoPhase.value = next
+  demoPhaseAt.value = Date.now()
+  if (!tickTimer) tickTimer = setInterval(() => { now.value = Date.now() }, 500)
+}
+
+const statusInfo = computed(() => {
+  const queued = engine.pending.value.length || undefined
+  if (approval.value && !approval.value.status) return { phase: 'approval', queue: queued }
+  if (question.value && !question.value.status) return { phase: 'question', queue: queued }
+  if (engine.loading.value) {
+    const elapsed = Math.max(0, now.value - demoPhaseAt.value)
+    if (demoPhase.value === 'tool') return { phase: 'running', tool: '联网检索', elapsed, queue: queued }
+    if (demoPhase.value === 'think') return { phase: 'thinking', elapsed, queue: queued }
+    return { phase: 'running', elapsed, queue: queued }
+  }
+  if (queued) return { phase: 'queued', queue: queued }
+  return null
+})
+
+function onStatusQueue() {
+  console.log('[demo] 状态条上的队列被点击，当前排队', engine.pending.value.length)
+}
 
 /**
  * 上下文占用（演示口径：32k 窗口 + 固定提示词/工具预算 + 对话按 2.5 字符≈1token 估）
@@ -176,6 +214,7 @@ async function transport(content, attachments, context) {
   let toolId = null
   let toolIndex = 0
   let phase = webAllowed ? 'tool' : (think ? 'think' : 'body')
+  markPhase(phase)
 
   /**
    * 必须返回 Promise 直到流结束：引擎的 loading 挂到这一刻，生成中发送钮才会
@@ -223,6 +262,7 @@ async function transport(content, attachments, context) {
             ],
           })
           phase = think ? 'think' : 'body'
+          markPhase(phase)
         }
         return
       }
@@ -232,6 +272,7 @@ async function transport(content, attachments, context) {
         if (thinkIndex >= think.length) {
           engine.stopThinking(msg.id)
           phase = 'body'
+          markPhase(phase)
         }
         return
       }
@@ -264,6 +305,7 @@ function onStop() {
 }
 
 onBeforeUnmount(() => {
+  if (tickTimer) clearInterval(tickTimer)
   if (timer) clearInterval(timer)
   finishStream?.()
 })

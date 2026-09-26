@@ -466,6 +466,8 @@ engine.sendMessage('补充一句')     // 返回 'steered'
   <eb-chat-queue :items="DEMO_QUEUE" style="max-width: 560px" />
 </DemoBlock>
 
+队列不是只读列表：每条还能**立刻插队发送**（`send-now`）与**取回编辑**（`recall`）——Claude Code 的 `↑` 取回、Codex 的 `Esc` 立即发送是同一诉求，不然用户只能删了重打。
+
 ```vue
 <eb-chatbot v-model="messages" queueable @send="onSend">
   <template #sender-prepend>
@@ -473,6 +475,8 @@ engine.sendMessage('补充一句')     // 返回 'steered'
       :items="engine.pending.value"
       @remove="engine.dequeue"
       @clear="engine.clearQueue"
+      @send-now="(id) => onSend(engine.takeFromQueue(id))"
+      @recall="(id) => (draft = engine.takeFromQueue(id).content)"
     />
   </template>
 </eb-chatbot>
@@ -756,6 +760,47 @@ iframe + 截图双模式。**有一个绕不过去的硬限制**：目标站返�
 注意：输入类的 hover 选择器要**排除 `.is-focus`**——鼠标点进输入台时 hover 与 focus 同时命中，不排除的话 hover 的灰色会盖掉聚焦环（实测踩过）。
 
 强调不靠边框：标题走**字重（`--eb-font-weight-medium`）+ 主色**，数值走 `tabular-nums` + 语义色（`--eb-color-success` / `--eb-color-danger`），图标只补信息位不加装饰。
+
+## 状态条（输入台上方）
+
+### EbChatStatusBar
+
+「AI 现在在做什么」此前只能靠 `aria-busy` 猜。状态条把它变成**一句话 + 一个可点的动作**，常驻在输入台上方。
+
+<DemoBlock>
+  <div style="display: flex; flex-direction: column; gap: 6px; max-width: 560px">
+    <eb-chat-status-bar :status="{ phase: 'thinking', elapsed: 1500 }" />
+    <eb-chat-status-bar :status="{ phase: 'running', tool: '抓取正文', elapsed: 4200 }" stoppable />
+    <eb-chat-status-bar :status="{ phase: 'queued', queue: 2 }" />
+    <eb-chat-status-bar :status="{ phase: 'compacting', hint: '已压缩 12 条历史' }" />
+    <eb-chat-status-bar :status="{ phase: 'error', error: '上游 503，请稍后重试' }" />
+  </div>
+</DemoBlock>
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `status` | object | `null` | `{ phase, label?, tool?, elapsed?, hint?, queue?, error? }`；`phase` 为 `idle` 或缺省时**不渲染** |
+| `stoppable` | boolean | `false` | 当前阶段能否中断，决定是否给「停止」钮 |
+
+| Events | 载荷 |
+| --- | --- |
+| `stop` | `()`（与输入台的 `stop` 同源，宿主接一处即可） |
+| `view-queue` | `()` |
+
+**阶段与呈现**（状态不只靠颜色区分，形状与运动也不同）：
+
+| phase | 文案 | 圆点 | elapsed |
+| --- | --- | --- | --- |
+| `thinking` | 思考中 | 呼吸点 | ✅ |
+| `running` | 正在执行 `<tool>`（无 tool 时「执行中」） | 转环 | ✅ |
+| `approval` | 待你确认 | 静态环（警告色） | — |
+| `question` | 等你回答 | 静态环（主色） | — |
+| `queued` | 已排队 N 条 | 实心点 + 右侧计数钮 | — |
+| `retrying` | 重试中 | 虚线转环 | ✅ |
+| `compacting` | 压缩上下文中 | 呼吸点 | ✅ |
+| `error` | 出错了（或宿主给的 `error` 原文） | 危险色实心点 | — |
+
+**无障碍口径**：`role="status"` 的 live region **只包状态句**——`elapsed` 每秒都在跳，整块播报会变成噪音，所以它单独放在 `aria-hidden` 的兄弟节点里；`hint` 作为弱化补充同样不进 live region；`prefers-reduced-motion` 下所有动效关闭。宿主侧接线：`EbChatbot` / `EbAiConsole` 的 `status` + `statusStoppable`，`stop` 与输入台共用，队列钮抛 `status-queue`。
 
 ## 输入类
 

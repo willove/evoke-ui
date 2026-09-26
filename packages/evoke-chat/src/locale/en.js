@@ -189,6 +189,8 @@ export default {
     lead: (n) => `Generating \u2014 ${n} queued`,
     attachmentOnly: '(attachment only)',
     remove: 'Remove from queue',
+    sendNow: 'Send now',
+    recall: 'Edit again',
     clear: 'Clear all',
   },
   speech: {
@@ -242,6 +244,19 @@ export default {
     args: 'Arguments',
     result: 'Result',
     retry: 'Retry',
+  },
+  status: {
+    thinking: 'Thinking',
+    running: 'Working',
+    runningTool: (tool) => `Running ${tool}`,
+    approval: 'Waiting for approval',
+    question: 'Waiting for your answer',
+    queued: (n) => `${n} queued`,
+    retrying: 'Retrying',
+    compacting: 'Compacting context',
+    error: 'Something went wrong',
+    stop: 'Stop',
+    viewQueue: 'View queue',
   },
   changes: {
     title: (n) => `${n} files changed`,

@@ -235,6 +235,7 @@ app.use(EvokeChat, { locale: zhCN })
 | `EbChatQuestion` | `@wil-works/evoke-chat/chat-question` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
 | `EbChatContextMeter` | `@wil-works/evoke-chat/chat-context-meter` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
 | `EbChatChanges` | `@wil-works/evoke-chat/chat-changes` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
+| `EbChatStatusBar` | `@wil-works/evoke-chat/chat-status-bar` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
 | `EbChatArtifact` | `@wil-works/evoke-chat/chat-artifact` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
 | `EbChatDiff` | `@wil-works/evoke-chat/chat-diff` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
 | `EbChatTerminal` | `@wil-works/evoke-chat/chat-terminal` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents |
@@ -303,6 +304,8 @@ EbChatbot 之外的家族成员。绝大多数场景不需要直接用它们—�
 | `approval` | Object | null |
 | `question` | Object | null |
 | `context` | Object | null |
+| `status` | Object | null |
+| `statusStoppable` | Boolean | false |
 | `inputValue` | String | "" |
 
 事件：`send`、`stop`、`copy`、`regenerate`、`action`、`edit`、`feedback`
@@ -678,6 +681,19 @@ EbChatPlan · EbChatConfirmation · EbChatArtifact
 
 事件：`select`
 
+### EbChatStatusBar
+
+「AI 现在在做什么」此前只能靠 aria-busy 猜。状态条把它变成一句话 + 一个可点的动作，常驻在输入台上方。
+
+- 入口：`@wil-works/evoke-chat/chat-status-bar`　源码：`src/components/chatbot/ChatStatusBar.vue`　文档：https://evoke-business-ui.wil-works.com/chat/chat-subcomponents
+
+| prop | 类型 | 默认 |
+| --- | --- | --- |
+| `status` | Object | null |
+| `stoppable` | Boolean | false |
+
+事件：`stop`
+
 ### EbChatArtifact
 
 EbChatPlan · EbChatConfirmation · EbChatArtifact
@@ -822,7 +838,7 @@ EbChatQueue 是待发送队列那条窄带，宿主放在输入区上方即可�
 | --- | --- | --- |
 | `items` | Array | () => [] |
 
-事件：`remove`、`clear`
+事件：`remove`、`clear`、`recall`
 
 ### EbChatCommandMenu
 
@@ -902,6 +918,7 @@ EbAiPromptBox 侧同理走 #toolbar-extra。
 | `placeholder` | String | void 0 |
 | `disabled` | Boolean | false |
 | `loading` | Boolean | false |
+| `queueable` | Boolean | false |
 | `scenes` | Array | () => [] |
 | `scene` | String | '' |
 | `capabilities` | Array | () => [] |
@@ -955,6 +972,9 @@ EbChatbot / EbAiConsole 的 question prop 传了就接管输入区，响应经 q
 | `approval` | Object | null |
 | `question` | Object | null |
 | `context` | Object | null |
+| `status` | Object | null |
+| `statusStoppable` | Boolean | false |
+| `queueable` | Boolean | false |
 | `showThinking` | Boolean | true |
 | `renderMode` | String | 'markdown' |
 | `autoScroll` | Boolean | true |

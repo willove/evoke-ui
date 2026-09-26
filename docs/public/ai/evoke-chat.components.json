@@ -264,6 +264,18 @@
           "required": false
         },
         {
+          "name": "status",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "statusStoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
           "name": "inputValue",
           "type": "String",
           "default": "\"\"",
@@ -1440,6 +1452,32 @@
       "expose": []
     },
     {
+      "name": "EbChatStatusBar",
+      "entry": "@wil-works/evoke-chat/chat-status-bar",
+      "source": "src/components/chatbot/ChatStatusBar.vue",
+      "summary": "「AI 现在在做什么」此前只能靠 aria-busy 猜。状态条把它变成一句话 + 一个可点的动作，常驻在输入台上方。",
+      "docs": "https://evoke-business-ui.wil-works.com/chat/chat-subcomponents",
+      "props": [
+        {
+          "name": "status",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "stoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        }
+      ],
+      "events": [
+        "stop"
+      ],
+      "slots": [],
+      "expose": []
+    },
+    {
       "name": "EbChatArtifact",
       "entry": "@wil-works/evoke-chat/chat-artifact",
       "source": "src/components/chatbot/ChatArtifact.vue",
@@ -1819,7 +1857,8 @@
       ],
       "events": [
         "remove",
-        "clear"
+        "clear",
+        "recall"
       ],
       "slots": [],
       "expose": []
@@ -2051,6 +2090,12 @@
         },
         {
           "name": "loading",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "queueable",
           "type": "Boolean",
           "default": "false",
           "required": false
@@ -2314,6 +2359,24 @@
           "name": "context",
           "type": "Object",
           "default": "null",
+          "required": false
+        },
+        {
+          "name": "status",
+          "type": "Object",
+          "default": "null",
+          "required": false
+        },
+        {
+          "name": "statusStoppable",
+          "type": "Boolean",
+          "default": "false",
+          "required": false
+        },
+        {
+          "name": "queueable",
+          "type": "Boolean",
+          "default": "false",
           "required": false
         },
         {

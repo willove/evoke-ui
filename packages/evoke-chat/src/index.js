@@ -44,6 +44,7 @@ import EbChatApproval from './components/chatbot/ChatApproval.vue'
 import EbChatQuestion from './components/chatbot/ChatQuestion.vue'
 import EbChatContextMeter from './components/chatbot/ChatContextMeter.vue'
 import EbChatChanges from './components/chatbot/ChatChanges.vue'
+import EbChatStatusBar from './components/chatbot/ChatStatusBar.vue'
 import EbChatArtifact from './components/chatbot/ChatArtifact.vue'
 import EbChatDiff from './components/chatbot/ChatDiff.vue'
 import EbChatTerminal from './components/chatbot/ChatTerminal.vue'
@@ -109,6 +110,7 @@ const components = {
   EbChatQuestion,
   EbChatContextMeter,
   EbChatChanges,
+  EbChatStatusBar,
   EbChatArtifact,
   EbChatDiff,
   EbChatTerminal,
@@ -160,6 +162,7 @@ export {
   EbChatQuestion,
   EbChatContextMeter,
   EbChatChanges,
+  EbChatStatusBar,
   EbChatArtifact,
   EbChatDiff,
   EbChatTerminal,

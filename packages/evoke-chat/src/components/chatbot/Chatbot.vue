@@ -74,6 +74,14 @@
       <div v-if="context" class="eb-chatbot__context">
         <ChatContextMeter v-bind="context" />
       </div>
+      <!-- 状态条紧贴输入台：空态不渲染，由宿主给 status -->
+      <ChatStatusBar
+        v-if="status"
+        :status="status"
+        :stoppable="statusStoppable"
+        @stop="emit('stop')"
+        @view-queue="emit('status-queue')"
+      />
       <div class="eb-chatbot__sender-wrapper">
         <slot name="sender-prepend" />
         <!-- 待审批：审批面板接管输入区（输入台暂时让位），Enter 允许一次 / Esc 拒绝 -->
@@ -138,6 +146,7 @@ import ChatSender from "./ChatSender.vue";
 import ChatApproval from "./ChatApproval.vue";
 import ChatQuestion from "./ChatQuestion.vue";
 import ChatContextMeter from "./ChatContextMeter.vue";
+import ChatStatusBar from "./ChatStatusBar.vue";
 const labels = useChatLabels();
 const props = defineProps({
   modelValue: { type: Array, required: false, default: () => [] },
@@ -199,9 +208,13 @@ const props = defineProps({
   question: { type: Object, required: false, default: null },
   /** 上下文占用 { used, capacity, breakdown? }：给了就在输入区上方显示占用环 */
   context: { type: Object, required: false, default: null },
+  /** 状态条 { phase, label?, tool?, elapsed?, hint?, queue? }：空态不渲染 */
+  status: { type: Object, required: false, default: null },
+  /** 当前阶段能否中断（决定状态条是否给「停止」钮） */
+  statusStoppable: { type: Boolean, required: false, default: false },
   inputValue: { type: String, required: false, default: "" }
 });
-const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "approval-respond", "question-respond", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject", "menu-key", "caret-change"]);
+const emit = defineEmits(["update:modelValue", "update:inputValue", "send", "stop", "approval-respond", "question-respond", "copy", "regenerate", "action", "edit", "feedback", "suggestion-click", "citation-click", "tool-retry", "plan-toggle", "plan-step-click", "confirm-respond", "artifact-open", "artifact-copy", "file-select", "attachment-add", "attachment-reject", "menu-key", "caret-change", "status-queue"]);
 const listRef = ref();
 const senderRef = ref();
 const innerMessages = ref([...props.modelValue || []]);

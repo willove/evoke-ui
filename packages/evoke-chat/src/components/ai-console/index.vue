@@ -89,6 +89,14 @@
       <div v-if="context" class="eb-ai-console__context">
         <EbChatContextMeter v-bind="context" />
       </div>
+      <!-- 状态条：空态不渲染；审批/提问接管时它仍可见（说明当前卡在哪一步） -->
+      <EbChatStatusBar
+        v-if="status"
+        :status="status"
+        :stoppable="statusStoppable"
+        @stop="emit('stop')"
+        @view-queue="emit('status-queue')"
+      />
       <!-- 审批接管输入区：待审批时输入台让位给审批面板（Enter 允许一次 / Esc 拒绝） -->
       <EbChatApproval
         v-if="approval"
@@ -110,6 +118,7 @@
         :placeholder="placeholder ?? labels.promptBox.placeholder"
         :disabled="disabled"
         :loading="loading"
+        :queueable="queueable"
         :scenes="scenes"
         :capabilities="capabilities"
         :models="models"
@@ -153,6 +162,7 @@ import EbAiPromptBox from '../ai-prompt-box/index.vue'
 import EbChatApproval from '../chatbot/ChatApproval.vue'
 import EbChatQuestion from '../chatbot/ChatQuestion.vue'
 import EbChatContextMeter from '../chatbot/ChatContextMeter.vue'
+import EbChatStatusBar from '../chatbot/ChatStatusBar.vue'
 import ChatList from '../chatbot/ChatList.vue'
 import ChatThreads from '../chatbot/ChatThreads.vue'
 import { useChatEngine } from '../chatbot/useChatEngine'
@@ -197,6 +207,12 @@ const props = defineProps({
   question: { type: Object, default: null },
   /** 上下文占用 { used, capacity, breakdown? }：给了就在输入台上方显示占用环 */
   context: { type: Object, default: null },
+  /** 状态条 { phase, label?, tool?, elapsed?, hint?, queue? }：空态不渲染 */
+  status: { type: Object, default: null },
+  /** 当前阶段能否中断（决定状态条是否给「停止」钮） */
+  statusStoppable: { type: Boolean, default: false },
+  /** 生成中是否允许继续投递（引擎入队等下一轮）；关掉则生成中拦下 */
+  queueable: { type: Boolean, default: false },
   /** 会话区 */
   showThinking: { type: Boolean, default: true },
   renderMode: { type: String, default: 'markdown' },
@@ -232,6 +248,7 @@ const emit = defineEmits([
   'stop',
   'approval-respond',
   'question-respond',
+  'status-queue',
   'copy',
   'regenerate',
   'action',
