@@ -9,7 +9,7 @@
          无明细时保持纯读数，不做假的可点控件 -->
     <eb-popover v-if="rows.length" trigger="click" placement="top" :width="200">
       <button type="button" class="eb-chat-usage__trigger" :aria-label="labels.usage.disclosure">
-        <eb-icon name="data-line" :size="12" aria-hidden="true" />
+        <eb-icon name="data-line" :size="14" aria-hidden="true" />
         <span class="eb-chat-usage__tokens">{{ tokensText }}</span>
         <template v-if="costText">
           <span class="eb-chat-usage__sep" aria-hidden="true">·</span>

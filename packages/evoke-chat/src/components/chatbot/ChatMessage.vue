@@ -163,7 +163,7 @@
             <span v-if="showTime && message?.createdAt" class="eb-chat-message__time">{{ formatTime(message.createdAt) }}</span>
             <!-- 用量与耗时与动作条同一行：信息常显，复制/重试等动作随悬浮淡入 -->
             <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
-              <eb-icon name="stopwatch" />
+              <eb-icon name="stopwatch" :size="14" />
               {{ formatDuration(message.duration) }}
             </span>
             <ChatUsage v-if="message?.usage" :usage="message.usage" />
@@ -495,9 +495,15 @@ function handleAction(key, message) {
 .eb-chat-message__duration {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   font-size: var(--eb-font-size-xs);
-  color: var(--eb-text-color-placeholder);
+  color: var(--eb-text-color-secondary);
+}
+
+/* 底行图标统一色调与尺寸：信息图标不再比动作图标更淡、也不一大一小 */
+.eb-chat-message__foot :deep(.eb-icon) {
+  color: var(--eb-text-color-secondary);
+  flex: none;
 }
 
 .eb-chat-message__content {

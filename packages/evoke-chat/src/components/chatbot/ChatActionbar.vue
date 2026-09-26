@@ -9,7 +9,7 @@
         :aria-label="copied ? labels.actionbar.copied : labels.actionbar.copy"
         @click="handleCopy"
       >
-        <eb-icon :name="copied ? 'check' : 'copy-document'" />
+        <eb-icon :name="copied ? 'check' : 'copy-document'" :size="14" />
       </button>
     </eb-tooltip>
     <eb-tooltip v-if="showEdit && message?.role === 'user'" :content="labels.actionbar.edit" placement="top">
@@ -19,7 +19,7 @@
         :aria-label="labels.actionbar.edit"
         @click="handleEdit"
       >
-        <eb-icon name="edit" />
+        <eb-icon name="edit" :size="14" />
       </button>
     </eb-tooltip>
     <eb-tooltip v-if="showRegenerate && message?.role === 'assistant'" :content="labels.actionbar.regenerate" placement="top">
@@ -29,7 +29,7 @@
         :aria-label="labels.actionbar.regenerate"
         @click="handleRegenerate"
       >
-        <eb-icon name="refresh-right" />
+        <eb-icon name="refresh-right" :size="14" />
       </button>
     </eb-tooltip>
     <eb-tooltip v-if="traceHref" :content="labels.actionbar.trace" placement="top">
@@ -40,7 +40,7 @@
         rel="noopener noreferrer"
         :aria-label="labels.actionbar.trace"
       >
-        <eb-icon name="top-right" />
+        <eb-icon name="top-right" :size="14" />
       </a>
     </eb-tooltip>
     <ChatSpeak
@@ -60,7 +60,7 @@
         :aria-label="action.desc || action.label"
         @click="handleCustomAction(action)"
       >
-        <eb-icon v-if="action.icon" :name="String(action.icon)" />
+        <eb-icon v-if="action.icon" :name="String(action.icon)" :size="14" />
         <span v-else>{{ action.label }}</span>
       </button>
     </eb-tooltip>
