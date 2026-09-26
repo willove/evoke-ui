@@ -121,8 +121,8 @@ function format(value) {
   padding: 0 var(--eb-space-2);
   border: 0;
   border-radius: var(--eb-radius-full);
-  background: var(--eb-bg-color);
-  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  background: transparent;
+  box-shadow: none;
   color: var(--eb-text-color-secondary);
   font-family: inherit;
   font-size: var(--eb-font-size-xs);

@@ -231,8 +231,10 @@
   --eb-pb-chip-h: 26px;
   --eb-pb-chip-font: var(--eb-font-size-xs);
   --eb-pb-chip-radius: var(--eb-radius-full);
-  --eb-pb-chip-ring: 0 0 0 1px var(--eb-border-color-lighter) inset;
-  --eb-pb-chip-ring-hover: 0 0 0 1px var(--eb-border-color-hover) inset;
+  /* 不加药丸边框：靠 hover / 激活底色表达可点（DSH 输入台同取向） */
+  --eb-pb-chip-ring: none;
+  --eb-pb-chip-ring-hover: none;
+  --eb-pb-chip-hover-bg: var(--eb-fill-color-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -390,9 +392,9 @@
   cursor: not-allowed;
 }
 
-/* 工具栏 chip 的 hover：只把发丝环加深一档（与卡片/输入台同一套语言） */
+/* 工具栏 chip 的 hover：给一层浅底（不再画药丸边框） */
 .eb-ai-prompt-box__tool-btn:hover:not(:disabled),
 .eb-ai-prompt-box__model-pill:hover:not(:disabled),
 .eb-ai-prompt-box__quota:hover {
-  box-shadow: var(--eb-pb-chip-ring-hover);
+  background: var(--eb-pb-chip-hover-bg);
 }
