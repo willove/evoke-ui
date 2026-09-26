@@ -29,14 +29,8 @@
       </eb-avatar>
     </div>
     <div class="eb-chat-message__body">
-      <div v-if="nameVisible || message?.duration || message?.usage || message?.edited" class="eb-chat-message__meta">
+      <div v-if="nameVisible" class="eb-chat-message__meta">
         <span v-if="nameVisible" class="eb-chat-message__name">{{ displayName }}</span>
-        <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
-          <eb-icon name="stopwatch" />
-          {{ formatDuration(message.duration) }}
-        </span>
-        <ChatUsage v-if="message?.usage" :usage="message.usage" />
-        <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
       </div>
       <div class="eb-chat-message__content">
         <ChatAttachments 
@@ -190,6 +184,18 @@
           />
           </div>
         </template>
+      </div>
+      <!-- 消息页脚：tokens 用量 / 耗时 / 已编辑贴在本条回答底部（动作条仍在 controls 行） -->
+      <div
+        v-if="message?.duration || message?.usage || message?.edited"
+        class="eb-chat-message__footer"
+      >
+        <span v-if="message?.role === 'assistant' && message?.duration && message?.status === 'done'" class="eb-chat-message__duration">
+          <eb-icon name="stopwatch" />
+          {{ formatDuration(message.duration) }}
+        </span>
+        <ChatUsage v-if="message?.usage" :usage="message.usage" />
+        <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
       </div>
     </div>
     </template>
@@ -416,6 +422,20 @@ function handleAction(key, message) {
 }
 
 .eb-chat-message--user .eb-chat-message__meta {
+  justify-content: flex-end;
+}
+
+/* 消息页脚：用量读数贴在本条回答底部（内容之后、控制行之前） */
+.eb-chat-message__footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--eb-space-2);
+  margin-top: var(--eb-space-1);
+  color: var(--eb-text-color-secondary);
+}
+
+.eb-chat-message--user .eb-chat-message__footer {
   justify-content: flex-end;
 }
 
