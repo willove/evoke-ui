@@ -2,6 +2,31 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [business-ui 0.10.0 / ui 0.12.0] — 2026-09-26
+
+### @wil-works/evoke-business-ui — 语义图标集 438 → 441（0.10.0）
+
+- Remix 语义图标集新增 3 个（**441**），`remix-svg-paths` / `remix-meta` 与
+  `generate-remix-icons` 三处同步；
+- 文档计数对齐源数据：hero 徽标、图标页正文与图标总览页此前停在 438——
+  这正是预检脚本警告的「文档承诺了包里没有的图标」，四年前那次 v0.16.0 踩过同一个坑；
+- 新增 `docs-theme-icons` 守卫（7 例）：文档里**写死**的图标计数必须等于生成集实际键数，
+  模板与 md 里用到的名字也必须能解析到，防止改名后渲染成空白。
+
+### @wil-works/evoke-ui — 语义图标集 77 → 80（0.12.0）
+
+- 核心集新增 3 个语义名（**80**），`svg-paths` 与生成脚本同步，docs-web 计数跟着走；
+- 新增 `docs-web-icons`（4 例）与 `docs-charts-theme-icons`（5 例）两处守卫：
+  ui 站与 charts 站的图标计数、以及自绘图形（不许出现 `<svg>` 自绘）都在守；
+- 三个站点的「当前版本」展示一并纳入 `docs-site-version` 守卫（9 例）：
+  hero 徽标 / `meta.js` / `Layout.vue` / 首页发布通告写错版本即失败——
+  此前同一站点两个版本号并存（页头新、hero 旧）没有任何检查能发现。
+
+### 工具链
+
+- `pre-release-check` 的读取顺序改为**暂存区 → HEAD → 工作区**：打 tag 前跑检查，
+  看到的就是这次提交要发布的那份内容，而不是上一个提交的。
+
 ## [chat 0.2.0] — 2026-09-26
 
 ### @wil-works/evoke-chat — 会话层 + 审批/提问接管 + 接入适配层（0.2.0）

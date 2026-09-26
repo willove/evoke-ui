@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.11.1</EvTag>
+      <EvTag size="small">v0.12.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.11.1 发布：聚焦涟漪改为两段式荡开-收拢、辐射量随尺寸分化、按压缩放缓</span>
+      <span>v0.12.0 发布：语义图标集 77 → 80，文档计数与生成集对齐并由守卫锁定</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.11.1</EvTag>
+        <EvTag tone="primary" size="small">v0.12.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
