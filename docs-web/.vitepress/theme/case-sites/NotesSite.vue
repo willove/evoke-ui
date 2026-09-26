@@ -180,7 +180,7 @@ const activities = [
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: 20px;
   align-items: start;
-  max-width: 1040px;
+  max-width: var(--ev-container-width, 1152px);
   margin-inline: auto;
   padding: 32px 24px 56px;
 }

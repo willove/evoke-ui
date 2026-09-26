@@ -140,7 +140,7 @@ function storyFade(p, a, b) {
   <template #logo>
     <a href="/" class="home-brand">
       <span class="home-brand__name">Evoke UI</span>
-      <EvTag size="small">v0.12.0</EvTag>
+      <EvTag size="small">v0.13.0</EvTag>
     </a>
   </template>
   <template #actions>
@@ -184,7 +184,7 @@ function storyFade(p, a, b) {
 >
   <template #badge>
     <EvAlert pill>
-      <span>v0.12.0 发布：语义图标集 77 → 80，文档计数与生成集对齐并由守卫锁定</span>
+      <span>v0.13.0 发布：EvSection 默认定宽居中，整页组装规则成文并由容器边界守卫锁定</span>
       <template #action>
         <a href="/guide/changelog" style="display:inline-flex; align-items:center; gap:2px;">更新记录<EvIcon name="arrow-right" :size="14" /></a>
       </template>
@@ -240,7 +240,7 @@ function storyFade(p, a, b) {
         </label>
       </EvCard>
       <div class="home-collage__chip">
-        <EvTag tone="primary" size="small">v0.12.0</EvTag>
+        <EvTag tone="primary" size="small">v0.13.0</EvTag>
         <EvTag size="small">Vue 3</EvTag>
       </div>
     </div>
@@ -352,7 +352,7 @@ function storyFade(p, a, b) {
     </div>
   </EvSection>
 
-  <EvSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center">
+  <EvSection eyebrow="cases" title="整页案例，直接抄作业" description="官网、博客、笔记工作台——三个可交互的整页案例，源码就在文档里，拷走改文案就能用。" align="center" width="narrow">
     <div class="home-cases">
       <a class="home-case" href="/cases/corporate">
         <span class="home-case__icon"><EvIcon name="building-line" :size="22" /></span>
@@ -421,8 +421,8 @@ function storyFade(p, a, b) {
   --p: var(--ev-scene-progress);
   --d: 0;
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
+  max-width: var(--ev-container-width, 1152px);
+  margin-inline: auto;
 }
 .home-story__browser {
   border: 1px solid var(--ev-border-color);
@@ -741,11 +741,7 @@ function storyFade(p, a, b) {
 .home-band {
   padding: 64px 0 40px;
 }
-/* 区块内容随容器令牌限宽，超宽屏不再无限拉伸 */
-.home-band .ev-section {
-  max-width: var(--ev-container-width, 1152px);
-  margin-inline: auto;
-}
+/* 区块宽度由 EvSection 的 width 档（默认 default）负责，此处不再页面级覆写 */
 .home-band .ev-marquee {
   margin-bottom: 96px;
 }
@@ -797,16 +793,10 @@ function storyFade(p, a, b) {
 .home-sibling-band {
   padding: 8px 24px 72px;
 }
-.home-sibling-band .ev-section {
-  max-width: var(--ev-container-width, 1152px);
-  margin-inline: auto;
-}
 .home-cases {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
-  max-width: 960px;
-  margin-inline: auto;
 }
 .home-case {
   display: flex;

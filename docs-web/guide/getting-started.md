@@ -57,6 +57,7 @@ import '@wil-works/evoke-ui/styles' // 样式聚合为单一产物，一次引�
       <EvButton variant="outline" size="large">了解更多</EvButton>
     </template>
   </EvHero>
+  <!-- 默认定宽居中（default 档）；仅出血大件（跑马灯/整宽图表/分屏滚动场景）才显式 width="full" -->
   <EvSection eyebrow="features" title="为什么选择我们">
     <EvFeatureGrid variant="cards" :items="features" />
   </EvSection>

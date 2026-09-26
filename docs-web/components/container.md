@@ -90,7 +90,8 @@
 
 ::: tip 组件内置容器
 [EvHero](./hero)、[EvFooter](./footer)、[EvNavbar](./navbar)、[EvCta](./cta) 内部已内置容器，
-无需再包一层；[EvSection](./section) 可直接声明 `width` 档；`EvContainer` 用于其余自定义区块的外层对齐。
+无需再包一层；[EvSection](./section) 默认定宽居中（`width` 档），同样不用外包；
+`EvContainer` 只用于其余自定义区块的外层对齐。整页组装规则见 [EvSection](./section) 页首「整页组装规则」。
 :::
 
 ## API

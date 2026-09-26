@@ -15,8 +15,11 @@ describe('EvSection', () => {
     expect(wrapper.classes()).toContain('is-center')
   })
 
-  it('width 定宽档：full 默认不带档位类，其余档挂 is-width-*', () => {
-    const full = mount(EvSection, { props: { title: 'T' } })
+  it('width 定宽档：默认 default 档（定宽居中），显式 full 不带档位类', () => {
+    const def = mount(EvSection, { props: { title: 'T' } })
+    expect(def.classes()).toContain('is-width-default')
+
+    const full = mount(EvSection, { props: { title: 'T', width: 'full' } })
     expect(full.classes()).not.toContain('is-width-full')
 
     const narrow = mount(EvSection, { props: { title: 'T', width: 'narrow' } })

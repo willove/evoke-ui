@@ -31,3 +31,54 @@ for (const [name, path] of PAGES) {
     await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true })
   })
 }
+
+/**
+ * 容器边界守卫（计算样式断言，非截图）
+ * 规则来源：AGENTS.md「evoke-ui 整页组装硬规则」+ section 文档「整页组装规则」。
+ * 防两类历史回归：
+ *   ① 区块漏定宽——不写 width 时曾是 full 通栏（0.13.0 起默认 default 档）；
+ *   ② 只给主体内层手写 max-width——标题通栏、卡片居中，同一区块两条左边界。
+ * 审 live 全屏版而非案例文档页的缩放舞台：舞台带 zoom，会把档位宽度一起缩放，量不准。
+ */
+// 笔记案例整页是 div 栅格（无 EvSection），不纳入守卫
+const GUARD_PAGES = ['/', '/cases/live/corporate', '/cases/live/blog', '/components/section']
+const TIERS = ['920px', '1152px', '1360px']
+
+for (const path of GUARD_PAGES) {
+  test(`容器边界守卫 · ${path}`, async ({ page }) => {
+    await page.goto(path, { waitUntil: 'networkidle' })
+    await page.evaluate(() => document.fonts.ready)
+    await page.waitForTimeout(250)
+
+    const report = await page.evaluate((tiers) => {
+      const sections = [...document.querySelectorAll('.ev-section')]
+      const widths = sections.map((s) => ({
+        title: s.querySelector('.ev-section__title')?.textContent?.slice(0, 14) ?? '(无标题)',
+        maxWidth: getComputedStyle(s).maxWidth,
+      }))
+      // 同边：标题、主体、主体的第一个块级子元素，三者左边缘必须重合
+      const edges = sections
+        .map((s) => {
+          const title = s.querySelector('.ev-section__title')
+          const body = s.querySelector('.ev-section__body')
+          if (!title || !body) return null
+          const first = body.firstElementChild
+          // 行级首子元素（行内按钮等）由文本对齐决定位置，不参与左边缘判定
+          if (first && getComputedStyle(first).display.startsWith('inline')) return null
+          const t = title.getBoundingClientRect().left
+          const b = body.getBoundingClientRect().left
+          const f = first ? first.getBoundingClientRect().left : b
+          return {
+            title: title.textContent.slice(0, 14),
+            same: Math.abs(t - b) < 1 && Math.abs(t - f) < 1,
+          }
+        })
+        .filter(Boolean)
+      return { widths, edges }
+    }, TIERS)
+
+    expect(report.widths.length, `${path} 未渲染出 EvSection`).toBeGreaterThan(0)
+    expect(report.widths.filter((w) => !TIERS.includes(w.maxWidth))).toEqual([])
+    expect(report.edges.filter((e) => !e.same)).toEqual([])
+  })
+}

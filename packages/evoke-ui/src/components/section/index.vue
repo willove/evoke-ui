@@ -19,6 +19,8 @@
 /**
  * EvSection — 内容区块（眉题 + 大标题 + 描述 + 内容）
  * eyebrow 为 remixdesign「WORK」式字距拉开的大写小标
+ * 默认定宽居中（default 档）：区块左右边界对整个区块生效一次，标题与主体天然同边；
+ * 通栏（width="full"）仅限出血大件，需显式声明
  */
 import { computed } from 'vue'
 
@@ -45,10 +47,12 @@ const props = defineProps({
   gap: { type: [String, Number], default: undefined },
   /** 滚动吸附：滚到该区块附近时轻吸到视口顶（proximity，可打断；需页面上有至少一个吸附区块才启用） */
   snap: { type: Boolean, default: false },
-  /** 定宽档：超过档位宽度后居中不再撑边；full 通栏（与 EvContainer 同一套 --ev-container-width 令牌） */
+  /** 定宽档：超过档位宽度后居中不再撑边。默认定宽（default 档，随 --ev-container-width 令牌），
+      标题与主体天然同边；full 通栏仅限出血大件（跑马灯/整宽图表/分屏滚动场景/出血大图），
+      需显式声明并说明理由——详见文档「整页组装规则」 */
   width: {
     type: String,
-    default: 'full',
+    default: 'default',
     validator: (v) => ['narrow', 'default', 'wide', 'full'].includes(v),
   },
 })

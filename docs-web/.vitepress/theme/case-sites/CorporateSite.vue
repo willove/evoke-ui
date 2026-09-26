@@ -228,7 +228,7 @@ function submitDemo() {
       </div>
     </div>
 
-    <EvSection id="pricing" eyebrow="定价" title="按团队规模选择，随时升级" description="所有付费方案都包含 14 天全功能试用，不需要绑定信用卡。" align="center">
+    <EvSection id="pricing" eyebrow="定价" title="按团队规模选择，随时升级" description="所有付费方案都包含 14 天全功能试用，不需要绑定信用卡。" align="center" width="narrow">
       <div class="cs-pricing">
         <template v-for="p in plans" :key="p.title">
           <EvBorderBeam
@@ -244,15 +244,15 @@ function submitDemo() {
       </div>
     </EvSection>
 
-    <EvSection eyebrow="功能对比" title="三个版本差在哪，一张表看清楚" align="center">
+    <EvSection eyebrow="功能对比" title="三个版本差在哪，一张表看清楚" align="center" width="narrow">
       <EvComparisonTable :columns="columns" :rows="rows" />
     </EvSection>
 
-    <EvSection id="faq" eyebrow="常见问题" title="购买之前，你可能想知道" align="center">
+    <EvSection id="faq" eyebrow="常见问题" title="购买之前，你可能想知道" align="center" width="narrow">
       <EvFaq :items="faqs" :default-open="0" />
     </EvSection>
 
-    <EvSection eyebrow="客户评价" title="他们已经在用 cumubase 开会了" align="center">
+    <EvSection eyebrow="客户评价" title="他们已经在用 cumubase 开会了" align="center" width="narrow">
       <div class="cs-quote">
         <EvQuote
           quote="把三张内部报表搬上 cumubase 只花了一个下午，第二天早会大家第一次看到同一份实时数据——争论数字的会议少了一半。"
@@ -263,7 +263,7 @@ function submitDemo() {
       </div>
     </EvSection>
 
-    <EvSection eyebrow="核心团队" title="一群把数据当产品做的人" description="小而专注的团队，一半时间在写代码，另一半在听客户怎么用。" align="center">
+    <EvSection eyebrow="核心团队" title="一群把数据当产品做的人" description="小而专注的团队，一半时间在写代码，另一半在听客户怎么用。" align="center" width="narrow">
       <div class="cs-team">
         <EvExecCard
           v-for="m in team"
@@ -370,26 +370,18 @@ function submitDemo() {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   align-items: stretch;
-  max-width: 960px;
-  margin-inline: auto;
-}
-.cs-quote {
-  max-width: 640px;
-  margin-inline: auto;
 }
 .cs-team {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  max-width: 920px;
-  margin-inline: auto;
 }
 
 /* ─── 数据链路滚动场景：折线随滚动画出（EvScrollScene 实战）───
    进场/画线/亮点的缓动在模板里对 progress 做 easeOutCubic 区段映射（:style 绑定） */
 .cs-story {
-  max-width: 1040px;
-  margin: 0 auto;
+  max-width: var(--ev-container-width, 1152px);
+  margin-inline: auto;
   display: grid;
   grid-template-columns: minmax(280px, 400px) 1fr;
   gap: 56px;

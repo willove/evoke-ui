@@ -103,7 +103,7 @@ const updates = [
     </EvSection>
 
     <div class="case-band">
-      <EvSection id="hot" eyebrow="热榜" title="读者转得最多的三段话" align="center">
+      <EvSection id="hot" eyebrow="热榜" title="读者转得最多的三段话" align="center" width="narrow">
         <div class="cb-hot">
           <EvCarousel :items="hot" :autoplay="5000">
             <template #item="{ item }">
@@ -114,7 +114,7 @@ const updates = [
       </EvSection>
     </div>
 
-    <EvSection id="about" eyebrow="关于作者" title="白天写代码，晚上写札记" align="center">
+    <EvSection id="about" eyebrow="关于作者" title="白天写代码，晚上写札记" align="center" width="narrow">
       <div class="cb-about">
         <EvProfileCard
           name="陈山月"
@@ -187,8 +187,6 @@ const updates = [
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 18px;
-  max-width: 1040px;
-  margin-inline: auto;
 }
 .cb-empty {
   margin: 0;
@@ -197,21 +195,14 @@ const updates = [
   font-size: 14px;
   color: var(--ev-text-secondary);
 }
-.cb-hot {
-  max-width: 720px;
-  margin-inline: auto;
-}
 .cb-article {
-  max-width: 720px;
-  margin-inline: auto;
+  /* 区块容器即标题与主体的共同边界；760px 阅读测宽由 EvArticle 内部排版负责 */
   text-align: left;
 }
 .cb-about {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  max-width: 880px;
-  margin-inline: auto;
   align-items: start;
 }
 .cb-stats {

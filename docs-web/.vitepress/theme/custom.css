@@ -324,18 +324,9 @@
 }
 
 /* ══════ 案例站点的容器结构（舞台缩放版与全屏 live 版共用）：
-   EvSection 自身不带容器，版块内容需要限宽居中，不能随舞台/视窗顶到边上；
-   色带类元素（公告/hero/指标带/页脚）保持通栏，由 .ev-container 或页面级样式控制内部 */
-.case-site .ev-section {
-  max-width: var(--ev-container-width, 1152px);
-  margin-inline: auto;
-}
-
-.case-site .ev-comparison-table,
-.case-site .ev-faq {
-  max-width: 860px;
-  margin-inline: auto;
-}
+   EvSection 默认定宽居中（width 档 + --ev-container-width 令牌），标题与主体天然同边，
+   此处不再页面级覆写；色带类元素（公告/hero/指标带/页脚）保持通栏，由 .ev-container
+   或页面级样式控制内部。通栏仅限出血大件，规则见 section 文档「整页组装规则」。 */
 
 /* EvSection 只有 margin-bottom，跟在全幅色带后面的版块要补回上间距；
    反向（gap=0 的版块 → 色带）同理补上，避免文章流与热榜贴死 */

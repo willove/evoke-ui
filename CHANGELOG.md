@@ -2,6 +2,32 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [evoke-ui 0.13.0] — 2026-09-26
+
+### @wil-works/evoke-ui — EvSection 默认定宽居中：整页组装规则组件化（0.13.0，breaking）
+
+- **`width` 默认值 `full` → `default`**：不写 `width` 的区块从此定宽居中（1152，随
+  `--ev-container-width` 令牌），标题与主体天然同边。**breaking**：依赖「裸 section 通栏」
+  的存量页面，宽屏视口下内容将收进容器；要通栏的区块显式 `width="full"`（仅限出血大件，
+  见下）。通栏判据从「默认」翻转为「需显式声明并说明理由」，错的写法不再零成本。
+- **整页组装规则成文**（section.md 页首规则块 + AGENTS.md 硬规则 + frontend-ui-ux
+  skill §4/§5）：① 默认定宽居中；② 通栏仅限出血大件——跑马灯、整宽图表、分屏滚动场景、
+  出血大图，且要能说出哪个子元素是出血大件；③ 标题与主体共用同一个容器，禁止只给主体
+  内层 `div` 手写 `max-width`（那会让标题通栏、卡片居中，同一区块两条左边界）；④ 宽度只
+  来自档位令牌，页面私写像素 `max-width` 一律禁止，比档位更窄的阅读测宽（如描述 560px）
+  下沉到组件内部排版；⑤ 要通栏的视觉、要收拢的内容学 EvCta——外层色带通栏、内层容器收内容。
+- **官方范例除尘**：文档站此前是规则的反面教材（getting-started 骨架、首页、三个案例页
+  全是裸 section，宽度靠页面 CSS 或内层手写 max-width 补）。现在首页与主题的
+  `.case-site .ev-section` 补丁删除（与新默认值同源同值，单一真相）；案例页内层私写宽度
+  归并档位（960/1040/880 → narrow/default；文字测宽交回 EvArticle 等组件内部）；
+  getting-started 骨架加注释说明通栏要显式。
+- **容器边界守卫**（visual/ui.spec.mjs，计算样式断言非截图）：首页 + 三个 live 案例 +
+  section 文档页，所有 `.ev-section` 计算 `max-width` 必须落在 920/1152/1360 三档；
+  每个带标题的区块，标题 / 主体 / 主体首个块级子元素左边缘必须重合——漏定宽与
+  「两条左边界」两类回归即红。
+- 测试：site.test.js 默认档断言更新（默认挂 `is-width-default`，显式 `full` 不带档位类），
+  evoke-ui 30 文件 347 项全过；docs-web SSR 全站构建通过。
+
 ## [business-ui 0.11.0 / tools-ui 1.2.0] — 2026-09-26
 
 ### @wil-works/evoke-business-ui — EbSplitter 拖拽条键盘 resize（0.11.0，增量）
