@@ -35,8 +35,10 @@ jobs:
           - { name: ui, pkg: "@wil-works/evoke-ui", dir: packages/evoke-ui }
           - { name: charts, pkg: "@wil-works/evoke-charts", dir: packages/evoke-charts }
           - { name: tools-ui, pkg: "@wil-works/evoke-tools-ui", dir: packages/evoke-tools-ui }
-      # 手动选择单个包时跳过另一个
-      max-parallel: 1
+      # 各包互不依赖（版本已在 npm 的会被跳过），并发发布即可；
+      # 此前 max-parallel: 1 把 5 个包串成一条链，每个都要独立 install + build
+      max-parallel: 3
+      fail-fast: false
     steps:
       - name: Skip when package not selected
         id: gate

@@ -11,6 +11,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 视觉基线只在"可能影响它"的改动上跑（tools-ui 及其两个底座的源码/令牌、docs-tools、visual 自身）
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      tools: ${{ steps.check.outputs.tools }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RANGE="${{ github.event.pull_request.base.sha }}...HEAD"
+          else
+            RANGE="${{ github.event.before }}...HEAD"
+          fi
+          CHANGED="$(git diff --name-only "$RANGE" 2>/dev/null || git diff --name-only HEAD~1)"
+          echo "changed:"; echo "$CHANGED" | head -40
+          if echo "$CHANGED" | grep -qE '^(packages/evoke-tools-ui/|packages/evoke-ui/|packages/evoke-business-ui/|docs-tools/|visual/|\.github/workflows/ci\.yml)'; then
+            echo "tools=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tools=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::本次改动与 tools 视觉基线无关，跳过 visual 作业"
+          fi
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -41,11 +66,8 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Unit tests
-        run: pnpm test
-
-      # 覆盖率统计（v8）：文本报告进日志，lcov/html 存档
-      - name: Coverage
+      # 测试与覆盖率一次跑完（v8）：此前 `pnpm test` + `pnpm test:coverage` 把整套跑两遍
+      - name: Unit tests (coverage)
         run: pnpm test:coverage
 
       # 文档站从本地脚本部署上线（scripts/deploy-docs.sh），部署前先在 CI 验证三站构建（含 SSR）可通过
@@ -74,7 +96,16 @@ jobs:
   # 基线在 visual/tools.spec.mjs-snapshots/ 入库；改动 = 必须 --update-snapshots
   # 显式重录（防"顺手重录把真回归洗掉"）。
   visual:
+    # needs test：测试没过就不必起这套重活；changes：无关改动直接跳过
+    needs: [test, changes]
+    if: needs.changes.outputs.tools == 'true'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # 18 例 × 三档密度 × 明暗 × 三档宽度：不分片时一套要跑 35-60 分钟。
+      # 分片只做对比较（基线只读），互不写同一份快照，可安全并行。
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/setup@v1
@@ -85,6 +116,11 @@ jobs:
           install: false
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Install Playwright chromium
         run: pnpm exec playwright install --with-deps chromium
       # playwright 的 webServer 会拉起全部 5 个 preview（含三站 docs），
@@ -107,4 +143,4 @@ jobs:
       - name: Build tools example
         run: pnpm build:tools-example
       - name: Visual regression (tools)
-        run: pnpm exec playwright test --project=tools
+        run: pnpm exec playwright test --project=tools --shard=${{ matrix.shard }}/3
