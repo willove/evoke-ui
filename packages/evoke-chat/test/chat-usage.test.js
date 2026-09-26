@@ -128,3 +128,63 @@ describe('引擎与消息接线', () => {
     expect(without.find('.eb-chat-usage').exists()).toBe(false)
   })
 })
+
+/**
+ * 阶梯披露（本轮新增）：一行摘要常驻，明细点开可见
+ * 口径与 assistant-ui / AI Elements 一致：为 0 的分项不渲染；无明细就不做可点控件。
+ */
+describe('用量明细披露', () => {
+  const FULL = {
+    promptTokens: 1200,
+    completionTokens: 380,
+    cacheReadTokens: 900,
+    reasoningTokens: 260,
+    ttftMs: 640,
+    tokensPerSecond: 38.4,
+  }
+
+  it('为 0 的分项不渲染；给了成本才有成本行', async () => {
+    const w = mount(ChatUsage, { props: { usage: FULL }, attachTo: document.body })
+    await w.find('.eb-chat-usage__trigger').trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const rows = [...document.body.querySelectorAll('.eb-chat-usage__row')].map((r) => r.textContent.replace(/\s+/g, ' ').trim())
+    expect(rows).toHaveLength(6)                       // 输入/输出/缓存读/推理/首字/速度
+    expect(rows[0]).toContain(chatLabels.usage.input)
+    expect(rows[0]).toContain('1.2k')
+    expect(rows[4]).toContain('0.64s')                 // 首字 640ms
+    expect(rows[5]).toContain('38.4 tok/s')
+    expect(rows.some((r) => r.includes(chatLabels.usage.cacheWrite))).toBe(false)  // 缓存写为 0 → 不渲染
+    expect(rows.some((r) => r.includes(chatLabels.usage.cost))).toBe(false)        // 没给成本 → 不渲染
+    w.unmount()
+  })
+
+  it('给了成本才出现成本行', async () => {
+    const w = mount(ChatUsage, { props: { usage: { ...FULL, cost: 0.0234, currency: '$' } }, attachTo: document.body })
+    await w.find('.eb-chat-usage__trigger').trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const rows = [...document.body.querySelectorAll('.eb-chat-usage__row')].map((r) => r.textContent.replace(/\s+/g, ' ').trim())
+    expect(rows.at(-1)).toContain(chatLabels.usage.cost)
+    expect(rows.at(-1)).toContain('$0.02')
+    w.unmount()
+  })
+
+  it('触发器是可点的 button 带无障碍名；关掉 disclosure 时不出现', () => {
+    const on = mount(ChatUsage, { props: { usage: FULL } })
+    const trigger = on.find('.eb-chat-usage__trigger')
+    expect(trigger.element.tagName).toBe('BUTTON')
+    expect(trigger.attributes('aria-label')).toBe(chatLabels.usage.disclosure)
+    // 根元素与两档类名保持原样（宿主依赖）
+    expect(on.find('.eb-chat-usage').classes()).toEqual(expect.arrayContaining(['eb-chat-usage--compact', 'is-bare']))
+
+    const off = mount(ChatUsage, { props: { usage: FULL, disclosure: false } })
+    expect(off.find('.eb-chat-usage__trigger').exists()).toBe(false)
+    // 纯读数形态：摘要仍在
+    expect(off.find('.eb-chat-usage__tokens').text()).toContain('1.6k')
+  })
+
+  it('只有总量、没有分项时不渲染可点控件（不做假按钮）', () => {
+    const w = mount(ChatUsage, { props: { usage: { totalTokens: 500 } } })
+    expect(w.find('.eb-chat-usage__trigger').exists()).toBe(false)
+    expect(w.find('.eb-chat-usage__tokens').text()).toContain('500 tokens')
+  })
+})

@@ -280,6 +280,15 @@ async function transport(content, attachments, context) {
       bodyIndex += 2
       if (bodyIndex >= prefix.length + body.length) {
         engine.completeMessage(msg.id)
+        // 真实接入时这里换成模型返回的 usage；明细披露会按「为 0 不显示」的口径收掉空项
+        engine.setUsage(msg.id, {
+          promptTokens: 1280,
+          completionTokens: 386,
+          cacheReadTokens: 960,
+          reasoningTokens: think ? 264 : 0,
+          ttftMs: 640,
+          tokensPerSecond: 38.4,
+        })
         finish()
       }
     }

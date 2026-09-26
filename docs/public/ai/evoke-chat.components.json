@@ -1932,6 +1932,12 @@
           "type": "Boolean",
           "default": "true",
           "required": false
+        },
+        {
+          "name": "disclosure",
+          "type": "Boolean",
+          "default": "true",
+          "required": false
         }
       ],
       "events": [],

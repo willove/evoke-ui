@@ -598,7 +598,7 @@ engine.setUsage(msg.id, {
 })
 ```
 
-消息带 `usage` 时元信息行自动出现一颗用量徽标（`1.2k tokens · $0.0032`），输入/输出的明细以读屏文本与悬浮提示给出、视觉上不占位。不带就完全不渲染。
+消息带 `usage` 时元信息行自动出现一颗用量徽标（`1.2k tokens · $0.0032`）。**点开给分项明细**（输入 / 输出 / 缓存读 / 缓存写 / 推理 / 首字 / 速度 / 成本）——为 0 的分项不渲染，宿主没给的成本也不出现；没给任何用量就完全不渲染，只有总量时分项为空、徽标不可点（不做假按钮）。
 
 单条用 `usage`，按会话汇总用 `items`（多条累加，token 与成本都汇总）：
 
@@ -607,6 +607,14 @@ engine.setUsage(msg.id, {
 ```
 
 千与百万以上折算成 `12.4k` / `2.3M`，成本小额保留四位（`$0.0032`）常规两位（`¥1.24`）。
+
+| Props | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `usage` | object | `null` | 单条用量：`{ promptTokens?, completionTokens?, totalTokens?, cacheReadTokens?, cacheWriteTokens?, reasoningTokens?, ttftMs?, tokensPerSecond?, cost?, currency? }` |
+| `items` | array | `null` | 多条用量（按会话汇总，token 与成本累加） |
+| `size` | string | `'compact'` | `compact` 用于消息元信息行，`default` 用于独立展示 |
+| `bare` | boolean | `true` | 去掉底色，直接融进上下文 |
+| `disclosure` | boolean | `true` | 关掉阶梯披露，只留一行摘要 |
 
 ## 观测性深链
 
