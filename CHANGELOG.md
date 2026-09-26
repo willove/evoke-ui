@@ -62,6 +62,28 @@
   ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
   `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
 
+## [tools-ui 1.0.0] — 2026-09-26
+
+### @wil-works/evoke-tools-ui — v1.0：API 冻结 + 文档站全站（M4 收官）
+
+- **API 冻结**（README「版本与 API 稳定性承诺」）：组件 props/events/slots、`./runtime` 契约、
+  `--et-*` 令牌名、`et-*` class 钩子、子路径导出——只增不改不删；删除/改名走 major 且先过
+  一个 minor 弃用警告。兜底行为（图标兜底 / 布局损坏降级不白屏 / 存储异常静默）为承诺级；
+- **G8 发布一致性门**（`scripts/pre-release-check.mjs` 扩展）：第四个库的版本展示点守卫
+  （`packages/evoke-tools-ui/test/docs-site-version.test.js`：hero 徽标 / README 徽标 / 站点配置）+
+  **文档宣称组件数 ↔ 入口产物**（DESIGN.md 的 L1 12 / L2 6 / L3 7 / L4 7 逐层与实际入口核对）+
+  既有图标数核对；
+- **视觉基线固化**：tools 的 L3 视觉回归（27 例）进 CI（新增 `visual` 作业 + Playwright chromium），
+  基线变更必须显式 `--update-snapshots`；
+- **docs-tools 全站**：指南 6 页（getting-started / commands / workbench / theme / keyboard /
+  **recipe-log-analyzer 非办公域配方**）+ 33 件组件页全覆盖（props/emits/slots 与源码逐项对齐，
+  机检零缺失）+ 侧栏导航；
+- **消费者冒烟通过**：npm 产物（无源码 alias）全新安装，标题栏 / 功能区 / 停占用面板槽 /
+  状态栏 / 命令→Toast 全链跑通；
+- 其它：DESIGN.md 里程碑段修复（M3 行曾在校对中丢失）+ §三 编号修正。
+
+自 0.4.0 起无 API 变更；0.4.0 → 1.0.0 是承诺与流程升级（发布门 + 文档全站 + CI 视觉固化）。
+
 ## [tools-ui 0.4.0] — 2026-09-25
 
 ### @wil-works/evoke-tools-ui — M3：产品外壳件与主题桥接（0.4.0）

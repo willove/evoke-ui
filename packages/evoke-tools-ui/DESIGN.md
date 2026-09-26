@@ -62,11 +62,11 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 5. **声明式工具区 + 分量降级**。tab/组/条目是一棵树（`gridLayout` 声明形态：rowSpan=2 大钮、
    1×1 小钮、width 输入类控件），产品只 merge 补丁；每个组声明降级终点
    （FULL → 小图标 → 整组变下拉），任意宽度可渲染，**禁换行**（G7 + 视觉断言双锁）。
-5. **布局即数据**。停靠区/面板/尺寸/折叠/隐藏/全屏是一棵可序列化的树（`createLayoutTree`），
+6. **布局即数据**。停靠区/面板/尺寸/折叠/隐藏/全屏是一棵可序列化的树（`createLayoutTree`），
    **EtWorkbench 是唯一写树处**（与 M1 命令状态同源）；持久化坏档一律降级默认布局
    （不白屏）并把修好的树覆写回存储——损坏只发生一次，提示不重复刷屏。
    隐藏 ≠ 不可达：`hidden` 是显式状态，"重置布局 / 显示面板"找得回来。
-6. **图标纪律**。三层命名（Remix 原生名 / 组件语义名 / 领域语义名）跨层引用即违规；
+7. **图标纪律**。三层命名（Remix 原生名 / 组件语义名 / 领域语义名）跨层引用即违规；
    同容器尺寸档 ≤2；line 风格为默认、fill 仅用于激活/选中；未命中禁渲染空白——
    回落显式兜底图标 + dev warn（G2 门把悬空名做成构建期失败）。
 
@@ -117,10 +117,11 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 - **M2（本版交付，0.3.0）**：布局树契约（dock/面板/序列化/持久化/损坏降级）+ L3 七件
   （EtWorkbench / EtDock / EtPanel / EtPanelGroup / EtScrollArea / EtEmptyState / EtDocumentTabs）；
   **复用检验已过**：非办公域（日志分析器）用同一套框架零改逻辑搭出完整工作台。
-
-令牌（三档密度 + chrome 预算）+ G1/G2/G4/G5/G7 五道门 + 图标解析兜底与领域别名 API +
-12 个 L1 原子件 + 键位表/焦点漫游基座 + 本白皮书与文档站设计规范页。
-M1 起才交付命令/菜单/折叠溢出（L2 工具区框架）——**门禁前置，先有 G1/G7 再写第一个组件**。
+- **M3（本版交付，0.4.0）**：L0 三契约（画布调色板映射 / 焦点陷阱 / 宿主探测）+ L4 七件
+  （EtTitleBar / EtStatusBar / EtBackstage / EtThemeBridge / EtDialog / EtToast / EtBanner）——
+  画布 `--ot-*` 随主题联动、双宿主标题栏、backstage 零尺寸跳动、焦点三处一致。
+- **M4（v1.0 冻结版）**：API 冻结、docs-tools 全站、G8 发布一致性门、视觉基线固化、
+  真实消费者升级验证。
 
 ## 七、工程约定（与底座同构）
 
@@ -134,3 +135,6 @@ M1 起才交付命令/菜单/折叠溢出（L2 工具区框架）——**门禁�
 - 依赖：白名单制——peer 只有 `vue` + `@wil-works/evoke-business-ui`，零第三方 UI 库；
   底座按 peer 解析，保证消费方单实例（ConfigProvider 的 inject key 是模块级 Symbol）。
 - 复用检验（M2 出口）：用 tools-ui 搭一个**非办公**工具界面；需要为它改办公逻辑 = 分层失败，打回。
+- **API 冻结（M4 / v1.0 起）**：组件 props/events/slots、`./runtime` 契约、`--et-*` 令牌名、
+  `et-*` class 钩子、子路径导出——冻结；删除/改名只走 major，且先过一个 minor 弃用警告。
+  兜底行为（图标兜底 / 布局损坏降级 / 存储异常静默）是承诺级：变更必须 major + 提前弃用。

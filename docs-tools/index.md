@@ -11,7 +11,7 @@ hero:
       link: /guide/design
 ---
 
-<p class="td-hero__badge">v0.4.0 · 内测版</p>
+<p class="td-hero__badge">v1.0.0</p>
 
 # 这是什么
 
@@ -33,7 +33,7 @@ tools-ui 只做**business-ui 语境下不存在的东西**，外加组件库给�
 | `--ec-*` evoke-charts | 图表 | 数据图形 | —— |
 | **`--et-*` tools-ui** | **工作台** | **文档/画布** | **三档（紧凑/默认/宽松）** |
 
-## 当前状态（M1）
+## 当前状态（v1.0.0）
 
 M0 交付：`--et-*` 令牌（三档密度 + chrome 度量与预算）、G1/G2/G4/G5/G7 五道门、
 图标解析与兜底机制、12 个 L1 原子件。
@@ -45,6 +45,8 @@ M2 起交付（已交付）：工作台布局运行时（EtWorkbench/EtDock/EtPa
 （持久化 / 损坏降级 / 复用检验已过：非办公域零改逻辑搭出完整工作台）。M3 已交付：外壳件（EtTitleBar 双宿主窗口控制位 / EtStatusBar / EtBackstage）+ 主题桥接
 （EtThemeBridge → 画布 --ot-* 调色板随明暗联动）+ 焦点三处一致（EtDialog/EtBackstage/命令面板共用
 focus/trap 契约）+ EtToast/EtBanner。M4 起 API 冻结与 v1.0。
+
+M4 交付中：**文档站已成全站**——指南 6 页、33 个组件入口逐页成档（含图标机制页），侧栏可点到每一页。
 
 ::: warning 计划文档先行
 本库一切取舍以 `plans/tools-ui/01–07` 为准；本页随里程碑批交付更新，不做超前承诺。

@@ -14,6 +14,9 @@
  *   3. 暂存区里没有意外的 hunk
  *      ——同上，整文件 `git add` 会把无关改动捎带进发布提交，此处逐条列出
  *        暂存的增删行供人工过目（只看，不拦截）
+ *   4. （M4 G8）tools-ui 文档宣称的组件数 ↔ 组件入口产物实际条数
+ *      ——DESIGN.md 的里程碑表写「L2 六个组件 / L3 七件 / L4 七件」，exports
+ *        契约按入口数断言；两层数字对不上就是文档承诺了不存在的能力
  *
  * 用法：node scripts/pre-release-check.mjs   （在仓库根目录执行）
  */
@@ -72,6 +75,7 @@ const guardFiles = [
   'packages/evoke-business-ui/test/docs-site-version.test.js',
   'packages/evoke-ui/test/docs-site-version.test.js',
   'packages/evoke-charts/test/docs-site-version.test.js',
+  'packages/evoke-tools-ui/test/docs-site-version.test.js',
 ].filter((f) => {
   try { read(f); return true } catch { return false }
 })
@@ -131,6 +135,66 @@ for (const pair of iconPairs) {
       )
     }
   }
+}
+
+// ─── 2.5 （M4 G8）tools-ui 文档宣称组件数 ↔ 入口产物 ───
+try {
+  const { pathToFileURL } = await import('node:url')
+  const entryModule = await import(
+    pathToFileURL(join(repoRoot, 'packages/evoke-tools-ui/scripts/component-entries.mjs')).href,
+  )
+  const entries = entryModule.getEtComponentEntries()
+  const names = new Set(entries.map((e) => e.name))
+  // 分层归属：与 src/index.js 的结构注释同源（改这里 = 改分层表，必须与 DESIGN.md 同步）
+  const LAYERS = {
+    L1: ['provider', 'tool-button', 'tool-group', 'tab-strip', 'screen-tip', 'key-hint', 'divider', 'tool-spacer', 'dropdown', 'select', 'tooltip', 'splitter'],
+    L2: ['ribbon-bar', 'overflow-menu', 'command-palette', 'context-menu', 'shortcut-panel', 'shortcut-hint'],
+    L3: ['dock', 'panel', 'panel-group', 'scroll-area', 'empty-state', 'workbench', 'document-tabs'],
+    L4: ['title-bar', 'status-bar', 'backstage', 'theme-bridge', 'dialog', 'toast', 'banner'],
+  }
+  // 辅件：splitter-panel（splitter 族的子路径辅件）/ icon（兜底载体）不进分层宣称
+  const AUX = ['splitter-panel', 'icon']
+  const classified = new Set([...Object.values(LAYERS).flat(), ...AUX])
+  const unclassified = entries.filter((e) => !classified.has(e.name)).map((e) => e.name)
+  if (unclassified.length) {
+    failures.push(`tools-ui 组件入口有未归类条目（分层表过期？）：${unclassified.join(', ')}`)
+  }
+  const layerCount = (layer) => LAYERS[layer].filter((n) => names.has(n)).length
+
+  // DESIGN.md 的里程碑表 = 宣称口径（L1 "12 个 L1 原子件" / L2 "六个组件" / L3 "七件" / L4 "七件"）
+  const design = readAtHead('packages/evoke-tools-ui/DESIGN.md')
+  const cn = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12 }
+  const num = (raw) => (cn[raw] ?? Number(raw))
+  // 每层一组候选句式（任一匹配即算宣称；全不中 = 文档丢了可核对的数字）
+  const claimPatterns = {
+    L1: [/(\d+)\s*个\s*L1 原子件/, /L1 原子件[^。\n]*?\*\*(\d+)\*\*/],
+    L2: [/L2\s*([一二三四五六七八九十]+|\d+)\s*个组件/],
+    L3: [/L3\s*([一二三四五六七八九十]+|\d+)\s*件/],
+    L4: [/L4\s*([一二三四五六七八九十]+|\d+)\s*件/],
+  }
+  const claims = []
+  for (const [layer, patterns] of Object.entries(claimPatterns)) {
+    const hit = patterns.map((re) => design.match(re)).find(Boolean)
+    if (!hit) {
+      failures.push(`DESIGN.md 里找不到 ${layer} 的组件数宣称（G8 需要每层都有可核对的数字）`)
+      continue
+    }
+    claims.push({ layer, count: num(hit[1]) })
+  }
+  for (const claim of claims) {
+    const actual = layerCount(claim.layer)
+    if (claim.count !== actual) {
+      failures.push(
+        `tools-ui 组件数不一致：DESIGN.md 宣称 ${claim.layer} ${claim.count} 个，入口产物实际 ${actual} 个。` +
+        '文档承诺的能力必须真实存在于发布产物里',
+      )
+    }
+  }
+  const claimedTotal = claims.reduce((n, c) => n + c.count, 0)
+  notes.push(`tools-ui 组件入口：${entries.length} 条（分层宣称合计 ${claimedTotal} + 辅件 ${AUX.length}）`)
+  for (const c of claims) notes.push(`  └ ${c.layer} 宣称 ${c.count} / 实际 ${layerCount(c.layer)}`)
+} catch (err) {
+  failures.push(`tools-ui 组件数一致性检查失败：${err.message}`)
 }
 
 // ─── 3. 暂存区 hunk 供人工过目 ───

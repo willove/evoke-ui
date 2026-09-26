@@ -69,3 +69,27 @@ jobs:
           name: coverage
           path: coverage
           retention-days: 7
+
+  # M4 视觉基线固化：tools-ui 的 L3 视觉回归进 CI。
+  # 基线在 visual/tools.spec.mjs-snapshots/ 入库；改动 = 必须 --update-snapshots
+  # 显式重录（防"顺手重录把真回归洗掉"）。
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/setup@v1
+        with:
+          version: 11
+          runtime: node@22
+          cache: true
+          install: false
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Build tools packages
+        run: pnpm build:ebui && pnpm build:tools
+      - name: Build tools example
+        run: pnpm build:tools-example
+      - name: Visual regression (tools)
+        run: pnpm exec playwright test --project=tools

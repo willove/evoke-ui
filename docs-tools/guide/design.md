@@ -175,7 +175,7 @@ const layout = ref(createLayoutTree({
 - **`EtSplitter` 的键盘 resize 未做**：拖拽条由底座 `EbSplitterPanel` 渲染，键盘增强放进
   M2 的面板树运行时（框架自有代码面）再做。
 - **组标题行 y 对齐的前提是同排组都有 label**（label 为空不渲染标题行，计划契约如此）；
-  混排场景的等高占位由 L2 `EtToolArea` 负责。
+  混排场景的等高占位由 L2 `EtRibbonBar` 负责。
 - **EtCommandPalette 的执行体归消费方**（`runOnSelect` 默认 false，与工具区/右键的 `@command`
   约定一致；true 为便捷模式：选中即 `registry.run`）。
 - **chrome 横带的分隔线不要用 `border`**：border 会吃掉 1px 内容盒，工具区内容就比

@@ -42,8 +42,9 @@ function sourceAlias() {
 
 /**
  * Evoke Tools UI 文档站
- * M0 只有一页指南（guide/design.md，--et-* 全量令牌 + 三档密度对照）；组件页与
- * recipe 随各里程碑批交付（tools-ui 计划 07 批次节奏：文档随批，不补）。
+ * M4 全站：指南 6 页（快速开始 / 命令 / 工作台 / 主题 / 键盘 / recipe）+ 组件页
+ * （33 个组件入口逐页 + 图标机制页）+ 契约页（--et-* 全量令牌与契约）。
+ * 侧栏分层与 src/index.js 的分层注释同源；组件数以产物入口为准（G8）。
  */
 export default defineConfig({
   lang: 'zh-CN',
@@ -53,6 +54,85 @@ export default defineConfig({
     sidebar: [
       {
         text: '指南',
+        collapsed: false,
+        items: [
+          { text: '快速开始', link: '/guide/getting-started' },
+          { text: '命令驱动', link: '/guide/commands' },
+          { text: '工作台布局', link: '/guide/workbench' },
+          { text: '主题与画布桥', link: '/guide/theme' },
+          { text: '键盘优先', link: '/guide/keyboard' },
+          { text: '配方：日志分析器', link: '/guide/recipe-log-analyzer' },
+        ],
+      },
+      {
+        text: '组件',
+        collapsed: false,
+        items: [
+          {
+            text: 'L1 原子件（12）',
+            collapsed: false,
+            items: [
+              { text: 'EtProvider', link: '/components/provider' },
+              { text: 'EtToolButton', link: '/components/tool-button' },
+              { text: 'EtToolGroup', link: '/components/tool-group' },
+              { text: 'EtTabStrip', link: '/components/tab-strip' },
+              { text: 'EtScreenTip', link: '/components/screen-tip' },
+              { text: 'EtKeyHint', link: '/components/key-hint' },
+              { text: 'EtDivider', link: '/components/divider' },
+              { text: 'EtToolSpacer', link: '/components/tool-spacer' },
+              { text: 'EtDropdown', link: '/components/dropdown' },
+              { text: 'EtSelect', link: '/components/select' },
+              { text: 'EtTooltip', link: '/components/tooltip' },
+              { text: 'EtSplitter / EtSplitterPanel', link: '/components/splitter' },
+            ],
+          },
+          {
+            text: 'L2 工具区（6）',
+            collapsed: false,
+            items: [
+              { text: 'EtRibbonBar / EtOverflowMenu', link: '/components/ribbon-bar' },
+              { text: 'EtCommandPalette', link: '/components/command-palette' },
+              { text: 'EtContextMenu', link: '/components/context-menu' },
+              { text: 'EtShortcutPanel', link: '/components/shortcut-panel' },
+              { text: 'EtShortcutHint', link: '/components/shortcut-hint' },
+            ],
+          },
+          {
+            text: 'L3 工作台（7）',
+            collapsed: false,
+            items: [
+              { text: 'EtWorkbench', link: '/components/workbench' },
+              { text: 'EtDock', link: '/components/dock' },
+              { text: 'EtPanel', link: '/components/panel' },
+              { text: 'EtPanelGroup', link: '/components/panel-group' },
+              { text: 'EtDocumentTabs', link: '/components/document-tabs' },
+              { text: 'EtScrollArea', link: '/components/scroll-area' },
+              { text: 'EtEmptyState', link: '/components/empty-state' },
+            ],
+          },
+          {
+            text: 'L4 外壳件（7）',
+            collapsed: false,
+            items: [
+              { text: 'EtTitleBar', link: '/components/title-bar' },
+              { text: 'EtStatusBar', link: '/components/status-bar' },
+              { text: 'EtBackstage', link: '/components/backstage' },
+              { text: 'EtThemeBridge', link: '/components/theme-bridge' },
+              { text: 'EtDialog', link: '/components/dialog' },
+              { text: 'EtToast', link: '/components/toast' },
+              { text: 'EtBanner', link: '/components/banner' },
+            ],
+          },
+          {
+            text: '图标机制',
+            collapsed: false,
+            items: [{ text: 'EtIcon · 三层命名与兜底', link: '/components/icons' }],
+          },
+        ],
+      },
+      {
+        text: '契约',
+        collapsed: false,
         items: [{ text: '设计规范（--et-* 全量）', link: '/guide/design' }],
       },
     ],

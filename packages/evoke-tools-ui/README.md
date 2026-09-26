@@ -1,5 +1,7 @@
 # @wil-works/evoke-tools-ui
 
+![npm version](https://img.shields.io/npm/v/%40wil-works%2Fevoke-tools-ui) ![npm version](https://img.shields.io/badge/version-v1.0.0-blue)
+
 Evoke Tools UI —— 纯 JS Vue3 **产品级 GUI 框架**（命名空间 `--et-*`）。
 
 服务对象：要把界面做成**一个软件**的产品——文档/画布居中，工具退到边缘，
@@ -7,7 +9,30 @@ chrome（标题栏 / 工具区 / 状态栏）环绕内容；常驻布局、键�
 
 - 设计语言白皮书：[`DESIGN.md`](./DESIGN.md)
 - 计划全文：仓库根 `plans/tools-ui/01–07`
-- 文档站：`docs-tools/`（M0 起交付 `guide/design.md`，组件页随里程碑批交付）
+- 文档站：`docs-tools/`（指南 6 页 + 33 件组件页全覆盖 + 非办公域 recipe）
+
+## 版本与 API 稳定性承诺（v1.0 起）
+
+`@wil-works/evoke-tools-ui` 自 **1.0.0** 起遵守语义化版本，以下为承诺范围：
+
+| 面 | 承诺 | 说明 |
+| --- | --- | --- |
+| 组件 `props` / `emits` / `slots` | **冻结**：只增不改不删（minor 新增、patch 修缺陷） | 删除或改名走 major；新增 prop 总有默认值，不改既有渲染 |
+| `./runtime` 契约（函数签名与返回结构） | **冻结**：同上 | 返回结构新增字段 = minor；删除/改名 = major |
+| 令牌 `--et-*` | **冻结**：值可随主题变，**名字不删不改** | 新令牌 minor 新增；消费方直接引用单个令牌的写法不受影响 |
+| class 钩子 `et-*` / `is-*` 状态类 | **冻结** | 产品按类做样式覆盖/测试选择器；改名 = major |
+| 子路径导出（`./styles`、`./runtime`、`./icons`、`./<component>`） | **冻结** | 新增组件子路径 = minor |
+| 兜底行为 | **承诺级**：图标未命中回落显式兜底图标、布局损坏降级默认布局不白屏、存储异常静默降级 | 这三条是框架级承诺，变更走 major 并提前一个 minor 弃用警告 |
+
+**弃用流程**：要删的东西先在 minor 里标记弃用（运行时 dev warn 一条，不刷屏），
+至少一个 minor 之后才在 major 删除。**1.0 之后没有"顺手改名"**——改名就是破坏性变更。
+
+## 质量门与测试层（构建前置）
+
+七道门（G1 令牌 / G2 图标 / G3 命令面 / G4 可访问名 / G5 组字 / G6 文案 / G7 几何）挂入
+`pnpm build:tools`；发布前 `node scripts/pre-release-check.mjs` 跑版本展示点守卫 + 图标数 +
+**组件数宣称核对（G8，M4 新增）**。测试层 L1 契约 / L2 组件 / L3 视觉（基线入库，CI 的
+visual 作业锁定）/ L4 集成（workbench 装配）/ L5 复用检验（非办公域）。
 
 ## 安装与使用
 
