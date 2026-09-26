@@ -92,9 +92,15 @@ importers:
         specifier: ^3.5.0
         version: 3.5.42(typescript@5.9.2)
     devDependencies:
+      highlight.js:
+        specifier: ^11.10.0
+        version: 11.12.0
       vitepress:
         specifier: ^1.6.0
         version: 1.6.0(@algolia/client-search@5.57.0)(async-validator@4.2.5)(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(typescript@5.9.2)
+      vitepress-plugin-llms:
+        specifier: ^1.14.0
+        version: 1.14.0
 
   docs-web:
     dependencies:
