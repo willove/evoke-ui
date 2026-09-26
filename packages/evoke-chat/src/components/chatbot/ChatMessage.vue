@@ -466,7 +466,8 @@ function handleAction(key, message) {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--eb-space-2);
+  /* 读数与动作之间留更松的气口（此前 8px 太挤，耗时与用量几乎贴在一起） */
+  gap: var(--eb-space-3);
   margin-top: var(--eb-space-1);
 }
 

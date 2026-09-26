@@ -188,13 +188,22 @@ defineExpose({ sumUsage, formatTokens });
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 0;
+  /* 可点就该有可点的反馈：hover 给浅灰底（与输入台 chip 同一语言，不画边框） */
+  height: 20px;
+  padding: 0 6px;
+  margin: 0 -6px;
   border: 0;
+  border-radius: var(--eb-radius-full);
   background: transparent;
   color: inherit;
   font: inherit;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
+  transition: background var(--eb-transition-duration-fast) var(--eb-ease-out);
+}
+
+.eb-chat-usage__trigger:hover {
+  background: var(--eb-fill-color-light);
 }
 
 .eb-chat-usage__trigger:hover {
