@@ -489,7 +489,7 @@ function handleAction(key, message) {
 
 .eb-chat-message__time {
   font-size: var(--eb-font-size-xs);
-  color: var(--eb-text-color-placeholder);
+  color: var(--eb-text-color-secondary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -501,10 +501,13 @@ function handleAction(key, message) {
   color: var(--eb-text-color-secondary);
 }
 
-/* 底行图标统一色调与尺寸：信息图标不再比动作图标更淡、也不一大一小 */
-.eb-chat-message__foot :deep(.eb-icon) {
+/*
+ * 底行信息组（时间 / 耗时 / 用量）文字与图标同色：secondary。
+ * 图标不单独指定颜色，继承父级 currentColor —— 文字与图标永远一致。
+ * 用量胶囊的 `--compact` 变体自带 placeholder 色（同优先级但更靠后），这里按行口径覆盖。
+ */
+.eb-chat-message__foot :deep(.eb-chat-usage) {
   color: var(--eb-text-color-secondary);
-  flex: none;
 }
 
 .eb-chat-message__content {
