@@ -1,6 +1,6 @@
 {
   "name": "@wil-works/evoke-chat",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "generatedBy": "packages/evoke-chat/scripts/gen-ai-docs.mjs",
   "docs": "https://evoke-business-ui.wil-works.com/chat/chatbot",
   "components": [

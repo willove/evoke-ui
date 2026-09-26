@@ -2,6 +2,16 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [evoke-chat 0.3.1] — 2026-09-26
+
+### @wil-works/evoke-chat — 底部读数显隐口径修正（0.3.1，patch）
+
+- **底部读数整组随悬浮显隐**：时间 / 耗时 / tokens 用量与动作条统一走
+  `.eb-chat-message__reveal`（`opacity` + `pointer-events` 门控）——0.3.0 里耗时与用量是常显，
+  与设计口径不符；触屏（`hover: none`）整组常显，键盘 `:focus-within` 同样可见。
+- 隐藏态 `pointer-events: none`：堵住"看不见却能点"的隐患。
+- opacity 而非 display 门控：隐藏仍占位，悬浮出现不引起任何位移（实测行高与各元素位置两态一致）。
+
 ## [evoke-chat 0.3.0] — 2026-09-26
 
 ### @wil-works/evoke-chat — 会话编排与读数层（0.3.0，minor）
