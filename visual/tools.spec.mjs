@@ -467,13 +467,23 @@ test('M3 出口 · 双宿主标题栏：Web 无控制位；桌面 mac 左序 / W
   // ① Web 宿主（默认档）：不渲染窗口控制位——浏览器的 chrome 管窗口
   expect((await measure(page)).count).toBe(0)
 
-  // ② 桌面宿主 + mac（headless 走 mac UA）：用户点演示条的"桌面"分段 → 控制位居左、close 先
+  // ② 桌面宿主 + **当前平台**：控制位必须在当前平台正确的那一侧。
+  // 不能写死 mac——守卫在 Linux CI 上也跑（UA = Linux，按契约右置）。首跑正是
+  // 红在这里：测试把平台当常量，而平台是运行环境属性。
   await page.locator('.eb-segmented__item').filter({ hasText: '桌面' }).first().click()
   await settle(page, { extraMs: 300 })
-  const mac = await measure(page)
-  expect(mac.count).toBe(3)
-  expect(mac.leftCount, 'mac 控制位应居左').toBe(3)
-  expect(mac.labels[0]).toContain('关闭')
+  const here = await measure(page)
+  expect(here.count).toBe(3)
+  const isMac = await page.evaluate(() =>
+    /Mac|iPhone|iPad/i.test(navigator.userAgent + (navigator.userAgentData?.platform || '')),
+  )
+  if (isMac) {
+    expect(here.leftCount, 'mac 控制位应居左').toBe(3)
+    expect(here.labels[0]).toContain('关闭') // traffic lights：close-first
+  } else {
+    expect(here.leftCount, 'Win/Linux 控制位应居右').toBe(0)
+    expect(here.labels[0]).toContain('最小化')
+  }
 
   // ③ 桌面宿主 + Windows UA：控制位居右、minimize 先
   const ctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120' })
