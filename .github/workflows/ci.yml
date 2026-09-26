@@ -87,14 +87,23 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Install Playwright chromium
         run: pnpm exec playwright install --with-deps chromium
-      # 与 test 作业同链：示例的 alias 直连两库源码，business-ui 源码又引用
-      # charts/ui——少构建一个包就会在 example 构建期解析失败
+      # playwright 的 webServer 会拉起全部 5 个 preview（含三站 docs），
+      # 所以这里必须把包 + 文档站 + 示例全部构建齐（少一个就在 server 启动期失败）。
+      # 与 test 作业同链的另一个原因：示例 alias 直连两库源码，business-ui 源码
+      # 又引用 charts/ui——少构建一个包会在 example 构建期解析失败。
       - name: Build packages
         run: |
           pnpm build:eui
           pnpm build:ebui
+          pnpm build:chat
           pnpm build:charts
           pnpm build:tools
+      - name: Build docs sites
+        run: |
+          pnpm docs:build
+          pnpm docs-web:build
+          pnpm docs-charts:build
+          pnpm docs-tools:build
       - name: Build tools example
         run: pnpm build:tools-example
       - name: Visual regression (tools)
