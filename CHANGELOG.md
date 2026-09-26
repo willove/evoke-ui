@@ -2,6 +2,37 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [evoke-chat 0.3.0] — 2026-09-26
+
+### @wil-works/evoke-chat — 会话编排与读数层（0.3.0，minor）
+
+**新增**
+
+- `EbChatStatusBar`：8 相位状态条（思考/执行/待确认/等回答/排队/重试/压缩/出错），
+  形状 + 运动区分状态；空态不渲染；live region 只包状态句，elapsed 走 aria-hidden 兄弟节点。
+- 消息排队：`EbChatQueue` 逐条「立即发送 / 取回编辑 / 移出」+ 全部清空；
+  引擎 `enqueue / dequeue / clearQueue`、本轮结束自动 flush、`queueable` 门（生成中 Enter 入队而非并发投递）。
+- `EbAiConsole`：`input-prepend` 插槽（贴输入台的待发送队列/附件条）、`toolbar-meta` 透传；
+  暴露 `setDraft / send / focus`，宿主可编排「取回编辑 / 立即发送」。
+- 用量读数：`EbChatUsage` 一行摘要 + 阶梯披露（`disclosure`，为 0 的分项不渲染、无分项不做假按钮）；
+  消息底行与时间 / 耗时 / 动作条同处一行——耗时与用量常显、时间与动作条随悬浮淡入（opacity 门控，无位移）。
+- 视觉口径：输入类真边框置 0、1px 发丝环写进 box-shadow（focus 主色 1px 环），卡片类同语言；
+  输入台 chip 统一 26px / 12px / 全圆 / 无边框，hover 浅底；窄容器（≤560px，容器查询）
+  能力项降级为正方形图标、额度只留数值（全文下沉 aria/title）。
+- `EbAppLayout`：定高改为可覆盖令牌 `--eb-app-layout-height`（默认 100vh）——
+  宿主页面自带顶栏时不再多出一条页面滚动条。
+
+**修复**
+
+- 图片附件预览：`FileReader` 读失败兜底（不给预览、不抛 uncaught），并修掉该路径在
+  jsdom 下的偶发 Unhandled Error（CI 曾因此"全绿却 exit 1"）。
+- 模型切换菜单：进出场动画改用左下锚点，去掉居中时代的 `translateX(-50%)` 平移。
+- 跨包 API 奇偶：`EvAiPromptBox` 同步 `queueable`。
+
+### 其它包
+
+- `evoke-business-ui` 的 `EbAppLayout` 定高令牌改由本版对话家族示例配套使用（同一改动随行发布）。
+
 ## [evoke-ui 0.13.0] — 2026-09-26
 
 ### @wil-works/evoke-ui — EvSection 默认定宽居中：整页组装规则组件化（0.13.0，breaking）

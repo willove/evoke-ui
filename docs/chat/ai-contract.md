@@ -1,4 +1,4 @@
-# @wil-works/evoke-chat AI 使用说明（v0.2.0）
+# @wil-works/evoke-chat AI 使用说明（v0.3.0）
 
 > 本页由 `packages/evoke-chat/scripts/gen-ai-docs.mjs` 自动生成，勿手改（改了会被构建门拦下）。
 
