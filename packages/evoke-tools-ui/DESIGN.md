@@ -135,6 +135,11 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 - 依赖：白名单制——peer 只有 `vue` + `@wil-works/evoke-business-ui`，零第三方 UI 库；
   底座按 peer 解析，保证消费方单实例（ConfigProvider 的 inject key 是模块级 Symbol）。
 - 复用检验（M2 出口）：用 tools-ui 搭一个**非办公**工具界面；需要为它改办公逻辑 = 分层失败，打回。
+- **画布契约在框架之下**（office-works P1-10 教训）：框架兜底四条（图标兜底 / 布局损坏降级 /
+  存储静默 / 命令状态同源）都**不覆盖画布重绘**——画布内容的"几何变更 → 重绘"契约归消费方
+  引擎，框架插手即越过 `--ot-*` 边界。消费方侧两条硬规矩：渲染器对几何签名自证（或每个变更点
+  显式 requestRender，"让宿主记得调"必漏）；画布重绘的取证用元素级截图哈希（整页截图会被
+  演示条读数污染出假阳性）。
 - **API 冻结（M4 / v1.0 起）**：组件 props/events/slots、`./runtime` 契约、`--et-*` 令牌名、
   `et-*` class 钩子、子路径导出——冻结；删除/改名只走 major，且先过一个 minor 弃用警告。
   兜底行为（图标兜底 / 布局损坏降级 / 存储异常静默）是承诺级：变更必须 major + 提前弃用。
