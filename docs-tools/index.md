@@ -11,7 +11,7 @@ hero:
       link: /guide/design
 ---
 
-<p class="td-hero__badge">v1.1.0</p>
+<p class="td-hero__badge">v1.2.0</p>
 
 # 这是什么
 
@@ -33,7 +33,7 @@ tools-ui 只做**business-ui 语境下不存在的东西**，外加组件库给�
 | `--ec-*` evoke-charts | 图表 | 数据图形 | —— |
 | **`--et-*` tools-ui** | **工作台** | **文档/画布** | **三档（紧凑/默认/宽松）** |
 
-## 当前状态（v1.1.0）
+## 当前状态（v1.2.0）
 
 M0 交付：`--et-*` 令牌（三档密度 + chrome 度量与预算）、G1/G2/G4/G5/G7 五道门、
 图标解析与兜底机制、12 个 L1 原子件。

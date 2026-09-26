@@ -82,3 +82,59 @@ describe('EtSplitter / EtSplitterPanel', () => {
     wrapper.unmount()
   })
 })
+
+describe('EtSplitter 键盘 resize（1.2.0 还清 M0 欠账）', () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1000)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(500)
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+    document.body.innerHTML = ''
+  })
+
+  const mountSplitter = (panelProps = '') =>
+    mount(
+      {
+        components: { EtSplitter, EtSplitterPanel },
+        template: `
+          <et-splitter layout="horizontal" style="width: 1000px">
+            <et-splitter-panel ${panelProps}>A</et-splitter-panel>
+            <et-splitter-panel>B</et-splitter-panel>
+          </et-splitter>`,
+      },
+      { attachTo: document.body },
+    )
+
+  it('分隔器语义与方向键（本族直通底座键盘 resize）', async () => {
+    const wrapper = mountSplitter('default-size="200px" min="50" max="350"')
+    await nextTick()
+    const bar = wrapper.find('[role="separator"]')
+    expect(bar.exists()).toBe(true)
+    expect(bar.attributes('tabindex')).toBe('0')
+    const widths = () => wrapper.findAll('.et-splitter-panel, .eb-splitter-panel').map((el) => el.attributes('style'))
+    const before = widths()
+    await bar.trigger('keydown', { key: 'ArrowRight' })
+    expect(widths()).not.toEqual(before)
+    expect(widths()[0]).toContain('208px')
+    wrapper.unmount()
+  })
+
+  it('keyboardStep 透传（24px 步长一次到位）', async () => {
+    const wrapper = mountSplitter('default-size="200px" :keyboard-step="24"')
+    await nextTick()
+    await wrapper.find('[role="separator"]').trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.findAll('.eb-splitter-panel')[0].attributes('style')).toContain('224px')
+    wrapper.unmount()
+  })
+
+  it('组字中的方向键不动尺寸（与 G5 同口径）', async () => {
+    const wrapper = mountSplitter('')
+    await nextTick()
+    const bar = wrapper.find('[role="separator"]')
+    const before = wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))
+    await bar.trigger('keydown', { key: 'ArrowRight', isComposing: true })
+    expect(wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))).toEqual(before)
+    wrapper.unmount()
+  })
+})

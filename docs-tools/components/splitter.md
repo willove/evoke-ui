@@ -21,7 +21,7 @@
 
 | 面 | 名称 | 说明 |
 | --- | --- | --- |
-| Props | 透传 | `size` / `defaultSize` / `min` / `max` / `resizable`（默认 true）/ `collapsible`（默认 false） |
+| Props | 透传 | `size` / `defaultSize` / `min` / `max` / `resizable`（默认 true）/ `collapsible`（默认 false）/ `keyboardStep`（默认 8，px） |
 | Emits | —— | 无 |
 | Slots | 透传 | 默认槽 = 面板内容 |
 
@@ -29,7 +29,9 @@
 
 - 面板注册、尺寸分摊、min/max 夹角、拖拽、折叠与百分比回传全部来自底座；本族只换度量。
 - 拖拽条由底座 `EbSplitterPanel` 自渲染；`EtDock` 用族内包装件而不是裸底座，`.et-splitter` 作用域才落得上。
-- 键盘调整尺寸未做：拖拽条键盘 resize 属面板树运行时射程，M0/M1 未交付（已知限制，文档与源码一致）。
+- **键盘 resize（1.2.0）**：可拖拽时拖拽条即 `role="separator"`（`tabindex=0`、`aria-orientation`、
+  `aria-valuenow/min/max` 取前面板）；←/→（横排）或 ↑/↓（竖排）按 `keyboardStep` 移动边界，
+  Home/End 到 min/max，与拖拽同一套夹角；组字中不响应。停靠面板可纯键盘调尺寸。
 
 ## 令牌与门禁
 

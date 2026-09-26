@@ -61,6 +61,38 @@ function getPanelCount() {
   return panels.length
 }
 
+/**
+ * 键盘 resize：拖拽条的键盘语义（role=separator + 方向键）。
+ * 与拖拽**同一套夹角**：前面板 newA 在 [minA, maxA] 夹住，后面板吃 totalAB - newA
+ * 再过 [minB, maxB]——不复用这套就会出现"键盘能突破 min/max"的分裂语义。
+ * @param {number} barIndex 条索引（= 前面板索引）
+ * @param {{ kind: 'step'|'min'|'max', delta?: number }} action
+ */
+function keyboardResize(barIndex, action) {
+  const panelA = panels[barIndex]
+  const panelB = panels[barIndex + 1]
+  if (!panelA || !panelB) return
+  if (panelA.resizable === false || panelB.resizable === false) return
+
+  const totalSize = containerSize.value
+  const minA = parseSizeValue(panelA.min, totalSize) ?? 0
+  const maxA = parseSizeValue(panelA.max, totalSize) ?? totalSize
+
+  const startA = sizes.value[barIndex]
+  const startB = sizes.value[barIndex + 1]
+  const totalAB = startA + startB
+
+  let newA = startA
+  if (action.kind === 'step') newA = startA + action.delta
+  else if (action.kind === 'min') newA = minA
+  else if (action.kind === 'max') newA = maxA
+  newA = Math.max(minA, Math.min(maxA, newA))
+
+  sizes.value[barIndex] = newA
+  sizes.value[barIndex + 1] = totalAB - newA
+  emitResize()
+}
+
 provide('evSplitter', {
   layout: computed(() => props.layout),
   sizes,
@@ -73,6 +105,7 @@ provide('evSplitter', {
   getPanelCount,
   isPanelResizable: (index) => panels[index]?.resizable !== false && panels[index + 1]?.resizable !== false,
   startDrag,
+  keyboardResize,
   collapsePanel,
   draggingIndex: computed(() => draggingIndex.value),
 })

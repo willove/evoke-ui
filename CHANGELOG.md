@@ -2,6 +2,24 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [business-ui 0.11.0 / tools-ui 1.2.0] — 2026-09-26
+
+### @wil-works/evoke-business-ui — EbSplitter 拖拽条键盘 resize（0.11.0，增量）
+
+- `EbSplitterPanel` 的拖拽条增加键盘语义：可拖拽时 `role="separator"` + `tabindex=0` +
+  `aria-orientation` + `aria-valuenow/min/max`（取前面板）；方向键按 `keyboardStep`
+  （新 prop，默认 8px）调整，Home/End 到 min/max；与拖拽共用同一套 min/max 夹角
+  （底座新增上下文方法 `keyboardResize`）；组字中不响应。纯增量，不改既有拖拽/折叠语义。
+
+### @wil-works/evoke-tools-ui — 停靠分隔器键盘 resize（1.2.0，还清 M0 计划欠账）
+
+- 计划 05 §三 的欠账项交付：`EtSplitter` 透传底座键盘 resize——拖拽条即 `separator`，
+  ←/→（横排）/ ↑/↓（竖排）调尺寸，Home/End 到 min/max，与拖拽同一套夹角；
+  `keyboardStep` prop 透传（默认 8px）；组字守卫；
+- 设计语言条 4（键盘优先）落地：停靠面板从此可纯键盘调尺寸；
+- 测试：底座 4 例（方向键 px 断言 / 竖排轴 / 组字守卫 / 不可拖拽无 separator 语义）+
+  tools-ui 3 例；视觉一条（聚焦 dock 分隔器 → ArrowRight → 面板变宽，真键盘全链）。
+
 ## [business-ui 0.10.0 / ui 0.12.0] — 2026-09-26
 
 ### @wil-works/evoke-business-ui — 语义图标集 438 → 441（0.10.0）
@@ -61,6 +79,21 @@
   适配 17 / 嵌套工具 5 / Markdown 成本 2）；文档补 4 页（chatbot / chat-subcomponents /
   ai-console / ai-workbench），覆盖 `EbChatApproval`、`EbChatQuestion`、`EbChatContextMeter`、
   `EbChatChanges`、子调用树、会话日志层与「接入 OpenAI / Anthropic」完整示例。
+
+## [tools-ui 1.2.0] — 2026-09-26
+
+### @wil-works/evoke-tools-ui — 停靠分隔器键盘 resize（还清 M0 计划欠账）
+
+- **`EtSplitter` 键盘 resize（计划 05 §三 的欠账项）**：拖拽条即 WAI-ARIA `separator`——
+  可拖拽时 `tabindex=0` + `aria-orientation` + `aria-valuenow/min/max`（取前面板）；
+  ←/→（横排）或 ↑/↓（竖排）按 `keyboardStep`（默认 8px，prop 可调）移动边界，Home/End 到
+  min/max；**与拖拽同一套 min/max 夹角**（共用底座 `keyboardResize`）；组字中不响应
+  （输入法合成期键事件不是用户指令）。语义挂在底座 `EbSplitterPanel`（拖拽条由它渲染），
+  tools-ui 透传即得；
+- **设计语言条 4（键盘优先）落地**：停靠面板从此可纯键盘调尺寸，不再只能鼠标拖拽；
+- 测试：底座 4 例（方向键 px 断言 / 竖排轴 / 组字守卫 / 不可拖拽无 separator 语义）+
+  tools-ui 3 例（族内直通 / keyboardStep 透传 / 组字守卫）；视觉一条（聚焦 dock 分隔器 →
+  ArrowRight → 面板变宽，真键盘全链）。
 
 ## [tools-ui 1.1.0] — 2026-09-26
 

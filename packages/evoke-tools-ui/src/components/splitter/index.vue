@@ -9,8 +9,9 @@
  *   2. 挂 .et-splitter 作用域：拖拽条的工具度量（可视厚度 / 热区 / 把手）在 style.css
  *      以 .et-splitter 前缀覆盖底座 .eb-splitter__bar 实现（度量全部走 --et-splitter-* 令牌）
  *
- * 键盘调整尺寸：M0 不做——拖拽条的键盘 resize 属于 M2 面板树运行时的射程，
- * 由 M2 的面板树/停靠运行时在焦点漫游（L0）之上补充键盘 resize 键位与可视化。
+ * 键盘调整尺寸：由底座拖拽条承担（role=separator + 方向键 ±keyboardStep / Home/End 到
+ * min/max，与拖拽同一套 min/max 夹角；组字中不响应）。本件透传即得——1.2.0 交付了
+ * M0 时记在计划里的这笔欠账（05 §三：键盘 resize 随面板树运行时补）。
  */
 import EbSplitter from '@wil-works/evoke-business-ui/splitter'
 

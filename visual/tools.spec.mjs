@@ -544,3 +544,34 @@ test('M3 出口 · 焦点管理三处一致：Dialog 的 Tab 循环与 Esc 归�
   })
   expect(restored).toContain('et-emptystate')
 })
+
+test('M2+ 出口 · 停靠分隔器键盘 resize（1.2.0 还清 M0 欠账：纯键盘可调面板尺寸）', async ({ page }) => {
+  await resetWorkbench(page)
+  await settle(page, { extraMs: 400 })
+
+  // 左停靠的两面板之间有一条 separator（stack 并列档）
+  const bar = page.locator('.et-workbench__rail--left [role="separator"]').first()
+  await expect(bar).toBeVisible()
+
+  const readPanelWidth = () =>
+    page.evaluate(() => {
+      const panel = document.querySelector('.et-workbench__rail--left .et-panel')
+      return panel ? Math.round(panel.getBoundingClientRect().width) : null
+    })
+  const before = await readPanelWidth()
+
+  // 键盘操作：聚焦 → 方向键（真键盘路径，不伪造 dispatchEvent）
+  await bar.focus()
+  const focusedIsSeparator = await page.evaluate(() => document.activeElement?.getAttribute('role'))
+  expect(focusedIsSeparator).toBe('separator')
+
+  await page.keyboard.press('ArrowRight')
+  await page.waitForTimeout(500) // dock 的 120ms 落定 + 写回
+  const after = await readPanelWidth()
+  expect(after, '方向键没改到面板尺寸（键盘链路断）').toBeGreaterThan(before)
+
+  // End = 到 max：尺寸还应继续变大（min/max 夹角内）
+  await page.keyboard.press('End')
+  await page.waitForTimeout(500)
+  expect(await readPanelWidth()).toBeGreaterThanOrEqual(after)
+})

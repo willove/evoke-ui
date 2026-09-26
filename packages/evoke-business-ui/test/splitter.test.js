@@ -115,8 +115,63 @@ describe('EbSplitter / EbSplitterPanel', () => {
     expect(wrapper.find('.eb-splitter__bar').classes()).toContain('is-disabled')
     wrapper.unmount()
   })
-})
 
+  it('键盘 resize：方向键按 step 移动边界，Home/End 到 min/max（同一套夹角）', async () => {
+    const wrapper = mountSplitter({}, 'default-size="200px" min="50" max="350"')
+    await nextTick()
+    const bar = wrapper.find('[role="separator"]')
+    expect(bar.exists()).toBe(true)
+    expect(bar.attributes('tabindex')).toBe('0')
+    expect(bar.attributes('aria-orientation')).toBe('vertical')
+    // aria 值取前面板（容器 mock 1000 宽：200 / 50 / 350）
+    expect(Number(bar.attributes('aria-valuenow'))).toBe(200)
+    expect(Number(bar.attributes('aria-valuemin'))).toBe(50)
+    expect(Number(bar.attributes('aria-valuemax'))).toBe(350)
+    const widths = () => wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))
+    const before = widths()
+    await bar.trigger('keydown', { key: 'ArrowRight' }) // +8px
+    const afterRight = widths()
+    expect(afterRight).not.toEqual(before)
+    // 具体夹角：前面板 200 → 208，后面板 800 → 792（percent 语义下以 px 断言）
+    expect(afterRight[0]).toContain('208px')
+    expect(afterRight[1]).toContain('792px')
+    await bar.trigger('keydown', { key: 'ArrowLeft' }) // -8px 回去
+    expect(widths()).toEqual(before)
+    await bar.trigger('keydown', { key: 'Home' }) // 前面板到 min 50
+    expect(widths()[0]).toContain('50px')
+    await bar.trigger('keydown', { key: 'End' }) // 前面板到 max 350
+    expect(widths()[0]).toContain('350px')
+    wrapper.unmount()
+  })
+  it('竖排布局：分隔器横向、上下键调尺寸', async () => {
+    const wrapper = mountSplitter({ layout: 'vertical' }, 'default-size="100px"')
+    await nextTick()
+    const bar = wrapper.find('[role="separator"]')
+    expect(bar.attributes('aria-orientation')).toBe('horizontal')
+    const before = wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))
+    await bar.trigger('keydown', { key: 'ArrowDown' })
+    const after = wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))
+    expect(after).not.toEqual(before)
+    wrapper.unmount()
+  })
+  it('组字中的方向键不触发 resize（输入法合成期）', async () => {
+    const wrapper = mountSplitter({}, '')
+    await nextTick()
+    const bar = wrapper.find('[role="separator"]')
+    const before = wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))
+    await bar.trigger('keydown', { key: 'ArrowRight', isComposing: true })
+    expect(wrapper.findAll('.eb-splitter-panel').map((el) => el.attributes('style'))).toEqual(before)
+    wrapper.unmount()
+  })
+  it('不可拖拽时无 separator 语义（不占 tab 序）', async () => {
+    const wrapper = mountSplitter({}, ':resizable="false"')
+    await nextTick()
+    const bar = wrapper.find('.eb-splitter__bar')
+    expect(bar.attributes('role')).toBeUndefined()
+    expect(bar.attributes('tabindex')).toBeUndefined()
+    wrapper.unmount()
+  })
+})
 describe('EbUpload', () => {
   it('双 class + 隐藏 input（绝对定位 opacity 0）', () => {
     const wrapper = mount(EbUpload, { props: { action: '/upload' }, slots: { default: '' } })
