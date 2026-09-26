@@ -1,0 +1,300 @@
+/**
+ * tools-ui 文档站主题样式（M4 后的站点优化，参考 charts 站的独立站点机制：
+ * 动态 demo 块 + 源码级消费 + 定制首屏）。
+ *
+ * 气质锚：**安静的 Excel 的文档站**——工具型、低噪声。首屏放实物（真工具区 demo），
+ * 不堆形容词；彩色只用一个主色（强调色 CTA + 链接），其余走中性阶。
+ *
+ * 边界纪律（AGENTS.md 整页组装硬规则）：站点首屏区块宽度只走 VitePress 容器的
+ * 既定边界，不私写像素 max-width；同边可量（标题与主体同一容器）。
+ */
+
+/* ─── 演示块（DemoBlock）：预览 + 可折叠源码 + 复制 ─── */
+.demo-block {
+  margin: 16px 0 24px;
+  border: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  border-radius: var(--eb-border-radius-base, 4px);
+  overflow: hidden;
+  background: var(--eb-bg-color, #fff);
+}
+
+.demo-block__preview {
+  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* 演示区里的文档式渗透要抵消：块内 p / li 观感归组件自身 */
+.vp-doc .demo-block p,
+.vp-doc .demo-block li {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.demo-block__source {
+  border-top: 1px dashed var(--eb-border-color-lighter, #e4e7ed);
+}
+
+.demo-block__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--eb-fill-color-light, #f5f7fa);
+}
+
+.demo-block__toggle,
+.demo-block__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--eb-border-radius-base, 4px);
+  background: transparent;
+  color: var(--eb-text-color-regular, #4e5969);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.demo-block__toggle:hover,
+.demo-block__btn:hover {
+  background: var(--eb-fill-color, #f0f2f5);
+  color: var(--eb-text-color-primary, #1d2129);
+}
+
+.demo-block__toggle.is-open {
+  color: var(--eb-color-primary, #2f6bff);
+}
+
+.demo-block__spacer {
+  flex: 1;
+}
+
+.demo-block__source-content {
+  border-top: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+}
+
+.demo-block__pre {
+  margin: 0;
+  padding: 12px 16px;
+  overflow: auto;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* ─── API 表 ─── */
+.api-table {
+  margin: 16px 0 24px;
+}
+
+.api-table__title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--eb-text-color-primary, #1d2129);
+}
+
+.api-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.api-table__table th,
+.api-table__table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  text-align: left;
+  vertical-align: top;
+}
+
+.api-table__table th {
+  color: var(--eb-text-color-secondary, #4e5969);
+  font-weight: 500;
+  background: var(--eb-fill-color-light, #f5f7fa);
+}
+
+.api-table__name {
+  font-family: var(--eb-font-family, inherit);
+  color: var(--eb-text-color-primary, #1d2129);
+  white-space: nowrap;
+}
+
+.api-table__type,
+.api-table__default {
+  color: var(--eb-text-color-secondary, #4e5969);
+}
+
+/* ─── 首屏（hero）：实物优先，不放渐变与三卡片 ─── */
+.td-hero {
+  padding: 48px 0 8px;
+}
+
+.td-hero__badge {
+  display: inline-block;
+  margin: 0 0 16px;
+  padding: 2px 10px;
+  border: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--eb-text-color-secondary, #4e5969);
+}
+
+.td-hero__title {
+  margin: 0 0 12px;
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--eb-text-color-primary, #1d2129);
+}
+
+.td-hero__title .accent {
+  color: var(--eb-color-primary, #2f6bff);
+}
+
+.td-hero__desc {
+  max-width: 640px;
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--eb-text-color-regular, #4e5969);
+}
+
+.td-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.td-hero__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: var(--eb-border-radius-base, 4px);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.td-hero__btn--primary {
+  background: var(--eb-color-primary, #2f6bff);
+  color: #fff;
+}
+
+.td-hero__btn--primary:hover {
+  background: var(--eb-color-primary-light-3, #5b8cff);
+}
+
+.td-hero__btn--ghost {
+  border: 1px solid var(--eb-border-color, #dcdfe6);
+  color: var(--eb-text-color-regular, #4e5969);
+}
+
+.td-hero__btn--ghost:hover {
+  border-color: var(--eb-color-primary-light-5, #a9c2ff);
+  color: var(--eb-color-primary, #2f6bff);
+}
+
+/* 数字行：真实可核对的数，不写形容词 */
+.td-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 0 0 36px;
+}
+
+.td-hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.td-hero__stat strong {
+  font-size: 22px;
+  font-weight: 650;
+  color: var(--eb-text-color-primary, #1d2129);
+}
+
+.td-hero__stat span {
+  font-size: 12px;
+  color: var(--eb-text-color-secondary, #4e5969);
+}
+
+/* 实物台：真工具区嵌进首屏（换标测试的锚点） */
+.td-hero__stage {
+  border: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  border-radius: var(--eb-border-radius-base, 4px);
+  overflow: hidden;
+  background: var(--eb-bg-color, #fff);
+}
+
+.td-hero__stage-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  background: var(--eb-fill-color-light, #f5f7fa);
+  font-size: 12px;
+  color: var(--eb-text-color-secondary, #4e5969);
+}
+
+.td-hero__stage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--eb-border-color, #dcdfe6);
+}
+
+/* ─── 特性区：非等宽三联卡，避免模板脸 ─── */
+.td-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+  margin: 0 0 40px;
+}
+
+.td-feature {
+  padding: 16px 18px;
+  border: 1px solid var(--eb-border-color-lighter, #e4e7ed);
+  border-radius: var(--eb-border-radius-base, 4px);
+}
+
+.td-feature:first-child {
+  grid-row: span 2;
+}
+
+.td-feature__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--eb-text-color-primary, #1d2129);
+}
+
+.td-feature__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--eb-text-color-secondary, #4e5969);
+}
+
+@media (max-width: 768px) {
+  .td-features {
+    grid-template-columns: 1fr;
+  }
+  .td-feature:first-child {
+    grid-row: auto;
+  }
+}

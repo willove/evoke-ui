@@ -2,28 +2,21 @@
 
 多文档标签：脏标记双通道、关闭确认、溢出列表，契约与 EtTabStrip 同源。
 
-```vue
+
 <script setup>
 import { ref } from 'vue'
-const active = ref('sheet-1')
-const documents = [
-  { id: 'sheet-1', title: '一季度', dirty: true },
-  { id: 'sheet-2', title: '二季度' },
+const activeDoc = ref('a')
+const docList = [
+  { id: 'a', title: '一季度', dirty: true },
+  { id: 'b', title: '二季度' },
   { id: 'notes', title: '备注', closable: false },
 ]
 </script>
 
-<template>
-  <et-document-tabs
-    v-model="active"
-    :documents="documents"
-    confirm-close
-    confirm-text="有未保存改动，确定关闭？"
-    @change="onChange"
-    @close="onClose"
-  />
-</template>
-```
+<DemoBlock>
+  <et-document-tabs v-model="activeDoc" :documents="docList" />
+  <span style="font-size: 12px; color: var(--eb-text-color-secondary);">激活：{{ activeDoc }}（脏标记 aria 双通道；「备注」不可关）</span>
+</DemoBlock>
 
 ## Props
 

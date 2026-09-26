@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { resolve } from 'node:path'
+import llmstxt from 'vitepress-plugin-llms'
+import { demoSourcePlugin } from './demo-source.mjs'
 import { getComponentEntries } from '../../packages/evoke-business-ui/scripts/component-entries.mjs'
 import { getEtComponentEntries } from '../../packages/evoke-tools-ui/scripts/component-entries.mjs'
 
@@ -50,6 +52,12 @@ export default defineConfig({
   lang: 'zh-CN',
   title: 'Evoke Tools UI',
   description: '产品级 GUI 框架：工具区 / 停靠 / 外壳件 + 运行时契约，命名空间 --et-*',
+  // <DemoBlock>源码注入（文档页只写一遍演示代码，块内即预览）
+  markdown: {
+    config(md) {
+      md.use(demoSourcePlugin)
+    },
+  },
   themeConfig: {
     sidebar: [
       {

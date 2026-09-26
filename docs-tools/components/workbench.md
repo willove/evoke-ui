@@ -2,29 +2,34 @@
 
 工作台骨架门面：区域槽 + 面板树 + 持久化 + 损坏降级，是布局树唯一的写树处。
 
-```vue
+
 <script setup>
 import { ref } from 'vue'
-import { createLayoutTree } from '@wil-works/evoke-tools-ui/runtime'
-const layout = ref(createLayoutTree(DEFAULT_LAYOUT))
+const wb = ref({
+  docks: [
+    { id: 'left', side: 'left', panels: [{ id: 'files', title: '文件', size: 160 }] },
+    { id: 'bottom', side: 'bottom', panels: [{ id: 'log', title: '日志', size: 120 }] },
+  ],
+  maximized: null,
+})
 </script>
 
-<template>
-  <et-workbench
-    v-model:layout="layout"
-    :default-layout="DEFAULT_LAYOUT"
-    persist-key="my-app"
-    @layout-corrupted="onCorrupted"
-  >
-    <template #titlebar><et-title-bar title="我的工具" /></template>
-    <template #documents><et-document-tabs v-model="doc" :documents="docs" /></template>
-    <template #toolbar><et-ribbon-bar :schema="schema" :registry="registry" /></template>
-    <template #panel="{ panel }"><component :is="viewOf(panel.id)" /></template>
-    <main>画布</main>
-    <template #statusbar><et-status-bar :items="items" /></template>
-  </et-workbench>
-</template>
-```
+<DemoBlock>
+  <div style="height: 300px; border: 1px solid var(--eb-border-color-lighter); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;">
+    <et-title-bar title="工作台演示" doc-title="报表.xlsx" />
+    <et-workbench v-model:layout="wb" :default-layout="wb" persist-key="docs-workbench-page">
+      <template #panel="{ panel }">
+        <ul style="margin: 0; padding: var(--et-space-inline) var(--et-space-band-inline); list-style: none; font-size: var(--et-density-base-font);">
+          <li v-for="n in 2" :key="n">{{ panel.title }} {{ n }}</li>
+        </ul>
+      </template>
+      <main style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--eb-text-color-secondary);">画布</main>
+      <template #statusbar>
+        <et-status-bar :items="[{ key: 'ready', label: '就绪' }]" zoom="100%" />
+      </template>
+    </et-workbench>
+  </div>
+</DemoBlock>
 
 ## Props
 

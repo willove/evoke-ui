@@ -23,6 +23,22 @@ const ctx = { hasSelection: true }
 </template>
 ```
 
+<script setup>
+import HomeStage from '../demos/HomeStage.vue'
+const ribbonSource = `<et-ribbon-bar
+  v-model="activeTab"
+  :schema="DEMO_RIBBON_SCHEMA"
+  :registry="demoRegistry"
+  :ctx="ctx"
+  persist-key="my-app-ribbon"
+  @command="onCommand"
+/>`
+</script>
+
+<DemoBlock :code="ribbonSource">
+  <HomeStage />
+</DemoBlock>
+
 ## Props
 
 | 名称 | 类型 | 默认 | 说明 |

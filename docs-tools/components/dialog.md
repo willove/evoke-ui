@@ -2,21 +2,18 @@
 
 模态：焦点陷阱 + Esc 收敛 + 焦点归还，与 Backstage、命令面板同一套焦点管理。
 
-```vue
-<et-dialog
-  v-model="open"
-  title="新建表格"
-  width="520px"
-  confirm-text="创建"
-  cancel-text="取消"
-  :close-on-click-mask="true"
-  :close-on-esc="true"
-  @confirm="onConfirm"
-  @cancel="onCancel"
->
-  <p>Tab 在陷阱内循环，Esc 收敛并归还焦点。</p>
-</et-dialog>
-```
+
+<script setup>
+import { ref } from 'vue'
+const open = ref(false)
+</script>
+
+<DemoBlock>
+  <eb-button type="primary" size="small" @click="open = true">打开模态</eb-button>
+  <et-dialog v-model="open" title="另存为" confirm-text="保存" cancel-text="取消" @confirm="open = false">
+    <p style="margin: 0;">Tab 在陷阱内循环，Esc 收敛并把焦点还给触发按钮。</p>
+  </et-dialog>
+</DemoBlock>
 
 ## Props
 

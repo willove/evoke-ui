@@ -2,18 +2,15 @@
 
 大钮（图标行 + caption）与小钮（图标 + ScreenTip）两种形态，尺寸走令牌、组内齐次。
 
-```vue
-<et-tool-button icon="copy" label="复制" size="large" />
 
-<et-tool-button
-  size="small"
-  icon="copy"
-  label="复制"
-  :active="true"
-  :tip="{ title: '复制', desc: '复制选区到剪贴板', combo: 'mod+c' }"
-  @click="run"
-/>
-```
+<DemoBlock>
+  <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+    <et-tool-button size="large" icon="bold" label="加粗" />
+    <et-tool-button size="small" icon="copy" :tip="{ title: '复制', combo: 'mod+c' }" />
+    <et-tool-button size="small" icon="clear" label="清除" :active="true" />
+    <et-tool-button size="small" icon="zoom-in" :tip="{ title: '放大' }" disabled />
+  </div>
+</DemoBlock>
 
 ## Props
 

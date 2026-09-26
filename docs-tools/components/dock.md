@@ -2,22 +2,31 @@
 
 dock 节点的呈现件：stack 并列分摊 / tabs 单槽 tab 化，内容归消费方。
 
-```vue
-<et-dock
-  :dock="dockNode"
-  :maximized="maximizedId"
-  @update:dock="onDockUpdate"
-  @panel-collapse="onCollapse"
-  @panel-close="onClose"
-  @panel-maximize="onMaximize"
-  @panel-restore="onRestore"
-  @dock-toggle="onDockToggle"
->
-  <template #panel="{ panel, dock }">
-    <component :is="viewOf(panel.id)" />
-  </template>
-</et-dock>
-```
+
+<script setup>
+import { ref } from 'vue'
+const dockLayout = ref({
+  docks: [{ id: 'left', side: 'left', panels: [
+    { id: 'files', title: '文件', size: 180 },
+    { id: 'search', title: '搜索', size: 180 },
+  ] }],
+  maximized: null,
+})
+</script>
+
+<DemoBlock>
+  <div style="height: 220px; width: 100%; border: 1px solid var(--eb-border-color-lighter); border-radius: 4px; overflow: hidden;">
+    <et-dock :dock="dockLayout.docks[0]" maximized="">
+      <template #panel="{ panel }">
+        <ul style="margin: 0; padding: var(--et-space-inline) var(--et-space-band-inline); list-style: none; font-size: var(--et-density-base-font);">
+          <li v-for="n in 3" :key="n">{{ panel.title }} {{ n }}</li>
+        </ul>
+      </template>
+    </et-dock>
+  </div>
+</DemoBlock>
+
+分隔条是 `role="separator"`：聚焦后用 ←/→（横排）调尺寸，Home/End 到 min/max。
 
 ## Props
 

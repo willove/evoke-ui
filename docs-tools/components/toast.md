@@ -2,16 +2,25 @@
 
 不抢焦点的轻提示：`role="status"` + `aria-live="polite"`，自动关定时器随关闭/卸载清理。
 
-```vue
-<et-toast
-  v-model="open"
-  message="已保存"
-  type="success"
-  :duration="2400"
-  position="top"
-  @action="onAction"
-/>
-```
+
+<script setup>
+import { ref } from 'vue'
+const toastOpen = ref(false)
+const toastMsg = ref('')
+const toastKind = ref('info')
+const show = (t) => {
+  toastKind.value = t
+  toastMsg.value = `这是 ${t} 提示`
+  toastOpen.value = true
+}
+</script>
+
+<DemoBlock>
+  <div style="display: flex; gap: 8px;">
+    <eb-button v-for="t in ['info', 'success', 'warn', 'error']" :key="t" size="small" @click="show(t)">{{ t }}</eb-button>
+  </div>
+  <et-toast v-model="toastOpen" :message="toastMsg" :type="toastKind" :duration="2400" />
+</DemoBlock>
 
 ## Props
 

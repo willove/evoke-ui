@@ -47,6 +47,37 @@ import { registerDomainIcons } from '@wil-works/evoke-tools-ui/icons'
 
 ## 密度写在根上
 
+密度是根级属性而非组件 prop：`EtProvider` 把它写进 `<html data-density>`，组件只引用令牌。
+切换档位即时生效（A-19 修复后），下面的分段一点就换：
+
+<script setup>
+import { ref } from 'vue'
+const density = ref('default')
+const wbLayout = ref({
+  docks: [
+    { id: 'left', side: 'left', panels: [
+      { id: 'files', title: '文件', size: 160 },
+      { id: 'search', title: '搜索', size: 160 },
+    ] },
+  ],
+  maximized: null,
+})
+</script>
+
+<DemoBlock>
+  <eb-segmented v-model="density" :options="[
+    { label: '紧凑', value: 'compact' },
+    { label: '默认', value: 'default' },
+    { label: '宽松', value: 'relaxed' },
+  ]" size="small" />
+  <et-tool-button size="large" icon="bold" label="加粗" />
+  <et-tool-button size="small" icon="copy" :tip="{ title: '复制', combo: 'mod+c' }" />
+  <et-key-hint combo="mod+k" />
+  <et-provider :density="density">
+    <span style="fontSize: 12px; color: var(--eb-text-color-secondary)">当前：{{ density }}</span>
+  </et-provider>
+</DemoBlock>
+
 密度是根级属性（`<html data-density>`），由 EtProvider 写入，不是组件 prop。卸载时还原挂载前的外部值；嵌套 EtProvider 以最后挂载者为准：
 
 ```vue
@@ -82,6 +113,33 @@ const copied = ref(false)
 ```
 
 `label` 同时是 small 钮的可访问名（G4）；`tip` 给字符串时 ScreenTip 只显示名称。
+
+## 一个真实装配
+
+标题栏 + 工具区 + 左停靠（两块面板并列，可拖分隔条，也可纯键盘调尺寸）+ 画布 + 状态栏：
+
+<DemoBlock>
+  <div style="height: 300px; border: 1px solid var(--eb-border-color-lighter); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;">
+    <et-title-bar title="文档站演示" doc-title="报表.xlsx" />
+    <et-workbench v-model:layout="wbLayout" :default-layout="wbLayout" persist-key="docs-getting-started">
+      <template #toolbar>
+        <div style="display: flex; gap: 8px; align-items: center; height: var(--et-chrome-toolarea-height); padding: 0 var(--et-space-band-inline); background: var(--et-chrome-bg);">
+          <et-tool-button size="small" icon="bold" label="加粗" />
+          <et-tool-button size="small" icon="copy" label="复制" />
+        </div>
+      </template>
+      <template #panel="{ panel }">
+        <ul style="margin: 0; padding: var(--et-space-inline) var(--et-space-band-inline); list-style: none; font-size: var(--et-density-base-font);">
+          <li v-for="n in 3" :key="n">{{ panel.title }} {{ n }}</li>
+        </ul>
+      </template>
+      <main style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--eb-text-color-secondary); background: var(--eb-bg-color);">画布区（产品内容）</main>
+      <template #statusbar>
+        <et-status-bar :items="[{ key: 'ready', label: '就绪' }]" zoom="100%" />
+      </template>
+    </et-workbench>
+  </div>
+</DemoBlock>
 
 ## 下一站
 
