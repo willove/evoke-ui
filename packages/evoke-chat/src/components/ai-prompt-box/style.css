@@ -17,16 +17,17 @@
 .eb-ai-prompt-box__model-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  font-size: var(--eb-font-size-sm);
+  gap: 4px;
+  height: var(--eb-pb-chip-h);
+  padding: 0 var(--eb-space-2);
+  font-size: var(--eb-pb-chip-font);
   font-weight: var(--eb-font-weight-medium);
   color: var(--eb-text-color-primary);
   background: var(--eb-bg-color);
   /* 与底座输入框同语言：真边框置 0，1px 环写进 box-shadow（hover 只加深一档） */
   border: 0;
-  border-radius: var(--eb-radius-full);
-  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  border-radius: var(--eb-pb-chip-radius);
+  box-shadow: var(--eb-pb-chip-ring);
   cursor: pointer;
   transition: box-shadow var(--eb-transition-duration-fast) var(--eb-ease-out);
 }
@@ -222,6 +223,16 @@
 
 /* ─── 工具行 ─── */
 .eb-ai-prompt-box__toolbar {
+  /*
+   * 工具栏统一档位：所有 chip（工具/能力/模型/额度）同一高度、字号、圆角与 1px 发丝环，
+   * 修掉此前"28/30/30/20/29px + 6px 与全圆两套圆角 + 13/12 两种字号"的大小不一。
+   * 发送按钮是主操作，刻意高一档（32px）。
+   */
+  --eb-pb-chip-h: 26px;
+  --eb-pb-chip-font: var(--eb-font-size-xs);
+  --eb-pb-chip-radius: var(--eb-radius-full);
+  --eb-pb-chip-ring: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  --eb-pb-chip-ring-hover: 0 0 0 1px var(--eb-border-color-hover) inset;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -245,12 +256,14 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px;
-  font-size: var(--eb-font-size-sm);
+  height: var(--eb-pb-chip-h);
+  padding: 0 var(--eb-space-2);
+  font-size: var(--eb-pb-chip-font);
   color: var(--eb-text-color-secondary);
-  background: none;
+  background: var(--eb-bg-color);
   border: none;
-  border-radius: var(--eb-radius-md);
+  box-shadow: var(--eb-pb-chip-ring);
+  border-radius: var(--eb-pb-chip-radius);
   cursor: pointer;
   transition:
     color var(--eb-duration-fast) var(--eb-ease-out),
@@ -290,12 +303,14 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
-  font-size: var(--eb-font-size-xs);
+  height: var(--eb-pb-chip-h);
+  padding: 0 var(--eb-space-2);
+  font-size: var(--eb-pb-chip-font);
   color: var(--eb-text-color-secondary);
-  background: var(--eb-fill-color-light);
+  background: var(--eb-bg-color);
   border: none;
-  border-radius: var(--eb-radius-full);
+  box-shadow: var(--eb-pb-chip-ring);
+  border-radius: var(--eb-pb-chip-radius);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -308,8 +323,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   margin-left: var(--eb-space-1);
   color: #fff;
   background: var(--eb-color-primary);
@@ -373,4 +388,11 @@
 .eb-ai-prompt-box__scene-chip:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* 工具栏 chip 的 hover：只把发丝环加深一档（与卡片/输入台同一套语言） */
+.eb-ai-prompt-box__tool-btn:hover:not(:disabled),
+.eb-ai-prompt-box__model-pill:hover:not(:disabled),
+.eb-ai-prompt-box__quota:hover {
+  box-shadow: var(--eb-pb-chip-ring-hover);
 }

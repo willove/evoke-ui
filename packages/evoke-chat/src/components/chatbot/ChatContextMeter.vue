@@ -115,12 +115,14 @@ function format(value) {
 .eb-chat-context {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px 2px 4px;
+  /* 与输入台工具栏同一档位（26px / 12px / 全圆 / 发丝环） */
+  gap: 4px;
+  height: var(--eb-pb-chip-h, 26px);
+  padding: 0 var(--eb-space-2);
   border: 0;
-  border-radius: 999px;
-  background: var(--eb-fill-color-blank);
-  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
+  border-radius: var(--eb-radius-full);
+  background: var(--eb-bg-color);
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
   color: var(--eb-text-color-secondary);
   font-family: inherit;
   font-size: var(--eb-font-size-xs);
@@ -139,8 +141,8 @@ function format(value) {
 }
 
 .eb-chat-context__ring {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   transform: rotate(-90deg);
 }
 

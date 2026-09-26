@@ -71,7 +71,7 @@
               :disabled="disabled || attachments.length >= maxAttachments"
               @click.stop="triggerFileUpload"
             >
-              <eb-icon name="plus" :size="16" />
+              <eb-icon name="plus" :size="14" />
             </button>
             <input
               ref="fileInputRef"
