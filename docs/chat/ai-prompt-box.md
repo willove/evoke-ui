@@ -112,7 +112,7 @@ function stopGenerate() {
   { name: 'v-model:scene', desc: '当前场景 key；选中后输入台内显示可移除 tag', type: 'string', default: '' },
   { name: 'capabilities', desc: '能力开关定义（词汇表由使用方定）', type: '{ key, label, icon? }[]', default: '[]' },
   { name: 'v-model:activeCapabilities', desc: '激活的能力 key 集合', type: 'string[]', default: '[]' },
-  { name: 'models', desc: '模型注册表；非空时输入台上方显示模型 pill', type: '{ key, label, icon? }[]', default: '[]' },
+  { name: 'models', desc: '模型注册表；非空时工具栏右侧（上下文长度之后）显示模型 pill', type: '{ key, label, icon? }[]', default: '[]' },
   { name: 'v-model:model', desc: '当前模型 key', type: 'string', default: '' },
   { name: 'quota', desc: '额度展示；传 null 不渲染', type: 'string | { label, percent }', default: 'null' },
   { name: 'showSettings', desc: '工具行显示设置按钮', type: 'boolean', default: 'false' },

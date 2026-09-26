@@ -65,7 +65,7 @@
   { name: 'status', desc: '状态条 { phase, label?, tool?, elapsed?, hint?, queue? }；phase 为 idle/缺省时不渲染', type: 'object | null', default: 'null' },
   { name: 'statusStoppable', desc: '当前阶段能否中断（决定状态条是否给「停止」钮）', type: 'boolean', default: 'false' },
   { name: 'status-queue', desc: '状态条上的排队计数被点击', type: '() => void', default: '—' },
-  { name: 'context', desc: '上下文占用 { used, capacity, breakdown? }；给了就在输入台上方显示占用环', type: 'object | null', default: 'null' },
+  { name: 'context', desc: '上下文占用 { used, capacity, breakdown? }；给了就在输入台工具栏右侧显示占用环（经 #toolbar-meta）', type: 'object | null', default: 'null' },
   { name: 'showThinking', desc: '会话消息展示思考过程', type: 'boolean', default: 'true' },
   { name: 'renderMode', desc: '消息渲染模式', type: 'markdown | text', default: 'markdown' },
   { name: 'userName / assistantName', desc: '会话区双方显示名（同时决定默认头像首字）；不传时取当前语言包', type: 'string', default: '我 / AI助手（随语言包）' },
