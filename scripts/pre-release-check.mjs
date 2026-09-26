@@ -32,13 +32,14 @@ function read(rel) {
   return readFileSync(join(repoRoot, rel), 'utf8')
 }
 
-/** 读「将要发布」的那份内容：优先取 HEAD（打 tag 时的状态），新文件回退工作区 */
+/** 读「将要发布」的那份内容：优先取暂存区（此时 commit 就是它），其次 HEAD，新文件回退工作区 */
 function readAtHead(rel) {
-  try {
-    return execSync(`git show HEAD:${rel}`, { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
-  } catch {
-    return read(rel) // 未入库的新文件，只能看工作区
+  for (const spec of [`:${rel}`, `HEAD:${rel}`]) {
+    try {
+      return execSync(`git show ${spec}`, { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+    } catch { /* 不在暂存区/未入库，继续下一个来源 */ }
   }
+  return read(rel)
 }
 
 /** 源数据里的图标键数（顶层 export const XxxPaths = { ... } 的一层缩进引号键） */
