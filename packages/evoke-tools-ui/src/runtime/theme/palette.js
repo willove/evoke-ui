@@ -70,18 +70,28 @@ export function applyCanvasPalette(target, palette) {
 /**
  * 订阅式刷新：主题变了（明暗切换 / 品牌换色）重跑一次解析+落值。
  * 返回取消订阅函数（06 §四：订阅必须可退订，禁泄漏）。
- * @param {(palette: object) => void} onChange 每次刷新后的调色板
+ *
+ * `palette = {}` 是**只订阅不落值**模式：画布产品自己持有 `--ot-*`（办公语义层的权威在
+ * 产品侧），只需要"主题变了"的信号去重读令牌换引擎主题——不必自写 MutationObserver。
+ * 因此去重签名必须含主题侧属性：只看解析结果时，空 palette 的签名恒为空串，
+ * 通知一次都不会发（2026-09-27 实测到的死订阅）。
+ * 签名不含 `style`：本件写回的行内 `--ot-*` 会改 style 属性，含它就自激循环。
+ * @param {(palette: object) => void} onChange 每次刷新后的调色板（挂载即发一次首值）
  */
 export function observeThemeChanges(target, getThemeStyle, onChange, palette = CANVAS_PALETTE) {
   if (typeof MutationObserver === 'undefined' || !target || typeof target !== 'object') {
     return () => {}
   }
-  let last = ''
+  const themeSig = () => {
+    const attr = (n) => (typeof target.getAttribute === 'function' ? target.getAttribute(n) || '' : '')
+    return `${target.className ?? ''}|${attr('data-theme')}|${attr('data-density')}`
+  }
+  let last = null
   const emit = () => {
     const resolved = resolveCanvasPalette(getThemeStyle(), palette)
-    const signature = Object.values(resolved)
+    const signature = `${themeSig()}|${Object.values(resolved)
       .map((e) => e.value)
-      .join('|')
+      .join('|')}`
     if (signature === last) return
     last = signature
     applyCanvasPalette(target, resolved)

@@ -2,6 +2,27 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 1.4.1] — 2026-09-27
+
+### @wil-works/evoke-tools-ui — 修死订阅：`palette = {}` 的「只订阅不落值」模式此前一次都不触发
+
+- **缺陷**：`observeThemeChanges` 的去重签名只由**解析结果的值**拼成，而 `last` 初值是空串——
+  传空登记表时签名恒为 `''`，`signature === last` 永远成立，于是**连挂载首值都不发**。
+  后果：`--ot-*` 权威在产品层（画布色由产品 CSS 定义、不希望框架覆写）的消费方，
+  没有任何办法用本件拿主题信号，只能继续自写 `MutationObserver`。
+- **修法**：签名改为 `class | data-theme | data-density | 解析结果值`，`last` 初值改 `null`
+  （保证挂载必发一次）。**签名不含 `style`**：本件写回的行内 `--ot-*` 只改 style 属性，
+  含它就会自激循环——这条由「写值自身也触发订阅但不自激」用例守着。
+- **行为变化（加法式，不会让任何既有消费者少收通知）**：纯切档（色值不变、只有
+  `data-density` / `class` 变）现在会重发一次并重写同值。1.4.0 的 `@change` JSDoc 承诺的
+  「挂载即发首值」到本版才在所有登记表形态下为真。
+- 测试：`theme-palette.test.js` 原「订阅」用例自己注释里写着"简化：不真驱动 mutation"——
+  改成真驱动 `MutationObserver` 回调，逐拍断言发/不发；新增 `palette = {}` 只订阅用例。
+  两条契约变更的用例已更新（密度切档从"不该重发"改为"必须重发"）。
+- 变异对照：把修复退回旧行为 → 4 条用例红；还原 → 全绿。另修一处测试卫生问题：
+  断言失败时未 `unmount` 会把观察器泄漏到下一个用例（表现为"下一条测试莫名变红"），
+  已用 `try/finally` 收口。
+
 ## [tools-ui 1.4.0] — 2026-09-27
 
 ### @wil-works/evoke-tools-ui — 办公整页装配（#tabbar 槽）+ 新三件视觉基线

@@ -36,34 +36,75 @@ describe('画布调色板映射', () => {
     expect(target.setProperty).not.toHaveBeenCalledWith(ot('canvas-text'), expect.anything())
   })
 
-  it('订阅：主题值变了才回调（去重），退订后不再触发', () => {
+  it('订阅：挂载发首值，之后只有主题状态真变了才回调（去重），退订后不再触发', () => {
     let values = { '--eb-bg-color': '#fff' }
     const getStyle = () => stubStyle(values)
     const onChange = vi.fn()
     let attrs = {}
     const target = {
+      className: '',
       setAttribute: (k, v) => { attrs[k] = v },
       removeAttribute: (k) => { delete attrs[k] },
       getAttribute: (k) => attrs[k] ?? null,
     }
-    const mo = { observe: vi.fn(), disconnect: vi.fn() }
+    let fire = null
+    const disconnect = vi.fn()
     vi.stubGlobal('MutationObserver', class {
-      constructor(cb) { this.cb = cb }
-      observe(...a) { mo.observe(...a); this.cb() }
-      disconnect(...a) { mo.disconnect(...a) }
+      constructor(cb) { fire = cb }
+      observe() {}
+      disconnect() { disconnect(); fire = null }
     })
     const off = observeThemeChanges(target, getStyle, onChange)
     expect(onChange).toHaveBeenCalledTimes(1)
 
-    // 无关属性变化 → 值没变，不回调
+    // 真驱动 mutation：状态没变 → 去重要挡住（写回行内 --ot-* 也算这种噪声）
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(1)
+
+    // 密度切档（值一个没变，只有 data-density 变）→ 必须发
     attrs['data-density'] = 'compact'
-    mo.observe.mock.calls // no-op
-    // 触发：真实 MutationObserver 走 cb；这里手动再跑一次 cb 需要访问实例——
-    // 简化：改值后直接验证去重逻辑（值不变不写）
-    values = { '--eb-bg-color': '#fff' }
-    expect(resolveCanvasPalette(getStyle())['canvas-bg'].value).toBe('#fff')
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(2)
+
+    // 品牌换色（解析结果变）→ 必须发
+    values = { '--eb-bg-color': '#111' }
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(3)
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(3)
+
     off()
-    expect(mo.disconnect).toHaveBeenCalled()
+    expect(disconnect).toHaveBeenCalledTimes(1)
+    expect(fire).toBeNull()
+    vi.unstubAllGlobals()
+  })
+
+  it('palette = {} 是「只订阅不落值」：画布产品自持 --ot-*，只要主题信号（2026-09-27 修的死订阅）', () => {
+    let attrs = {}
+    const target = {
+      className: '',
+      setAttribute: (k, v) => { attrs[k] = v },
+      removeAttribute: (k) => { delete attrs[k] },
+      getAttribute: (k) => attrs[k] ?? null,
+    }
+    let fire = null
+    vi.stubGlobal('MutationObserver', class {
+      constructor(cb) { fire = cb }
+      observe() {}
+      disconnect() { fire = null }
+    })
+    const onChange = vi.fn()
+    // 空 palette：解析结果恒为 {}，若签名只看解析结果就永远是空串 → 一次都不发
+    const off = observeThemeChanges(target, () => stubStyle({}), onChange, {})
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange.mock.calls[0][0]).toEqual({})
+
+    target.className = 'dark'
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(2)
+    fire()
+    expect(onChange).toHaveBeenCalledTimes(2) // 没变仍去重
+    off()
     vi.unstubAllGlobals()
   })
 })

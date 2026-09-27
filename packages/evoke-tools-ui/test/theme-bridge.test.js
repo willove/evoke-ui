@@ -92,16 +92,20 @@ describe('EtThemeBridge 主题联动', () => {
     wrapper.unmount()
   })
 
-  it('值没变的属性变化（密度切换）：签名去重，不重复落值', async () => {
+  it('密度切档是真信号：重新解析并落值（幂等写，值不变）', async () => {
     vi.stubGlobal('getComputedStyle', () => stubStyle({ '--eb-bg-color': '#111827' }))
     const wrapper = mount(EtThemeBridge)
-    const setPropertySpy = vi.spyOn(htmlEl().style, 'setProperty')
-
-    htmlEl().setAttribute('data-density', 'compact') // 属性在监听名单里，但值签名不变
-    await flush()
-    expect(setPropertySpy).not.toHaveBeenCalled()
-    expect(htmlEl().style.getPropertyValue(ot('canvas-bg'))).toBe('#111827')
-    wrapper.unmount()
+    try {
+      const setPropertySpy = vi.spyOn(htmlEl().style, 'setProperty')
+      htmlEl().setAttribute('data-density', 'compact')
+      await flush()
+      // 签名含 data-density：这一档必须重发（画布产品靠它换字号），色值本身没变 → 写回同值
+      expect(setPropertySpy).toHaveBeenCalledWith(ot('canvas-bg'), '#111827')
+      expect(htmlEl().style.getPropertyValue(ot('canvas-bg'))).toBe('#111827')
+    } finally {
+      // 断言失败也要退订：漏一个未卸载实例，它的观察器会把写入串到下一个用例（踩过）
+      wrapper.unmount()
+    }
   })
 
   it('palette prop 可扩展（产品追加画布角色）', () => {
@@ -153,10 +157,13 @@ describe('EtThemeBridge @change 订阅面', () => {
     expect(wrapper.emitted('change')).toHaveLength(2)
     expect(wrapper.emitted('change')[1][0]['canvas-bg'].value).toBe('#1a1a1a')
 
-    // 再动一次无关属性：解析结果没变 → 不该再发
+    // 再动一次主题侧属性：签名含 class/data-theme/data-density → 视为真信号重发一次，
+    // 但色值没变 → 第三次之后不再叠加（自激由"签名不含 style"挡住）
     htmlEl().setAttribute('data-theme', 'x')
     await flush()
-    expect(wrapper.emitted('change')).toHaveLength(2)
+    expect(wrapper.emitted('change')).toHaveLength(3)
+    await flush()
+    expect(wrapper.emitted('change')).toHaveLength(3)
     wrapper.unmount()
   })
 })

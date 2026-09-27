@@ -34,7 +34,7 @@ export default defineComponent({
     'change',
   ],
   props: {
-    /** 画布角色 → 主题侧令牌名登记表（默认 CANVAS_PALETTE；产品可整体替换以追加角色） */
+    /** 画布角色 → 主题侧令牌名登记表（默认 CANVAS_PALETTE；产品可整体替换以追加角色；传 {} = 只订阅不落值，`--ot-*` 权威留在产品侧） */
     palette: { type: Object, default: () => CANVAS_PALETTE },
     /** 写入与订阅目标：'html'（默认）/ CSS 选择器 / Element 实例 */
     target: { type: [String, Object], default: 'html' },
