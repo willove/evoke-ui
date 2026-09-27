@@ -2,25 +2,15 @@
 
 快捷键文本的平台符号化：`mod` 在 macOS 印 ⌘，在 Windows/Linux 印 Ctrl。
 
-```vue
+<DemoBlock densities>
 <et-key-hint combo="mod+shift+z" />
 <et-key-hint combo="mod+shift+z" platform="mac" />
 <et-key-hint combo="ctrl+f1" platform="win" />
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `combo` | String | `''` | 规范组合键串；未规范化也接受，构造期校验键名合法性 |
-| `platform` | String | `'auto'` | `auto` 走运行时识别；`mac` / `win` 可钉死（测试与文档用） |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无 |
+<CompApi id="key-hint" />
 
 ## 行为
 

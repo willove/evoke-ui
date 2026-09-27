@@ -2,44 +2,33 @@
 
 纯文字 tab 条（对齐 Excel/WPS）：roving 漫游、Delete 关闭、窄屏溢出「更多」。
 
-```vue
 <script setup>
 import { ref } from 'vue'
 const active = ref('home')
+const closed = ref([])
 const tabs = [
   { id: 'home', label: '开始' },
   { id: 'insert', label: '插入', closable: true },
+  { id: 'data', label: '数据', closable: true },
   { id: 'review', label: '审阅', disabled: true },
+  { id: 'view', label: '视图' },
+  { id: 'help', label: '帮助' },
 ]
+function onClose(_, id) {
+  closed.value.push(id)
+  if (active.value === id) active.value = 'home'
+}
 </script>
 
-<template>
-  <et-tab-strip v-model="active" :tabs="tabs" @change="onChange" @close="onClose" />
-</template>
-```
+<DemoBlock densities>
+  <et-tab-strip v-model="active" :tabs="tabs" @close="onClose" />
+</DemoBlock>
 
-## Props
+<p class="demo-readout">当前 <code>{{ active }}</code> · 已关闭 <code>{{ closed.join('、') || '—' }}</code></p>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | String | `''` | 激活 tab 的 id |
-| `tabs` | Array | 必填 | `{ id, label, closable?, disabled? }` |
-| `overflowLabel` | String | `'更多'` | 窄屏溢出入口文案 |
+## API
 
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | id | v-model 回写 |
-| `change` | id | 选中变化，与 `update:modelValue` 同场发（两个都绑会双发） |
-| `close` | id | 关闭请求（Delete 或关闭钮） |
-| `context` | `(id, event)` | 右键 / 上下文 tab 钩子，不拦默认行为 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| —— | —— | 无 |
+<CompApi id="tab-strip" />
 
 ## 行为
 

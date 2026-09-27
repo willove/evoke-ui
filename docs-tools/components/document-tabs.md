@@ -18,30 +18,9 @@ const docList = [
   <span style="font-size: 12px; color: var(--eb-text-color-secondary);">激活：{{ activeDoc }}（脏标记 aria 双通道；「备注」不可关）</span>
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | String | `''` | 激活文档的 id |
-| `documents` | Array | `[]` | `{ id, title, dirty?, closable? }`（closable 缺省视为可关闭） |
-| `overflowLabel` | String | `'更多'` | 窄屏溢出入口文案 |
-| `confirmClose` | Boolean | `false` | 关闭前弹确认（仅在同时给了 `confirmText` 时生效） |
-| `confirmText` | String | `''` | 关闭确认文案（`EbPopconfirm` 的 title） |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | id | v-model 回写 |
-| `change` | id | 选中变化 |
-| `close` | id | 关闭请求（确认过后） |
-| `context` | `(id, event)` | 右键钩子，不拦默认行为 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| —— | —— | 无 |
+<CompApi id="document-tabs" />
 
 ## 行为
 

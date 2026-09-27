@@ -22,29 +22,9 @@ const show = (t) => {
   <et-toast v-model="toastOpen" :message="toastMsg" :type="toastKind" :duration="2400" />
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | Boolean | `false` | 开关 |
-| `message` | String | `''` | 提示文本（默认槽可整体替换） |
-| `type` | String | `'info'` | `info` / `success` / `warn` / `error`；未知值回落 info |
-| `duration` | Number | `3000` | 自动关毫秒数；`0` = 常驻到消费方关闭 |
-| `position` | String | `'top'` | `top` / `center` / `bottom`；未知值回落 top |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | boolean | 开关回写（自动关到点时也发） |
-| `action` | —— | 操作位点击 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 替换 message 的正文 |
-| `action` | —— | 操作位（撤销等）；给了才渲染 |
+<CompApi id="toast" />
 
 ## 行为
 

@@ -2,37 +2,26 @@
 
 全屏页（文件菜单那种）：左导航 + 内容区 + 返回/Esc，开关不引发画布尺寸跳动。
 
-```vue
-<et-backstage v-model="open" title="文件" :nav-width="220">
-  <template #nav>
-    <button type="button" @click="open = false">最近</button>
-    <button type="button" @click="open = false">打开</button>
-  </template>
-  <p>最近文档（产品内容）</p>
-</et-backstage>
-```
+<script setup>
+import { ref } from 'vue'
+const open = ref(false)
+</script>
 
-## Props
+<DemoBlock>
+  <div class="demo-col">
+    <et-tool-button size="small" icon="folder-open" label="文件" @click="open = true" />
+    <et-backstage v-model="open" title="文件">
+      <template #nav>
+        <et-tool-button v-for="n in ['最近', '打开', '另存为']" :key="n" size="small" icon="file" :label="n" @click="open = false" />
+      </template>
+      <p>最近文档（产品内容）</p>
+    </et-backstage>
+  </div>
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | Boolean | `false` | 开关 |
-| `title` | String | `''` | 标题（`aria-label` 取它，缺省「全屏页」） |
-| `navWidth` | Number | `null` | 左导航宽（px）；null 走 CSS 令牌默认档 |
+## API
 
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | boolean | 开关回写（Esc 与返回钮都只发这个） |
-| `opened` / `closed` | —— | 过渡结束（after-enter / after-leave） |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `nav` | —— | 左导航内容 |
-| 默认 | —— | 内容区（具体页由产品填） |
+<CompApi id="backstage" />
 
 ## 行为
 

@@ -23,27 +23,9 @@ const schema = [
 </template>
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `registry` | Object | 必填 | 命令注册表 |
-| `schema` | Array | `[]` | 菜单节点：`item`（绑 command）/ `separator` / `submenu`（label + 递归 children） |
-| `ctx` | Object | `{}` | 推演 `enabled` 的上下文 |
-| `disabled` | Boolean | `false` | 关闭本菜单 |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `command` | id | 条目点击；跑不跑由消费方决定 |
-| `visible-change` | boolean | 菜单开合 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 触发器区域（画布宿主） |
+<CompApi id="context-menu" />
 
 ## 行为
 

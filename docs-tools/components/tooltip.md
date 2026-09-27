@@ -2,34 +2,15 @@
 
 底座 `EbTooltip` 的密度适配包装：默认延迟改成工具界面口径，浮层类名做合并而非覆盖。
 
-```vue
+<DemoBlock>
 <et-tooltip content="复制选区" placement="top" :show-after="400">
   <et-tool-button size="small" icon="copy" label="复制" />
 </et-tooltip>
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `content` | String | `''` | 提示文本（`#content` 槽可整体替换） |
-| `placement` | String | `'top'` | 12 个 placement 值 |
-| `disabled` | Boolean | `false` | 关闭提示 |
-| `effect` | String | `'dark'` | `dark` / `light` |
-| `showAfter` | Number | `400` | 首显延迟，与 `--et-screentip-delay-first` 同源 |
-| `hideAfter` | Number | `200` | 自动隐藏延迟，与 `--et-screentip-delay-hide` 同源 |
-| `trigger` | String | `'hover'` | `hover` / `click` / `focus` / `contextmenu` |
-| `virtualTriggering` | Boolean | `false` | 虚拟触发（自定义参考元素） |
-| `virtualRef` | Object | `null` | 虚拟触发参考元素 |
-| 透传 | —— | —— | 其余属性经 `v-bind="$attrs"` 下传（`popper-class` 由本件接管并合并） |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无（显隐由底座内部管理） |
-| Slots | 默认 | 触发器 |
-| Slots | `content` | 浮层内容，替换 `content` prop |
+<CompApi id="tooltip" />
 
 ## 行为
 

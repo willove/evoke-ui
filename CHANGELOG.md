@@ -2,6 +2,168 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 1.3.1] — 2026-09-27
+
+### @wil-works/evoke-tools-ui — 办公整页装配（#tabbar 槽）+ 新三件视觉基线（1.3.1，patch）
+
+- **`EtWorkbench` 新增 `#tabbar` 内容页签带槽**（加法式，不改既有槽）：位于主体行与状态栏之间，
+  与顶部 `#documents` 上下分工、可同时用——办公整页不必再套 CSS 横带，五条带高度全走令牌
+  （标题栏 32 / 工具区 tab 26 + 组行 72 / 公式栏 26 / 页签 26 / 状态栏 24）。
+  槽位契约（`src/slots.js`）与 G10 门同步：命名槽 28 → 29。
+- **示例工程新增「办公装配」视图**（`view=toolbar 切换`）：五条带 + 公式栏 + 画布宿主 + 表页签（9 张表）+
+  状态栏，作为 v1.3 办公三件的视觉基线载体；示例样式补画布位拉伸（宿主吃满，滚动才有量）。
+- **视觉回归补 8 条**（`visual/tools.spec.mjs`，28 → 36）：
+  - 基线 5 条：办公装配（默认 / 暗色 / 紧凑）、公式栏键盘聚焦的中性焦点环、表页签溢出态；
+  - 不变量 3 条：办公 chrome 预算（横带高度与令牌逐项一致）、画布宿主（可滚动 / 浮层不随滚动 /
+    滚动量上报状态栏）、公式栏（引用位跟随选区 / 回车提交 / Esc 收敛）、表页签（窄屏溢出收进「更多」、
+    收起项 `aria-hidden` 且不占 Tab 序列、当前表永远可见）。
+  - 示例控件条因新增视图变宽 → 5 条既有工作台基线按规程重录（mac；Linux 由 CI 作业录）。
+- **旗舰案例**改用 `#tabbar` 槽（去掉横带包装 CSS），与文档配方一致。
+- 组件页与组合契约页同步：`EtWorkbench` Slots 增 `#tabbar` + 办公整页装配示例；配方表拆成
+  「办公整页（五条带）」与「只拼横带（办公皮肤）」。
+- **布局契约修两处**（写办公单画布页时暴露，均为真缺陷）：
+  - `normalizeLayout` 现在把**显式 `docks: []`** 当合法形态（只有画布的工作台，之后可 `addDock` 长出停靠）；
+    只有"给了 dock 条目却一个都不合法"才判损坏走 fallback。此前 `createLayoutTree({ docks: [] })` 直接抛
+    `布局没有任何可用 dock`，与 Workbench 文档「空树 = 只有画布的工作台」自相矛盾。
+  - `loadLayout` 新增 `empty` 标记（没有持久化档 ≠ 坏档）；`EtWorkbench` 挂载读回遇 `empty` **不再用
+    `defaultLayout` 覆盖传入的 `layout`**——此前首次打开时产品的初始布局会被自己的默认布局顶掉
+    （传"只有画布"的树、默认布局带 dock 的消费方必中），回归用例已锁。
+
+### docs-tools — 组件页六面改由源码现算 + 活体 demo 与三档密度 + G11 覆盖门
+
+- **组件页不再手抄 API**（计划 02 §四的「props / events / slots / 可访问名 / 键盘行为 / 密度表现」
+  六面此前 36 页逐页手写，改一版重抄一遍，且漏抄的页会静默说谎）：
+  新增 `docs-tools/.vitepress/component-api.mjs`——vite 虚拟模块 `virtual:component-api`
+  **每次请求现算**（不落地生成物，杜绝"忘了重新生成"），数据全部取自既有单一来源：
+  SFC 的 `defineProps`（含 prop 上的 JSDoc）/ `defineEmits` / `defineExpose`、`src/slots.js` 槽位契约、
+  `src/taxonomy.js` 分类表、件内 `style.css` 实际引用的令牌、模板里的 `aria-*`/`role` 与按键判定；
+  事件**载荷从 `emit()` 调用点读出**（`tab-strip.change → tab.id`），不靠手写。
+  主题件 `<CompApi id="…" />` 渲染六面，36 页全部接上，手写 API 段清零。
+- **说明回灌源码**：迁移脚本先把页里已有、源码却缺注释的 prop/事件说明插回 SFC（约 55 处），
+  随后补齐全部缺口（props 129 / 事件 77 / 暴露 8，共 214 条成员说明，零「未写」）。
+  **prop 注释会随 vue-tsc 进 `.d.ts`**（TS 消费方悬停即得），事件与暴露注释 vue-tsc 不透传，
+  只服务文档站与读源码——不是"一处注释三处生效"，别按那个预期验收。
+- **三档密度对照**：`DemoBlock` 加 `densities`，用 `[data-density]` 属性选择器把同一演示在
+  紧凑 24 / 默认 32 / 宽松 40 三带并排渲染（不动全站根属性），13 页已用。
+- **活体 demo 12 → 28 页**：办公三件（公式栏引用位随选区 + Enter 提交回执 / 表页签切换与新增 /
+  画布宿主滚动·浮层·焦点读数）、壳族（标题栏 Web↔桌面宿主切换、面板折叠·最大化·关闭、分隔器
+  键盘 resize 实测回传百分比）、输入与反馈族若干。8 页确属无可视形态的登记进 `DEMO_NA` 并写明理由。
+- **G11 文档覆盖门**（`docs-tools/scripts/check-docs-coverage.mjs`，已挂 `docs:build` 与根
+  `docs-tools:check`）：逐页核 ①有页 ②有 `<CompApi>` ③不得残留手写 API 段（防回潮）
+  ④有活体 demo 或在 `DEMO_NA` 写明理由
+  ⑤每个 prop / 事件 / 暴露方法都有源码注释（与文档页读同一份现算数据，缺一条即红）
+  ——「还剩哪些内容」从此由 CI 维护，不再每次人工盘点；两条断言各做过一次变异对照（撤 `<CompApi>`
+  即红、删一条 prop 注释即红）。
+- **文档站自检进 CI**（`visual/docs.spec.mjs`，36 例，`--project=docs-tools`）：逐页守无 console
+  报错、演示区非空、页内不出现 `NaN` 读数；变异对照已验（撤掉一页 `<CompApi>` 即红）。
+- **修两处文档说谎**：`guide/design.md` 的「`EtSplitter` 键盘 resize 未做」改为 1.2.0 已交付并指向
+  键位与 aria 取值；markdown 表格样式规则 `:not([class*='eb-'])`（两条选择器重复且挡不住组件自带表格）
+  收紧为 `table:not([class])`，组件表格不再被撑出空档。
+
+## [tools-ui 1.3.0] — 2026-09-27
+
+### @wil-works/evoke-tools-ui — office 办公基本件三件 + 槽位组合契约（1.3.0）
+
+- **office 层补三件**（子路径 `./office`，入口 33 → **36**：common 29 + office 7）：
+  - `EtFormulaBar` 公式栏：引用位 / 编辑区 / 动作位三槽，高度钉 `--et-chrome-auxbar-height`；
+    Enter 提交（发**当前编辑值**，不依赖父级回写）、Esc 收敛、Shift+Enter 与组字期间放行；只读态不提交；
+  - `EtSheetTabs` 工作表标签：底带表页签（当前页白底 + 强调条），roving 漫游、右键钩子、加号、
+    `#tab` 自定义渲染；溢出复用 `planOverflow` 纯函数，全条目常驻 DOM（焦点不因重排丢失）；
+  - `EtSheetCanvasHost` 画布宿主：滚动视口 + 不随滚动的浮层位 + `resize`/`scroll` 契约 + 焦点进出事件 +
+    `scrollTo()`；不认识单元格，格子怎么画归产品。
+- **办公皮肤** `src/office/styles/office.css`：`.et-office-bands` 横带序列（顶带 → 弹性画布位 → 底带），
+  只消费 `--et-*`，不定义办公语义色（回流禁令照旧）。
+- **槽位组合契约**：新增单一来源 `src/slots.js`（谁开了哪些槽 / 吃什么 / 作用域 / 无槽原因），
+  文档站新增[组合契约页](/guide/composition)（现场多槽装配样板 + 五条配方 + 全量清单）；
+  新增 **G10 槽位门**（`scripts/check-slots.mjs`，已挂 build）：契约 ↔ SFC **双向核对**——
+  代码删槽、改名、文档漏记、无槽件声明与实现不符都会失败；`test/slots.test.js` 7 条同守。
+- **文档站**：36 件组件页 + 三件新组件页（Props / Emits / Slots / 暴露）；指南加「组合契约」；
+  两层概览页、侧栏与站内搜索随分类表自动更新；旗舰案例「电子表格工作台」改用真件装配
+  （公式栏 + 画布宿主 + 表页签 + 办公皮肤横带），引用位跟随选区、提交回执、表切换、滚动量全部实测通过。
+- **G8 发布门**改读分类表（不再写死 L1–L4），按「组件入口 36 件 / common 29 / office 7」核对 DESIGN.md 宣称。
+
+### @wil-works/evoke-tools-ui — 「中性工具壳」风格体系（1.3.0，随两层重构同版）
+
+- **气质锚定调**：一间安静的仪器房——chrome 近无色，彩色只给状态与内容。三条纪律写进令牌与门禁：
+  chrome 近无色 / 描边优先于阴影 / 聚焦不靠品牌色。
+- **焦点环不跟随品牌色**（`--et-focus-ring-color`）：改高对比中性色（亮色黑、暗色白，`dark.css`
+  重映射），offset **1px → 0**；新增**双色环** `--et-focus-ring-dual`（内 1px + 外 1px 中性双色）
+  供浮层与画布用——主色环在彩色内容与深底上看不见。`forced-colors` 下改用系统 `Highlight`。
+- **选中态底色去品牌化**：`--et-state-selected-bg` 从主色浅底改中性 fill（亮 `fill-color` /
+  暗 `fill-color-dark`），主色只落在文字与图标（`--et-state-selected-fg`）——"彩色留给数据"。
+- **圆角阶梯 2/4/8/12**：`--et-radius-lg` 6→8，新增 `--et-radius-xl` 12；`--et-menu-radius`
+  2→8（浮层档），ScreenTip / Tooltip / Toast / Banner → 8，对话框面 → 12；工具钮按 Fluent 规则
+  分档（<32px 小钮 2、大钮 4，新增 `--et-toolbtn-radius-large`）。
+- **阴影只给浮层**：新增三档固定映射 `--et-shadow-pop` / `--et-shadow-callout` /
+  `--et-shadow-dialog`（引底座 `--eb-shadow-2/3/5`），chrome 内部一律 1px 描边。
+- **动效三档**：新增 `--et-duration-hover/pop/collapse` = 100/150/200ms 与
+  `--et-ease-decelerate/accelerate`；`--et-duration-fast/base/slow` 指向这三档（原为底座 0.1/0.2/0.3s）。
+- **门禁**：`check-token-rule.mjs` 新增规则 ⑨⑩⑪（chrome 与工具钮表面禁引主色/语义色 · 焦点环必须是
+  中性色 · 选中态底色禁主色浅底）；`check-density.mjs` 增设「风格基线」断言表（焦点环 / 圆角阶梯 /
+  动效三档）。文档站新增[风格体系页](/guide/style)（含现场样板与可判定验收清单），设计规范页同步。
+- 视觉基线：本次令牌改动在 `visual/tools.spec.mjs` 的 28 条基线上**未超容差**（重录后文件无变化），
+  Linux 基线无需重录。
+
+### @wil-works/evoke-tools-ui — 两层重构：common-tools + office-tools（1.3.0，minor）
+
+- **组件分两层**（同包子路径，不新增包、不破坏既有 import）：
+  `@wil-works/evoke-tools-ui/common`（29 件：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入，
+  **不含办公语义**，任何工具形态都能用）与 `@wil-works/evoke-tools-ui/office`（4 件：功能区
+  `ribbon-bar` / 溢出菜单 / 「文件」后台页 / 画布调色板桥，只在办公形态成立）。
+  根入口 `.` 仍是全量 33 件，行为不变。
+- **分类从 L1–L4 改为「两层 × 用途分类 × 粒度」**：一级按工具用途（壳 / 工具区 / 命令 /
+  面板 / 反馈 / 输入 / 基础），二级标原子件 / 功能块 / 契约。判定办公归属的唯一用词表与
+  G1 令牌门同源（`cell` / `sheet` / `formula` / `canvas-grid` / `spreadsheet` / `--ot-*`）。
+- **分类单一来源 `src/taxonomy.js`**（id / zh / layer / category / granularity / summary）：
+  包入口的 imports、组件注册表与导出表按它重排；文档站侧栏、两层概览页与站内搜索**直接
+  从它派生**（不再手工维护分类）。新增 **G9 分类门**（`scripts/check-taxonomy.mjs`，已挂
+  build）与 7 条 `test/taxonomy.test.js`：三层视图（入口表 / common / office）与 taxonomy
+  必须逐项一致，office 层是显式白名单清单。
+- **文档站**：新增 `/common/` 与 `/office/` 两个概览页（按分类列件、带粒度标签与摘要）、
+  顶栏加「通用 / 办公」入口、侧栏改为「层标题 + 用途分类分组」，首页数据带与分区速览同步；
+  设计规范页补「两层与用途分类」段（含依赖方向与判定表）。
+- `plans/tools-ui/05` 重写为《两层与用途分类》（含旧 L1–L4 → 新分类映射表，供源码里的
+  历史里程碑引用对照）；包 README 补两层说明、子路径导出表与 G9 门。
+
+## [docs-tools 案例区] — 2026-09-27
+
+### 文档站（tools）— 新增「案例」分区：8 个可运行的完整装配
+
+- **分区与导航**：新增 `/examples/`（案例总览 + 8 个案例页），顶栏加「案例」入口、
+  侧栏为案例目录、站内搜索索引纳入案例；首页 hero 次按钮与横幅 CTA 改指案例，
+  分区速览首格换成案例入口。对齐 charts 站（9 案例）与 business 站（示例中心）的分区形态。
+- **案例 = 真装配，不是截图**：每页 `examples/cases/*.vue` 是 460px 舞台里的完整
+  `et-*` 装配（`EtWorkbench` 区域槽 + 停靠树 + 文档标签 + 功能区 + 状态栏 + 右键/命令面板），
+  经 `<DocExample>` 内嵌可运行，右上「查看源码」给出整份实现。8 个案例：
+  电子表格工作台 / 日志分析器 / 数据库查询台 / 文件资源管理器 / 代码编辑器 /
+  运维监控台 / 邮件工作台 / 设置中心（Backstage）。
+- **案例都带真交互**：点选与方向键移动选区（状态栏实时求和）、级别过滤（命中数联动）、
+  ⌘K 命令面板、右键菜单、停靠折叠与持久化、Backstage 全屏设置——交互契约与组件页同源，
+  不另起一套演示口径。
+- 新增案例页时同步 `theme/meta.js` 的 `EXAMPLES_NAV`（侧栏与搜索同源）；写法见
+  [docs-tools/README.md](docs-tools/README.md)「站点分区」。
+
+## [docs-tools 站点重做] — 2026-09-27
+
+### 文档站（tools）— 整站对齐 business / charts 家族外壳
+
+- **外壳与两站同构**：`TdLayout` 从 business 站 `DocLayout` 移植（`bd-` → `td-`），
+  **不再 spread VitePress 默认主题**——警示横幅、顶栏（logo + 版本 + 图标导航 + 官方库下拉 +
+  搜索 + npm 图标钮 + 暗色）、侧栏分组、正文排版、代码块、演示块与 API 表全部自备，
+  与 business / charts 三站同一套语法与令牌（#175DFF 主色 / 顶栏 60px / 侧栏 240px /
+  12px 卡圆角 / 同一套间距与字号档）。
+- **首页改为家族语法**：居中 hero（徽标 + 大标题 + 数据带）→ 六张圆底图标特性卡 →
+  peer 姊妹块 → 全宽渐变横幅 → 六格分区速览 → 30 秒上手。tools 独有的一段「实物台」
+  （真 EtRibbonBar，命令表驱动）按家族盒式语言保留在 hero 之后。
+- **导航数据化**：`meta.js` 重写为 `GUIDE_NAV`（指南 + 契约）/ `COMPONENT_NAV`
+  （L1–L4 + 图标机制，中文主文本 + 英文后缀）/ `ALL_PAGES` 搜索索引；
+  组件页侧栏带筛选框，窄屏抽屉承载主导航 + 官方库三个外链。
+- **顺带修掉的两处**：脱离默认主题后代码块复制钮（此前 `position: static` 零尺寸、
+  看得见代码看不见钮）由自写样式 + 事件委托接管；窄屏抽屉（此前只有菜单钮、没有抽屉 CSS，
+  侧栏常驻把内容挤成 150px）随家族响应式段一并到位。
+- `config.mts` 去掉从未生效的 VitePress `sidebar` 配置（自定义外壳自渲染导航），
+  版本展示点仍由 `themeConfig.toolsVersion` 构建期读包。
+
 ## [evoke-chat 0.3.1] — 2026-09-26
 
 ### @wil-works/evoke-chat — 底部读数显隐口径修正（0.3.1，patch）

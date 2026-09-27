@@ -2,36 +2,26 @@
 
 空态即首屏：一句引导 + 一个主按钮，图标取 lg 档、无插画、强调色只出现一次。
 
-```vue
-<et-empty-state
-  icon="search"
-  title="从粘贴一段数据开始"
-  desc="支持 CSV 与 JSON。"
-  action-label="新建表格"
-  @action="onAction"
-/>
-```
+<script setup>
+import { ref } from 'vue'
+const actions = ref(0)
+</script>
 
-## Props
+<DemoBlock densities>
+  <et-empty-state
+    icon="search"
+    title="从粘贴一段数据开始"
+    desc="支持 CSV 与 JSON。"
+    action-label="新建表格"
+    @action="actions++"
+  />
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `icon` | String | `'search'` | 第 ② 层语义名（缺省档引导情景） |
-| `title` | String | 必填 | 引导句，一行 |
-| `desc` | String | `''` | 一行补充说明；空串不渲染该行 |
-| `actionLabel` | String | `''` | 主按钮文案；给了 `action` 槽时忽略 |
+<p class="demo-readout">主按钮点击 <code>{{ actions }}</code> 次</p>
 
-## Emits
+## API
 
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `action` | —— | 主按钮点击（仅在用 `actionLabel` 时） |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `action` | —— | 主按钮位：整体替换默认主钮（仍是全组件唯一强调色操作） |
+<CompApi id="empty-state" />
 
 ## 行为
 

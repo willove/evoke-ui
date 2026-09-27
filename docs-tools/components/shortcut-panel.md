@@ -7,19 +7,9 @@
 <et-shortcut-panel :registry="registry" platform="mac" />
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `registry` | Object | 必填 | 命令注册表（`buildShortcutTable` 的数据源） |
-| `platform` | String | `'auto'` | `auto` 走运行时识别；`mac` / `win` 可钉死 |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无 |
+<CompApi id="shortcut-panel" />
 
 ## 行为
 

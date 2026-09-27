@@ -2,41 +2,27 @@
 
 产品外壳标题栏：产品名 / 快捷访问位 / 文档名 / 窗口控制位（双宿主适配）。
 
-```vue
-<et-title-bar
-  title="我的工具"
-  doc-title="报表.xlsx"
-  :host="hostMode"
-  @window-control="onWinCtl"
->
-  <template #quick>
-    <et-key-hint combo="mod+s" />
-  </template>
-</et-title-bar>
-```
+<script setup>
+import { ref } from 'vue'
+const host = ref('web')
+const last = ref('')
+</script>
 
-## Props
+<DemoBlock>
+  <div class="demo-col">
+    <div class="demo-row">
+      <et-tool-button v-for="h in ['web', 'desktop']" :key="h" size="small" :icon="h === 'web' ? 'grid' : 'computer'" :label="h === 'web' ? 'Web 宿主' : '桌面壳'" :active="host === h" @click="host = h" />
+    </div>
+    <et-title-bar title="报表工具" doc-title="报表.xlsx" :host="host" @window-control="last = $event">
+      <template #quick><et-key-hint combo="mod+s" /></template>
+    </et-title-bar>
+    <p class="demo-readout">窗口控制 <code>{{ last || '—' }}</code></p>
+  </div>
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `title` | String | `''` | 产品名（`brand` 槽未提供时渲染） |
-| `docTitle` | String | `''` | 文档名（`center` 槽未提供时渲染；空串不渲染文档名位） |
-| `host` | String | `'auto'` | `auto` 走探测；`web` / `desktop` 显式钉死 |
-| `windowControls` | Boolean | `true` | 窗口控制位总开关（桌面壳且为 true 才渲染） |
+## API
 
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `window-control` | `'close'` / `'minimize'` / `'maximize'` | 窗口动作只冒泡；宿主 API 归产品侧 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `brand` | —— | 产品名位（整体替换） |
-| `quick` | —— | 快捷访问位（保存、撤销等） |
-| `center` | —— | 文档名位（整体替换） |
+<CompApi id="title-bar" />
 
 ## 行为
 

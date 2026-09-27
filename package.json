@@ -26,6 +26,7 @@
     "docs-charts:preview": "pnpm --filter @wil-works/evoke-charts-docs docs:preview",
     "docs-tools:dev": "pnpm --filter @wil-works/evoke-tools-ui-docs docs:dev",
     "docs-tools:build": "pnpm --filter @wil-works/evoke-tools-ui-docs docs:build",
+    "docs-tools:check": "pnpm --filter @wil-works/evoke-tools-ui-docs docs:check",
     "docs-tools:preview": "pnpm --filter @wil-works/evoke-tools-ui-docs docs:preview",
     "playground:ebui": "pnpm --filter @wil-works/evoke-business-ui-playground dev",
     "example:ebui-dashboard": "pnpm --filter @wil-works/ebui-example-dashboard dev",

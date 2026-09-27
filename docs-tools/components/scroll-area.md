@@ -2,31 +2,21 @@
 
 面板 / 工具区里「内容比容器大」的位的统一滚动外壳：只做 overflow 容器。
 
-```vue
-<et-scroll-area direction="vertical">
-  <ul>
-    <li v-for="line in lines" :key="line">{{ line }}</li>
-  </ul>
-</et-scroll-area>
-```
+<script setup>
+const lines = Array.from({ length: 24 }, (_, i) => `第 ${i + 1} 行`)
+</script>
 
-## Props
+<DemoBlock>
+  <et-scroll-area direction="vertical" style="height: 160px">
+    <ul class="demo-list">
+      <li v-for="line in lines" :key="line">{{ line }}</li>
+    </ul>
+  </et-scroll-area>
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `direction` | String | `'auto'` | `auto` 双轴；`vertical` 只纵滚（横轴锁死）；`horizontal` 只横滚 |
+## API
 
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 滚动内容 |
-
-## Emits
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
+<CompApi id="scroll-area" />
 
 ## 行为
 

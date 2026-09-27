@@ -66,5 +66,7 @@ export default defineConfig({
     { name: 'business', testMatch: /visual\/business\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4174' } },
     { name: 'charts', testMatch: /visual\/charts\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4175' } },
     { name: 'tools', testMatch: /visual\/tools\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4180' } },
+    // 文档站自检：跑在 docs-tools 的 preview 上（4176），不产基线，只守渲染
+    { name: 'docs-tools', testMatch: /visual\/docs\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4176' } },
   ],
 })

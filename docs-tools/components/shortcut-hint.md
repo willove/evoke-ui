@@ -2,25 +2,14 @@
 
 一个键位 + 可选标签的内联提示：工具区尾部、ScreenTip 说明行、设置项旁边。
 
-```vue
+<DemoBlock densities>
 <et-shortcut-hint keys="mod+s" label="保存" />
 <et-shortcut-hint keys="mod+k" />
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `keys` | String | `''` | 规范组合键串；空串不渲染键帽 |
-| `label` | String | `''` | 可选标签（命令名）；为空时只有键帽 |
-| `platform` | String | `'auto'` | `auto` 走运行时识别；`mac` / `win` 可钉死 |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无 |
+<CompApi id="shortcut-hint" />
 
 ## 行为
 

@@ -2,7 +2,6 @@
 
 底座 `EbSelect` 的密度适配包装：size 缺省时按当前密度档映射，其余全透传。
 
-```vue
 <script setup>
 import { ref } from 'vue'
 const size = ref(12)
@@ -13,36 +12,15 @@ const options = [
 ]
 </script>
 
-<template>
-  <et-select v-model="size" :options="options" size="small" @change="onChange" />
-</template>
-```
+<DemoBlock densities>
+  <et-select v-model="size" :options="options" size="small" />
+</DemoBlock>
 
-## Props
+<p class="demo-readout">字号 <code>{{ size }}</code></p>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | String \| Number \| Boolean \| Array \| Object | `''` | 选中值 |
-| `size` | String | `undefined` | 显式传入优先；缺省按密度档映射 |
-| 透传 | —— | —— | 其余属性经 `v-bind="$attrs"` 下传 `EbSelect`（含 `options` / `field-names` / `label-in-value` / `virtual` …） |
+## API
 
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | value | v-model 回写 |
-| `change` | value | 选中变化 |
-| `clear` | —— | 清空 |
-| `visible-change` | boolean | 浮层显隐 |
-| `remove-tag` | value | 多选移除标签 |
-| `filter-change` | string | 过滤词变化 |
-| `blur` / `focus` | Event | 焦点事件 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 透传 | —— | 插槽模式（`EbOption` 注册）与 `#empty` 等底座槽原样可用 |
+<CompApi id="select" />
 
 ## 行为
 

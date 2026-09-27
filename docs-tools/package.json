@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
+    "docs:build": "node scripts/check-docs-coverage.mjs && vitepress build",
+    "docs:check": "node scripts/check-docs-coverage.mjs",
     "docs:preview": "vitepress preview"
   },
   "dependencies": {

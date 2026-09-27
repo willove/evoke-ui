@@ -22,7 +22,18 @@ import App from './App.vue'
 createApp(App).use(EvokeToolsUI).mount('#app')
 ```
 
-`app.use(EvokeToolsUI)` 注册全部 `Et*` 组件：分层 32 件（L1 12 / L2 6 / L3 7 / L4 7）+ 辅件 `EtSplitterPanel`，共 33 个组件入口；另有图标机制 `EtIcon`。
+`app.use(EvokeToolsUI)` 注册全部 `Et*` 组件（36 个入口）。也可以只装一层：
+
+```js
+import CommonTools from '@wil-works/evoke-tools-ui/common'
+import OfficeTools from '@wil-works/evoke-tools-ui/office'
+
+createApp(App).use(CommonTools).use(OfficeTools)
+```
+
+`common-tools`（29 件：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入，不含办公语义）与
+`office-tools`（7 件：功能区 / 溢出菜单 / 后台页 / 表页签 / 公式栏 / 画布宿主 / 画布桥）的分工见[设计规范](design.md#两层与用途分类)，
+逐件清单见 [common-tools](/common/) 与 [office-tools](/office/)。
 
 ## 按需引入
 

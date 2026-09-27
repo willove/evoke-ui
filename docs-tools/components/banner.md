@@ -2,32 +2,23 @@
 
 跟内容同流的内联横条：浅底 + 图标色，warn/error 打断式播报。
 
-```vue
-<et-banner type="warn" title="有未保存改动" @close="onClose">
-  切换页面前请先保存，或选择「放弃改动」。
-</et-banner>
-```
+<script setup>
+import { ref } from 'vue'
+const open = ref(true)
+</script>
 
-## Props
+<DemoBlock densities>
+  <div class="demo-col">
+    <et-banner v-if="open" type="warn" title="有未保存改动" @close="open = false">
+      切换页面前请先保存，或选择「放弃改动」。
+    </et-banner>
+    <et-tool-button v-else size="small" icon="refresh" label="重新显示" @click="open = true" />
+  </div>
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `type` | String | `'info'` | `info` / `warn` / `error`；未知值回落 info |
-| `closable` | Boolean | `true` | 渲染关闭钮 |
-| `title` | String | `''` | 标题；空 = 只有正文的紧凑形态 |
+## API
 
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `close` | —— | 关闭钮点击；去留由消费方（v-if）决定 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 正文 |
-| `action` | —— | 操作位（如「立即保存」） |
+<CompApi id="banner" />
 
 ## 行为
 

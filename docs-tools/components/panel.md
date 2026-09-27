@@ -2,48 +2,40 @@
 
 侧/底停靠面板：标题栏（标题 + 工具位 + 动作组）+ 内容区，状态只由 props 来。
 
-```vue
-<et-panel
-  :panel="panelNode"
-  :maximized="maximizedId === panelNode.id"
-  :body-scroll="true"
-  @collapse="onCollapse"
-  @expand="onExpand"
-  @close="onClose"
-  @maximize="onMaximize"
-  @restore="onRestore"
->
-  <template #tools>
-    <et-tool-button size="small" icon="more" label="更多" />
-  </template>
-  面板内容
-</et-panel>
-```
+<script setup>
+import { computed, ref } from 'vue'
+const collapsed = ref(false)
+const closed = ref(false)
+const maximized = ref(false)
+const node = computed(() => ({ id: 'files', title: '文件', closable: true, collapsed: collapsed.value }))
+</script>
 
-## Props
+<DemoBlock densities>
+  <et-panel
+    v-if="!closed"
+    :panel="node"
+    :maximized="maximized"
+    @collapse="collapsed = true"
+    @expand="collapsed = false"
+    @close="closed = true"
+    @maximize="maximized = true"
+    @restore="maximized = false"
+  >
+    <template #tools>
+      <et-tool-button size="small" icon="more" label="更多" />
+    </template>
+    <p class="demo-readout">文件 · 12 项</p>
+  </et-panel>
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `panel` | Object | `null` | 布局节点 `{ id, title, size, min, max, collapsed, hidden, closable }` |
-| `maximized` | Boolean | `false` | 全屏态（同刻全局只有一个面板为真） |
-| `bodyScroll` | Boolean | `true` | 内容区滚动；关掉后自溢出由消费方自己管 |
+<div v-if="closed" class="demo-row">
+  <span class="demo-readout">已关闭</span>
+  <et-tool-button size="small" icon="refresh" label="重新打开" @click="closed = false" />
+</div>
 
-## Emits
+## API
 
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `collapse` | id | 折叠请求 |
-| `expand` | id | 展开请求 |
-| `close` | id | 关闭请求（关闭 = 隐藏，显式状态） |
-| `maximize` | id | 全屏请求 |
-| `restore` | —— | 退出全屏 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | `{ panel }` | 内容区；折叠态整体不渲染 |
-| `tools` | —— | 标题栏右侧工具位，无槽不占位 |
+<CompApi id="panel" />
 
 ## 行为
 

@@ -2,26 +2,17 @@
 
 工具区弹性占位：把后续组推到行尾（对齐 Office 功能区右侧留白的形态）。
 
-```vue
+<DemoBlock>
 <et-tool-group label="视图">
   <et-tool-button icon="zoom-in" label="放大" />
   <et-tool-spacer />
   <et-tool-button icon="more" label="更多" />
 </et-tool-group>
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `direction` | String | `'horizontal'` | `horizontal` / `vertical` |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无 |
+<CompApi id="tool-spacer" />
 
 ## 行为
 

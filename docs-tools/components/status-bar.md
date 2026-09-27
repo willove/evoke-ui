@@ -2,41 +2,29 @@
 
 chrome 底带：可配置项 + 内置缩放工具位，高度钉死不换行。
 
-```vue
-<et-status-bar
-  :items="[
-    { key: 'ready', label: '就绪' },
-    { key: 'selection', label: '选区', value: 'A1:B14', visible: true },
-    { key: 'coedit', label: '协同', value: '3 人', onClick: (item) => openCoedit(item) },
-  ]"
-  zoom="100%"
-  @item-click="onItemClick"
->
-  <template #left>自定义左区</template>
-  <template #right><span>100%</span></template>
-</et-status-bar>
-```
+<script setup>
+import { ref } from 'vue'
+const zoom = ref(100)
+const last = ref('')
+const items = [
+  { key: 'ready', label: '就绪' },
+  { key: 'selection', label: '选区', value: 'A1:B14', visible: true },
+  { key: 'coedit', label: '协同', value: '3 人' },
+]
+</script>
 
-## Props
+<DemoBlock densities>
+  <et-status-bar :items="items" :zoom="`${zoom}%`" @item-click="last = $event" />
+</DemoBlock>
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `items` | Array | `[]` | 可配置项 `{ key, label, value?, visible?, onClick? }`；`visible === false` 不渲染 |
-| `zoom` | Number \| String | `''` | 内置工具位缩放显示；`''` = 不渲染 |
+<div class="demo-row">
+  <et-tool-button v-for="z in [80, 100, 150]" :key="z" size="small" icon="zoom-in" :label="`${z}%`" :active="zoom === z" @click="zoom = z" />
+  <span class="demo-readout">最近点击 <code>{{ last || '—' }}</code></span>
+</div>
 
-## Emits
+## API
 
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `item-click` | key | 条目点击 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `left` | —— | 左区产品内容（在 items 之前） |
-| `center` | —— | 中区 |
-| `right` | —— | 右区；给了就不渲染内置缩放工具位 |
+<CompApi id="status-bar" />
 
 ## 行为
 

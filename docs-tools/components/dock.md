@@ -28,28 +28,9 @@ const dockLayout = ref({
 
 分隔条是 `role="separator"`：聚焦后用 ←/→（横排）调尺寸，Home/End 到 min/max。
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `dock` | Object | 必填 | 停靠区节点 `{ id, side, collapsed, panels, presentation? }` |
-| `maximized` | String | `null` | 当前全屏面板 id（全局唯一） |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:dock` | dock | 尺寸分摊后经 `setPanelSize` 夹角回写的新 dock 节点 |
-| `panel-collapse` / `panel-expand` / `panel-close` | id | 面板动作 |
-| `panel-maximize` | id | 面板全屏请求 |
-| `panel-restore` | —— | 退出全屏 |
-| `dock-toggle` | id | 折叠把手点击（整列收/放） |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `panel` | `{ panel, dock }` | 面板内容；不传 = 面板只有标题栏（合法空态） |
+<CompApi id="dock" />
 
 ## 行为
 

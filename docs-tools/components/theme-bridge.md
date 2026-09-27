@@ -7,19 +7,9 @@
 <et-theme-bridge :palette="palette" target="html" />
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `palette` | Object | `CANVAS_PALETTE` | 画布角色 → 主题侧令牌名登记表；产品可整体替换以追加角色 |
-| `target` | String \| Object | `'html'` | 写入与订阅目标：`'html'` / CSS 选择器 / Element 实例 |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无（render 返回 null） |
+<CompApi id="theme-bridge" />
 
 ## 行为
 

@@ -2,7 +2,15 @@
   <div class="demo-block vp-raw">
     <!-- 演示区 -->
     <div class="demo-block__preview">
-      <slot />
+      <!-- densities：同一演示在紧凑/默认/宽松三带并排（[data-density] 是普通属性选择器，
+           局部生效，不需要切全站根属性） -->
+      <template v-if="bands.length">
+        <div v-for="b in bands" :key="b" class="demo-block__band" :data-density="b">
+          <span class="demo-block__band-label">{{ BAND_ZH[b] }}</span>
+          <div class="demo-block__band-body"><slot /></div>
+        </div>
+      </template>
+      <slot v-else />
     </div>
     <!-- 源码区 -->
     <div v-if="code" class="demo-block__source">
@@ -39,7 +47,18 @@ hljs.registerLanguage('xml', xml)
 
 const props = defineProps({
   code: { type: String, default: '' },
+  /** true = 紧凑/默认/宽松三带并排；数组 = 指定档位子集 */
+  densities: { type: [Boolean, Array], default: false },
 })
+
+const BAND_ZH = { compact: '紧凑 24', default: '默认 32', relaxed: '宽松 40' }
+const bands = computed(() =>
+  Array.isArray(props.densities)
+    ? props.densities
+    : props.densities
+      ? ['compact', 'default', 'relaxed']
+      : [],
+)
 
 const showCode = ref(false)
 const copied = ref(false)

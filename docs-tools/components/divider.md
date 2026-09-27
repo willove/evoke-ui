@@ -2,27 +2,17 @@
 
 工具界面组间分隔：1px 描边、长度随控件档位，与 `EbDivider` 分工不同。
 
-```vue
+<DemoBlock densities>
 <et-tool-group label="剪贴板">
   <et-tool-button icon="copy" label="复制" />
   <et-divider direction="vertical" length="large" />
   <et-tool-button icon="brush" label="格式刷" />
 </et-tool-group>
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `direction` | String | `'vertical'` | `horizontal` / `vertical` |
-| `length` | String | `'large'` | `large` = 大钮高 / `small` = 小钮高 / `row` = 列表行高 |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | —— | 无 |
-| Slots | —— | 无 |
+<CompApi id="divider" />
 
 ## 行为
 

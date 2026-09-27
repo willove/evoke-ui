@@ -19,29 +19,9 @@
 </et-panel-group>
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `panels` | Array | `[]` | 同一 dock 的面板节点数组（至少 1 个；顺序即 tab 顺序） |
-| `activeId` | String | `''` | 激活面板 id；落空（切走/被隐藏）时落到首个可见面板 |
-| `maximizedPanel` | String | `null` | 全屏面板 id（全局唯一，透传给激活面板做视觉放大） |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `select` | id | 切 tab |
-| `collapse` / `expand` / `close` | id | 面板动作 |
-| `maximize` | id | 全屏请求 |
-| `restore` | —— | 退出全屏 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | `{ panel }` | 内容，转发给激活面板的 EtPanel |
-| `tools` | `{ panel }` | 工具位，同样转发给激活面板 |
+<CompApi id="panel-group" />
 
 ## 行为
 

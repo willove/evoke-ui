@@ -31,39 +31,41 @@ const wb = ref({
   </div>
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `layout` | Object | `null` | 布局树（v-model：本组件是唯一的写树处） |
-| `defaultLayout` | Object | `null` | 默认布局（重置用；挂载读盘失败时的降级目标） |
-| `persistKey` | String | `''` | 非空即 localStorage 读写在挂载/变更时发生 |
+<CompApi id="workbench" />
 
-## Emits
+## 办公整页装配（v1.3）
 
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:layout` | tree | 树变更（含损坏自愈后的清理树） |
-| `reset` | —— | `resetLayout()` 被调用 |
-| `layout-corrupted` | string[] | 坏 prop / 坏 JSON / 半坏树，已降级到默认布局 |
+五条带各就各位即可拼出办公整页，不需要额外写布局 CSS：
 
-## Slots
+```vue
+<et-workbench :layout="layout" :default-layout="DEFAULT" persist-key="app">
+  <template #titlebar><et-title-bar title="季度报表" doc-title="报表.xlsx" /></template>
+  <template #documents><et-document-tabs v-model="doc" :documents="docs" /></template>
+  <template #toolbar>
+    <et-ribbon-bar v-model="tab" :schema="schema" :registry="registry" />
+    <et-formula-bar v-model="formula" :reference="reference" @submit="apply" />
+  </template>
 
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| `titlebar` | —— | 顶带（chrome：产品名/文档名/窗口控制位） |
-| `documents` | —— | 文档标签位 |
-| `toolbar` | —— | 工具区（放 EtRibbonBar） |
-| `panel` | `{ panel, dock }` | 停靠面板内容，按 panel.id 映射 |
-| 默认 | —— | 中列画布 |
-| `left` / `right` / `bottom` | —— | dock 之外的面板级 UI（一般留空） |
-| `statusbar` | —— | 底带 |
+  <et-sheet-canvas-host label="工作表" @scroll="onScroll"><my-grid /></et-sheet-canvas-host>
+
+  <template #tabbar><et-sheet-tabs v-model="sheet" :tabs="sheets" /></template>
+  <template #statusbar><et-status-bar :items="items" zoom="100%" /></template>
+</et-workbench>
+```
+
+带高全部走令牌：标题栏 32 / 工具区（tab 26 + 组行 72）/ 公式栏 26 / 页签 26 / 状态栏 24。
 
 ## 行为
 
 - 持久化：挂载 `loadLayout` 读回；变更 `saveLayout`，写前 `layoutEquals` 比对，无变更不写，异常静默。
 - 损坏降级：一律降级到 `defaultLayout` 渲染（不白屏）；修好的树覆写存储，损坏只提示一次。
 - 空 `defaultLayout` 也合法：空树 = 只有画布的工作台（仍可交互、可重置）。
+- **只有画布的初始布局**：传 `createLayoutTree({ docks: [] })`（显式空树，合法形态），之后可用
+  `addDock` 运行时长出停靠——办公单画布页就这一档。
+- **首次打开不被默认布局顶掉**：没有持久化档时不发生"恢复"，传入的 `layout` 原样生效；
+  有档（含坏档降级）才走读回路径。
 - 全屏：树里 `maximized` 非空 → 对应停靠整幅、其它区域让位（纯 CSS grid 重排）。
 - 关闭 = 隐藏（`hidden` 是显式状态：重置布局 / 显示面板都找得回来）。
 - 暴露 `resetLayout()` / `saveNow()` / `getLayout()`。

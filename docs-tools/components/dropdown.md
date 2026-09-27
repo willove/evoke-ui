@@ -15,27 +15,9 @@
 </et-dropdown>
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| 透传 | —— | —— | 本件不声明自己的 props，全部经 `v-bind="$attrs"` 下传 `EbDropdown` |
-
-底座的 `trigger` / `placement` / `split-button` / `disabled` 等 prop 原样可用。
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `visible-change` | boolean | 浮层显隐 |
-| `command` | any | 菜单项 `command` 值 |
-| `click` | MouseEvent | 触发器点击 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 透传 | —— | `#trigger` = 触发内容，`#dropdown` = 浮层菜单（底座槽位语义：默认子内容会顶掉触发器，菜单必须放 `#dropdown`） |
+<CompApi id="dropdown" />
 
 ## 行为
 

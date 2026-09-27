@@ -12,24 +12,9 @@
   </div>
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `size` | String | `'large'` | `large` / `small`；只切形态，不实现密度分支 |
-| `icon` | String | `''` | 第 ② 层语义名或已登记领域名 |
-| `label` | String | `''` | large = caption；small = 可访问名来源 |
-| `active` | Boolean | `false` | 激活态，渲染 `aria-pressed` |
-| `disabled` | Boolean | `false` | 禁用态，点击双保险拦截 |
-| `caret` | Boolean | `false` | 「按钮+下拉」指示，渲染在 caption 行右侧 |
-| `tip` | String \| Object | `null` | 小钮富提示；对象形如 `{ title, desc?, combo? }` |
-
-## Emits / Slots
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Emits | `click` | 载荷 MouseEvent；`disabled` 时不发 |
-| Slots | —— | 无 |
+<CompApi id="tool-button" />
 
 ## 行为
 

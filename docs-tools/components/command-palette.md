@@ -21,30 +21,9 @@ const ctx = { hasSelection: true }
 </template>
 ```
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `registry` | Object | 必填 | 命令注册表 |
-| `modelValue` | Boolean | `false` | 面板开关 |
-| `ctx` | Object | `{}` | 推演 `enabled` 的上下文 |
-| `placeholder` | String | —— | 不传则用底座自带占位符 |
-| `recentKey` | String | `''` | 非空即按该键在 localStorage 存最近 5 个命令 id 并置顶 |
-| `hotkey` | String | `'mod+k'` | 开面板快捷键；仅作声明与展示，全局绑定归消费方 |
-| `runOnSelect` | Boolean | `false` | `false` = 只 emit `command`；`true` = 先 `registry.run` 再 emit |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | boolean | 开关回写 |
-| `command` | id | 选中条目（禁用命令不 emit） |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 透传底座触发器槽（底座当前版本不渲染该槽，传了等底座支持即生效） |
+<CompApi id="command-palette" />
 
 ## 行为
 

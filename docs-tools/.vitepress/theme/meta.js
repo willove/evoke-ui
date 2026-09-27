@@ -1,95 +1,103 @@
 /**
- * tools 文档站目录 — 顶栏 / 侧栏 / 站内搜索共用（移植自 business 站的同构文件）。
- * 版本从包的 package.json 读：顶栏展示点与 npm 包版本不可能漂移
- * （G8 守的是 index.md 的 hero 徽标，这里是顶栏那一处）。
+ * 站点目录数据 — 顶栏 / 侧栏 / 站内搜索共用。
+ *
+ * 组件目录**不再手写**：直接读包内分类单一来源
+ * （packages/evoke-tools-ui/src/taxonomy.js），两层（common / office）与
+ * 用途分类（壳 / 工具区 / 命令 / 面板 / 反馈 / 输入 / 基础）在那边定义一次，
+ * 这里只做展示形态的适配。分类漂移由包的 G9 分类门 + taxonomy.test.js 守。
  */
-/** 版本展示点由 config.mts 的 themeConfig.toolsVersion 供（构建期读包，不硬编码） */
-export const BRAND = { name: 'Evoke Tools UI' }
+import {
+  LAYERS,
+  CATEGORIES,
+  GRANULARITIES,
+  COMPONENT_TAXONOMY,
+  groupedByCategory,
+} from '../../../packages/evoke-tools-ui/src/taxonomy.js'
 
-/** 顶栏导航（外链走 target=_blank） */
-export const NAV_ITEMS = [
-  { key: 'guide', label: '指南', icon: 'book', path: '/guide/getting-started' },
-  { key: 'contract', label: '契约', icon: 'file-text', path: '/guide/design' },
-  { key: 'npm', label: 'npm', icon: 'npmjs', path: 'https://www.npmjs.com/package/@wil-works/evoke-tools-ui', external: true },
-]
-
-/** 侧栏分组：与 config.mts 的 sidebar 同源（一处改两头同步） */
-export const SIDEBAR_GROUPS = [
+/** 指南分组（/guide/* 的侧栏） */
+export const GUIDE_NAV = [
   {
-    name: 'L1 原子件',
-    key: 'l1',
+    name: '指南',
+    key: 'guide',
     components: [
-      { name: 'EtProvider', path: '/components/provider' },
-      { name: 'EtToolButton', path: '/components/tool-button' },
-      { name: 'EtToolGroup', path: '/components/tool-group' },
-      { name: 'EtTabStrip', path: '/components/tab-strip' },
-      { name: 'EtScreenTip', path: '/components/screen-tip' },
-      { name: 'EtKeyHint', path: '/components/key-hint' },
-      { name: 'EtDivider', path: '/components/divider' },
-      { name: 'EtToolSpacer', path: '/components/tool-spacer' },
-      { name: 'EtDropdown', path: '/components/dropdown' },
-      { name: 'EtSelect', path: '/components/select' },
-      { name: 'EtTooltip', path: '/components/tooltip' },
-      { name: 'EtSplitter', suffix: ' / Panel', path: '/components/splitter' },
+      { name: '快速开始', zh: '', path: '/guide/getting-started' },
+      { name: '命令驱动', zh: '', path: '/guide/commands' },
+      { name: '工作台布局', zh: '', path: '/guide/workbench' },
+      { name: '风格体系', zh: '', path: '/guide/style' },
+      { name: '组合契约（槽位）', zh: '', path: '/guide/composition' },
+      { name: '主题与画布桥', zh: '', path: '/guide/theme' },
+      { name: '键盘优先', zh: '', path: '/guide/keyboard' },
+      { name: '配方：日志分析器', zh: '', path: '/guide/recipe-log-analyzer' },
     ],
   },
   {
-    name: 'L2 工具区',
-    key: 'l2',
-    components: [
-      { name: 'EtRibbonBar', suffix: ' / OverflowMenu', path: '/components/ribbon-bar' },
-      { name: 'EtCommandPalette', path: '/components/command-palette' },
-      { name: 'EtContextMenu', path: '/components/context-menu' },
-      { name: 'EtShortcutPanel', path: '/components/shortcut-panel' },
-      { name: 'EtShortcutHint', path: '/components/shortcut-hint' },
-    ],
-  },
-  {
-    name: 'L3 工作台',
-    key: 'l3',
-    components: [
-      { name: 'EtWorkbench', path: '/components/workbench' },
-      { name: 'EtDock', path: '/components/dock' },
-      { name: 'EtPanel', path: '/components/panel' },
-      { name: 'EtPanelGroup', path: '/components/panel-group' },
-      { name: 'EtDocumentTabs', path: '/components/document-tabs' },
-      { name: 'EtScrollArea', path: '/components/scroll-area' },
-      { name: 'EtEmptyState', path: '/components/empty-state' },
-    ],
-  },
-  {
-    name: 'L4 外壳件',
-    key: 'l4',
-    components: [
-      { name: 'EtTitleBar', path: '/components/title-bar' },
-      { name: 'EtStatusBar', path: '/components/status-bar' },
-      { name: 'EtBackstage', path: '/components/backstage' },
-      { name: 'EtThemeBridge', path: '/components/theme-bridge' },
-      { name: 'EtDialog', path: '/components/dialog' },
-      { name: 'EtToast', path: '/components/toast' },
-      { name: 'EtBanner', path: '/components/banner' },
-    ],
-  },
-  {
-    name: '图标机制',
-    key: 'icons',
-    components: [{ name: 'EtIcon', suffix: ' · 三层命名与兜底', path: '/components/icons' }],
+    name: '契约',
+    key: 'contract',
+    components: [{ name: '设计规范（--et-* 全量）', zh: '', path: '/guide/design' }],
   },
 ]
 
-/** 侧栏"导航"组（指南与契约） */
-export const GUIDE_NAV_ITEMS = [
-  { key: 'getting-started', label: '快速开始', icon: 'rocket', path: '/guide/getting-started' },
-  { key: 'commands', label: '命令驱动', icon: 'command', path: '/guide/commands' },
-  { key: 'workbench', label: '工作台布局', icon: 'layout', path: '/guide/workbench' },
-  { key: 'theme', label: '主题与画布桥', icon: 'palette', path: '/guide/theme' },
-  { key: 'keyboard', label: '键盘优先', icon: 'keyboard', path: '/guide/keyboard' },
-  { key: 'recipe', label: '配方：日志分析器', icon: 'flask', path: '/guide/recipe-log-analyzer' },
-  { key: 'design', label: '设计规范', icon: 'file-text', path: '/guide/design' },
+/** 案例分组（/examples/* 的侧栏） */
+export const EXAMPLES_NAV = [
+  {
+    name: '案例',
+    key: 'examples',
+    components: [
+      { name: '案例总览', zh: '', path: '/examples/' },
+      { name: '电子表格工作台', zh: '', path: '/examples/sheet-workbench' },
+      { name: '日志分析器', zh: '', path: '/examples/log-analyzer' },
+      { name: '数据库查询台', zh: '', path: '/examples/sql-console' },
+      { name: '文件资源管理器', zh: '', path: '/examples/file-explorer' },
+      { name: '代码编辑器', zh: '', path: '/examples/code-editor' },
+      { name: '运维监控台', zh: '', path: '/examples/ops-monitor' },
+      { name: '邮件工作台', zh: '', path: '/examples/mail-workspace' },
+      { name: '设置中心（Backstage）', zh: '', path: '/examples/settings-backstage' },
+    ],
+  },
 ]
 
-/** 站内搜索的扁平索引（name + path） */
-export const SEARCH_INDEX = [
-  ...GUIDE_NAV_ITEMS.map((i) => ({ name: i.label, path: i.path, category: '指南' })),
-  ...SIDEBAR_GROUPS.flatMap((g) => g.components.map((c) => ({ name: c.name, path: c.path, category: g.name }))),
+/** 组件条目的展示形态：中文短名 + 子路径名（英文）+ 分类/粒度标签 */
+function toSidebarItems(components) {
+  return components.map((c) => ({
+    name: c.zh,
+    suffix: c.id,
+    path: `/components/${c.id}`,
+    id: c.id,
+    layer: c.layer,
+    category: c.category,
+    granularity: c.granularity,
+    summary: c.summary,
+  }))
+}
+
+/** 两层 × 用途分类的侧栏树（/components/* 与两个概览页共用） */
+export const TOOLS_LAYERS = Object.values(LAYERS).map((layer) => ({
+  ...layer,
+  groups: groupedByCategory(layer.key).map(({ category, components }) => ({
+    key: `${layer.key}-${category.key}`,
+    name: category.zh,
+    desc: category.desc,
+    components: toSidebarItems(components),
+  })),
+}))
+
+/** 概览页与抽屉用：层 → 分类 → 条目（含中文摘要） */
+export { LAYERS, CATEGORIES, GRANULARITIES, COMPONENT_TAXONOMY }
+
+/** 站内搜索的扁平索引（指南 + 组件 + 案例，带分类） */
+export const ALL_PAGES = [
+  ...GUIDE_NAV.flatMap((g) => g.components.map((c) => ({ ...c, category: g.name }))),
+  ...COMPONENT_TAXONOMY.map((c) => ({
+    name: c.zh,
+    zh: c.id,
+    path: `/components/${c.id}`,
+    category: `${LAYERS[c.layer].zh} · ${CATEGORIES[c.category].zh}`,
+  })),
+  ...EXAMPLES_NAV.flatMap((g) => g.components.map((c) => ({ ...c, category: g.name }))),
 ]
+
+/** 主题色与品牌（家族三站同一枚 #175DFF） */
+export const BRAND = {
+  name: 'Evoke Tools UI',
+  primary: '#175DFF',
+}

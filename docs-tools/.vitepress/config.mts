@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { resolve } from 'node:path'
 import llmstxt from 'vitepress-plugin-llms'
 import { demoSourcePlugin } from './demo-source.mjs'
+import { componentApiPlugin } from './component-api.mjs'
 import toolsPkg from '../../packages/evoke-tools-ui/package.json'
 import { getComponentEntries } from '../../packages/evoke-business-ui/scripts/component-entries.mjs'
 import { getEtComponentEntries } from '../../packages/evoke-tools-ui/scripts/component-entries.mjs'
@@ -47,12 +48,13 @@ function sourceAlias() {
  * Evoke Tools UI 文档站
  * M4 全站：指南 6 页（快速开始 / 命令 / 工作台 / 主题 / 键盘 / recipe）+ 组件页
  * （33 个组件入口逐页 + 图标机制页）+ 契约页（--et-* 全量令牌与契约）。
- * 侧栏分层与 src/index.js 的分层注释同源；组件数以产物入口为准（G8）。
+ * 侧栏/目录页/搜索的组件分类与 src/taxonomy.js 同源（两层 + 用途分类）；
+ * 组件数以产物入口为准（G8），分类一致性由包的 G9 分类门守。
  */
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Evoke Tools UI',
-  description: '产品级 GUI 框架：工具区 / 停靠 / 外壳件 + 运行时契约，命名空间 --et-*',
+  description: '产品级 GUI 框架：common-tools 通用层 + office-tools 办公子类 + 运行时契约，命名空间 --et-*',
   // <DemoBlock>源码注入（文档页只写一遍演示代码，块内即预览）
   markdown: {
     config(md) {
@@ -63,93 +65,10 @@ export default defineConfig({
     // 顶栏版本展示点：构建期从包读取（不硬编码——G8 版本守卫扫的是本文件里的
     // 字面版本串，程序化读入不会造成假阳性，也不会与 npm 包版本漂移）
     toolsVersion: toolsPkg.version,
-    sidebar: [
-      {
-        text: '指南',
-        collapsed: false,
-        items: [
-          { text: '快速开始', link: '/guide/getting-started' },
-          { text: '命令驱动', link: '/guide/commands' },
-          { text: '工作台布局', link: '/guide/workbench' },
-          { text: '主题与画布桥', link: '/guide/theme' },
-          { text: '键盘优先', link: '/guide/keyboard' },
-          { text: '配方：日志分析器', link: '/guide/recipe-log-analyzer' },
-        ],
-      },
-      {
-        text: '组件',
-        collapsed: false,
-        items: [
-          {
-            text: 'L1 原子件（12）',
-            collapsed: false,
-            items: [
-              { text: 'EtProvider', link: '/components/provider' },
-              { text: 'EtToolButton', link: '/components/tool-button' },
-              { text: 'EtToolGroup', link: '/components/tool-group' },
-              { text: 'EtTabStrip', link: '/components/tab-strip' },
-              { text: 'EtScreenTip', link: '/components/screen-tip' },
-              { text: 'EtKeyHint', link: '/components/key-hint' },
-              { text: 'EtDivider', link: '/components/divider' },
-              { text: 'EtToolSpacer', link: '/components/tool-spacer' },
-              { text: 'EtDropdown', link: '/components/dropdown' },
-              { text: 'EtSelect', link: '/components/select' },
-              { text: 'EtTooltip', link: '/components/tooltip' },
-              { text: 'EtSplitter / EtSplitterPanel', link: '/components/splitter' },
-            ],
-          },
-          {
-            text: 'L2 工具区（6）',
-            collapsed: false,
-            items: [
-              { text: 'EtRibbonBar / EtOverflowMenu', link: '/components/ribbon-bar' },
-              { text: 'EtCommandPalette', link: '/components/command-palette' },
-              { text: 'EtContextMenu', link: '/components/context-menu' },
-              { text: 'EtShortcutPanel', link: '/components/shortcut-panel' },
-              { text: 'EtShortcutHint', link: '/components/shortcut-hint' },
-            ],
-          },
-          {
-            text: 'L3 工作台（7）',
-            collapsed: false,
-            items: [
-              { text: 'EtWorkbench', link: '/components/workbench' },
-              { text: 'EtDock', link: '/components/dock' },
-              { text: 'EtPanel', link: '/components/panel' },
-              { text: 'EtPanelGroup', link: '/components/panel-group' },
-              { text: 'EtDocumentTabs', link: '/components/document-tabs' },
-              { text: 'EtScrollArea', link: '/components/scroll-area' },
-              { text: 'EtEmptyState', link: '/components/empty-state' },
-            ],
-          },
-          {
-            text: 'L4 外壳件（7）',
-            collapsed: false,
-            items: [
-              { text: 'EtTitleBar', link: '/components/title-bar' },
-              { text: 'EtStatusBar', link: '/components/status-bar' },
-              { text: 'EtBackstage', link: '/components/backstage' },
-              { text: 'EtThemeBridge', link: '/components/theme-bridge' },
-              { text: 'EtDialog', link: '/components/dialog' },
-              { text: 'EtToast', link: '/components/toast' },
-              { text: 'EtBanner', link: '/components/banner' },
-            ],
-          },
-          {
-            text: '图标机制',
-            collapsed: false,
-            items: [{ text: 'EtIcon · 三层命名与兜底', link: '/components/icons' }],
-          },
-        ],
-      },
-      {
-        text: '契约',
-        collapsed: false,
-        items: [{ text: '设计规范（--et-* 全量）', link: '/guide/design' }],
-      },
-    ],
+    // 侧栏/顶栏/搜索的目录数据在 theme/meta.js（与 business / charts 两站同构：
+    // 自定义外壳自己渲染导航，不用 VitePress 默认主题的 sidebar）
   },
   vite: {
-    plugins: [sourceAlias()],
+    plugins: [sourceAlias(), componentApiPlugin()],
   },
 })

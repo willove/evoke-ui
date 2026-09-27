@@ -2,28 +2,26 @@
 
 底座分隔基元的工具度量适配：拖拽条厚度、热区、把手走 `--et-splitter-*`，其余透传。
 
-```vue
-<et-splitter layout="horizontal" @resize="onResize">
-  <et-splitter-panel :size="300" :min="220" :max="480">文件树</et-splitter-panel>
-  <et-splitter-panel :default-size="'1fr'">编辑器</et-splitter-panel>
-</et-splitter>
-```
+<script setup>
+import { ref } from 'vue'
+const sizes = ref([])
+</script>
+
+<DemoBlock>
+  <div class="demo-col">
+    <et-splitter layout="horizontal" class="demo-splitter" @resize="sizes = $event">
+      <et-splitter-panel size="38%" min="180"><p class="demo-readout">文件树</p></et-splitter-panel>
+      <et-splitter-panel size="62%" min="240"><p class="demo-readout">编辑器（拖或聚焦分隔条按 ←/→）</p></et-splitter-panel>
+    </et-splitter>
+    <p class="demo-readout">回传尺寸 <code>{{ sizes.length ? sizes.join(' / ') : '—' }}</code></p>
+  </div>
+</DemoBlock>
 
 ## EtSplitter
 
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Props | 透传 | `layout`（`horizontal` / `vertical`，默认 `horizontal`）等全部下传 `EbSplitter` |
-| Emits | `resize` | 载荷为底座回传的百分比数组 |
-| Slots | 透传 | 默认槽放 `EtSplitterPanel` |
+<CompApi id="splitter" />
 
-## EtSplitterPanel
-
-| 面 | 名称 | 说明 |
-| --- | --- | --- |
-| Props | 透传 | `size` / `defaultSize` / `min` / `max` / `resizable`（默认 true）/ `collapsible`（默认 false）/ `keyboardStep`（默认 8，px） |
-| Emits | —— | 无 |
-| Slots | 透传 | 默认槽 = 面板内容 |
+面板件 `EtSplitterPanel`（`size` / `min` / `max` / `keyboardStep` 等透传面）见 [其单页](/components/splitter-panel)。
 
 ## 行为
 

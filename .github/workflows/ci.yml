@@ -149,7 +149,8 @@ jobs:
       - name: Visual regression (tools)
         env:
           VISUAL_SCOPE: tools
-        run: pnpm exec playwright test --project=tools --shard=${{ matrix.shard }}/3
+        # docs-tools = 文档站自检（无基线，只守每页渲染），与 tools 视觉同批跑
+        run: pnpm exec playwright test --project=tools --project=docs-tools --shard=${{ matrix.shard }}/3
 
   # 基线重录（Linux）：视觉基线只能在与守卫相同的平台上录制——此前只在 mac 上
   # 录过 darwin 基线，CI（ubuntu）上 28 例快照全红"A snapshot doesn't exist"。

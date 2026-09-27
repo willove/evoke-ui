@@ -6,6 +6,20 @@
 令牌单一事实源是 `packages/evoke-tools-ui/src/styles/variables.css`；本页与 `pnpm tokens:export`
 产出的 `design-tokens/evoke-tools-ui.{light,dark}.json` 同源，构建期 `check-density.mjs` 逐项对照。
 
+## 两层与用途分类
+
+组件分两层，分类的单一来源是 `packages/evoke-tools-ui/src/taxonomy.js`（文档站侧栏、目录页、
+站内搜索都从它派生；漂移由 `scripts/check-taxonomy.mjs`（G9）与 `test/taxonomy.test.js` 守）：
+
+| 层 | 入口 | 装什么 | 判据 |
+| --- | --- | --- | --- |
+| **common-tools** | `@wil-works/evoke-tools-ui/common` | 基准件 + 通用壳 + 命令面 + 面板 + 反馈 + 输入（29 件） | 不含办公语义，任何工具形态都能用 |
+| **office-tools** | `@wil-works/evoke-tools-ui/office` | 功能区 tab/组语义、溢出菜单、「文件」后台页、底带表页签、公式栏、画布宿主、画布调色板桥（7 件） | 只在办公形态成立 |
+
+一级分类按**工具用途**（不是实现批次）：壳 / 工具区 / 命令 / 面板 / 反馈 / 输入 / 基础；
+二级标粒度：原子件 / 功能块 / 契约。查组件先按"我要做工具的哪一块"进
+[common-tools](/common/) 或 [office-tools](/office/)。
+
 ## 双层架构
 
 | 层 | 令牌族 | 覆盖时机 |
@@ -72,14 +86,16 @@ G7 门把"布局属性禁字面量 px"做成构建期硬检查；真实装配下
 | `--et-statusbar-item-gap` | 状态栏条目间距 | 12px |
 | `--et-toolbtn-caret-size` | 「按钮+下拉」指示尺寸 | 14px |
 
-状态视觉只做底色/文字色差异：
+状态视觉只做底色/文字色差异（「中性工具壳」基线，见[风格体系](style.md)）：
 
 ```
 --et-state-hover-bg      → var(--eb-fill-color-light)   hover 禁跳强调色，只加深一档
 --et-state-active-bg     → var(--eb-fill-color)
---et-state-selected-fg   → var(--eb-color-primary)
+--et-state-selected-bg   → var(--eb-fill-color)          选中底色走中性 fill，不用主色浅底
+--et-state-selected-fg   → var(--eb-color-primary)       主色只落在文字/图标
 --et-state-disabled-fg   → var(--eb-text-color-disabled)
---et-focus-ring-color    → var(--eb-color-primary)      宽 2px，offset 1px
+--et-focus-ring-color    → 高对比中性色（亮黑/暗白）      宽 2px，offset 0，不跟随品牌色
+--et-focus-ring-dual     → 内 1px + 外 1px 中性双色环      浮层与画布用（任意底色可见）
 ```
 
 ## 层级（z-index 阶梯）
@@ -90,8 +106,10 @@ G7 门把"布局属性禁字面量 px"做成构建期硬检查；真实装配下
 
 ## 圆角 / 动效 / 图标
 
-- 圆角：`--et-radius-sm/md/lg` = 2/4/6px（比中后台小一档）。
-- 动效时长引用 `--eb-duration-*`；默认态**无位移无缩放**，只过渡背景/边框/颜色。
+- 圆角阶梯：`--et-radius-sm/md/lg/xl` = 2/4/8/12px（小钮 2 · 大钮与输入 4 · 面板与浮层 8 · 对话框 12）。
+- 阴影只给浮层，三档固定映射：`--et-shadow-pop` / `--et-shadow-callout` / `--et-shadow-dialog`；chrome 内部一律 1px 描边。
+- 动效三档：`--et-duration-hover/pop/collapse` = 100/150/200ms（曲线 `--et-ease-decelerate/accelerate`）；
+  默认态**无位移无缩放**，只过渡背景/边框/颜色。
 - 图标档位：xs 14（状态栏）/ sm 16（菜单项、小钮）/ md 20 / lg 24（工具区大钮）/ xl 28；
   同容器尺寸档 ≤2；默认 line 风格，fill 仅用于激活/选中；图标与文字间距用 `--et-icon-gap-*`。
 - 图标未命中禁渲染空白：回落显式兜底图标 `question-circle`（dev 下 `console.warn`）；
@@ -188,10 +206,11 @@ tools-ui 只做到 chrome 与命令面：**画布内容的渲染契约归消费�
 - **`EbTooltip` 的 `trigger` 校验集缺 `'manual'`**（`EbPopper` 有）：想完全接管触发路径
   （`EtScreenTip` 的 hover+focus 双路）目前会吃一条 dev warn，组件侧用"默认 hover +
   切档后重调 show()"绕过，行为有测试锁定；底座补 `'manual'` 属底座改动，M1 评估。
-- **`EtSplitter` 的键盘 resize 未做**：拖拽条由底座 `EbSplitterPanel` 渲染，键盘增强放进
-  M2 的面板树运行时（框架自有代码面）再做。
+- **`EtSplitter` 的键盘 resize 已在 1.2.0 交付**：拖拽条仍由底座 `EbSplitterPanel` 渲染，
+  族内包装件给它加 `role="separator"` + 方向键 / Home / End 改尺寸（步长 `keyboardStep`，默认 8px），
+  组字期间不响应；键位与 aria 取值见 [splitter 页](/components/splitter)。
 - **组标题行 y 对齐的前提是同排组都有 label**（label 为空不渲染标题行，计划契约如此）；
-  混排场景的等高占位由 L2 `EtRibbonBar` 负责。
+  混排场景的等高占位由 office-tools 的 `EtRibbonBar` 负责。
 - **EtCommandPalette 的执行体归消费方**（`runOnSelect` 默认 false，与工具区/右键的 `@command`
   约定一致；true 为便捷模式：选中即 `registry.run`）。
 - **chrome 横带的分隔线不要用 `border`**：border 会吃掉 1px 内容盒，工具区内容就比

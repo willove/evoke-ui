@@ -39,34 +39,9 @@ const ribbonSource = `<et-ribbon-bar
   <HomeStage />
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `schema` | Array | `[]` | tab 节点树：`{ key, type: 'tab', label, children: [group] }` |
-| `registry` | Object | `null` | 命令注册表，状态唯一来源 |
-| `modelValue` | String | `''` | 激活 tab 的 key；缺省落到首个常驻 tab |
-| `collapsed` | Boolean | `false` | 真折叠态（受控可选；内部 toggle 经 `update:collapsed` 回写） |
-| `contextTabs` | Array | `[]` | `{ id, label, when(ctx) }`，声明式唤出 |
-| `ctx` | Object | `{}` | 选区/焦点上下文，喂给 `registry.state` |
-| `persistKey` | String | `''` | 非空即按产品持久化折叠态 |
-| `overflowLabel` | String | `'更多'` | 窄屏溢出入口文案 |
-| `peek` | Boolean | `true` | 折叠后 hover/focus tab 条时浮层临时展开 |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | key | 激活 tab 变化 |
-| `update:collapsed` | boolean | 折叠态回写 |
-| `change` | key | tab 切换 |
-| `command` | id | 命令请求；跑不跑由消费方决定（`registry.run`） |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| —— | —— | 无（条目由 schema 渲染） |
+<CompApi id="ribbon-bar" />
 
 ## 行为
 

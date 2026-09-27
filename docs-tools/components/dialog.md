@@ -15,33 +15,9 @@ const open = ref(false)
   </et-dialog>
 </DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | Boolean | `false` | 开关 |
-| `title` | String | `''` | 标题（`aria-label` 取它，缺省「对话框」） |
-| `width` | String \| Number | `'520px'` | 面板宽；数字按 px |
-| `closeOnClickMask` | Boolean | `true` | 点遮罩关闭（只认遮罩自身，面板冒泡已过滤） |
-| `closeOnEsc` | Boolean | `true` | Esc 收敛；false 时 Esc 不关（焦点陷阱仍生效） |
-| `confirmText` | String | `''` | 确认钮文案；给了才渲染 |
-| `cancelText` | String | `''` | 取消钮文案；给了才渲染 |
-
-## Emits
-
-| 名称 | 载荷 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | boolean | 开关回写 |
-| `confirm` | —— | 确认点击（随后关闭；执行体归消费方） |
-| `cancel` | —— | 取消点击（随后关闭） |
-| `opened` / `closed` | —— | 过渡结束 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 正文 |
-| `footer` | —— | 整体接管底栏；给了就不渲染内置双钮 |
+<CompApi id="dialog" />
 
 ## 行为
 

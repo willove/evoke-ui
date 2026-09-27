@@ -2,25 +2,17 @@
 
 控件行 + 组标题行的功能区组容器；组间分隔用 EtDivider，不在组内。
 
-```vue
+<DemoBlock densities>
 <et-tool-group label="剪贴板">
   <et-tool-button icon="copy" label="复制" />
   <et-divider direction="vertical" />
   <et-tool-button icon="brush" label="格式刷" />
 </et-tool-group>
-```
+</DemoBlock>
 
-## Props
+## API
 
-| 名称 | 类型 | 默认 | 说明 |
-| --- | --- | --- | --- |
-| `label` | String | `''` | 组标题行文本；为空不渲染标题行，组不占标题带高度 |
-
-## Slots
-
-| 名称 | 作用域 | 说明 |
-| --- | --- | --- |
-| 默认 | —— | 控件行内容（ToolButton / Dropdown / Select / Divider / ToolSpacer 混排） |
+<CompApi id="tool-group" />
 
 ## 行为
 
