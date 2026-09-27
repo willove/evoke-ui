@@ -145,54 +145,57 @@ try {
   )
   const entries = entryModule.getEtComponentEntries()
   const names = new Set(entries.map((e) => e.name))
-  // 分层归属：与 src/index.js 的结构注释同源（改这里 = 改分层表，必须与 DESIGN.md 同步）
-  const LAYERS = {
-    L1: ['provider', 'tool-button', 'tool-group', 'tab-strip', 'screen-tip', 'key-hint', 'divider', 'tool-spacer', 'dropdown', 'select', 'tooltip', 'splitter'],
-    L2: ['ribbon-bar', 'overflow-menu', 'command-palette', 'context-menu', 'shortcut-panel', 'shortcut-hint'],
-    L3: ['dock', 'panel', 'panel-group', 'scroll-area', 'empty-state', 'workbench', 'document-tabs'],
-    L4: ['title-bar', 'status-bar', 'backstage', 'theme-bridge', 'dialog', 'toast', 'banner'],
-  }
-  // 辅件：splitter-panel（splitter 族的子路径辅件）/ icon（兜底载体）不进分层宣称
-  const AUX = ['splitter-panel', 'icon']
-  const classified = new Set([...Object.values(LAYERS).flat(), ...AUX])
-  const unclassified = entries.filter((e) => !classified.has(e.name)).map((e) => e.name)
-  if (unclassified.length) {
-    failures.push(`tools-ui 组件入口有未归类条目（分层表过期？）：${unclassified.join(', ')}`)
-  }
-  const layerCount = (layer) => LAYERS[layer].filter((n) => names.has(n)).length
 
-  // DESIGN.md 的里程碑表 = 宣称口径（L1 "12 个 L1 原子件" / L2 "六个组件" / L3 "七件" / L4 "七件"）
-  const design = readAtHead('packages/evoke-tools-ui/DESIGN.md')
-  const cn = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12 }
-  const num = (raw) => (cn[raw] ?? Number(raw))
-  // 每层一组候选句式（任一匹配即算宣称；全不中 = 文档丢了可核对的数字）
-  const claimPatterns = {
-    L1: [/(\d+)\s*个\s*L1 原子件/, /L1 原子件[^。\n]*?\*\*(\d+)\*\*/],
-    L2: [/L2\s*([一二三四五六七八九十]+|\d+)\s*个组件/],
-    L3: [/L3\s*([一二三四五六七八九十]+|\d+)\s*件/],
-    L4: [/L4\s*([一二三四五六七八九十]+|\d+)\s*件/],
+  // 分层归属来自包内分类单一来源（v1.3 起：common / office 两层 × 用途分类；tokenize 见 src/taxonomy.js）
+  const taxonomy = await import(
+    pathToFileURL(join(repoRoot, 'packages/evoke-tools-ui/src/taxonomy.js')).href
+  )
+  const { LAYERS, COMPONENT_TAXONOMY } = taxonomy
+  const taxNames = new Set(COMPONENT_TAXONOMY.map((c) => c.id))
+  const unclassified = entries.filter((e) => !taxNames.has(e.name)).map((e) => e.name)
+  if (unclassified.length) {
+    failures.push(`tools-ui 组件入口未进分类表（taxonomy.js 过期？）：${unclassified.join(', ')}`)
   }
+  const layerCount = (layer) =>
+    COMPONENT_TAXONOMY.filter((c) => c.layer === layer && names.has(c.id)).length
+
+  // DESIGN.md 的宣称口径（§五之二）：common N 件 / office N 件 / 组件入口 N 件
+  const design = readAtHead('packages/evoke-tools-ui/DESIGN.md')
+  const claimPatterns = {
+    common: [/common\s*(\d+)\s*件/],
+    office: [/office\s*(\d+)\s*件/],
+  }
+  const totalHit = design.match(/组件入口\s*\*\*(\d+)\s*件\*\*/)
+  if (!totalHit) failures.push('DESIGN.md 里找不到「组件入口 N 件」的总量宣称（G8 需要可核对的数字）')
+  else if (Number(totalHit[1]) !== entries.length) {
+    failures.push(
+      `tools-ui 组件总数不一致：DESIGN.md 宣称 ${totalHit[1]} 件，入口产物实际 ${entries.length} 件。` +
+        '文档承诺的能力必须真实存在于发布产物里',
+    )
+  }
+
   const claims = []
   for (const [layer, patterns] of Object.entries(claimPatterns)) {
     const hit = patterns.map((re) => design.match(re)).find(Boolean)
     if (!hit) {
-      failures.push(`DESIGN.md 里找不到 ${layer} 的组件数宣称（G8 需要每层都有可核对的数字）`)
+      failures.push(`DESIGN.md 里找不到 ${layer} 层的组件数宣称（G8 需要每层都有可核对的数字）`)
       continue
     }
-    claims.push({ layer, count: num(hit[1]) })
+    claims.push({ layer, count: Number(hit[1]) })
   }
   for (const claim of claims) {
     const actual = layerCount(claim.layer)
     if (claim.count !== actual) {
       failures.push(
-        `tools-ui 组件数不一致：DESIGN.md 宣称 ${claim.layer} ${claim.count} 个，入口产物实际 ${actual} 个。` +
-        '文档承诺的能力必须真实存在于发布产物里',
+        `tools-ui 组件数不一致：DESIGN.md 宣称 ${claim.layer} ${claim.count} 件，入口产物实际 ${actual} 件。` +
+          '文档承诺的能力必须真实存在于发布产物里',
       )
     }
   }
   const claimedTotal = claims.reduce((n, c) => n + c.count, 0)
-  notes.push(`tools-ui 组件入口：${entries.length} 条（分层宣称合计 ${claimedTotal} + 辅件 ${AUX.length}）`)
+  notes.push(`tools-ui 组件入口：${entries.length} 条（两层宣称合计 ${claimedTotal}）`)
   for (const c of claims) notes.push(`  └ ${c.layer} 宣称 ${c.count} / 实际 ${layerCount(c.layer)}`)
+  notes.push(`  └ office 层清单：${LAYERS.office?.label ?? 'office-tools'}`)
 } catch (err) {
   failures.push(`tools-ui 组件数一致性检查失败：${err.message}`)
 }
