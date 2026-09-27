@@ -68,6 +68,20 @@ describe('构造与校验', () => {
     expect(tree.docks.map((d) => d.id)).toEqual(['ok', 's'])
   })
 
+  it('显式 docks: [] 是合法形态（只有画布的工作台），不算损坏', () => {
+    const tree = createLayoutTree({ docks: [] })
+    expect(tree.docks).toEqual([])
+    expect(tree.maximized).toBeNull()
+  })
+
+  it('给了 dock 但一个都不合法 → 仍判损坏（收集错误，不静默变空树）', () => {
+    const errors = []
+    const tree = normalizeLayout({ docks: [{ side: 'nope' }, { id: 'x' }] }, { docks: [] }, errors)
+    expect(errors.join(' ')).toMatch(/没有任何可用 dock|side 必须是/)
+    // fallback 生效（这里 fallback 就是空树：只有画布）
+    expect(tree.docks).toEqual([])
+  })
+
   it('id 命名空间全局唯一（dock 与面板共用）', () => {
     const errors = []
     normalizeLayout(
@@ -106,9 +120,15 @@ describe('序列化与损坏降级（不白屏）', () => {
     expect(tree.docks).toHaveLength(2)
   })
 
-  it('结构坏档（docks 空 / 非对象）→ 降级', () => {
-    expect(deserializeLayout('{"docks":[]}', defaultTree()).usedFallback).toBe(true)
+  it('结构坏档（非对象 / docks 非数组）→ 降级', () => {
     expect(deserializeLayout('"字符串"', defaultTree()).usedFallback).toBe(true)
+    expect(deserializeLayout('{"docks":42}', defaultTree()).usedFallback).toBe(true)
+  })
+
+  it('显式空档 {"docks":[]} 是合法"只有画布"树，不再当损坏降级（v1.3.1 口径）', () => {
+    const { tree, usedFallback } = deserializeLayout('{"docks":[]}', defaultTree())
+    expect(usedFallback).toBe(false)
+    expect(tree.docks).toEqual([])
   })
 
   it('半坏档：可用 dock 保留、坏项进 errors', () => {

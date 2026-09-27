@@ -20,7 +20,9 @@ import EbTooltip from '@wil-works/evoke-business-ui/tooltip'
 defineOptions({ name: 'EtTooltip', inheritAttrs: false })
 
 const props = defineProps({
+  /** 提示文本（#content 槽可整体替换） */
   content: { type: String, default: '' },
+  /** 12 个 placement 值 */
   placement: {
     type: String,
     default: 'top',
@@ -31,18 +33,23 @@ const props = defineProps({
         'left-start', 'left-end', 'right-start', 'right-end',
       ].includes(v),
   },
+  /** 关闭提示 */
   disabled: { type: Boolean, default: false },
+  /** dark / light */
   effect: { type: String, default: 'dark', validator: (v) => ['dark', 'light'].includes(v) },
   /** 工具界面首显延迟（与 --et-screentip-delay-first 同源：400ms） */
   showAfter: { type: Number, default: 400 },
   /** 自动隐藏延迟（与 --et-screentip-delay-hide 同源：200ms） */
   hideAfter: { type: Number, default: 200 },
+  /** hover / click / focus / contextmenu */
   trigger: {
     type: String,
     default: 'hover',
     validator: (v) => ['hover', 'click', 'focus', 'contextmenu'].includes(v),
   },
+  /** 虚拟触发（自定义参考元素） */
   virtualTriggering: { type: Boolean, default: false },
+  /** 虚拟触发参考元素 */
   virtualRef: { type: Object, default: null },
 })
 

@@ -17,7 +17,7 @@
 .et-screentip.et-screentip {
   max-width: var(--et-screentip-max-width);
   padding: var(--et-space-block);
-  border-radius: var(--et-radius-md);
+  border-radius: var(--et-radius-lg);
   font-size: var(--et-density-base-font);
   line-height: var(--et-density-line-height);
 }

@@ -66,13 +66,21 @@ const TRANSITION_NAME = 'et-backstage'
 const ICON_SIZE = 'var(--et-icon-sm)'
 
 const props = defineProps({
+  /** 开关 */
   modelValue: { type: Boolean, default: false },
+  /** 标题（aria-label 取它，缺省「全屏页」） */
   title: { type: String, default: '' },
   /** 左导航宽（px）；null = 走 CSS 令牌默认档 */
   navWidth: { type: Number, default: null },
 })
 
-const emit = defineEmits(['update:modelValue', 'opened', 'closed'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 进场动画结束（此刻才可读焦点位） */
+  'opened',
+  /** 退场动画结束（Esc 与点外部都走同一条收起路径） */
+  'closed',
+])
 
 const rootRef = ref(null)
 const modalFocus = useModalFocus(() => rootRef.value, { onEscape: close })

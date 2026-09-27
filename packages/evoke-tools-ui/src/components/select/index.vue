@@ -24,6 +24,7 @@ import { useDensity } from '../../composables/useDensity'
 defineOptions({ name: 'EtSelect', inheritAttrs: false })
 
 const props = defineProps({
+  /** Boolean \ */
   modelValue: { type: [String, Number, Boolean, Array, Object], default: '' },
   /** 显式传入则优先；缺省按当前密度档映射（mapDensityToSelectSize） */
   size: { type: String, default: undefined },
@@ -31,12 +32,19 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:modelValue',
+  /** 选中变化 */
   'change',
+  /** 清空 */
   'clear',
+  /** 下拉浮层显隐变化（底座透传）；载荷 = 是否展开 */
   'visible-change',
+  /** 多选态移除某个 tag（底座透传）；载荷 = 被移除的值 */
   'remove-tag',
+  /** 可搜索模式下过滤词变化（底座透传）；载荷 = 过滤词 */
   'filter-change',
+  /** 输入框失焦（底座透传）；载荷 = 原生 FocusEvent */
   'blur',
+  /** 输入框聚焦（底座透传）；载荷 = 原生 FocusEvent */
   'focus',
 ])
 

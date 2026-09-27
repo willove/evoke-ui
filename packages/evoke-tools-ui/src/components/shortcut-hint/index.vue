@@ -22,6 +22,7 @@ const props = defineProps({
   keys: { type: String, default: '' },
   /** 可选标签（命令名；为空时只有键帽） */
   label: { type: String, default: '' },
+  /** auto 走运行时识别；mac / win 可钉死 */
   platform: {
     type: String,
     default: 'auto',

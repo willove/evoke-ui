@@ -140,11 +140,17 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:dock',
+  /** 区内某面板折叠；载荷 = 面板 id（改的是树，本件不自存） */
   'panel-collapse',
+  /** 区内某面板展开；载荷 = 面板 id */
   'panel-expand',
+  /** 区内某面板关闭；载荷 = 面板 id */
   'panel-close',
+  /** 区内某面板最大化；载荷 = 面板 id */
   'panel-maximize',
+  /** 区内面板从最大化还原（无载荷） */
   'panel-restore',
+  /** 整条停靠区经折叠把手切换；载荷 = 停靠区 id */
   'dock-toggle',
 ])
 

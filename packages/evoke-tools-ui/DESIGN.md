@@ -75,7 +75,7 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 - **语义层**（主题 API 入口，产品可覆盖）：`--et-chrome-*`（各带高度与预算）、
   `--et-density-*`（三档基准）、`--et-focus-*`、`--et-z-*`（层级阶梯）、`--et-state-*`（七态）。
 - **设计层**（度量常量）：`--et-size-*`（控件/图标尺寸）、`--et-space-*`（工具界面间距）、
-  `--et-radius-*`（比中后台小一档）、`--et-duration-*`、`--et-icon-*`、`--et-menu-*`、
+  `--et-radius-*`（阶梯 2/4/8/12）、`--et-shadow-*`（只给浮层三档）、`--et-duration-*`（100/150/200ms）、`--et-icon-*`、`--et-menu-*`、
   `--et-panel-*`、`--et-statusbar-*`。
 
 三层令牌契约（上层只准引用下层，禁止反向回流，每层独立门禁）：
@@ -106,6 +106,17 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 | `EtCommandPalette` / `EtContextMenu` / `EtShortcutPanel` | 命令表驱动的面板/右键/键位表 | M1 |
 | `EtWorkbench` / `EtPanel` / `EtDock` / `EtDocumentTabs` | 面板树、停靠、布局持久化 | M2 |
 | `EtTitleBar` / `EtStatusBar` / `EtBackstage` / `EtThemeBridge` / `EtDialog` | 产品外壳件与主题桥接 | M3 |
+| `EtFormulaBar` / `EtSheetTabs` / `EtSheetCanvasHost` | 办公基本件：公式栏 / 底带表页签 / 画布宿主（office 层） | v1.3 |
+
+## 五之二、两层与分类（v1.3 起）
+
+组件入口 **36 件**，分两层（子路径 `./common` 与 `./office`），分类单一来源是 `src/taxonomy.js`：
+
+- **common 29 件**：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入——不含办公语义，任何工具形态都能用；
+- **office 7 件**：功能区 / 溢出菜单 / 后台页 / 底带表页签 / 公式栏 / 画布宿主 / 画布桥——只在办公形态成立。
+
+分类由 G9 分类门（`check-taxonomy.mjs`）+ G10 槽位门（`check-slots.mjs`）+ `test/taxonomy.test.js`
+守一致性；本节的 29 / 7 由发布门 G8 对着入口产物核对。
 
 ## 六、里程碑边界
 
@@ -122,6 +133,9 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
   画布 `--ot-*` 随主题联动、双宿主标题栏、backstage 零尺寸跳动、焦点三处一致。
 - **M4（v1.0 冻结版）**：API 冻结、docs-tools 全站、G8 发布一致性门、视觉基线固化、
   真实消费者升级验证。
+- **v1.3（本版）**：两层重构（common / office 子路径）+ 用途分类替代 L1–L4 + 「中性工具壳」风格基线
+  + 办公基本件三件（公式栏 / 表页签 / 画布宿主）+ 槽位契约（G10）。
+  旧 L1–L4 是**实现批次**口径，保留在各里程碑文字里供追溯；现行分类见 §五之二。
 
 ## 七、工程约定（与底座同构）
 
@@ -129,7 +143,9 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
   `@typedef` 表达，`vue-tsc` 产出 `.d.ts` 供 TS strict 消费方对接。
 - 目录：`src/components/<name>/index.vue + style.css`；`src/runtime/`（L0 契约，与组件分家——
   产品外壳能力不是组件，混进 components 就是"每个形态各写一份状态机"的起点）；
-  `src/icons/`（解析兜底 + 领域别名）；`src/composables/`。
+  `src/icons/`（解析兜底 + 领域别名）；`src/composables/`；`src/office/styles/`（办公皮肤：
+  横带序列类，只消费 `--et-*`，不定义办公语义色）；`src/taxonomy.js` 与 `src/slots.js`
+  （分类与槽位两份单一来源）。
 - 构建：Vite lib 多入口（主入口 + runtime/icons 契约入口 + 每组件子路径），
   样式聚合 `dist/evoke-tools-ui.css`；构建前置跑五道门。
 - 依赖：白名单制——peer 只有 `vue` + `@wil-works/evoke-business-ui`，零第三方 UI 库；

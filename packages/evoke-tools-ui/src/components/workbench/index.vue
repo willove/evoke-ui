@@ -114,6 +114,11 @@
       </div>
     </div>
 
+    <!-- 内容页签带（办公形态：工作表标签；与顶部 #documents 对称，二者可同时用） -->
+    <div v-if="$slots.tabbar" class="et-workbench__band et-workbench__band--tabbar">
+      <slot name="tabbar" />
+    </div>
+
     <!-- 状态栏槽（chrome 底带） -->
     <div v-if="$slots.statusbar" class="et-workbench__band et-workbench__band--statusbar">
       <slot name="statusbar" />
@@ -160,7 +165,13 @@ const props = defineProps({
   persistKey: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:layout', 'reset', 'layout-corrupted'])
+const emit = defineEmits([
+  'update:layout',
+  /** 「重置布局」被触发（产品也可主动调 resetLayout()）；本件已落回默认树 */
+  'reset',
+  /** 入参或读回的布局树判为损坏并已降落默认树；载荷 = 错误清单（坏档只提示一次） */
+  'layout-corrupted',
+])
 
 /**
  * 默认布局的可用形态。消费方传了坏 defaultLayout 也不能让组件失手：
@@ -247,6 +258,8 @@ onMounted(() => {
   if (!props.persistKey) return
   // 挂载读回（空存储 = 默认布局；坏档降级默认布局并上报，照常渲染不白屏）
   const loaded = loadLayout(localStorageSafe(), props.persistKey, defaultTree.value)
+  // 没有持久化档 = 首次打开：当前树就是调用方给的 layout，别用 defaultLayout 顶掉它
+  if (loaded.empty) return
   lastSaved = loaded.tree
   if (loaded.usedFallback) {
     reportCorruption(loaded.errors)

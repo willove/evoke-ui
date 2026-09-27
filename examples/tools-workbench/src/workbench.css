@@ -347,3 +347,32 @@
   margin: 0;
   color: var(--eb-text-color-regular);
 }
+
+/* ─── 办公装配视图（v1.3）：画布宿主吃满画布位，才有真实的滚动量 ─── */
+.wb--office .et-workbench__canvas {
+  display: flex;
+  min-height: 0;
+}
+.wb__host {
+  width: 100%;
+  min-height: 0;
+}
+/* 画布内容：等距网格示意（产品这里放 canvas / 自绘网格） */
+.wb__office-sheet {
+  height: 100%;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, var(--eb-border-color-lighter) 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 95px, var(--eb-border-color-lighter) 95px 96px);
+}
+/* 浮层位内容：不随内容滚动 */
+.wb__office-chip {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-start: 14px;
+  padding: 4px 9px;
+  border: 1px solid var(--et-state-selected-fg);
+  border-radius: var(--et-radius-sm);
+  background: var(--eb-bg-color);
+  font-size: 11px;
+  color: var(--et-state-selected-fg);
+}

@@ -34,14 +34,23 @@ import { isImeComposing } from '@wil-works/evoke-business-ui'
 defineOptions({ name: 'EtContextMenu' })
 
 const props = defineProps({
+  /** 命令注册表 */
   registry: { type: Object, required: true },
   // 菜单节点：item 绑命令 id；separator；submenu 带 label + 递归的 children
+  /** 菜单节点：item（绑 command）/ separator / submenu（label + 递归 children） */
   schema: { type: Array, default: () => [] },
+  /** 推演 enabled 的上下文 */
   ctx: { type: Object, default: () => ({}) },
+  /** 关闭本菜单 */
   disabled: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['command', 'visible-change'])
+const emit = defineEmits([
+  /** 菜单项被选中；载荷 = 该项绑定的命令（与工具区同一 registry 出口，enabled/active 同源） */
+  'command',
+  /** 菜单显隐变化；载荷 = 是否可见 */
+  'visible-change',
+])
 
 const baseRef = ref(null)
 
@@ -205,7 +214,9 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
+  /** 在指定锚点打开菜单；override 可临时换掉本次的 schema 或上下文 */
   open: (target, override) => baseRef.value?.open(target, override),
+  /** 收起菜单（焦点归还触发元素由底座负责） */
   close: () => baseRef.value?.close(),
 })
 </script>

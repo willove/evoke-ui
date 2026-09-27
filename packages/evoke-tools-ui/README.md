@@ -1,6 +1,6 @@
 # @wil-works/evoke-tools-ui
 
-![npm version](https://img.shields.io/npm/v/%40wil-works%2Fevoke-tools-ui) ![npm version](https://img.shields.io/badge/version-v1.2.1-blue)
+![npm version](https://img.shields.io/npm/v/%40wil-works%2Fevoke-tools-ui) ![npm version](https://img.shields.io/badge/version-v1.3.1-blue)
 
 Evoke Tools UI —— 纯 JS Vue3 **产品级 GUI 框架**（命名空间 `--et-*`）。
 
@@ -9,7 +9,7 @@ chrome（标题栏 / 工具区 / 状态栏）环绕内容；常驻布局、键�
 
 - 设计语言白皮书：[`DESIGN.md`](./DESIGN.md)
 - 计划全文：仓库根 `plans/tools-ui/01–07`
-- 文档站：`docs-tools/`（指南 6 页 + 33 件组件页全覆盖 + 非办公域 recipe）
+- 文档站：`docs-tools/`（指南 9 页 + 36 件组件页全覆盖 + 9 个案例）
 
 ## 版本与 API 稳定性承诺（v1.0 起）
 
@@ -62,7 +62,28 @@ app.use(EvokeToolsUI)
 
 紧凑 24 / 默认 32 / 宽松 40 的控件高对齐 Fluent UI 的 small/medium/large 阶梯。
 
-## L2 工具区（M1）
+## 两层与用途分类（v1.3 起）
+
+| 层 | 入口 | 件数 | 装什么 |
+| --- | --- | --- | --- |
+| common-tools | `@wil-works/evoke-tools-ui/common` | 29 | 基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入（不含办公语义） |
+| office-tools | `@wil-works/evoke-tools-ui/office` | 7 | 功能区 / 溢出菜单 / 后台页 / 表页签 / 公式栏 / 画布宿主 / 画布桥（办公形态） |
+
+```js
+import CommonTools from '@wil-works/evoke-tools-ui/common'
+import OfficeTools from '@wil-works/evoke-tools-ui/office'
+createApp(App).use(CommonTools).use(OfficeTools)   // 也可只装一层
+```
+
+一级分类按**工具用途**（壳 / 工具区 / 命令 / 面板 / 反馈 / 输入 / 基础），二级标粒度
+（原子件 / 功能块 / 契约）。两份单一来源：
+
+- `src/taxonomy.js` —— 分类（层 / 用途 / 粒度 / 摘要）：文档站侧栏、两层概览页与站内搜索都从它派生；
+  `scripts/check-taxonomy.mjs`（G9 门）与 `test/taxonomy.test.js` 守一致性。
+- `src/slots.js` —— **槽位组合契约**（谁开了哪些槽、吃什么、作用域是什么）：文档站「组合契约」页从它渲染，
+  `scripts/check-slots.mjs`（G10 门）与 SFC 双向核对——删槽、漏记都会红。
+
+## 工具区与命令（common · toolbar / command）
 
 ```vue
 <et-ribbon-bar
@@ -81,7 +102,7 @@ app.use(EvokeToolsUI)
 - 真折叠（Ctrl+F1 / ⌥⌘R / 双击）与 peek 浮层；分量降级与溢出「更多」禁换行；
 - 同一命令表再驱动 `<et-command-palette>`（⌘K）与 `<et-context-menu>`（右键）。
 
-## L3 工作台（M2）
+## 工作台与面板（common · shell / panel）
 
 ```vue
 <et-workbench v-model:layout="layout" :default-layout="DEFAULT" persist-key="my-app"
@@ -99,7 +120,7 @@ app.use(EvokeToolsUI)
 - `EtDock`（stack 并列分摊尺寸 / tabs 档）+ `EtPanel`（28px 标题栏 + 折叠/最大化/关闭）+
   `EtScrollArea` + `EtEmptyState`（一句引导 + 一个主钮）+ `EtDocumentTabs`（脏标记/关闭/溢出）。
 
-## L4 外壳件（M3）
+## 外壳件与反馈（common · shell / feedback，含 office 的 Backstage）
 
 ```vue
 <et-title-bar title="我的工具" doc-title="报表.xlsx" @window-control="onWinCtl" />
@@ -121,7 +142,9 @@ app.use(EvokeToolsUI)
 
 | 入口 | 内容 |
 | --- | --- |
-| `.` | 全部组件 + 运行时契约 + 图标机制 |
+| `.` | 全部组件（36）+ 运行时契约 + 图标机制 + 分类与槽位元数据 |
+| `./common` | common-tools：29 件（基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入） |
+| `./office` | office-tools：7 件（功能区 / 溢出菜单 / 后台页 / 表页签 / 公式栏 / 画布宿主 / 画布桥） |
 | `./styles` | `--et-*` 令牌 + 暗色 + 基础样式 |
 | `./runtime` | L0 契约：命令注册表 / 菜单 schema / 工具区状态机 / 键位表 / 焦点漫游 / 布局树 / 画布调色板 / 焦点陷阱 / 宿主探测 |
 | `./icons` | 图标解析兜底 + 领域别名注册 API |
@@ -132,6 +155,8 @@ app.use(EvokeToolsUI)
 | 门 | 判据 | 脚本 |
 | --- | --- | --- |
 | G1 | 令牌纯度 / 回流禁令 / 引用完整 / 依赖白名单 | `scripts/check-token-rule.mjs` |
+| G9 | 两层（common/office）与用途分类同源，三处视图不许漂移 | `scripts/check-taxonomy.mjs` |
+| G10 | 槽位契约 ↔ SFC 双向一致（删槽 / 漏记都失败） | `scripts/check-slots.mjs` |
 | G7 | 布局属性禁字面量 px、z-index 走阶梯、工具组契约 | `scripts/check-geometry.mjs` |
 | G2 | 悬空图标名 = 失败 | `scripts/check-icon-names.mjs` |
 | G4 | 图标按钮必须 aria-label | `scripts/a11y-names.mjs` |

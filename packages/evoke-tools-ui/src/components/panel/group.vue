@@ -64,7 +64,20 @@ const props = defineProps({
   maximizedPanel: { type: String, default: null },
 })
 
-const emit = defineEmits(['select', 'collapse', 'expand', 'close', 'maximize', 'restore'])
+const emit = defineEmits([
+  /** tab 呈现态下切换激活面板；载荷 = 面板 id */
+  'select',
+  /** 组内某面板折叠；载荷 = 面板 id */
+  'collapse',
+  /** 组内某面板展开；载荷 = 面板 id */
+  'expand',
+  /** 组内某面板关闭；载荷 = 面板 id */
+  'close',
+  /** 组内某面板最大化；载荷 = 面板 id */
+  'maximize',
+  /** 组内面板从最大化还原（无载荷） */
+  'restore',
+])
 
 /** 隐藏面板整条退出（产品层用 showPanel 拉回来——隐藏 ≠ 不可达） */
 const visiblePanels = computed(() => props.panels.filter((panel) => !panel.hidden))

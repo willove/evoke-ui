@@ -1,0 +1,87 @@
+/* EtFormulaBar — 公式栏（office 层 · 辅助栏）
+   形态：引用位 + 编辑区 + 动作位，高度钉死 chrome 预算；
+   底色用次级横带（比 chrome 底深一档 = "这是输入区"的暗示），下边界 1px 分隔线。 */
+
+.et-formulabar {
+  display: flex;
+  align-items: center;
+  gap: var(--et-auxbar-gap);
+  height: var(--et-chrome-auxbar-height);
+  padding-inline: var(--et-space-band-inline);
+  background: var(--et-chrome-band-bg);
+  border-bottom: 1px solid var(--et-chrome-separator);
+  overflow: hidden;
+  font-size: var(--et-density-base-font);
+  color: var(--et-toolbtn-fg);
+}
+
+/* 展开：显式用户操作，高度交给内容（chrome 预算由产品/布局树自行处理） */
+.et-formulabar.is-expanded {
+  height: auto;
+  min-height: var(--et-chrome-auxbar-height);
+  align-items: stretch;
+  padding-block: var(--et-space-inline);
+}
+
+.et-formulabar__reference {
+  display: flex;
+  align-items: center;
+  flex: none;
+  width: var(--et-auxbar-name-width);
+  height: 100%;
+  padding-inline: var(--et-space-inline);
+  border-inline-end: 1px solid var(--et-chrome-separator);
+}
+
+.et-formulabar__reference-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--eb-text-color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.et-formulabar__editor {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.et-formulabar__input {
+  width: 100%;
+  height: var(--et-auxbar-input-height);
+  padding-inline: var(--et-space-inline);
+  border: 1px solid transparent;
+  border-radius: var(--et-radius-sm);
+  background: transparent;
+  color: var(--et-toolbtn-fg);
+  font-family: var(--et-font-family);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+}
+
+.et-formulabar__input:hover {
+  border-color: var(--eb-border-color-light);
+}
+.et-formulabar__input:focus {
+  border-color: var(--eb-border-color);
+  background: var(--eb-bg-color);
+}
+.et-formulabar__input::placeholder {
+  color: var(--eb-text-color-placeholder);
+}
+
+.et-formulabar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--et-space-inline);
+  flex: none;
+  height: 100%;
+}
+
+/* 只读：编辑区弱化（不隐藏——内容仍要能读、能选中复制） */
+.et-formulabar.is-readonly .et-formulabar__input {
+  color: var(--eb-text-color-secondary);
+}

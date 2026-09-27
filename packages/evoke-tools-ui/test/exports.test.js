@@ -13,8 +13,8 @@ const entries = getEtComponentEntries()
 const NO_SUBPATH_OK = new Set(['EtIcon'])
 
 describe('M0 入口与导出契约', () => {
-  it('入口清单 = M0 13 件 + M1 6 件 + M2 7 件 + M3 7 件', () => {
-    expect(entries.length).toBe(33)
+  it('入口清单 = common 29 件 + office 7 件（v1.3 两层；M0–M3 的 33 件 + v1.3 办公三件）', () => {
+    expect(entries.length).toBe(36)
     const names = entries.map((e) => e.name)
     expect(new Set(names).size).toBe(names.length)
     for (const name of names) expect(name).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -65,6 +65,7 @@ describe('M0 入口与导出契约', () => {
   })
 
   it('安装函数把全部组件注册进 app', async () => {
+    // 主入口要装载 36 件组件 + 办公皮肤，转换与求值都重；默认 5s 在并行跑全量时会被挤爆（曾偶发红）
     const mod = await import('../src/index.js')
     const registered = []
     const app = { component: (name, comp) => registered.push([name, comp]), config: { globalProperties: {} }, provide: () => {}, directive: () => {} }
@@ -73,7 +74,25 @@ describe('M0 入口与导出契约', () => {
     for (const { exportName } of entries) {
       expect(registered.map(([n]) => n)).toContain(exportName)
     }
-  })
+  }, 20000)
+
+  it('两层入口各自注册自己那层（common 29 / office 7），且都带图标载体', async () => {
+    const [common, office] = await Promise.all([
+      import('../src/common/index.js'),
+      import('../src/office/index.js'),
+    ])
+    const collect = (mod) => {
+      const names = []
+      mod.default.install({ component: (n) => names.push(n), config: { globalProperties: {} }, provide: () => {}, directive: () => {} })
+      return names
+    }
+    const commonNames = collect(common)
+    const officeNames = collect(office)
+    expect(commonNames.filter((n) => n.startsWith('Et') && n !== 'EtIcon').length).toBe(29)
+    expect(officeNames.filter((n) => n.startsWith('Et') && n !== 'EtIcon').length).toBe(7)
+    expect(commonNames).toContain('EtIcon')
+    expect(officeNames).toContain('EtIcon')
+  }, 20000)
 
   it('运行时契约从 ./runtime 入口可取出（键位表 + 焦点漫游）', async () => {
     const runtime = await import('../src/runtime/index.js')

@@ -187,6 +187,47 @@ for (const file of files) {
   }
 }
 
+// ── 规则 ⑨⑩⑪：「中性工具壳」风格基线（chrome 近无色 / 焦点环中性 / 选中态中性底）──
+{
+  const varsSrc = readFileSync(resolve(pkgRoot, 'src/styles/variables.css'), 'utf8')
+  const darkSrc = readFileSync(resolve(pkgRoot, 'src/styles/dark.css'), 'utf8')
+
+  /** 抓 --name: value; 一行（只用于本包令牌定义文件） */
+  function tokenValue(src, name) {
+    const m = src.match(new RegExp(`--${name}\\s*:\\s*([^;]+);`))
+    return m ? m[1].trim() : null
+  }
+
+  const BRAND_OR_STATE = /--eb-color-(primary|success|warning|danger|info)/
+
+  // ⑨ chrome 与工具钮表面：近无色（不得引用主色/语义色）
+  for (const src of [varsSrc, darkSrc]) {
+    for (const m of src.matchAll(/--(et-chrome-[\w-]+|et-toolbtn-(?:fg|caption-fg|bg))\s*:\s*([^;]+);/g)) {
+      if (BRAND_OR_STATE.test(m[2])) {
+        violations.push(`variables/dark.css  --${m[1]} 引用了主色/语义色（chrome 近无色纪律）：${m[2]}`)
+      }
+    }
+  }
+
+  // ⑩ 焦点环不跟随品牌色（高对比中性色：亮 #000 / 暗 #fff）
+  for (const [src, label] of [[varsSrc, 'variables.css'], [darkSrc, 'dark.css']]) {
+    for (const name of ['et-focus-ring-color', 'et-focus-ring-inner', 'et-focus-ring-outer']) {
+      const val = tokenValue(src, name)
+      if (val && val !== '#000000' && val !== '#ffffff') {
+        violations.push(`${label}  --${name} 必须是高对比中性色（#000000/#ffffff），实际 ${val}`)
+      }
+    }
+  }
+
+  // ⑪ 选中态底色走中性 fill，主色只落文字/图标
+  for (const [src, label] of [[varsSrc, 'variables.css'], [darkSrc, 'dark.css']]) {
+    const val = tokenValue(src, 'et-state-selected-bg')
+    if (val && BRAND_OR_STATE.test(val)) {
+      violations.push(`${label}  --et-state-selected-bg 不得用主色浅底（选中底色=中性 fill，主色只给文字/图标）：${val}`)
+    }
+  }
+}
+
 if (violations.length) {
   console.error(`[check-token-rule] 违反令牌与回流铁律，共 ${violations.length} 处：`)
   for (const v of violations) console.error('  ' + v)

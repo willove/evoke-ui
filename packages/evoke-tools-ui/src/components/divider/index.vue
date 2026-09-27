@@ -17,6 +17,7 @@
 defineOptions({ name: 'EtDivider' })
 
 const props = defineProps({
+  /** horizontal / vertical */
   direction: {
     type: String,
     default: 'vertical',

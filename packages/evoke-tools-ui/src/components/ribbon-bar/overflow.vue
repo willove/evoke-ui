@@ -71,7 +71,10 @@ const props = defineProps({
   label: { type: String, default: '更多' },
 })
 
-const emit = defineEmits(['command'])
+const emit = defineEmits([
+  /** 收起条目经「更多」菜单被选中；载荷 = 命令 id（与工具区平铺态同一出口） */
+  'command',
+])
 
 /** 组内可成菜单行的节点：item / select；未注册的命令过滤掉（与展开态一致） */
 function entriesOf(group) {

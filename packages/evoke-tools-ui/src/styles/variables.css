@@ -30,6 +30,17 @@
   --et-chrome-auxbar-height: 26px; /* 辅助栏位（办公产品用它承载公式栏） */
   --et-chrome-statusbar-height: 24px;
   --et-chrome-group-label-height: 16px; /* 组标题行固定高度，不随内容撑开 */
+  /* 辅助栏（办公形态的公式栏位）：引用位定宽 + 位间距，随密度微调（见文件末尾两档） */
+  --et-auxbar-name-width: 88px;
+  --et-auxbar-gap: var(--et-space-inline);
+  --et-auxbar-input-height: 20px; /* 编辑控件高（= 辅助栏高 - 上下各 3px 留白） */
+  /* 表页签（办公形态的底带）：签内左右留白 + 单签最大宽（超长表名省略） */
+  --et-tabbar-tab-padding: 10px;
+  --et-tabbar-tab-max-width: 160px;
+  --et-tabbar-add-size: 18px; /* 「加号」钮方形边长（<控件高，落在底带里不撑高） */
+  --et-tabbar-dot-size: 6px; /* 表签色点 */
+  --et-tabbar-overflow-min-width: 140px;
+  --et-tabbar-overflow-max-height: 240px;
   --et-chrome-toolarea-collapsed: 0px; /* 折叠态工具区高度 */
   /* 工具区分量：控件行 + 组标题行。控件行高度 = 大钮高度（默认 56） */
   --et-chrome-toolarea-row-height: var(--et-size-toolbtn-large);
@@ -83,7 +94,8 @@
   --et-toolbtn-caret-size: var(--et-icon-xs); /* 「按钮+下拉」指示（14px 档） */
   --et-toolbtn-gap: var(--et-space-inline); /* 大钮图标行与 caption 间距 */
   --et-toolbtn-caption-gap: var(--et-icon-gap-sm); /* caption 与下拉指示的间距 */
-  --et-toolbtn-radius: var(--et-radius-sm);
+  --et-toolbtn-radius: var(--et-radius-sm); /* 小钮（<32px） */
+  --et-toolbtn-radius-large: var(--et-radius-md); /* 大钮（≥32px） */
   /* 组内条目间距 / tab 条条目间距 / 提示内部间距（同类元素同屏同值） */
   --et-toolgroup-item-gap: var(--et-space-inline);
   --et-tabstrip-item-gap: var(--et-space-inline);
@@ -92,7 +104,7 @@
   --et-menu-item-height: var(--et-density-control-height);
   --et-menu-item-padding-inline: var(--et-space-block);
   --et-menu-icon-gutter: 20px; /* 图标位固定宽：无图标也留位，文字左对齐 */
-  --et-menu-radius: var(--et-radius-sm);
+  --et-menu-radius: var(--et-radius-lg); /* 浮层档：菜单/下拉 8 */
   /* 面板 / 状态栏 / tab 条 */
   --et-panel-header-height: 28px;
   --et-statusbar-item-gap: 12px;
@@ -111,26 +123,36 @@
   --et-screentip-delay-hide: 200ms;
   --et-screentip-max-width: 240px; /* 说明行再长也在这个跨度内换行，不拉成横幅 */
 
-  /* 状态视觉（只做底色/文字色差异；hover 禁跳强调色） */
+  /* 状态视觉（只做底色/文字色差异；hover 禁跳强调色）
+     「中性工具壳」基线：选中态底色走中性 fill（不是主色浅底），主色只落在**文字/图标**上——
+     chrome 近无色，彩色留给状态与数据。 */
   --et-state-hover-bg: var(--eb-fill-color-light);
   --et-state-active-bg: var(--eb-fill-color);
   --et-state-selected-fg: var(--eb-color-primary);
-  --et-state-selected-bg: var(--eb-color-primary-light-9);
+  --et-state-selected-bg: var(--eb-fill-color);
   --et-state-disabled-fg: var(--eb-text-color-disabled);
   /* 危险位（关闭钮 hover 等）：语义令牌，值引用底座 danger 阶梯（明暗各自定义） */
   --et-state-danger-bg: var(--eb-color-danger-light-9);
   --et-state-danger-fg: var(--eb-color-danger);
   --et-state-disabled-bg: var(--eb-fill-color-light);
 
-  /* 焦点环规格（焦点漫游与键盘可达的可见性保证） */
-  --et-focus-ring-color: var(--eb-color-primary);
+  /* 焦点环规格（焦点漫游与键盘可达的可见性保证）
+     「中性工具壳」基线：**焦点环不跟随品牌色**——主色环在彩色/深色内容上会看不见
+     （工具界面到处是内容色），改用高对比中性色：亮色内环 #000、暗色 #fff（dark.css 重映射）。
+     偏移 0：紧贴元素外缘，不留缝隙。浮层与画布可用下面的双色环复合令牌。 */
+  --et-focus-ring-color: #000000;
   --et-focus-ring-width: 2px;
-  --et-focus-ring-offset: 1px;
+  --et-focus-ring-offset: 0px;
   /* 复合形态（盒阴影型）是规格面；实现用 base.css 的 outline 三段式 ——
      outline 不进盒模型、不撑布局，且 Windows 高对比度模式下仍可见 */
   --et-focus-ring: 0 0 0 var(--et-focus-ring-width) var(--et-focus-ring-color);
+  /* 双色环（浮层 / 画布：任意底色上都可见）：内 1px 与背景相反的中性色 + 外 1px 另一色 */
+  --et-focus-ring-inner: #000000;
+  --et-focus-ring-outer: #ffffff;
+  --et-focus-ring-dual: 0 0 0 1px var(--et-focus-ring-inner), 0 0 0 2px var(--et-focus-ring-outer);
 
-  /* chrome 表面（引用基础层语义色，本层不新增色板） */
+  /* chrome 表面（引用基础层语义色，本层不新增色板）
+     近无色纪律：本块不得引用主色/语义色（门禁 scripts/check-token-rule.mjs 规则 9 守） */
   --et-chrome-bg: var(--eb-bg-color);
   --et-chrome-band-bg: var(--eb-bg-color-page);
   --et-chrome-separator: var(--eb-border-color-light);
@@ -151,14 +173,29 @@
   --et-z-modal: 3000;
   --et-z-notify: 4000;
 
-  /* ══════ 五、圆角 / 动效（设计层）══════ */
-  --et-radius-sm: 2px; /* 工具界面圆角比中后台小一档 */
+  /* ══════ 五、圆角 / 阴影 / 动效（设计层）══════
+     圆角阶梯（Fluent 明文：<32px 的元素降到 2px；工具界面比中后台小一档）：
+       2 工具钮小钮等 <32px 元素 · 4 大钮/输入/下拉/公式栏 · 8 面板/卡片/菜单
+       · 12 对话框/backstage
+     阴影只给浮层（临时 UI），chrome 一律 1px 描边不用阴影；档位固定映射底座阶梯。 */
+  --et-radius-sm: 2px;
   --et-radius-md: 4px;
-  --et-radius-lg: 6px;
+  --et-radius-lg: 8px;
+  --et-radius-xl: 12px;
   --et-radius-full: 9999px;
-  --et-duration-fast: var(--eb-duration-fast);
-  --et-duration-base: var(--eb-duration-base);
-  --et-duration-slow: var(--eb-duration-slow);
+  --et-shadow-pop: var(--eb-shadow-2); /* 命令栏 / 下拉 / ScreenTip */
+  --et-shadow-callout: var(--eb-shadow-3); /* callout / hover 卡 / 侧底面板 */
+  --et-shadow-dialog: var(--eb-shadow-5); /* 对话框 / backstage */
+  /* 动效三档（只用到 100/150/200；超过 200 需在设计评审说明）：
+       hover/按下 100ms 仅颜色 · 浮层进出 150ms（允许 4px 上浮）· 折叠/全屏页 200ms */
+  --et-duration-hover: 100ms;
+  --et-duration-pop: 150ms;
+  --et-duration-collapse: 200ms;
+  --et-duration-fast: var(--et-duration-hover);
+  --et-duration-base: var(--et-duration-pop);
+  --et-duration-slow: var(--et-duration-collapse);
+  --et-ease-decelerate: var(--eb-ease-out); /* 进场 */
+  --et-ease-accelerate: var(--eb-ease-in); /* 离场 */
   --et-ease-out: var(--eb-ease-out);
 
   /* ══════ 六、版式基线（引用基础层字阶，供工具界面复用）══════ */
@@ -168,6 +205,7 @@
 
 /* ══════ 紧凑档：控件高 24 / 大钮 48 / 图标 sm 14 lg 20 ══════ */
 [data-density='compact'] {
+  --et-auxbar-name-width: 72px;
   --et-density-base-font: 12px;
   --et-density-caption-font: 11px;
   --et-density-control-height: 24px;
@@ -183,6 +221,7 @@
 
 /* ══════ 宽松档：控件高 40 / 大钮 64 / 图标 sm 20 lg 28 ══════ */
 [data-density='relaxed'] {
+  --et-auxbar-name-width: 104px;
   --et-density-base-font: 14px;
   --et-density-caption-font: 13px;
   --et-density-control-height: 40px;

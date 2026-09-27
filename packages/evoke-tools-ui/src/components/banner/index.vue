@@ -44,11 +44,16 @@ defineOptions({ name: 'EtBanner' })
 const props = defineProps({
   /** info | warn | error */
   type: { type: String, default: 'info' },
+  /** 渲染关闭钮 */
   closable: { type: Boolean, default: true },
+  /** 标题；空 = 只有正文的紧凑形态 */
   title: { type: String, default: '' },
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits([
+  /** 关闭钮按下（closable 才渲染该钮）；本件不自隐，显示与否由产品收 v-model 或改条件 */
+  'close',
+])
 
 /** 类型图标：库内 semantic 名（G2 注册表） */
 const TYPE_ICONS = { info: 'info', warn: 'warning', error: 'error' }

@@ -33,6 +33,12 @@
   border-top: var(--et-divider-size) solid var(--et-chrome-separator);
 }
 
+/* 内容页签带：与状态栏各自带一条上边界线（画布 | 页签 | 状态栏 三段分明，不会叠成双线） */
+.et-workbench__band--tabbar {
+  height: var(--et-chrome-tabstrip-height);
+  border-top: var(--et-divider-size) solid var(--et-chrome-separator);
+}
+
 /* ─── 主体行 ───
    左停靠 / 画布 / 右停靠各占一列（auto 列宽 = 停靠面板声明宽，画布吃剩余），
    底停靠通栏一行。minmax(0, 1fr) 保证画布可被压窄而不顶破布局（M2 出口：

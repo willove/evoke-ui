@@ -17,7 +17,10 @@ import EbSplitter from '@wil-works/evoke-business-ui/splitter'
 
 defineOptions({ name: 'EtSplitter', inheritAttrs: false })
 
-const emit = defineEmits(['resize'])
+const emit = defineEmits([
+  /** 尺寸变化（拖拽或键盘 resize 后）；载荷 = 各面板占比字符串数组，如 ['38.00%', '62.00%'] */
+  'resize',
+])
 </script>
 
 <template>

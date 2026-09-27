@@ -43,6 +43,7 @@ defineOptions({ name: 'EtShortcutPanel' })
 const props = defineProps({
   /** 命令注册表（buildShortcutTable 的数据源） */
   registry: { type: Object, required: true },
+  /** auto 走运行时识别；mac / win 可钉死 */
   platform: {
     type: String,
     default: 'auto',

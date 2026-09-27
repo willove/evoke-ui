@@ -12,8 +12,15 @@ html.dark {
   --et-state-hover-bg: var(--eb-fill-color);
   --et-state-active-bg: var(--eb-fill-color-dark);
 
-  /* 选中态浅底在暗色下用 primary-light-7（亮色为 light-9），保证可分辨 */
-  --et-state-selected-bg: var(--eb-color-primary-light-7);
+  /* 选中态底色走中性 fill（亮色 fill-color / 暗色提一档 fill-color-dark），
+     主色只落在文字/图标（--et-state-selected-fg 在暗色换 primary-light-3） */
+  --et-state-selected-bg: var(--eb-fill-color-dark);
+  --et-state-selected-fg: var(--eb-color-primary-light-3);
+
+  /* 焦点环不跟随品牌色：暗色用白色内环（亮色为黑色，见 variables.css） */
+  --et-focus-ring-color: #ffffff;
+  --et-focus-ring-inner: #ffffff;
+  --et-focus-ring-outer: #000000;
 
   /* 禁用态：暗色下禁用文字提一档，避免不可见 */
   --et-state-disabled-fg: var(--eb-text-color-placeholder);

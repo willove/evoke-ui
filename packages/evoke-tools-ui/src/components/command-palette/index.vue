@@ -32,14 +32,20 @@ import { currentPlatform, formatCombo } from '../../runtime/keys/keys'
 defineOptions({ name: 'EtCommandPalette' })
 
 const props = defineProps({
+  /** 命令注册表 */
   registry: { type: Object, required: true },
+  /** 面板开关 */
   modelValue: { type: Boolean, default: false },
+  /** 推演 enabled 的上下文 */
   ctx: { type: Object, default: () => ({}) },
   // 默认透传底座（不传 = 底座自带占位符；defineProps 无默认即为 undefined，Vue 不下发该 prop）
+  /** 不传则用底座自带占位符 */
   placeholder: { type: String },
   // '' = 不记最近使用；非空时以此键在 localStorage 存最近 5 个命令 id
+  /** 非空即按该键在 localStorage 存最近 5 个命令 id 并置顶 */
   recentKey: { type: String, default: '' },
   // 开面板的快捷键：仅作声明 / 供消费方读取与展示；全局绑定由消费方决定
+  /** 开面板快捷键；仅作声明与展示，全局绑定归消费方 */
   hotkey: { type: String, default: 'mod+k' },
   /**
    * 选中条目时的执行体归属（两种模式，默认走「声明式一致」）：
@@ -53,7 +59,11 @@ const props = defineProps({
   runOnSelect: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['update:modelValue', 'command'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 条目被选中；载荷 = 命令 id。runOnSelect=false（默认）时只发不跑，执行归消费方 */
+  'command',
+])
 
 const baseRef = ref(null)
 // registry.list() 与 localStorage 均非响应式：打开 / 执行后各 bump 一次强制 items 重算
@@ -142,7 +152,9 @@ watch(
 )
 
 defineExpose({
+  /** 打开面板（直通底座；与 v-model 等价，供命令式入口调用） */
   open: () => baseRef.value?.open(),
+  /** 收起面板 */
   close: () => baseRef.value?.close(),
 })
 </script>

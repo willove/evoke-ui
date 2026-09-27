@@ -37,7 +37,14 @@ import EbDropdown from '@wil-works/evoke-business-ui/dropdown'
 
 defineOptions({ name: 'EtDropdown', inheritAttrs: false })
 
-const emit = defineEmits(['visible-change', 'command', 'click'])
+const emit = defineEmits([
+  /** 浮层显隐变化（底座透传）；载荷 = 是否展开 */
+  'visible-change',
+  /** 菜单项被选中（底座透传）；载荷 = 该项 command */
+  'command',
+  /** 触发器被点击（底座透传）；载荷 = 原生 MouseEvent */
+  'click',
+])
 
 const baseRef = ref(null)
 // 转发底座命令式方法（读底座源码：defineExpose({ open, close, visible })）

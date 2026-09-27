@@ -1,0 +1,55 @@
+/* ============================================
+   Evoke Tools UI — 办公皮肤（office 层）
+
+   办公形态的**横带序列**：顶带（标题栏 → tab 条 → 功能区 → 辅助栏/公式栏）
+   → 画布位 → 底带（工作表标签 → 状态栏）。
+
+   皮肤只做两件事：
+     ① 把序列的**布局契约**给出来（谁弹性、谁钉高、边界怎么描），产品不用自己写一遍 flex；
+     ② 声明办公形态的默认底色与分隔（近无色：底走 chrome 令牌，边界一律 1px 描边）。
+
+   颜色与度量全部来自 --et-*（框架层）：皮肤里**不得**出现办公语义令牌（--ot-*）
+   或办公语义词做属性名——那些归产品层（office-works 的 --ot-* 只被画布内容消费）。
+   ============================================ */
+
+/* 横带序列容器：纵向排布，画布位吃掉剩余高度（零页面滚动的前提） */
+.et-office-bands {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--et-chrome-bg);
+  color: var(--et-toolbtn-fg);
+  font-family: var(--et-font-family);
+  font-size: var(--et-density-base-font);
+  line-height: var(--et-density-line-height);
+}
+
+/* 顶部横带组：高度由内容（各带自己的令牌）决定，禁被压缩 */
+.et-office-bands__top,
+.et-office-bands__bottom {
+  flex: none;
+  min-height: 0;
+}
+
+/* 画布位：唯一弹性区；里面放 EtSheetCanvasHost / EtWorkbench 内容 */
+.et-office-bands__canvas {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  position: relative;
+  /* 画布与 chrome 的边界：1px 描边，不用阴影 */
+  border-block: 1px solid var(--et-chrome-separator);
+}
+
+/* 底带顺序固定：工作表标签在状态栏之上 */
+.et-office-bands__bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 办公形态的横带分隔：相邻带之间只留一条 1px 线（避免叠成双线） */
+.et-office-bands__top > *:not(:last-child) {
+  border-bottom: 1px solid var(--et-chrome-separator);
+}

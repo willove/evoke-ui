@@ -10,53 +10,67 @@
  *   const app = createApp(App)
  *   app.use(EvokeToolsUI)
  *
- * 分层：能复用 business-ui 的一律复用（浮层 / 菜单列表 / 命令面板 / 分隔基元），
- * 本库只新建"产品外壳"组件与运行时契约（tools-ui 计划 01 §二）。
- * 分层：M0 的 L0 键位表/焦点漫游 + L1 原子件 12 个；M1 的 L2 工具区（命令/schema/
- * RibbonBar/命令面板/右键/键位表）；M2 的 L3 工作台（Dock/Panel/Workbench/DocumentTabs）。
+ * 分层（v1.3 起）：组件分两层，分类单一来源见 src/taxonomy.js
+ *   · common（29 件）—— public GUI：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入，不含办公语义
+ *   · office（4 件）—— 办公形态：功能区 / 溢出菜单 / 后台页 / 画布桥
+ * 两层可分别按子路径安装：`@wil-works/evoke-tools-ui/common` 与 `/office`。
+ * 本入口 = 全量（33 件），行为与既有版本一致。
  */
 
 // ══════ CSS — 设计变量（--et-*）+ 暗色重映射 + 工具界面基础样式 ══════
 import './styles/index.css'
+// 办公皮肤（office 层的横带序列类；根入口 = 全量，两层都带）
+import './office/styles/office.css'
 
-// ─── L1 原子件 ───
+// ─── common · 基础 primitives ───
 import EtProvider from './components/provider/index.vue'
+import EtDivider from './components/divider/index.vue'
+// ─── common · 工具区 toolbar ───
 import EtToolButton from './components/tool-button/index.vue'
 import EtToolGroup from './components/tool-group/index.vue'
-import EtTabStrip from './components/tab-strip/index.vue'
-import EtScreenTip from './components/screen-tip/index.vue'
-import EtKeyHint from './components/key-hint/index.vue'
-import EtDivider from './components/divider/index.vue'
 import EtToolSpacer from './components/tool-spacer/index.vue'
-// 工具界面专用形态（business-ui 同名件的密度适配包装）
-import EtDropdown from './components/dropdown/index.vue'
-import EtSelect from './components/select/index.vue'
-import EtTooltip from './components/tooltip/index.vue'
-import EtSplitter from './components/splitter/index.vue'
-import EtSplitterPanel from './components/splitter/panel.vue'
-// ─── L2 工具区（M1） ───
-import EtRibbonBar from './components/ribbon-bar/index.vue'
-import EtOverflowMenu from './components/ribbon-bar/overflow.vue'
+import EtTabStrip from './components/tab-strip/index.vue'
+// ─── common · 命令 command ───
 import EtCommandPalette from './components/command-palette/index.vue'
 import EtContextMenu from './components/context-menu/index.vue'
 import EtShortcutPanel from './components/shortcut-panel/index.vue'
+import EtKeyHint from './components/key-hint/index.vue'
 import EtShortcutHint from './components/shortcut-hint/index.vue'
-// ─── L3 工作台（M2） ───
+// ─── common · 面板 panel ───
 import EtDock from './components/dock/index.vue'
 import EtPanel from './components/panel/index.vue'
 import EtPanelGroup from './components/panel/group.vue'
+import EtSplitter from './components/splitter/index.vue'
+import EtSplitterPanel from './components/splitter/panel.vue'
 import EtScrollArea from './components/scroll-area/index.vue'
-import EtEmptyState from './components/empty-state/index.vue'
+// ─── common · 壳 shell ───
 import EtWorkbench from './components/workbench/index.vue'
 import EtDocumentTabs from './components/document-tabs/index.vue'
-// ─── L4 外壳件（M3） ───
 import EtTitleBar from './components/title-bar/index.vue'
 import EtStatusBar from './components/status-bar/index.vue'
-import EtBackstage from './components/backstage/index.vue'
-import EtThemeBridge from './components/theme-bridge/index.vue'
+// ─── common · 反馈 feedback ───
+import EtScreenTip from './components/screen-tip/index.vue'
+import EtTooltip from './components/tooltip/index.vue'
 import EtDialog from './components/dialog/index.vue'
 import EtToast from './components/toast/index.vue'
 import EtBanner from './components/banner/index.vue'
+import EtEmptyState from './components/empty-state/index.vue'
+// ─── common · 输入 inputs ───
+import EtSelect from './components/select/index.vue'
+import EtDropdown from './components/dropdown/index.vue'
+// ─── office · 壳 shell（办公形态） ───
+import EtBackstage from './components/backstage/index.vue'
+import EtSheetTabs from './components/sheet-tabs/index.vue'
+// ─── office · 工具区 toolbar（办公形态） ───
+import EtRibbonBar from './components/ribbon-bar/index.vue'
+import EtOverflowMenu from './components/ribbon-bar/overflow.vue'
+// ─── office · 面板 panel（办公形态） ───
+import EtSheetCanvasHost from './components/sheet-canvas-host/index.vue'
+// ─── office · 输入 inputs（办公形态） ───
+import EtFormulaBar from './components/formula-bar/index.vue'
+// ─── office · 基础 primitives（画布桥） ───
+import EtThemeBridge from './components/theme-bridge/index.vue'
+
 // ─── 图标机制（解析与兜底载体 + 领域别名注册 API）──
 import EtIcon from './icons/icon.vue'
 import {
@@ -151,45 +165,70 @@ import {
 // ─── Composables ───
 import { useDensity, ET_DENSITY_KEY, ET_DENSITIES } from './composables/useDensity'
 
+// ─── 分类元数据（单一来源：src/taxonomy.js；两层视图见 ./common 与 ./office）──
+import {
+  LAYERS,
+  CATEGORIES,
+  GRANULARITIES,
+  COMPONENT_TAXONOMY,
+  OFFICE_SEMANTIC_WORDS,
+  byLayer,
+  groupedByCategory,
+  taxonomyOf,
+} from './taxonomy.js'
+import { SLOT_CONTRACT, SLOT_CONTRACT_PATHS, tagOf, contractByLayer } from './slots.js'
+
 // ─── Component Registry ───
 const components = {
+  // 基础
   EtProvider,
+  EtDivider,
+  // 工具区
   EtToolButton,
   EtToolGroup,
-  EtTabStrip,
-  EtScreenTip,
-  EtKeyHint,
-  EtDivider,
   EtToolSpacer,
-  EtDropdown,
-  EtSelect,
-  EtTooltip,
-  EtSplitter,
-  EtSplitterPanel,
-  // L2 工具区（M1）
-  EtRibbonBar,
-  EtOverflowMenu,
+  EtTabStrip,
+  // 命令
   EtCommandPalette,
   EtContextMenu,
   EtShortcutPanel,
+  EtKeyHint,
   EtShortcutHint,
-  // L3 工作台（M2）
+  // 面板
   EtDock,
   EtPanel,
   EtPanelGroup,
+  EtSplitter,
+  EtSplitterPanel,
   EtScrollArea,
-  EtEmptyState,
+  // 壳
   EtWorkbench,
   EtDocumentTabs,
-  // L4 外壳件（M3）
   EtTitleBar,
   EtStatusBar,
-  EtBackstage,
-  EtThemeBridge,
+  // 反馈
+  EtScreenTip,
+  EtTooltip,
   EtDialog,
   EtToast,
   EtBanner,
-  // 图标机制
+  EtEmptyState,
+  // 输入
+  EtSelect,
+  EtDropdown,
+  // office · 壳
+  EtBackstage,
+  EtSheetTabs,
+  // office · 工具区
+  EtRibbonBar,
+  EtOverflowMenu,
+  // office · 面板
+  EtSheetCanvasHost,
+  // office · 输入
+  EtFormulaBar,
+  // office · 基础（画布桥）
+  EtThemeBridge,
+  // 图标机制（./icons 子路径；不计入两层分类表，但根入口要注册它）
   EtIcon,
 }
 
@@ -203,44 +242,54 @@ function install(app, _options = {}) {
 
 // ─── Exports ───
 export {
-  // L1 原子件
+  // 基础 primitives
   EtProvider,
+  EtDivider,
+  // 工具区 toolbar
   EtToolButton,
   EtToolGroup,
-  EtTabStrip,
-  EtScreenTip,
-  EtKeyHint,
-  EtDivider,
   EtToolSpacer,
-  // 工具界面专用形态（business-ui 包装）
-  EtDropdown,
-  EtSelect,
-  EtTooltip,
-  EtSplitter,
-  EtSplitterPanel,
-  // L2 工具区（M1）
-  EtRibbonBar,
-  EtOverflowMenu,
+  EtTabStrip,
+  // 命令 command
   EtCommandPalette,
   EtContextMenu,
   EtShortcutPanel,
+  EtKeyHint,
   EtShortcutHint,
-  // L3 工作台（M2）
+  // 面板 panel
   EtDock,
   EtPanel,
   EtPanelGroup,
+  EtSplitter,
+  EtSplitterPanel,
   EtScrollArea,
-  EtEmptyState,
+  // 壳 shell
   EtWorkbench,
   EtDocumentTabs,
-  // L4 外壳件（M3）
   EtTitleBar,
   EtStatusBar,
-  EtBackstage,
-  EtThemeBridge,
+  // 反馈 feedback
+  EtScreenTip,
+  EtTooltip,
   EtDialog,
   EtToast,
   EtBanner,
+  EtEmptyState,
+  // 输入 inputs
+  EtSelect,
+  EtDropdown,
+  // office · 壳
+  EtBackstage,
+  EtSheetTabs,
+  // office · 工具区
+  EtRibbonBar,
+  EtOverflowMenu,
+  // office · 面板
+  EtSheetCanvasHost,
+  // office · 输入
+  EtFormulaBar,
+  // office · 基础（画布桥）
+  EtThemeBridge,
   // 图标机制
   EtIcon,
   registerDomainIcons,
@@ -295,6 +344,20 @@ export {
   useDensity,
   ET_DENSITY_KEY,
   ET_DENSITIES,
+  // 分类元数据（两层与用途分类的单一来源）
+  LAYERS,
+  CATEGORIES,
+  GRANULARITIES,
+  COMPONENT_TAXONOMY,
+  OFFICE_SEMANTIC_WORDS,
+  byLayer,
+  groupedByCategory,
+  taxonomyOf,
+  // 槽位组合契约（谁开了哪些槽 / 吃什么 / 作用域）
+  SLOT_CONTRACT,
+  SLOT_CONTRACT_PATHS,
+  tagOf,
+  contractByLayer,
   // Install
   install,
   components,

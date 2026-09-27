@@ -138,7 +138,33 @@ const CONTROL_TABLE = {
   '--et-panel-header-height': '28px',
   '--et-statusbar-item-gap': '12px',
   '--et-focus-ring-width': '2px',
-  '--et-focus-ring-offset': '1px',
+  '--et-focus-ring-offset': '0px',
+}
+
+/** 风格基线（「中性工具壳」：焦点环中性 / 圆角阶梯 / 动效三档 / 阴影只给浮层） */
+const STYLE_TABLE = {
+  // 焦点环不跟随品牌色（亮色黑、暗色白；dark.css 重映射）
+  '--et-focus-ring-color': '#000000',
+  '--et-focus-ring-inner': '#000000',
+  '--et-focus-ring-outer': '#ffffff',
+  // 圆角阶梯：2 小钮 · 4 大钮/输入 · 8 面板/浮层 · 12 对话框
+  '--et-radius-sm': '2px',
+  '--et-radius-md': '4px',
+  '--et-radius-lg': '8px',
+  '--et-radius-xl': '12px',
+  '--et-toolbtn-radius': '2px',
+  '--et-toolbtn-radius-large': '4px',
+  '--et-menu-radius': '8px',
+  // 动效三档（超过 200ms 需评审）
+  '--et-duration-hover': '100ms',
+  '--et-duration-pop': '150ms',
+  '--et-duration-collapse': '200ms',
+}
+console.log('\n风格基线（中性工具壳）：')
+for (const [name, expected] of Object.entries(STYLE_TABLE)) {
+  const actual = resolveValue(name, defaultDefs)
+  if (actual !== expected) failures.push(`default  --${name}: 期望 ${expected}，实际 ${actual}`)
+  console.log(`  ${name.padEnd(34)} ${actual.padStart(8)}  期望 ${expected}`)
 }
 console.log('\n控件尺寸与状态（默认档）：')
 for (const [name, expected] of Object.entries(CONTROL_TABLE)) {

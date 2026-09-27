@@ -151,7 +151,11 @@ export function normalizeLayout(input, fallback = null, errors = []) {
     }
     docks.push(dock)
   }
-  if (docks.length === 0) {
+  // 两种"零 dock"要分开：
+  //   · 显式 `docks: []` = 合法形态：只有画布的工作台（办公单画布页就这一档，
+  //     之后可用 addDock 运行时长出停靠）——不能当损坏；
+  //   · 给了条目却一个都不合法 = 数据损坏 → 走 fallback（不白屏）。
+  if (docks.length === 0 && input.docks.length > 0) {
     errors.push('布局没有任何可用 dock')
     return fallback ? clone(fallback) : null
   }
@@ -192,10 +196,13 @@ export function deserializeLayout(json, fallback) {
 export function loadLayout(storage, key, fallback) {
   try {
     const raw = storage.getItem(key)
-    if (!raw) return { tree: clone(fallback), errors: [], usedFallback: false }
-    return deserializeLayout(raw, fallback)
+    // empty: true = **没有持久化档**（首次打开 / 被清空）。调用方据此判断"要不要用回档覆盖
+    // 当前树"——有档才叫恢复，没档就不该动调用方给的 layout（v1.3.1 前的坑：空存储也返回
+    // fallback，Workbench 拿它盖掉了 layout prop，产品的初始布局被自己的 defaultLayout 顶掉）。
+    if (!raw) return { tree: clone(fallback), errors: [], usedFallback: false, empty: true }
+    return { ...deserializeLayout(raw, fallback), empty: false }
   } catch {
-    return { tree: clone(fallback), errors: ['存储读取失败，降级到默认布局'], usedFallback: true }
+    return { tree: clone(fallback), errors: ['存储读取失败，降级到默认布局'], usedFallback: true, empty: false }
   }
 }
 

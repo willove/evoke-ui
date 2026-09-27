@@ -12,10 +12,24 @@
   box-sizing: border-box;
 }
 
-/* 焦点环：键盘可见性是工具界面的硬要求（focus-visible 才出现，鼠标不打扰） */
+/* 焦点环：键盘可见性是工具界面的硬要求（focus-visible 才出现，鼠标不打扰）。
+   「中性工具壳」基线：环色是**高对比中性色**（亮色黑 / 暗色白），不跟随品牌色——
+   主色环在彩色内容与深底上会看不见。offset 0：紧贴元素外缘。
+   浮层与画布用双色环（任意底色上都可见）：--et-focus-ring-dual。 */
 .et-provider :focus-visible {
   outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
   outline-offset: var(--et-focus-ring-offset);
+}
+/* 双色环：内 1px + 外 1px，两层都取中性色，落在白底/深底/彩色底上都成立 */
+.et-focus-dual:focus-visible {
+  outline: 1px solid var(--et-focus-ring-inner);
+  outline-offset: 0;
+  box-shadow: 0 0 0 2px var(--et-focus-ring-outer);
+}
+@media (forced-colors: active) {
+  .et-provider :focus-visible {
+    outline: var(--et-focus-ring-width) solid Highlight;
+  }
 }
 
 /* 默认动效纪律：无位移、无缩放；动效由使用方按需叠加 */

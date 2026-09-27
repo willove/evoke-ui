@@ -10,7 +10,7 @@
   gap: var(--et-space-inline);
   padding: var(--et-space-block);
   border: var(--et-divider-size) solid var(--eb-color-info-light-7);
-  border-radius: var(--et-radius-md);
+  border-radius: var(--et-radius-lg);
   background: var(--eb-color-info-light-9);
   color: var(--eb-text-color-regular);
   font-family: var(--et-font-family);

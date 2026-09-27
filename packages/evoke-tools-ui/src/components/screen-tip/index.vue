@@ -85,6 +85,7 @@ const props = defineProps({
         'left-start', 'left-end', 'right-start', 'right-end',
       ].includes(v),
   },
+  /** 关闭提示 */
   disabled: { type: Boolean, default: false },
 })
 

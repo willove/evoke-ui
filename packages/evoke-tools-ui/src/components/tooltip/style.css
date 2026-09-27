@@ -5,7 +5,7 @@
  * 全部引用 --et-radius-md / --et-space-* 令牌（G7），随密度档切换。 */
 
 .eb-popper.et-tooltip {
-  border-radius: var(--et-radius-md);
+  border-radius: var(--et-radius-lg);
   padding-block: var(--et-space-block);
   padding-inline: calc(var(--et-space-block) + var(--et-space-inline));
 }

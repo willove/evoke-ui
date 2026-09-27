@@ -26,7 +26,7 @@
   max-width: calc(100% - var(--eb-space-8));
   margin-top: var(--eb-dialog-margin-top);
   background: var(--et-chrome-bg);
-  border-radius: var(--et-radius-lg);
+  border-radius: var(--et-radius-xl);
   box-shadow: var(--eb-shadow-4);
   color: var(--eb-text-color-regular);
   font-family: var(--et-font-family);

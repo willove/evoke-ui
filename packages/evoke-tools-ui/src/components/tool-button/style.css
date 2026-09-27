@@ -126,3 +126,8 @@
   outline: var(--et-focus-ring-width) solid var(--et-focus-ring-color);
   outline-offset: var(--et-focus-ring-offset);
 }
+
+/* 大钮 ≥32px：圆角走 4（Fluent：<32px 才降到 2px）；小钮保持 2px 档 */
+.et-toolbtn--large {
+  border-radius: var(--et-toolbtn-radius-large);
+}

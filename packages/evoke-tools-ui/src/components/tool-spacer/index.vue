@@ -12,6 +12,7 @@
 defineOptions({ name: 'EtToolSpacer' })
 
 defineProps({
+  /** 弹簧方向：horizontal 把后续条目推到行尾，vertical 推到底 */
   direction: {
     type: String,
     default: 'horizontal',

@@ -107,7 +107,10 @@ const props = defineProps({
   windowControls: { type: Boolean, default: true },
 })
 
-const emit = defineEmits(['window-control'])
+const emit = defineEmits([
+  /** 窗口控制钮按下；载荷 = 'close' | 'minimize' | 'maximize'（顺序与放置取宿主×平台契约表） */
+  'window-control',
+])
 
 const slots = useSlots()
 

@@ -585,3 +585,148 @@ test('M2+ 出口 · 停靠分隔器键盘 resize（1.2.0 还清 M0 欠账：纯�
   await page.waitForTimeout(500)
   expect(await readPanelWidth()).toBeGreaterThanOrEqual(after)
 })
+
+// ─── v1.3 办公装配：office 层三件（公式栏 / 画布宿主 / 表页签）+ #tabbar 槽 ──────
+// 载体 = 示例的「办公装配」视图（五条横带：标题栏 / 文档标签 / 工具区+公式栏 / 页签 / 状态栏）。
+
+/** 打开示例并切到办公装配视图（清掉持久化，保证基线态确定） */
+async function gotoOfficeView(page, { density = 'default', dark = false } = {}) {
+  await page.goto('/')
+  await settle(page)
+  await page.evaluate(() => {
+    localStorage.removeItem('demo-office-layout')
+    localStorage.removeItem('demo-ribbon-collapsed')
+  })
+  await page.reload({ waitUntil: 'networkidle' })
+  await settle(page)
+  await page.locator('.demo__control', { hasText: '视图' }).locator('.eb-segmented__item', { hasText: '办公装配' }).click()
+  await setDensity(page, density)
+  if (dark) await setDark(page, true)
+  await settle(page, { extraMs: 350 })
+}
+
+test('tools 基线 · 办公装配（五条横带 + 三件）', async ({ page }) => {
+  await gotoOfficeView(page)
+  await expect(page).toHaveScreenshot('tools-office-assembly.png', { fullPage: true })
+})
+
+test('tools 基线 · 办公装配（暗色）', async ({ page }) => {
+  await gotoOfficeView(page, { dark: true })
+  await expect(page).toHaveScreenshot('tools-office-assembly-dark.png', { fullPage: true })
+})
+
+test('tools 基线 · 办公装配（紧凑档）', async ({ page }) => {
+  await gotoOfficeView(page, { density: 'compact' })
+  await expect(page).toHaveScreenshot('tools-office-assembly-compact.png', { fullPage: true })
+})
+
+test('M3 出口 · 办公 chrome 预算：横带高度与令牌逐项一致', async ({ page }) => {
+  await gotoOfficeView(page)
+  const heights = await page.evaluate(() => {
+    const h = (sel) => {
+      const el = document.querySelector(sel)
+      return el ? Math.round(el.getBoundingClientRect().height) : null
+    }
+    return {
+      titlebar: h('.et-workbench__band--titlebar'),
+      documents: h('.et-workbench__band--documents'),
+      toolbar: h('.et-workbench__band--toolbar'),
+      formula: h('.et-formulabar'),
+      tabbar: h('.et-workbench__band--tabbar'),
+      statusbar: h('.et-workbench__band--statusbar'),
+    }
+  })
+  // 令牌口径：标题栏 32 / 辅助栏（公式栏）26 / 页签 26 / 状态栏 24（三档密度不缩放 chrome）
+  expect(heights.titlebar).toBe(32)
+  expect(heights.formula).toBe(26)
+  expect(heights.tabbar).toBe(26)
+  expect(heights.statusbar).toBe(24)
+  // 工具区带 = 功能区（tab 26 + 组行 72）+ 公式栏 26
+  expect(heights.toolbar).toBeGreaterThanOrEqual(98)
+  expect(heights.documents).toBeGreaterThan(0)
+})
+
+test('M3 出口 · 画布宿主：滚动有量、浮层不随滚动、滚动量上报状态栏', async ({ page }) => {
+  await gotoOfficeView(page)
+  const before = await page.evaluate(() => {
+    const vp = document.querySelector('.et-canvashost__viewport')
+    const chip = document.querySelector('.wb__office-chip')
+    return {
+      scrollTop: vp.scrollTop,
+      scrollable: vp.scrollHeight > vp.clientHeight,
+      chipOffset: Math.round(chip.getBoundingClientRect().top - vp.getBoundingClientRect().top),
+    }
+  })
+  expect(before.scrollable, '画布宿主应可滚动（内容高于视口）').toBe(true)
+
+  await page.locator('.et-canvashost__viewport').hover()
+  await page.mouse.wheel(0, 200)
+  await page.waitForTimeout(300)
+
+  const after = await page.evaluate(() => {
+    const vp = document.querySelector('.et-canvashost__viewport')
+    const chip = document.querySelector('.wb__office-chip')
+    return {
+      scrollTop: vp.scrollTop,
+      chipOffset: Math.round(chip.getBoundingClientRect().top - vp.getBoundingClientRect().top),
+      status: [...document.querySelectorAll('.et-statusbar__item')].map((el) => el.textContent.trim()).join(' '),
+    }
+  })
+  expect(after.scrollTop).toBeGreaterThan(0)
+  // 浮层位固定于视口：滚动前后相对视口的偏移不变
+  expect(after.chipOffset).toBe(before.chipOffset)
+  // #scroll 事件把滚动量交回产品（状态栏读数）
+  expect(after.status).toMatch(/滚动\s*\d+,\s*\d+/)
+  expect(after.status).not.toMatch(/滚动\s*0,\s*0/)
+})
+
+test('M3 出口 · 公式栏：引用位跟随选区、回车提交、Esc 收敛', async ({ page }) => {
+  await gotoOfficeView(page)
+  // 选区上下文切换后引用位重算（示例里「无 / 图片 / 表格」三档）
+  await page.locator('.demo__control', { hasText: '选区' }).locator('.eb-segmented__item', { hasText: '表格' }).click()
+  await settle(page)
+  const reference = await page.locator('.et-formulabar__reference-text').innerText()
+  expect(reference).toContain('B2:B14')
+
+  await page.locator('.et-formulabar__input').fill('=AVERAGE(B2:B14)')
+  await page.keyboard.press('Enter')
+  await settle(page)
+  await expect(page.locator('.et-toast__message, .et-toast')).toContainText('已录入')
+})
+
+test('tools 基线 · 公式栏（键盘聚焦的中性焦点环）', async ({ page }) => {
+  await gotoOfficeView(page)
+  const input = page.locator('.et-formulabar__input')
+  await input.focus()
+  await settle(page, { extraMs: 150 })
+  await expect(page.locator('.et-formulabar')).toHaveScreenshot('tools-office-formulabar-focus.png')
+})
+
+test('M3 出口 · 表页签：窄屏溢出收进「更多」，收起项不占 Tab 序列', async ({ page }) => {
+  await gotoOfficeView(page)
+  // 堆更多表：窄屏下必然溢出
+  await page.evaluate(() => {
+    const el = document.querySelector('.et-sheettabs')
+    el.style.maxWidth = '260px'
+  })
+  await settle(page, { extraMs: 400 })
+
+  const state = await page.evaluate(() => {
+    const more = document.querySelector('.et-sheettabs__more')
+    const collapsed = [...document.querySelectorAll('.et-sheettabs__tab.is-collapsed')]
+    return {
+      moreVisible: more ? !more.classList.contains('is-hidden') : false,
+      collapsedCount: collapsed.length,
+      collapsedHidden: collapsed.every((el) => el.getAttribute('aria-hidden') === 'true'),
+      collapsedUntabbable: collapsed.every((el) => el.getAttribute('tabindex') === '-1'),
+      activeStillVisible: !!document.querySelector('.et-sheettabs__tab.is-active:not(.is-collapsed)'),
+    }
+  })
+  expect(state.moreVisible, '窄屏应出现「更多」入口').toBe(true)
+  expect(state.collapsedCount).toBeGreaterThan(0)
+  expect(state.collapsedHidden, '收起的表签要 aria-hidden').toBe(true)
+  expect(state.collapsedUntabbable, '收起的表签不占 Tab 序列').toBe(true)
+  expect(state.activeStillVisible, '当前表永远可见').toBe(true)
+
+  await expect(page.locator('.et-workbench__band--tabbar')).toHaveScreenshot('tools-office-sheettabs-overflow.png')
+})

@@ -22,6 +22,9 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.js'),
+        // 两层视图入口（common-tools / office-tools）：能只装一层，也能两层都装
+        common: resolve(__dirname, 'src/common/index.js'),
+        office: resolve(__dirname, 'src/office/index.js'),
         // 运行时契约入口（L0：键位表 / 焦点漫游 / 图标机制），消费方可不装组件只用契约
         runtime: resolve(__dirname, 'src/runtime/index.js'),
         icons: resolve(__dirname, 'src/icons/index.js'),

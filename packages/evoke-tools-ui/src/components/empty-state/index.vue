@@ -46,7 +46,10 @@ const props = defineProps({
   actionLabel: { type: String, default: '' },
 })
 
-const emit = defineEmits(['action'])
+const emit = defineEmits([
+  /** 主按钮被点击（actionLabel 非空才渲染该钮） */
+  'action',
+])
 
 /**
  * 图标 prop 经 computed 中转（与 EtToolButton 的 iconName 同惯例）：

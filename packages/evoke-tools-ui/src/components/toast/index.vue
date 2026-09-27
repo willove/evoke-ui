@@ -46,7 +46,9 @@ const TYPE_ICONS = { info: 'info', success: 'success', warn: 'warning', error: '
 const ICON_SIZE = 'var(--et-icon-sm)'
 
 const props = defineProps({
+  /** 开关 */
   modelValue: { type: Boolean, default: false },
+  /** 提示文本（默认槽可整体替换） */
   message: { type: String, default: '' },
   /** info | success | warn | error */
   type: { type: String, default: 'info' },
@@ -56,7 +58,11 @@ const props = defineProps({
   position: { type: String, default: 'top' },
 })
 
-const emit = defineEmits(['update:modelValue', 'action'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 操作位（#action 插槽）被点击——撤销/重做等由产品决定 */
+  'action',
+])
 
 const TYPES = ['info', 'success', 'warn', 'error']
 const POSITIONS = ['top', 'center', 'bottom']

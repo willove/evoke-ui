@@ -25,6 +25,7 @@ import { ET_DENSITY_KEY, ET_DENSITIES } from '../../composables/useDensity'
 defineOptions({ name: 'EtProvider', inheritAttrs: false })
 
 const props = defineProps({
+  /** compact / default / relaxed，校验集外给出 dev 告警 */
   density: {
     type: String,
     default: 'default',

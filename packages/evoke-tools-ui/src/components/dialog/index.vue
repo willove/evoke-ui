@@ -68,17 +68,33 @@ defineOptions({ name: 'EtDialog' })
 const TRANSITION_NAME = 'et-dialog'
 
 const props = defineProps({
+  /** 开关 */
   modelValue: { type: Boolean, default: false },
+  /** 标题（aria-label 取它，缺省「对话框」） */
   title: { type: String, default: '' },
+  /** '520px' */
   width: { type: [String, Number], default: '520px' },
+  /** 点遮罩关闭（只认遮罩自身，面板冒泡已过滤） */
   closeOnClickMask: { type: Boolean, default: true },
+  /** Esc 收敛；false 时 Esc 不关（焦点陷阱仍生效） */
   closeOnEsc: { type: Boolean, default: true },
   /** 给了才渲染对应钮；footer 槽整体接管时以槽为准 */
   confirmText: { type: String, default: '' },
+  /** 取消钮文案；给了才渲染 */
   cancelText: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'confirm', 'cancel', 'opened', 'closed'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 主按钮按下（本件不收自己，收起由 v-model 决定） */
+  'confirm',
+  /** 取消路径：取消钮 / 遮罩 / Esc 三条路共用同一出口 */
+  'cancel',
+  /** 进场动画结束（此刻读焦点位才准，陷阱已在挂载时就位） */
+  'opened',
+  /** 退场动画结束（焦点归还触发元素之后） */
+  'closed',
+])
 
 const panelRef = ref(null)
 const modalFocus = useModalFocus(() => panelRef.value, {

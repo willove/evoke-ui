@@ -71,7 +71,18 @@ const props = defineProps({
   bodyScroll: { type: Boolean, default: true },
 })
 
-const emit = defineEmits(['collapse', 'expand', 'close', 'maximize', 'restore'])
+const emit = defineEmits([
+  /** 标题栏折叠钮按下；载荷 = 面板 id。本件不自存状态，产品改树后回写 props.panel */
+  'collapse',
+  /** 折叠态下点击把手展开；载荷 = 面板 id */
+  'expand',
+  /** 关闭钮按下；载荷 = 面板 id（隐藏 ≠ 不可达，产品可用 showPanel 拉回） */
+  'close',
+  /** 最大化钮按下；载荷 = 面板 id（写进树的 maximized） */
+  'maximize',
+  /** 从最大化还原（无载荷：还原的就是本面板） */
+  'restore',
+])
 
 /** 标题栏图标一律 16 档（--et-icon-sm），同一族件齐次 */
 const ICON_SIZE = 'var(--et-icon-sm)'

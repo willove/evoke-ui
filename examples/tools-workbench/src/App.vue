@@ -141,7 +141,75 @@
       </et-dialog>
     </template>
 
-    <!-- ═══ 视图二：图标底座对比（M0 留档面） ═══ -->
+    <!-- ═══ 视图二：办公装配（office 层三件 + 五条横带；v1.3 视觉基线载体） ═══ -->
+    <template v-else-if="view === 'office'">
+      <et-workbench
+        v-model:layout="officeLayout"
+        class="wb wb--office"
+        :default-layout="DEMO_DEFAULT_LAYOUT"
+        persist-key="demo-office-layout"
+      >
+        <template #titlebar>
+          <et-title-bar title="办公装配示例" doc-title="季度报表.xlsx" />
+        </template>
+
+        <template #documents>
+          <et-document-tabs v-model="activeDoc" :documents="DEMO_DOCUMENTS" />
+        </template>
+
+        <template #toolbar>
+          <et-ribbon-bar
+            v-model="activeTab"
+            v-model:collapsed="collapsed"
+            class="wb__ribbon"
+            :schema="DEMO_RIBBON_SCHEMA"
+            :registry="demoRegistry"
+            :ctx="ctx"
+            @command="onCommand"
+          />
+          <!-- 公式栏：引用位跟随选区，编辑区可提交 -->
+          <et-formula-bar
+            v-model="officeFormula"
+            :reference="officeReference"
+            class="wb__office-bar"
+            placeholder="输入内容或公式"
+            @submit="onOfficeFormulaSubmit"
+          >
+            <template #actions>
+              <span class="wb__auxbar-hint">Ctrl+F1 折叠功能区</span>
+              <et-tool-button size="small" icon="function-line" label="插入函数" @click="onOfficeInsertFunction" />
+            </template>
+          </et-formula-bar>
+        </template>
+
+        <!-- 画布宿主：滚动视口 + 不随滚动的浮层位 -->
+        <et-sheet-canvas-host
+          label="季度报表画布"
+          class="wb__host"
+          :content-width="960"
+          :content-height="1200"
+          @scroll="onOfficeScroll"
+        >
+          <div class="wb__office-sheet" />
+          <template #overlay>
+            <span class="wb__office-chip">浮层位：不随内容滚动</span>
+          </template>
+        </et-sheet-canvas-host>
+
+        <!-- 内容页签带（Workbench 的 #tabbar 槽） -->
+        <template #tabbar>
+          <et-sheet-tabs v-model="officeSheet" :tabs="officeSheets" @add="onOfficeSheetAdd" />
+        </template>
+
+        <template #statusbar>
+          <et-status-bar :items="officeStatusItems" zoom="100%" />
+        </template>
+      </et-workbench>
+
+      <et-toast v-model="toast.open" :message="toast.message" type="success" :duration="2400" />
+    </template>
+
+    <!-- ═══ 视图三：图标底座对比（M0 留档面） ═══ -->
     <template v-else>
       <div class="cmp">
         <section class="cmp__row">
@@ -184,7 +252,7 @@
  * EtCommandPalette（⌘K）与 EtContextMenu（右键）。enabled/active 由
  * ctx（选区/焦点）推演——工具区、右键、命令面板三处状态同源。
  */
-import { computed, h, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, h, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { isImeComposing } from '@wil-works/evoke-business-ui'
 import { EbSegmented, EbSwitch, registerIcons, useDarkMode } from '@wil-works/evoke-business-ui'
 import { comboMatchesEvent } from '@wil-works/evoke-tools-ui/runtime'
@@ -222,6 +290,7 @@ const densityOptions = [
 ]
 const viewOptions = [
   { label: '工作台', value: 'workbench' },
+  { label: '办公装配', value: 'office' },
   { label: '图标对比', value: 'icons' },
 ]
 const view = ref('workbench')
@@ -325,6 +394,47 @@ function onGlobalKeydown(e) {
 }
 onMounted(() => document.addEventListener('keydown', onGlobalKeydown))
 onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
+
+// ─── 办公装配视图（office 层三件）───
+/** 办公视图的布局：**只有画布**（办公整页不需要停靠，画布位数才是重点）+ 独立持久化键 */
+const officeLayout = ref(createLayoutTree({ docks: [] }))
+const officeSheet = ref('汇总')
+const officeSheets = [
+  { id: '汇总', label: '汇总' },
+  { id: '明细', label: '明细', color: '#f59e0b' },
+  { id: '口径', label: '口径说明' },
+  { id: 'jan', label: '一月' },
+  { id: 'feb', label: '二月' },
+  { id: 'mar', label: '三月' },
+  { id: 'apr', label: '四月' },
+  { id: 'src', label: '数据源' },
+  { id: 'draft', label: '草稿' },
+]
+const officeFormula = ref('=SUM(B2:B14)')
+const officeScroll = reactive({ left: 0, top: 0 })
+const officeReference = computed(() => (ctx.value.hasSelection ? 'B2:B14' : 'B2'))
+const officeStatusItems = computed(() => [
+  { key: 'ready', label: '就绪' },
+  { key: 'sheet', label: '工作表', value: officeSheet.value },
+  { key: 'scroll', label: '滚动', value: `${Math.round(officeScroll.left)}, ${Math.round(officeScroll.top)}` },
+])
+
+function onOfficeScroll({ scrollLeft, scrollTop }) {
+  officeScroll.left = scrollLeft
+  officeScroll.top = scrollTop
+}
+
+function onOfficeFormulaSubmit(value) {
+  toast.value = { open: true, message: `已录入：${value}` }
+}
+
+function onOfficeInsertFunction() {
+  officeFormula.value = '=AVERAGE(B2:B14)'
+}
+
+function onOfficeSheetAdd() {
+  toast.value = { open: true, message: '已请求新增工作表' }
+}
 
 const compareCommands = [
   { icon: 'bold', label: '加粗' },

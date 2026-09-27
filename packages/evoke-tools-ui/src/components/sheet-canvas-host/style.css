@@ -1,0 +1,52 @@
+/* EtSheetCanvasHost — 表格画布宿主（office 层 · 画布位）
+   形态：可滚动视口 + 不随滚动的浮层位；宿主自己不加外框（边框归布局/停靠），
+   底与 chrome 同族无色，焦点环走全局中性环。 */
+
+.et-canvashost {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  background: var(--et-chrome-bg);
+}
+
+.et-canvashost__viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--et-chrome-bg);
+  /* 画布自身可滚动时用系统滚动条（虚拟化产品通常自绘，这里只兜底） */
+  overscroll-behavior: contain;
+}
+
+.et-canvashost.is-scroll-x .et-canvashost__viewport {
+  overflow-x: auto;
+}
+.et-canvashost.is-scroll-y .et-canvashost__viewport {
+  overflow-y: auto;
+}
+
+/* 焦点在画布上时**不加内描边**：画布聚焦是常态，加环会把整个画布框住、噪音太大；
+   焦点可见性由产品在"当前单元格"上表达（办公软件的通行做法）。 */
+.et-canvashost__viewport:focus {
+  outline: none;
+}
+
+.et-canvashost__sizer {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+/* 浮层位：固定于视口、不随内容滚动；默认不吃事件（只有子元素吃） */
+.et-canvashost__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--et-z-panel);
+  pointer-events: none;
+}
+.et-canvashost__overlay > * {
+  pointer-events: auto;
+}

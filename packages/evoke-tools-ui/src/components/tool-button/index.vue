@@ -57,6 +57,7 @@ const props = defineProps({
   label: { type: String, default: '' },
   /** 命令激活/选中态（aria-pressed） */
   active: { type: Boolean, default: false },
+  /** 禁用态，点击双保险拦截 */
   disabled: { type: Boolean, default: false },
   /** 「按钮+下拉」形态的下拉指示，渲染在 caption 行右侧 */
   caret: { type: Boolean, default: false },
@@ -64,7 +65,10 @@ const props = defineProps({
   tip: { type: [String, Object], default: null },
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits([
+  /** 被点击；载荷 = 原生 MouseEvent。绑了 command 时执行由消费方在 @command 侧决定 */
+  'click',
+])
 
 // 与 EbButton 同范式：经 computed 中转，模板里不直写 prop 名
 const iconName = computed(() => props.icon)

@@ -144,7 +144,14 @@ const props = defineProps({
   peek: { type: Boolean, default: true },
 })
 
-const emit = defineEmits(['update:modelValue', 'update:collapsed', 'change', 'command'])
+const emit = defineEmits([
+  'update:modelValue',
+  'update:collapsed',
+  /** 功能区 tab 切换；载荷 = tab 的 key */
+  'change',
+  /** 条目命令被点击；载荷 = 命令 id——跑不跑由消费方决定（registry.run），本件不推演执行 */
+  'command',
+])
 
 // ─── tab 条（常驻 tab + 上下文 tab） ───
 const schemaTabs = computed(() =>

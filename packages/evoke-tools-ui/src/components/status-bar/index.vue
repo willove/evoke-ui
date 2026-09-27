@@ -60,7 +60,10 @@ const props = defineProps({
   zoom: { type: [Number, String], default: '' },
 })
 
-const emit = defineEmits(['item-click'])
+const emit = defineEmits([
+  /** 状态栏条目被点击；载荷 = 条目的 key（条目自带 onClick 时先跑条目自己的） */
+  'item-click',
+])
 
 const slots = useSlots()
 

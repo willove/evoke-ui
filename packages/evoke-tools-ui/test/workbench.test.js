@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { createLayoutTree } from '../src/runtime/layout/tree.js'
 
 /**
  * EtWorkbench 组件契约（tools-ui 计划 05 §四 L3 验收要点 / 07 M2 出口条件）
@@ -110,13 +111,14 @@ afterEach(() => {
 })
 
 describe('EtWorkbench 区域槽', () => {
-  it('titlebar / documents / toolbar / canvas / statusbar 各归其位', async () => {
+  it('titlebar / documents / toolbar / canvas / tabbar / statusbar 各归其位', async () => {
     const wrapper = await mountWorkbench(
       {},
       {
         titlebar: '<div class="t-title">产品名</div>',
         documents: '<div class="t-docs">文档标签</div>',
         toolbar: '<div class="t-tool">工具区</div>',
+        tabbar: '<div class="t-tabs">工作表标签</div>',
         statusbar: '<div class="t-status">就绪</div>',
         default: '<div class="t-canvas">画布</div>',
       },
@@ -125,15 +127,17 @@ describe('EtWorkbench 区域槽', () => {
     expect(wrapper.find('.et-workbench__band--documents .t-docs').exists()).toBe(true)
     expect(wrapper.find('.et-workbench__band--toolbar .t-tool').exists()).toBe(true)
     expect(wrapper.find('.et-workbench__canvas .t-canvas').exists()).toBe(true)
+    expect(wrapper.find('.et-workbench__band--tabbar .t-tabs').exists()).toBe(true)
     expect(wrapper.find('.et-workbench__band--statusbar .t-status').exists()).toBe(true)
 
-    // 顺序：标题栏 → 文档标签位 → 工具栏 → 主体行 → 状态栏
+    // 顺序：标题栏 → 文档标签位 → 工具栏 → 主体行 → 内容页签带 → 状态栏
     const html = wrapper.html()
     const at = (sel) => html.indexOf(sel)
     expect(at('band--titlebar')).toBeLessThan(at('band--documents'))
     expect(at('band--documents')).toBeLessThan(at('band--toolbar'))
     expect(at('band--toolbar')).toBeLessThan(at('workbench__body'))
-    expect(at('workbench__body')).toBeLessThan(at('band--statusbar'))
+    expect(at('workbench__body')).toBeLessThan(at('band--tabbar'))
+    expect(at('band--tabbar')).toBeLessThan(at('band--statusbar'))
     wrapper.unmount()
   })
 
@@ -142,8 +146,35 @@ describe('EtWorkbench 区域槽', () => {
     expect(wrapper.find('.et-workbench__band--titlebar').exists()).toBe(false)
     expect(wrapper.find('.et-workbench__band--documents').exists()).toBe(false)
     expect(wrapper.find('.et-workbench__band--toolbar').exists()).toBe(false)
+    expect(wrapper.find('.et-workbench__band--tabbar').exists()).toBe(false)
     expect(wrapper.find('.et-workbench__band--statusbar').exists()).toBe(false)
     expect(wrapper.find('.et-workbench__canvas').exists()).toBe(true)
+    wrapper.unmount()
+  })
+})
+
+describe('EtWorkbench 内容页签带（#tabbar）', () => {
+  it('与顶部 #documents 可同时用：上是文档、下是内容页签', async () => {
+    const wrapper = await mountWorkbench(
+      {},
+      {
+        documents: '<div class="t-docs">文档</div>',
+        tabbar: '<div class="t-tabs">工作表</div>',
+      },
+    )
+    expect(wrapper.find('.et-workbench__band--documents .t-docs').exists()).toBe(true)
+    expect(wrapper.find('.et-workbench__band--tabbar .t-tabs').exists()).toBe(true)
+    // 一个在主体行之上、一个在其下（办公软件的上下页签分工）
+    const html = wrapper.html()
+    expect(html.indexOf('band--documents')).toBeLessThan(html.indexOf('workbench__body'))
+    expect(html.indexOf('workbench__body')).toBeLessThan(html.indexOf('band--tabbar'))
+    wrapper.unmount()
+  })
+
+  it('只给 #tabbar 也能成立（无顶部文档位的办公整页）', async () => {
+    const wrapper = await mountWorkbench({}, { tabbar: '<div class="t-tabs">工作表</div>' })
+    expect(wrapper.find('.et-workbench__band--documents').exists()).toBe(false)
+    expect(wrapper.find('.et-workbench__band--tabbar .t-tabs').exists()).toBe(true)
     wrapper.unmount()
   })
 })
@@ -209,6 +240,20 @@ describe('EtWorkbench 停靠位', () => {
 })
 
 describe('EtWorkbench 布局持久化', () => {
+  it('首次打开（无持久化档）不用 defaultLayout 顶掉传入的 layout（v1.3.1 修）', async () => {
+    stubStorage({})
+    // 产品传的是"只有画布"的树，默认布局却有四条 dock：空存储不该发生恢复
+    const wrapper = await mountWorkbench({
+      persistKey: 'demo-layout',
+      layout: createLayoutTree({ docks: [] }),
+      defaultLayout: makeDefault(),
+    })
+    await flushPromises()
+    expect(wrapper.findAllComponents(EtDock)).toHaveLength(0)
+    expect(wrapper.find('.et-workbench__canvas').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
   it('无变更不写盘；变更才写一次（layoutEquals 比对路径）', async () => {
     const storage = stubStorage()
     const wrapper = await mountWorkbench({ persistKey: 'wb-key' })

@@ -118,7 +118,15 @@ const props = defineProps({
   confirmText: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'change', 'close', 'context'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 激活文档切换；载荷 = 文档 id */
+  'change',
+  /** 文档被关闭（关闭钮 / 键盘 Delete）；载荷 = 被关闭文档的 id——脏标记下的确认归产品 */
+  'close',
+  /** 文档被右键；载荷 = (文档 id, 原生 MouseEvent)，菜单内容由产品给 */
+  'context',
+])
 
 /** 关闭钮图标档：xs（14，密集行内档）——尺寸同样只引用令牌 */
 const CLOSE_ICON_SIZE = 'var(--et-icon-xs)'

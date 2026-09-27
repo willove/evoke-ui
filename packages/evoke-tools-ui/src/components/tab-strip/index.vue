@@ -110,7 +110,15 @@ const props = defineProps({
   overflowLabel: { type: String, default: '更多' },
 })
 
-const emit = defineEmits(['update:modelValue', 'change', 'close', 'context'])
+const emit = defineEmits([
+  'update:modelValue',
+  /** 选中项切换；载荷 = 新选中条目的 id */
+  'change',
+  /** 条目被关闭（点关闭钮或键盘 Delete）；载荷 = 被关闭条目的 id */
+  'close',
+  /** 条目被右键；载荷 = (条目 id, 原生 MouseEvent)——菜单内容由产品给 */
+  'context',
+])
 
 /** 关闭钮图标档：xs（14，密集行内档）——尺寸同样只引用令牌 */
 const CLOSE_ICON_SIZE = 'var(--et-icon-xs)'
