@@ -33,10 +33,18 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             RANGE="${{ github.event.pull_request.base.sha }}...HEAD"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # dispatch 没有 event.before：按最近一笔判，否则手动触发的守卫永远被跳过
+            RANGE="HEAD~1...HEAD"
           else
             RANGE="${{ github.event.before }}...HEAD"
           fi
-          CHANGED="$(git diff --name-only "$RANGE" 2>/dev/null || git diff --name-only HEAD~1)"
+          CHANGED="$(git diff --name-only "$RANGE" 2>/dev/null)"
+          if [ -z "$CHANGED" ]; then
+            # RANGE 取不到（首推 / 强推把 before 打成空对象）→ 退到最近一笔再看；
+            # 两笔之间确实无差异时结果仍为空，不会把"无关"伪装成"有改动"
+            CHANGED="$(git diff --name-only HEAD~1...HEAD 2>/dev/null)"
+          fi
           echo "changed:"; echo "$CHANGED" | head -40
           if echo "$CHANGED" | grep -qE '^(packages/evoke-tools-ui/|packages/evoke-ui/|packages/evoke-business-ui/|docs-tools/|visual/|\.github/workflows/ci\.yml)'; then
             echo "tools=true" >> "$GITHUB_OUTPUT"
