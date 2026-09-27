@@ -29,6 +29,8 @@ const items = [
 ## 行为
 
 - 条目是原生 `button` 包壳 + `aria-label` 组合可访问名（`label` + `value`），可键盘聚焦。
+- **读数带是 polite 活区**：条目 `value` 与内置缩放显示各挂 `aria-live="polite"`，值变了读屏跟得上；
+  `label` 不是活区（静态名重复播报是噪声）。
 - 点击同时走 `item-click` 事件与数据里的 `onClick`；两种接法等价，别同时用（会调两次）。
 - 坏条目（非对象）直接跳过不渲染；`visible` 缺省 true。
 - 高度钉死 `--et-chrome-statusbar-height`，overflow 隐藏兜底，禁换行禁撑高：左区弹性压缩 + 条目省略号，放不下先切左区条目。

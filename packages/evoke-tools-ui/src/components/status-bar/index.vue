@@ -21,7 +21,8 @@
         @click="onItemClick(item)"
       >
         <span class="et-statusbar__label">{{ item.label }}</span>
-        <span v-if="hasValue(item)" class="et-statusbar__value">{{ item.value }}</span>
+        <!-- 值随选区/统计变化：polite 活区让读屏跟得上（状态栏的读数本就是给人听的） -->
+        <span v-if="hasValue(item)" class="et-statusbar__value" aria-live="polite">{{ item.value }}</span>
       </button>
     </div>
 
@@ -31,7 +32,7 @@
 
     <div class="et-statusbar__side et-statusbar__side--right">
       <slot name="right" />
-      <span v-if="!slots.right && zoomText" class="et-statusbar__zoom">{{ zoomText }}</span>
+      <span v-if="!slots.right && zoomText" class="et-statusbar__zoom" aria-live="polite">{{ zoomText }}</span>
     </div>
   </div>
 </template>

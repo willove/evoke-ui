@@ -148,10 +148,18 @@ function readType(value) {
 
 /* ────────────────────────── SFC 解析 ────────────────────────── */
 
+/** 选项式写法（defineComponent({ props: {…}, emits: […] })）的兜底定位 */
+function optionsBlock(src, key) {
+  const m = new RegExp(`^\\s{2}${key}:\\s*(\\{|\\[)`, 'm').exec(src)
+  if (!m) return null
+  return sliceBalanced(src, m.index + m[0].length - 1)
+}
+
 function parseProps(src) {
   const idx = src.indexOf('defineProps(')
-  if (idx < 0) return []
-  const body = unwrap(sliceBalanced(src, src.indexOf('(', idx)) || '')
+  let body = null
+  if (idx >= 0) body = unwrap(sliceBalanced(src, src.indexOf('(', idx)) || '')
+  else body = optionsBlock(src, 'props')
   if (!body) return []
   return splitTopLevel(body)
     .map(readMember)
@@ -202,8 +210,9 @@ const withVModelDesc = (list) =>
 
 function parseEmits(src) {
   const idx = src.indexOf('defineEmits(')
-  if (idx < 0) return []
-  const body = unwrap(sliceBalanced(src, src.indexOf('(', idx)) || '')
+  let body = null
+  if (idx >= 0) body = unwrap(sliceBalanced(src, src.indexOf('(', idx)) || '')
+  else body = optionsBlock(src, 'emits')
   if (!body) return []
   // 数组式：['click']，事件名前的 JSDoc 作为说明
   const out = splitTopLevel(body)

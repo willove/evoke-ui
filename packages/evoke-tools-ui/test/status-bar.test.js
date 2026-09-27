@@ -62,6 +62,14 @@ describe('EtStatusBar 可配置项', () => {
     expect(first.attributes('disabled')).toBeUndefined()
   })
 
+  it('读数带是 polite 活区：值与缩放变了读屏跟得上（消费方从自写读数带迁过来不降级）', () => {
+    const wrapper = mount(EtStatusBar, { props: { items: ITEMS, zoom: 120 } })
+    expect(wrapper.find('.et-statusbar__value').attributes('aria-live')).toBe('polite')
+    expect(wrapper.find('.et-statusbar__zoom').attributes('aria-live')).toBe('polite')
+    // label 不是活区：静态名重复播报是噪声
+    expect(wrapper.find('.et-statusbar__label').attributes('aria-live')).toBeUndefined()
+  })
+
   it('条目点击发 item-click(key)', async () => {
     const wrapper = mount(EtStatusBar, { props: { items: ITEMS } })
     await wrapper.findAll('.et-statusbar__item')[1].trigger('click')

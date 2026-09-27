@@ -126,6 +126,41 @@ describe('EtThemeBridge 主题联动', () => {
   })
 })
 
+describe('EtThemeBridge @change 订阅面', () => {
+  /** 可变主题 stub：切 dark 就换值，模拟真实主题联动 */
+  const stubTheme = (state) => ({
+    getPropertyValue: (name) => {
+      const dark = state.dark
+      const map = {
+        '--eb-bg-color': dark ? '#1a1a1a' : '#ffffff',
+        '--eb-color-primary': dark ? '#7aa2ff' : '#2f6bff',
+      }
+      return map[name] ?? ''
+    },
+  })
+
+  it('挂载发首值，主题变了再发；值没变不重复发（按签名去重）', async () => {
+    const state = { dark: false }
+    vi.stubGlobal('getComputedStyle', () => stubTheme(state))
+    const wrapper = mount(EtThemeBridge)
+
+    expect(wrapper.emitted('change')).toHaveLength(1)
+    expect(wrapper.emitted('change')[0][0]['canvas-bg'].value).toBe('#ffffff')
+
+    state.dark = true
+    htmlEl().classList.add('dark')
+    await flush()
+    expect(wrapper.emitted('change')).toHaveLength(2)
+    expect(wrapper.emitted('change')[1][0]['canvas-bg'].value).toBe('#1a1a1a')
+
+    // 再动一次无关属性：解析结果没变 → 不该再发
+    htmlEl().setAttribute('data-theme', 'x')
+    await flush()
+    expect(wrapper.emitted('change')).toHaveLength(2)
+    wrapper.unmount()
+  })
+})
+
 describe('EtThemeBridge 退订纪律', () => {
   it('卸载时退订（MutationObserver disconnect 被调，禁观察器泄漏）', () => {
     const instances = []

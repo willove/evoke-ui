@@ -18,6 +18,10 @@
  * palette prop 允许产品追加画布角色：{ ...CANVAS_PALETTE, 'canvas-x': '--eb-xxx' }，
  * 角色名经 applyCanvasPalette 统一加前缀后落值，产品侧引用同名即可。
  *
+ * 引擎类消费方（canvas 产品，取值后还要 setTheme）走 @change：每次刷新后发解析结果，
+ * 挂载即发首值——产品据此重读自己的 --ot-* 并换主题，不需要再自写 MutationObserver。
+ * 去重按解析结果签名（值没变不发），所以订阅不会自激，也不会漏 data-density 切档。
+ *
  * 本件不渲染任何 DOM（render 返回 null：桥接是纯副作用，不占布局、不吃事件）。
  */
 import { defineComponent, onBeforeUnmount, onMounted, watch } from 'vue'
@@ -25,13 +29,17 @@ import { CANVAS_PALETTE, observeThemeChanges } from '../../runtime/theme/palette
 
 export default defineComponent({
   name: 'EtThemeBridge',
+  emits: [
+    /** 画布调色板已刷新（挂载即发一次首值，之后随主题/密度变化再发）；载荷 = 解析后的 { 角色: { token, value } } */
+    'change',
+  ],
   props: {
     /** 画布角色 → 主题侧令牌名登记表（默认 CANVAS_PALETTE；产品可整体替换以追加角色） */
     palette: { type: Object, default: () => CANVAS_PALETTE },
     /** 写入与订阅目标：'html'（默认）/ CSS 选择器 / Element 实例 */
     target: { type: [String, Object], default: 'html' },
   },
-  setup(props) {
+  setup(props, { emit }) {
     /** 退订函数占位：subscribe 每次重建前先退旧的（target/palette 变更不叠观察器） */
     let unsubscribe = () => {}
 
@@ -51,7 +59,8 @@ export default defineComponent({
       if (!el) return
       // 同一个 el 传两边：MutationObserver 的 Node + applyCanvasPalette 的写入面
       // （L0 对 Element 走 el.style；自定义属性落行内样式才对元素及其子树生效）
-      unsubscribe = observeThemeChanges(el, () => getComputedStyle(el), undefined, props.palette)
+      // onChange 直通本件的 @change：画布产品据此重读 --ot-* 换引擎主题，不必自写观察器
+      unsubscribe = observeThemeChanges(el, () => getComputedStyle(el), (resolved) => emit('change', resolved), props.palette)
     }
 
     onMounted(subscribe)

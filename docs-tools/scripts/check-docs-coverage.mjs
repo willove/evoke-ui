@@ -36,7 +36,6 @@ const DEMO_NA = {
   'panel-group': '分组容器由 EtDock/EtWorkbench 驱动，单摆无状态；见 dock 与 workbench 页',
   'splitter-panel': '透传底座件，形态在 splitter 页演示',
   'shortcut-panel': '键位表由命令表生成，空表无内容；装配在 /guide/keyboard 演示',
-  'theme-bridge': '无 DOM（写 CSS 变量），演示 = /guide/theme 的画布联动',
 }
 
 const failures = []
