@@ -240,7 +240,7 @@ describe('EtWorkbench 停靠位', () => {
 })
 
 describe('EtWorkbench 布局持久化', () => {
-  it('首次打开（无持久化档）不用 defaultLayout 顶掉传入的 layout（v1.3.1 修）', async () => {
+  it('首次打开（无持久化档）不用 defaultLayout 顶掉传入的 layout（v1.4 修）', async () => {
     stubStorage({})
     // 产品传的是"只有画布"的树，默认布局却有四条 dock：空存储不该发生恢复
     const wrapper = await mountWorkbench({

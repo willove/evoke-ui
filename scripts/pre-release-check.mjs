@@ -146,7 +146,7 @@ try {
   const entries = entryModule.getEtComponentEntries()
   const names = new Set(entries.map((e) => e.name))
 
-  // 分层归属来自包内分类单一来源（v1.3 起：common / office 两层 × 用途分类；tokenize 见 src/taxonomy.js）
+  // 分层归属来自包内分类单一来源（v1.4 起：common / office 两层 × 用途分类；tokenize 见 src/taxonomy.js）
   const taxonomy = await import(
     pathToFileURL(join(repoRoot, 'packages/evoke-tools-ui/src/taxonomy.js')).href
   )

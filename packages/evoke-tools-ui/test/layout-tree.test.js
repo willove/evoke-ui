@@ -125,7 +125,7 @@ describe('序列化与损坏降级（不白屏）', () => {
     expect(deserializeLayout('{"docks":42}', defaultTree()).usedFallback).toBe(true)
   })
 
-  it('显式空档 {"docks":[]} 是合法"只有画布"树，不再当损坏降级（v1.3.1 口径）', () => {
+  it('显式空档 {"docks":[]} 是合法"只有画布"树，不再当损坏降级（v1.4 口径）', () => {
     const { tree, usedFallback } = deserializeLayout('{"docks":[]}', defaultTree())
     expect(usedFallback).toBe(false)
     expect(tree.docks).toEqual([])

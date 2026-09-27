@@ -106,9 +106,9 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
 | `EtCommandPalette` / `EtContextMenu` / `EtShortcutPanel` | 命令表驱动的面板/右键/键位表 | M1 |
 | `EtWorkbench` / `EtPanel` / `EtDock` / `EtDocumentTabs` | 面板树、停靠、布局持久化 | M2 |
 | `EtTitleBar` / `EtStatusBar` / `EtBackstage` / `EtThemeBridge` / `EtDialog` | 产品外壳件与主题桥接 | M3 |
-| `EtFormulaBar` / `EtSheetTabs` / `EtSheetCanvasHost` | 办公基本件：公式栏 / 底带表页签 / 画布宿主（office 层） | v1.3 |
+| `EtFormulaBar` / `EtSheetTabs` / `EtSheetCanvasHost` | 办公基本件：公式栏 / 底带表页签 / 画布宿主（office 层） | v1.4 |
 
-## 五之二、两层与分类（v1.3 起）
+## 五之二、两层与分类（v1.4 起）
 
 组件入口 **36 件**，分两层（子路径 `./common` 与 `./office`），分类单一来源是 `src/taxonomy.js`：
 
@@ -133,7 +133,7 @@ tooltip / popper / scrollbar / virtual-list / dialog / color-picker / segmented 
   画布 `--ot-*` 随主题联动、双宿主标题栏、backstage 零尺寸跳动、焦点三处一致。
 - **M4（v1.0 冻结版）**：API 冻结、docs-tools 全站、G8 发布一致性门、视觉基线固化、
   真实消费者升级验证。
-- **v1.3（本版）**：两层重构（common / office 子路径）+ 用途分类替代 L1–L4 + 「中性工具壳」风格基线
+- **v1.4（本版）**：两层重构（common / office 子路径）+ 用途分类替代 L1–L4 + 「中性工具壳」风格基线
   + 办公基本件三件（公式栏 / 表页签 / 画布宿主）+ 槽位契约（G10）。
   旧 L1–L4 是**实现批次**口径，保留在各里程碑文字里供追溯；现行分类见 §五之二。
 

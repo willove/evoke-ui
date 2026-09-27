@@ -5,7 +5,7 @@ import EtSheetTabs from '../src/components/sheet-tabs/index.vue'
 import EtSheetCanvasHost from '../src/components/sheet-canvas-host/index.vue'
 
 /**
- * office 层三件（v1.3）：公式栏 / 工作表标签 / 画布宿主
+ * office 层三件（v1.4）：公式栏 / 工作表标签 / 画布宿主
  *
  * 契约焦点（对应各自组件的"一句话职责"）：
  *   · 公式栏：回车提交、Esc 收敛、组字期间不拦、槽优先

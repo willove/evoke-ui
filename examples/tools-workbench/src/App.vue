@@ -141,7 +141,7 @@
       </et-dialog>
     </template>
 
-    <!-- ═══ 视图二：办公装配（office 层三件 + 五条横带；v1.3 视觉基线载体） ═══ -->
+    <!-- ═══ 视图二：办公装配（office 层三件 + 五条横带；v1.4 视觉基线载体） ═══ -->
     <template v-else-if="view === 'office'">
       <et-workbench
         v-model:layout="officeLayout"

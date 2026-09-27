@@ -7,7 +7,7 @@ import HomeStage from './demos/HomeStage.vue'
 </script>
 
 <div class="td-hero">
-  <p class="td-hero__badge">v1.3.1 · 内测版 · 36 个组件入口</p>
+  <p class="td-hero__badge">v1.4.0 · 内测版 · 36 个组件入口</p>
   <h1 class="td-hero__title">
     Evoke <span class="accent">Tools</span> UI
   </h1>

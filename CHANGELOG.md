@@ -2,16 +2,16 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
-## [tools-ui 1.3.1] — 2026-09-27
+## [tools-ui 1.4.0] — 2026-09-27
 
-### @wil-works/evoke-tools-ui — 办公整页装配（#tabbar 槽）+ 新三件视觉基线（1.3.1，patch）
+### @wil-works/evoke-tools-ui — 办公整页装配（#tabbar 槽）+ 新三件视觉基线
 
 - **`EtWorkbench` 新增 `#tabbar` 内容页签带槽**（加法式，不改既有槽）：位于主体行与状态栏之间，
   与顶部 `#documents` 上下分工、可同时用——办公整页不必再套 CSS 横带，五条带高度全走令牌
   （标题栏 32 / 工具区 tab 26 + 组行 72 / 公式栏 26 / 页签 26 / 状态栏 24）。
   槽位契约（`src/slots.js`）与 G10 门同步：命名槽 28 → 29。
 - **示例工程新增「办公装配」视图**（`view=toolbar 切换`）：五条带 + 公式栏 + 画布宿主 + 表页签（9 张表）+
-  状态栏，作为 v1.3 办公三件的视觉基线载体；示例样式补画布位拉伸（宿主吃满，滚动才有量）。
+  状态栏，作为 v1.4 办公三件的视觉基线载体；示例样式补画布位拉伸（宿主吃满，滚动才有量）。
 - **视觉回归补 8 条**（`visual/tools.spec.mjs`，28 → 36）：
   - 基线 5 条：办公装配（默认 / 暗色 / 紧凑）、公式栏键盘聚焦的中性焦点环、表页签溢出态；
   - 不变量 3 条：办公 chrome 预算（横带高度与令牌逐项一致）、画布宿主（可滚动 / 浮层不随滚动 /
@@ -28,6 +28,16 @@
   - `loadLayout` 新增 `empty` 标记（没有持久化档 ≠ 坏档）；`EtWorkbench` 挂载读回遇 `empty` **不再用
     `defaultLayout` 覆盖传入的 `layout`**——此前首次打开时产品的初始布局会被自己的默认布局顶掉
     （传"只有画布"的树、默认布局带 dock 的消费方必中），回归用例已锁。
+
+### @wil-works/evoke-tools-ui — 首次真实消费撞出的两处缺口（@change / 状态栏活区）
+
+- **`EtThemeBridge` 新增 `@change`**：M3 交付物 4 写的是"提供订阅机制与暗色联动"，但组件只内部
+  订阅、不对外发信号——画布产品（读 `--ot-*` 后还要 `renderer.setTheme`）拿不到"令牌变了"，
+  只能自写 `MutationObserver`。现在挂载即发首值、随主题/密度变化再发（按解析结果签名去重，
+  值没变不重复发、写值不自激）。加法式变更，不动既有 props/slots。
+- **`EtStatusBar` 条目 `value` 与内置缩放显示挂 `aria-live="polite"`**：首个真实消费者原本自写的
+  读数带就有 polite 活区，迁到本件会把读屏播报降级；`label` 不是活区（静态名重复播报是噪声）。
+- 版本口径：`@change` 属加法式 API 面 → 本条按 **minor** 记，未发布的 1.3.0 / 1.3.1 记录并入本版。
 
 ### docs-tools — 组件页六面改由源码现算 + 活体 demo 与三档密度 + G11 覆盖门
 
@@ -60,9 +70,8 @@
   键位与 aria 取值；markdown 表格样式规则 `:not([class*='eb-'])`（两条选择器重复且挡不住组件自带表格）
   收紧为 `table:not([class])`，组件表格不再被撑出空档。
 
-## [tools-ui 1.3.0] — 2026-09-27
 
-### @wil-works/evoke-tools-ui — office 办公基本件三件 + 槽位组合契约（1.3.0）
+### @wil-works/evoke-tools-ui — office 办公基本件三件 + 槽位组合契约
 
 - **office 层补三件**（子路径 `./office`，入口 33 → **36**：common 29 + office 7）：
   - `EtFormulaBar` 公式栏：引用位 / 编辑区 / 动作位三槽，高度钉 `--et-chrome-auxbar-height`；
@@ -82,7 +91,7 @@
   （公式栏 + 画布宿主 + 表页签 + 办公皮肤横带），引用位跟随选区、提交回执、表切换、滚动量全部实测通过。
 - **G8 发布门**改读分类表（不再写死 L1–L4），按「组件入口 36 件 / common 29 / office 7」核对 DESIGN.md 宣称。
 
-### @wil-works/evoke-tools-ui — 「中性工具壳」风格体系（1.3.0，随两层重构同版）
+### @wil-works/evoke-tools-ui — 「中性工具壳」风格体系（随两层重构同版）
 
 - **气质锚定调**：一间安静的仪器房——chrome 近无色，彩色只给状态与内容。三条纪律写进令牌与门禁：
   chrome 近无色 / 描边优先于阴影 / 聚焦不靠品牌色。
@@ -104,7 +113,7 @@
 - 视觉基线：本次令牌改动在 `visual/tools.spec.mjs` 的 28 条基线上**未超容差**（重录后文件无变化），
   Linux 基线无需重录。
 
-### @wil-works/evoke-tools-ui — 两层重构：common-tools + office-tools（1.3.0，minor）
+### @wil-works/evoke-tools-ui — 两层重构：common-tools + office-tools
 
 - **组件分两层**（同包子路径，不新增包、不破坏既有 import）：
   `@wil-works/evoke-tools-ui/common`（29 件：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入，

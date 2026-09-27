@@ -13,7 +13,7 @@ const entries = getEtComponentEntries()
 const NO_SUBPATH_OK = new Set(['EtIcon'])
 
 describe('M0 入口与导出契约', () => {
-  it('入口清单 = common 29 件 + office 7 件（v1.3 两层；M0–M3 的 33 件 + v1.3 办公三件）', () => {
+  it('入口清单 = common 29 件 + office 7 件（v1.4 两层；M0–M3 的 33 件 + v1.4 办公三件）', () => {
     expect(entries.length).toBe(36)
     const names = entries.map((e) => e.name)
     expect(new Set(names).size).toBe(names.length)

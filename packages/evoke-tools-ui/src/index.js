@@ -10,7 +10,7 @@
  *   const app = createApp(App)
  *   app.use(EvokeToolsUI)
  *
- * 分层（v1.3 起）：组件分两层，分类单一来源见 src/taxonomy.js
+ * 分层（v1.4 起）：组件分两层，分类单一来源见 src/taxonomy.js
  *   · common（29 件）—— public GUI：基准件 / 通用壳 / 命令面 / 面板 / 反馈 / 输入，不含办公语义
  *   · office（4 件）—— 办公形态：功能区 / 溢出菜单 / 后台页 / 画布桥
  * 两层可分别按子路径安装：`@wil-works/evoke-tools-ui/common` 与 `/office`。

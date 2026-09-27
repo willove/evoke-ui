@@ -348,7 +348,7 @@
   color: var(--eb-text-color-regular);
 }
 
-/* ─── 办公装配视图（v1.3）：画布宿主吃满画布位，才有真实的滚动量 ─── */
+/* ─── 办公装配视图（v1.4）：画布宿主吃满画布位，才有真实的滚动量 ─── */
 .wb--office .et-workbench__canvas {
   display: flex;
   min-height: 0;
