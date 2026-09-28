@@ -1,7 +1,7 @@
 /**
  * 类型产物后处理（vue-tsc 之后运行）：
  *
- * 1. 子路径存根 — 为 "./*" 通配 exports 生成 dist/types/entries/<name>.d.ts，
+ * 1. 子路径存根 — 为逐条登记的组件子路径 exports 生成 dist/types/entries/<name>.d.ts，
  *    re-export 对应模块的镜像声明（发布包只含 dist，不得指向 src）。
  * 2. 说明符改写 — vue-tsc 产出的 d.ts 以 './x.vue' 引用 SFC 声明（实际文件为
  *    x.vue.d.ts）。普通 tsc 只对 .js 系后缀做 .d.ts 替换，解析不了 '.vue'；

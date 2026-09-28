@@ -188,3 +188,46 @@ describe('用量明细披露', () => {
     expect(w.find('.eb-chat-usage__tokens').text()).toContain('500 tokens')
   })
 })
+
+describe('ChatUsage segments（宿主自定义分段记账）', () => {
+  // 披露行在 popover 懒内容里，jsdom 挂载不渲染（与既有用例同口径：断言读屏文本/暴露方法）
+  it('单条 segments 参与披露数据；label 是宿主措辞，组件不翻译', () => {
+    const w = mount(ChatUsage, {
+      props: { usage: usage({ segments: [{ label: '检索阶段', tokens: 320 }, { label: '生成阶段', tokens: 180 }] }) },
+    })
+    expect(w.vm.sumUsage([usage({ segments: [{ label: '检索阶段', tokens: 320 }, { label: '生成阶段', tokens: 180 }] })]).segments)
+      .toEqual([{ label: '检索阶段', tokens: 320 }, { label: '生成阶段', tokens: 180 }])
+  })
+
+  it('多条汇总时 segments 按 label 合并累加', () => {
+    const w = mount(ChatUsage, { props: { usage: {} } })
+    expect(w.vm.sumUsage([
+      { promptTokens: 10, completionTokens: 20, segments: [{ label: '检索', tokens: 8 }] },
+      { promptTokens: 5, completionTokens: 5, segments: [{ label: '检索', tokens: 4 }, { label: '重排', tokens: 2 }] },
+    ]).segments).toEqual([{ label: '检索', tokens: 12 }, { label: '重排', tokens: 2 }])
+  })
+
+  it('只有 segments（无 prompt/completion/cost）也判定有数据，不整件消失', () => {
+    const w = mount(ChatUsage, { props: { usage: { segments: [{ label: '阶段', tokens: 64 }] } } })
+    expect(w.find('.eb-chat-usage').exists()).toBe(true)
+    expect(w.find('.eb-chat-usage__tokens').text()).toContain('0')
+  })
+})
+
+describe('ChatMessage 阶段进度条（assistant/progress 的可见落点）', () => {
+  it('message.progress 有 label 才渲染一行读数；没有就不渲染', () => {
+    const withProgress = mount(ChatMessage, {
+      props: { message: { id: 'a1', role: 'assistant', content: '', status: 'streaming', progress: { label: '检索知识库', detail: '3 个库', elapsedMs: 1200 } } },
+    })
+    expect(withProgress.find('.eb-chat-message__progress').exists()).toBe(true)
+    expect(withProgress.find('.eb-chat-message__progress-label').text()).toBe('检索知识库')
+    expect(withProgress.find('.eb-chat-message__progress').text()).toContain('3 个库')
+    expect(withProgress.find('.eb-chat-message__progress').text()).toContain('1.2s')
+    withProgress.unmount()
+
+    const without = mount(ChatMessage, {
+      props: { message: { id: 'a2', role: 'assistant', content: '正文', status: 'done' } },
+    })
+    expect(without.find('.eb-chat-message__progress').exists()).toBe(false)
+  })
+})

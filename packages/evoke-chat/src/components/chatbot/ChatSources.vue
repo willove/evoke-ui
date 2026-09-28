@@ -38,7 +38,7 @@
           />
           <span class="eb-chat-sources__text">
             <span class="eb-chat-sources__title">{{ item.title || item.url || item.source }}</span>
-            <span v-if="item.source || domain(item.url)" class="eb-chat-sources__meta">{{ item.source || domain(item.url) }}</span>
+            <span v-if="metaOf(item)" class="eb-chat-sources__meta">{{ metaOf(item) }}</span>
             <span v-if="item.snippet" class="eb-chat-sources__snippet">{{ item.snippet }}</span>
           </span>
         </button>
@@ -53,7 +53,7 @@ import { ref, computed } from "vue";
 import { useChatLabels } from "./labels";
 const labels = useChatLabels();
 const props = defineProps({
-  /** 来源列表 [{ id?, index?, title, url?, source?, snippet?, favicon? }] */
+  /** 来源列表 [{ id?, index?, title, url?, source?, snippet?, favicon?, status? }]；status 是宿主给的定位状态说明（如「未定位」），拼在元信息行 */
   items: { type: Array, required: false, default: () => [] },
   /** 折叠头部；关掉就是常驻列表 */
   collapsible: { type: Boolean, required: false, default: true },
@@ -70,6 +70,10 @@ function domain(url) {
   // 只取主机名展示：整段 URL 太长且常带追踪参数
   const matched = /^[a-z][a-z0-9+.-]*:(?:\/\/)?([^/?#]+)/i.exec(url);
   return matched ? matched[1] : "";
+}
+/** 元信息行：来源/域名与宿主的 status（如「未定位」）并排，任一存在就渲染 */
+function metaOf(item) {
+  return [item.source || domain(item.url), item.status].filter(Boolean).join(" · ");
 }
 /** 行内上标点击时联动：展开列表、标记并滚到对应卡片 */
 function highlight(id) {

@@ -1,6 +1,6 @@
 {
   "name": "@wil-works/evoke-chat",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Evoke Chat — AI 对话与 Agent UI（对话窗口、消息体、卡片、工具调用、沙箱预览），底座为 @wil-works/evoke-business-ui",
   "type": "module",
   "main": "./dist/index.mjs",
@@ -16,9 +16,165 @@
       "types": "./dist/types/locale/index.d.ts",
       "default": "./dist/locale.mjs"
     },
-    "./*": {
-      "types": "./dist/types/entries/*.d.ts",
-      "default": "./dist/*.mjs"
+    "./chatbot": {
+      "types": "./dist/types/entries/chatbot.d.ts",
+      "default": "./dist/chatbot.mjs"
+    },
+    "./chat-list": {
+      "types": "./dist/types/entries/chat-list.d.ts",
+      "default": "./dist/chat-list.mjs"
+    },
+    "./chat-message": {
+      "types": "./dist/types/entries/chat-message.d.ts",
+      "default": "./dist/chat-message.mjs"
+    },
+    "./chat-sender": {
+      "types": "./dist/types/entries/chat-sender.d.ts",
+      "default": "./dist/chat-sender.mjs"
+    },
+    "./chat-content": {
+      "types": "./dist/types/entries/chat-content.d.ts",
+      "default": "./dist/chat-content.mjs"
+    },
+    "./chat-markdown": {
+      "types": "./dist/types/entries/chat-markdown.d.ts",
+      "default": "./dist/chat-markdown.mjs"
+    },
+    "./chat-thinking": {
+      "types": "./dist/types/entries/chat-thinking.d.ts",
+      "default": "./dist/chat-thinking.mjs"
+    },
+    "./chat-loading": {
+      "types": "./dist/types/entries/chat-loading.d.ts",
+      "default": "./dist/chat-loading.mjs"
+    },
+    "./chat-actionbar": {
+      "types": "./dist/types/entries/chat-actionbar.d.ts",
+      "default": "./dist/chat-actionbar.mjs"
+    },
+    "./chat-attachments": {
+      "types": "./dist/types/entries/chat-attachments.d.ts",
+      "default": "./dist/chat-attachments.mjs"
+    },
+    "./chat-suggestion": {
+      "types": "./dist/types/entries/chat-suggestion.d.ts",
+      "default": "./dist/chat-suggestion.mjs"
+    },
+    "./chat-feedback": {
+      "types": "./dist/types/entries/chat-feedback.d.ts",
+      "default": "./dist/chat-feedback.mjs"
+    },
+    "./chat-message-edit": {
+      "types": "./dist/types/entries/chat-message-edit.d.ts",
+      "default": "./dist/chat-message-edit.mjs"
+    },
+    "./chat-sources": {
+      "types": "./dist/types/entries/chat-sources.d.ts",
+      "default": "./dist/chat-sources.mjs"
+    },
+    "./chat-tool-call": {
+      "types": "./dist/types/entries/chat-tool-call.d.ts",
+      "default": "./dist/chat-tool-call.mjs"
+    },
+    "./chat-threads": {
+      "types": "./dist/types/entries/chat-threads.d.ts",
+      "default": "./dist/chat-threads.mjs"
+    },
+    "./chat-widget": {
+      "types": "./dist/types/entries/chat-widget.d.ts",
+      "default": "./dist/chat-widget.mjs"
+    },
+    "./chat-plan": {
+      "types": "./dist/types/entries/chat-plan.d.ts",
+      "default": "./dist/chat-plan.mjs"
+    },
+    "./chat-confirmation": {
+      "types": "./dist/types/entries/chat-confirmation.d.ts",
+      "default": "./dist/chat-confirmation.mjs"
+    },
+    "./chat-approval": {
+      "types": "./dist/types/entries/chat-approval.d.ts",
+      "default": "./dist/chat-approval.mjs"
+    },
+    "./chat-question": {
+      "types": "./dist/types/entries/chat-question.d.ts",
+      "default": "./dist/chat-question.mjs"
+    },
+    "./chat-context-meter": {
+      "types": "./dist/types/entries/chat-context-meter.d.ts",
+      "default": "./dist/chat-context-meter.mjs"
+    },
+    "./chat-changes": {
+      "types": "./dist/types/entries/chat-changes.d.ts",
+      "default": "./dist/chat-changes.mjs"
+    },
+    "./chat-status-bar": {
+      "types": "./dist/types/entries/chat-status-bar.d.ts",
+      "default": "./dist/chat-status-bar.mjs"
+    },
+    "./chat-artifact": {
+      "types": "./dist/types/entries/chat-artifact.d.ts",
+      "default": "./dist/chat-artifact.mjs"
+    },
+    "./chat-diff": {
+      "types": "./dist/types/entries/chat-diff.d.ts",
+      "default": "./dist/chat-diff.mjs"
+    },
+    "./chat-terminal": {
+      "types": "./dist/types/entries/chat-terminal.d.ts",
+      "default": "./dist/chat-terminal.mjs"
+    },
+    "./chat-file-tree": {
+      "types": "./dist/types/entries/chat-file-tree.d.ts",
+      "default": "./dist/chat-file-tree.mjs"
+    },
+    "./chat-test-results": {
+      "types": "./dist/types/entries/chat-test-results.d.ts",
+      "default": "./dist/chat-test-results.mjs"
+    },
+    "./chat-stack-trace": {
+      "types": "./dist/types/entries/chat-stack-trace.d.ts",
+      "default": "./dist/chat-stack-trace.mjs"
+    },
+    "./chat-share": {
+      "types": "./dist/types/entries/chat-share.d.ts",
+      "default": "./dist/chat-share.mjs"
+    },
+    "./chat-speak": {
+      "types": "./dist/types/entries/chat-speak.d.ts",
+      "default": "./dist/chat-speak.mjs"
+    },
+    "./chat-voice-input": {
+      "types": "./dist/types/entries/chat-voice-input.d.ts",
+      "default": "./dist/chat-voice-input.mjs"
+    },
+    "./chat-queue": {
+      "types": "./dist/types/entries/chat-queue.d.ts",
+      "default": "./dist/chat-queue.mjs"
+    },
+    "./chat-command-menu": {
+      "types": "./dist/types/entries/chat-command-menu.d.ts",
+      "default": "./dist/chat-command-menu.mjs"
+    },
+    "./chat-usage": {
+      "types": "./dist/types/entries/chat-usage.d.ts",
+      "default": "./dist/chat-usage.mjs"
+    },
+    "./chat-sandbox": {
+      "types": "./dist/types/entries/chat-sandbox.d.ts",
+      "default": "./dist/chat-sandbox.mjs"
+    },
+    "./chat-web-preview": {
+      "types": "./dist/types/entries/chat-web-preview.d.ts",
+      "default": "./dist/chat-web-preview.mjs"
+    },
+    "./ai-prompt-box": {
+      "types": "./dist/types/entries/ai-prompt-box.d.ts",
+      "default": "./dist/ai-prompt-box.mjs"
+    },
+    "./ai-console": {
+      "types": "./dist/types/entries/ai-console.d.ts",
+      "default": "./dist/ai-console.mjs"
     },
     "./package.json": "./package.json"
   },

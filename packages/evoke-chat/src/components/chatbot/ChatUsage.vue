@@ -43,7 +43,7 @@ import EbPopover from "@wil-works/evoke-business-ui/popover";
 import { useChatLabels } from "./labels";
 const labels = useChatLabels();
 const props = defineProps({
-  /** 单条用量 { promptTokens?, completionTokens?, totalTokens?, cost?, currency? } */
+  /** 单条用量 { promptTokens?, completionTokens?, totalTokens?, cost?, currency?, segments?: [{ label, tokens }] }；segments 是宿主自定义的分段记账（如按阶段），披露行里跟在标准分项后面 */
   usage: { type: Object, required: false, default: null },
   /** 多条用量（按会话汇总时给这个） */
   items: { type: Array, required: false, default: null },
@@ -64,9 +64,10 @@ function formatTokens(n) {
   return `${(value / 1000000).toFixed(1)}M`;
 }
 
-/** 汇总多条：total 优先，缺失时用 prompt+completion 补；成本按币种累加 */
+/** 汇总多条：total 优先，缺失时用 prompt+completion 补；成本按币种累加；segments 按 label 合并累加 */
 function sumUsage(list) {
   const acc = { promptTokens: 0, completionTokens: 0, totalTokens: 0, cost: 0, currency: "" };
+  const segments = new Map();
   let hasCost = false;
   for (const item of list || []) {
     if (!item) continue;
@@ -81,15 +82,20 @@ function sumUsage(list) {
       // 币种取第一个出现的，混币种不做汇率换算——那是宿主的业务
       if (!acc.currency) acc.currency = item.currency || "";
     }
+    for (const seg of item.segments || []) {
+      if (!seg?.label) continue;
+      segments.set(seg.label, (segments.get(seg.label) || 0) + (Number(seg.tokens) || 0));
+    }
   }
   if (!hasCost) delete acc.cost;
+  if (segments.size) acc.segments = [...segments].map(([label, tokens]) => ({ label, tokens }));
   return acc;
 }
 
 const resolved = computed(() => (props.items ? sumUsage(props.items) : props.usage || null));
 const hasData = computed(() => {
   const u = resolved.value;
-  return !!u && (u.totalTokens > 0 || u.promptTokens > 0 || u.completionTokens > 0 || typeof u.cost === "number");
+  return !!u && (u.totalTokens > 0 || u.promptTokens > 0 || u.completionTokens > 0 || typeof u.cost === "number" || (u.segments || []).some((s) => Number(s.tokens) > 0));
 });
 const total = computed(() => {
   const u = resolved.value;
@@ -134,6 +140,10 @@ const rows = computed(() => {
   push('cacheRead', labels.usage.cacheRead, u.cacheReadTokens ? fmtToken(u.cacheReadTokens) : '')
   push('cacheWrite', labels.usage.cacheWrite, u.cacheWriteTokens ? fmtToken(u.cacheWriteTokens) : '')
   push('reasoning', labels.usage.reasoning, u.reasoningTokens ? fmtToken(u.reasoningTokens) : '')
+  // 宿主自定义分段（如按阶段记账）跟在标准分项后面；label 是宿主给的，组件不翻译
+  ;(u.segments || []).forEach((seg, i) => {
+    if (seg?.label) push(`seg-${i}`, seg.label, fmtToken(seg.tokens))
+  })
   push('ttft', labels.usage.ttft, u.ttftMs ? `${(Number(u.ttftMs) / 1000).toFixed(2)}s` : '')
   push('speed', labels.usage.speed, u.tokensPerSecond ? `${Number(u.tokensPerSecond).toFixed(1)} tok/s` : '')
   push('cost', labels.usage.cost, costText.value)

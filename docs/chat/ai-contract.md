@@ -1,4 +1,4 @@
-# @wil-works/evoke-chat AI 使用说明（v0.3.1）
+# @wil-works/evoke-chat AI 使用说明（v0.4.0）
 
 > 本页由 `packages/evoke-chat/scripts/gen-ai-docs.mjs` 自动生成，勿手改（改了会被构建门拦下）。
 
@@ -162,6 +162,8 @@ session.open({ cursor: 0, records: [] })
 - 事件信封 { type, seq, time, data, ignorable?, surfaceOp? }；seq 必须连续，缺口会缓冲并回调 onGap
 - 游标只被持久事件推进；瞬时事件（审批/提问/占用）不会推进也不会造成缺口
 - 不可忽略的未知事件会标记 degraded，宿主应重拉整窗
+- open() 必须在 submit 前调（忘调会自动补开但告警）；切会话 = 再 open()（旧订阅迟到事件被代际守卫丢弃），彻底停用 dispose()
+- 结构化进度走 assistant/progress 瞬时事件 { messageId, label, detail?, elapsedMs?, percent? }，别把阶段进度拼进 think 文本
 
 ### 直接接 OpenAI / Anthropic
 
@@ -169,11 +171,14 @@ API：`createChatTransport`
 
 ```js
 const transport = createChatTransport({
-  provider: 'anthropic',            // 'openai' | 'anthropic'
+  provider: 'anthropic',            // 'openai' | 'anthropic'，或自定义 adapter 对象
   apiKey, model: 'claude-sonnet-4-5', system: '你是运营助手',
   tools: [{ name: 'web_search', description: '联网检索', parameters: {…} }],
   contextWindow: 32000,
   getMessages: () => session.messages.value,
+  onExtension: ({ event, data, json }) => {      // RAG 引用/进度等非标准载荷
+    if (json?.type === 'citations') { session.receive(mapCitations(json)); return true }
+  },
 })
 ```
 
@@ -181,6 +186,8 @@ const transport = createChatTransport({
 - 浏览器直连会暴露 key：生产走自己的后端代理（url 指到代理）
 - 这两家没有 follow/补页协议，历史要宿主自己存
 - 工具参数是分片 JSON，适配层已按 index 拼完再 parse
+- onExtension 返回 true = 本帧已被扩展消费，跳过标准映射；自研后端可给 provider 传实现 createState/buildRequest/headersOf/frameToEvents/finalize 契约的对象，不必手写 transport
+- 中断已接进 SSE 解析层：abort 解除挂起的 read 再补 turn/end(aborted)，不会一直挂
 
 ### 自定义工具卡的参数/结果渲染
 

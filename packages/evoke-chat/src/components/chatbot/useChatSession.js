@@ -8,8 +8,8 @@
  *
  * 宿主适配器（全部可选，缺省即退化成"只折叠、不发送"）：
  *   transport = {
- *     open({ cursor, generation })        // 订阅事件流；返回 unsubscribe 可选
- *     page({ from, to })                  // 补页：返回该 seq 区间的持久事件数组
+ *     open({ cursor, sessionId, onEvent, onGap })  // 订阅事件流；返回 unsubscribe 可选
+ *     page({ from, to })                           // 补页：返回该 seq 区间的持久事件数组
  *     send({ requestId, sessionId, content, attachments, mode, context })
  *     cancel({ sessionId })
  *   }
@@ -17,6 +17,7 @@
  * 事件契约（宿主把自家 wire 数据映射成这几类；其余类型按 `ignorable` 处理）：
  *   user/message      { requestId?, message: { id?, content, attachments? } }
  *   assistant/delta   { messageId, text? , think? }            瞬时（无 seq）
+ *   assistant/progress { messageId, label, detail?, elapsedMs?, percent? }  瞬时（无 seq）
  *   assistant/message { messageId, message: { content, thinkContent?, usage? }, interrupted? }
  *   tool/call         { messageId, callId, name, label?, args? }
  *   tool/result       { messageId, callId, result?, error?, duration? }
@@ -75,6 +76,18 @@ export function applySessionEvent(engine, event) {
       ensureMessage(engine, targetId);
       if (data.think) engine.appendThinkContent(targetId, data.think);
       if (data.text) engine.appendContent(targetId, data.text);
+      return true;
+    }
+    case "assistant/progress": {
+      // 结构化进度（阶段名+毫秒/百分比）有一等通道：别再把阶段进度字符串化进 think 文本
+      if (!targetId) return false;
+      ensureMessage(engine, targetId);
+      const progress = {};
+      if (data.label !== undefined) progress.label = data.label;
+      if (data.detail !== undefined) progress.detail = data.detail;
+      if (data.elapsedMs !== undefined) progress.elapsedMs = data.elapsedMs;
+      if (data.percent !== undefined) progress.percent = data.percent;
+      engine.setProgress(targetId, progress);
       return true;
     }
     case "assistant/message": {
@@ -179,6 +192,12 @@ export function useChatSession(options = {}) {
   const flights = new Map();
   let foldedUpTo = 0;
   let unsubscribe = null;
+  /** 订阅代：每次 open() 递增，transport 拿到的 onEvent 记住自己那代（迟到事件防线） */
+  let epoch = 0;
+  /** transport.open 是否已被调过（submit 前没调过会自动补开） */
+  let opened = false;
+  /** dispose 之后的会话不再折叠事件、不再发送 */
+  let disposed = false;
 
   const log = options.log || createSessionLog({
     onGap: (gap) => requestPage(gap),
@@ -322,22 +341,72 @@ export function useChatSession(options = {}) {
     }
   }
 
-  /** 打开/重开会话：装快照并订阅；返回 unsubscribe */
+  /** 打开/重开会话：装快照并订阅；返回 unsubscribe。再次 open 即切代——旧订阅的迟到事件就地丢弃 */
   function open(snapshotInput = {}) {
+    disposed = false;
+    const myEpoch = ++epoch;
+    opened = true;
     log.beginGeneration();
     log.install(snapshotInput);
+    // 新视图从干净状态开始：旧视图的乐观气泡/审批/提问不再有回声可等
+    //（它们的迟到事件已被代际守卫拦下），留着只会变成永远的“发送中”
+    pending.value = [];
+    flights.clear();
+    approval.value = null;
+    question.value = null;
+    engine.loading.value = false;
     sync({ connected: true });
-    const off = transport.open?.({ cursor: log.cursor, sessionId, onEvent: receive, onGap: requestPage });
+    const off = transport.open?.({
+      cursor: log.cursor,
+      sessionId,
+      // onEvent 闭包记住自己这代：transport 若还握着旧闭包（在途轮），事件会被代际守卫丢弃
+      onEvent: (event) => receive(event, myEpoch),
+      onGap: requestPage,
+    });
     unsubscribe = typeof off === "function" ? off : null;
     return unsubscribe;
   }
 
   /** 收到一条 wire 事件：先过日志（连续性/缺口），再折叠 */
-  function receive(event) {
+  function receive(event, atEpoch = epoch) {
+    // 代际守卫：视图切换（再次 open）或 dispose 之后，旧订阅/旧轮的迟到事件不再折叠——
+    // 否则 ensureMessage 会在新视图里复活幽灵消息
+    if (disposed || atEpoch !== epoch) return false;
     return log.apply(event);
   }
 
+  /**
+   * 停用本会话：断开订阅并丢弃一切后续事件（含在途轮的迟到事件）。幂等；
+   * 再 open() 可重新启用（换快照即切会话）。切会话不必 dispose——再 open() 就够。
+   */
+  function dispose() {
+    if (disposed) return;
+    disposed = true;
+    epoch += 1; // 让还握着旧 onEvent 的在途轮全部失效
+    unsubscribe?.();
+    unsubscribe = null;
+    pending.value = [];
+    flights.clear();
+    approval.value = null;
+    question.value = null;
+    engine.loading.value = false;
+    sync({ connected: false });
+    transport.close?.({ sessionId });
+  }
+
   async function submit(text, attachments = [], context) {
+    if (disposed) {
+      console.warn("[evoke-chat] useChatSession：已 dispose，submit 被忽略（切会话请重新 open()）");
+      return null;
+    }
+    // sink 没接通时走 sink 的标准事件会全部蒸发（症状是永远“思考中”）——这个静默断链
+    // 排查成本极高，首次 submit 自动补开并喊出来
+    if (!opened && typeof transport.open === "function") {
+      console.warn(
+        "[evoke-chat] useChatSession：submit 前未调用 open()，事件出口未接通（流式事件此前会全部丢失）——已自动补开；快照/重连语义请显式 open()",
+      );
+      open();
+    }
     const requestId = context?.requestId || newRequestId();
     const payload = {
       requestId,
@@ -368,6 +437,7 @@ export function useChatSession(options = {}) {
 
   /** 同一 requestId 重发（服务端按 requestId 去重，重复投递是安全的）；失败返回 false 不抛 */
   async function retrySend(requestId) {
+    if (disposed) return false;
     const payload = flights.get(requestId);
     if (!payload) return false;
     try {
@@ -380,6 +450,7 @@ export function useChatSession(options = {}) {
 
   /** 停止：交给宿主的协作式中止（本库不持 AbortController） */
   async function stop() {
+    if (disposed) return;
     await transport.cancel?.({ sessionId });
   }
 
@@ -394,10 +465,7 @@ export function useChatSession(options = {}) {
 
   // user/message 的持久回声 = 该条已被接受，收掉乐观气泡（见 foldNewEntries）
 
-  onScopeDispose(() => {
-    unsubscribe?.();
-    transport.close?.({ sessionId });
-  });
+  onScopeDispose(() => dispose());
 
   return {
     engine,
@@ -414,6 +482,7 @@ export function useChatSession(options = {}) {
     submit,
     retrySend,
     stop,
+    dispose,
     respondApproval,
     respondQuestion,
     retireEcho,

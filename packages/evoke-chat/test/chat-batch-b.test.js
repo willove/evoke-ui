@@ -186,3 +186,15 @@ describe('Chatbot 引用转发', () => {
     expect(evt[0][1].id).toBe('a1')
   })
 })
+
+describe('ChatSources status 字段', () => {
+  it('宿主给的定位状态拼进元信息行，不再被迫塞进 title', () => {
+    const w = mount(ChatSources, {
+      props: { items: [{ title: '一份报告', url: 'https://ref.example.com/x', status: '未定位' }, { title: '另一份', source: '内部库' }] },
+    })
+    const cards = w.findAll('.eb-chat-sources__card')
+    expect(cards[0].text()).toContain('ref.example.com · 未定位')
+    expect(cards[1].text()).toContain('内部库')
+    expect(cards[1].text()).not.toContain('未定位')
+  })
+})

@@ -232,3 +232,109 @@ describe('useChatSession：折叠与发送', () => {
     other.stop()
   })
 })
+describe('useChatSession：接通防线（真实接入反馈批）', () => {
+  function boot(overrides = {}) {
+    const transport = {
+      send: vi.fn(async () => {}),
+      cancel: vi.fn(async () => {}),
+      page: vi.fn(async () => []),
+      open: vi.fn(() => () => {}),
+      ...overrides,
+    }
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    return { session, transport, scope }
+  }
+
+  it('submit 前忘调 open()：自动补开 + 警告，事件出口接通后流式照常到达', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { session, transport, scope } = boot()
+    // 刻意不调 open() —— 旧版在这里静默断链，delta/turn/end 全部蒸发，页面永远“思考中”
+    await session.submit('你好')
+    expect(transport.open).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('open()'))
+    session.receive({ type: 'assistant/delta', transient: true, data: { messageId: 'a1', text: '流式' } })
+    expect(session.messages.value.at(-1).content).toBe('流式')
+    warn.mockRestore()
+    scope.stop()
+  })
+
+  it('代际守卫：切会话（再 open）后，旧订阅的迟到事件不再折叠（幽灵消息防线）', () => {
+    let lastOnEvent
+    const transport = {
+      open: vi.fn(({ onEvent }) => { lastOnEvent = onEvent; return () => {} }),
+      send: vi.fn(async () => {}),
+      cancel: vi.fn(async () => {}),
+      page: vi.fn(async () => []),
+    }
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    session.open({ cursor: 0, records: [] })
+    const firstGenOnEvent = lastOnEvent
+    // 切会话 = 再 open()：换快照、进新代
+    session.open({ cursor: 1, records: [ev('user/message', 1, { message: { content: '新会话' } })] })
+    expect(transport.open).toHaveBeenCalledTimes(2)
+
+    // 旧代闭包还在“在途轮”手里：瞬态增量、持久事件都不许折进新视图
+    firstGenOnEvent({ type: 'assistant/delta', transient: true, data: { messageId: 'ghost', text: '幽灵' } })
+    firstGenOnEvent(ev('assistant/message', 9, { messageId: 'ghost', message: { content: '幽灵' } }))
+    expect(session.messages.value.some((m) => m.id === 'ghost')).toBe(false)
+    expect(session.log.cursor).toBe(1)
+
+    // 新代订阅照常工作
+    lastOnEvent({ type: 'assistant/delta', transient: true, data: { messageId: 'a1', text: '活的' } })
+    expect(session.messages.value.at(-1).content).toBe('活的')
+    scope.stop()
+  })
+
+  it('dispose()：事件停折、submit 拒发、transport.close 被调；幂等；再 open() 复活', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    let lastOnEvent
+    const transport = {
+      open: vi.fn(({ onEvent }) => { lastOnEvent = onEvent; return () => {} }),
+      send: vi.fn(async () => {}),
+      cancel: vi.fn(async () => {}),
+      page: vi.fn(async () => []),
+      close: vi.fn(async () => {}),
+    }
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    session.open({ cursor: 0, records: [] })
+    const oldOnEvent = lastOnEvent
+
+    session.dispose()
+    session.dispose() // 幂等：close 只调一次
+    expect(transport.close).toHaveBeenCalledTimes(1)
+    oldOnEvent({ type: 'assistant/delta', transient: true, data: { messageId: 'ghost', text: '幽灵' } })
+    expect(session.messages.value).toHaveLength(0)
+    expect(await session.submit('不该发')).toBe(null)
+    expect(transport.send).not.toHaveBeenCalled()
+
+    // 再 open() = 复活（切会话的另一种姿势）
+    session.open({ cursor: 0, records: [] })
+    lastOnEvent({ type: 'assistant/delta', transient: true, data: { messageId: 'a1', text: '活的' } })
+    expect(session.messages.value.at(-1).content).toBe('活的')
+    warn.mockRestore()
+    scope.stop()
+  })
+
+  it('assistant/progress 折叠成 message.progress；turn/end 收尾后清空', () => {
+    const { session, scope } = boot()
+    session.open({
+      cursor: 0,
+      records: [ev('user/message', 1, { message: { content: '查一下' } })],
+    })
+    session.receive({
+      type: 'assistant/progress',
+      transient: true,
+      data: { messageId: 'a1', label: '检索知识库', detail: '3 个库', elapsedMs: 1200 },
+    })
+    const assistant = session.messages.value.at(-1)
+    expect(assistant.id).toBe('a1')
+    expect(assistant.progress).toEqual({ label: '检索知识库', detail: '3 个库', elapsedMs: 1200 })
+
+    session.receive({ type: 'turn/end', transient: true, data: { messageId: 'a1', reason: { kind: 'completed' } } })
+    expect(session.messages.value.at(-1).progress).toBe(null)
+    scope.stop()
+  })
+})

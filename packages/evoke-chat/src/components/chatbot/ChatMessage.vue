@@ -52,6 +52,11 @@
             :duration="message?.thinkDuration || 0"
             :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
           />
+          <div v-if="message?.progress?.label" class="eb-chat-message__progress">
+            <span class="eb-chat-message__progress-label">{{ message.progress.label }}</span>
+            <span v-if="message.progress.detail" class="eb-chat-message__progress-detail">{{ message.progress.detail }}</span>
+            <span v-if="message.progress.elapsedMs" class="eb-chat-message__progress-detail">{{ labels.message.duration(formatElapsed(message.progress.elapsedMs)) }}</span>
+          </div>
           <ChatPlan
             v-if="message?.plan?.steps?.length"
             :plan="message.plan"
@@ -359,6 +364,8 @@ function formatDuration(ms) {
   const seconds = Math.floor(ms % 6e4 / 1e3);
   return `${minutes}m${seconds}s`;
 }
+/** 阶段进度的耗时口径与思考耗时一致（毫秒 → ms/s） */
+const formatElapsed = formatDuration;
 function handleCopy(message) {
   emit("copy", message);
 }
@@ -602,6 +609,25 @@ function handleAction(key, message) {
   display: flex;
   flex-direction: column;
   gap: var(--eb-space-1);
+}
+
+/* assistant/progress 的可见落点：阶段名 + 细节/耗时，安静的一行读数（收尾态由引擎清掉） */
+.eb-chat-message__progress {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--eb-space-2);
+  margin-bottom: var(--eb-space-2);
+  font-size: var(--eb-font-size-xs);
+}
+
+.eb-chat-message__progress-label {
+  color: var(--eb-text-color-secondary);
+}
+
+.eb-chat-message__progress-detail {
+  color: var(--eb-text-color-placeholder);
+  font-variant-numeric: tabular-nums;
 }
 
 .eb-chat-message__tools-heading {

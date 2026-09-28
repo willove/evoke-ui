@@ -2,6 +2,56 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [evoke-chat 0.4.0] — 2026-09-28
+
+### @wil-works/evoke-chat — 真实接入反馈批：接通防线 + 取消信号 + 扩展钩子（0.4.0，minor）
+
+首批真实项目接入 expose 的问题全数收口：两个 P0 静默故障、两个 P1 结构性缺口、四个 P2 小项。
+
+**修复（P0）**
+
+- **`useChatSession` 的静默断链**：`transport.open` 未被调用时，走事件出口的标准事件
+  （delta 增量、`turn/end` 收尾）会全部蒸发，而引擎直改路径照常工作——症状是页面永远
+  "思考中"，排查成本极高。现在首次 `submit` 会自动补开并 `console.warn` 一声；
+  显式 `open()` 仍是正式接法（快照装载与重连语义都在那里）。
+- **`readSseFrames` 接受 `{ signal }`**：此前拿走 reader 却不接取消信号，宿主 abort 后
+  挂起中的 `reader.read()` 无法解除（挂起测试的元凶）。现在 abort 经 `reader.cancel()`
+  解除阻塞、迭代安静收尾，读到一半的残帧按丢弃处理，监听器与锁都会释放；
+  `createChatTransport` 的中断已接进解析层——abort 先解除挂起的 read，再统一补
+  `turn/end(aborted)`。三个 Web 流语义（getReader 即锁定 / clone 须在锁定前 / tee 双分支
+  都要 cancel）在模块头注释里写明，不再由消费方踩。
+
+**新增（P1 + P2）**
+
+- `createChatTransport` 新增 `onExtension({ event, data, json })`：标准协议之外的载荷
+  （RAG 引用、进度、运行卡）有了拦截口——返回 `true` 表示本帧已被扩展消费、跳过标准映射，
+  不返回则照常走 adapter。`provider` 也接受自定义 adapter 对象（实现
+  `createState` / `buildRequest` / `headersOf` / `frameToEvents` / `finalize` 契约），
+  自研后端不再需要复制整条 fetch/abort 管线。
+- `useChatSession` 代际守卫与 `dispose()`：每次 `open()` 进新代，transport 拿到的
+  `onEvent` 记住自己那代——切会话（再 `open()`）后，在途轮的迟到事件就地丢弃，
+  不再经 `ensureMessage` 在新视图里复活幽灵消息；`open()` 同时清空乐观气泡 / 审批 /
+  提问等瞬态（新视图从干净状态开始）。`dispose()` 幂等停用（事件停折、submit 拒发、
+  `transport.close` 通知），再 `open()` 可复活；组件卸载自动调用。内置 transport 的
+  每轮事件出口在 `send` 开始时固定，与代际守卫配合闭环。
+- 结构化进度一等通道：事件契约新增瞬时事件 `assistant/progress`
+  （`{ messageId, label, detail?, elapsedMs?, percent? }`），折叠进 `engine.setProgress`
+  → `message.progress`；`EbChatMessage` 在思考块下方渲染一行阶段读数（阶段名 + 细节/耗时，
+  收尾态自动清空）。阶段进度不必再字符串化进 think 文本。
+- `EbChatSources` 条目新增 `status` 字段：宿主的定位状态说明（如「未定位」）与域名同行
+  展示，不必再拼进 `title`。
+- `EbChatUsage` 用量新增 `segments: [{ label, tokens }]`：宿主自定义的分段记账
+  （如按阶段的 stages_tokens）进披露行，跟在标准分项后面；多条汇总按 `label` 合并累加；
+  只有 segments 也判定有数据。segments 是细分、不计入总量。
+- 打包：exports map 去掉 `"./*"` 通配，40 个组件子路径逐条显式登记——通配会 advertise
+  不存在的子路径（如 `adapters/createChatTransport`），import 到不存在的文件才报错；
+  显式登记后未登记路径直接 `ERR_PACKAGE_PATH_NOT_EXPORTED`。exports ↔ 入口清单的一致性
+  由 `check-artifacts`（构建链）与 `exports.test.js` 双重守卫。
+
+**测试**：新增 12 条（signal 取消与锁释放、挂起流 cancel 收尾、onExtension 认领/透传、
+自定义 adapter 接入、自动补开告警、代际守卫双代隔离、dispose 幂等与复活、progress 折叠
+与收尾清空、segments 合并、status 元信息行、进度条渲染门控）。
+
 ## [tools-ui 1.4.1] — 2026-09-27
 
 ### @wil-works/evoke-tools-ui — 修死订阅：`palette = {}` 的「只订阅不落值」模式此前一次都不触发

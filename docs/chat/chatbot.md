@@ -563,7 +563,7 @@ const onSlotClear = () => {
 
 ## 来源引用与行内上标
 
-消息带 `citations` 数组即渲染来源卡列表（序号 / favicon / 标题 / 域名 / 摘要，可折叠）。正文里的行内引用用 **`source:` 协议**书写——`[1](source:c1)` 渲染成可点击上标，点击会展开来源列表并高亮对应卡片，同时抛 `citation-click`：
+消息带 `citations` 数组即渲染来源卡列表（序号 / favicon / 标题 / 域名 / 摘要，可折叠；条目可带 `status` 说明定位状态——如「未定位」——与域名同行展示，不必把它拼进标题）。正文里的行内引用用 **`source:` 协议**书写——`[1](source:c1)` 渲染成可点击上标，点击会展开来源列表并高亮对应卡片，同时抛 `citation-click`：
 
 <DemoBlock>
   <eb-chatbot v-model="citeMsgs" height="460px" :show-tip="false" @citation-click="onCiteClick" />
@@ -752,12 +752,19 @@ session.stop()                               // 停止（本层不持 AbortContr
 session.messages                             // 折叠后的消息数组，直接喂 <eb-chatbot v-model>
 ```
 
+**`open()` 与生命周期的三条口径**：
+
+- `submit` 前忘了 `open()` 也能跑——首次发送会自动补开并 `console.warn` 一声（不补的话走事件出口的流式事件会全部静默丢失，页面停在“生成中”）。但快照装载、断线重连的语义都在 `open()`，正式接入请显式调用。
+- **切会话 = 再调一次 `open()`**（换快照）：旧订阅的迟到事件（在途轮的增量、收尾）由代际守卫就地丢弃，不会在新会话里复活幽灵消息；乐观气泡、审批、提问等瞬态同时清空，新视图从干净状态开始。
+- 整个会话不再用了调 `session.dispose()`：断开订阅、丢弃一切后续事件并通知 `transport.close`；之后再 `open()` 可复活。组件卸载（scope 销毁）会自动 dispose。
+
 事件契约（宿主把自家 wire 数据映射成这几类，其余类型按 `ignorable` 处理）：
 
 | 事件 | 数据 | 折叠成 |
 | --- | --- | --- |
 | `user/message` | `{ requestId?, message: { content, attachments? } }` | 用户消息（同 `requestId` 的乐观气泡自动摘除） |
 | `assistant/delta`（瞬时） | `{ messageId, text?, think? }` | `appendContent` / `appendThinkContent` |
+| `assistant/progress`（瞬时） | `{ messageId, label, detail?, elapsedMs?, percent? }` | `setProgress`：消息上一行阶段读数（阶段名 + 细节/耗时）；收尾态自动清空 |
 | `assistant/message` | `{ messageId, message: { content, thinkContent?, usage? }, interrupted? }` | 落定；`interrupted` 走中断态 |
 | `tool/call` | `{ messageId, callId, name, args? }` | 工具卡转执行中 |
 | `tool/result` | `{ messageId, callId, result?, error?, duration? }` | 完成 / 失败；`error.code === 'interrupted'` 落「已停止」 |
@@ -792,19 +799,26 @@ session.messages                             // 折叠后的消息数组，直�
 import { createChatTransport, useChatSession } from '@wil-works/evoke-chat'
 
 const transport = createChatTransport({
-  provider: 'anthropic',        // 'openai' | 'anthropic'
+  provider: 'anthropic',        // 'openai' | 'anthropic'，也可直接给自定义 adapter 对象（见下）
   apiKey: '...',                // 浏览器直连不安全：生产走你自己的后端代理（url 换成代理地址）
   model: 'claude-sonnet-4-5',
   system: '你是运营助手',
   tools: [{ name: 'web_search', description: '联网检索', parameters: { type: 'object', properties: { query: { type: 'string' } } } }],
   contextWindow: 32000,         // 给了才会报上下文占用
   getMessages: () => session.messages.value,   // 历史来源（本库消息数组）
+  // 标准协议之外的载荷（RAG 引用 / 进度 / 运行卡）在这里拦截：
+  onExtension: ({ event, data, json }) => {
+    if (json?.type === 'citations') { session.receive(toCitationEvent(json)); return true }
+    // 返回 true = 本帧已被扩展消费，跳过标准映射；不返回则照常走 adapter
+  },
 })
 
 const session = useChatSession({ transport })
 session.open({ cursor: 0, records: [] })
 session.submit('帮我诊断渠道下滑')
 ```
+
+自研后端不必再手写整条 transport：**provider 直接给一个实现了适配器契约的对象**（`createState` / `buildRequest` / `headersOf` / `frameToEvents` / `finalize`），fetch 错误处理与「abort → `turn/end(aborted)`」的收尾广播都由 `createChatTransport` 复用。
 
 **映射表**（各家差异都在适配器里吸收，宿主不用管）：
 
@@ -818,7 +832,7 @@ session.submit('帮我诊断渠道下滑')
 | 用量 | `usage.prompt_tokens / completion_tokens / total_tokens` | `message_start.input_tokens` + `message_delta.output_tokens`（分两处，适配器合并） |
 | 工具 schema | `tools[].function.{name,description,parameters}` | `tools[].{name,description,input_schema}` |
 | 历史回灌 | `role:'tool'` + `tool_call_id` | `tool_result` 内容块 |
-| 中断 | 客户端 `AbortController`；abort 后统一补一条 `turn/end(aborted)` | 同 |
+| 中断 | 客户端 `AbortController`；abort 会解除 SSE 挂起中的 read（signal 直通解析层，`readSseFrames` 也接受 `{ signal }`），随后统一补一条 `turn/end(aborted)` | 同 |
 
 **边界（刻意不做的事）**：这两家**没有** follow 流与补页协议，所以适配出来的 transport `open` 只登记事件出口、`page` 返回空——**历史要宿主自己存**（刷新后从你的后端拿）；`approve` / `answerQuestion` 是应用级交互，不属于 provider 适配。想用完整的会话日志层（游标/缺口补齐/断线恢复），把 `open` / `page` 接到你自己的后端即可，其余照旧。
 

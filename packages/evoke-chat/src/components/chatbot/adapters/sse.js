@@ -4,6 +4,13 @@
  * 两家模型服务（OpenAI Chat Completions / Anthropic Messages）都用 Server-Sent Events 推流：
  * 帧以空行分隔，`data:` 可多行（按 \n 拼接），`:` 开头是注释（心跳），`data: [DONE]` 收尾。
  * 这里只做协议解析，不碰业务语义——语义在 openai.js / anthropic.js 里。
+ *
+ * 取消（`{ signal }`）：abort 后挂起中的 `reader.read()` 会被 `reader.cancel()` 解除，
+ * 迭代**安静收尾**（等同流正常结束，不抛错）；读到一半的残帧按丢弃处理——中途取消的
+ * 帧不完整，交出去就是半个 JSON。三个 Web 流语义消费方容易踩，这里替你处理掉：
+ *   - 流一经 `getReader()` 即锁定，别人再 lock/iterate 会抛；
+ *   - `response.clone()` 必须在锁定**前**调用；
+ *   - `tee()` 出的分支要两个都 `cancel()`，源才会真正关。
  */
 
 /** 找下一帧的结束位置（兼容 \n\n 与 \r\n\r\n） */
@@ -53,24 +60,54 @@ export function parseSseText(text) {
   return frames
 }
 
-/** async iterable（Uint8Array / string）→ 帧 */
-export async function* readSseFrames(body) {
-  if (!body) return
-  const decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null
-  let buffer = ''
-  for await (const chunk of body) {
-    buffer += typeof chunk === 'string' ? chunk : (decoder ? decoder.decode(chunk, { stream: true }) : '')
-    let hit = frameEnd(buffer)
-    while (hit) {
-      const frame = parseSseFrame(buffer.slice(0, hit.at))
-      buffer = buffer.slice(hit.next)
-      if (frame) yield frame
-      hit = frameEnd(buffer)
-    }
+/**
+ * async iterable / ReadableStream → 帧（可传 `{ signal }`：abort 解除挂起的 read，安静收尾）
+ *
+ * reader 由这里持有并负责释放：abort / 消费方中途退出都会 `cancel()` 流，
+ * 不给「锁了不还、abort 了还挂在 read 上」留门。
+ */
+export async function* readSseFrames(source, { signal } = {}) {
+  if (!source || signal?.aborted) return
+  // 有 getReader 的按流处理（reader 才有 cancel 通道）；纯 async iterable 走迭代器协议
+  const reader = typeof source.getReader === 'function' ? source.getReader() : null
+  const iterator = reader ? null : source[Symbol.asyncIterator]()
+  let aborted = false
+  const onAbort = () => {
+    aborted = true
+    // cancel 让挂起的 read 以 { done: true } 收场——这是「解除阻塞」而不是「打断报错」
+    reader?.cancel()?.catch?.(() => {})
+    iterator?.return?.()?.catch?.(() => {})
   }
-  if (buffer.trim()) {
-    const frame = parseSseFrame(buffer)
-    if (frame) yield frame
+  signal?.addEventListener('abort', onAbort, { once: true })
+  const decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null
+  try {
+    let buffer = ''
+    for (;;) {
+      const { done, value } = reader ? await reader.read() : await iterator.next()
+      if (done) break
+      buffer += typeof value === 'string' ? value : (decoder ? decoder.decode(value, { stream: true }) : '')
+      let hit = frameEnd(buffer)
+      while (hit) {
+        const frame = parseSseFrame(buffer.slice(0, hit.at))
+        buffer = buffer.slice(hit.next)
+        if (frame) yield frame
+        hit = frameEnd(buffer)
+      }
+    }
+    // 残段只在正常收尾时冲洗：中途 abort 的残帧不完整，不该当成一帧交出去
+    if (!aborted && buffer.trim()) {
+      const frame = parseSseFrame(buffer)
+      if (frame) yield frame
+    }
+  } finally {
+    signal?.removeEventListener('abort', onAbort)
+    if (reader) {
+      // cancel 对已自然收尾的流是幂等 no-op；中途退出（break / return）也能还掉资源
+      reader.cancel()?.catch?.(() => {})
+      reader.releaseLock?.()
+    } else {
+      iterator?.return?.()?.catch?.(() => {})
+    }
   }
 }
 
@@ -94,8 +131,7 @@ export async function* streamChunks(stream) {
   }
 }
 
-/** 便捷入口：fetch 响应体（或任意流）→ 帧 */
-export async function* sseFramesOf(body) {
-  const stream = body?.getReader && typeof body[Symbol.asyncIterator] !== 'function' ? streamChunks(body) : body
-  yield* readSseFrames(stream)
+/** 便捷入口：fetch 响应体（或任意流 / async iterable）→ 帧；`signal` 原样透传 */
+export async function* sseFramesOf(body, { signal } = {}) {
+  yield* readSseFrames(body, { signal })
 }

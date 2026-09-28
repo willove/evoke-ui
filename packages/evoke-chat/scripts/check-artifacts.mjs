@@ -67,6 +67,14 @@ if (builtEntries < componentImports.length) {
   fail.push(`dist/*.mjs 只有 ${builtEntries} 个，少于组件入口 ${componentImports.length} 个`)
 }
 
+// ── 5. exports 面与入口清单一致：组件子路径逐条显式登记，禁 "./*" 通配 ──
+//    （通配会 advertise 不存在的子路径如 adapters/*，消费方 import 到不存在的文件才报错）
+const pkg = JSON.parse(readFileSync(join(pkgRoot, 'package.json'), 'utf8'))
+const wildcardKeys = Object.keys(pkg.exports || {}).filter((k) => k.includes('*'))
+if (wildcardKeys.length) fail.push(`exports 出现通配键 ${wildcardKeys.join(', ')} —— 子路径必须逐条登记`)
+const missingExports = componentImports.map(kebab).filter((name) => !pkg.exports?.[`./${name}`])
+if (missingExports.length) fail.push(`package.json exports 缺少子路径：${missingExports.map((n) => `./${n}`).join(', ')}`)
+
 if (fail.length) {
   console.error('[check-artifacts] 构建产物不完整：')
   for (const line of fail) console.error(`  - ${line}`)

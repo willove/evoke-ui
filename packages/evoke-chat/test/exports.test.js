@@ -33,7 +33,7 @@ describe('按需子路径导出契约', () => {
     expect(missing).toEqual([])
   })
 
-  it('exports 面：主入口带 types、locale 与 styles 子路径、通配子路径保留', () => {
+  it('exports 面：主入口带 types、locale 与 styles 子路径；组件子路径逐条显式登记（禁通配——"./*" 会 advertise 不存在的子路径，如 adapters/*）', () => {
     expect(pkg.exports['.']).toEqual({
       types: './dist/types/index.d.ts',
       default: './dist/index.mjs',
@@ -43,11 +43,15 @@ describe('按需子路径导出契约', () => {
       types: './dist/types/locale/index.d.ts',
       default: './dist/locale.mjs',
     })
-    expect(pkg.exports['./*']).toEqual({
-      types: './dist/types/entries/*.d.ts',
-      default: './dist/*.mjs',
-    })
     expect(pkg.types).toBe('./dist/types/index.d.ts')
+    const wildcardKeys = Object.keys(pkg.exports).filter((k) => k.includes('*'))
+    expect(wildcardKeys).toEqual([])
+    for (const { name } of entries) {
+      expect(pkg.exports[`./${name}`], `./${name} 未登记`).toEqual({
+        types: `./dist/types/entries/${name}.d.ts`,
+        default: `./dist/${name}.mjs`,
+      })
+    }
   })
 
   it('依赖边界：底座与 vue 是 peer，随包走的只有 marked / highlight.js', () => {

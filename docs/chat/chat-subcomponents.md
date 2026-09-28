@@ -622,10 +622,14 @@ engine.setUsage(msg.id, {
   totalTokens: 500,
   cost: 0.0032,        // 可选；不给就不显示成本位
   currency: '$',       // 可选；混币种取第一个出现的，不做汇率换算
+  segments: [          // 可选；宿主自定义的分段记账（如按阶段），披露行跟在标准分项后面
+    { label: '检索阶段', tokens: 320 },
+    { label: '生成阶段', tokens: 180 },
+  ],
 })
 ```
 
-消息带 `usage` 时元信息行自动出现一颗用量徽标（`1.2k tokens · $0.0032`）。**点开给分项明细**（输入 / 输出 / 缓存读 / 缓存写 / 推理 / 首字 / 速度 / 成本）——为 0 的分项不渲染，宿主没给的成本也不出现；没给任何用量就完全不渲染，只有总量时分项为空、徽标不可点（不做假按钮）。
+消息带 `usage` 时元信息行自动出现一颗用量徽标（`1.2k tokens · $0.0032`）。**点开给分项明细**（输入 / 输出 / 缓存读 / 缓存写 / 推理 / 自定义分段 / 首字 / 速度 / 成本）——为 0 的分项不渲染，宿主没给的成本也不出现；没给任何用量就完全不渲染，只有总量时分项为空、徽标不可点（不做假按钮）。多条汇总时 `segments` 按 `label` 合并累加。
 
 单条用 `usage`，按会话汇总用 `items`（多条累加，token 与成本都汇总）：
 
@@ -637,7 +641,7 @@ engine.setUsage(msg.id, {
 
 | Props | 类型 | 默认 | 说明 |
 | --- | --- | --- | --- |
-| `usage` | object | `null` | 单条用量：`{ promptTokens?, completionTokens?, totalTokens?, cacheReadTokens?, cacheWriteTokens?, reasoningTokens?, ttftMs?, tokensPerSecond?, cost?, currency? }` |
+| `usage` | object | `null` | 单条用量：`{ promptTokens?, completionTokens?, totalTokens?, cacheReadTokens?, cacheWriteTokens?, reasoningTokens?, ttftMs?, tokensPerSecond?, cost?, currency?, segments? }`，`segments` 为 `[{ label, tokens }]`（token 记账的分段细分，不计入总量） |
 | `items` | array | `null` | 多条用量（按会话汇总，token 与成本累加） |
 | `size` | string | `'compact'` | `compact` 用于消息元信息行，`default` 用于独立展示 |
 | `bare` | boolean | `true` | 去掉底色，直接融进上下文 |

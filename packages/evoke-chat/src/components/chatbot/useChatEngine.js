@@ -98,6 +98,7 @@ function useChatEngine(options = {}) {
       const duration = startTime ? Date.now() - startTime : void 0;
       msg.status = "done";
       msg.thinking = false;
+      msg.progress = null; // 阶段进度只属于进行中的轮：收尾后留着就是谎报
       settleThinkDuration(msg);
       if (duration && duration > 0) {
         msg.duration = duration;
@@ -105,7 +106,7 @@ function useChatEngine(options = {}) {
     }
   }
   function setMessageError(id, error) {
-    updateMessage(id, { status: "error", error, thinking: false });
+    updateMessage(id, { status: "error", error, thinking: false, progress: null });
   }
   /**
    * 中断生成：保留已流出的正文，状态记 cancelled。
@@ -118,6 +119,7 @@ function useChatEngine(options = {}) {
     if (!msg) return;
     if (msg.thinking) msg.thinkInterrupted = true;
     msg.thinking = false;
+    msg.progress = null;
     // 与 completeMessage 同款收尾：思考起点折成 thinkDuration（没思考过则不动）
     settleThinkDuration(msg);
     // 还在跑的工具调用不能继续转圈：与消息同一终态语义（cancelled），
@@ -300,6 +302,12 @@ function useChatEngine(options = {}) {
   // 只存不解析：成本要价目表，那是宿主的业务数据，引擎不猜
   function setUsage(messageId, usage) {
     updateMessage(messageId, { usage: usage || null });
+  }
+  // ── 结构化进度 ──
+  // 阶段名+耗时/百分比的一等通道（assistant/progress 事件落这里），
+  // { label, detail?, elapsedMs?, percent? }。只存不解读：措辞是宿主的业务
+  function setProgress(messageId, progress) {
+    updateMessage(messageId, { progress: progress || null });
   }
   /** 本轮改动汇总 { files: [{ path, display?, added?, deleted?, binary?, oversized? }], total?, added?, deleted? } */
   function setChanges(messageId, changes) {
@@ -518,6 +526,7 @@ function useChatEngine(options = {}) {
     updateArtifact,
     removeArtifact,
     setUsage,
+    setProgress,
     setChanges,
     setTrace
   };

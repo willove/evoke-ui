@@ -261,3 +261,101 @@ describe('createChatTransport 端到端', () => {
     expect(() => createChatTransport({ provider: 'gemini' })).toThrow(/未知 provider/)
   })
 })
+describe('SSE 取消与扩展钩子（真实接入反馈批）', () => {
+  it('readSseFrames：abort 解除挂起中的 read，安静收尾；残帧不冲洗；锁被释放', async () => {
+    // 吐一段后永远挂着（服务端不出话）：旧签名没有 signal，宿主 abort 了 read 也回不来
+    const controller = new AbortController()
+    const stream = new ReadableStream({
+      start(c) {
+        c.enqueue(new TextEncoder().encode('data: {"a":1}\n\ndata: {"b":'))
+      },
+    })
+    const frames = []
+    const pumping = (async () => {
+      for await (const f of readSseFrames(stream, { signal: controller.signal })) frames.push(f)
+    })()
+    await vi.waitFor(() => expect(frames).toHaveLength(1))
+    controller.abort()
+    await pumping
+    // 完整帧已交付；残帧 `data: {"b":` 按 abort 语义丢弃
+    expect(frames).toHaveLength(1)
+    expect(JSON.parse(frames[0].data)).toEqual({ a: 1 })
+    // cancel + releaseLock 都做了：流不再被锁着（clone 要在锁定前的坑不会落到消费方）
+    expect(stream.locked).toBe(false)
+  })
+
+  it('transport：cancel 后挂起的流循环立即收尾（signal 已接进解析层），补 aborted 终态', async () => {
+    // 只 enqueue 一次且不 close 的流：signal 未接通的旧实现会永远停在 for await，
+    // stop() 之后没有 turn/end，loading 永远不落
+    const stream = new ReadableStream({
+      start(c) {
+        c.enqueue(new TextEncoder().encode('data: {"choices":[{"delta":{"content":"开头"}}]}\n\n'))
+      },
+    })
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200, body: stream, text: async () => '' }))
+    const transport = createChatTransport({ provider: 'openai', apiKey: 'k', model: 'm', getMessages: () => [], fetchImpl })
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    session.open({ cursor: 0, records: [] })
+    const sending = session.submit('写一篇长文')
+    await vi.waitFor(() => expect(session.messages.value.at(-1)?.content).toBe('开头'))
+    await session.stop()
+    await sending
+    await vi.waitFor(() => expect(session.messages.value.at(-1).status).toBe('cancelled'))
+    scope.stop()
+  })
+
+  it('onExtension：非标准载荷（RAG 引用等）可整帧认领；不认领的照常走标准映射', async () => {
+    const body = [
+      'data: {"choices":[{"delta":{"content":"答案"}}]}\n\n',
+      'data: {"type":"citations","sources":[{"title":"文档","url":"https://e.dev/a"}]}\n\n',
+      'data: {"choices":[{"delta":{"content":"！" }}]}\n\n',
+      'data: [DONE]\n\n',
+    ].join('')
+    const claimed = []
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200, body: streamOf([body]), text: async () => '' }))
+    const transport = createChatTransport({
+      provider: 'openai', apiKey: 'k', model: 'm', getMessages: () => [], fetchImpl,
+      onExtension: (frame) => {
+        if (frame.json?.type === 'citations') {
+          claimed.push(frame.json)
+          return true // 本帧已被扩展消费，跳过标准映射
+        }
+      },
+    })
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    session.open({ cursor: 0, records: [] })
+    await session.submit('查资料')
+    await vi.waitFor(() => expect(session.messages.value.at(-1).status).toBe('done'))
+    expect(claimed).toEqual([{ type: 'citations', sources: [{ title: '文档', url: 'https://e.dev/a' }] }])
+    expect(session.messages.value.at(-1).content).toBe('答案！')
+    scope.stop()
+  })
+
+  it('自定义 adapter 对象：实现契约即可接入整条管线；缺方法开局就报', async () => {
+    const body = 'data: {"answer":"自研协议"}\n\ndata: [DONE]\n\n'
+    const custom = {
+      defaultUrl: 'https://in-house.example/v1/answer',
+      createState: () => ({}),
+      buildRequest: ({ model, messages }) => ({ model, messages }),
+      headersOf: () => ({ 'content-type': 'application/json' }),
+      frameToEvents: (frame, _state, { messageId }) => {
+        const answer = JSON.parse(frame.data)?.answer
+        return answer ? [{ type: 'assistant/delta', transient: true, data: { messageId, text: answer } }] : []
+      },
+      finalize: () => [],
+    }
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200, body: streamOf([body]), text: async () => '' }))
+    const transport = createChatTransport({ provider: custom, getMessages: () => [], fetchImpl })
+    const scope = effectScope()
+    const session = scope.run(() => useChatSession({ transport, sessionId: 's1' }))
+    session.open({ cursor: 0, records: [] })
+    await session.submit('hi')
+    await vi.waitFor(() => expect(session.messages.value.at(-1).content).toBe('自研协议'))
+    scope.stop()
+
+    const incomplete = { createState: () => ({}) }
+    expect(() => createChatTransport({ provider: incomplete, getMessages: () => [] })).toThrow(/缺少契约方法/)
+  })
+})
