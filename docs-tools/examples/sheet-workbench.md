@@ -21,6 +21,7 @@
 
 - **一份 ctx 喂全部界面**：`{ hasCell, bold, italic, frozen }` 由选区推演，工具区、右键菜单、命令面板的 `enabled / active` 都读它——没有第二处状态。
 - **网格是产品内容**：案例用最小替身（点选 + 方向键 + 加粗/倾斜/冻结），换成本地表格引擎时 chrome 一行不用改。
+- **视口即网格焦点根**：`viewport-role="grid"` 定语义，行/列规模与活动格 ARIA 由 `syncViewportAria()` 经 `viewportEl` 同步；内层网格不再自设 `tabindex`，宿主的 `viewport-focus / viewport-blur` 才收得到焦点。
 - **持久化与降级**：`persist-key` 记住停靠尺寸与折叠态；`layout-corrupted` 时降级默认布局并提示，不白屏。
 - 三档密度、暗色与 `--eb-*` 令牌跟随宿主，chrome 与产品内容各自取色。
 

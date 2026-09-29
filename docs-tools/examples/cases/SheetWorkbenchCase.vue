@@ -59,19 +59,23 @@
       <et-theme-bridge />
       <et-context-menu :registry="registry" :schema="CONTEXT_SCHEMA" :ctx="ctx">
         <et-sheet-canvas-host
+          ref="canvasRef"
           class="case-sheet__host"
-              label="工作表"
-              :content-width="0"
-              :content-height="0"
-              @scroll="onCanvasScroll"
-            >
-              <div ref="gridRef" class="case-sheet__grid" tabindex="0" @keydown="onGridKeydown">
+          label="工作表"
+          viewport-role="grid"
+          :content-width="0"
+          :content-height="0"
+          @scroll="onCanvasScroll"
+          @keydown="onGridKeydown"
+        >
+          <div ref="gridRef" class="case-sheet__grid">
             <div class="case-sheet__corner" />
             <div v-for="c in COLS" :key="`h${c}`" class="case-sheet__colhead" :class="{ 'is-sel': sel.c === c }">{{ c }}</div>
             <template v-for="r in ROWS" :key="`r${r}`">
               <div class="case-sheet__rowhead" :class="{ 'is-sel': sel.r === r }">{{ r }}</div>
               <div
                 v-for="c in COLS"
+                :id="`case-sheet-cell-${r}${c}`"
                 :key="`${r}${c}`"
                 class="case-sheet__cell"
                 :class="{
@@ -82,12 +86,12 @@
                 }"
                 @click="selectCell(r, c)"
               >{{ CELLS[r]?.[c] ?? '' }}</div>
-                </template>
-              </div>
-              <template #overlay>
-                <span v-if="frozen" class="case-sheet__frozen-chip">已冻结首行</span>
-              </template>
-            </et-sheet-canvas-host>
+            </template>
+          </div>
+          <template #overlay>
+            <span v-if="frozen" class="case-sheet__frozen-chip">已冻结首行</span>
+          </template>
+        </et-sheet-canvas-host>
       </et-context-menu>
 
       <!-- 内容页签带：Workbench 的 #tabbar 槽（与顶部 #documents 对称） -->
@@ -111,8 +115,10 @@
  * 全部 chrome 走 et-*：命令表驱动工具区、停靠树持久化、文档标签、右键与状态栏。
  * 网格是产品内容（这里用最小实现替身）：点选单元格 → 选区/求和进状态栏，
  * 方向键移动选区，加粗/倾斜落在单元格上，冻结首行由工具区命令开关。
+ * 视口即网格焦点根（role=grid 走 viewport-role）；行/列规模与活动格 ARIA
+ * 宿主不设 prop，由 syncViewportAria 经暴露的 viewportEl 同步。
  */
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { createCommandRegistry } from '@wil-works/evoke-tools-ui/runtime'
 
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -181,7 +187,8 @@ function onAddSheet() {
   toast.open = true
 }
 
-/** 画布宿主：滚动量只用于状态栏回执（真实产品按它算可见区） */
+/** 画布宿主：滚动量只用于状态栏回执（真实产品按它算可见区）；grid ARIA 经 viewportEl 同步 */
+const canvasRef = ref(null)
 const canvasScroll = reactive({ left: 0, top: 0 })
 function onCanvasScroll({ scrollLeft, scrollTop }) {
   canvasScroll.left = scrollLeft
@@ -312,6 +319,20 @@ function onCorrupted() {
   toast.open = true
   toast.message = '布局已重置为默认'
 }
+
+/**
+ * grid ARIA 同步（产品职责，宿主没有这些 prop）：视口已有 role=grid，
+ * 这里补行/列规模与活动格——活动格 id 必须是视口的 DOM 后代才生效。
+ */
+function syncViewportAria() {
+  const vp = canvasRef.value?.viewportEl
+  if (!vp) return
+  vp.setAttribute('aria-rowcount', String(ROWS.length))
+  vp.setAttribute('aria-colcount', String(COLS.length))
+  vp.setAttribute('aria-activedescendant', `case-sheet-cell-${sel.r}${sel.c}`)
+}
+onMounted(syncViewportAria)
+watch(() => [sel.r, sel.c], syncViewportAria)
 
 function onGridKeydown(e) {
   const map = {

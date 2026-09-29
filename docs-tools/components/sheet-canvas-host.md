@@ -43,3 +43,4 @@ const focused = ref(false)
 - **浮层不随滚动**：需要跟随单元格的浮层（编辑器）走 `#overlay` + 产品自己算坐标；
 - **宿主不加外框**：边框归布局/停靠，避免与分隔线叠成双线；
 - **画布聚焦不加内描边**：焦点可见性由产品在"当前单元格"上表达（办公软件的通行做法）。
+- **grid ARIA 归产品**：语义 role 用 `viewport-role` 传；`aria-rowcount / aria-colcount / aria-activedescendant` 宿主不设 prop，产品经暴露的 `viewportEl` 自行同步（工作台案例的 `syncViewportAria()` 即此用法）。
