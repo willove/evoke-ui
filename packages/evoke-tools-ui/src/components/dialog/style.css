@@ -25,7 +25,7 @@
   /* 宽由 width prop 经内联样式给出；max-width 防小视口破界 */
   max-width: calc(100% - var(--eb-space-8));
   margin-top: var(--eb-dialog-margin-top);
-  background: var(--et-chrome-bg);
+  background: var(--et-surface-stage);
   border-radius: var(--et-radius-xl);
   box-shadow: var(--eb-shadow-4);
   color: var(--eb-text-color-regular);
@@ -79,7 +79,7 @@
   padding-inline: var(--et-space-block);
   border: var(--et-divider-size) solid var(--eb-border-color);
   border-radius: var(--et-radius-md);
-  background: var(--et-chrome-bg);
+  background: var(--et-surface-stage);
   color: var(--eb-text-color-regular);
   font-size: var(--et-density-caption-font);
   font-family: inherit;

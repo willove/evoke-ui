@@ -530,8 +530,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-mail__folder.is-active {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-selected-fg);
+  background: var(--et-state-selected-bg);
 }
 .case-mail__tag {
   display: flex;
@@ -551,7 +551,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   display: grid;
   grid-template-columns: minmax(240px, 300px) 1fr;
   height: 100%;
-  background: var(--eb-bg-color);
+  background: var(--et-surface-stage);
 }
 .case-mail__center {
   display: flex;
@@ -594,8 +594,17 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-mail__item.is-sel {
-  background: var(--eb-color-primary-light-9);
-  box-shadow: inset 2px 0 0 var(--eb-color-primary);
+  background: var(--et-state-content-selected-bg);
+}
+.case-mail__item.is-sel .case-mail__from,
+.case-mail__item.is-sel .case-mail__subject,
+.case-mail__item.is-sel .case-mail__mark {
+  color: var(--et-state-content-selected-fg);
+}
+.case-mail__item.is-sel .case-mail__time,
+.case-mail__item.is-sel .case-mail__preview {
+  color: var(--et-state-content-selected-fg);
+  opacity: 0.75;
 }
 .case-mail__from {
   display: flex;

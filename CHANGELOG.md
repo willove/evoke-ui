@@ -2,6 +2,28 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [tools-ui 1.5.0] — 2026-09-29（未发版）
+
+### @wil-works/evoke-tools-ui — 桌面表面分层：铬带灰面 + 内容舞台亮面 + 内容选中对（minor）
+
+**新增**
+
+- 表面分层令牌：`--et-surface-tray`（铬带灰面：标题栏/功能区/状态栏/面板头）与
+  `--et-surface-stage`（内容舞台亮面：画布视口/文档区/浮层）。工具界面默认自带
+  「灰铬带框住亮舞台」的桌面分层；暗色下铬带沉向更深一档、舞台保持亮面，方向与亮色一致。
+- 内容选中对：`--et-state-content-selected-bg / -fg`（主色实底 + 反色文字），供产品的
+  数据与列表走桌面式选中；chrome 内选中（页签/导航）仍走 `--et-state-selected-*` 中性对，
+  主色只落文字/图标的纪律不变。
+- 状态灰阶重排：hover/选中在灰铬带上落 `fill-color-dark`、按下落 `fill-color-darker`，
+  灰面上保持可见。
+- 公式栏编辑位改为常亮舞台白底 + 发丝描边（"可输入"的暗示不依赖带间色差）；
+  对话框与 Toast 改走舞台亮面，不再跟铬带同色。
+- 换肤入口：覆盖 `--et-surface-tray / -stage` 整体换铬面气质，覆盖 `--eb-color-primary`
+  连带内容选中色（主题指南新增「表面分层与换肤入口」一节）。
+
+**升级注意**：默认观感变化——铬带从白变灰。视觉基线已随本次重录；想要旧观感的产品把
+`--et-surface-tray` 覆盖回 `--eb-bg-color` 即可。
+
 ## [evoke-chat 0.4.0] — 2026-09-28
 
 ### @wil-works/evoke-chat — 真实接入反馈批：接通防线 + 取消信号 + 扩展钩子（0.4.0，minor）

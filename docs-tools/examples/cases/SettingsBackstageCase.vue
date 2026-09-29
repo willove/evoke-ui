@@ -488,8 +488,8 @@ onMounted(() => document.addEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-settings__nav.is-active {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-selected-fg);
+  background: var(--et-state-selected-bg);
 }
 .case-settings__stage {
   max-width: 560px;
@@ -552,6 +552,6 @@ onMounted(() => document.addEventListener('keydown', onGlobalKeydown))
   cursor: pointer;
 }
 .case-settings__disclosure:hover {
-  color: var(--eb-color-primary);
+  color: var(--eb-text-color-primary);
 }
 </style>

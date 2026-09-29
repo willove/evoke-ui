@@ -53,9 +53,10 @@
   width: 100%;
   height: var(--et-auxbar-input-height);
   padding-inline: var(--et-space-inline);
-  border: 1px solid transparent;
+  /* 编辑位恒为舞台亮面 + 发丝描边：灰铬带上一块"可输入"的白，是桌面输入区的通行暗示 */
+  border: 1px solid var(--et-chrome-separator);
   border-radius: var(--et-radius-sm);
-  background: transparent;
+  background: var(--et-surface-stage);
   color: var(--et-toolbtn-fg);
   font-family: var(--et-font-family);
   font-size: var(--et-density-base-font);

@@ -88,6 +88,8 @@
 .et-panel__body {
   flex: 1;
   min-height: 0;
+  /* 面板体 = 内容舞台亮面：面板头退成铬带灰，内容区亮起来当主角 */
+  background: var(--et-surface-stage);
 }
 
 /* 内容区滚动（bodyScroll 默认开）：滚动只发生在内容区，外壳不动 */

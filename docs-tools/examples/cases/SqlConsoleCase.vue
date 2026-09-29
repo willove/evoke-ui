@@ -645,7 +645,7 @@ function note(message) {
   outline: none;
 }
 .case-sql__filter:focus {
-  border-color: var(--eb-color-primary);
+  border-color: var(--eb-border-color-dark);
 }
 .case-sql__filter:disabled {
   background: var(--eb-fill-color-light);
@@ -681,8 +681,8 @@ function note(message) {
   cursor: default;
 }
 .case-sql__td.is-sel {
-  background: var(--eb-color-primary-light-9);
-  color: var(--eb-color-primary);
+  background: var(--et-state-content-selected-bg);
+  color: var(--et-state-content-selected-fg);
 }
 .case-sql__panel {
   display: block;
@@ -743,8 +743,8 @@ function note(message) {
   background: var(--eb-fill-color-light);
 }
 .case-sql__object.is-sel {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-selected-fg);
+  background: var(--et-state-selected-bg);
 }
 .case-sql__object-name {
   font-family: var(--case-mono);

@@ -1,5 +1,10 @@
 {
   "$description": "@wil-works/evoke-tools-ui（--et-*） 设计令牌 — dark（html.dark 覆盖项，叠加在 light 之上使用）",
+  "surface": {
+    "tray": {
+      "$value": "var(--eb-bg-color-page)"
+    }
+  },
   "chrome": {
     "separator": {
       "$value": "var(--eb-border-color-hover)"
@@ -13,10 +18,27 @@
       "$value": "var(--eb-fill-color-dark)"
     },
     "selected-bg": {
-      "$value": "var(--eb-color-primary-light-7)"
+      "$value": "var(--eb-fill-color)"
+    },
+    "selected-fg": {
+      "$value": "var(--eb-color-primary-light-3)"
     },
     "disabled-fg": {
       "$value": "var(--eb-text-color-placeholder)"
+    }
+  },
+  "focus": {
+    "ring-color": {
+      "$value": "#ffffff",
+      "$type": "color"
+    },
+    "ring-inner": {
+      "$value": "#ffffff",
+      "$type": "color"
+    },
+    "ring-outer": {
+      "$value": "#000000",
+      "$type": "color"
     }
   }
 }

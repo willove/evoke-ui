@@ -488,8 +488,12 @@ onBeforeUnmount(() => clearInterval(timer))
   background: var(--eb-fill-color-light);
 }
 .case-ops__service.is-active {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-content-selected-fg);
+  background: var(--et-state-content-selected-bg);
+}
+.case-ops__service.is-active .case-ops__service-meta {
+  color: var(--et-state-content-selected-fg);
+  opacity: 0.75;
 }
 .case-ops__state {
   width: 8px;
@@ -570,7 +574,14 @@ onBeforeUnmount(() => clearInterval(timer))
   background: var(--eb-fill-color-light);
 }
 .case-ops__event.is-active {
-  background: var(--eb-color-primary-light-9);
+  background: var(--et-state-selected-bg);
+}
+.case-ops__event.is-active .case-ops__event-time,
+.case-ops__event.is-active .case-ops__event-msg {
+  color: var(--et-state-selected-fg);
+}
+.case-ops__event.is-active .case-ops__event-time {
+  opacity: 0.75;
 }
 .case-ops__event-time {
   flex-shrink: 0;

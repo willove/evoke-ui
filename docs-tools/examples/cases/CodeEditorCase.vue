@@ -492,8 +492,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-code__file.is-active {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-selected-fg);
+  background: var(--et-state-selected-bg);
 }
 .case-code__file.is-dirty::after {
   content: '';
@@ -521,7 +521,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   outline: none;
 }
 .case-code__input:focus {
-  border-color: var(--eb-color-primary);
+  border-color: var(--eb-border-color-dark);
 }
 .case-code__hits {
   margin: 0;
@@ -546,7 +546,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
 }
 .case-code__hit:hover {
   background: var(--eb-fill-color-light);
-  color: var(--eb-color-primary);
 }
 .case-code__hit-name {
   font-family: var(--eb-font-family-code, monospace);
@@ -574,7 +573,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-code__problem.is-active {
-  background: var(--eb-color-primary-light-9);
+  background: var(--et-state-selected-bg);
+}
+.case-code__problem.is-active .case-code__problem-msg {
+  color: var(--et-state-selected-fg);
 }
 .case-code__level {
   flex-shrink: 0;
@@ -614,7 +616,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
 .case-code__canvas {
   height: 100%;
   overflow: auto;
-  background: var(--eb-bg-color);
+  background: var(--et-surface-stage);
 }
 .case-code__breadcrumb {
   position: sticky;
@@ -626,7 +628,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   height: 26px;
   padding: 0 var(--et-space-band-inline);
   border-bottom: 1px solid var(--eb-border-color-lighter);
-  background: var(--eb-bg-color);
+  background: var(--et-surface-stage);
   font-size: 12px;
   color: var(--eb-text-color-secondary);
 }
@@ -649,8 +651,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   cursor: text;
 }
 .case-code__line.is-cursor {
-  background: var(--eb-color-primary-light-9);
-  box-shadow: inset 2px 0 0 var(--eb-color-primary);
+  background: var(--et-state-selected-bg);
+  box-shadow: inset 2px 0 0 var(--et-state-selected-fg);
 }
 .case-code__ln {
   width: 24px;

@@ -380,8 +380,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onGlobalKeydown))
   background: var(--eb-fill-color-light);
 }
 .case-log__row.is-sel {
-  background: var(--eb-color-primary-light-9);
-  color: var(--eb-color-primary);
+  background: var(--et-state-content-selected-bg);
+  color: var(--et-state-content-selected-fg);
+}
+.case-log__row.is-sel .case-log__time {
+  color: var(--et-state-content-selected-fg);
+  opacity: 0.75;
 }
 .case-log__time {
   font-family: var(--eb-font-family-code, monospace);

@@ -406,8 +406,8 @@ function onGridKeydown(e) {
 }
 .case-sheet__colhead.is-sel,
 .case-sheet__rowhead.is-sel {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-selected-fg);
+  background: var(--et-state-selected-bg);
 }
 .case-sheet__cell {
   display: flex;
@@ -423,9 +423,10 @@ function onGridKeydown(e) {
   overflow: hidden;
 }
 .case-sheet__cell.is-sel {
-  outline: 2px solid var(--eb-color-primary);
+  outline: 2px solid var(--et-state-selected-fg);
   outline-offset: -2px;
-  background: var(--eb-color-primary-light-9);
+  background: var(--et-state-content-selected-bg);
+  color: var(--et-state-content-selected-fg);
 }
 .case-sheet__cell.is-bold {
   font-weight: 700;
@@ -437,7 +438,7 @@ function onGridKeydown(e) {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--eb-bg-color);
+  background: var(--et-surface-stage);
 }
 .case-sheet__panel {
   display: block;
@@ -460,8 +461,8 @@ function onGridKeydown(e) {
   background: var(--eb-fill-color-light);
 }
 .case-sheet__sheet.is-active {
-  color: var(--eb-color-primary);
-  background: var(--eb-color-primary-light-9);
+  color: var(--et-state-content-selected-fg);
+  background: var(--et-state-content-selected-bg);
 }
 .case-sheet__list {
   margin: 0;

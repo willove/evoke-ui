@@ -786,7 +786,6 @@ function note(message) {
 }
 .case-file__crumb:hover {
   background: var(--eb-fill-color-light);
-  color: var(--eb-color-primary);
 }
 .case-file__crumb-sep {
   color: var(--eb-text-color-placeholder);
@@ -806,11 +805,11 @@ function note(message) {
   outline: none;
 }
 .case-file__filter:focus {
-  border-color: var(--eb-color-primary);
+  border-color: var(--eb-border-color-dark);
 }
 .case-file__canvas {
   height: 100%;
-  background: var(--eb-bg-color);
+  background: var(--et-surface-stage);
 }
 .case-file__scroll {
   height: 100%;
@@ -846,15 +845,15 @@ function note(message) {
   background: var(--eb-fill-color-light);
 }
 .case-file__row.is-sel {
-  background: var(--eb-color-primary-light-9);
-  color: var(--eb-color-primary);
+  background: var(--et-state-content-selected-bg);
+  color: var(--et-state-content-selected-fg);
 }
 .case-file__row-icon {
   flex-shrink: 0;
   color: var(--eb-text-color-secondary);
 }
 .case-file__row.is-sel .case-file__row-icon {
-  color: var(--eb-color-primary);
+  color: var(--et-state-content-selected-fg);
 }
 .case-file__row-btn {
   flex: 1;
@@ -917,7 +916,7 @@ function note(message) {
   background: var(--eb-fill-color-light);
 }
 .case-file__tree-row.is-current {
-  background: var(--eb-color-primary-light-9);
+  background: var(--et-state-selected-bg);
 }
 .case-file__caret {
   display: inline-flex;
@@ -948,7 +947,7 @@ function note(message) {
   cursor: pointer;
 }
 .case-file__tree-row.is-current .case-file__tree-name {
-  color: var(--eb-color-primary);
+  color: var(--et-state-selected-fg);
 }
 .case-file__tree-list {
   margin: 0;
@@ -965,7 +964,7 @@ function note(message) {
   flex-shrink: 0;
 }
 .case-file__tree-row.is-current .case-file__icon {
-  color: var(--eb-color-primary);
+  color: var(--et-state-selected-fg);
 }
 .case-file__preview {
   display: flex;

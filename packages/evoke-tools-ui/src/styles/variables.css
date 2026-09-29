@@ -125,12 +125,17 @@
 
   /* 状态视觉（只做底色/文字色差异；hover 禁跳强调色）
      「中性工具壳」基线：选中态底色走中性 fill（不是主色浅底），主色只落在**文字/图标**上——
-     chrome 近无色，彩色留给状态与数据。 */
-  --et-state-hover-bg: var(--eb-fill-color-light);
-  --et-state-active-bg: var(--eb-fill-color);
+     chrome 近无色，彩色留给状态与数据。
+     灰阶随表面分层走：铬带是灰面，hover/选中在灰面上要再深一档才可见。 */
+  --et-state-hover-bg: var(--eb-fill-color-dark);
+  --et-state-active-bg: var(--eb-fill-color-darker);
   --et-state-selected-fg: var(--eb-color-primary);
-  --et-state-selected-bg: var(--eb-fill-color);
+  --et-state-selected-bg: var(--eb-fill-color-dark);
   --et-state-disabled-fg: var(--eb-text-color-disabled);
+  /* 内容层选中（产品数据/列表的桌面实底选中）：chrome 选中仍走上面的中性对，
+     彩色只允许出现在内容舞台的这一处——这是消费方换主题色时跟着走的位。 */
+  --et-state-content-selected-bg: var(--eb-color-primary);
+  --et-state-content-selected-fg: #ffffff;
   /* 危险位（关闭钮 hover 等）：语义令牌，值引用底座 danger 阶梯（明暗各自定义） */
   --et-state-danger-bg: var(--eb-color-danger-light-9);
   --et-state-danger-fg: var(--eb-color-danger);
@@ -151,10 +156,18 @@
   --et-focus-ring-outer: #ffffff;
   --et-focus-ring-dual: 0 0 0 1px var(--et-focus-ring-inner), 0 0 0 2px var(--et-focus-ring-outer);
 
+  /* ══════ 桌面表面分层（语义层）══════
+     tray = 铬带（标题栏/功能区/状态栏/面板头），灰面退后——取 fill 与 fill-dark
+     的中点：比纯白明确是"另一层"，又不越过 hover/选中的深档；
+     stage = 内容舞台（视口/文档区/浮层），亮面当主角。
+     桌面气质基线：两档面 + 1px 分隔就分层，不靠阴影；消费方换肤从这里覆盖。 */
+  --et-surface-tray: color-mix(in srgb, var(--eb-fill-color) 50%, var(--eb-fill-color-dark));
+  --et-surface-stage: var(--eb-bg-color);
+
   /* chrome 表面（引用基础层语义色，本层不新增色板）
      近无色纪律：本块不得引用主色/语义色（门禁 scripts/check-token-rule.mjs 规则 9 守） */
-  --et-chrome-bg: var(--eb-bg-color);
-  --et-chrome-band-bg: var(--eb-bg-color-page);
+  --et-chrome-bg: var(--et-surface-tray);
+  --et-chrome-band-bg: var(--et-surface-tray);
   --et-chrome-separator: var(--eb-border-color-light);
   --et-chrome-group-label-color: var(--eb-text-color-secondary);
   --et-chrome-group-label-font-size: var(--eb-font-size-xs);

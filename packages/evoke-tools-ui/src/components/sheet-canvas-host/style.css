@@ -1,6 +1,6 @@
 /* EtSheetCanvasHost — 表格画布宿主（office 层 · 画布位）
    形态：可滚动视口 + 不随滚动的浮层位；宿主自己不加外框（边框归布局/停靠），
-   底与 chrome 同族无色，焦点环走全局中性环。 */
+   底 = 内容舞台亮面（--et-surface-stage），焦点环走全局中性环。 */
 
 .et-canvashost {
   position: relative;
@@ -8,7 +8,7 @@
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-  background: var(--et-chrome-bg);
+  background: var(--et-surface-stage);
 }
 
 .et-canvashost__viewport {
@@ -16,7 +16,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--et-chrome-bg);
+  background: var(--et-surface-stage);
   /* 画布自身可滚动时用系统滚动条（虚拟化产品通常自绘，这里只兜底） */
   overscroll-behavior: contain;
 }

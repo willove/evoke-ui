@@ -15,7 +15,7 @@
   padding: var(--et-space-block);
   border: var(--et-divider-size) solid var(--et-chrome-separator);
   border-radius: var(--et-radius-lg);
-  background: var(--et-chrome-bg);
+  background: var(--et-surface-stage);
   box-shadow: var(--eb-shadow-3);
   color: var(--eb-text-color-regular);
   font-family: var(--et-font-family);
