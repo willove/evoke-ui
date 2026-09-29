@@ -53,13 +53,15 @@ describe('EbSplitter / EbSplitterPanel', () => {
     wrapper.unmount()
   })
 
-  it('resize 事件回传百分比', async () => {
+  it('resize 事件回传百分比；挂载初始化标 system（供消费方过滤合成 resize）', async () => {
     const wrapper = mountSplitter()
     await nextTick()
     const emitted = wrapper.findComponent(EbSplitter).emitted('resize')
     expect(emitted).toBeTruthy()
     const sizes = emitted[emitted.length - 1][0]
     expect(sizes).toEqual(['30.00%', '70.00%'])
+    // 挂载时的 emit 是初始化合成值：来源必须是 system（用户拖拽/键盘才是 user）
+    expect(emitted[emitted.length - 1][1]).toEqual({ source: 'system' })
     wrapper.unmount()
   })
 

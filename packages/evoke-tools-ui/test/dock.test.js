@@ -191,6 +191,31 @@ describe('EtDock resize 回写', () => {
     wrapper.unmount()
   })
 
+  it('底座合成 resize（挂载初始化/容器 RO，source system）不回写——慢加载坏值不落盘的根', async () => {
+    const wrapper = await mountDock({ dock: dockNode({ panels: plainPanels() }) })
+    // 底座挂载即主动 emit 一次（初始化分栏用）：必须带 system 标记
+    const mountEmits = wrapper.findComponent(EbSplitter).emitted('resize')
+    expect(mountEmits?.length).toBeGreaterThan(0)
+    expect(mountEmits[mountEmits.length - 1][1]).toEqual({ source: 'system' })
+    // 即便 system resize 给了与声明完全不同的占比，也不许写树——
+    // 慢加载时容器尺寸未定，换算回写会把膨胀量测固化成声明宽并持久化
+    wrapper.findComponent(EbSplitter).vm.$emit('resize', ['90.00%', '10.00%'], { source: 'system' })
+    vi.advanceTimersByTime(200)
+    await nextTick()
+    expect(wrapper.emitted('update:dock')).toBeFalsy()
+    wrapper.unmount()
+  })
+
+  it('无标记的 resize（旧底座/测试直发）视为用户来源，照常回写', async () => {
+    const wrapper = await mountDock({ dock: dockNode() })
+    vi.advanceTimersByTime(200)
+    wrapper.findComponent(EbSplitter).vm.$emit('resize', ['50.00%'])
+    vi.advanceTimersByTime(200)
+    await nextTick()
+    expect(wrapper.emitted('update:dock')[0][0].panels[0].size).toBe(260)
+    wrapper.unmount()
+  })
+
   it('单个面板（含 tabs 档激活位）：百分比回写该位面板', async () => {
     const wrapper = await mountDock({ dock: dockNode({ panels: [panelNode({ min: undefined, max: undefined })] }) })
     vi.advanceTimersByTime(200)

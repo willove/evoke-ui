@@ -18,13 +18,18 @@ import EbSplitter from '@wil-works/evoke-business-ui/splitter'
 defineOptions({ name: 'EtSplitter', inheritAttrs: false })
 
 const emit = defineEmits([
-  /** 尺寸变化（拖拽或键盘 resize 后）；载荷 = 各面板占比字符串数组，如 ['38.00%', '62.00%'] */
+  /**
+   * 尺寸变化（拖拽或键盘 resize 后）；载荷 = [各面板占比字符串数组, { source }]，
+   * 如 [['38.00%', '62.00%'], { source: 'user' }]。source 透传底座标记：
+   * 'user' = 用户拖拽/键盘/折叠；'system' = 挂载初始化 / 容器 RO 重分摊
+   * （合成值，回写持久化会固化量测时刻的容器尺寸——消费方应过滤）。
+   */
   'resize',
 ])
 </script>
 
 <template>
-  <eb-splitter v-bind="$attrs" class="et-splitter" @resize="(sizes) => emit('resize', sizes)">
+  <eb-splitter v-bind="$attrs" class="et-splitter" @resize="(...args) => emit('resize', ...args)">
     <template v-for="(_, SlotName) in $slots" #[SlotName]="slotProps">
       <slot :name="SlotName" v-bind="slotProps || {}" />
     </template>

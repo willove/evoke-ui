@@ -266,7 +266,12 @@ const slotPanels = computed(() => {
 let settleTimer = null
 let latestSizes = []
 
-function onResize(sizes) {
+function onResize(sizes, meta) {
+  // 底座的挂载初始化与容器 RO 重分摊是合成 resize（source: 'system'）：
+  // 换算回写会把量测时刻的主轴尺寸固化为声明宽并持久化——慢加载下 CSS 未定
+  // 时量到膨胀容器，实测把底部停靠 150 冲到 245、左右面板挤成 0 高且坏值落盘。
+  // 只有用户来源（拖拽/键盘/折叠）才允许写树。
+  if (meta?.source === 'system') return
   if (settleTimer !== null) clearTimeout(settleTimer)
   settleTimer = setTimeout(flushResize, SETTLE_MS)
   latestSizes = Array.isArray(sizes) ? sizes : sizes == null ? [] : [sizes]

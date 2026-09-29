@@ -20,7 +20,15 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['resize'])
+const emit = defineEmits([
+  /**
+   * 尺寸变化；载荷 = [各面板占比字符串数组, { source }]。
+   * source = 'user'（拖拽/键盘/折叠，用户的意图，可持久化）| 'system'
+   * （挂载初始化 / 容器 ResizeObserver 重分摊，合成值——回写它会把量测
+   * 时刻的容器尺寸固化为声明尺寸，慢加载下实测写坏布局树，消费方须过滤）。
+   */
+  'resize',
+])
 
 const containerRef = ref(null)
 const containerSize = ref(0)
@@ -231,11 +239,11 @@ function collapsePanel(panelIndex, direction) {
   emitResize()
 }
 
-function emitResize() {
+function emitResize(source = 'user') {
   const totalSize = containerSize.value
   if (totalSize === 0) return
   const result = sizes.value.map((px) => `${((px / totalSize) * 100).toFixed(2)}%`)
-  emit('resize', result)
+  emit('resize', result, { source })
 }
 
 // ─── 生命周期 ───
@@ -255,14 +263,15 @@ onMounted(() => {
       if (newSize !== containerSize.value) {
         containerSize.value = newSize
         recalculate()
-        emitResize()
+        emitResize('system')
       }
     })
     resizeObserver.observe(containerRef.value)
   }
   recalculate()
-  // 初始布局完成后同步一次尺寸（消费方初始化分栏用）
-  emitResize()
+  // 初始布局完成后同步一次尺寸（消费方初始化分栏用）；来源 system——
+  // 这是合成值，不该被当成用户拖拽写回持久化
+  emitResize('system')
 })
 
 onBeforeUnmount(() => {

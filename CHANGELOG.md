@@ -2,6 +2,16 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [business-ui 0.12.0] — 2026-09-29（未发版）
+
+### @wil-works/evoke-business-ui — Splitter 的 resize 事件附来源标记（minor）
+
+`resize` 载荷从「占比数组」扩为 `[占比数组, { source }]`：`source: 'user'`（拖拽/键盘/
+折叠，用户意图）与 `'system'`（挂载初始化、容器 ResizeObserver 重分摊——合成值）。
+首参不变，既有消费方无需改动；需要把尺寸写回持久化的消费方**必须过滤 `system`**：
+慢加载下容器尺寸未定，回写合成 resize 会把当时的量测固化成声明尺寸写坏布局
+（tools-ui 的 EtDock 此前即中招，见 tools-ui 1.5.0 的修复条目）。
+
 ## [tools-ui 1.5.0] — 2026-09-29（未发版）
 
 ### @wil-works/evoke-tools-ui — 桌面表面分层：铬带灰面 + 内容舞台亮面 + 内容选中对（minor）
@@ -23,6 +33,14 @@
 
 **升级注意**：默认观感变化——铬带从白变灰。视觉基线已随本次重录；想要旧观感的产品把
 `--et-surface-tray` 覆盖回 `--eb-bg-color` 即可。
+
+**修复（P0）**
+
+- **停靠布局的挂载竞态**：底座 Splitter 在挂载初始化与容器重分摊时会发合成 resize，
+  EtDock 曾把它当用户拖拽换算回写布局树并持久化——慢加载下 CSS 未定、量到的容器
+  尺寸偏大，底部停靠会被冲到接近 max（案例实测 150 → 245）且把左右面板挤成 0 高，
+  坏值落盘后持续污染（刷新也无法自愈）。现在 resize 事件带来源标记，Dock 只回写
+  用户来源；反复加载不再产生任何写盘，真实拖拽回写不受影响。
 
 ## [evoke-chat 0.4.0] — 2026-09-28
 
