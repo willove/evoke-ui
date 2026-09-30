@@ -2,6 +2,26 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [evoke-chat 0.4.1] — 2026-10-01
+
+### @wil-works/evoke-chat — 来源与宿主长串溢出清扫（patch）
+
+宿主给的长串——无 title 的 citation 回退显示整段 URL、长域名、无连字符的长 token——
+在多处容器里画出边框：CSS 里域名点号与无空格 token 不提供换行点，容器一窄文本就横向
+溢出。全包 39 个组件按同一透镜过完，实锤六处收口；其余容器（20 处省略号截断、markdown
+正文 `word-break` 与代码块横滚、terminal/diff 的设计性横滚）逐一核对均安全。
+
+**修复**
+
+- **ChatSources**：标题/元信息/摘要三行统一放开 `overflow-wrap: anywhere`。元信息行
+  此前零溢出处理，长域名直接撑破卡片；标题/摘要遇不可断串被水平硬剪且无省略号。
+  实测长 URL 标题越界 73px、长摘要 603px 全部归零，窄容器下收缩链路恢复。
+- **ChatCommandMenu**：候选项 label 去掉 `flex-shrink: 0`，改 `min-width: 0` + 省略，
+  长命令名不再把行撑出菜单（420px 菜单实测越界 78px → 0），描述列共存时按比例让位；
+  label 补 `title` 提示，悬停可看全名。
+- **ChatQuestion 选项 / ChatPlan 步骤 / ChatFeedback 原因标签**：宿主文案容器各放开
+  `overflow-wrap: anywhere`，长串就地折行（300px/240px 窄容器实测越界 255/240px → 0）。
+
 ## [business-ui 0.12.0] — 2026-09-29（未发版）
 
 ### @wil-works/evoke-business-ui — Splitter 的 resize 事件附来源标记（minor）
