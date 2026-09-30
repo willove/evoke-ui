@@ -208,6 +208,9 @@ defineExpose({ highlight });
   flex-direction: column;
   min-width: 0;
   gap: 1px;
+  /* 域名点号、URL 长串都不提供换行点：不在这一层放开紧急断行，
+     标题/元信息/摘要任何一行遇到无空格长串都会横向撑破卡片 */
+  overflow-wrap: anywhere;
 }
 
 .eb-chat-sources__title {
