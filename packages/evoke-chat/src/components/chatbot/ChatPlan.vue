@@ -240,6 +240,8 @@ function formatDuration(ms) {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  /* 步骤文案是宿主给的：无空格长串没有换行点，得放开紧急断行 */
+  overflow-wrap: anywhere;
   padding: 0;
   border: none;
   background: transparent;

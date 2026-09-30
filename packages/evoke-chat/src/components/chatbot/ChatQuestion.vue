@@ -283,6 +283,8 @@ onMounted(() => rootRef.value?.focus?.());
   flex-wrap: wrap;
   align-items: center;
   gap: var(--eb-space-2);
+  /* 选项文案是宿主给的：无空格长串（链接/标识符）没有换行点，得放开紧急断行 */
+  overflow-wrap: anywhere;
   padding: var(--eb-space-2) var(--eb-space-3);
   border: 1px solid var(--eb-border-color-lighter);
   border-radius: var(--eb-radius-md);

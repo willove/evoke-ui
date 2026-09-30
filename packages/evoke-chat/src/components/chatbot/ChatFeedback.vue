@@ -206,6 +206,8 @@ function cancel() {
   display: flex;
   flex-wrap: wrap;
   gap: var(--eb-space-2);
+  /* 原因标签是宿主给的：无空格长串没有换行点，得放开紧急断行 */
+  overflow-wrap: anywhere;
 }
 
 .eb-chat-feedback__reason {

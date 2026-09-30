@@ -14,7 +14,7 @@
         @mousedown.prevent="emit('select', i)"
       >
         <eb-icon v-if="item.icon" :name="item.icon" :size="14" class="eb-chat-command__icon" />
-        <span class="eb-chat-command__label">{{ item.label }}</span>
+        <span class="eb-chat-command__label" :title="item.label">{{ item.label }}</span>
         <span v-if="item.desc" class="eb-chat-command__desc">{{ item.desc }}</span>
       </li>
     </ul>
@@ -107,7 +107,11 @@ watch(
 }
 
 .eb-chat-command__label {
-  flex-shrink: 0;
+  /* 可收缩 + 省略：长命令名不再把行撑出菜单，描述列在旁侧共存时按比例让位 */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: var(--eb-font-size-sm);
   color: var(--eb-text-color-primary);
 }
