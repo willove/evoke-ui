@@ -152,7 +152,7 @@ const panelMaxNow = computed(() => resolveBound(props.max, ctx.containerSize?.va
 
 /**
  * 键盘 resize：方向键按 step 移动边界，Home/End 到 min/max（与拖拽同一套夹角）。
- * 组字中不响应——输入法合成期间的键盘事件不是用户指令（与 tools-ui G5 同口径）。
+ * 组字中不响应——输入法合成期间的键盘事件不是用户指令。
  */
 function onBarKeydown(e) {
   if (e.isComposing || e.keyCode === 229) return

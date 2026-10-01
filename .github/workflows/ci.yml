@@ -4,12 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:
-    inputs:
-      update_visual_baselines:
-        description: '在 Linux 上重录 tools 视觉基线并回推（基线守卫与守卫运行同平台）'
-        type: boolean
-        default: true
 
 # 同分支新推送取消旧运行，省构建时长
 permissions:
@@ -20,39 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # 视觉基线只在"可能影响它"的改动上跑（tools-ui 及其两个底座的源码/令牌、docs-tools、visual 自身）
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      tools: ${{ steps.check.outputs.tools }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - id: check
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            RANGE="${{ github.event.pull_request.base.sha }}...HEAD"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # dispatch 没有 event.before：按最近一笔判，否则手动触发的守卫永远被跳过
-            RANGE="HEAD~1...HEAD"
-          else
-            RANGE="${{ github.event.before }}...HEAD"
-          fi
-          CHANGED="$(git diff --name-only "$RANGE" 2>/dev/null)"
-          if [ -z "$CHANGED" ]; then
-            # RANGE 取不到（首推 / 强推把 before 打成空对象）→ 退到最近一笔再看；
-            # 两笔之间确实无差异时结果仍为空，不会把"无关"伪装成"有改动"
-            CHANGED="$(git diff --name-only HEAD~1...HEAD 2>/dev/null)"
-          fi
-          echo "changed:"; echo "$CHANGED" | head -40
-          if echo "$CHANGED" | grep -qE '^(packages/evoke-tools-ui/|packages/evoke-ui/|packages/evoke-business-ui/|docs-tools/|visual/|\.github/workflows/ci\.yml)'; then
-            echo "tools=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "tools=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::本次改动与 tools 视觉基线无关，跳过 visual 作业"
-          fi
-
   test:
     runs-on: ubuntu-latest
     steps:
@@ -76,8 +37,6 @@ jobs:
           pnpm build:ebui
           pnpm build:chat
           pnpm build:charts
-          # tools-ui 排最后：它的 vue-tsc 要读底座 d.ts（peer 走 workspace:*）
-          pnpm build:tools
 
       # 编辑器同口径类型检查（vue-tsc --noEmit）；构建期的 d.ts 生成是第二道类型关
       - name: Typecheck
@@ -97,10 +56,6 @@ jobs:
       - name: Build docs (charts)
         run: pnpm docs-charts:build
 
-      # 第四站：docs-tools（M0 起交付，guide/design 全量令牌页）
-      - name: Build docs (tools)
-        run: pnpm docs-tools:build
-
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
@@ -108,102 +63,3 @@ jobs:
           name: coverage
           path: coverage
           retention-days: 7
-
-  # M4 视觉基线固化：tools-ui 的 L3 视觉回归进 CI。
-  # 基线在 visual/tools.spec.mjs-snapshots/ 入库；改动 = 必须 --update-snapshots
-  # 显式重录（防"顺手重录把真回归洗掉"）。
-  visual:
-    # needs test：测试没过就不必起这套重活；changes：无关改动直接跳过
-    needs: [test, changes]
-    if: needs.changes.outputs.tools == 'true'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      # 18 例 × 三档密度 × 明暗 × 三档宽度：不分片时一套要跑 35-60 分钟。
-      # 分片只做对比较（基线只读），互不写同一份快照，可安全并行。
-      matrix:
-        shard: [1, 2, 3]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/setup@v1
-        with:
-          version: 11
-          runtime: node@22
-          cache: true
-          install: false
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Install Playwright chromium
-        run: pnpm exec playwright install --with-deps chromium
-      # 只需 tools 相关的两份 preview（VISUAL_SCOPE=tools → 4176 docs-tools / 4180 工作台示例），
-      # 所以只建它们真正吃的东西：evoke-ui + business-ui + charts + tools-ui 四个包、
-      # docs-tools 一站、工作台示例。（实测：chat 的 dist 挪走也能建齐；
-      # 示例 alias 直连源码，business-ui 源码引用 charts/ui，故这两个包不能省。）
-      - name: Build packages
-        run: |
-          pnpm build:eui
-          pnpm build:ebui
-          pnpm build:charts
-          pnpm build:tools
-      - name: Build docs (tools)
-        run: pnpm docs-tools:build
-      - name: Build tools example
-        run: pnpm build:tools-example
-      - name: Visual regression (tools)
-        env:
-          VISUAL_SCOPE: tools
-        # docs-tools = 文档站自检（无基线，只守每页渲染），与 tools 视觉同批跑
-        run: pnpm exec playwright test --project=tools --project=docs-tools --shard=${{ matrix.shard }}/3
-
-  # 基线重录（Linux）：视觉基线只能在与守卫相同的平台上录制——此前只在 mac 上
-  # 录过 darwin 基线，CI（ubuntu）上 28 例快照全红"A snapshot doesn't exist"。
-  # 本作业由 workflow_dispatch 手动触发：重录 → 自动回推 → 普通推送的守卫随即可用。
-  visual-baseline:
-    # workflow_dispatch 的 boolean 输入在 inputs 上下文里就是布尔值——与字符串
-    # 'true' 比较恒为 false（首次触发踩过：作业整段 skipped）。直接用真值判断。
-    if: >-
-      github.event_name == 'workflow_dispatch' &&
-      inputs.update_visual_baselines
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/setup@v1
-        with:
-          version: 11
-          runtime: node@22
-          cache: true
-          install: false
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Install Playwright chromium
-        run: pnpm exec playwright install --with-deps chromium
-      - name: Build packages
-        run: |
-          pnpm build:eui
-          pnpm build:ebui
-          pnpm build:charts
-          pnpm build:tools
-      - name: Build docs (tools)
-        run: pnpm docs-tools:build
-      - name: Build tools example
-        run: pnpm build:tools-example
-      - name: Re-record visual baselines (linux)
-        env:
-          VISUAL_SCOPE: tools
-        run: pnpm exec playwright test --project=tools --update-snapshots
-      - name: Push baselines
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.norepo.github.com"
-          git add visual/tools.spec.mjs-snapshots
-          if git diff --cached --quiet; then
-            echo "无基线变更"
-          else
-            git commit -m "chore(visual): 重录 Linux 视觉基线（workflow_dispatch）"
-            git push origin HEAD:${{ github.ref_name }}
-          fi

@@ -14,9 +14,6 @@
  *   3. 暂存区里没有意外的 hunk
  *      ——同上，整文件 `git add` 会把无关改动捎带进发布提交，此处逐条列出
  *        暂存的增删行供人工过目（只看，不拦截）
- *   4. （M4 G8）tools-ui 文档宣称的组件数 ↔ 组件入口产物实际条数
- *      ——DESIGN.md 的里程碑表写「L2 六个组件 / L3 七件 / L4 七件」，exports
- *        契约按入口数断言；两层数字对不上就是文档承诺了不存在的能力
  *
  * 用法：node scripts/pre-release-check.mjs   （在仓库根目录执行）
  */
@@ -75,7 +72,6 @@ const guardFiles = [
   'packages/evoke-business-ui/test/docs-site-version.test.js',
   'packages/evoke-ui/test/docs-site-version.test.js',
   'packages/evoke-charts/test/docs-site-version.test.js',
-  'packages/evoke-tools-ui/test/docs-site-version.test.js',
 ].filter((f) => {
   try { read(f); return true } catch { return false }
 })
@@ -135,69 +131,6 @@ for (const pair of iconPairs) {
       )
     }
   }
-}
-
-// ─── 2.5 （M4 G8）tools-ui 文档宣称组件数 ↔ 入口产物 ───
-try {
-  const { pathToFileURL } = await import('node:url')
-  const entryModule = await import(
-    pathToFileURL(join(repoRoot, 'packages/evoke-tools-ui/scripts/component-entries.mjs')).href,
-  )
-  const entries = entryModule.getEtComponentEntries()
-  const names = new Set(entries.map((e) => e.name))
-
-  // 分层归属来自包内分类单一来源（v1.4 起：common / office 两层 × 用途分类；tokenize 见 src/taxonomy.js）
-  const taxonomy = await import(
-    pathToFileURL(join(repoRoot, 'packages/evoke-tools-ui/src/taxonomy.js')).href
-  )
-  const { LAYERS, COMPONENT_TAXONOMY } = taxonomy
-  const taxNames = new Set(COMPONENT_TAXONOMY.map((c) => c.id))
-  const unclassified = entries.filter((e) => !taxNames.has(e.name)).map((e) => e.name)
-  if (unclassified.length) {
-    failures.push(`tools-ui 组件入口未进分类表（taxonomy.js 过期？）：${unclassified.join(', ')}`)
-  }
-  const layerCount = (layer) =>
-    COMPONENT_TAXONOMY.filter((c) => c.layer === layer && names.has(c.id)).length
-
-  // DESIGN.md 的宣称口径（§五之二）：common N 件 / office N 件 / 组件入口 N 件
-  const design = readAtHead('packages/evoke-tools-ui/DESIGN.md')
-  const claimPatterns = {
-    common: [/common\s*(\d+)\s*件/],
-    office: [/office\s*(\d+)\s*件/],
-  }
-  const totalHit = design.match(/组件入口\s*\*\*(\d+)\s*件\*\*/)
-  if (!totalHit) failures.push('DESIGN.md 里找不到「组件入口 N 件」的总量宣称（G8 需要可核对的数字）')
-  else if (Number(totalHit[1]) !== entries.length) {
-    failures.push(
-      `tools-ui 组件总数不一致：DESIGN.md 宣称 ${totalHit[1]} 件，入口产物实际 ${entries.length} 件。` +
-        '文档承诺的能力必须真实存在于发布产物里',
-    )
-  }
-
-  const claims = []
-  for (const [layer, patterns] of Object.entries(claimPatterns)) {
-    const hit = patterns.map((re) => design.match(re)).find(Boolean)
-    if (!hit) {
-      failures.push(`DESIGN.md 里找不到 ${layer} 层的组件数宣称（G8 需要每层都有可核对的数字）`)
-      continue
-    }
-    claims.push({ layer, count: Number(hit[1]) })
-  }
-  for (const claim of claims) {
-    const actual = layerCount(claim.layer)
-    if (claim.count !== actual) {
-      failures.push(
-        `tools-ui 组件数不一致：DESIGN.md 宣称 ${claim.layer} ${claim.count} 件，入口产物实际 ${actual} 件。` +
-          '文档承诺的能力必须真实存在于发布产物里',
-      )
-    }
-  }
-  const claimedTotal = claims.reduce((n, c) => n + c.count, 0)
-  notes.push(`tools-ui 组件入口：${entries.length} 条（两层宣称合计 ${claimedTotal}）`)
-  for (const c of claims) notes.push(`  └ ${c.layer} 宣称 ${c.count} / 实际 ${layerCount(c.layer)}`)
-  notes.push(`  └ office 层清单：${LAYERS.office?.label ?? 'office-tools'}`)
-} catch (err) {
-  failures.push(`tools-ui 组件数一致性检查失败：${err.message}`)
 }
 
 // ─── 3. 暂存区 hunk 供人工过目 ───

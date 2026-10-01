@@ -2,6 +2,24 @@
 
 本库遵循 [Semantic Versioning](https://semver.org/)。
 
+## [项目调整] — 2026-10-01
+
+**@wil-works/evoke-tools-ui 自仓库移除**：该项目经验证未达预期，整体撤出 monorepo
+（包、docs-tools 文档站、工作台示例、视觉基线与相关脚本/CI 一并移除）。npm 上的历史
+版本（0.1.0 → 1.4.1）由维护者手动 unpublish，安装过旧版本的项目请迁移出 Et* 组件。
+底座中为此项目加的能力不受影响：business-ui Splitter 的 resize 来源标记
+（`source: 'user' | 'system'`）仍是公共契约，见 business-ui 0.12.0 条目。
+
+## [business-ui 0.12.0] — 2026-09-29（未发版）
+
+### @wil-works/evoke-business-ui — Splitter 的 resize 事件附来源标记（minor）
+
+`resize` 载荷从「占比数组」扩为 `[占比数组, { source }]`：`source: 'user'`（拖拽/键盘/
+折叠，用户意图）与 `'system'`（挂载初始化、容器 ResizeObserver 重分摊——合成值）。
+首参不变，既有消费方无需改动；需要把尺寸写回持久化的消费方**必须过滤 `system`**：
+慢加载下容器尺寸未定，回写合成 resize 会把当时的量测固化成声明尺寸写坏布局
+（此前的消费方 EtDock 即中招，该包已随 tools-ui 移除，见「项目调整」条目）。
+
 ## [evoke-chat 0.4.1] — 2026-10-01
 
 ### @wil-works/evoke-chat — 来源与宿主长串溢出清扫（patch）
@@ -21,46 +39,6 @@
   label 补 `title` 提示，悬停可看全名。
 - **ChatQuestion 选项 / ChatPlan 步骤 / ChatFeedback 原因标签**：宿主文案容器各放开
   `overflow-wrap: anywhere`，长串就地折行（300px/240px 窄容器实测越界 255/240px → 0）。
-
-## [business-ui 0.12.0] — 2026-09-29（未发版）
-
-### @wil-works/evoke-business-ui — Splitter 的 resize 事件附来源标记（minor）
-
-`resize` 载荷从「占比数组」扩为 `[占比数组, { source }]`：`source: 'user'`（拖拽/键盘/
-折叠，用户意图）与 `'system'`（挂载初始化、容器 ResizeObserver 重分摊——合成值）。
-首参不变，既有消费方无需改动；需要把尺寸写回持久化的消费方**必须过滤 `system`**：
-慢加载下容器尺寸未定，回写合成 resize 会把当时的量测固化成声明尺寸写坏布局
-（tools-ui 的 EtDock 此前即中招，见 tools-ui 1.5.0 的修复条目）。
-
-## [tools-ui 1.5.0] — 2026-09-29（未发版）
-
-### @wil-works/evoke-tools-ui — 桌面表面分层：铬带灰面 + 内容舞台亮面 + 内容选中对（minor）
-
-**新增**
-
-- 表面分层令牌：`--et-surface-tray`（铬带灰面：标题栏/功能区/状态栏/面板头）与
-  `--et-surface-stage`（内容舞台亮面：画布视口/文档区/浮层）。工具界面默认自带
-  「灰铬带框住亮舞台」的桌面分层；暗色下铬带沉向更深一档、舞台保持亮面，方向与亮色一致。
-- 内容选中对：`--et-state-content-selected-bg / -fg`（主色实底 + 反色文字），供产品的
-  数据与列表走桌面式选中；chrome 内选中（页签/导航）仍走 `--et-state-selected-*` 中性对，
-  主色只落文字/图标的纪律不变。
-- 状态灰阶重排：hover/选中在灰铬带上落 `fill-color-dark`、按下落 `fill-color-darker`，
-  灰面上保持可见。
-- 公式栏编辑位改为常亮舞台白底 + 发丝描边（"可输入"的暗示不依赖带间色差）；
-  对话框与 Toast 改走舞台亮面，不再跟铬带同色。
-- 换肤入口：覆盖 `--et-surface-tray / -stage` 整体换铬面气质，覆盖 `--eb-color-primary`
-  连带内容选中色（主题指南新增「表面分层与换肤入口」一节）。
-
-**升级注意**：默认观感变化——铬带从白变灰。视觉基线已随本次重录；想要旧观感的产品把
-`--et-surface-tray` 覆盖回 `--eb-bg-color` 即可。
-
-**修复（P0）**
-
-- **停靠布局的挂载竞态**：底座 Splitter 在挂载初始化与容器重分摊时会发合成 resize，
-  EtDock 曾把它当用户拖拽换算回写布局树并持久化——慢加载下 CSS 未定、量到的容器
-  尺寸偏大，底部停靠会被冲到接近 max（案例实测 150 → 245）且把左右面板挤成 0 高，
-  坏值落盘后持续污染（刷新也无法自愈）。现在 resize 事件带来源标记，Dock 只回写
-  用户来源；反复加载不再产生任何写盘，真实拖拽回写不受影响。
 
 ## [evoke-chat 0.4.0] — 2026-09-28
 

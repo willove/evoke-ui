@@ -80,27 +80,6 @@ importers:
         specifier: ^1.14.0
         version: 1.14.0
 
-  docs-tools:
-    dependencies:
-      '@wil-works/evoke-business-ui':
-        specifier: workspace:*
-        version: link:../packages/evoke-business-ui
-      '@wil-works/evoke-tools-ui':
-        specifier: workspace:*
-        version: link:../packages/evoke-tools-ui
-      vue:
-        specifier: ^3.5.0
-        version: 3.5.42(typescript@5.9.2)
-    devDependencies:
-      highlight.js:
-        specifier: ^11.10.0
-        version: 11.12.0
-      vitepress:
-        specifier: ^1.6.0
-        version: 1.6.0(@algolia/client-search@5.57.0)(async-validator@4.2.5)(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(typescript@5.9.2)
-      vitepress-plugin-llms:
-        specifier: ^1.14.0
-        version: 1.14.0
 
   docs-web:
     dependencies:
@@ -319,27 +298,6 @@ importers:
         specifier: ^8.0.10
         version: 8.2.2
 
-  examples/tools-workbench:
-    dependencies:
-      '@wil-works/evoke-business-ui':
-        specifier: workspace:*
-        version: link:../../packages/evoke-business-ui
-      '@wil-works/evoke-tools-ui':
-        specifier: workspace:*
-        version: link:../../packages/evoke-tools-ui
-      vue:
-        specifier: ^3.5.42
-        version: 3.5.42(typescript@5.9.2)
-    devDependencies:
-      '@fluentui/svg-icons':
-        specifier: 1.1.342
-        version: 1.1.342
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.8
-        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
-      vite:
-        specifier: ^8.0.10
-        version: 8.2.2
 
   packages/evoke-business-ui:
     dependencies:
@@ -436,29 +394,6 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
-  packages/evoke-tools-ui:
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.8
-        version: 6.0.8(vite@8.2.2)(vue@3.5.42(typescript@5.9.2))
-      '@vue/compiler-sfc':
-        specifier: ^3.5.42
-        version: 3.5.42
-      '@wil-works/evoke-business-ui':
-        specifier: workspace:*
-        version: link:../evoke-business-ui
-      typescript:
-        specifier: ^5.9.2
-        version: 5.9.2
-      vite:
-        specifier: ^8.0.10
-        version: 8.2.2
-      vue:
-        specifier: ^3.5.42
-        version: 3.5.42(typescript@5.9.2)
-      vue-tsc:
-        specifier: ^3.3.11
-        version: 3.3.11(typescript@5.9.2)
 
   packages/evoke-ui:
     devDependencies:

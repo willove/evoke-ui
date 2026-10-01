@@ -9,8 +9,8 @@
  * 如 EbInputNumber → input-number、EbDropdownMenu → dropdown-menu。
  *
  * 解析器按参数通用化（本库默认 Eb / 自身 src/index.js，行为与参数化前完全一致）：
- * 姐妹库（如 evoke-tools-ui，前缀 Et）以 { prefix: 'Et', pkgRoot } 复用同一实现，
- * 避免四库各写一份解析逻辑后规则漂移（tools-ui 计划 02 §五）。
+ * 同构库（如图表库的子入口清单）以 { prefix, pkgRoot } 复用同一实现，
+ * 避免各写一份解析逻辑后规则漂移。
  */
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'

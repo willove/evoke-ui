@@ -37,10 +37,7 @@ export default defineConfig({
     },
   },
   /**
-   * 视觉基线的**服务范围**：默认 all（本地跑全套）。
-   * CI 的 tools 作业只需要 tools 相关那两份 preview（4176 docs-tools / 4180 工作台示例）——
-   * 其余三站不启动，就不必为它们构建与等待（此前要建齐 5 个 preview 才能跑 18 例 tools 用例）。
-   * 用法：VISUAL_SCOPE=tools pnpm exec playwright test --project=tools
+   * 视觉基线的**服务范围**：保留 all 一档（本地跑全套三站）。
    */
   webServer: (() => {
     const servers = {
@@ -52,21 +49,13 @@ export default defineConfig({
       },
       business: { command: 'pnpm visual:preview:business', url: 'http://127.0.0.1:4174' },
       charts: { command: 'pnpm visual:preview:charts', url: 'http://127.0.0.1:4175' },
-      tools: { command: 'pnpm visual:preview:tools', url: 'http://127.0.0.1:4176' },
-      // M0 的视觉回归吃工作台装配示例（真实 chrome 装配 = 预算/不变量断言面）；
-      // M2 起补 docs-tools 的 recipe 页（4176）
-      'tools-example': { command: 'pnpm visual:preview:tools-example', url: 'http://127.0.0.1:4180' },
     }
-    const scope = process.env.VISUAL_SCOPE || 'all'
-    const keys = scope === 'tools' ? ['tools', 'tools-example'] : Object.keys(servers)
+    const keys = Object.keys(servers)
     return keys.map((k) => ({ ...servers[k], reuseExistingServer: !process.env.CI, timeout: 60_000 }))
   })(),
   projects: [
     { name: 'ui', testMatch: /visual\/ui\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4173' } },
     { name: 'business', testMatch: /visual\/business\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4174' } },
     { name: 'charts', testMatch: /visual\/charts\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4175' } },
-    { name: 'tools', testMatch: /visual\/tools\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4180' } },
-    // 文档站自检：跑在 docs-tools 的 preview 上（4176），不产基线，只守渲染
-    { name: 'docs-tools', testMatch: /visual\/docs\.spec\.mjs/, use: { baseURL: 'http://127.0.0.1:4176' } },
   ],
 })
