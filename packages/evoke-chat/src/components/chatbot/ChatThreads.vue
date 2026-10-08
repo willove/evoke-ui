@@ -152,7 +152,10 @@ const props = defineProps({
   /** 按时间分组（今天 / 昨天 / 近 7 天 / 更早）；搜索中与置顶段不分组 */
   groupByDate: { type: Boolean, required: false, default: true },
   renamable: { type: Boolean, required: false, default: true },
-  removable: { type: Boolean, required: false, default: true }
+  removable: { type: Boolean, required: false, default: true },
+  /** 时间列转义口：宿主给格式化函数（如 YYYY-MM-DD HH:mm:ss）；缺省回落
+      浏览器本地日期——中文宿主普遍要显式格式而不是跟随 locale 的 9/28/2026。 */
+  timeFormat: { type: Function, required: false, default: null }
 });
 const emit = defineEmits(["select", "create", "rename", "remove", "pin", "archive", "search"]);
 const keyword = ref("");
@@ -239,6 +242,7 @@ function itemPropsFor(thread) {
 
 function formatTime(ts) {
   if (!ts) return "";
+  if (props.timeFormat) return props.timeFormat(ts);
   return new Date(ts).toLocaleDateString();
 }
 

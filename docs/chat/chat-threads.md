@@ -101,6 +101,7 @@ const sessions = useChatSessions({
   { name: 'showCreate', desc: '显示新建按钮', type: 'boolean', default: 'true' },
   { name: 'groupByDate', desc: '按今天 / 昨天 / 近 7 天 / 更早分组；搜索中与置顶段不分组', type: 'boolean', default: 'true' },
   { name: 'renamable / removable', desc: '菜单里的重命名与删除项；置顶与归档不受影响', type: 'boolean', default: 'true / true' },
+  { name: 'timeFormat', desc: '时间列格式化转义口（如 YYYY-MM-DD HH:mm:ss）；缺省回落浏览器本地日期', type: '(ts: number) => string', default: '—' },
 ]" />
 
 <ApiTable title="ChatThreads Events" :rows="[

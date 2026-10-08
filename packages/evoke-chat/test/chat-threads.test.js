@@ -202,6 +202,19 @@ describe('ChatThreads', () => {
     w.unmount()
   })
 
+  it('timeFormat：给格式化函数时时间列走宿主格式；缺省回落本地日期', async () => {
+    const stamp = Date.UTC(2026, 9, 28, 6, 30) // 10 月 28 日（UTC，断言用原值不经本地时区）
+    const w = mountList({ threads: [{ id: 't9', title: '定时任务', updatedAt: stamp }] })
+    await w.setProps({ timeFormat: (ts) => new Date(ts).toISOString().slice(0, 10) })
+    expect(w.find('.eb-chat-threads__time').text()).toBe('2026-10-28')
+    // 撤掉转义口回落浏览器本地日期（非空、不含宿主格式）
+    await w.setProps({ timeFormat: null })
+    const fallback = w.find('.eb-chat-threads__time').text()
+    expect(fallback).not.toBe('')
+    expect(fallback).not.toBe('2026-10-28')
+    w.unmount()
+  })
+
   it('展开归档后归档条目出现', async () => {
     const w = mountList()
     await w.find('.eb-chat-threads__archived-toggle').trigger('click')

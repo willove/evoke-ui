@@ -1163,6 +1163,12 @@
           "type": "Boolean",
           "default": "true",
           "required": false
+        },
+        {
+          "name": "timeFormat",
+          "type": "Function",
+          "default": "null",
+          "required": false
         }
       ],
       "events": [

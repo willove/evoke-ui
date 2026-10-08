@@ -655,6 +655,7 @@ EbChatSources
 | `groupByDate` | Boolean | true |
 | `renamable` | Boolean | true |
 | `removable` | Boolean | true |
+| `timeFormat` | Function | null |
 
 事件：`select`、`create`、`rename`、`remove`、`pin`、`archive`、`search`
 
