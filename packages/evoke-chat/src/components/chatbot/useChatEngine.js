@@ -6,6 +6,16 @@ const startTimeMap = /* @__PURE__ */ new WeakMap();
 const thinkStartMap = /* @__PURE__ */ new WeakMap();
 function useChatEngine(options = {}) {
   const labels = useChatLabels();
+  /**
+   * keepProgressLog：收尾后**保留** progressLog（系统轨迹）。
+   *
+   * 默认 false：进度只属于进行中的轮，收尾后留着就是谎报（组件已为轨迹做了
+   * 折叠披露，所以"保留"必须由宿主显式要）。置 true 的宿主（如 RAG/agent 后端）
+   * 会在答案出来后回看"它查了什么、为什么这么答"——那时轨迹才是证据。
+   *
+   * 这是**开关不是修 bug**：两种语义都成立，区别只在宿主要不要事后审计。
+   */
+  const keepProgressLog = options.keepProgressLog === true;
   const messages = ref(options.initialMessages || []);
   const loading = ref(false);
   const inputValue = ref("");
@@ -118,7 +128,7 @@ function useChatEngine(options = {}) {
       msg.status = "done";
       msg.thinking = false;
       msg.progress = null; // 阶段进度只属于进行中的轮：收尾后留着就是谎报
-      msg.progressLog = [];
+      if (!keepProgressLog) msg.progressLog = []; // keepProgressLog 开的宿主要留作事后证据
       settleThinkDuration(msg);
       if (duration && duration > 0) {
         msg.duration = duration;
@@ -126,7 +136,10 @@ function useChatEngine(options = {}) {
     }
   }
   function setMessageError(id, error) {
-    updateMessage(id, { status: "error", error, thinking: false, progress: null, progressLog: [] });
+    updateMessage(id, {
+      status: "error", error, thinking: false, progress: null,
+      ...(keepProgressLog ? {} : { progressLog: [] }),
+    });
   }
   /**
    * 中断生成：保留已流出的正文，状态记 cancelled。
@@ -140,7 +153,7 @@ function useChatEngine(options = {}) {
     if (msg.thinking) msg.thinkInterrupted = true;
     msg.thinking = false;
     msg.progress = null;
-    msg.progressLog = [];
+    if (!keepProgressLog) msg.progressLog = [];
     // 与 completeMessage 同款收尾：思考起点折成 thinkDuration（没思考过则不动）
     settleThinkDuration(msg);
     // 还在跑的工具调用不能继续转圈：与消息同一终态语义（cancelled），
@@ -321,8 +334,20 @@ function useChatEngine(options = {}) {
 
   // ── 用量 ──
   // 只存不解析：成本要价目表，那是宿主的业务数据，引擎不猜
+  // model/provider 是**归属信息**（这答案是哪个模型、哪条线路给的）：
+  // 多模型路由/多线路并存时，运行卡与用量行没有它就答不出"这是谁给的"。
+  // 不给就不显示——不猜，也不占位。
   function setUsage(messageId, usage) {
     updateMessage(messageId, { usage: usage || null });
+  }
+  function setModel(messageId, model = {}) {
+    updateMessage(messageId, {
+      model: {
+        provider: model.provider || "",
+        name: model.name || "",
+        ...(model.version ? { version: model.version } : {}),
+      },
+    });
   }
   // ── 结构化进度 ──
   // 阶段名+耗时/百分比的一等通道（assistant/progress 事件落这里），
@@ -347,8 +372,21 @@ function useChatEngine(options = {}) {
     if (item.percent !== undefined) current.percent = item.percent;
     msg.progress = current;
   }
-  function clearProgress(messageId) {
-    updateMessage(messageId, { progress: null, progressLog: [] });
+  /**
+   * 结束进度显示：**只清当前行，保留完整轨迹**。
+   *
+   * 为什么不清 progressLog：轨迹是这一轮"系统做了什么"的**事后证据**——
+   * "它查了什么、为什么这么答"恰恰是用户拿到答案之后最想看的，而组件已经为它
+   * 做好了折叠披露（progressSteps）。在收尾那一刻把轨迹清掉，等于把刚攒好的
+   * 时间线删掉（真跑踩过：对接 RAG 后端时发现答案一出、11 个阶段的日志就没了）。
+   *
+   * 真的要清（例如下一轮重来、消息被重发）用 `{ keepLog: false }`。
+   */
+  function clearProgress(messageId, options = {}) {
+    const patch = { progress: null };
+    const keep = options && options.keepLog !== undefined ? options.keepLog === true : keepProgressLog;
+    if (!keep) patch.progressLog = [];
+    updateMessage(messageId, patch);
   }
   /** 本轮改动汇总 { files: [{ path, display?, added?, deleted?, binary?, oversized? }], total?, added?, deleted? } */
   function setChanges(messageId, changes) {
@@ -619,6 +657,7 @@ function useChatEngine(options = {}) {
     updateArtifact,
     removeArtifact,
     setUsage,
+    setModel,
     setProgress,
     appendProgress,
     clearProgress,

@@ -282,7 +282,7 @@ engine.appendProgress(msg.id, { label: '合成答案' })
     pitfalls: [
       'setProgress 只更新当前行不记轨迹；appendProgress 记轨迹并联动当前行',
       'progressLog 是系统轨迹，别当 plan 用——给用户看的计划走 setPlan',
-      '收尾（completeMessage / cancelMessage / 出错）会清掉 progress 与 progressLog',
+      '收尾（completeMessage / cancelMessage / 出错）会清掉 progress；progressLog 默认也清（进度只属于进行中的轮），宿主要事后审计就用 useChatEngine({ keepProgressLog: true }) 或 clearProgress(id, { keepLog: true }) 留轨迹',
     ],
   },
   {
