@@ -262,7 +262,7 @@ describe('useChatEngine progressLog（appendProgress / clearProgress）', () => 
     expect(eng.messages.value[2].progressLog).toEqual([])
   })
 
-  it('clearProgress 同时清当前行与轨迹；无 label 的 entry 不入轨迹', () => {
+  it('clearProgress 默认只清当前行、轨迹按引擎开关（默认清）', () => {
     const eng = useChatEngine({})
     const m = eng.createAssistantMessage()
     eng.appendProgress(m.id, { label: 'x' })
@@ -270,7 +270,60 @@ describe('useChatEngine progressLog（appendProgress / clearProgress）', () => 
     expect(eng.messages.value[0].progressLog).toHaveLength(1)
     eng.clearProgress(m.id)
     expect(eng.messages.value[0].progress).toBeNull()
+    expect(eng.messages.value[0].progressLog).toEqual([])  // 默认：进度只属于进行中的轮
+  })
+
+  it('clearProgress({ keepLog: true }) 保留轨迹；引擎 keepProgressLog 也生效', () => {
+    const a = useChatEngine({})
+    const ma = a.createAssistantMessage()
+    a.appendProgress(ma.id, { label: 'a' })
+    a.clearProgress(ma.id, { keepLog: true })
+    expect(a.messages.value[0].progressLog).toHaveLength(1)
+
+    const b = useChatEngine({ keepProgressLog: true })
+    const mb = b.createAssistantMessage()
+    b.appendProgress(mb.id, { label: 'b' })
+    b.clearProgress(mb.id)
+    expect(b.messages.value[0].progress).toBeNull()
+    expect(b.messages.value[0].progressLog).toHaveLength(1)
+  })
+
+  it('keepProgressLog 开着时，收尾（完成/中断/出错）都留轨迹', () => {
+    const done = useChatEngine({ keepProgressLog: true })
+    const m1 = done.createAssistantMessage()
+    done.appendProgress(m1.id, { label: '合成' })
+    done.completeMessage(m1.id)
+    expect(done.messages.value[0].progressLog).toHaveLength(1)
+    expect(done.messages.value[0].progress).toBeNull()
+
+    const stop = useChatEngine({ keepProgressLog: true })
+    const m2 = stop.createAssistantMessage()
+    stop.appendProgress(m2.id, { label: '检索' })
+    stop.cancelMessage(m2.id)
+    expect(stop.messages.value[0].progressLog).toHaveLength(1)
+
+    const fail = useChatEngine({ keepProgressLog: true })
+    const m3 = fail.createAssistantMessage()
+    fail.appendProgress(m3.id, { label: '路由' })
+    fail.setMessageError(m3.id, 'boom')
+    expect(fail.messages.value[0].progressLog).toHaveLength(1)
+  })
+
+  it('默认宿主不受影响：收尾后 progressLog 仍清空（回归）', () => {
+    const eng = useChatEngine({})
+    const m = eng.createAssistantMessage()
+    eng.appendProgress(m.id, { label: '合成' })
+    eng.completeMessage(m.id)
     expect(eng.messages.value[0].progressLog).toEqual([])
+  })
+
+  it('setModel 记归属（provider/name/version）；不给就是空对象不猜', () => {
+    const eng = useChatEngine({})
+    const m = eng.createAssistantMessage()
+    eng.setModel(m.id, { provider: 'dashscope', name: 'qwen-plus' })
+    expect(eng.messages.value[0].model).toEqual({ provider: 'dashscope', name: 'qwen-plus' })
+    eng.setModel(m.id, { provider: 'x', name: 'y', version: '2026-01' })
+    expect(eng.messages.value[0].model.version).toBe('2026-01')
   })
 })
 

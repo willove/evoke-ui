@@ -157,6 +157,7 @@ export default {
     reasoning: '推理',
     ttft: '首字',
     speed: '速度',
+    model: '模型',
     cost: '成本',
     summary: (count, detail) => `近 ${count} 条合计，${detail}`,
   },

@@ -47,6 +47,8 @@ const props = defineProps({
   usage: { type: Object, required: false, default: null },
   /** 多条用量（按会话汇总时给这个） */
   items: { type: Array, required: false, default: null },
+  /** 本轮归属 { provider?, name?, version? }：谁给的答案（多路由时是归属证据） */
+  model: { type: Object, required: false, default: null },
   /** compact 用于消息元信息行，default 用于独立展示 */
   size: { type: String, required: false, default: "compact" },
   /** 去掉底色，直接融进上下文（例如放在元信息行里） */
@@ -147,6 +149,10 @@ const rows = computed(() => {
   push('ttft', labels.usage.ttft, u.ttftMs ? `${(Number(u.ttftMs) / 1000).toFixed(2)}s` : '')
   push('speed', labels.usage.speed, u.tokensPerSecond ? `${Number(u.tokensPerSecond).toFixed(1)} tok/s` : '')
   push('cost', labels.usage.cost, costText.value)
+  // 归属：**谁给的**这轮答案（多模型/多线路路由时的归属证据）。
+  // 走同一套 push —— 不给就不渲染，不占位、不猜。
+  const m = props.model || {}
+  push('model', labels.usage.model, [m.provider, m.name].filter(Boolean).join(' / '))
   return out;
 });
 
