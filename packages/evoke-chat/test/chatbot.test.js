@@ -14,6 +14,7 @@ import {
   escapeHtml,
   simpleMarkdown,
   copyToClipboard,
+  anchorSource,
 } from '../src/components/chatbot/utils'
 import {
   renderChatMarkdown,
@@ -218,6 +219,13 @@ describe('chatbot/utils', () => {
     const ids = new Set(Array.from({ length: 200 }, () => generateId()))
     expect(ids.size).toBe(200)
     for (const id of ids) expect(id).toMatch(/^[a-z0-9]+$/)
+  })
+
+  it('anchorSource：生成 source: 协议片段，数字文本固定序号、缺省自动编号占位', () => {
+    expect(anchorSource('doc-3', '3')).toBe('[3](source:doc-3)')
+    expect(anchorSource('doc-3')).toBe('[](source:doc-3)')
+    // 空白与圆括号会截断 markdown 链接：refId 一律清洗
+    expect(anchorSource('a b(c)')).toBe('[](source:abc)')
   })
 
   it('formatFileSize：falsy 空、B/KB/MB 三档', () => {
@@ -522,6 +530,21 @@ describe('ChatMessage 头部开关与时间位置', () => {
     // DOM 顺序：foot 在气泡之后
     const html = w.html()
     expect(html.indexOf('__bubble')).toBeLessThan(html.indexOf('__foot'))
+  })
+
+  it('model / provider 落在底部读数行（provider 拼前缀，hover 才现）', () => {
+    const msg = { id: 'a1', role: 'assistant', content: 'hi', status: 'done', createdAt: Date.now(), model: 'claude-sonnet-4-5', provider: 'anthropic' }
+    const w = mount(ChatMessage, { props: { message: msg } })
+    const model = w.find('.eb-chat-message__model')
+    expect(model.exists()).toBe(true)
+    expect(model.text()).toBe('anthropic/claude-sonnet-4-5')
+    expect(model.classes()).toContain('eb-chat-message__reveal')
+    // 只有 model 没有 provider：单显示
+    const solo = mount(ChatMessage, { props: { message: { ...msg, provider: undefined } } })
+    expect(solo.find('.eb-chat-message__model').text()).toBe('claude-sonnet-4-5')
+    // 用户消息不显示模型归属
+    const user = mount(ChatMessage, { props: { message: { ...msg, role: 'user' } } })
+    expect(user.find('.eb-chat-message__model').exists()).toBe(false)
   })
 
   it('show-time=false 时不渲染时间', () => {

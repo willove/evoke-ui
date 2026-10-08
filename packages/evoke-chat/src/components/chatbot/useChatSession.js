@@ -18,8 +18,9 @@
  *   user/message      { requestId?, message: { id?, content, attachments? } }
  *   assistant/delta   { messageId, text? , think? }            瞬时（无 seq）
  *   assistant/progress { messageId, label, detail?, elapsedMs?, percent? }  瞬时（无 seq）
- *   assistant/message { messageId, message: { content, thinkContent?, usage? }, interrupted? }
+ *   assistant/message { messageId, message: { content, thinkContent?, usage?, model?, provider? }, interrupted? }
  *   tool/call         { messageId, callId, name, label?, args? }
+ *   tool/args         { messageId, callId, chunk }             瞬时（无 seq）：入参 JSON 分片
  *   tool/result       { messageId, callId, result?, error?, duration? }
  *   turn/end          { messageId, reason: { kind } , error? }
  *   reason.kind: completed / max-tokens / aborted / interrupted / blocked / error
@@ -95,6 +96,9 @@ export function applySessionEvent(engine, event) {
       if (data.message?.content !== undefined) patch.content = data.message.content;
       if (data.message?.thinkContent !== undefined) patch.thinkContent = data.message.thinkContent;
       if (data.message?.usage !== undefined) patch.usage = data.message.usage;
+      // 模型归属（多模型路由时"这答案是谁给的"）：原样落消息字段，底行读数据此显示
+      if (data.message?.model !== undefined) patch.model = data.message.model;
+      if (data.message?.provider !== undefined) patch.provider = data.message.provider;
       if (!targetId) return false;
       ensureMessage(engine, targetId);
       engine.updateMessage(targetId, patch);
@@ -111,6 +115,12 @@ export function applySessionEvent(engine, event) {
         args: data.args,
       });
       return true;
+    }
+    case "tool/args": {
+      // 入参流式（瞬时）：与 tool/call 同一 callId，JSON 文本逐片拼接，卡片边收边显示
+      if (!targetId || !data.callId) return false;
+      ensureMessage(engine, targetId);
+      return engine.appendToolCallArgs(targetId, data.callId, data.chunk ?? "") != null;
     }
     case "tool/result": {
       if (!targetId || !data.callId) return false;

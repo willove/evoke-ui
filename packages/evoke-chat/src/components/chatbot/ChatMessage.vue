@@ -162,10 +162,10 @@
             @pick="handleSuggestionPick"
           />
           <div
-            v-if="showTime || showActions || message?.duration || message?.usage || message?.edited"
+            v-if="showTime || showActions || message?.duration || message?.usage || message?.model || message?.edited"
             class="eb-chat-message__foot"
           >
-            <!-- 底部读数整组随悬浮显隐（时间 / 耗时 / tokens 用量，与动作条同一机制） -->
+            <!-- 底部读数整组随悬浮显隐（时间 / 耗时 / 模型 / tokens 用量，与动作条同一机制） -->
             <span
               v-if="showTime && message?.createdAt"
               class="eb-chat-message__time eb-chat-message__reveal"
@@ -179,6 +179,13 @@
               <eb-icon name="stopwatch" :size="14" />
               {{ formatDuration(message.duration) }}
             </span>
+            <!-- 模型归属：多模型路由时说清"这答案是谁给的"（provider/model 原样透传，引擎不猜） -->
+            <span
+              v-if="message?.role === 'assistant' && message?.model && message?.status === 'done'"
+              class="eb-chat-message__model eb-chat-message__reveal"
+              :class="{ 'is-visible': hovered }"
+              :title="message?.provider ? `${message.provider} · ${message.model}` : message?.model"
+            >{{ modelText }}</span>
             <span
               v-if="message?.usage"
               class="eb-chat-message__usage eb-chat-message__reveal"
@@ -307,6 +314,12 @@ const showActions = computed(() => {
 const showFeedback = computed(() => props.feedback && props.message?.role === "assistant" && props.message?.status === "done");
 const resolvedSuggestions = computed(() => props.message?.suggestions || []);
 const resolvedToolCalls = computed(() => props.message?.toolCalls || []);
+// 模型归属读数：provider/model 拼成一段（只有 model 就只显示 model）
+const modelText = computed(() => {
+  const m = props.message;
+  if (!m?.model) return "";
+  return m.provider ? `${m.provider}/${m.model}` : String(m.model);
+});
 // 运行过程标题：跑着就说「正在执行 N 个步骤」（带流光），跑完才结算「执行了 N 个步骤（用时 X）」
 const toolsLive = computed(() => resolvedToolCalls.value.some((t) => t.status === "running" || t.status === "pending"));
 const toolsHeading = computed(() => {
@@ -547,6 +560,18 @@ function handleAction(key, message) {
   gap: 4px;
   font-size: var(--eb-font-size-xs);
   color: var(--eb-text-color-secondary);
+}
+
+/* 模型归属：读数性质与耗时一致（无图标、纯文字，长名允许截断省略） */
+.eb-chat-message__model {
+  display: inline-flex;
+  align-items: center;
+  max-width: 220px;
+  overflow: hidden;
+  font-size: var(--eb-font-size-xs);
+  color: var(--eb-text-color-placeholder);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /*

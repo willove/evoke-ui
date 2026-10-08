@@ -127,7 +127,7 @@ function useChatEngine(options = {}) {
     if (msg.toolCalls?.length) {
       const cancelTree = (list) => (list || []).map((t) => ({
         ...t,
-        ...(t.status === "running" || t.status === "pending" ? { status: "cancelled", streaming: false } : {}),
+        ...(t.status === "running" || t.status === "pending" ? { status: "cancelled", streaming: false, argsStreaming: false } : {}),
         ...(t.subCalls?.length ? { subCalls: cancelTree(t.subCalls) } : {})
       }));
       msg.toolCalls = cancelTree(msg.toolCalls);
@@ -388,6 +388,7 @@ function useChatEngine(options = {}) {
       duration: 0,
       error: "",
       streaming: false,
+      argsStreaming: false,
       startedAt: 0,
       subCalls: []
     };
@@ -428,7 +429,35 @@ function useChatEngine(options = {}) {
     const existing = call.id ? locateToolCall(msg.toolCalls, call.id)?.call : null;
     const tc = existing || addToolCall(messageId, call);
     if (!tc) return null;
-    updateToolCall(messageId, tc.id, { status: "running", streaming: false, startedAt: Date.now() });
+    updateToolCall(messageId, tc.id, { status: "running", streaming: false, argsStreaming: false, startedAt: Date.now() });
+    return tc.id;
+  }
+  /** 流式入参序列化兜底：宿主先给了对象又追加增量时退回 JSON 文本（异常输入给空串重来） */
+  function stringifyArgs(value) {
+    try {
+      return JSON.stringify(value) ?? "";
+    } catch {
+      return "";
+    }
+  }
+  /**
+   * 工具入参的流式增量：长参数（SQL / 查询 DSL / 写操作 payload）逐片可见，
+   * 与输出侧 appendToolCallResult 对称。内部拼 JSON 文本；收尾时 completeToolCall
+   * 尝试 parse 回对象（失败保留原文——半截 JSON 诚实展示，不假装成对象）。
+   * 无 id 时返回 null；终态调用不再接收增量，与输出侧同款守卫。
+   */
+  function appendToolCallArgs(messageId, callId, chunk) {
+    const msg = findMessage(messageId);
+    const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
+    if (!tc || tc.status === "done" || tc.status === "error" || tc.status === "cancelled") return null;
+    const text = String(chunk ?? "");
+    const base = typeof tc.args === "string" ? tc.args : tc.args == null ? "" : stringifyArgs(tc.args);
+    updateToolCall(messageId, callId, {
+      args: base + text,
+      argsStreaming: true,
+      status: "running",
+      startedAt: tc.startedAt || Date.now()
+    });
     return tc.id;
   }
   /**
@@ -462,6 +491,17 @@ function useChatEngine(options = {}) {
     const duration = tc?.startedAt ? Date.now() - tc.startedAt : 0;
     const patch = { status: "done", streaming: false, duration };
     if (result !== undefined) patch.result = result;
+    // 入参流式收尾：拼完的 JSON 文本尝试 parse 回对象；parse 不动就保留原文
+    if (tc.argsStreaming) {
+      patch.argsStreaming = false;
+      if (typeof tc.args === "string" && tc.args) {
+        try {
+          patch.args = JSON.parse(tc.args);
+        } catch {
+          /* 半截 JSON：保留原文文本 */
+        }
+      }
+    }
     updateToolCall(messageId, callId, patch);
   }
   function failToolCall(messageId, callId, error) {
@@ -469,7 +509,7 @@ function useChatEngine(options = {}) {
     const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
     if (!tc || tc.status === "cancelled") return;
     const text = error instanceof Error ? error.message : error;
-    updateToolCall(messageId, callId, { status: "error", streaming: false, error: text || labels.tool.error });
+    updateToolCall(messageId, callId, { status: "error", streaming: false, argsStreaming: false, error: text || labels.tool.error });
   }
   /** 记录一条消息的点赞点踩与结构化原因 */
   function setFeedback(messageId, value, payload = {}) {
@@ -511,6 +551,7 @@ function useChatEngine(options = {}) {
     startToolCall,
     addSubToolCall,
     findToolCall,
+    appendToolCallArgs,
     appendToolCallResult,
     completeToolCall,
     failToolCall,

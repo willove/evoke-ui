@@ -136,6 +136,26 @@ describe('useChatSession：折叠与发送', () => {
     scope.stop()
   })
 
+  it('tool/args 瞬时事件流式拼入参；assistant/message 透传 model/provider', () => {
+    const { session, scope } = boot()
+    session.open({ cursor: 0, records: [] })
+    session.receive({ type: 'tool/call', transient: true, data: { messageId: 'a1', callId: 'c1', name: 'sql_query' } })
+    session.receive({ type: 'tool/args', transient: true, data: { messageId: 'a1', callId: 'c1', chunk: '{"query":' } })
+    session.receive({ type: 'tool/args', transient: true, data: { messageId: 'a1', callId: 'c1', chunk: '"SELECT 1"}' } })
+    const tc = session.messages.value.at(-1).toolCalls[0]
+    expect(tc).toMatchObject({ name: 'sql_query', status: 'running', argsStreaming: true })
+    expect(tc.args).toBe('{"query":"SELECT 1"}')
+
+    session.receive({ type: 'assistant/message', seq: 1, data: { messageId: 'a1', message: { content: '好了', model: 'glm-5', provider: 'zhipu' } } })
+    const msg = session.messages.value.at(-1)
+    expect(msg.model).toBe('glm-5')
+    expect(msg.provider).toBe('zhipu')
+    // 收尾把入参 parse 回对象
+    session.receive({ type: 'tool/result', transient: true, data: { messageId: 'a1', callId: 'c1' } })
+    expect(session.messages.value.at(-1).toolCalls[0].args).toEqual({ query: 'SELECT 1' })
+    scope.stop()
+  })
+
   it('缺口走 transport.page 补齐，补完才折叠后到的事件', async () => {
     const { session, transport, scope } = boot({
       page: vi.fn(async ({ from, to }) => [ev('assistant/message', 2, { messageId: 'a1', message: { content: '第二' } }), ev('turn/end', 3, { messageId: 'a1', reason: { kind: 'completed' } })]),

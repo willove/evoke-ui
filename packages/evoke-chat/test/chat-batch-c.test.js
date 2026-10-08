@@ -170,6 +170,33 @@ describe('ChatToolCall', () => {
   })
 })
 
+describe('工具入参流式渲染（argsStreaming）', () => {
+  it('argsStreaming 时卡片自动展开、按拼接文本显示并带光标', async () => {
+    const w = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'sql_query', status: 'running', args: '{"query": "SEL', argsStreaming: true } },
+    })
+    await nextTick()
+    // immediate watch：挂载即在流式 → 自动展开（v-show 不留 display:none）
+    expect(w.find('.eb-chat-tool-call__body').attributes('style') || '').not.toContain('display: none')
+    expect(w.find('.eb-chat-tool-call__pre').text()).toContain('{"query": "SEL')
+    expect(w.find('.eb-chat-tool-call__caret').exists()).toBe(true)
+  })
+
+  it('入参流式结束回到用户可控折叠态；对象 args 照旧 pretty print、无光标', async () => {
+    const w = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'sql_query', status: 'running', args: '{"query": "SEL', argsStreaming: true } },
+    })
+    await nextTick()
+    expect(w.find('.eb-chat-tool-call__caret').exists()).toBe(true)
+    w.setProps({ toolCall: { id: 't', name: 'sql_query', status: 'done', args: { query: 'SELECT 1' }, argsStreaming: false } })
+    await nextTick()
+    expect(w.find('.eb-chat-tool-call__caret').exists()).toBe(false)
+    expect(w.find('.eb-chat-tool-call__pre').text()).toContain('"query": "SELECT 1"')
+    // 用户没动过开合：流式结束自动收起
+    expect(w.find('.eb-chat-tool-call__body').attributes('style') || '').toContain('display: none')
+  })
+})
+
 describe('useChatEngine 工具调用状态机', () => {
   function seeded() {
     const eng = useChatEngine({})
@@ -232,6 +259,59 @@ describe('useChatEngine 工具调用状态机', () => {
     expect(eng.appendToolCallResult(m.id, id, 'late')).toBeNull()
     expect(eng.messages.value[0].toolCalls[0].result).toBe('done output')
     expect(eng.appendToolCallResult(m.id, 'missing', 'x')).toBeNull()
+  })
+
+  it('appendToolCallArgs：入参分片拼接并标记 argsStreaming/running', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'sql_query' })
+    expect(eng.appendToolCallArgs(m.id, id, '{"query":')).toBe(id)
+    eng.appendToolCallArgs(m.id, id, '"SELECT 1"}')
+    const tc = eng.messages.value[0].toolCalls[0]
+    expect(tc.args).toBe('{"query":"SELECT 1"}')
+    expect(tc).toMatchObject({ status: 'running', argsStreaming: true })
+  })
+
+  it('appendToolCallArgs：complete 收尾自动 parse 回对象并清 argsStreaming', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'sql_query' })
+    eng.appendToolCallArgs(m.id, id, '{"query":"SELECT 1"}')
+    eng.completeToolCall(m.id, id, '3 行')
+    const tc = eng.messages.value[0].toolCalls[0]
+    expect(tc.args).toEqual({ query: 'SELECT 1' })
+    expect(tc.argsStreaming).toBe(false)
+  })
+
+  it('appendToolCallArgs：半截 JSON 收尾保留原文（不假装成对象）', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'sql_query' })
+    eng.appendToolCallArgs(m.id, id, '{"query": "SEL')
+    eng.completeToolCall(m.id, id)
+    expect(eng.messages.value[0].toolCalls[0].args).toBe('{"query": "SEL')
+  })
+
+  it('appendToolCallArgs：终态调用与未知 id 不再接收增量', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'x' })
+    eng.completeToolCall(m.id, id, 'ok')
+    expect(eng.appendToolCallArgs(m.id, id, 'late')).toBeNull()
+    expect(eng.appendToolCallArgs(m.id, 'missing', 'x')).toBeNull()
+  })
+
+  it('cancelMessage：入参流式中的调用落 cancelled 且停止接收分片', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'sql_query' })
+    eng.appendToolCallArgs(m.id, id, '{"q')
+    eng.cancelMessage(m.id)
+    const tc = eng.messages.value[0].toolCalls[0]
+    expect(tc).toMatchObject({ status: 'cancelled', argsStreaming: false, args: '{"q' })
+    expect(eng.appendToolCallArgs(m.id, id, 'x')).toBeNull()
+  })
+
+  it('appendToolCallArgs：宿主先给对象再追加增量时退回 JSON 文本续拼', () => {
+    const { eng, m } = seeded()
+    const id = eng.startToolCall(m.id, { name: 'x', args: { a: 1 } })
+    eng.appendToolCallArgs(m.id, id, ' 然后还有')
+    expect(eng.messages.value[0].toolCalls[0].args).toBe('{"a":1} 然后还有')
   })
 
   it('addSubToolCall：挂子调用，按 id 递归流式/收尾', () => {

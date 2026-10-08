@@ -82,6 +82,8 @@ export {
   registerHighlightLanguage,
 } from './components/chatbot/chatMarkdown'
 export { chatLabels, useChatLabels } from './components/chatbot/labels'
+// 行内引用锚点：生成 source: 协议片段，正文渲染成可点上标并联动来源卡高亮
+export { anchorSource } from './components/chatbot/utils'
 // 适配层：OpenAI / Anthropic 消息接入（纯映射，零 SDK 依赖）
 export { createChatTransport, openai, anthropic } from './components/chatbot/adapters/createChatTransport'
 export { readSseFrames, sseFramesOf, parseSseText, parseSseFrame, streamChunks } from './components/chatbot/adapters/sse'

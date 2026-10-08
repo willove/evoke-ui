@@ -126,7 +126,18 @@ function copyToClipboard(text) {
     }
   });
 }
+/**
+ * 行内引用锚点：生成 `source:` 协议的 markdown 片段，正文里渲染成可点上标
+ * （点击联动 EbChatSources 高亮对应卡片）。text 给数字则固定序号，省略则按
+ * 出现顺序自动编号；refId 要与 citations[].id 一一对应。
+ */
+function anchorSource(refId, text) {
+  // 空白与圆括号会截断 markdown 链接，refId 一律清洗掉（id 该是安全 token）
+  const id = String(refId ?? "").replace(/[\s()]/g, "");
+  return `[${text ?? ""}](source:${id})`;
+}
 export {
+  anchorSource,
   copyToClipboard,
   escapeHtml,
   formatFileSize,

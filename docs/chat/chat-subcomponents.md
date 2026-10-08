@@ -96,7 +96,7 @@ Props 与 `ChatList` 的透传面一致，外加 `message` 本身；其中 `show
 | --- | --- |
 | `content` | 只换气泡内正文；作用域 `{ message, content, renderMode, streaming }` |
 
-消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。
+消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, usage?, model?, provider?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。`toolCalls[].argsStreaming` 为真表示入参在流式（JSON 文本逐片拼接，收尾自动 parse 回对象）；`model` / `provider` 是模型归属（多模型路由时底部读数行显示 `provider/model`，引擎只透传不解析）。
 
 ### EbChatMarkdown
 
@@ -114,6 +114,8 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 | Events | 载荷 |
 | --- | --- |
 | `citation-click` | `(id)` 行内引用上标被点击或回车 |
+
+行内锚点的生成助手是 `anchorSource(refId, text?)`（主入口导出）：返回 `[text](source:refId)` 片段，`refId` 与 `citations[].id` 对应；`text` 省略按出现顺序自动编号，给数字则固定序号。引用列表本身是**回合级**语义（渲染在正文之后），行内关系走这个协议。
 
 管线配置（协议白名单、主题色、追加高亮语言）见 [Chatbot 的正文渲染配置](/chat/chatbot#正文渲染配置)。
 

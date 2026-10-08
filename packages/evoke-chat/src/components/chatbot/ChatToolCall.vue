@@ -38,7 +38,7 @@
       <section v-if="hasArgs" class="eb-chat-tool-call__section">
         <p class="eb-chat-tool-call__section-title">{{ labels.tool.args }}</p>
         <slot name="args" :tool-call="toolCall">
-          <pre class="eb-chat-tool-call__pre">{{ stringify(toolCall.args) }}</pre>
+          <pre ref="argsRef" class="eb-chat-tool-call__pre">{{ stringify(toolCall.args) }}<span v-if="argsStreaming" class="eb-chat-tool-call__caret" aria-hidden="true" /></pre>
         </slot>
       </section>
       <section v-if="failed" class="eb-chat-tool-call__section">
@@ -84,7 +84,7 @@ const MAX_TOOL_DEPTH = 16;
 
 const labels = useChatLabels();
 const props = defineProps({
-  /** { id, name, label?, args?, result?, status, duration?, error?, streaming?, subCalls? } */
+  /** { id, name, label?, args?, result?, status, duration?, error?, streaming?, argsStreaming?, subCalls? } */
   toolCall: { type: Object, required: false, default: () => ({}) },
   /** 未显式指定时，有参数或结果才允许展开 */
   expanded: { type: Boolean, required: false, default: undefined },
@@ -98,9 +98,12 @@ const open = ref(props.expanded ?? false);
 // 用户手动开合过就尊重用户：流式结束不再自动收起
 let userToggled = false;
 const resultRef = ref(null);
+const argsRef = ref(null);
 const panelId = `eb-chat-tool-call-${Math.random().toString(36).slice(2, 9)}`;
 const running = computed(() => props.toolCall?.status === "running");
 const streaming = computed(() => props.toolCall?.streaming === true);
+// 入参流式与输出流式同款待遇：光标、自动展开、贴底
+const argsStreaming = computed(() => props.toolCall?.argsStreaming === true);
 const succeeded = computed(() => props.toolCall?.status === "done");
 const failed = computed(() => props.toolCall?.status === "error");
 const cancelled = computed(() => props.toolCall?.status === "cancelled");
@@ -123,15 +126,24 @@ const subCount = computed(() => props.toolCall?.subCalls?.length || 0);
 const expandable = computed(() => hasArgs.value || hasResult.value || failed.value || subCalls.value.length > 0);
 // 与计划卡同一约定：流式输出期间自动展开（盯着跑），结束后回到用户可控的折叠态。
 // immediate 是为了「挂载时就已在流式」的历史/重连场景也能展开。
-watch(streaming, (on) => {
+// 入参与输出任一侧在流式都算「正在跑」，全部停了才回落。
+watch([streaming, argsStreaming], ([out, args], [prevOut, prevArgs]) => {
   if (props.expanded !== undefined) return;
+  const on = out || args;
+  const wasOn = prevOut || prevArgs;
   if (on) open.value = true;
-  else if (!userToggled) open.value = false;
+  else if (wasOn && !userToggled) open.value = false;
 }, { immediate: true });
 // 流式输出贴底：命令边跑边出，新内容不能被折在下面
 watch(() => props.toolCall?.result, () => {
   if (!streaming.value) return;
   const el = resultRef.value;
+  if (el) el.scrollTop = el.scrollHeight;
+});
+// 入参流式同样贴底：长 JSON 边收边看，最新的分片不能被折走
+watch(() => props.toolCall?.args, () => {
+  if (!argsStreaming.value) return;
+  const el = argsRef.value;
   if (el) el.scrollTop = el.scrollHeight;
 });
 const statusText = computed(() => {
