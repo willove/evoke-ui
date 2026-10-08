@@ -212,6 +212,134 @@ describe('useChatEngine', () => {
   })
 })
 
+// ── parts 消息模型（到达顺序真相 + 平面投影） ──
+
+describe('useChatEngine parts 消息模型', () => {
+  function seeded() {
+    const engine = useChatEngine({})
+    const msg = engine.createAssistantMessage()
+    return { engine, msg }
+  }
+
+  it('appendContent / appendThinkContent / startToolCall 按到达顺序落 parts，投影同步', () => {
+    const { engine, msg } = seeded()
+    engine.appendThinkContent(msg.id, '先查数据')
+    engine.appendContent(msg.id, '查到近 6 个月：')
+    const callId = engine.startToolCall(msg.id, { name: 'sql_query' })
+    engine.appendContent(msg.id, '对比行业均值…')
+    const parts = engine.messages.value[0].parts
+    expect(parts.map((p) => p.type)).toEqual(['reasoning', 'text', 'tool', 'text'])
+    expect(parts[2]).toMatchObject({ type: 'tool', toolCallId: callId })
+    // 平面投影：拼接语义，交错信息只活在 parts 里
+    expect(engine.messages.value[0].content).toBe('查到近 6 个月：对比行业均值…')
+    expect(engine.messages.value[0].thinkContent).toBe('先查数据')
+  })
+
+  it('连续文本增量合并进尾部 text part（不逐片新建）', () => {
+    const { engine, msg } = seeded()
+    engine.appendContent(msg.id, 'a')
+    engine.appendContent(msg.id, 'b')
+    engine.appendContent(msg.id, 'c')
+    const parts = engine.messages.value[0].parts
+    expect(parts).toHaveLength(1)
+    expect(parts[0].text).toBe('abc')
+    // 思考与正文交替后再回来：新建 text part（两段正文各占其位）
+    engine.appendThinkContent(msg.id, '想一下')
+    engine.appendContent(msg.id, 'd')
+    expect(engine.messages.value[0].parts.map((p) => p.type)).toEqual(['text', 'reasoning', 'text'])
+  })
+
+  it('startToolCall 复用 id 不重复插 part；addSubToolCall 不占消息级位置', () => {
+    const { engine, msg } = seeded()
+    const id = engine.startToolCall(msg.id, { name: 'fetch_page' })
+    engine.startToolCall(msg.id, { id, name: 'fetch_page' })
+    expect(engine.messages.value[0].parts.filter((p) => p.type === 'tool')).toHaveLength(1)
+    engine.addSubToolCall(msg.id, id, { name: 'parse_html' })
+    expect(engine.messages.value[0].parts.filter((p) => p.type === 'tool')).toHaveLength(1)
+  })
+
+  it('落定覆写（updateMessage 改 content）只动投影、不碰 parts', () => {
+    const { engine, msg } = seeded()
+    engine.appendContent(msg.id, '流式正文')
+    engine.updateMessage(msg.id, { content: '修正后的终稿' })
+    const m = engine.messages.value[0]
+    expect(m.content).toBe('修正后的终稿')
+    expect(m.parts).toHaveLength(1)
+    expect(m.parts[0].text).toBe('流式正文')
+  })
+
+  it('收尾保留 parts（轨迹属于这条消息，不随状态清掉）', () => {
+    const { engine, msg } = seeded()
+    engine.appendContent(msg.id, '正文')
+    engine.completeMessage(msg.id)
+    expect(engine.messages.value[0].parts.map((p) => p.type)).toEqual(['text'])
+    expect(engine.messages.value[0].status).toBe('done')
+  })
+})
+
+describe('ChatMessage parts 交错渲染', () => {
+  function interleave() {
+    const engine = useChatEngine({})
+    const msg = engine.createAssistantMessage()
+    engine.appendContent(msg.id, '查到近 6 个月的数据：')
+    const callId = engine.startToolCall(msg.id, { name: 'sql_query', label: '查询营收' })
+    engine.completeToolCall(msg.id, callId, '6 行')
+    engine.appendContent(msg.id, '增速高于大盘。')
+    engine.completeMessage(msg.id)
+    return engine.messages.value[0]
+  }
+
+  it('DOM 顺序按到达交错：正文 → 工具卡 → 正文', () => {
+    const w = mount(ChatMessage, { props: { message: interleave() } })
+    const html = w.html()
+    const bubble1 = html.indexOf('查到近 6 个月的数据')
+    const tool = html.indexOf('查询营收')
+    const bubble2 = html.indexOf('增速高于大盘')
+    expect(bubble1).toBeGreaterThanOrEqual(0)
+    expect(tool).toBeGreaterThan(bubble1)
+    expect(bubble2).toBeGreaterThan(tool)
+    // 单卡工具组不给组标题（交错时标题是噪音）
+    expect(w.find('.eb-chat-message__tools-heading').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('流式尾标只落在最后一个 text 段', () => {
+    const engine = useChatEngine({})
+    const msg = engine.createAssistantMessage()
+    engine.appendContent(msg.id, '第一段。')
+    const callId = engine.startToolCall(msg.id, { name: 'x' })
+    engine.appendContent(msg.id, '第二段还在流')
+    engine.appendToolCallResult(msg.id, callId, '出')
+    const w = mount(ChatMessage, { props: { message: engine.messages.value[0], renderMode: 'text' } })
+    const texts = w.findAll('.eb-chat-message__text')
+    expect(texts).toHaveLength(2)
+    // 只有第二段（最后 run）带 shimmer 拖尾
+    expect(texts[0].find('.eb-chat-shimmer').exists()).toBe(false)
+    expect(texts[1].find('.eb-chat-shimmer').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('无 parts 的消息走固定顺序（legacy 回归）', () => {
+    const w = mount(ChatMessage, {
+      props: {
+        message: {
+          id: 'l1', role: 'assistant', content: '正文', status: 'done',
+          thinkContent: '思考', thinking: false,
+          toolCalls: [{ id: 't1', name: 'x', status: 'done' }],
+        },
+      },
+    })
+    // text() 不含模板注释（html() 的注释里有「正文」字样会干扰 indexOf）
+    const text = w.text()
+    expect(text.indexOf('思考')).toBeLessThan(text.indexOf('正文'))
+    expect(w.find('.eb-chat-tool-call').exists()).toBe(true)
+    const html = w.html()
+    expect(html.indexOf('eb-chat-message__tools')).toBeGreaterThan(-1)
+    expect(html.indexOf('eb-chat-message__tools')).toBeLessThan(html.indexOf('eb-chat-message__bubble'))
+    w.unmount()
+  })
+})
+
 // ── utils 纯函数 ──
 
 describe('chatbot/utils', () => {

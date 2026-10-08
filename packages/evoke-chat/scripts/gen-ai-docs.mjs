@@ -137,6 +137,21 @@ engine.completeMessage(msg.id)                      // 收尾：settle 耗时、
     pitfalls: ['不要自己拼字符串后 setMessageContent——那样没有 streaming 光标与贴底', '正文与思维链必须分开两个 API，混写会串行渲染'],
   },
   {
+    task: '消息内交错（parts）',
+    apis: ['createAssistantMessage', 'appendContent', 'appendThinkContent', 'startToolCall'],
+    code: `// appendContent / appendThinkContent / startToolCall 自动记录到达顺序（message.parts），
+// 组件按 parts 交错渲染：正文 → 工具卡 → 正文。
+engine.appendContent(msg.id, '查到近 6 个月的数据：')
+engine.startToolCall(msg.id, { name: 'sql_query', label: '查询营收' })
+engine.appendContent(msg.id, '对比行业均值来看…')   // 工具卡之后的正文段
+// content / thinkContent / toolCalls 是 parts 的平面投影：复制、朗读等平面消费照旧`,
+    pitfalls: [
+      'parts 是真相：{ id, type: text/reasoning/tool, text?, toolCallId? }；连续同型增量合并进尾部 part',
+      '落定覆写（assistant/message 的 content）只改投影不动 parts——渲染以 parts 为准',
+      '子调用（addSubToolCall）不占消息级位置：它渲染在父卡内部；无 parts 的老消息走固定顺序',
+    ],
+  },
+  {
     task: '停止生成（用户点停止 / 双击 Esc）',
     apis: ['cancelMessage'],
     code: `// 组件侧：EbAiPromptBox / EbChatSender 的 stop 事件

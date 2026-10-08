@@ -34,6 +34,9 @@ function useChatEngine(options = {}) {
       role: "assistant",
       content: "",
       thinkContent: "",
+      // 到达顺序轨迹（真相）：text / reasoning / tool 交错落这里；
+      // content / thinkContent / toolCalls 是由它派生的平面投影（复制/朗读等平面消费走投影）
+      parts: [],
       thinking: false,
       status: "pending",
       createdAt: now
@@ -52,9 +55,24 @@ function useChatEngine(options = {}) {
     const msg = messages.value.find((m) => m.id === id);
     if (msg) {
       msg.content += content;
+      // parts 是真相：连续文本增量合并进尾部 text part，不逐片新建（响应式与重渲染成本）
+      appendPart(msg, "text", content);
       if (msg.status !== "streaming") {
         msg.status = "streaming";
       }
+    }
+  }
+  /**
+   * 追加一个 part（text / reasoning）。与尾部同型就续写，否则按到达顺序新建。
+   * tool part 由 startToolCall 落（引用 toolCallId，卡数据在 toolCalls 投影里）。
+   */
+  function appendPart(msg, type, text) {
+    if (!Array.isArray(msg.parts)) msg.parts = [];
+    const last = msg.parts[msg.parts.length - 1];
+    if (last && last.type === type) {
+      last.text += text;
+    } else {
+      msg.parts = [...msg.parts, { id: generateId(), type, text }];
     }
   }
   function markThinkStart(msg) {
@@ -74,6 +92,7 @@ function useChatEngine(options = {}) {
     const msg = messages.value.find((m) => m.id === id);
     if (msg) {
       msg.thinkContent = (msg.thinkContent || "") + content;
+      appendPart(msg, "reasoning", content);
       msg.thinking = true;
       markThinkStart(msg);
     }
@@ -420,6 +439,10 @@ function useChatEngine(options = {}) {
     if (!msg) return null;
     const tc = makeToolCall(call);
     msg.toolCalls = [...(msg.toolCalls || []), tc];
+    // 到达顺序：新工具卡在正文流里的位置落一个锚 part（渲染按 parts 交错；
+    // 子调用不占消息级位置——它渲染在父卡内部）。复用 id 的 startToolCall 不走这里，天然幂等。
+    if (!Array.isArray(msg.parts)) msg.parts = [];
+    msg.parts = [...msg.parts, { id: generateId(), type: "tool", toolCallId: tc.id }];
     return tc;
   }
   /** 给某个调用挂一个子调用（并行派发/PTC 子步）；返回子调用 id（与 startToolCall 一致），父不存在或超深返回 null */

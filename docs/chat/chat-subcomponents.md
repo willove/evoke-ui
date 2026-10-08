@@ -96,10 +96,14 @@ Props 与 `ChatList` 的透传面一致，外加 `message` 本身；其中 `show
 | --- | --- |
 | `content` | 只换气泡内正文；作用域 `{ message, content, renderMode, streaming }` |
 
-消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, usage?, model?, provider?, progress?, progressLog?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。`toolCalls[].argsStreaming` 为真表示入参在流式（JSON 文本逐片拼接，收尾自动 parse 回对象）；`model` / `provider` 是模型归属（多模型路由时底部读数行显示 `provider/model`，引擎只透传不解析）；`progress` 是当前阶段读数（`{ label, detail?, elapsedMs?, percent? }`），`progressLog` 是流水线轨迹（`appendProgress` 逐条追加并联动当前行，≥2 条时收进「前 N 个阶段」折叠，收尾清空）。
+消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, usage?, model?, provider?, progress?, progressLog?, parts?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。`toolCalls[].argsStreaming` 为真表示入参在流式（JSON 文本逐片拼接，收尾自动 parse 回对象）；`model` / `provider` 是模型归属（多模型路由时底部读数行显示 `provider/model`，引擎只透传不解析）；`progress` 是当前阶段读数（`{ label, detail?, elapsedMs?, percent? }`），`progressLog` 是流水线轨迹（`appendProgress` 逐条追加并联动当前行，≥2 条时收进「前 N 个阶段」折叠，收尾清空）；`parts` 是到达顺序轨迹（`[{ id, type: 'text' | 'reasoning' | 'tool', text?, toolCallId? }]`，引擎在 `appendContent` / `appendThinkContent` / `startToolCall` 时自动记录）——有 parts 时组件按到达顺序**交错渲染**（正文→工具→正文），`content` / `thinkContent` / `toolCalls` 是它的平面投影（复制、朗读等平面消费照旧）；无 parts 的老消息走固定顺序（thinking → tools → 正文），零改动。
 
 <DemoBlock>
   <eb-chat-message :message="DEMO_MESSAGE_TIMELINE" style="max-width: 560px" />
+</DemoBlock>
+
+<DemoBlock>
+  <eb-chat-message :message="DEMO_MESSAGE_PARTS" style="max-width: 560px" />
 </DemoBlock>
 
 ### EbChatMarkdown
@@ -1038,6 +1042,29 @@ const DEMO_MESSAGE_TIMELINE = {
     { label: '检索知识库', detail: '命中 12 段', elapsedMs: 340 },
     { label: '核对事实', detail: '3 处交叉验证', elapsedMs: 860 },
     { label: '合成答案', elapsedMs: 2400 },
+  ],
+}
+
+const DEMO_MESSAGE_PARTS = {
+  id: 'pt-1',
+  role: 'assistant',
+  status: 'done',
+  content: '查到近 6 个月的数据：对比行业均值来看，增速高于大盘：结论：**领先约 4 个百分点**，主要来自 Q3 的新客放量。',
+  thinkContent: '用户要对比口径，先查数据再补行业均值',
+  thinking: false,
+  thinkDuration: 800,
+  duration: 4200,
+  toolCalls: [
+    { id: 'q1', name: 'sql_query', label: '查询营收', status: 'done', duration: 420, args: { sql: 'SELECT month, revenue …' }, result: '6 行' },
+    { id: 'q2', name: 'web_search', label: '补行业均值', status: 'done', duration: 900, args: { query: '行业平均增速' }, result: '3 条' },
+  ],
+  parts: [
+    { id: 'p1', type: 'reasoning', text: '用户要对比口径，先查数据再补行业均值' },
+    { id: 'p2', type: 'text', text: '查到近 6 个月的数据：' },
+    { id: 'p3', type: 'tool', toolCallId: 'q1' },
+    { id: 'p4', type: 'text', text: '对比行业均值来看，增速高于大盘：' },
+    { id: 'p5', type: 'tool', toolCallId: 'q2' },
+    { id: 'p6', type: 'text', text: '结论：**领先约 4 个百分点**，主要来自 Q3 的新客放量。' },
   ],
 }
 

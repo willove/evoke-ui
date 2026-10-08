@@ -45,13 +45,6 @@
           @cancel="editing = false"
         />
         <template v-else>
-          <ChatThinking 
-            v-if="showThinking && (message?.thinking || message?.thinkContent)"
-            :content="message?.thinkContent"
-            :thinking="message?.thinking"
-            :duration="message?.thinkDuration || 0"
-            :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
-          />
           <!-- 流水线轨迹：当前阶段常显一行；历史阶段（≥2 条）收进披露，点开是紧凑日志 -->
           <div v-if="progressLog.length > 1 || message?.progress?.label" class="eb-chat-message__progress">
             <button
@@ -88,25 +81,84 @@
             :confirmation="message.confirmation"
             @respond="(c, key) => emit('confirm-respond', c, key, message)"
           />
-          <div v-if="resolvedToolCalls.length" class="eb-chat-message__tools">
-            <p v-if="resolvedToolCalls.length > 1" class="eb-chat-message__tools-heading">
-              <span :class="{ 'eb-chat-shimmer': toolsLive }">{{ toolsHeading }}</span>
-            </p>
-            <ChatToolCall
-              v-for="tc in resolvedToolCalls"
-              :key="tc.id"
-              :tool-call="tc"
-              :retryable="toolRetryable"
-              @retry="handleToolRetry"
-            >
-              <template v-if="$slots['tool-result']" #result="p">
-                <slot name="tool-result" v-bind="p" />
-              </template>
-              <template v-if="$slots['tool-args']" #args="p">
-                <slot name="tool-args" v-bind="p" />
-              </template>
-            </ChatToolCall>
-          </div>
+          <!-- 双轨正文区：有 parts 按「到达顺序」交错（正文→工具→正文），
+               无 parts 走固定顺序（thinking → tools → 正文）。turn 级内容（进度/计划/确认）在上面，
+               回合级汇总（来源/产物/文件树/改动）在下面，两轨共用。 -->
+          <template v-if="hasParts">
+            <template v-for="run in partRuns" :key="run.key">
+              <ChatThinking
+                v-if="run.type === 'reasoning'"
+                :content="run.text"
+                :thinking="message?.thinking"
+                :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
+              />
+              <div v-else-if="run.type === 'tool' && run.calls.length" class="eb-chat-message__tools">
+                <p v-if="run.calls.length > 1" class="eb-chat-message__tools-heading">
+                  <span :class="{ 'eb-chat-shimmer': run.live }">{{ run.heading }}</span>
+                </p>
+                <ChatToolCall
+                  v-for="tc in run.calls"
+                  :key="tc.id"
+                  :tool-call="tc"
+                  :retryable="toolRetryable"
+                  @retry="handleToolRetry"
+                >
+                  <template v-if="$slots['tool-result']" #result="p">
+                    <slot name="tool-result" v-bind="p" />
+                  </template>
+                  <template v-if="$slots['tool-args']" #args="p">
+                    <slot name="tool-args" v-bind="p" />
+                  </template>
+                </ChatToolCall>
+              </div>
+              <div v-else-if="run.type === 'text' && run.text" class="eb-chat-message__bubble">
+                <!-- #content 在 parts 模式下按 text 段生效（每段一次），交错位置由 parts 决定 -->
+                <slot
+                  name="content"
+                  :message="message"
+                  :content="run.text"
+                  :renderMode="renderMode"
+                  :streaming="isStreaming && run.last"
+                >
+                  <ChatMarkdown
+                    v-if="renderMode === 'markdown'"
+                    :content="run.text"
+                    :streaming="isStreaming && run.last"
+                    @citation-click="handleCitationClick"
+                  />
+                  <div v-else class="eb-chat-message__text">{{ splitRunText(run.text, isStreaming && run.last).head }}<span v-if="isStreaming && run.last" class="eb-chat-shimmer">{{ splitRunText(run.text, true).tail }}</span></div>
+                </slot>
+              </div>
+            </template>
+          </template>
+          <template v-else>
+            <ChatThinking
+              v-if="showThinking && (message?.thinking || message?.thinkContent)"
+              :content="message?.thinkContent"
+              :thinking="message?.thinking"
+              :duration="message?.thinkDuration || 0"
+              :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
+            />
+            <div v-if="resolvedToolCalls.length" class="eb-chat-message__tools">
+              <p v-if="resolvedToolCalls.length > 1" class="eb-chat-message__tools-heading">
+                <span :class="{ 'eb-chat-shimmer': toolsLive }">{{ toolsHeading }}</span>
+              </p>
+              <ChatToolCall
+                v-for="tc in resolvedToolCalls"
+                :key="tc.id"
+                :tool-call="tc"
+                :retryable="toolRetryable"
+                @retry="handleToolRetry"
+              >
+                <template v-if="$slots['tool-result']" #result="p">
+                  <slot name="tool-result" v-bind="p" />
+                </template>
+                <template v-if="$slots['tool-args']" #args="p">
+                  <slot name="tool-args" v-bind="p" />
+                </template>
+              </ChatToolCall>
+            </div>
+          </template>
           <div v-if="awaitingReply" class="eb-chat-message__loading">
             <ChatLoading />
           </div>
@@ -124,7 +176,7 @@
             </div>
           </template>
           <template v-else-if="hasBody">
-            <div class="eb-chat-message__bubble">
+            <div v-if="!hasParts" class="eb-chat-message__bubble">
               <!-- #content 只接管正文渲染：附件 / 思考 / 工具 / 来源 / 动作条仍由本组件负责 -->
               <slot
                 name="content"
@@ -337,6 +389,48 @@ const showActions = computed(() => {
 const showFeedback = computed(() => props.feedback && props.message?.role === "assistant" && props.message?.status === "done");
 const resolvedSuggestions = computed(() => props.message?.suggestions || []);
 const resolvedToolCalls = computed(() => props.message?.toolCalls || []);
+// ── parts 交错渲染（消息有 parts 时按「到达顺序」，无 parts 走固定顺序）──
+const hasParts = computed(() => (props.message?.parts?.length || 0) > 0);
+/**
+ * 连续同型 parts 聚成一段（run）：一段 markdown / 一个思考块 / 一组工具卡。
+ * text 增量在引擎侧已合并进尾部 part，这里的聚合兜住宿主手拼 parts 的情况。
+ */
+const partRuns = computed(() => {
+  const parts = props.message?.parts || [];
+  const groups = [];
+  for (const p of parts) {
+    const last = groups[groups.length - 1];
+    if (last && last.type === p.type) last.parts.push(p);
+    else groups.push({ type: p.type, parts: [p] });
+  }
+  return groups.map((group, i) => {
+    const key = group.parts[0].id;
+    if (group.type === "text") {
+      return { type: "text", key, text: group.parts.map((p) => p.text).join(""), last: i === groups.length - 1 };
+    }
+    if (group.type === "reasoning") {
+      return { type: "reasoning", key, text: group.parts.map((p) => p.text).join("") };
+    }
+    const calls = group.parts
+      .map((p) => (props.message?.toolCalls || []).find((t) => t.id === p.toolCallId))
+      .filter(Boolean);
+    const live = calls.some((t) => t.status === "running" || t.status === "pending");
+    let heading = "";
+    if (calls.length > 1) {
+      const total = calls.reduce((sum, t) => sum + (t.duration || 0), 0);
+      const text = labels.tool.group(calls.length);
+      heading = total > 0 ? `${text}${labels.message.duration(formatDuration(total))}` : text;
+    }
+    return { type: "tool", key, calls, live, heading };
+  });
+});
+/** 纯文本模式下 text 段的拖尾切分（与整条消息的 textHead/textTail 同款口径） */
+function splitRunText(text, streaming) {
+  const chars = Array.from(text || "");
+  if (!streaming) return { head: chars.join(""), tail: "" };
+  const from = Math.max(0, chars.length - SHIMMER_TAIL);
+  return { head: chars.slice(0, from).join(""), tail: chars.slice(from).join("") };
+}
 // 模型归属读数：provider/model 拼成一段（只有 model 就只显示 model）
 const modelText = computed(() => {
   const m = props.message;
