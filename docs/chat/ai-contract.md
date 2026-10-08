@@ -52,17 +52,20 @@ function onStop() {
 
 ### 渲染工具调用（含流式输出）
 
-API：`startToolCall`、`appendToolCallResult`、`completeToolCall`、`failToolCall`
+API：`startToolCall`、`appendToolCallArgs`、`appendToolCallResult`、`completeToolCall`、`failToolCall`
 
 ```js
-const callId = engine.startToolCall(msg.id, { name: 'web_search', label: '联网检索', args: { query } })
-engine.appendToolCallResult(msg.id, callId, '命中 3 条…')   // 边跑边出，卡片自动展开并贴底
-engine.completeToolCall(msg.id, callId)                     // 省略 result：保留已流出的输出
+const callId = engine.startToolCall(msg.id, { name: 'web_search', label: '联网检索' })
+engine.appendToolCallArgs(msg.id, callId, '{"query":')     // 入参也流式：JSON 文本逐片拼，卡片边收边显示
+engine.appendToolCallArgs(msg.id, callId, '"Q3 营收"}')
+engine.appendToolCallResult(msg.id, callId, '命中 3 条…')   // 输出侧边跑边出
+engine.completeToolCall(msg.id, callId)                     // 收尾：拼完的入参自动 parse 回对象
 ```
 
 注意：
 - completeToolCall 第三参省略时保留流式输出，传空串才会清空
 - 失败用 failToolCall（错误首行会摘要显示），不要走 completeToolCall
+- 入参按 JSON 文本拼接，收尾自动 parse 回对象；半截 JSON parse 不动就保留原文（诚实展示）
 
 ### 工具调用里挂子步骤（并行派发 / PTC）
 
@@ -164,6 +167,7 @@ session.open({ cursor: 0, records: [] })
 - 不可忽略的未知事件会标记 degraded，宿主应重拉整窗
 - open() 必须在 submit 前调（忘调会自动补开但告警）；切会话 = 再 open()（旧订阅迟到事件被代际守卫丢弃），彻底停用 dispose()
 - 结构化进度走 assistant/progress 瞬时事件 { messageId, label, detail?, elapsedMs?, percent? }，别把阶段进度拼进 think 文本
+- 入参流式走 tool/args 瞬时事件 { messageId, callId, chunk }；assistant/message 可带 model/provider（模型归属透传）
 
 ### 直接接 OpenAI / Anthropic
 
@@ -188,6 +192,41 @@ const transport = createChatTransport({
 - 工具参数是分片 JSON，适配层已按 index 拼完再 parse
 - onExtension 返回 true = 本帧已被扩展消费，跳过标准映射；自研后端可给 provider 传实现 createState/buildRequest/headersOf/frameToEvents/finalize 契约的对象，不必手写 transport
 - 中断已接进 SSE 解析层：abort 解除挂起的 read 再补 turn/end(aborted)，不会一直挂
+
+### 正文行内引用（RAG 引用锚点）
+
+API：`anchorSource`、`EbChatSources`、`citation-click`
+
+```js
+// citations 是回合级语义（来源卡渲染在正文之后）；行内关系用 source: 协议
+engine.appendContent(msg.id, '根据' + anchorSource('doc-3', '3') + ' 篇文档…')
+// 等价于正文里写 [3](source:doc-3)：渲染成可点上标，点击 → EbChatSources 高亮对应卡片
+// text 省略则按出现顺序自动编号；text 给数字则固定该序号
+```
+
+注意：
+- anchorSource(refId, text?) 返回 markdown 片段；refId 必须与 citations[].id 一一对应，否则点了没卡可高亮
+- citations 是回合级（消息级字段、渲染在正文后），行内锚点才是"这句来自哪篇"的表达
+- 纯文本 renderMode 下 source: 协议不渲染上标，只有 markdown 模式支持
+
+### 记用量与模型归属
+
+API：`useChatEngine.setUsage`
+
+```js
+engine.setUsage(msg.id, {
+  promptTokens: 120, completionTokens: 380, totalTokens: 500,
+  cost: 0.0032, currency: '$',            // 成本要价目表，是宿主业务数据；不给就不显示
+  segments: [{ label: '检索阶段', tokens: 320 }, { label: '生成阶段', tokens: 180 }],
+})
+// 模型归属是消息级字段：message.model / message.provider，底部读数行显示 provider/model
+engine.updateMessage(msg.id, { model: 'claude-sonnet-4-5', provider: 'anthropic' })
+```
+
+注意：
+- usage 字段面：prompt/completion/totalTokens、cacheRead/cacheWrite/reasoningTokens、ttftMs、tokensPerSecond、cost、currency、segments
+- segments 是分段记账（如检索 vs 生成），多条汇总时按 label 合并累加
+- model / provider 只透传不解析：引擎不猜路由，多模型时由后端在 assistant/message 事件里带上
 
 ### 自定义工具卡的参数/结果渲染
 
@@ -1022,6 +1061,7 @@ EbChatbot / EbAiConsole 的 question prop 传了就接管输入区，响应经 q
 | `useSpeechInput` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usespeechinput |
 | `chatLabels` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#chatlabels |
 | `useChatLabels` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#usechatlabels |
+| `anchorSource` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#anchorsource |
 | `createChatTransport` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#createchattransport |
 | `openai` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#openai |
 | `anthropic` | `@wil-works/evoke-chat` | https://evoke-business-ui.wil-works.com/chat/chat-subcomponents#anthropic |
