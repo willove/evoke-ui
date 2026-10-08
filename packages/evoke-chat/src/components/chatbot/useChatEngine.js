@@ -99,6 +99,7 @@ function useChatEngine(options = {}) {
       msg.status = "done";
       msg.thinking = false;
       msg.progress = null; // 阶段进度只属于进行中的轮：收尾后留着就是谎报
+      msg.progressLog = [];
       settleThinkDuration(msg);
       if (duration && duration > 0) {
         msg.duration = duration;
@@ -106,7 +107,7 @@ function useChatEngine(options = {}) {
     }
   }
   function setMessageError(id, error) {
-    updateMessage(id, { status: "error", error, thinking: false, progress: null });
+    updateMessage(id, { status: "error", error, thinking: false, progress: null, progressLog: [] });
   }
   /**
    * 中断生成：保留已流出的正文，状态记 cancelled。
@@ -120,6 +121,7 @@ function useChatEngine(options = {}) {
     if (msg.thinking) msg.thinkInterrupted = true;
     msg.thinking = false;
     msg.progress = null;
+    msg.progressLog = [];
     // 与 completeMessage 同款收尾：思考起点折成 thinkDuration（没思考过则不动）
     settleThinkDuration(msg);
     // 还在跑的工具调用不能继续转圈：与消息同一终态语义（cancelled），
@@ -309,6 +311,26 @@ function useChatEngine(options = {}) {
   function setProgress(messageId, progress) {
     updateMessage(messageId, { progress: progress || null });
   }
+  /**
+   * 内部流水线时间线：一次问答可能跑十几个阶段（理解→检索→核对→路由→合成）。
+   * progress 是「当前一句话」，progressLog 是完整轨迹（系统轨迹，不是给用户看的 plan）。
+   * 追加时联动把该项写进 progress——只用 appendProgress 的宿主也有当前行读数。
+   */
+  function appendProgress(messageId, entry) {
+    if (!entry?.label) return;
+    const msg = findMessage(messageId);
+    if (!msg) return;
+    const item = { at: Date.now(), ...entry };
+    msg.progressLog = [...(msg.progressLog || []), item];
+    const current = { label: item.label };
+    if (item.detail !== undefined) current.detail = item.detail;
+    if (item.elapsedMs !== undefined) current.elapsedMs = item.elapsedMs;
+    if (item.percent !== undefined) current.percent = item.percent;
+    msg.progress = current;
+  }
+  function clearProgress(messageId) {
+    updateMessage(messageId, { progress: null, progressLog: [] });
+  }
   /** 本轮改动汇总 { files: [{ path, display?, added?, deleted?, binary?, oversized? }], total?, added?, deleted? } */
   function setChanges(messageId, changes) {
     updateMessage(messageId, { changes: changes || null });
@@ -482,15 +504,22 @@ function useChatEngine(options = {}) {
   /**
    * 收尾工具调用。`result` 省略时保留流式累积的输出——流式接法下调用方
    * 往往没有完整结果可给，不能因为没传就把已流出的内容抹掉。
+   * `meta.resultType` 声明结果形态（text/json/image/file）；不给则按值推断
+   * （字符串=text、其余=json），组件默认渲染据此选形态。
    */
-  function completeToolCall(messageId, callId, result) {
+  function completeToolCall(messageId, callId, result, meta = {}) {
     const msg = findMessage(messageId);
     const tc = msg ? locateToolCall(msg.toolCalls, callId)?.call : null;
     // 已被中断的调用是终态：迟到的 complete 不能把它改回「已完成」
     if (!tc || tc.status === "cancelled") return;
     const duration = tc?.startedAt ? Date.now() - tc.startedAt : 0;
     const patch = { status: "done", streaming: false, duration };
-    if (result !== undefined) patch.result = result;
+    if (result !== undefined) {
+      patch.result = result;
+      patch.resultType = meta.resultType || (typeof result === "string" ? "text" : "json");
+    } else if (meta.resultType) {
+      patch.resultType = meta.resultType;
+    }
     // 入参流式收尾：拼完的 JSON 文本尝试 parse 回对象；parse 不动就保留原文
     if (tc.argsStreaming) {
       patch.argsStreaming = false;
@@ -568,6 +597,8 @@ function useChatEngine(options = {}) {
     removeArtifact,
     setUsage,
     setProgress,
+    appendProgress,
+    clearProgress,
     setChanges,
     setTrace
   };

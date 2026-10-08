@@ -22,6 +22,7 @@ export default {
     cancelled: '已停止生成',
     edited: '已编辑',
     duration: (text) => `（用时 ${text}）`,
+    progressSteps: (n) => `前 ${n} 个阶段`,
     user: '我',
     assistant: 'AI助手',
     tip: '内容由 AI 生成，仅供参考',

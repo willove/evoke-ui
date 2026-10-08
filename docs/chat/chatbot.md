@@ -765,9 +765,11 @@ session.messages                             // 折叠后的消息数组，直�
 | `user/message` | `{ requestId?, message: { content, attachments? } }` | 用户消息（同 `requestId` 的乐观气泡自动摘除） |
 | `assistant/delta`（瞬时） | `{ messageId, text?, think? }` | `appendContent` / `appendThinkContent` |
 | `assistant/progress`（瞬时） | `{ messageId, label, detail?, elapsedMs?, percent? }` | `setProgress`：消息上一行阶段读数（阶段名 + 细节/耗时）；收尾态自动清空 |
-| `assistant/message` | `{ messageId, message: { content, thinkContent?, usage? }, interrupted? }` | 落定；`interrupted` 走中断态 |
+| `assistant/progress-log`（瞬时） | `{ messageId, label, detail?, elapsedMs?, percent? }` | `appendProgress`：逐条追加成流水线轨迹（`progressLog`），当前行联动；≥2 条时历史收进「前 N 个阶段」折叠 |
+| `assistant/message` | `{ messageId, message: { content, thinkContent?, usage?, model?, provider? }, interrupted? }` | 落定（`model` / `provider` 透传成底部模型归属读数）；`interrupted` 走中断态 |
 | `tool/call` | `{ messageId, callId, name, args? }` | 工具卡转执行中 |
-| `tool/result` | `{ messageId, callId, result?, error?, duration? }` | 完成 / 失败；`error.code === 'interrupted'` 落「已停止」 |
+| `tool/args`（瞬时） | `{ messageId, callId, chunk }` | `appendToolCallArgs`：入参 JSON 分片逐片拼接，收尾自动 parse 回对象 |
+| `tool/result` | `{ messageId, callId, result?, resultType?, error?, duration? }` | 完成 / 失败；`resultType: 'image' / 'file'` 换非文本默认渲染；`error.code === 'interrupted'` 落「已停止」 |
 | `turn/end` | `{ messageId, reason: { kind } }` | `completed` 收尾、`max-tokens` 截断保留、`aborted`/`blocked` 中断、`error` 红块 |
 
 三条不变量（违反即上报 `onViolation`，绝不静默硬接）：

@@ -48,7 +48,33 @@
       <section v-else-if="hasResult" class="eb-chat-tool-call__section">
         <p class="eb-chat-tool-call__section-title">{{ labels.tool.result }}</p>
         <slot name="result" :tool-call="toolCall">
-          <pre ref="resultRef" class="eb-chat-tool-call__pre">{{ stringify(toolCall.result) }}<span v-if="streaming" class="eb-chat-tool-call__caret" aria-hidden="true" /></pre>
+          <img
+            v-if="resultKind === 'image' && imageSrc"
+            class="eb-chat-tool-call__image"
+            :src="imageSrc"
+            :alt="imageAlt"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          >
+          <!-- URL 协议不在白名单：不留破图，退成文本（与正文图片同款纪律） -->
+          <a
+            v-else-if="resultKind === 'file' && fileName && fileHref"
+            class="eb-chat-tool-call__file"
+            :href="fileHref"
+            target="_blank"
+            rel="noopener noreferrer"
+            :title="fileName"
+          >
+            <eb-icon :name="fileIcon" :size="14" />
+            <span class="eb-chat-tool-call__file-name">{{ fileName }}</span>
+            <span v-if="fileSize" class="eb-chat-tool-call__file-size">{{ fileSize }}</span>
+          </a>
+          <div v-else-if="resultKind === 'file' && fileName" class="eb-chat-tool-call__file" :title="fileName">
+            <eb-icon :name="fileIcon" :size="14" />
+            <span class="eb-chat-tool-call__file-name">{{ fileName }}</span>
+            <span v-if="fileSize" class="eb-chat-tool-call__file-size">{{ fileSize }}</span>
+          </div>
+          <pre v-else ref="resultRef" class="eb-chat-tool-call__pre">{{ stringify(toolCall.result) }}<span v-if="streaming" class="eb-chat-tool-call__caret" aria-hidden="true" /></pre>
         </slot>
       </section>
       <!-- 子调用（并行派发 / PTC 子步）：同一种卡递归渲染，深度到顶就停 -->
@@ -77,6 +103,8 @@
 <script setup>
 import EbIcon from "@wil-works/evoke-business-ui/icon"
 import { ref, computed, watch } from "vue";
+import { fileIconFor } from "./fileIcons";
+import { formatFileSize } from "./utils";
 import { useChatLabels } from "./labels";
 
 /** 子调用嵌套上限：挡住异常/自引用数据造成的无限递归（引擎侧同样设了 16 层） */
@@ -120,6 +148,33 @@ const errorHint = computed(() => {
 });
 const hasArgs = computed(() => props.toolCall?.args !== undefined && props.toolCall?.args !== null);
 const hasResult = computed(() => props.toolCall?.result !== undefined && props.toolCall?.result !== null);
+// ── 非文本结果的默认渲染（resultType 元数据，引擎收尾时写入）──
+// URL 白名单与正文图片同款：http/https/data 之外退回文本，不留点不动的破图/坏链
+const SAFE_URL_SCHEMES = /* @__PURE__ */ new Set(["http", "https", "data"]);
+function safeUrl(raw) {
+  const href = String(raw || "");
+  const colon = href.indexOf(":");
+  const scheme = colon > 0 ? href.slice(0, colon).toLowerCase() : "";
+  return SAFE_URL_SCHEMES.has(scheme) ? href : "";
+}
+const resultKind = computed(() => props.toolCall?.resultType || "");
+const resultObj = computed(() => {
+  const r = props.toolCall?.result;
+  return r && typeof r === "object" ? r : null;
+});
+const imageSrc = computed(() => {
+  if (resultKind.value !== "image") return "";
+  const raw = typeof props.toolCall?.result === "string" ? props.toolCall.result : resultObj.value?.url;
+  return safeUrl(raw);
+});
+const imageAlt = computed(() => String(resultObj.value?.alt || props.toolCall?.label || props.toolCall?.name || ""));
+const fileName = computed(() => (resultKind.value === "file" ? String(resultObj.value?.name || "") : ""));
+const fileHref = computed(() => (resultKind.value === "file" ? safeUrl(resultObj.value?.url) : ""));
+const fileSize = computed(() => {
+  const size = resultObj.value?.size;
+  return typeof size === "number" && size > 0 ? formatFileSize(size) : "";
+});
+const fileIcon = computed(() => fileIconFor({ name: fileName.value }));
 /** 子调用：深度到顶就不再往下渲染（数据里若递归自引用，也不会无限展开） */
 const subCalls = computed(() => (props.depth < MAX_TOOL_DEPTH ? (props.toolCall?.subCalls || []) : []));
 const subCount = computed(() => props.toolCall?.subCalls?.length || 0);
@@ -368,6 +423,53 @@ function toggle() {
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* 图片结果：限高不裁内容（object-fit 保比例，禁拉伸），宽度跟容器 */
+.eb-chat-tool-call__image {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: var(--eb-radius-sm);
+  object-fit: contain;
+}
+
+/* 文件结果：一行紧凑卡（图标 + 名称 + 体积），与 pre 同款发丝环 */
+.eb-chat-tool-call__file {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--eb-space-2);
+  max-width: 100%;
+  padding: var(--eb-space-1) var(--eb-space-2);
+  border-radius: var(--eb-radius-sm);
+  border: 0;
+  box-shadow: 0 0 0 1px var(--eb-border-color-extra-light) inset;
+  color: var(--eb-text-color-secondary);
+  font-size: var(--eb-font-size-xs);
+  text-decoration: none;
+}
+
+a.eb-chat-tool-call__file:hover {
+  box-shadow: 0 0 0 1px var(--eb-border-color-lighter) inset;
+  color: var(--eb-text-color-primary);
+}
+
+.eb-chat-tool-call__file:focus-visible {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 2px;
+}
+
+.eb-chat-tool-call__file-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eb-chat-tool-call__file-size {
+  flex-shrink: 0;
+  color: var(--eb-text-color-placeholder);
+  font-variant-numeric: tabular-nums;
 }
 
 .eb-chat-tool-call__pre--error {

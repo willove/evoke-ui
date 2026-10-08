@@ -52,10 +52,30 @@
             :duration="message?.thinkDuration || 0"
             :interrupted="message?.status === 'cancelled' && !!message?.thinkInterrupted"
           />
-          <div v-if="message?.progress?.label" class="eb-chat-message__progress">
-            <span class="eb-chat-message__progress-label">{{ message.progress.label }}</span>
-            <span v-if="message.progress.detail" class="eb-chat-message__progress-detail">{{ message.progress.detail }}</span>
-            <span v-if="message.progress.elapsedMs" class="eb-chat-message__progress-detail">{{ labels.message.duration(formatElapsed(message.progress.elapsedMs)) }}</span>
+          <!-- 流水线轨迹：当前阶段常显一行；历史阶段（≥2 条）收进披露，点开是紧凑日志 -->
+          <div v-if="progressLog.length > 1 || message?.progress?.label" class="eb-chat-message__progress">
+            <button
+              v-if="progressLog.length > 1"
+              type="button"
+              class="eb-chat-message__progress-toggle"
+              :aria-expanded="String(progressOpen)"
+              @click="progressOpen = !progressOpen"
+            >
+              <eb-icon :name="progressOpen ? 'arrow-down' : 'arrow-right'" :size="12" />
+              {{ labels.message.progressSteps(progressLog.length - 1) }}
+            </button>
+            <ol v-if="progressOpen" class="eb-chat-message__progress-log">
+              <li v-for="(step, i) in progressLog" :key="i" :class="{ 'is-current': i === progressLog.length - 1 }">
+                <span class="eb-chat-message__progress-label">{{ step.label }}</span>
+                <span v-if="step.detail" class="eb-chat-message__progress-detail">{{ step.detail }}</span>
+                <span v-if="step.elapsedMs" class="eb-chat-message__progress-detail">{{ formatElapsed(step.elapsedMs) }}</span>
+              </li>
+            </ol>
+            <template v-if="!progressOpen && message?.progress?.label">
+              <span class="eb-chat-message__progress-label">{{ message.progress.label }}</span>
+              <span v-if="message.progress.detail" class="eb-chat-message__progress-detail">{{ message.progress.detail }}</span>
+              <span v-if="message.progress.elapsedMs" class="eb-chat-message__progress-detail">{{ labels.message.duration(formatElapsed(message.progress.elapsedMs)) }}</span>
+            </template>
           </div>
           <ChatPlan
             v-if="message?.plan?.steps?.length"
@@ -280,6 +300,9 @@ const emit = defineEmits(["copy", "regenerate", "action", "edit", "feedback", "s
 const hovered = ref(false);
 const editing = ref(false);
 const sourcesRef = ref(null);
+// 流水线轨迹的展开态：默认收起（安静读数——当前阶段常显，历史收进披露）
+const progressOpen = ref(false);
+const progressLog = computed(() => props.message?.progressLog || []);
 function handleCitationClick(id) {
   // 上标与来源卡是兄弟节点，联动走 expose 而不是把 citations 塞进渲染层
   sourcesRef.value?.highlight?.(id);
@@ -644,6 +667,61 @@ function handleAction(key, message) {
   gap: var(--eb-space-2);
   margin-bottom: var(--eb-space-2);
   font-size: var(--eb-font-size-xs);
+}
+
+/* 轨迹披露钮：与整行同色系，弱化为文字钮（唯一可点处，不给强调色） */
+.eb-chat-message__progress-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: var(--eb-text-color-placeholder);
+  cursor: pointer;
+}
+
+.eb-chat-message__progress-toggle:hover {
+  color: var(--eb-text-color-secondary);
+}
+
+.eb-chat-message__progress-toggle:focus-visible {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--eb-radius-sm);
+}
+
+/* 展开的轨迹：整列占满（序号 + 阶段 + 细节/耗时），行距贴紧成日志感 */
+.eb-chat-message__progress-log {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: eb-chat-progress;
+}
+
+.eb-chat-message__progress-log li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--eb-space-2);
+  counter-increment: eb-chat-progress;
+}
+
+.eb-chat-message__progress-log li::before {
+  content: counter(eb-chat-progress) ".";
+  min-width: 1.5em;
+  color: var(--eb-text-color-placeholder);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 当前阶段比历史亮一档：扫一眼就知道跑到哪了 */
+.eb-chat-message__progress-log li.is-current .eb-chat-message__progress-label {
+  color: var(--eb-text-color-primary);
 }
 
 .eb-chat-message__progress-label {

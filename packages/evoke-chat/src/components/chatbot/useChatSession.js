@@ -18,10 +18,11 @@
  *   user/message      { requestId?, message: { id?, content, attachments? } }
  *   assistant/delta   { messageId, text? , think? }            瞬时（无 seq）
  *   assistant/progress { messageId, label, detail?, elapsedMs?, percent? }  瞬时（无 seq）
+ *   assistant/progress-log { messageId, label, detail?, elapsedMs?, percent? }  瞬时（无 seq）：逐条追加成流水线轨迹
  *   assistant/message { messageId, message: { content, thinkContent?, usage?, model?, provider? }, interrupted? }
  *   tool/call         { messageId, callId, name, label?, args? }
  *   tool/args         { messageId, callId, chunk }             瞬时（无 seq）：入参 JSON 分片
- *   tool/result       { messageId, callId, result?, error?, duration? }
+ *   tool/result       { messageId, callId, result?, resultType?, error?, duration? }
  *   turn/end          { messageId, reason: { kind } , error? }
  *   reason.kind: completed / max-tokens / aborted / interrupted / blocked / error
  *
@@ -91,6 +92,17 @@ export function applySessionEvent(engine, event) {
       engine.setProgress(targetId, progress);
       return true;
     }
+    case "assistant/progress-log": {
+      // 流水线时间线（瞬时）：与 assistant/progress 同构，但逐条追加成轨迹
+      if (!targetId || data.label === undefined) return false;
+      ensureMessage(engine, targetId);
+      const entry = { label: data.label };
+      if (data.detail !== undefined) entry.detail = data.detail;
+      if (data.elapsedMs !== undefined) entry.elapsedMs = data.elapsedMs;
+      if (data.percent !== undefined) entry.percent = data.percent;
+      engine.appendProgress(targetId, entry);
+      return true;
+    }
     case "assistant/message": {
       const patch = {};
       if (data.message?.content !== undefined) patch.content = data.message.content;
@@ -132,7 +144,7 @@ export function applySessionEvent(engine, event) {
       } else if (data.error) {
         engine.failToolCall(targetId, data.callId, data.error.reason || data.error.message || data.error);
       } else {
-        engine.completeToolCall(targetId, data.callId, data.result);
+        engine.completeToolCall(targetId, data.callId, data.result, { resultType: data.resultType });
       }
       return true;
     }

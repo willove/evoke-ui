@@ -96,7 +96,11 @@ Props 与 `ChatList` 的透传面一致，外加 `message` 本身；其中 `show
 | --- | --- |
 | `content` | 只换气泡内正文；作用域 `{ message, content, renderMode, streaming }` |
 
-消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, usage?, model?, provider?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。`toolCalls[].argsStreaming` 为真表示入参在流式（JSON 文本逐片拼接，收尾自动 parse 回对象）；`model` / `provider` 是模型归属（多模型路由时底部读数行显示 `provider/model`，引擎只透传不解析）。
+消息项的字段：`{ id, role, content, status, thinking?, thinkContent?, thinkDuration?, thinkInterrupted?, attachments?, suggestions?, feedback?, feedbackReasons?, feedbackNote?, edited?, citations?, toolCalls?, duration?, usage?, model?, provider?, progress?, progressLog?, error? }`，`status` 取 `pending / streaming / done / error / cancelled`；`thinking` 为真表示正在思考（流式期间思考块强制展开），`thinkDuration` 是思考耗时（毫秒，引擎自动结算），`thinkInterrupted` 为真表示思考阶段就被中断（思考块标题改说「思考已中断」）。`toolCalls[].argsStreaming` 为真表示入参在流式（JSON 文本逐片拼接，收尾自动 parse 回对象）；`model` / `provider` 是模型归属（多模型路由时底部读数行显示 `provider/model`，引擎只透传不解析）；`progress` 是当前阶段读数（`{ label, detail?, elapsedMs?, percent? }`），`progressLog` 是流水线轨迹（`appendProgress` 逐条追加并联动当前行，≥2 条时收进「前 N 个阶段」折叠，收尾清空）。
+
+<DemoBlock>
+  <eb-chat-message :message="DEMO_MESSAGE_TIMELINE" style="max-width: 560px" />
+</DemoBlock>
 
 ### EbChatMarkdown
 
@@ -143,11 +147,13 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 
 ### EbChatToolCall
 
-工具调用卡：状态标记（等待/执行/失败/完成/已停止）、耗时、参数与结果的折叠展开，失败态给重试钮。**支持子调用**：`toolCall.subCalls` 是同一形状的数组（并行派发 / PTC 子步），展开后按层级递归渲染、左侧细轨标出从属关系，折叠时头部给子调用计数；嵌套上限 16 层（引擎与组件两侧都设了，异常自引用数据也不会炸）。`toolCall.streaming` 为真时结果区末尾补光标并自动展开盯跑（收尾后回到用户可控的折叠态）；失败态在折叠行直接给**错误首行**，不展开也知道为什么失败；`status: 'cancelled'`（运行中被停止）用停止标记与「已停止」，不给重试钮、也不再转圈。
+工具调用卡：状态标记（等待/执行/失败/完成/已停止）、耗时、参数与结果的折叠展开，失败态给重试钮。**支持子调用**：`toolCall.subCalls` 是同一形状的数组（并行派发 / PTC 子步），展开后按层级递归渲染、左侧细轨标出从属关系，折叠时头部给子调用计数；嵌套上限 16 层（引擎与组件两侧都设了，异常自引用数据也不会炸）。`toolCall.streaming` 为真时结果区末尾补光标并自动展开盯跑（收尾后回到用户可控的折叠态）；`argsStreaming` 是入参侧的同款待遇——长参数（SQL / 查询 DSL）边收边看，收尾自动 parse 回对象；失败态在折叠行直接给**错误首行**，不展开也知道为什么失败；`status: 'cancelled'`（运行中被停止）用停止标记与「已停止」，不给重试钮、也不再转圈。
+
+非文本结果：`toolCall.resultType` 给 `image` / `file` 时默认渲染换形态——image 认 `{ url, alt? }` 渲染成限高图片，file 认 `{ name, url?, size? }` 渲染成一行文件卡（图标按后缀、可点下载）；URL 只放行 `http` / `https` / `data`，其余退回文本（不留破图/坏链）。
 
 | Props | 类型 | 默认 | 说明 |
 | --- | --- | --- | --- |
-| `toolCall` | object | `{}` | `{ id, name, label?, args?, result?, status, duration?, error? }` |
+| `toolCall` | object | `{}` | `{ id, name, label?, args?, result?, resultType?, status, duration?, error?, streaming?, argsStreaming? }` |
 | `expanded` | boolean | 自动 | 未指定时有参数或结果才可展开 |
 | `retryable` | boolean | `true` | 失败态是否给重试钮 |
 
@@ -160,13 +166,15 @@ Markdown 渲染器：GFM 表格与任务列表、代码块工具条（语言标�
 | --- | --- |
 | `args` / `result` | `{ toolCall }`，可换成 `EbJsonViewer` 等 |
 
-参数与结果默认走带环检测的 JSON `<pre>`（宿主传入的对象常带循环引用）。
+参数与结果默认走带环检测的 JSON `<pre>`（宿主传入的对象常带循环引用）；`resultType: 'image' | 'file'` 时见上——引擎侧 `completeToolCall(msgId, callId, result, { resultType })` 写入，事件驱动走 `tool/result` 的 `resultType` 字段。
 
 <DemoBlock>
   <div style="display: flex; flex-direction: column; gap: 12px; max-width: 560px">
     <eb-chat-tool-call :tool-call="DEMO_TOOL_RUNNING" />
-    <eb-chat-tool-call :tool-call="DEMO_TOOL_DONE" />
+    <eb-chat-tool-call :tool-call="DEMO_TOOL_DONE" :expanded="true" />
     <eb-chat-tool-call :tool-call="DEMO_TOOL_ERROR" />
+    <eb-chat-tool-call :tool-call="DEMO_TOOL_IMAGE" :expanded="true" />
+    <eb-chat-tool-call :tool-call="DEMO_TOOL_FILE" :expanded="true" />
   </div>
 </DemoBlock>
 
@@ -1018,6 +1026,41 @@ const DEMO_TOOL_DONE = {
   result: { hits: 3, top: '深海热泉口微生物固碳研究（2026）' },
 }
 const DEMO_TOOL_ERROR = { id: 't-3', name: 'read_file', label: '读取文件', status: 'error', error: 'ENOENT: 文件不存在' }
+
+const DEMO_MESSAGE_TIMELINE = {
+  id: 'tl-1',
+  role: 'assistant',
+  content: '',
+  status: 'streaming',
+  progress: { label: '合成答案', elapsedMs: 2400 },
+  progressLog: [
+    { label: '理解意图', elapsedMs: 120 },
+    { label: '检索知识库', detail: '命中 12 段', elapsedMs: 340 },
+    { label: '核对事实', detail: '3 处交叉验证', elapsedMs: 860 },
+    { label: '合成答案', elapsedMs: 2400 },
+  ],
+}
+
+const DEMO_TOOL_IMAGE = {
+  id: 't-4',
+  name: 'capture_page',
+  label: '网页截图',
+  status: 'done',
+  duration: 1180,
+  args: { url: 'https://pricing.example.com' },
+  resultType: 'image',
+  result: { url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23f5f7fa'/%3E%3Crect x='24' y='22' width='120' height='14' rx='4' fill='%23d0d6de'/%3E%3Crect x='24' y='50' width='352' height='1' fill='%23e3e8ee'/%3E%3Crect x='24' y='66' width='160' height='82' rx='6' fill='%23c3d4e8'/%3E%3Crect x='200' y='70' width='176' height='10' rx='3' fill='%23dfe5ec'/%3E%3Crect x='200' y='90' width='140' height='10' rx='3' fill='%23e7ebf1'/%3E%3Crect x='200' y='110' width='156' height='10' rx='3' fill='%23e7ebf1'/%3E%3Crect x='24' y='162' width='96' height='22' rx='11' fill='%234c7dd0'/%3E%3C/svg%3E", alt: '定价页截图' },
+}
+
+const DEMO_TOOL_FILE = {
+  id: 't-5',
+  name: 'export_sheet',
+  label: '导出报表',
+  status: 'done',
+  duration: 820,
+  resultType: 'file',
+  result: { name: '季度汇总.xlsx', size: 204800, url: 'https://evoke-business-ui.wil-works.com/quarter.xlsx' },
+}
 
 const DEMO_SOURCES = [
   { id: 's1', index: 1, title: '深海热泉口微生物固碳研究', url: 'https://example.com/paper/1', source: 'Nature', snippet: '热泉口化能合成速率约为光合作用的 0.1% 量级。' },

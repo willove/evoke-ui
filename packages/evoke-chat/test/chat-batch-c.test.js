@@ -197,6 +197,57 @@ describe('工具入参流式渲染（argsStreaming）', () => {
   })
 })
 
+describe('工具结果的非文本默认渲染（resultType）', () => {
+  it('image：白名单 URL 渲染 img（带 alt 与 referrerpolicy），不再走 pre', () => {
+    const w = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'web_search', label: '联网检索', status: 'done', resultType: 'image', result: { url: 'https://cdn.example.com/shot.png', alt: '页面截图' } } },
+    })
+    const img = w.find('img.eb-chat-tool-call__image')
+    expect(img.exists()).toBe(true)
+    expect(img.attributes('src')).toBe('https://cdn.example.com/shot.png')
+    expect(img.attributes('alt')).toBe('页面截图')
+    expect(img.attributes('referrerpolicy')).toBe('no-referrer')
+    expect(w.find('.eb-chat-tool-call__pre').exists()).toBe(false)
+  })
+
+  it('image：非白名单协议不留破图，退回文本 pre', () => {
+    const w = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'web_search', status: 'done', resultType: 'image', result: { url: 'javascript:alert(1)' } } },
+    })
+    expect(w.find('img.eb-chat-tool-call__image').exists()).toBe(false)
+    expect(w.find('.eb-chat-tool-call__pre').exists()).toBe(true)
+    expect(w.find('.eb-chat-tool-call__pre').text()).toContain('javascript:alert(1)')
+  })
+
+  it('file：有白名单链接渲染 a 卡（图标 + 名称 + 体积）；无 url 退纯展示卡', () => {
+    const linked = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'export', status: 'done', resultType: 'file', result: { name: '报表.xlsx', url: 'https://cdn.example.com/r.xlsx', size: 2048 } } },
+    })
+    const a = linked.find('a.eb-chat-tool-call__file')
+    expect(a.exists()).toBe(true)
+    expect(a.attributes('href')).toBe('https://cdn.example.com/r.xlsx')
+    expect(a.attributes('target')).toBe('_blank')
+    expect(a.text()).toContain('报表.xlsx')
+    expect(a.text()).toContain('2.0 KB')
+
+    const bare = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'export', status: 'done', resultType: 'file', result: { name: '本地产物.md' } } },
+    })
+    expect(bare.find('a.eb-chat-tool-call__file').exists()).toBe(false)
+    expect(bare.find('.eb-chat-tool-call__file').exists()).toBe(true)
+    expect(bare.find('.eb-chat-tool-call__file').text()).toContain('本地产物.md')
+  })
+
+  it('resultType 缺省时字符串/对象照旧走 pre（回归）', () => {
+    const w = mount(ChatToolCall, {
+      props: { toolCall: { id: 't', name: 'sql', status: 'done', result: { rows: 3 } } },
+    })
+    expect(w.find('.eb-chat-tool-call__pre').exists()).toBe(true)
+    expect(w.find('img.eb-chat-tool-call__image').exists()).toBe(false)
+    expect(w.find('.eb-chat-tool-call__file').exists()).toBe(false)
+  })
+})
+
 describe('useChatEngine 工具调用状态机', () => {
   function seeded() {
     const eng = useChatEngine({})
@@ -312,6 +363,20 @@ describe('useChatEngine 工具调用状态机', () => {
     const id = eng.startToolCall(m.id, { name: 'x', args: { a: 1 } })
     eng.appendToolCallArgs(m.id, id, ' 然后还有')
     expect(eng.messages.value[0].toolCalls[0].args).toBe('{"a":1} 然后还有')
+  })
+
+  it('completeToolCall：meta.resultType 优先；缺省按值推断（字符串=text、对象=json）', () => {
+    const { eng, m } = seeded()
+    const a = eng.startToolCall(m.id, { name: 'a' })
+    eng.completeToolCall(m.id, a, '纯文本')
+    const b = eng.startToolCall(m.id, { name: 'b' })
+    eng.completeToolCall(m.id, b, { rows: 3 })
+    const c = eng.startToolCall(m.id, { name: 'c' })
+    eng.completeToolCall(m.id, c, { url: 'https://x/y.png' }, { resultType: 'image' })
+    const calls = eng.messages.value[0].toolCalls
+    expect(calls.find((t) => t.name === 'a').resultType).toBe('text')
+    expect(calls.find((t) => t.name === 'b').resultType).toBe('json')
+    expect(calls.find((t) => t.name === 'c').resultType).toBe('image')
   })
 
   it('addSubToolCall：挂子调用，按 id 递归流式/收尾', () => {

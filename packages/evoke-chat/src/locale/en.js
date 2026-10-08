@@ -22,6 +22,7 @@ export default {
     cancelled: 'Generation stopped',
     edited: 'Edited',
     duration: (text) => ` (${text})`,
+    progressSteps: (n) => `${n} earlier stages`,
     user: 'You',
     assistant: 'Assistant',
     tip: 'AI-generated content may be inaccurate',

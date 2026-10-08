@@ -231,3 +231,82 @@ describe('ChatMessage 阶段进度条（assistant/progress 的可见落点）', 
     expect(without.find('.eb-chat-message__progress').exists()).toBe(false)
   })
 })
+
+describe('useChatEngine progressLog（appendProgress / clearProgress）', () => {
+  it('appendProgress 逐条追加轨迹，并联动把最后一项写进当前行 progress', () => {
+    const eng = useChatEngine({})
+    const m = eng.createAssistantMessage()
+    eng.appendProgress(m.id, { label: '理解意图', elapsedMs: 80 })
+    eng.appendProgress(m.id, { label: '检索知识库', detail: '命中 12 段' })
+    const msg = eng.messages.value[0]
+    expect(msg.progressLog).toHaveLength(2)
+    expect(msg.progressLog[0]).toMatchObject({ label: '理解意图', elapsedMs: 80 })
+    expect(msg.progress).toMatchObject({ label: '检索知识库', detail: '命中 12 段' })
+  })
+
+  it('收尾路径全部清轨迹：complete / cancel / error', () => {
+    const eng = useChatEngine({})
+    const a = eng.createAssistantMessage()
+    eng.appendProgress(a.id, { label: 'x' })
+    eng.completeMessage(a.id)
+    expect(eng.messages.value[0].progressLog).toEqual([])
+
+    const b = eng.createAssistantMessage()
+    eng.appendProgress(b.id, { label: 'x' })
+    eng.cancelMessage(b.id)
+    expect(eng.messages.value[1].progressLog).toEqual([])
+
+    const c = eng.createAssistantMessage()
+    eng.appendProgress(c.id, { label: 'x' })
+    eng.setMessageError(c.id, 'boom')
+    expect(eng.messages.value[2].progressLog).toEqual([])
+  })
+
+  it('clearProgress 同时清当前行与轨迹；无 label 的 entry 不入轨迹', () => {
+    const eng = useChatEngine({})
+    const m = eng.createAssistantMessage()
+    eng.appendProgress(m.id, { label: 'x' })
+    eng.appendProgress(m.id, { detail: '没标签不算阶段' })
+    expect(eng.messages.value[0].progressLog).toHaveLength(1)
+    eng.clearProgress(m.id)
+    expect(eng.messages.value[0].progress).toBeNull()
+    expect(eng.messages.value[0].progressLog).toEqual([])
+  })
+})
+
+describe('ChatMessage 流水线时间线（progressLog）', () => {
+  const log3 = [
+    { label: '理解意图', elapsedMs: 80 },
+    { label: '检索知识库', detail: '命中 12 段', elapsedMs: 340 },
+    { label: '合成答案', elapsedMs: 900 },
+  ]
+
+  it('多阶段：默认当前行 + 折叠钮计数；展开后完整轨迹且末条标记当前', async () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 'a1', role: 'assistant', content: '', status: 'streaming', progress: { label: '合成答案' }, progressLog: log3 } },
+    })
+    // 默认收起：历史阶段不可见，折叠钮给「前 2 个阶段」
+    const toggle = w.find('.eb-chat-message__progress-toggle')
+    expect(toggle.exists()).toBe(true)
+    expect(toggle.text()).toContain('前 2 个阶段')
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(w.find('.eb-chat-message__progress-log').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__progress-label').text()).toBe('合成答案')
+
+    await toggle.trigger('click')
+    expect(w.find('.eb-chat-message__progress-toggle').attributes('aria-expanded')).toBe('true')
+    const items = w.findAll('.eb-chat-message__progress-log li')
+    expect(items).toHaveLength(3)
+    expect(items.at(2).classes()).toContain('is-current')
+    expect(items.at(0).text()).toContain('理解意图')
+    expect(items.at(1).text()).toContain('340ms')
+  })
+
+  it('单阶段：不渲染折叠钮（不做假控件），当前行照常', () => {
+    const w = mount(ChatMessage, {
+      props: { message: { id: 'a1', role: 'assistant', content: '', status: 'streaming', progress: { label: '检索' }, progressLog: [{ label: '检索' }] } },
+    })
+    expect(w.find('.eb-chat-message__progress-toggle').exists()).toBe(false)
+    expect(w.find('.eb-chat-message__progress-label').text()).toBe('检索')
+  })
+})
