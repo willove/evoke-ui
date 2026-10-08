@@ -209,6 +209,22 @@ engine.appendContent(msg.id, '根据' + anchorSource('doc-3', '3') + ' 篇文档
 - citations 是回合级（消息级字段、渲染在正文后），行内锚点才是"这句来自哪篇"的表达
 - 纯文本 renderMode 下 source: 协议不渲染上标，只有 markdown 模式支持
 
+### 内部流水线时间线（progressLog）
+
+API：`appendProgress`、`clearProgress`、`setProgress`
+
+```js
+// progress 是「当前一句话」；progressLog 是完整轨迹（理解→检索→核对→合成…）
+engine.appendProgress(msg.id, { label: '检索知识库', detail: '命中 12 段', elapsedMs: 340 })
+engine.appendProgress(msg.id, { label: '合成答案' })
+// 追加联动更新当前行；历史阶段（≥2 条）收进「前 N 个阶段」折叠，展开是紧凑日志
+```
+
+注意：
+- setProgress 只更新当前行不记轨迹；appendProgress 记轨迹并联动当前行
+- progressLog 是系统轨迹，别当 plan 用——给用户看的计划走 setPlan
+- 收尾（completeMessage / cancelMessage / 出错）会清掉 progress 与 progressLog
+
 ### 记用量与模型归属
 
 API：`useChatEngine.setUsage`
@@ -240,6 +256,8 @@ API：`EbChatToolCall 的 #args / #result 插槽`
 
 注意：
 - 默认是带环检测的 JSON &lt;pre&gt;；只要换成插槽就不会丢默认的折叠/状态语义
+- resultType: text / json / image / file——image 认 { url, alt? }、file 认 { name, url?, size? }
+- 非文本 URL 只放行 http/https/data（与正文图片同款白名单），其余退回文本
 
 ### 多语言
 
