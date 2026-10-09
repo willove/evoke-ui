@@ -948,7 +948,6 @@ EbChatUsage 只展示宿主给的用量——成本要价目表，那是宿主�
 | --- | --- | --- |
 | `usage` | Object | null |
 | `items` | Array | null |
-| `model` | Object | null |
 | `size` | String | "compact" |
 | `bare` | Boolean | true |
 | `disclosure` | Boolean | true |

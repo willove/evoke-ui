@@ -334,20 +334,9 @@ function useChatEngine(options = {}) {
 
   // ── 用量 ──
   // 只存不解析：成本要价目表，那是宿主的业务数据，引擎不猜
-  // model/provider 是**归属信息**（这答案是哪个模型、哪条线路给的）：
-  // 多模型路由/多线路并存时，运行卡与用量行没有它就答不出"这是谁给的"。
-  // 不给就不显示——不猜，也不占位。
+  // 模型归属走消息级 model / provider 字符串字段（0.5.0 起事件 assistant/message 直接透传）
   function setUsage(messageId, usage) {
     updateMessage(messageId, { usage: usage || null });
-  }
-  function setModel(messageId, model = {}) {
-    updateMessage(messageId, {
-      model: {
-        provider: model.provider || "",
-        name: model.name || "",
-        ...(model.version ? { version: model.version } : {}),
-      },
-    });
   }
   // ── 结构化进度 ──
   // 阶段名+耗时/百分比的一等通道（assistant/progress 事件落这里），
@@ -657,7 +646,6 @@ function useChatEngine(options = {}) {
     updateArtifact,
     removeArtifact,
     setUsage,
-    setModel,
     setProgress,
     appendProgress,
     clearProgress,

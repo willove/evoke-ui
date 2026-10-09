@@ -1928,12 +1928,6 @@
           "required": false
         },
         {
-          "name": "model",
-          "type": "Object",
-          "default": "null",
-          "required": false
-        },
-        {
           "name": "size",
           "type": "String",
           "default": "\"compact\"",

@@ -317,13 +317,22 @@ describe('useChatEngine progressLog（appendProgress / clearProgress）', () => 
     expect(eng.messages.value[0].progressLog).toEqual([])
   })
 
-  it('setModel 记归属（provider/name/version）；不给就是空对象不猜', () => {
-    const eng = useChatEngine({})
+  it('keepProgressLog 收尾后组件层轨迹仍可回看（折叠钮在，展开给全程）', async () => {
+    const eng = useChatEngine({ keepProgressLog: true })
     const m = eng.createAssistantMessage()
-    eng.setModel(m.id, { provider: 'dashscope', name: 'qwen-plus' })
-    expect(eng.messages.value[0].model).toEqual({ provider: 'dashscope', name: 'qwen-plus' })
-    eng.setModel(m.id, { provider: 'x', name: 'y', version: '2026-01' })
-    expect(eng.messages.value[0].model.version).toBe('2026-01')
+    eng.appendProgress(m.id, { label: '理解意图', elapsedMs: 120 })
+    eng.appendProgress(m.id, { label: '检索知识库', elapsedMs: 340 })
+    eng.appendProgress(m.id, { label: '合成答案', elapsedMs: 900 })
+    eng.appendContent(m.id, '答案正文')
+    eng.completeMessage(m.id)
+
+    const w = mount(ChatMessage, { props: { message: eng.messages.value[0] } })
+    const toggle = w.find('.eb-chat-message__progress-toggle')
+    expect(toggle.exists()).toBe(true) // 收尾后轨迹不消失：事后证据还在
+    expect(toggle.text()).toContain('前 2 个阶段')
+    await toggle.trigger('click')
+    expect(w.findAll('.eb-chat-message__progress-log li')).toHaveLength(3)
+    w.unmount()
   })
 })
 

@@ -157,7 +157,6 @@ export default {
     reasoning: 'Reasoning',
     ttft: 'First token',
     speed: 'Speed',
-    model: 'Model',
     cost: 'Cost',
     summary: (count, detail) => `${count} messages total, ${detail}`,
   },
