@@ -263,7 +263,7 @@
               class="eb-chat-message__usage eb-chat-message__reveal"
               :class="{ 'is-visible': hovered }"
             >
-              <ChatUsage :usage="message.usage" :model="message.model" />
+              <ChatUsage :usage="message.usage" />
             </span>
             <span v-if="message?.edited" class="eb-chat-message__edited">{{ labels.message.edited }}</span>
             <ChatActionbar 
