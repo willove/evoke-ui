@@ -10,7 +10,7 @@
 底座中为此项目加的能力不受影响：business-ui Splitter 的 resize 来源标记
 （`source: 'user' | 'system'`）仍是公共契约，见 business-ui 0.12.0 条目。
 
-## [business-ui 0.12.0] — 2026-09-29（未发版）
+## [business-ui 0.12.0] — 2026-10-11
 
 ### @wil-works/evoke-business-ui — Splitter 的 resize 事件附来源标记（minor）
 
@@ -19,6 +19,14 @@
 首参不变，既有消费方无需改动；需要把尺寸写回持久化的消费方**必须过滤 `system`**：
 慢加载下容器尺寸未定，回写合成 resize 会把当时的量测固化成声明尺寸写坏布局
 （此前的消费方 EtDock 即中招，该包已随 tools-ui 移除，见「项目调整」条目）。
+
+### @wil-works/evoke-business-ui — 菜单收起时图标漂移修复（fix）
+
+折叠动画期间菜单图标被残余文字宽度推着漂移、动画末尾才落位：折叠态宽度写死 64px
+是瞬时值，外层侧栏还在 0.45s 过渡中，菜单先到位、两者不同步——改 `width: 100%`
+让菜单跟随侧栏的 transition 一起到位；菜单项 `justify-content: center` 不参与过渡
+而文字 span 在收缩——改 `flex-start` + 固定 `padding-left`（折叠宽减图标宽的一半），
+图标全程不动。
 
 ## [evoke-chat 0.4.1] — 2026-10-01
 
