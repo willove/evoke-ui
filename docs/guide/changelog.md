@@ -20,10 +20,36 @@ evoke-business-ui 的版本演进，最新在上。完整的变更明细（含�
 <script setup>
 const releases = [
   {
+    version: 'v0.12.0',
+    date: '2026-10-11',
+    title: 'Splitter resize 来源标记 + 菜单收起图标漂移修复',
+    latest: true,
+    bullets: [
+      'EbSplitter 的 resize 载荷扩为 [占比数组, { source }]：user（拖拽/键盘/折叠）与 system（挂载初始化、容器重分摊的合成值）——需要把尺寸写回持久化的消费方必须过滤 system，否则慢加载下会把量测固化成声明尺寸写坏布局',
+      '修复菜单收起动画期间图标被残余文字宽度推着漂移、动画末尾才落位的问题：折叠态宽度改 width:100% 跟随侧栏过渡，菜单项改 flex-start + 固定 padding-left，图标全程不动',
+    ],
+  },
+  {
+    version: 'v0.11.0',
+    date: '2026-09-26',
+    title: 'Splitter 拖拽条键盘 resize',
+    bullets: [
+      '拖拽条增加键盘语义：role="separator" + tabindex + aria-valuenow/min/max，方向键按 keyboardStep（新 prop，默认 8px）调整，Home/End 到 min/max，与拖拽共用同一套夹角；组字中不响应',
+    ],
+  },
+  {
+    version: 'v0.10.0',
+    date: '2026-09-26',
+    title: '语义图标集 438 → 441 + 文档计数守卫',
+    bullets: [
+      'Remix 语义图标集新增 3 个（441），hero 徽标、图标页正文与总览页的计数一并对齐源数据',
+      '新增 docs-theme-icons 守卫：文档里写死的图标计数必须等于生成集实际键数，模板与 md 用到的名字必须能解析，防止改名后渲染成空白',
+    ],
+  },
+  {
     version: 'v0.9.0',
     date: '2026-09-22',
     title: '对话家族独立成包 + 文档独立分区',
-    latest: true,
     bullets: [
       'AI 对话家族（对话窗口 / 消息体 / 各类卡片 / 工具调用 / 沙箱预览等 35 个组件）整族迁出到新包 @wil-works/evoke-chat，按需安装——不用对话能力的项目不再带 marked 与 highlight.js',
       '底座补 ./locale 子路径导出与 useLocale / usePlatform / isImeComposing / inBrowser 四个公共接缝；注册组件 182 → 147',
